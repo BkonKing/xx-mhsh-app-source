@@ -3,14 +3,17 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './styles/base.css'
-import './utils/rem.js' // 引入rem自适应
+// import './utils/rem.js' // 引入rem自适应
 import '../public/js/api.js' // 引入apiCloud-api
 // import * as method from '@/utils/utils.js' // 引入全局方法
 // vconsole 悬浮console
 import VConsole from 'vconsole'
 import Navigation from 'vue-navigation'
+import 'amfe-flexible'
 
-Vue.use(Navigation, { router })
+Vue.use(Navigation, {
+  router
+})
 Vue.config.productionTip = false
 // 全局引入公用方法，也可以在组件中单独引入，推荐在组件中单独引入。
 // Vue.prototype.$METHOD = method
@@ -27,6 +30,14 @@ Vue.config.productionTip = false
 if (window.navigator.userAgent.match(/APICloud/i)) {
   window.apiready = () => {
     process.env.NODE_ENV === 'development' && new VConsole()
+    const mam = api.require('mam')
+    mam.startSmartUpdate(function (ret, err) {
+      if (ret) {
+        alert(JSON.stringify(ret))
+      } else {
+        alert(JSON.stringify(err))
+      }
+    })
     // 将API链接Vue原型，后续通过this.$APICLOUD代替window.api
     Vue.prototype.$api = window.api
     new Vue({

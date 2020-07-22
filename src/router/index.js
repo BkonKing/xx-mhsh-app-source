@@ -1,8 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-// tarBar ----- 子页面
+/* tabbar */
 import Index from '../views/index/index.vue'
+
+/* Router Modules */
+import butlerRouter from './modules/butler'
+import lifeRouter from './modules/life'
+import neighboursRouter from './modules/neighbours'
+import personageRouter from './modules/personage'
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location, onResolve, onReject) {
@@ -67,7 +73,11 @@ const routes = [{
     meta: {
       keepAlive: true
     }
-  }]
+  }],
+  ...butlerRouter,
+  ...lifeRouter,
+  ...neighboursRouter,
+  ...personageRouter
 }]
 
 const router = new VueRouter({

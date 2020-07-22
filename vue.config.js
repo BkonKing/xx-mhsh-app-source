@@ -1,8 +1,11 @@
 const path = require('path')
 const fs = require('fs')
-const { exec, spawn } = require('child_process')
+const {
+  exec,
+  spawn
+} = require('child_process')
 
-const appname = 'mhsh' // 项目文件名
+const appname = 'mhsh3' // 项目文件名
 const appPort = 10915 // 真机同步端口,浏览器打开端口。
 const scriptActive = process.env.npm_lifecycle_event
 
@@ -10,8 +13,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : './',
   outputDir: '../' + appname, // 运行时生成的生产环境构建文件的目录(默认""dist""，构建之前会被清除)
   indexPath: 'index.html', // 指定生成的 index.html 的输出路径(相对于 outputDir)也可以是一个绝对路径。
-  filenameHashing:
-    process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */,
+  filenameHashing: process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */ ,
   pages: {
     // pages 里配置的路径和文件名在你的文档目录必须存在 否则启动服务会报错
     index: {
@@ -22,14 +24,25 @@ module.exports = {
       title: '美好生活' // 当使用 title 选项时,在 template 中使用：<title><%= htmlWebpackPlugin.options.title %></title>
     }
   },
-  lintOnSave: true, // 是否在保存的时候检查
+  lintOnSave: false, // 是否在保存的时候检查
+  css: {
+    loaderOptions: {
+      less: {
+        // 若使用 less-loader@5，请移除 lessOptions 这一级，直接配置选项。
+        modifyVars: {
+          // 或者可以通过 less 文件覆盖（文件路径为绝对路径）
+          hack: `true; @import "${path.join(__dirname, 'src/styles/var.less')}";`,
+        },
+      },
+    },
+  },
   // webpack配置
   chainWebpack: config => {
     config.entry('index').add('@babel/polyfill') // 添加babel-poiyfill
-    // const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-    // types.forEach(type =>
-    //   addStyleResource(config.module.rule('less').oneOf(type))
-    // )
+    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+    types.forEach(type =>
+      addStyleResource(config.module.rule('less').oneOf(type))
+    )
     // 清除css，js版本号
     config.output.filename('static/js/[name].js').end()
     config.output.chunkFilename('static/js/[name].js').end()
@@ -42,63 +55,61 @@ module.exports = {
     }
   },
   configureWebpack: config => {
-    config.plugins = config.plugins.concat([
-      {
-        apply: compiler => {
-          if (scriptActive === 'watch-build') {
-            /** 插件初始化后开启wifi服务 */
-            compiler.hooks.afterPlugins.tap('apicloud', () => {
-              const wifiWorker = spawn(`apicloud wifiStart --port ${appPort}`, {
-                shell: true
-              })
-              wifiWorker.stdout.on('data', function(chunk) {
-                /** 严格模式下不允许使用八进制 */
-                console.log('\033[32m【APICloud-cli】:' +chunk.toString() +'\033[0m\n')
-              })
-              wifiWorker.on('error', err => {
-                console.log('请确保已安装apicloud-cli' + err)
-              })
+    config.plugins = config.plugins.concat([{
+      apply: compiler => {
+        if (scriptActive === 'watch-build') {
+          /** 插件初始化后开启wifi服务 */
+          compiler.hooks.afterPlugins.tap('apicloud', () => {
+            const wifiWorker = spawn(`apicloud wifiStart --port ${appPort}`, {
+              shell: true
             })
-            /** 生成资源后,删除重复热更新文件 */
-            compiler.hooks.afterEmit.tap('apicloud', compilation => {
-              const assets = compilation.assets
-              const unlinked = []
-              const files = fs.readdirSync(
-                path.join(__dirname, `../${appname}/`)
-              )
-              if (files.length) {
-                let jsFiles = files.filter(f => /.*(\.js|\.json)$/.test(f))
-                jsFiles.forEach(file => {
-                  if (!assets[file]) {
-                    fs.unlinkSync(path.resolve(`../${appname}/${file}`))
-                    unlinked.push(file)
-                  }
-                })
-                if (unlinked.length > 0) {
-                  console.log('删除热更新文件: ', unlinked)
+            wifiWorker.stdout.on('data', function (chunk) {
+              /** 严格模式下不允许使用八进制 */
+              console.log('\033[32m【APICloud-cli】:' + chunk.toString() + '\033[0m\n')
+            })
+            wifiWorker.on('error', err => {
+              console.log('请确保已安装apicloud-cli' + err)
+            })
+          })
+          /** 生成资源后,删除重复热更新文件 */
+          compiler.hooks.afterEmit.tap('apicloud', compilation => {
+            const assets = compilation.assets
+            const unlinked = []
+            const files = fs.readdirSync(
+              path.join(__dirname, `../${appname}/`)
+            )
+            if (files.length) {
+              let jsFiles = files.filter(f => /.*(\.js|\.json)$/.test(f))
+              jsFiles.forEach(file => {
+                if (!assets[file]) {
+                  fs.unlinkSync(path.resolve(`../${appname}/${file}`))
+                  unlinked.push(file)
                 }
+              })
+              if (unlinked.length > 0) {
+                console.log('删除热更新文件: ', unlinked)
               }
-            })
-            /** 编译完成，真机同步 */
-            compiler.hooks.done.tap('apicloud', () => {
-              exec(
-                `apicloud wifiSync --project ../${appname} --updateAll false --port ${appPort}`,
-                (error, stdout) => {
-                  if (error) {
-                    console.error(`exec error: ${error}`)
-                    console.log(
-                      `error: wifi真机同步失败，请确保已安装apicloud-cli或已启动Wifi服务`
-                    )
-                    return
-                  }
-                  console.log('\033[44;30m DONE \033[40;34m '+'【APICloud-cli】:wifi真机同步成功'+'\033[0m')
+            }
+          })
+          /** 编译完成，真机同步 */
+          compiler.hooks.done.tap('apicloud', () => {
+            exec(
+              `apicloud wifiSync --project ../${appname} --updateAll false --port ${appPort}`,
+              (error, stdout) => {
+                if (error) {
+                  console.error(`exec error: ${error}`)
+                  console.log(
+                    `error: wifi真机同步失败，请确保已安装apicloud-cli或已启动Wifi服务`
+                  )
+                  return
                 }
-              )
-            })
-          }
+                console.log('\033[44;30m DONE \033[40;34m ' + '【APICloud-cli】:wifi真机同步成功' + '\033[0m')
+              }
+            )
+          })
         }
       }
-    ])
+    }])
   },
   // webpack-dev-server配置
   devServer: {
@@ -124,11 +135,12 @@ module.exports = {
   pluginOptions: {}
 }
 
-// function addStyleResource(rule) {
-//   rule
-//     .use('style-resource')
-//     .loader('style-resources-loader')
-//     .options({
-//       patterns: [path.resolve(__dirname, './src/assets/styles/theme.less')]
-//     })
-// }
+function addStyleResource(rule) {
+  rule.use('style-resource')
+    .loader('style-resources-loader')
+    .options({
+      patterns: [
+        path.join(__dirname, 'src/styles/var.less'), // 需要全局导入的less
+      ],
+    })
+}

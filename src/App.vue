@@ -23,8 +23,8 @@ export default {
   created () {
     // this.$api.alert(
     //   {
-    //     title: 'api',
-    //     msg: '123'
+    //     title: '静默更新',
+    //     msg: '可行'
     //   }
     // )
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
