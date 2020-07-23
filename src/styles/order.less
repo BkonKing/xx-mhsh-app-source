@@ -1,0 +1,347 @@
+
+
+.scroll-body {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: @background-color;
+	/* #ifndef H5 */
+	
+	/* #endif */
+	top: 88px;
+	/* #ifdef APP-PLUS */
+	top: 0;
+	/* #endif */
+}
+.cont-session {
+	width: 710px;
+	background-color: @text-color-inverse;
+	margin: 0 auto 30px;
+	@include border-radius(10px);
+	position: relative;
+}
+
+/* 列表 */
+.goods-session {
+	padding: 40px 30px 0;
+}
+.order-list {
+	padding: 0 20px 30px;
+}
+.order-item {
+	width: 710px;
+	// min-height: 370px;
+	@include border-radius(10px);
+	overflow: hidden;
+	margin-top: 30px;
+	padding: 0 30px;
+	background-color: @text-color-inverse;
+}
+.order-header {
+	height: 90px;
+	color: @gray-7;
+	@extend %fx-flex-center;
+	@extend %border-bottom;
+	margin-bottom: @padding-lg;
+}
+.order-no {
+	width: 480px;
+}
+.order-status {
+	text-align: right;
+	width: 170px;
+}
+.order-goods-info {
+	margin-bottom: @padding-lg;
+	height: 130px;
+	@extend %fx-space-between;
+}
+.order-pic-block {
+	width: 130px;
+	height: 130px;
+	@extend %fx-row;
+	overflow: hidden;
+}
+.order-pic {
+	width: 130px;
+	height: 130px;
+}
+.order-info {
+	width: 500px;
+	flex-wrap: wrap;
+}
+.order-name-price {
+	width: 500px;
+	height: 46px;
+	color: @text-color;
+	@extend %fx-space-between;
+	align-items: center;
+}
+.order-name {
+	@extend %fx-row;
+}
+.order-name-text,.order-sku-text {
+	max-width: 350px;
+	@extend .p-ellipsis;
+}
+.order-sku-num {
+	height: 44px;
+	color: @gray-7;
+	font-size: 24px;
+	@extend %fx-space-between;
+	align-items: center;
+}
+.order-action-session {
+	@extend %fx-space-between;
+	height: 40px;
+	line-height: 30px;
+	padding-top: 10px;
+	font-size: 24px;
+	color: @gray-7;
+}
+.order-buy-num {
+	text-align: right;
+}
+.order-action-text {
+	@extend %fx-row;
+}
+.order-action-btn {
+	width: 50px;
+	height: 50px;
+	padding: 10px;
+	margin-top: -10px;
+}
+.order-action-pic {
+	width: 30px;
+	height: 30px;
+}
+.order-footer {
+	min-height: 92px;
+	@extend %border-top;
+}
+.order-total {
+	height: 80px;
+	text-align: right;
+	padding-top: 15px;
+	@extend %fx-flex-end;
+	align-items: center;
+	color: @gray-7;
+}
+.order-price-total {
+	@extend %fx-row;
+	margin-left: 18px;
+	align-items: center;
+}
+.order-btn-box {
+	padding-bottom: 30px;
+	@extend %fx-flex-end;
+}
+.order-border-btn {
+	height: 66px;
+	min-width: 158px;
+	@include border-radius(6px);
+	@extend %border-all;
+	padding: 0 @padding-md;
+	@extend %fx-flex-center;
+	display: flex;
+}
+.order-border-btn {
+	margin-left: @padding-md;
+}
+.paid-btn {
+	border-width: 0;
+	background-color: @red-dark;
+}
+
+.toggle-btn {
+	height: 66px;
+	margin-top: -30px;
+}
+
+/* 订单详情 */
+.order-session {
+	position: relative;
+	padding: 0 20px;
+}
+.order-header-bg {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 280px;
+	background-image: linear-gradient(to right, @red, @red-dark);
+}
+.order-status-session {
+	height: 174px;
+	align-items: center;
+	padding-top: 26px;
+	position: relative;
+	z-index: 6;
+}
+.order-status-name {
+  line-height: 66px;
+  font-size: 38px;
+  font-weight: bold;
+	color: #fefefe;
+}
+.order-status-tip {
+  line-height: 56px;
+	font-size: 28px;
+	color: #fefefe;
+}
+  /* 订单价格信息 */
+.detail-price-list {
+	padding: 16px 0;
+	@extend %border-top;
+	@extend %border-bottom;
+}
+.detail-price-item {
+	@extend %fx-space-between;
+	height: 52px;
+	align-items: center;
+}
+.flex-sart-item {
+	@extend %fx-row;
+	height: 52px;
+	align-items: center;
+}
+.flex-sart-item-left {
+	@extend .width-146;
+}
+.order-total-detail {
+	height: 90px;
+	padding-top: 0;
+}
+
+  /* 收货地址 */
+.address-logistics,.order-remarks {
+	padding: 0 30px;
+	align-items: center;
+	justify-content: center;
+}
+.address-logistics {
+	padding: 26px 30px;
+}
+.shipping-logistics {
+	margin-top: 26px;
+	padding-top: 26px;
+	@extend %border-top;
+}
+.shipping-address-item,.order-remarks-item,.order-message-item {
+	@extend %fx-row;
+	height: 52px;
+	align-items: center;
+}
+.shipping-logistics-item {
+	@extend %fx-flex-center;
+}
+.shipping-address-item-left,.order-remarks-item-left,.order-message-item-left {
+	@extend .width-146;
+}
+.shipping-address-item-right,.order-remarks-item-right,.order-message-item-right {
+	@extend %fx-row;
+	width: 504px;
+}
+.shipping-address-username {
+	max-width: 280px;
+	@extend .p-ellipsis;
+}
+.shipping-address-text,.order-remarks-text {
+	max-width: 504px;
+	@extend .p-ellipsis;
+}
+.shipping-logistics-item-right {
+	position: relative;
+	padding-left: 36px;
+}
+.shipping-address-icon {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 16px;
+	height: 26px;
+}
+.shipping-logistics-point {
+	position: absolute;
+	top: 16px;
+	left: 8px;
+	width: 8px;
+	height: 8px;
+	background-color: @gray-6;
+	@include border-radius(4px);
+}
+.shipping-logistics-line {
+	position: absolute;
+	top: 34px;
+	bottom: 10px;
+	left: 10px;
+	width: 2px;
+	height: 36px;
+	background-color: @gray-6;
+	@include border-radius(4px);
+}
+.shipping-logistics-text {
+	line-height: 40px;
+	flex-wrap: wrap;
+	width: 466px;
+}
+.order-remarks {
+	height: 120px;
+}
+   /* 订单信息 */
+.order-message {
+	padding: 26px 30px;
+	align-items: center;
+	justify-content: center;
+}
+.order-message-item {
+	height: 56px;
+	position: relative;
+}
+.order-tip-item {
+	width: 650px;
+	@extend %fx-row;
+	position: relative;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+.order-tip-item-left {
+	@extend .width-146;
+}
+.order-tip-item-right {
+	width: 466px;
+}
+.order-tip-text {
+	line-height: 56px;
+}
+.copy-btn {
+	position: absolute;
+	right: -10px;
+	top: 0;
+	padding: 10px;
+}
+.copy-text {
+	width: 32px;
+	width: 58px;
+	color: #ffa110;
+	font-size: 22px;
+	text-align: center;
+	@include border(@orange-dark);
+}
+  /* 底部按钮 */
+.fixed-empty {
+	height: 150px;
+}
+.btn-fixed-buttom {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 120px;
+	padding-right: 20px;
+	align-items: center;
+	@extend %fx-flex-end;
+	@extend %border-top;
+	background-color: @text-color-inverse;
+}

@@ -1,0 +1,164 @@
+.tf-list {
+  flex-direction: row;
+  padding: 30px;
+  border-radius: 10px;
+  background-color: #fff;
+  margin-bottom: 20px;
+}
+.tf-list-image {
+  width: 120px;
+  height: 120px;
+  margin-right: 20px;
+}
+.tf-list-title {
+  font-size: 30px;
+  line-height: 48px;
+}
+.tf-list-content {
+  font-size: 24px;
+  line-height: 48px;
+  color: @gray-7;
+}
+
+/*卡片视图 */
+.tf-card {
+  width: 100%;
+  background-color: #fff;
+  border-radius: @border-radius-md;
+  padding: 0 @padding-lg;
+  // position: relative;
+  // box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+}
+.tf-card-header,
+.tf-card-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: @padding-lg 0;
+  align-items: center;
+}
+.tf-card-header {
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: @divider-color;
+}
+.tf-card-footer {
+  font-size: 28px;
+  color: @gray-7;
+  border-top-width: 2px;
+  border-top-style: solid;
+  border-top-color: @divider-color;
+}
+.tf-card-header__title {
+  font-size: 30px;
+  color: @text-color;
+  font-weight: 500;
+  lines: 1;
+  text-overflow: ellipsis;
+}
+.tf-card-header__status {
+  width: 140px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 28px;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  text-align: center;
+  color: #fff;
+  background-color: @red-dark;
+}
+.tf-card-header__status--complete {
+  background-color: #aaaaaa;
+}
+.tf-card-header-left {
+  padding: 20px 10px;
+  justify-content: space-between;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: @divider-color;
+}
+.tf-card-content {
+  padding: 30px 0;
+  color: #666;
+  font-size: 28px;
+  line-height: 52px;
+}
+
+/* input*/
+.tf-phone-input-box {
+  flex-direction: row;
+  width: 650px;
+  padding: 30px 0;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  border-bottom-color: #383838;
+}
+
+.tf-phone-input-label {
+  width: 110px;
+  font-size: 34px;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 50px;
+}
+
+.tf-phone-input {
+  font-size: 36px;
+  color: #333333;
+}
+
+.tf-phone-code-btn {
+  font-size: 26px;
+  height: 66px;
+  line-height: 66px;
+  padding: 0 26px;
+  margin: 0;
+  border-width: 3px;
+  border-style: solid;
+  border-color: @gray-8;
+  border-radius: 4px;
+}
+
+  .tf-form-box {
+    margin-top: 40px;
+    margin-bottom: 20px;
+  }
+  .tf-form-label {
+    color: #000;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .tf-form-item {
+    flex-direction: row;
+    width: 460px;
+    height: 66px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 0 20px;
+  }
+  .tf-form-item__input {
+    flex: 1;
+    height: 66px;
+    line-height: 66px;
+    font-size: 24px;
+  }
+  .tf-form-item__icon {
+    line-height: 66px;
+    font-size: 36px;
+    color: #aaa;
+  }
+  .tf-form-item__input--placeholder {
+    height: 66px;
+    line-height: 66px;
+    font-size: 24px;
+    color: @gray-7;
+  }
+  .tf-form-item__textarea {
+    flex: 1;
+    height:160px;
+    padding: 30px 18px;
+    font-size: 24px;
+    color: @gray-7;
+    background-color:#F0F0F0;
+    border-radius:4px;
+  }

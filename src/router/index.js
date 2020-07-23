@@ -30,55 +30,75 @@ const routes = [{
   path: '/',
   component: Index,
   children: [{
-    path: '',
-    name: 'page01',
+    path: '/home',
+    name: 'home',
     component: () =>
       import(
-        /* webpackChunkName: "page01" */
-        '@/views/page/page01.vue'
+        /* webpackChunkName: "home" */
+        '@/views/home/index.vue'
       ),
     meta: {
       keepAlive: true
     }
   }, {
-    path: '/page02',
-    name: 'page02',
+    path: '/life',
+    name: 'life',
     component: () =>
       import(
-        /* webpackChunkName: "page02" */
-        '@/views/page/page02.vue'
+        /* webpackChunkName: "life" */
+        '@/views/life/index.vue'
       ),
     meta: {
       keepAlive: true
     }
   }, {
-    path: '/page03',
-    name: 'page03',
+    path: '/butler',
+    name: 'butler',
     component: () =>
       import(
-        /* webpackChunkName: "page03" */
-        '@/views/page/page03.vue'
+        /* webpackChunkName: "butler" */
+        '@/views/butler/index.vue'
       ),
     meta: {
       keepAlive: true
     }
-  }, {
-    path: '/page04',
-    name: 'page04',
-    component: () =>
-      import(
-        /* webpackChunkName: "page04" */
-        '@/views/page/page04.vue'
-      ),
-    meta: {
-      keepAlive: true
-    }
-  }],
-  ...butlerRouter,
-  ...lifeRouter,
-  ...neighboursRouter,
-  ...personageRouter
-}]
+  // }, {
+  //   path: '/neighbours',
+  //   name: 'neighbours',
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "neighbours" */
+  //       '@/views/neighbours/index.vue'
+  //     ),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // }, {
+  //   path: '/personage',
+  //   name: 'personage',
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "personage" */
+  //       '@/views/personage/index.vue'
+  //     ),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  }]
+},
+{
+  path: '/login',
+  name: 'login',
+  component: () =>
+    import(
+      /* webpackChunkName: "login" */
+      '@/views/login/index.vue'
+    )
+},
+...butlerRouter,
+...lifeRouter,
+...neighboursRouter,
+...personageRouter]
 
 const router = new VueRouter({
   routes

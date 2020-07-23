@@ -71,7 +71,6 @@ export default {
     "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   width: 100%;
   height: 100%;
-  text-align: center;
   overflow: hidden;
   background-color: #f5f5f5;
 }

@@ -7,8 +7,80 @@
 
 // TabbarItem
 @tabbar-item-font-size: @font-size-sm;
-@tabbar-item-text-color: @gray-6;
+@tabbar-item-text-color: @gray-7;
 @tabbar-item-active-color: @primary;
 @tabbar-item-line-height: 1;
 @tabbar-item-icon-size: 36px;
 @tabbar-item-margin-bottom: 10px;
+
+// NavBar
+@nav-bar-height: 88px;
+@nav-bar-background-color: @white;
+@nav-bar-arrow-size: 30px;
+@nav-bar-icon-color: @gray-8;
+@nav-bar-text-color: @gray-8;
+@nav-bar-title-font-size: @font-size-lg;
+@nav-bar-title-text-color: @text-color;
+@nav-bar-z-index: 1;
+
+// Button
+@button-mini-height: 48px;
+@button-mini-font-size: @font-size-xs;
+@button-small-height: 64px;
+@button-small-font-size: @font-size-sm;
+@button-normal-font-size: @font-size-md;
+@button-large-height: 100px;
+@button-default-height: 88px;
+@button-default-line-height: 1.2;
+@button-default-font-size: @font-size-lg;
+@button-default-color: @text-color;
+@button-default-background-color: @white;
+@button-default-border-color: @border-color;
+@button-primary-color: @white;
+@button-primary-background-color: @green;
+@button-primary-border-color: @green;
+@button-info-color: @white;
+@button-info-background-color: @blue;
+@button-info-border-color: @blue;
+@button-danger-color: @white;
+@button-danger-background-color: @red;
+@button-danger-border-color: @red;
+@button-warning-color: @white;
+@button-warning-background-color: @orange;
+@button-warning-border-color: @orange;
+@button-border-width: @border-width-base;
+@button-border-radius: @border-radius-sm;
+@button-round-border-radius: @border-radius-max;
+@button-plain-background-color: @white;
+@button-disabled-opacity: @disabled-opacity;
+
+// Search
+@search-padding: @padding-md;
+@search-background-color: @white;
+@search-content-background-color: @background-color;
+@search-input-height: 24px;
+@search-label-padding: 0 5px;
+@search-label-color: @text-color;
+@search-label-font-size: @font-size-md;
+@search-left-icon-color: @gray-6;
+@search-action-padding: 0 @padding-xs;
+@search-action-text-color: @text-color;
+@search-action-font-size: @font-size-md;
+
+// Collapse
+@collapse-item-transition-duration: @animation-duration-base;
+@collapse-item-content-padding: @padding-sm @padding-md;
+@collapse-item-content-font-size: 14px;
+@collapse-item-content-line-height: 1.5;
+@collapse-item-content-text-color: @gray-6;
+@collapse-item-content-background-color: @white;
+@collapse-item-title-disabled-color: @gray-5;
+
+@flex: {display: flex};
+@flex-column: {@flex();flex-direction: column;}
+
+@text-ellipsis : {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}

@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     onChange (value) {
-      console.log(value)
+      // console.log(value)
     }
   }
 }
