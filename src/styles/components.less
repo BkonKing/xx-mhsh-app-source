@@ -86,7 +86,7 @@
 
 /* input*/
 .tf-phone-input-box {
-  flex-direction: row;
+  @flex();
   width: 650px;
   padding: 30px 0;
   border-bottom-width: 3px;
@@ -113,9 +113,7 @@
   line-height: 66px;
   padding: 0 26px;
   margin: 0;
-  border-width: 3px;
-  border-style: solid;
-  border-color: @gray-8;
+  border: 3px solid @gray-8;
   border-radius: 4px;
 }
 

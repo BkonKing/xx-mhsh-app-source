@@ -192,14 +192,4 @@ export default {
 .tf-main-container {
   padding-top: 88px !important;
 }
-/deep/ .van-cell {
-  line-height: 70px !important;
-  padding-left: 25px;
-  .van-icon {
-    font-size: 34px;
-  }
-  .van-icon-search {
-    margin-right: 10px;
-  }
-}
 </style>

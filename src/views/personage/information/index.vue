@@ -1,117 +1,113 @@
 <template>
-  <view class="tf-bg tf-screen">
-    <uni-segmented-control
-      style="background-color: #fff;"
-      :current="current"
-      :values="items"
-      @clickItem="onClickItem"
-      style-type="text"
-      active-color="#EB5841"
-    ></uni-segmented-control>
-    <scroll-view class="tf-padding-base tab-content" :scroll-y="true">
+  <div class="tf-bg tf-screen">
+    <van-nav-bar title="我的资料" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <div class="tf-main-container">
+    <van-tabs v-model="current">
+        <van-tab v-for="(item, i) in items" :key="i" @click="onClickItem" :title="item"></van-tab>
+      </van-tabs>
+    <div class="tf-padding-base tab-content">
       <template v-if="current === 0">
-        <uni-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-          <uni-list-item title="头像">
+        <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
+          <tf-list-item title="头像">
             <template v-slot:right>
               <image class="tf-avatar-m tf-mr-base" src="/static/logo.png" mode="widthFix"></image>
             </template>
-          </uni-list-item>
-          <uni-list-item title="昵称" rightText="这是一个默认昵称" :showArrow="false"></uni-list-item>
-          <uni-list-item title="性别" rightText=""></uni-list-item>
-          <uni-list-item title="生日" rightText="1990-01-01"></uni-list-item>
-        </uni-list>
-        <uni-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-          <uni-list-item title="姓名" rightText="张三" :showArrow="false"></uni-list-item>
-          <uni-list-item title="手机号" rightText="1555555555" @click="jumpPhone"></uni-list-item>
-          <uni-list-item
+          </tf-list-item>
+          <tf-list-item title="昵称" rightText="这是一个默认昵称" :showArrow="false"></tf-list-item>
+          <tf-list-item title="性别" rightText=""></tf-list-item>
+          <tf-list-item title="生日" rightText="1990-01-01"></tf-list-item>
+        </tf-list>
+        <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
+          <tf-list-item title="姓名" rightText="张三" :showArrow="false"></tf-list-item>
+          <tf-list-item title="手机号" rightText="1555555555" @click="jumpPhone"></tf-list-item>
+          <tf-list-item
             title="收货地址"
             rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
             rightWidth="460px"
             @click="goAddress"
-          ></uni-list-item>
-        </uni-list>
-        <uni-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;"><uni-list-item title="人脸采集"></uni-list-item></uni-list>
-        <uni-list style="background-color: #fff;border-radius: 8px;">
-          <uni-list-item title="修改支付密码" @click="editPaymentCode"></uni-list-item>
-          <uni-list-item title="修改登录密码" @click="editLoginPassword"></uni-list-item>
-        </uni-list>
+          ></tf-list-item>
+        </tf-list>
+        <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;"><tf-list-item title="人脸采集"></tf-list-item></tf-list>
+        <tf-list style="background-color: #fff;border-radius: 8px;">
+          <tf-list-item title="修改支付密码" @click="editPaymentCode"></tf-list-item>
+          <tf-list-item title="修改登录密码" @click="editLoginPassword"></tf-list-item>
+        </tf-list>
       </template>
       <template v-if="current === 1">
-        <view class="house-owner house-box">
-          <view class="tf-row-center"><text class="house-owner-current">当前房产</text></view>
-          <view class="tf-row-space-between">
-            <view class="tf-row">
-              <text class="house-user house-user--owner">业主业主</text>
-              <view class="tf-space-between">
-                <text class="house-name">XXXX美好生活家园</text>
-                <text class="house-address">5栋1单元1001</text>
-              </view>
-            </view>
-            <view class="tf-row-vertical-center house-people-box">
-              <text class="tf-icon" style="font-size: 36px;">&#xe7cf;</text>
-              <text class="house-people-number">4</text>
-            </view>
-          </view>
-        </view>
-        <view class="house-box tf-row">
-          <text class="house-user house-user--relation">业主业主</text>
-          <view class="tf-space-between">
-            <text class="house-name">XXXX美好生活家园</text>
-            <text class="house-address">5栋1单元1001</text>
-          </view>
-        </view>
-        <view class="house-box tf-row">
-          <text class="house-user house-user--tenant">业主业主</text>
-          <view class="tf-space-between">
-            <text class="house-name">XXXX美好生活家园</text>
-            <text class="house-address">5栋1单元1001</text>
-          </view>
-        </view>
-        <view class="house-box tf-row">
-          <text class="house-user house-user--relation">业主业主</text>
-          <view class="tf-space-between">
-            <text class="house-name">XXXX美好生活家园</text>
-            <text class="house-address">5栋1单元1001</text>
-          </view>
-        </view>
+        <div class="house-owner house-box">
+          <div class="tf-row-center"><div class="house-owner-current">当前房产</div></div>
+          <div class="tf-row-space-between">
+            <div class="tf-row">
+              <div class="house-user house-user--owner">业主业主</div>
+              <div class="tf-space-around">
+                <div class="house-name">XXXX美好生活家园</div>
+                <div class="house-address">5栋1单元1001</div>
+              </div>
+            </div>
+            <div class="tf-row-vertical-center house-people-box">
+              <div class="tf-icon tf-icon-team"></div>
+              <div class="house-people-number">4</div>
+            </div>
+          </div>
+        </div>
+        <div class="house-box tf-row">
+          <div class="house-user house-user--relation">业主业主</div>
+          <div class="tf-space-around">
+            <div class="house-name">XXXX美好生活家园</div>
+            <div class="house-address">5栋1单元1001</div>
+          </div>
+        </div>
+        <div class="house-box tf-row">
+          <div class="house-user house-user--tenant">业主业主</div>
+          <div class="tf-space-around">
+            <div class="house-name">XXXX美好生活家园</div>
+            <div class="house-address">5栋1单元1001</div>
+          </div>
+        </div>
+        <div class="house-box tf-row">
+          <div class="house-user house-user--relation">业主业主</div>
+          <div class="tf-space-around">
+            <div class="house-name">XXXX美好生活家园</div>
+            <div class="house-address">5栋1单元1001</div>
+          </div>
+        </div>
         <button class="tf-btn tf-btn-primary" type="warn" @click="addHouse">新增房产</button>
       </template>
       <template v-if="current === 2">
-        <dropdown-menu>
-          <!-- <dropdown-item v-model="value2" :list="list"></dropdown-item> -->
-          <dropdown-item v-model="value" :list="list"></dropdown-item>
-        </dropdown-menu>
-        <view class="tf-card tf-mt-base">
-          <text class="tf-card-header">XXXX美好生活家园 5栋1单元1002</text>
-          <view class="tf-card-content">
-            <uni-tag class="user-role tf-mr-base" text="业主" type="error" :inverted="true" size="small"></uni-tag>
-            <text>哈哈哈</text>
-            <text class="tf-mr-base">(本人)</text>
-            <text class="tf-mr-base">女</text>
-            <text>12312312312</text>
-          </view>
-        </view>
+        <van-dropdown-menu>
+          <van-dropdown-item v-model="value" :options="list" />
+        </van-dropdown-menu>
+        <div class="tf-card tf-mt-base">
+          <div class="tf-card-header">XXXX美好生活家园 5栋1单元1002</div>
+          <div class="tf-card-content">
+            <van-tag class="user-role tf-mr-base" plain type="danger" :inverted="true" size="small">业主</van-tag>
+            <div>哈哈哈</div>
+            <div class="tf-mr-base">(本人)</div>
+            <div class="tf-mr-base">女</div>
+            <div>12312312312</div>
+          </div>
+        </div>
         <button class="tf-btn tf-btn-primary" type="warn" @click="addHouse">新增成员</button>
       </template>
-    </scroll-view>
-  </view>
+    </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue'
-import uniList from '@/components/uni-list/uni-list.vue'
-import uniListItem from '@/components/uni-list-item/uni-list-item.vue'
-import uniTag from '@/components/uni-tag/uni-tag.vue'
-import dropdownMenu from '@/components/dropdown/dropdown-menu.vue'
-import dropdownItem from '@/components/dropdown/dropdown-item.vue'
+import { NavBar, Tab, Tabs, DropdownMenu, DropdownItem, Tag } from 'vant'
+import tfList from '@/components/tf-list/index.vue'
+import tfListItem from '@/components/tf-list/item.vue'
 export default {
   components: {
-    uniSegmentedControl,
-    uniList,
-    uniListItem,
-    uniTag,
-    dropdownMenu,
-    dropdownItem
+    [NavBar.name]: NavBar,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
+    [DropdownMenu.name]: DropdownMenu,
+    [DropdownItem.name]: DropdownItem,
+    [Tag.name]: Tag,
+    tfList,
+    tfListItem
   },
   data () {
     return {
@@ -141,29 +137,19 @@ export default {
       }
     },
     addHouse () {
-      uni.navigateTo({
-        url: '/pages/personage/house/attestation'
-      })
+      this.$router.push('/pages/personage/house/attestation')
     },
     goAddress () {
-      uni.navigateTo({
-        url: '/pages/personage/information/address'
-      })
+      this.$router.push('/pages/personage/information/address')
     },
     jumpPhone () {
-      uni.navigateTo({
-        url: '/pages/personage/information/phone'
-      })
+      this.$router.push('/pages/personage/information/phone')
     },
     editPaymentCode () {
-      uni.navigateTo({
-        url: '/pages/personage/information/payment-code'
-      })
+      this.$router.push('/pages/personage/information/payment-code')
     },
     editLoginPassword () {
-      uni.navigateTo({
-        url: '/pages/personage/information/login-password'
-      })
+      this.$router.push('/pages/personage/information/login-password')
     }
   }
 }
@@ -178,6 +164,7 @@ export default {
 }
 
 .house-owner-current {
+  position: relative;
   width: 194px;
   height: 40px;
   line-height: 40px;
@@ -189,11 +176,12 @@ export default {
 }
 
 .house-user {
+  @flex();
   width: 88px;
   padding: 0 20px;
   height: 88px;
   text-align: center;
-  justify-content: center;
+  align-items: center;
   color: #fff;
   font-size: 24px;
   margin-right: @padding-md;
@@ -241,7 +229,7 @@ export default {
 .tab-content {
   width: 750px;
   position: fixed;
-  top: 98px;
+  top: 196px;
   bottom: 128px;
 }
 .tf-btn {
@@ -254,7 +242,24 @@ export default {
   color: @gray-7;
 }
 .tf-card-content {
-  flex-direction: row;
+  @flex();
   align-items: center;
+}
+.tf-icon-team {
+  font-size: 36px;
+}
+/deep/ .van-dropdown-menu__bar {
+  border-radius:33px;
+}
+/deep/ .van-dropdown-menu__title:after {
+  margin-top: -10px;
+  border-width: 8px;
+  border-color: transparent transparent #aaa #aaa;
+}
+/deep/ .van-dropdown-item__option {
+  height: 66px;
+}
+/deep/ .van-cell--clickable:active {
+  background: @gray-3;
 }
 </style>

@@ -40,17 +40,17 @@ const routes = [{
     meta: {
       keepAlive: true
     }
-  // }, {
-  //   path: '/life',
-  //   name: 'life',
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "life" */
-  //       '@/views/life/index.vue'
-  //     ),
-  //   meta: {
-  //     keepAlive: true
-  //   }
+  }, {
+    path: '/life',
+    name: 'life',
+    component: () =>
+      import(
+        /* webpackChunkName: "life" */
+        '@/views/life/index.vue'
+      ),
+    meta: {
+      keepAlive: true
+    }
   }, {
     path: '/butler',
     name: 'butler',
@@ -73,17 +73,17 @@ const routes = [{
     meta: {
       keepAlive: true
     }
-  // }, {
-  //   path: '/personage',
-  //   name: 'personage',
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "personage" */
-  //       '@/views/personage/index.vue'
-  //     ),
-  //   meta: {
-  //     keepAlive: true
-  //   }
+  }, {
+    path: '/personage',
+    name: 'personage',
+    component: () =>
+      import(
+        /* webpackChunkName: "personage" */
+        '@/views/personage/index.vue'
+      ),
+    meta: {
+      keepAlive: true
+    }
   }]
 },
 {

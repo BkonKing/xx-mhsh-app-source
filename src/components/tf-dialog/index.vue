@@ -115,7 +115,7 @@ export default {
 }
 
 .tf-dialog-footer {
-  flex-direction: row;
+  @flex();
   padding-top: 20px;
   padding-bottom: 40px;
 }

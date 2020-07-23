@@ -1,179 +1,167 @@
 <template>
-  <div class="tf-screen">
-    <uni-nav-bar>
-      <div class="tf-row" slot="right">
-        <text class="tf-icon" @click="goSetting">{{ icon_setting }}</text>
-        <text class="tf-icon margin-left" @click="goMessage">{{ icon_message }}</text>
-        <uni-badge class="badge" text="2" type="error" @click="bindClick"></uni-badge>
-      </div>
-    </uni-nav-bar>
-    <div class="tf-bg-white">
-      <div class="tf-row tf-padding-lg" @click="goInformation">
-        <img class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit">
-        <div class="personage-info--base">
-          <div class="user-info-box">
-            <text class="user-name">这是一个默认昵</text>
-            <uni-tag class="user-role" text="业主" type="error" :inverted="true" size="small"></uni-tag>
-            <uni-tag class="user-role" text="管理员" type="success" :inverted="true" size="small"></uni-tag>
-            <uni-tag class="user-role" text="维修员" type="primary" :inverted="true" size="small"></uni-tag>
+  <div class="tf-bg">
+    <van-nav-bar :fixed="true" :border="false">
+      <template #right>
+        <span class="tf-icon tf-icon-setting" @click="goSetting"></span>
+        <span class="tf-icon tf-icon-message" @click="goMessage"></span>
+        <span class="van-info">2</span>
+      </template>
+    </van-nav-bar>
+    <div class="tf-main-container">
+      <div class="tf-bg-white">
+        <div class="tf-row tf-padding-lg" @click="goInformation">
+          <img class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit" />
+          <div class="personage-info--base">
+            <div class="user-info-box">
+              <div class="user-name">这是一个默认昵</div>
+              <van-tag class="user-role" plain type="danger" :inverted="true" size="small">业主</van-tag>
+              <van-tag class="user-role" plain type="success" :inverted="true" size="small">管理员</van-tag>
+              <van-tag class="user-role" plain type="primary" :inverted="true" size="small">维修员</van-tag>
+            </div>
+            <div class="user-address">5座7B单元-1001</div>
           </div>
-          <text class="user-address">5座7B单元-1001</text>
+        </div>
+        <div class="tf-row coin-box">
+          <div class="tf-flex-item tf-column" @click="goHappiness">
+            <div class="user-text--lg">90000</div>
+            <div class="user-text--grey">幸福币</div>
+          </div>
+          <div class="tf-flex-item tf-column">
+            <div class="user-text--lg">26</div>
+            <div class="user-text--grey">优惠券</div>
+          </div>
+          <div class="tf-flex-item tf-column tf-flex-center">
+            <button
+              :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
+              @click="sign"
+            >
+              <div class="user-btn__text" :style="{ color: signStatus ? '#8F8F94' : '#fff' }">签到</div>
+            </button>
+          </div>
         </div>
       </div>
-      <div class="tf-row coin-box">
-        <div class="tf-flex-item" @click="goHappiness">
-          <text class="user-text--lg">90000</text>
-          <text class="user-text--grey">幸福币</text>
-        </div>
-        <div class="tf-flex-item">
-          <text class="user-text--lg">26</text>
-          <text class="user-text--grey">优惠券</text>
-        </div>
-        <div class="tf-flex-item tf-flex-center">
-          <button :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']" @click="sign">
-            <text class="user-btn__text" :style="({ color: signStatus ? '#8F8F94' : '#fff' })">签到</text>
-          </button>
-        </div>
-      </div>
-    </div>
-    <scroll-div :scroll-y="true">
-      <div class="tf-bg">
+      <div class="functional-box">
         <div class="module-box">
-          <text class="module-title">事务处理</text>
+          <div class="module-title">事务处理</div>
           <div class="tf-padding-base">
             <div class="tf-row manage-border-bottom">
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
-                <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-                <text class="text-sm">待处理</text>
-                <uni-badge class="personage-badge" text="3" type="error" :inverted="true"></uni-badge>
+                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <div class="text-sm">待处理</div>
+                <span class="van-info personage-badge">3</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
-                <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-                <text class="text-sm">待分派</text>
+                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <div class="text-sm">待分派</div>
               </div>
             </div>
             <div class="tf-row">
               <div class="manage-box manage-border-right" @click="goTransaction(3)">
-                <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-                <text class="text-sm">待结案</text>
+                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <div class="text-sm">待结案</div>
               </div>
               <div class="manage-box" @click="goTransaction(4)">
-                <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-                <text class="text-sm">已结案</text>
+                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <div class="text-sm">已结案</div>
               </div>
             </div>
           </div>
         </div>
         <div class="module-box" @click="goOrder">
-          <text class="module-title">我的订单</text>
+          <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box">
-              <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-              <text class="text-sm">待付款</text>
+              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <div class="text-sm">待付款</div>
             </div>
             <div class="order-box">
-              <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-              <text class="text-sm">待发货</text>
+              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <div class="text-sm">待发货</div>
             </div>
             <div class="order-box">
-              <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-              <text class="text-sm">待收货</text>
+              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <div class="text-sm">待收货</div>
             </div>
             <div class="order-box">
-              <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-              <text class="text-sm">退换</text>
+              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <div class="text-sm">退换</div>
             </div>
             <div class="order-box">
-              <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
-              <text class="text-sm">全部</text>
+              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <div class="text-sm">全部</div>
             </div>
           </div>
         </div>
-        <uni-list class="personage-list tf-mb-lg">
-          <uni-list-item title="我的订单" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
-          <uni-list-item title="我的互动" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
-          <uni-list-item title="我的资料" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation"></uni-list-item>
-          <uni-list-item title="幸福基金" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
-        </uni-list>
-        <uni-list class="personage-list">
-          <uni-list-item title="常见问题" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
-          <uni-list-item title="意见反馈" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goFeedback"></uni-list-item>
-        </uni-list>
+        <tf-list class="personage-list tf-mb-lg">
+          <tf-list-item title="我的订单" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          </tf-list-item>
+          <tf-list-item title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          </tf-list-item>
+          <tf-list-item title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          </tf-list-item>
+          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
+          </tf-list-item>
+        </tf-list>
+        <tf-list class="personage-list">
+          <tf-list-item title="常见问题" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          </tf-list-item>
+          <tf-list-item title="意见反馈" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goFeedback">
+          </tf-list-item>
+        </tf-list>
       </div>
-    </scroll-div>
+    </div>
   </div>
 </template>
 
 <script>
-import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue'
-import uniBadge from '@/components/uni-badge/uni-badge.vue'
-import uniList from '@/components/uni-list/uni-list.vue'
-import uniListItem from '@/components/uni-list-item/uni-list-item.vue'
-import uniTag from '@/components/uni-tag/uni-tag.vue'
-import { icon_setting, icon_message } from '../const/icon.js'
+import { NavBar, Tag, Toast } from 'vant'
+import tfList from '@/components/tf-list/index.vue'
+import tfListItem from '@/components/tf-list/item.vue'
 export default {
   components: {
-    uniNavBar,
-    uniBadge,
-    uniList,
-    uniListItem,
-    uniTag
+    [NavBar.name]: NavBar,
+    [Tag.name]: Tag,
+    tfList,
+    tfListItem
   },
   data () {
     return {
-      icon_setting,
-      icon_message,
       signStatus: false
     }
   },
   methods: {
     sign () {
       if (!this.signStatus) {
-        uni.showToast({
-          icon: 'none',
-          title: '签到成功   幸福币+10'
+        Toast({
+          message: '签到成功   幸福币+10'
         })
       } else {
         // 已签到，弹出签到日历
       }
     },
     goSetting () {
-      uni.navigateTo({
-        url: '/pages/personage/setting/index'
-      })
+      this.$router.push('/pages/personage/setting/index')
     },
     goMessage () {
-      uni.navigateTo({
-        url: '/pages/personage/message/index'
-      })
+      this.$router.push('/pages/personage/message/index')
     },
     goInformation () {
-      uni.navigateTo({
-        url: '/pages/personage/information/index'
-      })
+      this.$router.push('/pages/personage/information/index')
     },
     goOrder () {
-      uni.navigateTo({
-        url: '/pages/personage/order-form/index'
-      })
+      this.$router.push('/pages/personage/order-form/index')
     },
     goTransaction (type) {
       const url = `/pages/personage/transaction/index?type=${type}`
-      uni.navigateTo({
-        url
-      })
+      this.$router.push(url)
     },
     // 意见反馈
     goFeedback () {
-      uni.navigateTo({
-        url: '/pages/personage/feedback/index'
-      })
+      this.$router.push('/pages/personage/feedback/index')
     },
     // 幸福币
     goHappiness () {
-      uni.navigateTo({
-        url: '/pages/personage/happiness-coin/index'
-      })
+      this.$router.push('/pages/personage/happiness-coin/index')
     }
   }
 }
@@ -197,6 +185,7 @@ export default {
 }
 
 .personage-info--base {
+  @flex-column();
   justify-content: space-around;
 }
 
@@ -208,7 +197,7 @@ export default {
 }
 
 .user-info-box {
-  flex-direction: row;
+  @flex();
   align-items: center;
 }
 
@@ -283,6 +272,7 @@ export default {
 .manage-box {
   flex: 1;
   height: 144px;
+  @flex-column();
   justify-content: center;
   align-items: center;
 }
@@ -302,9 +292,6 @@ export default {
 }
 .margin-left {
   margin-left: 32px;
-}
-.tf-bg {
-  padding: 30px 20px;
 }
 .manage-image {
   width: 60px;
@@ -331,5 +318,15 @@ export default {
   border-style: solid;
   border-color: @red-dark;
   border-radius: 50%;
+}
+.tf-main-container {
+  overflow: hidden;
+  @flex-column();
+}
+.functional-box {
+  @flex-column();
+  flex: 1;
+  padding: 30px 20px;
+  overflow: auto;
 }
 </style>

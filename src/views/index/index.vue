@@ -1,8 +1,11 @@
 <template>
   <div class="view-container">
-    <main class="view-main">
-      <router-view />
-    </main>
+    <div class="view-main-container">
+      <div class="placeholder-box" :style="{height: `${statusBarHeight}px`}"></div>
+      <div class="view-main">
+        <router-view />
+      </div>
+    </div>
     <footer>
       <Tabbar :tabList="tabList"></Tabbar>
     </footer>
@@ -20,6 +23,7 @@ export default {
   data () {
     return {
       codeScan: null,
+      statusBarHeight: 0,
       tabList: [
         {
           title: '首页',
@@ -45,31 +49,33 @@ export default {
     }
   },
   created () {
-    this.codeScan = this.$api.require('codeScan')
   },
   methods: {
-    onClickRight () {
-      this.codeScan.scan(function (ret, err) {
-        if (ret.status) {
-          alert(ret.code)
-        }
-      })
-    }
+    getStatusBarHeight () {
+      const statusBar = this.$api.require('statusBar')
+      this.statusBarHeight = statusBar.getStatusBarHeight()
+    },
+    onClickRight () {}
   }
 }
 </script>
 
 <style lang="less" scoped>
 .view-container {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
-.view-main {
+.view-main-container {
+  @flex-column();
   // flex: 1;
   overflow: hidden;
   // 兼容安卓低版本浏览器
   height: calc(100% - 98px);
+}
+.view-main {
+  flex: 1;
+  overflow: auto;
 }
 </style>

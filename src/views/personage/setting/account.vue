@@ -1,63 +1,75 @@
 <template>
-  <view class="tf-bg-white">
-    <text class="tf-h3">切换账户登录</text>
-    <view class="account">
-      <image class="user-avatar" src="/static/app-icon.png" mode="aspectFill"></image>
-      <view style="justify-content: center;">
-        <text class="user-name">这是一个默认昵称</text>
-        <text class="tf-text-grey">15022223333</text>
-      </view>
-    </view>
-    <button type="warn" style="width: 100%;margin-top: 70px;">换个账户登录</button>
-  </view>
+  <div class="tf-bg-white">
+    <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+    </van-nav-bar>
+    <div class="tf-h3">切换账户登录</div>
+    <div class="account" :class="{'account-active': active}">
+      <img class="user-avatar" src="/static/app-icon.png" mode="aspectFill" />
+      <div class="tf-space-around">
+        <div class="user-name">这是一个默认昵称</div>
+        <div class="tf-text-grey">15022223333</div>
+      </div>
+    </div>
+    <van-button class="account-btn" type="danger">换个账户登录</van-button>
+  </div>
 </template>
 
 <script>
+import { NavBar, Button } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+    [Button.name]: Button
+  },
   data () {
     return {
-
+      active: 1
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-  .tf-bg-white {
-    padding: 30px 50px;
-    height: 100%;
-  }
+.tf-bg-white {
+  padding: 30px 50px;
+  height: 100%;
+}
 
-  .tf-h3 {
-    margin: 80px 0;
-  }
+.tf-h3 {
+  margin: 80px 0;
+}
 
-  .account {
-    flex-direction: row;
-    width: 650px;
-    height: 180px;
-    padding: 30px;
-    border-width: 1px;
-    border-style: solid;
-    border-color: #aaa;
-    border-radius:10px;
-  }
+.account {
+  @flex();
+  width: 650px;
+  height: 180px;
+  padding: 30px;
+  border: 1px solid #aaa;
+  border-radius: 10px;
+}
 
-  .user-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    margin-right: @padding-md;
-  }
+.account-active {
+  border: 3px solid @red-dark;
+}
 
-  .user-name {
-    font-size: 34px;
-    font-weight: 500;
-    color: @text-color;
-    margin-bottom: 10px;
-  }
+.user-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-right: @padding-md;
+}
 
-  .tf-text-grey {
-    font-size: 30px;
-  }
+.user-name {
+  font-size: 34px;
+  font-weight: 500;
+  color: @text-color;
+}
+
+.tf-text-grey {
+  font-size: 30px;
+}
+.account-btn {
+  width: 90%;
+  margin: 80px 5% 0;
+}
 </style>
