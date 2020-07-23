@@ -1,35 +1,42 @@
 <template>
-  <view class="tf-bg tf-padding-base">
-    <list>
-      <cell v-for="(item, i) in data" :key="item.id">
-        <view class="tf-card" @click="jump(item)">
-          <view class="tf-card-header">
+  <div class="tf-bg tf-padding-base">
+    <van-nav-bar title="我的投诉表扬" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-main-container">
+      <refreshList :list.sync="data" @load="getComPraiseList">
+        <template v-slot="{item}">
+          <div class="tf-card" @click="jump(item)">
+          <div class="tf-card-header">
             <userInfo avatar="/static/app-icon.png" :name="item.name" :time="item.ctime">
               <template v-slot:right>
-                <text class="tf-icon">{{item.info_type}}</text>
+                <div class="tf-icon">{{item.info_type}}</div>
               </template>
             </userInfo>
-          </view>
-          <text class="tf-card-content">{{ item.content }}</text>
-          <view class="tf-image-box">
-            <image class="details-image" mode="aspectFill" v-for="(item, i) in item.images" :key="i" :src="item.src" v-if="i < 3"></image>
-            <text class="details-image--shade" v-if="item.images.length > 3">+{{ item.images.length - 3 }}</text>
-          </view>
-          <view v-if="item.reply" class="reply-box">
-            <text class="reply-title">社区回复</text>
-            <text class="reply-content">{{ item.reply }}</text>
-          </view>
-        </view>
-      </cell>
-    </list>
-  </view>
+          </div>
+          <div class="tf-card-content">{{ item.content }}</div>
+          <div class="tf-image-box">
+            <img class="details-image" mode="aspectFill" v-for="(item, i) in item.images" :key="i" :src="item.src" v-if="i < 3">
+            <div class="details-image--shade" v-if="item.images.length > 3">+{{ item.images.length - 3 }}</div>
+          </div>
+          <div v-if="item.reply" class="reply-box">
+            <div class="reply-title">社区回复</div>
+            <div class="reply-content">{{ item.reply }}</div>
+          </div>
+        </div>
+        </template>
+      </refreshList>
+    </div>
+  </div>
 </template>
 
 <script>
-import userInfo from '@/pages/components/user-info/index.nvue'
+import { NavBar } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
+import userInfo from '@/components/user-info/index.vue'
 import { getComPraiseList } from '@/api/butler/butler.js'
 export default {
   components: {
+    [NavBar.name]: NavBar,
+    refreshList,
     userInfo
   },
   data () {
@@ -80,7 +87,7 @@ export default {
       ]
     }
   },
-  onLoad () {
+  created () {
     this.getComPraiseList()
   },
   methods: {
@@ -93,9 +100,7 @@ export default {
     },
     jump (item) {
       const url = `/pages/butler/compraise/details?id=${item.id}&type=${item.info_type}`
-      uni.navigateTo({
-        url
-      })
+      this.$router.push(url)
     }
   }
 }
@@ -106,8 +111,8 @@ export default {
   margin-bottom: @padding-lg;
 }
 
-.tf-image-box {
-  padding-bottom: 40px;
+.tf-card-header {
+  border-bottom: 1px solid @divider-color;
 }
 
 .reply-box {
@@ -128,6 +133,14 @@ export default {
   color: @gray-7;
   font-size: 24px;
   line-height: 52px;
+  border-radius:10px;
+}
+
+.tf-image-box {
+  @flex();
+  justify-content: space-around;
+  position: relative;
+  padding-bottom: 40px;
 }
 
 .details-image {
@@ -143,6 +156,7 @@ export default {
   z-index: 1;
   background-color: #000000;
   opacity: 0.6;
+  top: 0;
   right: 0;
   text-align: center;
   color: #fff;

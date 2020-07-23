@@ -1,4 +1,73 @@
-@import (reference) "baseVar.less";
+// Color Palette
+@black: #000;
+@white: #fff;
+@gray-1: #f8f8f8;
+@gray-2: #f0f0f0; // 分割线
+@gray-3: #ebedf0;
+@gray-4: #dcdee0;
+@gray-5: #c8c7cc;
+@gray-6: #aaa;
+@gray-7: #8F8F94; // text-grey
+@gray-8: #383838;
+@red: #f9866b;
+@red-dark: #eb5841;
+@blue: #019aff;
+@blue-dark: #448fe4;
+@orange: #ffc017;
+@orange-dark: #ffa110;
+@orange-light: #fffbe8;
+@green: #55ff7f;
+@green-dark: #55b862;
+@primary: @red-dark;
+
+// Gradient Colors
+@gradient-red: linear-gradient(to right, @red, @red-dark);
+@gradient-orange: linear-gradient(to right, @orange, @orange-dark);
+
+// Component Colors
+@text-color: #222;
+@active-color: #222;
+@active-opacity: 0.7;
+@disabled-opacity: 0.5;
+@background-color: #f2f2f4;
+@background-color-light: #fff;
+@text-link-color: #576b95;
+
+// Padding
+@padding-base: 5px;
+@padding-xs: @padding-base * 2;
+@padding-sm: @padding-base * 3;
+@padding-md: @padding-base * 4;
+@padding-lg: @padding-base * 6;
+@padding-xl: @padding-base * 8;
+
+// Font
+@font-size-xs: 10px;
+@font-size-sm: 22px;
+@font-size-md: 28px;
+@font-size-lg: 30px;
+@font-weight-bold: 500;
+@base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+  Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'Hiragino Sans GB',
+  'Microsoft Yahei', sans-serif;
+@price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial,
+  sans-serif;
+
+// Animation
+@animation-duration-base: 0.3s;
+@animation-duration-fast: 0.2s;
+@animation-timing-function-enter: ease-out;
+@animation-timing-function-leave: ease-in;
+
+// Border
+@border-color: @gray-5;
+@border-width-base: 2px;
+@border-radius-sm: 6px;
+@border-radius-md: 10px;
+@border-radius-lg: 16px;
+@border-radius-max: 999px;
+
+@divider-color: @gray-2;
 
 // Tabbar
 @tabbar-height: 98px;
@@ -19,7 +88,7 @@
 @nav-bar-arrow-size: 30px;
 @nav-bar-icon-color: @gray-8;
 @nav-bar-text-color: @gray-8;
-@nav-bar-title-font-size: @font-size-lg;
+@nav-bar-title-font-size: 34px;
 @nav-bar-title-text-color: @text-color;
 @nav-bar-z-index: 1;
 
@@ -76,11 +145,57 @@
 @collapse-item-content-background-color: @white;
 @collapse-item-title-disabled-color: @gray-5;
 
-@flex: {display: flex};
-@flex-column: {@flex();flex-direction: column;}
+// Picker
+@picker-background-color: @white;
+@picker-toolbar-height: 88px;
+@picker-title-font-size: @font-size-lg;
+@picker-title-line-height: 88px;
+@picker-action-padding: 0 @padding-md;
+@picker-action-font-size: @font-size-md;
+@picker-confirm-action-color: @text-link-color;
+@picker-cancel-action-color: @gray-6;
+@picker-option-font-size: @font-size-lg;
+@picker-option-text-color: @black;
+@picker-option-disabled-opacity: 0.3;
+@picker-loading-icon-color: @blue;
+@picker-loading-mask-color: rgba(255, 255, 255, 0.9);
+
+
+// Tab
+@tab-text-color: @gray-7;
+@tab-active-text-color: @text-color;
+@tab-disabled-text-color: @gray-5;
+@tab-font-size: @font-size-md;
+
+// Tabs
+@tabs-default-color: @red;
+@tabs-line-height: 98px;
+@tabs-card-height: 30px;
+@tabs-nav-background-color: @white;
+@tabs-bottom-bar-height: 4px;
+@tabs-bottom-bar-color: @tabs-default-color;
+
+@flex: {
+  display: flex
+}
+
+@flex-column: {
+  @flex();
+  flex-direction: column;
+}
+
+@flex-column-between: {
+  @flex-column();
+  justify-content: space-between;
+}
+
+@flex-column-around: {
+  @flex-column();
+  justify-content: space-around;
+}
 
 @text-ellipsis : {
   overflow: hidden;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }

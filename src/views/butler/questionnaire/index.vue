@@ -1,15 +1,32 @@
 <template>
-  <view><tfList :data="list"></tfList></view>
+  <div class="tf-bg">
+    <van-nav-bar
+      title="问卷投票"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      @click-left="$router.go(-1)"
+    >
+      <template #right>
+        <span class="tf-icon tf-icon-time-circle" @click="goMyList"></span>
+      </template>
+    </van-nav-bar>
+    <div class="tf-main-container">
+      <questionList :data="list"></questionList>
+    </div>
+  </div>
 </template>
 
 <script>
-import tfList from './components/list.nvue';
-import { getWjtpList } from '@/api/butler/butler.js';
+import { NavBar } from 'vant'
+import questionList from './components/list.vue'
+import { getWjtpList } from '@/api/butler/butler.js'
 export default {
   components: {
-    tfList
+    [NavBar.name]: NavBar,
+    questionList
   },
-  data() {
+  data () {
     return {
       list: [
         {
@@ -31,26 +48,28 @@ export default {
           stime: '2020-06-03 16:35:26'
         }
       ]
-    };
-  },
-  onNavigationBarButtonTap({ index }) {
-    if (index === 0) {
-      uni.navigateTo({
-        url: '/pages/butler/questionnaire/my'
-      });
     }
   },
-  onLoad() {
-    this.getWjtpList();
+  created () {
+    this.getWjtpList()
   },
   methods: {
-    getWjtpList() {
+    getWjtpList () {
       getWjtpList().then(res => {
         if (res.success) {
-          this.list = res.data;
+          this.list = res.data
         }
-      });
+      })
+    },
+    goMyList () {
+      this.$router.push('/pages/butler/questionnaire/my')
     }
   }
-};
+}
 </script>
+
+<style scoped>
+.tf-icon {
+  font-size: 44px;
+}
+</style>

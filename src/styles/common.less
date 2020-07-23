@@ -1,11 +1,12 @@
 * {
   box-sizing: border-box;
+  line-height: 1.4;
 }
 
-@font-face {
-  font-family: 'iconfont';
-  src: url('https://at.alicdn.com/t/font_1908587_ppeo1ml9et.ttf') format('truetype');
-}
+// @font-face {
+//   font-family: 'iconfont';
+//   src: url('https://at.alicdn.com/t/font_1908587_ppeo1ml9et.ttf') format('truetype');
+// }
 
 .tf-screen {
   width: 100%;
@@ -14,38 +15,34 @@
 
 .tf-main-container {
   height: 100%;
-  padding-top: 118px !important;
+  padding-top: 88px !important;
   overflow: auto;
 }
 
 /* 水平方向*/
 .tf-row {
   @flex();
-  flex-direction: row;
 }
 
 .tf-column {
-  @flex();
-  flex-direction: column;
+  @flex-column();
 }
 
 /* 垂直居中*/
 .tf-vertical-center {
-  @flex();
+  @flex-column();
   justify-content: center;
 }
 
 /* 水平方向，垂直居中*/
 .tf-row-vertical-center {
   @flex();
-  flex-direction: row;
   align-items: center;
 }
 
 /* 水平方向，分布左右*/
 .tf-row-space-between {
   @flex();
-  flex-direction: row;
   justify-content: space-between;
 }
 
@@ -64,8 +61,11 @@
 }
 
 .tf-space-between {
-  @flex();
-  justify-content: space-between;
+  @flex-column-between();
+}
+
+.tf-space-around {
+  @flex-column-around();
 }
 
 .tf-flex-item {
@@ -127,10 +127,10 @@
   margin: @padding-md;
 }
 
-.tf-icon {
-  font-family: iconfont;
-  // color: #bbb
-}
+// .tf-icon {
+//   font-family: iconfont;
+//   // color: #bbb
+// }
 
 .tf-text {
   font-size: @font-size-md;
@@ -194,6 +194,7 @@
 }
 
 .tf-bg {
+  height: 100%;
   background-color: @background-color;
 }
 
@@ -243,7 +244,7 @@
 
 /* 图片*/
 .tf-image-box {
-  flex-direction: row;
+  @flex();
   flex-wrap: wrap;
   justify-content: space-between;
 }

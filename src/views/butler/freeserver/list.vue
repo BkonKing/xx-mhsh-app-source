@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-padding-base">
-    <van-nav-bar title="我的免费预约" :fixed="true" left-arrow @click-left="goBack" />
-    <div class="tf-flex-item">
+    <van-nav-bar title="我的免费预约" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-main-container">
       <refreshList :list.sync="data" @load="onLoad">
         <template v-slot="slotProps">
           <div class="tf-card tf-mb-base">
@@ -66,9 +66,6 @@ export default {
           this.data = res.data
         }
       })
-    },
-    goBack () {
-      this.$router.go(-1)
     }
   },
   filters: {

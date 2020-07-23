@@ -1,71 +1,95 @@
 <template>
-  <view class="tf-bg tf-padding-base" :style="{ 'padding-bottom': `${keyboardHeight}px` }">
-    <tf-list>
-      <text class="list-title">邀约设置</text>
-      <tf-list-item title="来访日期">
-        <template v-slot:right>
-          <picker mode="date" :value="form.stime" :start="startDate" :end="endDate" @change="bindDateChange">
-            <text class="tf-text text-right">{{ form.stime }}</text>
-          </picker>
-        </template>
-      </tf-list-item>
-      <tf-list-item title="进出次数">
-        <template v-slot:right>
-          <picker mode="selector" :range="array" range-key="label" :value="form.vtimes" @change="bindNumChange">
-            <text class="tf-text text-right">{{ vtimes }}</text>
-          </picker>
-        </template>
-      </tf-list-item>
-      <tf-list-item title="同行人数" :showArrow="false">
-        <template v-slot:right>
-          <input v-model="form.num" type="number" class="tf-input" />
-        </template>
-      </tf-list-item>
-      <tf-list-item title="来访目的" :showArrow="false">
-        <template v-slot:right>
-          <input v-model="form.remark" class="tf-input" />
-        </template>
-      </tf-list-item>
-    </tf-list>
-    <view class="visitor-btn">
-      <text class="tf-icon visitor-btn__text">{{ icon_contacts }} 选择访客</text>
-    </view>
-    <tf-list>
-      <text class="list-title">访客信息</text>
-      <visitor-form v-if="1" ref="form"></visitor-form>
-      <view v-else class="visitor-info">
-        <view class="tf-row">
-          <text class="visitor-info__text tf-mr-base">鲁班七号 男</text>
-          <text class="visitor-info__text tf-text-grey">15066668888 闽A23333</text>
-        </view>
-        <text class="tf-icon">{{ icon_delete }}</text>
-      </view>
-    </tf-list>
-    <button class="tf-mt-base" @click="addVisitorLog" type="warn">发起邀约</button>
-  </view>
+  <div class="tf-bg tf-padding-base">
+    <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+      <template #right>
+        <span class="tf-icon tf-icon-time-circle" @click="goInviteList"></span>
+        <span class="tf-icon tf-icon-time-circle" @click="goVisitorList"></span>
+      </template>
+    </van-nav-bar>
+    <div class="tf-main-container">
+      <tf-list>
+        <div class="list-title">邀约设置</div>
+        <tf-list-item title="来访日期">
+          <template v-slot:right>
+            <div class="tf-text text-right" @click="showDatePicker = true">{{ form.stime }}</div>
+          </template>
+        </tf-list-item>
+        <tf-list-item title="进出次数">
+          <template v-slot:right>
+            <div class="tf-text text-right" @click="showPicker = true">{{ vtimes }}</div>
+          </template>
+        </tf-list-item>
+        <tf-list-item title="同行人数" :showArrow="false">
+          <template v-slot:right>
+            <input v-model="form.num" type="number" class="tf-input" />
+          </template>
+        </tf-list-item>
+        <tf-list-item title="来访目的" :showArrow="false">
+          <template v-slot:right>
+            <input v-model="form.remark" class="tf-input" />
+          </template>
+        </tf-list-item>
+      </tf-list>
+      <div class="visitor-btn">
+        <div class="tf-icon tf-icon-contacts visitor-btn__text">选择访客</div>
+      </div>
+      <tf-list>
+        <div class="list-title">访客信息</div>
+        <visitor-form v-if="1" ref="form"></visitor-form>
+        <div v-else class="visitor-info">
+          <div class="tf-row">
+            <div class="visitor-info__text tf-mr-base">鲁班七号 男</div>
+            <div class="visitor-info__text tf-text-grey">15066668888 闽A23333</div>
+          </div>
+          <div class="tf-icon tf-icon-delete"></div>
+        </div>
+      </tf-list>
+      <van-button size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
+    </div>
+    <van-popup v-model="showDatePicker" round position="bottom">
+      <van-datetime-picker
+        v-model="form.stime"
+        type="datetime"
+        title="选择时间"
+        @cancel="showDatePicker = false"
+        @confirm="showDatePicker = false"
+      />
+    </van-popup>
+    <van-popup v-model="showPicker" round position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="array"
+        value-key="label"
+        @cancel="showPicker = false"
+        @confirm="bindNumChange"
+      />
+    </van-popup>
+  </div>
 </template>
 
 <script>
-import visitorForm from './components/form.nvue';
-import tfList from '@/pages/components/tf-list/index.nvue';
-import tfListItem from '@/pages/components/tf-list/item.nvue';
-import { icon_contacts, icon_delete } from '@/pages/const/icon.js';
-import { addVisitorLog } from '@/api/butler/butler.js';
-import { getDate } from '@/utils/util.js';
+import { NavBar, Toast, Picker, DatetimePicker, Popup, Button } from 'vant'
+import visitorForm from './components/form.vue'
+import tfList from '@/components/tf-list/index.vue'
+import tfListItem from '@/components/tf-list/item.vue'
+import { addVisitorLog } from '@/api/butler/butler.js'
+import { getDate } from '@/utils/util.js'
 export default {
   components: {
+    [NavBar.name]: NavBar,
+    [Picker.name]: Picker,
+    [DatetimePicker.name]: DatetimePicker,
+    [Popup.name]: Popup,
+    [Button.name]: Button,
     tfList,
     tfListItem,
     visitorForm
   },
-  data() {
+  data () {
     const currentDate = getDate({
       format: true
-    });
+    })
     return {
-      icon_contacts,
-      icon_delete,
-      keyboardHeight: 0,
       title: 'picker',
       array: [
         {
@@ -87,85 +111,66 @@ export default {
         vtimes: 0,
         num: '',
         remark: ''
-      }
-    };
+      },
+      showDatePicker: false,
+      showPicker: false
+    }
   },
   computed: {
-    startDate() {
-      return getDate('start');
+    startDate () {
+      return getDate('start')
     },
-    endDate() {
-      return getDate('end');
+    endDate () {
+      return getDate('end')
     },
-    vtimes() {
-      return this.array[this.form.vtimes].label;
+    vtimes () {
+      return this.array[this.form.vtimes].label
     }
-  },
-  //点击导航栏 buttons 时触发
-  onNavigationBarButtonTap({ index }) {
-    if (index === 0) {
-      this.goInviteList();
-    } else if (index === 1) {
-      this.goVisitorList();
-    }
-  },
-  onLoad() {
-    uni.onKeyboardHeightChange(res => {
-      this.keyboardHeight = res.height;
-    });
   },
   methods: {
-    addVisitorLog() {
-      const visitorData = this.$refs.form.getData();
+    addVisitorLog () {
+      this.sendInvite()
+      const visitorData = this.$refs.form.getData()
       const params = Object.assign({}, visitorData, this.form)
       if (!this.form.stime) {
-        uni.showToast({
-          title: '请选择来访日期',
-          icon: 'none'
+        Toast({
+          message: '请选择来访日期'
         })
       } else if (!visitorData.realname) {
-        uni.showToast({
-          title: '请填写访客姓名',
-          icon: 'none'
+        Toast({
+          message: '请填写访客姓名'
         })
       } else if (!visitorData.gender) {
-        uni.showToast({
-          title: '请选择访客性别',
-          icon: 'none'
+        Toast({
+          message: '请选择访客性别'
         })
       }
       addVisitorLog().then(res => {
         if (res.success) {
-          this.sendInvite();
+          this.sendInvite()
         }
-      });
+      })
     },
-    goVisitorList() {
-      uni.navigateTo({
-        url: '/pages/butler/visitor/visitor-list'
-      });
+    goVisitorList () {
+      this.$router.push('/pages/butler/visitor/visitor-list')
     },
-    goInviteList() {
-      uni.navigateTo({
-        url: '/pages/butler/visitor/invite-list'
-      });
+    goInviteList () {
+      this.$router.push('/pages/butler/visitor/invite-list')
     },
-    sendInvite() {
-      uni.navigateTo({
-        url: '/pages/butler/visitor/invite'
-      });
+    sendInvite () {
+      this.$router.push('/pages/butler/visitor/invite')
     },
-    bindNumChange(e) {
-      this.form.vtimes = parseInt(e.detail.value);
+    bindNumChange (value) {
+      this.form.vtimes = parseInt(value)
     },
-    bindDateChange(e) {
-      this.form.stime = e.detail.value;
+    bindDateChange (e) {
+      this.form.stime = e.detail.value
     },
-    bindTimeChange(e) {
-      this.time = e.target.value;
+    bindTimeChange (e) {
+      this.time = e.target.value
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

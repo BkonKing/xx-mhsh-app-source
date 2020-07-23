@@ -1,15 +1,14 @@
 <template>
-  <view class="tf-clist-cell" @click="onClick">
-    <text class="tf-clist-cell-left">{{ title }}</text>
-    <view class="tf-clist-cell-right">
+  <div class="tf-clist-cell" @click="onClick">
+    <div class="tf-clist-cell-left">{{ title }}</div>
+    <div class="tf-clist-cell-right">
       <slot name="right"></slot>
-      <uni-icons v-if="showArrow" :size="20" class="uni-icon-wrapper" color="#aaa" type="arrowright" />
-    </view>
-  </view>
+      <span v-if="showArrow" class="tf-icon tf-icon-right uni-icon-wrapper"></span>
+    </div>
+  </div>
 </template>
 
 <script>
-import uniIcons from '@/components/uni-icons/uni-icons.vue';
 export default {
   props: {
     title: {
@@ -22,20 +21,17 @@ export default {
       default: true
     }
   },
-  components: {
-    uniIcons
-  },
   methods: {
-    onClick() {
-      this.$emit('click');
+    onClick () {
+      this.$emit('click')
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
 .tf-clist-cell {
-  flex-direction: row !important;
+  @flex();
   justify-content: space-between;
   align-items: center;
   // width: 710px;
@@ -51,7 +47,7 @@ export default {
 }
 
 .tf-clist-cell-right {
-  flex-direction: row !important;
+  @flex();
   justify-content: flex-end;
   align-items: center;
   flex: 1;

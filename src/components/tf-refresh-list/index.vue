@@ -1,6 +1,6 @@
 <template>
   <van-pull-refresh
-    style="text-align: center;width: 100%;"
+    style="text-align: center;width: 100%;height: 100%;"
     v-model="refreshing"
     success-text="刷新成功"
     @refresh="onRefresh"
@@ -90,9 +90,13 @@ export default {
 }
 .tf-van-cell {
   background: none;
+  padding: 0;
   margin-bottom: 20px;
 }
 /deep/ .van-pull-refresh {
   width: 100%;
+}
+/deep/ .van-cell::after {
+  border-bottom: none;
 }
 </style>

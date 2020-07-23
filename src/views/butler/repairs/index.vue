@@ -13,32 +13,32 @@
       content="您有正在进行中的报事报修，点击查看进度>>"
       @click="goProgress"
     ></tf-alert>
-      <div class="tf-card">
-        <div class="tf-card-header">选择类型</div>
-        <div class="tf-card-content" style="padding-bottom: 10px;">
-          <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
-        </div>
+    <div class="tf-card">
+      <div class="tf-card-header">选择类型</div>
+      <div class="tf-card-content" style="padding-bottom: 10px;">
+        <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
       </div>
-      <div class="tf-card">
-        <div class="tf-card-header">内容描述</div>
-        <div class="tf-card-content">
-          <van-field
-            class="uni-input"
-            v-model="content"
-            rows="9"
-            autosize
-            type="textarea"
-            :maxlength="300"
-            placeholder="请描述具体内容"
-            show-word-limit
-          />
-        </div>
+    </div>
+    <div class="tf-card">
+      <div class="tf-card-header">内容描述</div>
+      <div class="tf-card-content">
+        <van-field
+          class="uni-input"
+          v-model="content"
+          rows="9"
+          autosize
+          type="textarea"
+          :maxlength="300"
+          placeholder="请描述具体内容"
+          show-word-limit
+        />
       </div>
-      <div class="tf-card">
-        <div class="tf-card-header">图片上传</div>
-        <div class="tf-card-content">
-          <van-uploader :after-read="uploadSuccess" />
-          <!-- <uImg
+    </div>
+    <div class="tf-card">
+      <div class="tf-card-header">图片上传</div>
+      <div class="tf-card-content">
+        <van-uploader :after-read="uploadSuccess" />
+        <!-- <uImg
             ref="upimg"
             :canUploadFile="true"
             :limit="limitNum"
@@ -47,16 +47,15 @@
             :fileKeyName="name"
             :uImgList.sync="images"
             @uploadSuccess="uploadSuccess"
-          ></uImg>-->
-        </div>
+        ></uImg>-->
       </div>
-      <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+    </div>
+    <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 
 <script>
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
-
 import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 // import uImg from '@/components/uploadImg/uploadImg.vue'

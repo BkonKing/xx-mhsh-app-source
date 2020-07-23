@@ -1,29 +1,37 @@
 <template>
-  <scroll-view class="tf-bg tf-padding-base">
-    <list>
-      <cell v-for="item in data" :key="item.id">
-        <view class="question-box" @click="jump(item)">
-          <view class="question-status-box">
-            <text class="question-type">{{ item.wjtp_type }}</text>
-          </view>
-          <view class="question-box__right">
-            <text class="question-title">{{ item.title }}</text>
-            <view class="question-info">
-              <view class="tf-row-vertical-center">
-                <text class="tf-gradient-tag--warning" v-if="item.virtual_coin > 0">+{{ item.virtual_coin }}</text>
-                <text class="participate-status" :class="item.status ? 'participate-status--proceed' : 'participate-status--end'">{{ item.joins }}人参加</text>
-              </view>
-              <text class="question-info__time">{{ item.stime }}</text>
-            </view>
-          </view>
-        </view>
-      </cell>
-    </list>
-  </scroll-view>
+    <refreshList :list.sync="data" @load="onLoad">
+        <template v-slot="slotProps">
+          <div class="question-box" @click="jump(slotProps.item)">
+          <div class="question-status-box">
+            <div class="question-type">{{ slotProps.item.wjtp_type }}</div>
+          </div>
+          <div class="question-box__right">
+            <div class="question-title">{{ slotProps.item.title }}</div>
+            <div class="question-info">
+              <div class="tf-row-vertical-center">
+                <div
+                  class="tf-gradient-tag--warning"
+                  v-if="slotProps.item.virtual_coin > 0"
+                >+{{ slotProps.item.virtual_coin }}</div>
+                <div
+                  class="participate-status"
+                  :class="slotProps.item.status ? 'participate-status--proceed' : 'participate-status--end'"
+                >{{ slotProps.item.joins }}人参加</div>
+              </div>
+              <div class="question-info__time">{{ slotProps.item.stime }}</div>
+            </div>
+          </div>
+        </div>
+        </template>
+      </refreshList>
 </template>
 
 <script>
+import refreshList from '@/components/tf-refresh-list'
 export default {
+  components: {
+    refreshList
+  },
   props: {
     data: {
       type: Array,
@@ -31,29 +39,29 @@ export default {
     }
   },
   methods: {
-    jump(item) {
-      const url = `/pages/butler/questionnaire/details?id=${item.id}`;
-      uni.navigateTo({
-        url
-      });
+    jump (item) {
+      const url = `/pages/butler/questionnaire/details?id=${item.id}`
+      this.$router.push(url)
+    },
+    onLoad () {
+
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
 .question-box {
   width: 710px;
-  flex-direction: row !important;
+  @flex();
   background-color: #fff;
   border-radius: @border-radius-md;
-  margin-bottom: 20px;
 }
 
 .question-status-box {
   width: 170px;
   // height: 170px;
-  background-color: @background-color-grey;
+  background-color: @gray-1;
   border-top-left-radius: @border-radius-md;
   border-bottom-left-radius: @border-radius-md;
 }
@@ -62,18 +70,19 @@ export default {
   line-height: 170px;
 }
 .question-box__right {
+  @flex-column();
   flex: 1;
   padding: 40px 20px;
 }
 .question-title {
+  margin-bottom: @padding-lg;
+  line-height: 1;
   font-size: 30px;
   font-weight: 500;
-  lines: 1;
-  text-overflow: ellipsis;
-  margin-bottom: @padding-lg;
+  @text-ellipsis();
 }
 .question-info {
-  flex-direction: row;
+  @flex();
   justify-content: space-between;
   align-items: center;
 }

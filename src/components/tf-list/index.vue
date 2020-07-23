@@ -1,14 +1,13 @@
 <template>
-  <view class="tf-clist">
+  <div class="tf-clist">
     <slot></slot>
-  </view>
+  </div>
 </template>
 
 <style lang="less" scoped>
   .tf-clist {
-    width: 710px;
+    width: 100%;
     background-color: #fff;
     border-radius: 8px;
   }
 </style>
-

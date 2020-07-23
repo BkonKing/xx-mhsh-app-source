@@ -1,43 +1,63 @@
 <template>
-  <view>
-    <uni-segmented-control :current="isVisit" :values="items" @clickItem="onClickItem" style-type="text" active-color="#eb5841" class="tf-bg-white"></uni-segmented-control>
-    <list :scrollable="true" class="tf-padding-base tf-bg">
-      <cell v-for="(item, i) in data" :key="i">
-        <view class="list-item">
-          <text class="tf-status-tag">已过期</text>
-          <view class="tf-row tf-mb-base">
-            <text class="tf-text-lg tf-text-grey">来访日期：</text>
-            <text class="tf-text-lg">{{ item.stime }}<!-- - {{ item.etime }} --></text>
-          </view>
-          <view class="tf-row tf-mb-base">
-            <text class="tf-text-lg tf-text-grey">进出次数：</text>
-            <text class="tf-text-lg">{{ item.vtimes | vtimes }}</text>
-          </view>
-          <view class="tf-row tf-mb-base">
-            <text class="tf-text-lg tf-text-grey">同行人数：</text>
-            <text class="tf-text-lg">{{ item.num }}人</text>
-          </view>
-          <view class="tf-row tf-mb-base">
-            <text class="tf-text-lg tf-text-grey">访客信息：</text>
-            <view>
-              <text class="tf-text-lg tf-mb-base">{{ item.realname }} {{ item.gender | sex }}</text>
-              <text class="tf-text-lg tf-text-grey">{{ item.mobile }} {{ item.car_number }}</text>
-            </view>
-          </view>
-        </view>
-      </cell>
-    </list>
-  </view>
+  <div class="tf-bg">
+    <van-nav-bar
+      title="访客邀约记录"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      @click-left="$router.go(-1)"
+    />
+    <div class="tf-main-container">
+      <van-tabs v-model="isVisit">
+        <van-tab v-for="(item, i) in items" :key="i" @click="onClickItem" :title="item"></van-tab>
+      </van-tabs>
+      <refreshList :list.sync="data" @load="getVisitorLogList">
+        <template v-slot="{item}">
+          <div class="tf-card tf-mb-base">
+            <div class="list-item">
+              <span class="tf-status-tag">已过期</span>
+              <div class="tf-row tf-mb-base">
+                <div class="tf-text-lg tf-text-grey">来访日期：</div>
+                <div class="tf-text-lg">
+                  {{ item.stime }}
+                  <!-- - {{ item.etime }} -->
+                </div>
+              </div>
+              <div class="tf-row tf-mb-base">
+                <div class="tf-text-lg tf-text-grey">进出次数：</div>
+                <div class="tf-text-lg">{{ item.vtimes | vtimes }}</div>
+              </div>
+              <div class="tf-row tf-mb-base">
+                <div class="tf-text-lg tf-text-grey">同行人数：</div>
+                <div class="tf-text-lg">{{ item.num }}人</div>
+              </div>
+              <div class="tf-row tf-mb-base">
+                <div class="tf-text-lg tf-text-grey">访客信息：</div>
+                <div>
+                  <span class="tf-text-lg">{{ item.realname }} {{ item.gender | sex }}</span>
+                  <div class="tf-text-lg tf-text-grey tf-mt-base">{{ item.mobile }} {{ item.car_number }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </refreshList>
+    </div>
+  </div>
 </template>
 
 <script>
-import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue';
-import { getVisitorLogList } from '@/api/butler/butler.js';
+import { NavBar, Tab, Tabs } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
+import { getVisitorLogList } from '@/api/butler/butler.js'
 export default {
   components: {
-    uniSegmentedControl
+    [NavBar.name]: NavBar,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
+    refreshList
   },
-  data() {
+  data () {
     return {
       items: ['待来访', '已过期', '已到访'],
       isVisit: 0,
@@ -71,46 +91,46 @@ export default {
           ctime: '2020-05-12 10:31:15'
         }
       ]
-    };
+    }
   },
-  onLoad() {
-    this.getVisitorLogList();
+  created () {
+    this.getVisitorLogList()
   },
   methods: {
-    getVisitorLogList() {
+    getVisitorLogList () {
       getVisitorLogList({
         isVisit: this.isVisit
       }).then(res => {
         if (res.success) {
-          this.data = res.data;
+          this.data = res.data
         }
-      });
+      })
     },
-    onClickItem(e) {
+    onClickItem (e) {
       if (this.isVisit !== e.currentIndex) {
-        this.isVisit = e.currentIndex;
-        this.getVisitorLogList();
+        this.isVisit = e.currentIndex
+        this.getVisitorLogList()
       }
     }
   },
   filters: {
-    sex(value) {
+    sex (value) {
       const sexText = {
         1: '男',
         2: '女'
-      };
-      return sexText[value];
+      }
+      return sexText[value]
     },
-    vtimes(value) {
+    vtimes (value) {
       const vtime = {
         1: '当日一次',
         2: '当日两次',
         3: '当日三次及以上'
-      };
-      return vtime[value];
+      }
+      return vtime[value]
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -119,11 +139,15 @@ export default {
   background-color: #fff;
   border-radius: @border-radius-md;
   margin-bottom: @padding-md;
-  padding: 20px 0 20px 20px;
+  padding: 30px 0;
 }
 
 .visit-status {
   position: absolute;
   right: 20px;
+}
+
+.tf-status-tag {
+  right: -30px;
 }
 </style>

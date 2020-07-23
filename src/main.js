@@ -12,6 +12,7 @@ import Navigation from 'vue-navigation'
 import './permission'
 import './styles/common.less'
 import './styles/components.less'
+import './styles/iconfont.css'
 import 'amfe-flexible'
 
 Vue.use(Navigation, {

@@ -30,7 +30,7 @@ const routes = [{
   path: '/',
   component: Index,
   children: [{
-    path: '/home',
+    path: '',
     name: 'home',
     component: () =>
       import(
@@ -40,17 +40,17 @@ const routes = [{
     meta: {
       keepAlive: true
     }
-  }, {
-    path: '/life',
-    name: 'life',
-    component: () =>
-      import(
-        /* webpackChunkName: "life" */
-        '@/views/life/index.vue'
-      ),
-    meta: {
-      keepAlive: true
-    }
+  // }, {
+  //   path: '/life',
+  //   name: 'life',
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "life" */
+  //       '@/views/life/index.vue'
+  //     ),
+  //   meta: {
+  //     keepAlive: true
+  //   }
   }, {
     path: '/butler',
     name: 'butler',
@@ -62,17 +62,17 @@ const routes = [{
     meta: {
       keepAlive: true
     }
-  // }, {
-  //   path: '/neighbours',
-  //   name: 'neighbours',
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "neighbours" */
-  //       '@/views/neighbours/index.vue'
-  //     ),
-  //   meta: {
-  //     keepAlive: true
-  //   }
+  }, {
+    path: '/neighbours',
+    name: 'neighbours',
+    component: () =>
+      import(
+        /* webpackChunkName: "neighbours" */
+        '@/views/neighbours/index.vue'
+      ),
+    meta: {
+      keepAlive: true
+    }
   // }, {
   //   path: '/personage',
   //   name: 'personage',

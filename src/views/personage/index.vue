@@ -1,95 +1,94 @@
 <template>
-  <view class="tf-screen">
-    <placeholderNavBar></placeholderNavBar>
+  <div class="tf-screen">
     <uni-nav-bar>
-      <view class="tf-row" slot="right">
+      <div class="tf-row" slot="right">
         <text class="tf-icon" @click="goSetting">{{ icon_setting }}</text>
         <text class="tf-icon margin-left" @click="goMessage">{{ icon_message }}</text>
         <uni-badge class="badge" text="2" type="error" @click="bindClick"></uni-badge>
-      </view>
+      </div>
     </uni-nav-bar>
-    <view class="tf-bg-white">
-      <view class="tf-row tf-padding-lg" @click="goInformation">
-        <image class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit"></image>
-        <view class="personage-info--base">
-          <view class="user-info-box">
+    <div class="tf-bg-white">
+      <div class="tf-row tf-padding-lg" @click="goInformation">
+        <img class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit">
+        <div class="personage-info--base">
+          <div class="user-info-box">
             <text class="user-name">这是一个默认昵</text>
             <uni-tag class="user-role" text="业主" type="error" :inverted="true" size="small"></uni-tag>
             <uni-tag class="user-role" text="管理员" type="success" :inverted="true" size="small"></uni-tag>
             <uni-tag class="user-role" text="维修员" type="primary" :inverted="true" size="small"></uni-tag>
-          </view>
+          </div>
           <text class="user-address">5座7B单元-1001</text>
-        </view>
-      </view>
-      <view class="tf-row coin-box">
-        <view class="tf-flex-item" @click="goHappiness">
+        </div>
+      </div>
+      <div class="tf-row coin-box">
+        <div class="tf-flex-item" @click="goHappiness">
           <text class="user-text--lg">90000</text>
           <text class="user-text--grey">幸福币</text>
-        </view>
-        <view class="tf-flex-item">
+        </div>
+        <div class="tf-flex-item">
           <text class="user-text--lg">26</text>
           <text class="user-text--grey">优惠券</text>
-        </view>
-        <view class="tf-flex-item tf-flex-center">
+        </div>
+        <div class="tf-flex-item tf-flex-center">
           <button :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']" @click="sign">
             <text class="user-btn__text" :style="({ color: signStatus ? '#8F8F94' : '#fff' })">签到</text>
           </button>
-        </view>
-      </view>
-    </view>
-    <scroll-view :scroll-y="true">
-      <view class="tf-bg">
-        <view class="module-box">
+        </div>
+      </div>
+    </div>
+    <scroll-div :scroll-y="true">
+      <div class="tf-bg">
+        <div class="module-box">
           <text class="module-title">事务处理</text>
-          <view class="tf-padding-base">
-            <view class="tf-row manage-border-bottom">
-              <view class="manage-box manage-border-right" @click="goTransaction(1)">
+          <div class="tf-padding-base">
+            <div class="tf-row manage-border-bottom">
+              <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
                 <text class="text-sm">待处理</text>
                 <uni-badge class="personage-badge" text="3" type="error" :inverted="true"></uni-badge>
-              </view>
-              <view class="manage-box" @click="goTransaction(2)">
+              </div>
+              <div class="manage-box" @click="goTransaction(2)">
                 <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
                 <text class="text-sm">待分派</text>
-              </view>
-            </view>
-            <view class="tf-row">
-              <view class="manage-box manage-border-right" @click="goTransaction(3)">
+              </div>
+            </div>
+            <div class="tf-row">
+              <div class="manage-box manage-border-right" @click="goTransaction(3)">
                 <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
                 <text class="text-sm">待结案</text>
-              </view>
-              <view class="manage-box" @click="goTransaction(4)">
+              </div>
+              <div class="manage-box" @click="goTransaction(4)">
                 <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
                 <text class="text-sm">已结案</text>
-              </view>
-            </view>
-          </view>
-        </view>
-        <view class="module-box" @click="goOrder">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="module-box" @click="goOrder">
           <text class="module-title">我的订单</text>
-          <view class="tf-row">
-            <view class="order-box">
+          <div class="tf-row">
+            <div class="order-box">
               <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
               <text class="text-sm">待付款</text>
-            </view>
-            <view class="order-box">
+            </div>
+            <div class="order-box">
               <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
               <text class="text-sm">待发货</text>
-            </view>
-            <view class="order-box">
+            </div>
+            <div class="order-box">
               <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
               <text class="text-sm">待收货</text>
-            </view>
-            <view class="order-box">
+            </div>
+            <div class="order-box">
               <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
               <text class="text-sm">退换</text>
-            </view>
-            <view class="order-box">
+            </div>
+            <div class="order-box">
               <image class="manage-image" src="/static/tabbar/me.png" mode="aspectFit"></image>
               <text class="text-sm">全部</text>
-            </view>
-          </view>
-        </view>
+            </div>
+          </div>
+        </div>
         <uni-list class="personage-list tf-mb-lg">
           <uni-list-item title="我的订单" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
           <uni-list-item title="我的互动" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
@@ -100,19 +99,17 @@
           <uni-list-item title="常见问题" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></uni-list-item>
           <uni-list-item title="意见反馈" thumb="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goFeedback"></uni-list-item>
         </uni-list>
-      </view>
-    </scroll-view>
-  </view>
+      </div>
+    </scroll-div>
+  </div>
 </template>
 
 <script>
-import placeholderNavBar from '../components/placeholder-nav-bar/index.nvue'
 import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue'
 import uniBadge from '@/components/uni-badge/uni-badge.vue'
 import uniList from '@/components/uni-list/uni-list.vue'
 import uniListItem from '@/components/uni-list-item/uni-list-item.vue'
 import uniTag from '@/components/uni-tag/uni-tag.vue'
-import uniCard from '@/components/uni-card/uni-card.vue'
 import { icon_setting, icon_message } from '../const/icon.js'
 export default {
   components: {
@@ -120,9 +117,7 @@ export default {
     uniBadge,
     uniList,
     uniListItem,
-    uniTag,
-    uniCard,
-    placeholderNavBar
+    uniTag
   },
   data () {
     return {

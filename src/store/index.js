@@ -33,9 +33,15 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    access_token: api.getGlobalData('access_token') || '',
-    refresh_token: api.getGlobalData('refresh_token') || '',
-    user_info: api.getGlobalData('user_info') || '',
+    access_token: api.getGlobalData({
+      key: 'access_token'
+    }) || '',
+    refresh_token: api.getGlobalData({
+      key: 'refresh_token'
+    }) || '',
+    user_info: api.getGlobalData({
+      key: 'user_info'
+    }) || '',
     hasLogin: false,
     loginProvider: '',
     openid: null,

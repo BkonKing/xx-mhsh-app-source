@@ -79,7 +79,7 @@ export default {
         {
           icon_image: '/static/logo.png',
           application: '小区活动',
-          url: '/pages/neighbours/index'
+          url: '/neighbours'
         },
         {
           icon_image: '/static/logo.png',
@@ -129,7 +129,9 @@ export default {
 }
 .notice-swipe {
   height: 88px;
-  line-height: 88px;
+  /deep/ .van-swipe-item {
+    line-height: 88px;
+  }
 }
 .key-box {
   width: 280px;

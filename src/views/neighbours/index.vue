@@ -1,83 +1,74 @@
 <template>
-  <view class="tf-bg">
-    <uni-nav-bar background-color="#fff" leftWidth="500px" rightWidth="200px" :statusBar="true">
-      <view slot="left"><text class="">和谐邻里</text></view>
-      <view class="tf-row" slot="right">
-        <text class="tf-icon" @click="scan">{{ icon_scan }}</text>
-        <view class="notice-box">
-          <text class="tf-icon margin-left">{{ icon_mail }}</text>
-          <uni-badge class="neighbours" text="26" type="error" v-if="status"></uni-badge>
-        </view>
-      </view>
-    </uni-nav-bar>
-    <uni-segmented-control
-      style="background-color: #fff;"
-      :current="current"
-      :values="items"
-      @clickItem="onClickItem"
-      style-type="text"
-      active-color="#EB5841"
-    ></uni-segmented-control>
-    <view style="padding: 40px 20px;">
+  <div class="tf-bg">
+    <van-nav-bar class="tf-nav-bar" left-text="和谐邻里" :left-arrow="false">
+    <template #right>
+      <div class="tf-row-vertical-center">
+        <span class="tf-icon margin-left">{{ iconMail }}</span>
+        <span v-if="status" class="van-info">2</span>
+      </div>
+    </template>
+  </van-nav-bar>
+    <van-tabs v-model="current" @click="onClickItem">
+      <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
+    </van-tabs>
+    <div style="padding: 40px 20px;">
       <list>
         <cell>
-          <view class="activity-cell">
-            <image class="activity-image"></image>
-            <text class="tf-status-tag">活动</text>
-            <text></text>
-            <text></text>
-            <view>
-              <text></text>
-              <text></text>
-            </view>
-          </view>
-          <view>
+          <div class="activity-cell">
+            <img class="activity-image">
+            <div class="tf-status-tag">活动</div>
+            <div></div>
+            <div></div>
+            <div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div>
             <user-info>
-              <text></text>
+              <div></div>
             </user-info>
-            <text></text>
-            <view>
-              <image></image>
-            </view>
-            <view>
-              <text></text>
-              <text></text>
-              <text></text>
-            </view>
-          </view>
-          <view>
-            <text></text>
-            <image></image>
-            <text></text>
-            <view>
-              <text></text>
-              <text></text>
-            </view>
-          </view>
+            <div></div>
+            <div>
+              <img>
+            </div>
+            <div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+          <div>
+            <div></div>
+            <img>
+            <div></div>
+            <div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
         </cell>
       </list>
-    </view>
-  </view>
+    </div>
+  </div>
 </template>
 
 <script>
-import uniNavBar from '@/components/uni-nav-bar/uni-nav-bar.vue'
-import uniBadge from '@/components/uni-badge/uni-badge.vue'
-import uniSegmentedControl from '@/components/uni-segmented-control/uni-segmented-control.vue'
-import UserInfo from '@/pages/components/user-info/index.nvue'
-import { icon_location, icon_scan, icon_mail } from '@/pages/const/icon.js'
+import { NavBar, Tab, Tabs } from 'vant'
+import UserInfo from '@/components/user-info/index.vue'
+import { iconLocation, iconScan, iconMail } from '@/const/icon.js'
 export default {
   components: {
-    uniNavBar,
-    uniBadge,
-    uniSegmentedControl,
+    [NavBar.name]: NavBar,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
     UserInfo
   },
   data () {
     return {
-      icon_location,
-      icon_scan,
-      icon_mail,
+      iconLocation,
+      iconScan,
+      iconMail,
       status: 1,
       items: ['最新', '小组', '活动', '资讯'],
       current: 0

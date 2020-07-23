@@ -1,15 +1,28 @@
 <template>
-  <tfList :data="list"></tfList>
+  <div class="tf-bg">
+    <van-nav-bar
+      title="我的问卷投票"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      @click-left="$router.go(-1)"
+    />
+    <div class="tf-main-container">
+      <questionList :data="list"></questionList>
+    </div>
+  </div>
 </template>
 
 <script>
-import tfList from './components/list.nvue';
-import { getMyWjtpList } from '@/api/butler/butler.js';
+import { NavBar } from 'vant'
+import questionList from './components/list.vue'
+import { getMyWjtpList } from '@/api/butler/butler.js'
 export default {
   components: {
-    tfList
+    [NavBar.name]: NavBar,
+    questionList
   },
-  data() {
+  data () {
     return {
       list: [
         {
@@ -22,19 +35,19 @@ export default {
           stime: '2020-06-03 16:35:26'
         }
       ]
-    };
+    }
   },
-  onLoad() {
-    this.getMyWjtpList();
+  created () {
+    this.getMyWjtpList()
   },
   methods: {
-    getMyWjtpList() {
+    getMyWjtpList () {
       getMyWjtpList().then(res => {
         if (res.success) {
-          this.list = res.data;
+          this.list = res.data
         }
-      });
+      })
     }
   }
-};
+}
 </script>

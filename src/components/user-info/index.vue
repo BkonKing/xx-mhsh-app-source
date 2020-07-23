@@ -1,32 +1,32 @@
 <template>
-  <view class="tf-row-space-between tf-flex-item">
-    <view class="tf-row tf-flex-item" style="height: 88px;">
-      <image class="tf-avatar tf-mr-base" :src="avatar" mode="aspectFit"></image>
+  <div class="tf-row-space-between tf-flex-item">
+    <div class="user-info__left-box">
+      <img class="tf-avatar tf-mr-base" :src="avatar" mode="aspectFit">
       <slot name="left">
-        <view class="tf-space-between">
-          <text class="user-info--name">{{name}}</text>
-          <text class="user-info-time">{{time}}</text>
-        </view>
+        <div class="tf-space-around">
+          <div class="user-info--name">{{name}}</div>
+          <div class="user-info-time">{{time}}</div>
+        </div>
       </slot>
-    </view>
-    <view class="user-info__right-box">
+    </div>
+    <div class="user-info__right-box">
       <slot name="right"></slot>
-    </view>
-  </view>
+    </div>
+  </div>
 </template>
 
 <script>
-  const stringProp = {
-    type: String,
-    default: ''
+const stringProp = {
+  type: String,
+  default: ''
+}
+export default {
+  props: {
+    avatar: stringProp,
+    name: stringProp,
+    time: stringProp
   }
-  export default {
-    props: {
-      avatar: stringProp,
-      name: stringProp,
-      time: stringProp
-    }
-  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -38,6 +38,11 @@
   .user-info-time {
     font-size: 24px;
     color: @gray-7
+  }
+  .user-info__left-box {
+    @flex();
+    flex: 1;
+    height: 88px;
   }
   .user-info__right-box {
     flex-direction: row;
