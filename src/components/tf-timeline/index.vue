@@ -152,6 +152,7 @@ export default {
   text-align: left;
   line-height: 18px;
   color: @gray-7;
+  margin-bottom: 10px;
 }
 
 .tf-timeline__row-desc {
@@ -237,15 +238,15 @@ export default {
   width: 5px;
   height: 5px;
   border-radius: 100px;
-  background-color: @gray-7;
+  background-color: @gray-6;
   margin: 0px 3px;
 }
 
 .tf-timeline__column-circle {
-  width: 5px;
-  height: 5px;
-  border-radius: 100px;
-  background-color: @gray-7;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: @gray-6;
   margin: 4px 0px 5px 0px;
 }
 
@@ -256,7 +257,6 @@ export default {
 .tf-timeline__column-check {
   width: 16px;
   height: 16px;
-  line-height: 14px;
   border-radius: 50%;
   margin: 2px 0px;
 }

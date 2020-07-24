@@ -45,7 +45,7 @@ export default {
   border-radius: @border-radius-md;
 }
 .grid-item__image {
-    width: 60px;
+  width: 60px;
   height: 60px;
   margin-bottom: @padding-md;
 }

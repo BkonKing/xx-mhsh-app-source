@@ -121,7 +121,7 @@ export default {
   background-image: linear-gradient(to right, @red, @red-dark);
 }
 .swiper-nav {
-  margin: 0 20px;
+  margin: 10px 20px 0;
   height: 88px;
   border-radius: @border-radius-sm;
   background-color: #fff;

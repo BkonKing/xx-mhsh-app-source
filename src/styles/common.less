@@ -13,12 +13,6 @@
   height: 100%;
 }
 
-.tf-main-container {
-  height: 100%;
-  padding-top: 88px !important;
-  overflow: auto;
-}
-
 /* 水平方向*/
 .tf-row {
   @flex();
@@ -411,28 +405,81 @@
   color: #fff;
 }
 
-.van-search{
+.tf-main-container {
+  height: 100%;
+  padding-top: 88px;
+  overflow: auto;
+}
+
+.van-nav-bar {
+  .tf-icon {
+    font-size: @font-size-lg;
+  }
+}
+
+.van-search {
   .van-search__content {
     height: 80px;
     padding-left: 30px;
   }
+
   .van-cell {
     padding-left: 25px;
+
     .van-field__left-icon,
     .van-field__control {
       line-height: 80px;
     }
+
     .van-field__control {
       font-size: 30px;
     }
+
     .van-icon {
       font-size: 34px;
     }
+
     .van-icon-search {
       margin-right: 10px;
     }
+
     .van-field__body {
       line-height: 46px;
     }
   }
-} 
+}
+
+/* 徽章 */
+.van-info {
+  min-width: 34px;
+  height: 34px;
+  line-height: 34px;
+  top: 17px;
+  background-color: @red-dark;
+  border: none;
+}
+
+/* tab选中下划线 */
+.van-tabs__line {
+  width: 64px !important;
+}
+
+#app {
+  .van-notice-bar {
+    padding: 0 30px;
+    border-radius: 10px;
+    .van-icon {
+      font-size: 36px;
+      margin-right: 20px;
+      color: @red-dark;
+    }
+    .van-swipe-item {
+      color: @red-dark;
+    }
+  }
+
+  /* vant下划线 */
+  .van-cell::after {
+    border-bottom: none;
+  }
+}

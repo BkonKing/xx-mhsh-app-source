@@ -56,6 +56,15 @@ const butlerRouter = [
         '@/views/butler/repairs/details.vue'
       )
   },
+  {
+    path: '/pages/butler/repairs/list',
+    name: 'repairsList',
+    component: () =>
+      import(
+        /* webpackChunkName: "repairsList" */
+        '@/views/butler/repairs/list.vue'
+      )
+  },
   /* 免费服务 */
   {
     path: '/pages/butler/freeserver/index',

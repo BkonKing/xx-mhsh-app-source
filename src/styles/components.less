@@ -1,5 +1,5 @@
 .tf-list {
-  flex-direction: row;
+  @flex();
   padding: 30px;
   border-radius: 10px;
   background-color: #fff;
@@ -38,9 +38,7 @@
   align-items: center;
 }
 .tf-card-header {
-  border-bottom-width: 2px;
-  border-bottom-style: solid;
-  border-bottom-color: @divider-color;
+  border-bottom: 2px solid @divider-color;
 }
 .tf-card-footer {
   font-size: 28px;
@@ -61,6 +59,7 @@
   height: 60px;
   line-height: 60px;
   font-size: 28px;
+  margin-right: -30px;
   border-top-left-radius: 30px;
   border-bottom-left-radius: 30px;
   text-align: center;
@@ -115,6 +114,7 @@
   margin: 0;
   border: 3px solid @gray-8;
   border-radius: 4px;
+  background-color: #fff;
 }
 
   .tf-form-box {
@@ -127,7 +127,7 @@
     margin-bottom: 20px;
   }
   .tf-form-item {
-    flex-direction: row;
+    @flex();
     width: 460px;
     height: 66px;
     background-color: #f0f0f0;

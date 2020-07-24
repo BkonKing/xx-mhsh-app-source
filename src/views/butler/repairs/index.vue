@@ -6,7 +6,11 @@
       :border="false"
       left-arrow
       @click-left="$router.go(-1)"
-    />
+    >
+      <template #right>
+        <span class="tf-icon tf-icon-time-circle" @click="goList"></span>
+      </template>
+    </van-nav-bar>
     <tf-alert
       v-if="progressList.length"
       type="warning"
@@ -209,5 +213,8 @@ export default {
 .uni-input {
   font-size: @font-size-md !important;
   padding: 0;
+}
+.alert-box {
+  margin-top: 30px;
 }
 </style>

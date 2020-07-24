@@ -12,7 +12,7 @@
         </Field>
         <Field v-if="login_type === 2" v-model="password" class="form-input" key="password" :type="showPassword ? 'text' : 'password'" placeholder="请输入您的密码" >
           <template #button>
-            <span class="tf-icon tf-text-white" @click="changePassword">{{showPassword ? '&#xe9aa;' : '&#xe7a4;'}}</span>
+            <span class="tf-icon tf-text-white" :class="[showPassword ? 'tf-icon-eye' : 'tf-icon-eye-close']" @click="changePassword"></span>
           </template>
         </Field>
       </div>
@@ -58,9 +58,7 @@ export default {
     },
     login () {
       this.$store.dispatch('login').then(() => {
-        this.$router.push({
-          path: 'home'
-        })
+        this.$router.push('')
       })
     }
   }
@@ -87,10 +85,12 @@ image {
 .logo {
   width: 212px;
   height: 214px;
+  margin-bottom: 30px;
 }
 .logo-text {
   width: 224px;
   height: 86px;
+  margin-bottom: 80px;
 }
 .form {
   width: 560px;
@@ -121,7 +121,11 @@ image {
   padding-right: 20px;
   margin-bottom: 30px;
   border: none;
+  font-size: 34px;
   background-color: rgba(255, 255, 255, 0.4);
+  .tf-icon {
+    font-size: 36px;
+  }
   /deep/ .van-field__control {
     color: #fff;
   }
@@ -170,7 +174,8 @@ image {
   height: 28px;
 }
 .uni-checkbox-icon {
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 28px;
 }
 .uni-checkbox-input-checked {
   color: #fff;
@@ -190,10 +195,13 @@ image {
   font-size: 30px;
   color: #fff;
   text-align: center;
-  margin-top: 80px;
+  margin-top: 50px;
   margin-bottom: 30px;
 }
 .uni-checkbox-wrapper {
   align-items: center;
+}
+.agreement-text {
+  font-size: 24px;
 }
 </style>

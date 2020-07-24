@@ -77,8 +77,12 @@ export default {
 }
 
 .van-info {
+  height: 24px;
+  line-height: 24px;
   top: 10px;
   right: 10px;
+  background: #fff;
+  color: @red-dark;
 }
 
 .underline {
@@ -86,6 +90,6 @@ export default {
 }
 
 .margin-left {
-  margin-left: 32px;
+  margin-left: 28px;
 }
 </style>

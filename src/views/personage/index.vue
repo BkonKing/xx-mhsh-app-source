@@ -3,8 +3,9 @@
     <van-nav-bar :fixed="true" :border="false">
       <template #right>
         <span class="tf-icon tf-icon-setting" @click="goSetting"></span>
-        <span class="tf-icon tf-icon-message" @click="goMessage"></span>
-        <span class="van-info">2</span>
+        <span class="tf-icon tf-icon-message" @click="goMessage">
+          <span class="van-info">2</span>
+        </span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -97,9 +98,9 @@
           </tf-list-item>
           <tf-list-item title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
-          <tf-list-item title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          <tf-list-item title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
           </tf-list-item>
-          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
+          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
         </tf-list>
         <tf-list class="personage-list">
@@ -328,5 +329,8 @@ export default {
   flex: 1;
   padding: 30px 20px;
   overflow: auto;
+}
+.tf-icon-message {
+  @relative();
 }
 </style>

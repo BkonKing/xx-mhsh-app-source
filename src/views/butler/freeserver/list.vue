@@ -3,12 +3,12 @@
     <van-nav-bar title="我的免费预约" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <refreshList :list.sync="data" @load="onLoad">
-        <template v-slot="slotProps">
+        <template v-slot="{item}">
           <div class="tf-card tf-mb-base">
             <div class="tf-card-header">
-              <div class="tf-card-header__title">{{ slotProps.item.category }}</div>
+              <div class="tf-card-header__title">{{ item.category }}</div>
             </div>
-            <div class="tf-card-content">{{slotProps.item | contentText}}</div>
+            <div class="tf-card-content">{{item | contentText}}</div>
           </div>
         </template>
       </refreshList>

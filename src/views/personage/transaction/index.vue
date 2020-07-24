@@ -1,32 +1,56 @@
 <template>
-  <view class="tf-bg">
-    <view class="transaction-header">
-      <text class="transaction-title">报事报修</text>
-      <text class="transaction-underline"></text>
-    </view>
-    <view class="transaction-tab-box">
-      <text v-for="(item, i) in typeList" :key="i" class="transaction-tab" :class="{ 'transaction-tab--active': type === item.value }" @click="type = item.value">{{ item.name }}()</text>
-    </view>
-    <list class="transaction-list" :scrollable="true">
-      <cell v-for="item in transactionList" :key="item.id" @click="jump(item)">
-        <text class="transaction-list-item--time">提交时间：{{ item.ctime }}</text>
-        <view class="tf-card" style="padding-right: 0 !important;">
-          <view class="tf-card-header">
-            <text class="tf-card-header__title">{{ item.category }}</text>
-            <text class="tf-card-header__status" :class="{ 'tf-card-header__status--complete': item.status > 5 }">{{ statusText[item.status] }}</text>
-          </view>
-          <text class="tf-card-content">{{ item.content }}</text>
-          <text class="tf-card-footer">{{ item.content }}</text>
-        </view>
-      </cell>
-    </list>
-  </view>
+  <div class="tf-bg">
+    <van-nav-bar
+      title="事务处理"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      @click-left="$router.go(-1)"
+    />
+    <div class="tf-main-container">
+      <div class="transaction-header">
+        <div class="transaction-title">报事报修</div>
+        <div class="transaction-underline"></div>
+      </div>
+      <div class="transaction-tab-box">
+        <div
+          v-for="(item, i) in typeList"
+          :key="i"
+          class="transaction-tab"
+          :class="{ 'transaction-tab--active': type === item.value }"
+          @click="type = item.value"
+        >{{ item.name }}()</div>
+      </div>
+      <refreshList class="transaction-list" :list.sync="transactionList" @load="onLoad">
+        <template v-slot="{item}">
+          <div class="transaction-list-item--time">提交时间：{{ item.ctime }}</div>
+          <div class="tf-card" style="padding-right: 0 !important;" @click="jump(item)">
+            <div class="tf-card-header">
+              <div class="tf-card-header__title">{{ item.category }}</div>
+              <div
+                class="tf-card-header__status"
+                :class="{ 'tf-card-header__status--complete': item.status > 5 }"
+              >{{ statusText[item.status] }}</div>
+            </div>
+            <div class="tf-card-content">{{ item.content }}</div>
+            <div class="tf-card-footer">{{ item.content }}</div>
+          </div>
+        </template>
+      </refreshList>
+    </div>
+  </div>
 </template>
 
 <script>
-import { statusText } from '../../const/butler.js';
+import { NavBar } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
+import { statusText } from '@/const/butler.js'
 export default {
-  data() {
+  components: {
+    [NavBar.name]: NavBar,
+    refreshList
+  },
+  data () {
     return {
       statusText,
       typeList: [
@@ -53,29 +77,32 @@ export default {
           id: '1',
           category: '居家报修',
           content: '厨房下水道堵了',
-          images: ['https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg', 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'],
+          images: [
+            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
+            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
+          ],
           status: 6,
           ctime: '2020-06-03 16:35:26'
         }
       ]
-    };
+    }
   },
-  onLoad({ type }) {
-    this.type = parseInt(type);
+  created () {
+    this.type = parseInt(this.$route.query.type)
   },
   methods: {
-    jump(item) {
-      const url = `/pages/personage/transaction/details?id=${item.id}&title=${item.category}`;
-      uni.navigateTo({
-        url
-      });
+    onLoad () {},
+    jump (item) {
+      const url = `/pages/personage/transaction/details?id=${item.id}&title=${item.category}`
+      this.$router.push(url)
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
 .transaction-header {
+  @flex-column();
   align-items: center;
   width: 750px;
   height: 98px;
@@ -95,7 +122,7 @@ export default {
   border-radius: 2px;
 }
 .transaction-tab-box {
-  flex-direction: row;
+  @flex();
   justify-content: space-between;
   padding: 30px;
 }
@@ -116,9 +143,6 @@ export default {
   border-color: @red-dark;
   background-color: @red-dark;
 }
-.transaction-list {
-  padding: 20px;
-}
 .transaction-list-item--time {
   text-align: center;
   font-size: 24px;
@@ -126,11 +150,10 @@ export default {
   margin-bottom: 20px;
 }
 .tf-card-header__title {
-  padding: 12px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: #383838;
+  padding: 7px 12px;
+  border:1px solid rgba(56,56,56,1);
   font-weight: 400;
+  border-radius:4px;
   font-size: 24px;
 }
 .tf-card-content {

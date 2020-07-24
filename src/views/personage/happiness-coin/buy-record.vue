@@ -1,79 +1,94 @@
 <template>
-	<view>
-		<list class="buy-list" :scrollable="true">
-      <cell v-for="item in list" :key="item.id">
-        <view class="buy-list-item">
-          <image class="buy-list-item__image" src="/static/app-icon.png"></image>
-          <view class="buy-list-item-right">
-            <text class="buy-list-item__name">{{item.name}}</text>
-            <text class="buy-list-item__specification">规格：{{item.specification}}</text>
-            <view class="tf-row">
-              <text class="tf-icon buy-list-item__price">{{item.time}}</text>
-              <text class="buy-list-item__price">{{item.number}}</text>
-            </view>
-          </view>
-        </view>
-      </cell>
-    </list>
-	</view>
+  <div class="tf-bg">
+    <van-nav-bar title="购买记录" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-main-container">
+      <refreshList :list.sync="list" @load="onLoad">
+        <template v-slot="{item}">
+          <div class="buy-list-item">
+            <img class="buy-list-item__image" src="/static/app-icon.png" />
+            <div class="buy-list-item-right">
+              <div class="buy-list-item__name">{{item.name}}</div>
+              <div class="buy-list-item__specification">规格：{{item.specification}}</div>
+              <div class="tf-row">
+                <div class="tf-icon buy-list-item__price">{{item.time}}</div>
+                <div class="buy-list-item__price">{{item.number}}</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </refreshList>
+    </div>
+  </div>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-        list: [
-          {
-            id: 1,
-            name: '签到送积分',
-            specification: '白色',
-            number: '1'
-          },
-          {
-            id: 1,
-            name: '签到送积分',
-            specification: '白色',
-            number: '1'
-          }
-        ]
-			};
-		}
-	}
+import { NavBar } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
+export default {
+  components: {
+    [NavBar.name]: NavBar,
+    refreshList
+  },
+  data () {
+    return {
+      list: [
+        {
+          id: 1,
+          name: '签到送积分',
+          specification: '白色',
+          number: '1'
+        },
+        {
+          id: 1,
+          name: '签到送积分',
+          specification: '白色',
+          number: '1'
+        }
+      ]
+    }
+  },
+  methods: {
+    onLoad () {
+
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
-  .buy-list {
-    width:750px;
-    padding: 30px 20px;
-    background-color: @background-color;
-  }
-  .buy-list-item {
-    width: 710px;
-    flex-direction: row;
-    align-items: center;
-    padding:30px;
-    background-color: #fff;
-    margin-bottom: 30px;
-    border-radius:10px;
-  }
-  .buy-list-item-right {
-    flex: 1;
-    height: 130px;
-    justify-content: space-around;
-  }
-  .buy-list-item__image {
-    width: 130px;
-    height: 130px;
-    margin-right: 20px;
-  }
-  .buy-list-item__specification {
-    font-size: 24px;
-    color: @gray-7;
-  }
-  .buy-list-item__name {
-    font-size: 30px;
-  }
-  .buy-list-item__price {
-    font-size: 28px;
-  }
+.buy-list {
+  width: 750px;
+  padding: 30px 20px;
+  background-color: @background-color;
+}
+.buy-list-item {
+  width: 100%;
+  @flex();
+  align-items: center;
+  padding: 30px;
+  background-color: #fff;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+.buy-list-item-right {
+  flex: 1;
+  height: 130px;
+  @flex-column();
+  justify-content: space-around;
+}
+.buy-list-item__image {
+  width: 130px;
+  height: 130px;
+  margin-right: 20px;
+}
+.buy-list-item__specification {
+  font-size: 24px;
+  color: @gray-7;
+}
+.buy-list-item__name {
+  font-size: 30px;
+}
+.buy-list-item__price {
+  font-size: 28px;
+}
 </style>
