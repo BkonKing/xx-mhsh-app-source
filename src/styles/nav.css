@@ -1,0 +1,36 @@
+.nav-empty {
+  height: 0.98rem;
+}
+.nav-box {
+  height: 0.98rem;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  left: 0;
+  top: 46px;
+  background-color: #fff;
+  z-index: 89;
+}
+.nav-item {
+  height: 100%;
+  line-height: 0.98rem;
+  text-align: center;
+  position: relative;
+  color: #8f8f94;
+  flex: 1;
+}
+.nav-item.cur {
+  font-size: 0.34rem;
+  color: #222222;
+  font-weight: bold;
+}
+.nav-item.cur::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 0.04rem;
+  background-color: #eb5841;
+  z-index: 9;
+  border-radius: 0.02rem;
+}

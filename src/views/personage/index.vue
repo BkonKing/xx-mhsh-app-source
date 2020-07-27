@@ -94,17 +94,17 @@
           </div>
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item title="我的订单" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          <tf-list-item border title="我的订单" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
-          <tf-list-item title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          <tf-list-item border title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
-          <tf-list-item title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
+          <tf-list-item border title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
           </tf-list-item>
           <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
         </tf-list>
         <tf-list class="personage-list">
-          <tf-list-item title="常见问题" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          <tf-list-item border title="常见问题" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
           <tf-list-item title="意见反馈" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goFeedback">
           </tf-list-item>
@@ -283,6 +283,7 @@ export default {
   border-radius: 8px;
 }
 .order-box {
+  @flex-column();
   flex: 1;
   justify-content: center;
   align-items: center;

@@ -35,14 +35,13 @@ export default {
 <style lang="less" scoped>
 .radio-btn-group {
   display: flex;
-  flex-direction: row;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 .radio-btn__item {
   height: 88px;
   padding: 0 20px;
   background-color: @background-color;
-  margin-right: @padding-lg;
   margin-bottom: @padding-lg;
   border-width: 3px;
   border-style: solid;

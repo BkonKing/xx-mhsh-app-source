@@ -1,0 +1,181 @@
+.font-24 {
+	font-size: 0.24rem;
+}
+.font-26 {
+	font-size: 0.26rem;
+}
+.font-28 {
+	font-size: 0.28rem;
+}
+.font-30 {
+	font-size: 0.3rem;
+}
+.font-34 {
+	font-size: 0.34rem;
+}
+.font-weight {
+	font-weight: bold;
+}
+.color-8f8f94 {
+	color: #8f8f94;
+}
+.color-fff {
+	color: #fff;
+}
+.color-000 {
+	color: #000;
+}
+.color-222 {
+	color: #222;
+}
+.color-666 {
+	color: #666;
+}
+.color-999 {
+	color: #999;
+}
+.color-eb5841 {
+	color: #eb5841;
+}
+.color-919499 {
+	color: #919499;
+}
+.color-ffa110 {
+	color: #ffa110;
+}
+.width-146 {
+	width: 1.46rem;
+}
+.flex-center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.flex-between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.flex-column-center {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.flex-align-center {
+	display: flex;
+	align-items: center;
+}
+.block-session {
+	width: 7.1rem;
+	background-color: #fff;
+	margin: 0 auto;
+	border-radius: 0.1rem;
+	position: relative;
+}
+  /* 底部按钮 */
+.fixed-submit-empty {
+	height: 1.68rem;
+}
+.submit-fixed-buttom {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 1.68rem;
+	padding: 0.4rem 0.2rem;
+}
+.submit-btn {
+	border-radius: 0.1rem;
+	height: 0.88rem;
+	background-color: #eb5841;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.submit-btn-unable {
+	background-color: #aaa;
+}
+
+.common-list {
+	padding: 0 0.3rem;
+}
+.common-item {
+	height: 1rem;
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	border-top: 1px solid #f0f0f0;
+}
+.common-item-first {
+	border-top-width: 0;
+}
+.common-item-left,.common-item-right {
+	display: flex;
+	align-items: center;
+}
+.common-item-right .van-icon-arrow {
+	margin-left: 0.1rem;
+}
+/*.common-item-arrow {
+	width: 0.16rem;
+	height: 0.26rem;
+	margin-left: 0.2rem;
+}*/
+
+.bottom-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
+.mask-bg {
+  background-color: rgba(0,0,0,0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/*弹窗*/
+.mask-bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.mask-block {
+  width: 5.60rem;
+  background-color: #fff;
+  border-radius: 0.1rem;
+  position: relative;
+}
+.mask-btn {
+  height: 0.66rem;
+  width: 4.6rem;
+  margin: 0 auto;
+}
+.mask-btn div {
+  width: 2.15rem;
+  height: 100%;
+  font-size: 0.3rem;
+  border-radius: 0.04rem;
+}
+.mask-sure-btn {
+  background-color: #eb5841;
+  color: #fff;
+}
+.mask-cancel-btn {
+  color: #8f8f94;
+  border: 0.02rem solid #aaa;
+}
+.mask-close {
+  position: absolute;
+  right: 0.2rem;
+  top: -0.8rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  padding: 0.1rem;
+  z-index: 5;
+}

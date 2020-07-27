@@ -1,12 +1,14 @@
 <template>
 	<div class="app-body tf-bg">
-		<van-nav-bar title="换货详情" :border="false" fixed left-text="" left-arrow></van-nav-bar>
+		<div class="order-bar">
+			<van-nav-bar title="订单详情" :border="false" fixed left-text="" left-arrow></van-nav-bar>
+		</div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
 			<div class="order-status-session">
-				<div class="order-status-name">申请换货中</div>
-				<div class="order-status-tip">订单等待处理中</div>
+				<div class="order-status-name">待付款</div>
+				<div class="order-status-tip">剩余23:23:23 自动取消订单</div>
 			</div>
 			<div class="cont-session goods-session">
 				<div class="order-goods-info">
@@ -23,9 +25,16 @@
 							<div class="order-num">￥21000.00</div>
 						</div>
 						<div class="order-action-session">
-							<div class="order-action-text">换货中</div>
+							<div class="order-action-text">不支持退货
+								<div class="order-action-btn">
+									<img class="img-100" src="@/assets/img/question_01.png" />
+								</div>
+							</div>
 							<div class="order-buy-num">x1</div>
 						</div>
+					</div>
+					<div class="order-goods-btn">
+						<div class="order-border-btn" hover-class="none">申请退换</div>
 					</div>
 				</div>
 				<div class="order-goods-info">
@@ -42,31 +51,41 @@
 							<div class="order-num">￥21000.00</div>
 						</div>
 						<div class="order-action-session">
-							<div class="order-action-text">换货中</div>
+							<div class="order-action-text color-8f8f94">不支持退货
+								<div class="order-action-btn">
+									<img class="img-100" src="@/assets/img/question_01.png" />
+								</div>
+							</div>
 							<div class="order-buy-num">x1</div>
 						</div>
 					</div>
+					<div class="order-goods-btn">
+						<div class="order-border-btn" hover-class="none">申请退换</div>
+					</div>
 				</div>
 				<div class="detail-price-list">
-					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">换货原因：</div>
-						<div class="color-222 font-28">发错货</div>
+					<div class="detail-price-item">
+						<div>商品总价</div>
+						<div>￥600.00</div>
 					</div>
-					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">换货编号：</div>
-						<div class="color-222 font-28">20200702101045</div>
+					<div class="detail-price-item">
+						<div>运费</div>
+						<div>￥600.00</div>
 					</div>
-					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">下单时间：</div>
-						<div class="color-222 font-28">2020-07-02  12:00:00</div>
+					<div class="detail-price-item">
+						<div>优惠券</div>
+						<div>￥600.00</div>
 					</div>
-					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">完成时间：</div>
-						<div class="color-222 font-28">2020-07-02  12:00:00</div>
+					<div class="detail-price-item">
+						<div>幸福币抵扣</div>
+						<div>￥600.00</div>
 					</div>
 				</div>
 				<div class="order-total order-total-detail">
 					<div class="color-8f8f94 font-24">共 1 件</div>
+					<div class="order-price-total">
+						合计:<span>￥200.00</span>
+					</div>
 				</div>
 			</div>
 			<div class="cont-session address-logistics">
@@ -104,40 +123,56 @@
 					</div>
 				</div>
 			</div>
-			<!-- <div class="cont-session order-message">
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">换货规格:</div>
-					<div class="color-222 font-28 order-tip-text">粉色</div>
+			<div class="cont-session order-remarks">
+				<div class="order-remarks-item">
+					<div class="order-remarks-item-left color-222 font-28">订单备注:</div>
+					<div class="shipping-address-item-right">
+						<div class="color-222 font-28 order-remarks-text">电子商品做好防潮防摔措施</div>
+					</div>
 				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明：</div>
-					<div class="order-tip-item-right color-222 font-28 order-tip-text">颜色不喜欢买错色号，希望能换一个颜色和样式</div>
-				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">寄出物流: </div>
-					<div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
-				</div>
-			</div> -->
+			</div>
 			<div class="cont-session order-message">
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">换货规格:</div>
-					<div class="color-222 font-28 order-tip-text">粉色</div>
+				<div class="order-message-item">
+					<div class="order-message-item-left color-8f8f94 font-28">订单编号:</div>
+					<div class="color-8f8f94 font-28 order-message-item-right">20200702184050</div>
+					<div class="copy-btn">
+						<div class="copy-text">复制</div>
+					</div>
 				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明:</div>
-					<div class="order-tip-item-right color-8f8f94 font-28 order-tip-text">无</div>
+				<div class="order-message-item">
+					<div class="order-message-item-left color-8f8f94 font-28">下单时间:</div>
+					<div class="color-8f8f94 font-28 order-message-item-right">2020-02-02  12:00:00</div>
 				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">寄出物流: </div>
-					<div class="color-222 font-28 order-tip-text">顺丰速运</div>
-					<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
+				<div class="order-message-item">
+					<div class="order-message-item-left color-8f8f94 font-28">支付方式:</div>
+					<div class="color-8f8f94 font-28 order-message-item-right">支付宝支付</div>
+				</div>
+				<div class="order-message-item">
+					<div class="order-message-item-left color-8f8f94 font-28">支付时间:</div>
+					<div class="color-8f8f94 font-28 order-message-item-right">2020-02-02  12:00:00</div>
 				</div>
 			</div>
 		</div>
 		<div class="fixed-empty"></div>
 		<div class="btn-fixed-buttom">
-			<navigator class="order-border-btn" hover-class="none"><div class="color-8f8f94 font-28">取消换货</div></navigator>
-			<div class="order-border-btn paid-btn"><div class="color-fff font-26">填写寄出物流</div></div>
+			<div class="order-border-btn" hover-class="none">物流详情</div>
+			<div class="order-border-btn paid-btn">付款(59:59:30)</div>
+		</div>
+		<div v-show="false" class="mask-bg">
+			<div class="mask-block">
+				<div class="mask-close">
+          <img class="img-100" src="@/assets/img/close.png" />
+        </div>
+				<div class="mask-tit">
+					<div class="mask-tit-text font-30 color-000">不支持退换说明</div>
+				</div>
+				<div class="mask-cont">
+					<div class="mask-cont-text font-24 color-666">贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。</div>
+				</div>
+				<div class="mask-btn flex-between">
+          <div class="mask-sure-btn flex-center">知道了</div>
+        </div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -151,9 +186,6 @@ export default {
 
     }
   },
-  onLoad () {
-
-  },
   methods: {
 
   }
@@ -163,4 +195,10 @@ export default {
 <style scoped>
 @import '../../../styles/life.css';
 @import '../../../styles/order.css';
+.app-body {
+	background-color: #f2f2f4;
+	font-size: 0.28rem;
+	width: 100%;
+	overflow: hidden;
+}
 </style>

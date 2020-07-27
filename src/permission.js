@@ -16,11 +16,9 @@ router.beforeEach(async (to, from, next) => {
   // document.title = getPageTitle(to.meta.title)
 
   // determine whether the user has logged in
-  console.log(api)
   const hasToken = api.getGlobalData({
     key: 'access_token'
   })
-  console.log(hasToken)
 
   if (hasToken) {
     if (to.path === '/login') {
