@@ -34,6 +34,7 @@
     <div class="tf-row-center tf-mt-lg">
       <div v-show="active === 1" class="entrance-operation" @click="getQrCode">
         <div class="entrance-operation__box">
+          <div class="triangle" :class="{'triangle-left': active === 1}"></div>
           <canvas id="qrcode" canvas-id="qrcode" class="qrcode-image" />
         </div>
         <div class="entrance-operation__alert tf-row-center">
@@ -43,6 +44,7 @@
       </div>
       <div v-show="active === 2" class="entrance-operation">
         <div class="entrance-operation__box">
+          <div class="triangle" :class="{'triangle-right': active === 2}"></div>
           <div class="instantly-btn" @click="ycOpenDoor">立即开门</div>
         </div>
         <div class="entrance-operation__alert">{{openDoorTime ? `${openDoorTime}已开门` : '点击即可开门'}}</div>
@@ -151,7 +153,7 @@ export default {
         foregroundColor: '#000000',
         fileType: 'jpg',
         correctLevel: uQRCode.defaults.correctLevel,
-        success: res => {
+        success: (res) => {
           // 生成成功后开启自动刷新
           this.countDownNum = 120
           this.timer && clearTimeout(this.timer)
@@ -172,7 +174,7 @@ export default {
     },
     // 立即开门，开门成功后显示开门时间
     ycOpenDoor () {
-      ycOpenDoor().then(res => {
+      ycOpenDoor().then((res) => {
         if (res.success) {
           this.openDoorTime = res
         }
@@ -222,6 +224,22 @@ export default {
     background: #fff;
     border-radius: 1px;
     margin-top: 35px;
+  }
+}
+
+.entrance-operation__box {
+  position: relative;
+  margin-top: 30px;
+  .triangle {
+    position: absolute;
+    top: -60px;
+    .triangle(30px, 30px, #fff);
+  }
+  .triangle-left {
+    left: 90px;
+  }
+  .triangle-right {
+    right: 90px;
   }
 }
 
@@ -322,12 +340,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width:650px;
-  height:66px;
+  width: 650px;
+  height: 66px;
   margin: 58px auto;
   padding: 0 30px;
-  background:rgba(255,255,255,0.3);
-  border-radius:33px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 33px;
   span {
     font-size: 28px;
     color: #fff;

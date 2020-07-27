@@ -8,18 +8,18 @@
     <div class="tf-padding-base tab-content">
       <template v-if="current === 0">
         <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-          <tf-list-item title="头像">
+          <tf-list-item border title="头像">
             <template v-slot:right>
-              <image class="tf-avatar-m tf-mr-base" src="/static/logo.png" mode="widthFix"></image>
+              <img class="tf-avatar-m tf-mr-base" src="/static/logo.png" mode="widthFix">
             </template>
           </tf-list-item>
-          <tf-list-item title="昵称" rightText="这是一个默认昵称" :showArrow="false"></tf-list-item>
-          <tf-list-item title="性别" rightText=""></tf-list-item>
+          <tf-list-item border title="昵称" rightText="这是一个默认昵称" :showArrow="false"></tf-list-item>
+          <tf-list-item border title="性别" rightText=""></tf-list-item>
           <tf-list-item title="生日" rightText="1990-01-01"></tf-list-item>
         </tf-list>
         <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-          <tf-list-item title="姓名" rightText="张三" :showArrow="false"></tf-list-item>
-          <tf-list-item title="手机号" rightText="1555555555" @click="jumpPhone"></tf-list-item>
+          <tf-list-item border title="姓名" rightText="张三" :showArrow="false"></tf-list-item>
+          <tf-list-item border title="手机号" rightText="1555555555" @click="jumpPhone"></tf-list-item>
           <tf-list-item
             title="收货地址"
             rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
@@ -29,7 +29,7 @@
         </tf-list>
         <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;"><tf-list-item title="人脸采集"></tf-list-item></tf-list>
         <tf-list style="background-color: #fff;border-radius: 8px;">
-          <tf-list-item title="修改支付密码" @click="editPaymentCode"></tf-list-item>
+          <tf-list-item border title="修改支付密码" @click="editPaymentCode"></tf-list-item>
           <tf-list-item title="修改登录密码" @click="editLoginPassword"></tf-list-item>
         </tf-list>
       </template>

@@ -23,7 +23,6 @@
         <van-field
           class="uni-input"
           v-model="content"
-          rows="9"
           autosize
           type="textarea"
           :maxlength="300"
@@ -48,7 +47,7 @@
         ></uImg>-->
       </div>
     </div>
-    <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+    <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 

@@ -1,8 +1,11 @@
 <template>
-  <div class="alert-box" @click="onClick">
-    <div class="alert-bg" :class="`alert-box--${type}`"></div>
-    <span class="tf-icon alert-box__icon" :class="`alert-box__content--${type}`">{{icon[type]}}</span>
-    <span class="alert-box__content" :class="`alert-box__content--${type}`">{{content}}</span>
+  <div class="alert-box" :class="`alert-box--${type}`" @click="onClick">
+    <div class="alert-bg"></div>
+    <div class="tf-row-vertical-center">
+      <span class="tf-icon alert-box__icon" :class="[`tf-icon-${type}-circle`]"></span>
+    <span class="alert-box__content">{{content}}</span>
+    </div>
+    <span class="tf-icon tf-icon-doubleright"></span>
   </div>
 </template>
 
@@ -43,15 +46,15 @@ export default {
 
 <style lang="less" scoped>
 .alert-box {
-  display: flex;
+  @flex();
   position: relative;
-  flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   flex: 1;
   height: 88px;
   padding: 26px 30px;
-  border-radius: @border-radius-sm;
+  border-radius: @border-radius-md;
+  color: #fff;
 }
 
 .alert-bg {
@@ -61,12 +64,13 @@ export default {
   height: 100%;
   left: 0;
   opacity: 0.2;
-  border-radius: @border-radius-sm;
+  border-radius: @border-radius-md;
 }
 
 .alert-box__icon {
   width: 36px;
   font-size: 36px;
+  margin-right: 20px;
 }
 
 .alert-box__content {
@@ -74,34 +78,38 @@ export default {
 }
 
 .alert-box--success {
-  background-color: @green-dark;
+  .alert-bg {
+    background-color: @green-dark;
+  }
+  .alert-box__content, .tf-icon {
+    color: @green-dark;
+  }
 }
 
 .alert-box--warning {
-  background-color: @red;
+  .alert-bg {
+    background-color: @red;
+  }
+  .alert-box__content, .tf-icon {
+    color: @red-dark;
+  }
 }
 
 .alert-box--error {
-  background-color: @red;
+  .alert-bg {
+    background-color: @red;
+  }
+  .alert-box__content, .tf-icon {
+    color: @red-dark;
+  }
 }
 
 .alert-box--info {
-  background-color: @gray-1;
-}
-
-.alert-box__content--success {
-  color: @green-dark;
-}
-
-.alert-box__content--warning {
-  color: @red-dark;
-}
-
-.alert-box__content--error {
-  color: @red-dark;
-}
-
-.alert-box__content--info {
-  color: @gray-7;
+  .alert-bg {
+    background-color: @gray-1;
+  }
+  .alert-box__content, .tf-icon {
+    color: @gray-7;
+  }
 }
 </style>

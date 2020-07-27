@@ -8,7 +8,10 @@
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <div class="tf-main-container">
-      <div class="tf-padding-base">
+      <div class="user-info-box">
+        <user-info avatar="@/assets/app-icon.png" name="用户昵称" time="2020.05.30"></user-info>
+      </div>
+      <div class="tf-padding">
         <div class="tf-card">
           <div class="tf-card-header">
             <div class="tf-card-header__title">内容描述</div>
@@ -88,6 +91,7 @@
 
 <script>
 import { NavBar, Picker, DatetimePicker, Field } from 'vant'
+import userInfo from '@/components/user-info/index.vue'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { statusText } from '@/const/butler.js'
@@ -99,7 +103,8 @@ export default {
     [DatetimePicker.name]: DatetimePicker,
     [Field.name]: Field,
     tfTimeline,
-    tfDialog
+    tfDialog,
+    userInfo
   },
   data () {
     return {
@@ -207,5 +212,11 @@ export default {
     padding: 20px;
     background:@gray-2;
   }
+}
+.user-info-box {
+  margin: 30px 20px 0;
+  padding: 30px;
+  border-radius:10px;
+  background: #fff;
 }
 </style>

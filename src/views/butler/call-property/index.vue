@@ -1,44 +1,48 @@
 <template>
-  <div>
-    <div class="introduce-box tf-mb-base">
-      <img class="bg-image" src="@/assets/app-icon.png" mode="aspectFit" />
-      <div class="logo-badge">
-        <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
+  <div class="tf-bg">
+    <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+    </van-nav-bar>
+    <div class="tf-main-container">
+      <div class="introduce-box">
+        <img class="bg-image" src="@/assets/app-icon.png" mode="aspectFit" />
+        <div class="logo-badge">
+          <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
+        </div>
+        <div class="property-title">{{ project_name }}</div>
+        <div class="property-content">{{ remarks }}</div>
       </div>
-      <div class="property-title">{{ project_name }}</div>
-      <div class="property-content">{{ remarks }}</div>
-    </div>
-    <div class="tf-bg tf-padding-base">
-      <phone-card
-        v-for="(item, i) in phoneList"
-        :key="i"
-        :name="item.title"
-        :info="item.remarks"
-        :tag="true"
-        :number="item.telephone"
-        :avatar="item.icon_images"
-      ></phone-card>
-    </div>
-    <div class="tf-bg-white">
-      <text class="module-title">常见问题</text>
-      <van-collapse v-model="activeNames">
-        <van-collapse-item v-for="(item, i) in eqList" :key="i" :name="i">
-          <template #title>
-            <div class="tf-van-collapse-item__title tf-row">
-              <div class="question-index-box">Q{{i + 1}}</div>
-              {{item.question}}
-            </div>
-          </template>
-          <div class="question-content">{{item.answer}}</div>
-        </van-collapse-item>
-      </van-collapse>
+      <div class="tf-bg tf-padding-base">
+        <phone-card
+          v-for="(item, i) in phoneList"
+          :key="i"
+          :name="item.title"
+          :info="item.remarks"
+          :tag="true"
+          :number="item.telephone"
+          :avatar="item.icon_images"
+        ></phone-card>
+      </div>
+      <div class="tf-bg-white">
+        <text class="module-title">常见问题</text>
+        <van-collapse v-model="activeNames">
+          <van-collapse-item v-for="(item, i) in eqList" :key="i" :name="i">
+            <template #title>
+              <div class="tf-van-collapse-item__title tf-row">
+                <div class="question-index-box">Q{{i + 1}}</div>
+                {{item.question}}
+              </div>
+            </template>
+            <div class="question-content">{{item.answer}}</div>
+          </van-collapse-item>
+        </van-collapse>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { NavBar, Collapse, CollapseItem } from 'vant'
-import phoneCard from '@/components/phone-card/phone-card.vue'
+import phoneCard from '../components/phone-card.vue'
 import { getCallWYList } from '@/api/butler/butler.js'
 export default {
   components: {
@@ -92,7 +96,7 @@ export default {
   },
   methods: {
     getCallWYList () {
-      getCallWYList().then(res => {
+      getCallWYList().then((res) => {
         if (res.success) {
           const { project_name, remarks, records, eq } = res.data
           this.project_name = project_name
@@ -108,16 +112,20 @@ export default {
 
 <style lang="less" scoped>
 .introduce-box {
-  width: 750px;
+  @relative();
+  width: 100%;
   height: 350px;
   align-items: center;
+  margin-bottom: 20px;
 }
 
 .logo-badge {
+  @flex();
+  justify-content: center;
+  align-items: center;
   margin: 30px auto;
   width: 120px;
   height: 120px;
-  padding: 10px;
   border-width: 3px;
   border-style: solid;
   border-color: @red-dark;
@@ -150,7 +158,7 @@ export default {
 .bg-image {
   position: absolute;
   z-index: -1;
-  width: 750px;
+  width: 100%;
   height: 350px;
 }
 .module-title {

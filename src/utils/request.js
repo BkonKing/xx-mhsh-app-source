@@ -109,21 +109,13 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
-      Toast({
-        message: codeMessage[code],
-        type: 'fail',
-        duration: 2 * 1000
-      })
+      Toast(codeMessage[code])
       return res
     }
   },
   error => {
     console.log('err' + error) // for debug
-    Toast({
-      message: error.message,
-      type: 'fail',
-      duration: 5 * 1000
-    })
+    Toast(error.message)
     return Promise.reject(error)
   }
 )

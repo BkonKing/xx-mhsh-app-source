@@ -2,24 +2,24 @@
   <div class="tf-bg tf-padding-base">
     <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
+        <span class="tf-icon tf-icon-solution" @click="goVisitorList"></span>
         <span class="tf-icon tf-icon-time-circle" @click="goInviteList"></span>
-        <span class="tf-icon tf-icon-time-circle" @click="goVisitorList"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
       <tf-list>
         <div class="list-title">邀约设置</div>
-        <tf-list-item title="来访日期">
+        <tf-list-item border title="来访日期">
           <template v-slot:right>
             <div class="tf-text text-right" @click="showDatePicker = true">{{ form.stime }}</div>
           </template>
         </tf-list-item>
-        <tf-list-item title="进出次数">
+        <tf-list-item border title="进出次数">
           <template v-slot:right>
             <div class="tf-text text-right" @click="showPicker = true">{{ vtimes }}</div>
           </template>
         </tf-list-item>
-        <tf-list-item title="同行人数" :showArrow="false">
+        <tf-list-item border title="同行人数" :showArrow="false">
           <template v-slot:right>
             <input v-model="form.num" type="number" class="tf-input" />
           </template>
@@ -30,8 +30,9 @@
           </template>
         </tf-list-item>
       </tf-list>
-      <div class="visitor-btn">
-        <div class="tf-icon tf-icon-contacts visitor-btn__text">选择访客</div>
+      <div class="visitor-btn" @click="goVisitorList">
+        <span class="tf-icon tf-icon-solution"></span>
+        <div class="visitor-btn__text">选择访客</div>
       </div>
       <tf-list>
         <div class="list-title">访客信息</div>
@@ -44,7 +45,7 @@
           <div class="tf-icon tf-icon-delete"></div>
         </div>
       </tf-list>
-      <van-button size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
+      <van-button class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
     </div>
     <van-popup v-model="showDatePicker" round position="bottom">
       <van-datetime-picker
@@ -181,19 +182,24 @@ export default {
 }
 
 .visitor-btn {
+  @flex();
+  justify-content: flex-end;
+  align-items: center;
+
   margin: 30px 0;
+  .tf-icon {
+    font-size: 44px;
+  }
 }
 
 .visitor-btn__text {
-  text-align: right;
-  height: 44px;
-  line-height: 44px;
   font-size: 26px;
+  margin-left: 10px;
 }
 
 .list-title {
   font-size: 30px;
-  padding: 30px;
+  padding: 20px 30px;
   font-weight: bold;
   text-align: center;
   border-bottom-width: 2px;

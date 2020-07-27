@@ -43,7 +43,6 @@
 /* 水平方向，居中*/
 .tf-row-center {
   @flex();
-  flex-direction: row;
   justify-content: center;
 }
 
@@ -83,6 +82,10 @@
 
 .tf-padding-lg {
   padding: 30px;
+}
+
+.tf-padding {
+  padding: 30px 20px;
 }
 
 .tf-padding-between-base {
@@ -138,6 +141,10 @@
   font-size: @font-size-lg;
 }
 
+.tf-text-blue {
+  color: @blue-dark;
+}
+
 .tf-text-white {
   color: #fff;
 }
@@ -188,7 +195,6 @@
 }
 
 .tf-bg {
-  height: 100%;
   background-color: @background-color;
 }
 
@@ -319,7 +325,7 @@
   padding: 0 15px;
   color: #fff;
   font-size: 24px;
-  background-image: linear-gradient(to right, @orange, @orange-dark);
+  background-image: linear-gradient(to right, @orange-dark, @orange);
 }
 
 .tf-gradient-tag--main {
@@ -333,6 +339,13 @@
 
 /* 圆形标记*/
 .tf-circle-tag--primary {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: @red-dark;
+}
+
+.tf-circle-tag--blue {
   width: 20px;
   height: 20px;
   border-radius: 10px;
@@ -372,7 +385,7 @@
   margin: 20px 0;
   border-bottom-width: 2px;
   border-bottom-style: solid;
-  border-bottom-color: @divider-color ;
+  border-bottom-color: @divider-color;
 }
 
 .tf-divider-dashed {
@@ -411,42 +424,11 @@
   overflow: auto;
 }
 
-.van-nav-bar {
-  .tf-icon {
-    font-size: @font-size-lg;
-  }
-}
-
-.van-search {
-  .van-search__content {
-    height: 80px;
-    padding-left: 30px;
-  }
-
-  .van-cell {
-    padding-left: 25px;
-
-    .van-field__left-icon,
-    .van-field__control {
-      line-height: 80px;
-    }
-
-    .van-field__control {
-      font-size: 30px;
-    }
-
-    .van-icon {
-      font-size: 34px;
-    }
-
-    .van-icon-search {
-      margin-right: 10px;
-    }
-
-    .van-field__body {
-      line-height: 46px;
-    }
-  }
+.tf-readed-tag {
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  background-color: @red-dark;
 }
 
 /* 徽章 */
@@ -459,12 +441,16 @@
   border: none;
 }
 
-/* tab选中下划线 */
-.van-tabs__line {
-  width: 64px !important;
-}
-
 #app {
+
+  > .tf-bg {
+    height: 100% ;
+  }
+
+  .view-main > .tf-bg {
+    height: 100% ;
+  }
+
   .van-notice-bar {
     padding: 0 30px;
     border-radius: 10px;
@@ -482,4 +468,87 @@
   .van-cell::after {
     border-bottom: none;
   }
+
+  .van-icon-arrow-left.van-nav-bar__arrow {
+    font-size: 40px;
+  }
+
+  .van-nav-bar__right {
+    .tf-icon {
+      font-size: 44px;
+    }
+    .tf-icon + .tf-icon {
+      margin-left: 20px;
+    }
+  }
+
+  .van-uploader__upload {
+    width: 114px;
+    height: 114px;
+    .van-icon-photograph {
+      font-size: 44px;
+    }
+  }
+
+  .van-button--large {
+    height: 88px;
+    border-radius: 10px;
+  }
+  .van-button--plain {
+    background: none;
+  }
+  
+  .van-search {
+    .van-search__content {
+      height: 80px;
+      padding-left: @padding-lg;
+    }
+  
+    .van-cell {
+      padding: 0 @padding-lg 0 0;
+  
+      .van-field__left-icon,
+      .van-field__control {
+        line-height: 80px;
+      }
+  
+      .van-field__control {
+        font-size: @font-size-lg;
+      }
+  
+      .van-icon {
+        font-size: 34px;
+      }
+  
+      .van-icon-search {
+        margin-right: 10px;
+      }
+  
+      .van-field__body {
+        line-height: 46px;
+      }
+    }
+  }
+
+  .van-cell--clickable:active {
+    background: none;
+  }
+  
+  /* tab选中下划线 */
+  .van-tabs__line {
+    width: 64px !important;
+  }
+
+  .van-tab--active {
+    .van-tab__text {
+      font-size: 34px;
+      font-weight: bold;
+    }
+  }
 }
+
+  /* 导航栏右侧文字 */
+  .van-nav-bar__right .van-nav-bar__text  {
+    color: @text-color;
+    font-size: 26px;
+  }

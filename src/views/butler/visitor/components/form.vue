@@ -1,16 +1,16 @@
 <template>
   <div>
-    <tf-list-item title="访客姓名" :showArrow="false">
+    <tf-list-item border title="访客姓名" :showArrow="false">
       <template v-slot:right>
         <input v-model="realname" class="tf-input" />
       </template>
     </tf-list-item>
-    <tf-list-item title="性别">
+    <tf-list-item border title="性别">
       <template v-slot:right>
         <div class="tf-text" @click="showPicker = true">{{ sexText }}</div>
       </template>
     </tf-list-item>
-    <tf-list-item title="手机号" :showArrow="false">
+    <tf-list-item border title="手机号" :showArrow="false">
       <template v-slot:right>
         <input v-model="mobile" type="number" class="tf-input" />
       </template>

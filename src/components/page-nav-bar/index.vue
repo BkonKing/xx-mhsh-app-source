@@ -12,7 +12,7 @@
     </template>
     <template #right>
       <span class="tf-icon" @click="scan">{{ iconScan }}</span>
-      <div class="notice-box">
+      <div class="notice-box" @click="goMessage">
         <span class="tf-icon margin-left">{{ iconMail }}</span>
         <span v-if="status" class="van-info">2</span>
       </div>
@@ -45,6 +45,9 @@ export default {
     }
   },
   methods: {
+    goMessage () {
+      this.$router.push('/pages/personage/message/index')
+    },
     goSelect () {
       this.$router.push('/pages/personage/house/select-community')
     },
@@ -79,6 +82,7 @@ export default {
 .van-info {
   height: 24px;
   line-height: 24px;
+  font-size: 18px;
   top: 10px;
   right: 10px;
   background: #fff;

@@ -79,4 +79,7 @@ export default {
     border: none;
   background-color: #fff;
 }
+/deep/ .tf-clist-box {
+  height: 100px;
+}
 </style>

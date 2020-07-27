@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-padding-base tf-main-container">
+  <div class="tf-bg tf-main-container">
     <van-nav-bar
       title="便民电话"
       :fixed="true"
@@ -13,7 +13,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import phoneCard from '@/components/phone-card/phone-card.vue'
+import phoneCard from '../components/phone-card.vue'
 import { getYellowPagesList } from '@/api/butler/butler.js'
 export default {
   components: {
@@ -50,4 +50,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.tf-main-container {
+  padding: 118px 20px 20px;
+}
+</style>

@@ -53,6 +53,7 @@ export default {
     this.getRepairList()
   },
   methods: {
+    onLoad () {},
     getRepairList () {
       getRepairList({
         projectId: '',

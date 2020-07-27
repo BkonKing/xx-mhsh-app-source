@@ -8,7 +8,7 @@
     >
     </van-nav-bar>
     <div class="tf-h3">设置登录密码</div>
-    <div style="margin-bottom: 140px;">
+    <div class="mb140">
       <div class="tf-phone-input-box">
         <div class="tf-phone-input-label">原密码</div>
         <input class="tf-phone-input width400" type="password" />
@@ -55,7 +55,7 @@ export default {
   }
 
   .tf-h3 {
-    margin: 60px 0;
+    margin: 148px 0 60px;
   }
 
   .tf-phone-input-label {
@@ -82,5 +82,8 @@ export default {
 
   .width400 {
     width: 400px;
+  }
+  .mb140 {
+    margin-bottom: 140px;
   }
 </style>

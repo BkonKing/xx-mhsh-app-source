@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <div class="tf-main-container">
-      <div class="tf-bg-white tf-padding-base">
+      <div class="tf-bg-white">
         <userInfo name="园博园他" avatar="/static/app-icon.png" :time="ctime"></userInfo>
         <div class="tf-auxiliary-content tf-mt-lg">{{content}}</div>
         <div class="tf-image-box tf-mt-base">
@@ -71,14 +71,18 @@ export default {
 
 <style lang="less" scoped>
 .tf-card {
-  width: 750px;
+  width: 100%;
+  border-radius: 0;
+}
+.tf-bg-white {
+  padding: 20px 30px 10px;
 }
 .tf-card-header {
   font-size: 30px;
 }
 .image {
-  width: 210px;
-  height: 210px;
+  width: 216px;
+  height: 216px;
   margin-bottom: 20px;
 }
 .tf-auxiliary-content {

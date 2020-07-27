@@ -8,7 +8,10 @@
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
             </div>
-            <div class="tf-card-content">{{item | contentText}}</div>
+            <div class="tf-card-content">
+              <div class="mb10">开始时间：{{item.stime}}</div>
+              <div>结束时间：{{item.etime}}</div>
+            </div>
           </div>
         </template>
       </refreshList>
@@ -67,15 +70,6 @@ export default {
         }
       })
     }
-  },
-  filters: {
-    contentText (item) {
-      if (item.category_type === 1) {
-        return `开始时间：${item.stime} \n\r结束时间：${item.etime}`
-      } else {
-        return `借用时间：${item.stime} \n\r归还时间：${item.etime}`
-      }
-    }
   }
 }
 </script>
@@ -87,5 +81,11 @@ export default {
 .tf-flex-item {
   height: 100%;
   padding-top: 88px;
+}
+.tf-card-content {
+  color: @gray-7;
+}
+.mb10 {
+  margin-bottom: 10px;
 }
 </style>

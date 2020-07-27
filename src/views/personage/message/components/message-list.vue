@@ -2,22 +2,22 @@
   <refreshList :list.sync="list" @load="onLoad">
     <template v-slot="{item}">
       <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
-          <div class="tf-list" @click="jump(item)">
-            <img
-              v-if="type !== 'system'"
-              class="tf-list-image"
-              :src="item.image"
-              :class="[`list-image__${type}`]"
-              mode="aspectFit"
-            />
-            <div class="tf-vertical-center">
-              <div class="tf-row-vertical-center">
-                <div class="tf-list-title">{{item.title}}</div>
-                <div class="tf-circle-tag--warning"></div>
-              </div>
-              <div class="tf-list-content">{{item.content}}</div>
-            </div>
+      <div class="tf-list" @click="jump(item)">
+        <img
+          v-if="type !== 'system'"
+          class="tf-list-image"
+          :src="item.image"
+          :class="[`list-image__${type}`]"
+          mode="aspectFit"
+        />
+        <div class="tf-space-around">
+          <div class="tf-row-vertical-center">
+            <div class="tf-list-title" :class="{'tf-mb-base': type === 'system'}">{{item.title}}</div>
+            <div class="tf-circle-tag--warning"></div>
           </div>
+          <div class="tf-list-content">{{item.content}}</div>
+        </div>
+      </div>
     </template>
   </refreshList>
 </template>
@@ -47,9 +47,7 @@ export default {
     }
   },
   methods: {
-    onLoad () {
-
-    }
+    onLoad () {}
   }
 }
 </script>
@@ -59,14 +57,18 @@ export default {
 .list-image__activity,
 .list-image__work {
   width: 80px;
+  height: 80px;
 }
+  .tf-list-title,
+  .tf-list-content {
+    line-height: 1;
+  }
 .tf-circle-tag--warning {
   width: 14px;
   height: 14px;
   margin-left: 8px;
 }
 .tf-list-content {
-  lines: 1;
-  text-overflow: ellipsis;
+  @text-ellipsis();
 }
 </style>

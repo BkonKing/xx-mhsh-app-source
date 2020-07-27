@@ -101,6 +101,7 @@ export default {
   margin-right: @padding-md;
 }
 .tf-icon {
+  font-size: 42px;
   margin-left: @padding-md;
 }
 .icon--remove {

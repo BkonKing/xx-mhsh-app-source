@@ -14,7 +14,7 @@
     <tf-alert
       v-if="progressList.length"
       type="warning"
-      content="您有正在进行中的报事报修，点击查看进度>>"
+      content="您有正在进行中的报事报修，点击查看进度"
       @click="goProgress"
     ></tf-alert>
     <div class="tf-card">
@@ -29,7 +29,6 @@
         <van-field
           class="uni-input"
           v-model="content"
-          rows="9"
           autosize
           type="textarea"
           :maxlength="300"
@@ -39,7 +38,7 @@
       </div>
     </div>
     <div class="tf-card">
-      <div class="tf-card-header">图片上传</div>
+      <div class="tf-card-header">上传图片</div>
       <div class="tf-card-content">
         <van-uploader :after-read="uploadSuccess" />
         <!-- <uImg
@@ -54,7 +53,7 @@
         ></uImg>-->
       </div>
     </div>
-    <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+    <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 

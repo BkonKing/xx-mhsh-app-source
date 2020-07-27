@@ -7,11 +7,11 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <div class="tf-main-container">
-      <div class="transaction-header">
+    <div class="transaction-header">
         <div class="transaction-title">报事报修</div>
         <div class="transaction-underline"></div>
       </div>
+    <div class="tf-main-container">
       <div class="transaction-tab-box">
         <div
           v-for="(item, i) in typeList"
@@ -24,7 +24,7 @@
       <refreshList class="transaction-list" :list.sync="transactionList" @load="onLoad">
         <template v-slot="{item}">
           <div class="transaction-list-item--time">提交时间：{{ item.ctime }}</div>
-          <div class="tf-card" style="padding-right: 0 !important;" @click="jump(item)">
+          <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
               <div
@@ -104,12 +104,13 @@ export default {
 .transaction-header {
   @flex-column();
   align-items: center;
-  width: 750px;
-  height: 98px;
+  width: 100%;
+  height: 186px;
+  padding-top: 88px;
   background-color: #fff;
 }
 .transaction-title {
-  width: 750px;
+  width: 100%;
   line-height: 94px;
   text-align: center;
   font-size: 34px;
@@ -149,6 +150,9 @@ export default {
   color: @gray-7;
   margin-bottom: 20px;
 }
+.tf-card-header {
+  padding: 20px 0;
+}
 .tf-card-header__title {
   padding: 7px 12px;
   border:1px solid rgba(56,56,56,1);
@@ -157,6 +161,12 @@ export default {
   font-size: 24px;
 }
 .tf-card-content {
+  @flex();
+  align-items: center;
   color: #666;
+  min-height: 144px;
+}
+.tf-main-container {
+  padding-top: 0;
 }
 </style>

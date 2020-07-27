@@ -15,21 +15,23 @@
           <div class="tf-icon tf-icon-moneycollect coin-icon"></div>
           <div class="coin-number">2333</div>
         </div>
-        <div class="sign-tag sign-tag--complete">签到</div>
+        <div class="sign-tag sign-tag--complete" @click="showCalendar = true">签到</div>
       </div>
     </div>
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
         <div class="function-box">
-          <div class="tf-icon function-box__icon">&#xe819;</div>
+          <div class="tf-icon tf-icon-scan function-box__icon"></div>
           <div class="function-box__text">扫一扫</div>
         </div>
         <div class="function-box">
-          <div class="tf-icon function-box__icon function-box__icon--pay">&#xe81f;</div>
+          <div class="tf-icon tf-icon-barcode function-box__icon function-box__icon--pay"></div>
           <div class="function-box__text">付款码</div>
         </div>
         <div class="function-box">
-          <div class="tf-icon function-box__icon function-box__icon--payreceipt">&#xe80b;</div>
+          <div
+            class="tf-icon tf-icon-moneycollect function-box__icon function-box__icon--payreceipt"
+          ></div>
           <div class="function-box__text">收款码</div>
         </div>
       </div>
@@ -46,8 +48,8 @@
               </div>
             </div>
           </div>
-          <!-- <text class="task-item__number">+20</text> -->
-          <div class="task-item__btn">去完成</div>
+          <div class="task-item__number">+20</div>
+          <!-- <div class="task-item__btn">去完成</div> -->
         </div>
       </div>
       <div class="sale-box">
@@ -458,10 +460,10 @@ export default {
   line-height: 44px;
   text-align: center;
   font-weight: 500;
-  color: #ca864e;
+  color: @gold-color;
 }
 .navbar-text {
-  color: #ca864e;
+  color: @gold-color;
   line-height: 44px;
   font-size: 26px;
 }
@@ -472,18 +474,14 @@ export default {
   text-align: center;
   color: #fff;
   font-size: 30px;
-  background-image: linear-gradient(
-    to right,
-    rgba(249, 134, 107, 1),
-    rgba(235, 88, 65, 1)
-  );
+  background-image: linear-gradient(to right, @red, @red-dark);
   border-top-left-radius: 44px;
   border-bottom-left-radius: 44px;
 }
 .sign-tag--complete {
-  color: #8f8f94;
+  color: @gray-7;
   background-image: none;
-  background-color: #f0f0f0;
+  background-color: @gray-2;
 }
 .sign-box {
   height: 290px;
@@ -517,11 +515,7 @@ export default {
   width: 98px;
   height: 98px;
   line-height: 98px;
-  background-image: linear-gradient(
-    to bottom right,
-    rgba(255, 192, 23, 1),
-    rgba(255, 161, 16, 1)
-  );
+  background-image: linear-gradient(to bottom right, @orange, @orange-dark);
   border-radius: 49px;
   margin-bottom: 15px;
   color: #fff;
@@ -529,18 +523,10 @@ export default {
   font-size: 50px;
 }
 .function-box__icon--pay {
-  background-image: linear-gradient(
-    to bottom right,
-    rgba(111, 202, 123, 1),
-    rgba(85, 184, 98, 1)
-  );
+  background-image: linear-gradient(to bottom right, @green, @green-dark);
 }
 .function-box__icon--payreceipt {
-  background-image: linear-gradient(
-    to bottom right,
-    rgba(99, 166, 241, 1),
-    rgba(68, 143, 228, 1)
-  );
+  background-image: linear-gradient(to bottom right, @blue, @blue-dark);
 }
 .happiness-coin-title {
   font-size: 34px;
@@ -596,11 +582,7 @@ export default {
   height: 46px;
   line-height: 46px;
   text-align: center;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(249, 134, 107, 1),
-    rgba(235, 88, 65, 1)
-  );
+  background-image: linear-gradient(to right, @red, @red-dark);
   border-radius: 23px;
   font-size: 24px;
   color: #fff;
@@ -642,7 +624,7 @@ export default {
 .commodity-coin {
   margin-top: 15px;
   font-size: 30px;
-  color: #eb5841;
+  color: @red-dark;
 }
 .sale-box {
   margin-top: 80px;
@@ -650,6 +632,7 @@ export default {
 }
 /deep/ .van-nav-bar {
   background: none;
+  z-index: 0;
   .van-icon,
   .van-nav-bar__title,
   .van-nav-bar__text {

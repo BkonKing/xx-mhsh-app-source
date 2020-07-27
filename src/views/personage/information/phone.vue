@@ -8,7 +8,7 @@
     >
     </van-nav-bar>
     <div class="tf-h3">验证手机号</div>
-    <div style="margin-bottom: 140px;">
+    <div class="mb140">
       <div class="tf-phone-input-box">
         <div class="tf-phone-input-label">手机号</div>
         <input class="tf-phone-input" type="number" />
@@ -46,11 +46,15 @@ export default {
 }
 
 .tf-h3 {
-  margin: 60px 0;
+  margin: 148px 0 60px;
 }
 
 .width200 {
   width: 200px;
+}
+
+.mb140 {
+  margin-bottom: 140px;
 }
 
 .tf-bg-primary {

@@ -69,7 +69,7 @@ export default {
 </script>
 
 <style scoped>
-.tf-icon {
-  font-size: 44px;
+.tf-main-container {
+  padding-top: 98px;
 }
 </style>

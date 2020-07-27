@@ -2,7 +2,7 @@
   <div class="tf-bg tf-padding-base">
     <van-nav-bar title="房屋认证" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
-        <span class="tf-icon tf-icon-edit-square" @click="goMyList"></span>
+        <span class="tf-icon tf-icon-edit-square" @click="goEdit"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -39,9 +39,9 @@
             </template>
           </tf-list-item>
         </tf-list>
-        <van-button class="tf-mt-base" type="danger" size="large" form-type="submit">提交</van-button>
+        <van-button class="tf-mt-lg" type="danger" size="large" form-type="submit">提交</van-button>
       </form>
-    <van-button class="tf-text-primary" type="default" size="large">删除</van-button>
+      <van-button class="tf-mt-lg tf-text-primary" type="default" size="large">删除</van-button>
     </div>
   </div>
 </template>
@@ -94,6 +94,9 @@ export default {
       this.category_id = value
     },
     goCheckHouse () {
+      this.$router.push('/pages/personage/house/select-community')
+    },
+    goEdit () {
       this.$router.push('/pages/personage/house/select-community')
     }
   }

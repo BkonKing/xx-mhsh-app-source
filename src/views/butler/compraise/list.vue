@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-padding-base">
+  <div class="tf-bg">
     <van-nav-bar title="我的投诉表扬" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <refreshList :list.sync="data" @load="getComPraiseList">
@@ -138,9 +138,9 @@ export default {
 
 .tf-image-box {
   @flex();
-  justify-content: space-around;
+  justify-content: space-between;
   position: relative;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
 }
 
 .details-image {

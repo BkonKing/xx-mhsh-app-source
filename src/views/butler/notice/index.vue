@@ -9,7 +9,12 @@
       @click-right="setNoticeReaded(0)"
     />
     <div class="tf-flex-item">
-      <van-pull-refresh style="text-align: center" v-model="refreshing" success-text="刷新成功" @refresh="onRefresh">
+      <van-pull-refresh
+        style="text-align: center"
+        v-model="refreshing"
+        success-text="刷新成功"
+        @refresh="onRefresh"
+      >
         <van-list
           class="tf-van-list"
           v-model="loading"
@@ -23,10 +28,12 @@
             <div class="list-item--time">{{item.ctime}}</div>
             <div class="tf-card" @click="jump(item)">
               <div class="tf-card-header" style="justify-content: flex-start;">
-                <span v-if="item.is_readed === '1'" class="is_readed"></span>
+                <span v-if="item.is_readed === '1'" class="tf-readed-tag"></span>
                 <span class="tf-card-header__title">{{item.title}}</span>
               </div>
-              <div class="tf-card-content">{{item.content}}</div>
+              <div class="tf-card-content">
+                <div class="van-multi-ellipsis--l2">{{item.content}}</div>
+              </div>
             </div>
           </van-cell>
         </van-list>
@@ -107,7 +114,7 @@ export default {
       return getNoticeList({
         project_id: '1'
         // notice_id: '1'
-      }).then(res => {
+      }).then((res) => {
         if (res.success) {
           this.noticeList = res.data.records
         }
@@ -118,7 +125,7 @@ export default {
       setNoticeReaded({
         project_id: '1',
         noticeId
-      }).then(res => {
+      }).then((res) => {
         if (res.success) {
         }
       })
@@ -158,19 +165,10 @@ export default {
   font-size: 24px;
   text-align: center;
   color: @gray-7;
-  margin: @padding-md;
+  margin: 0 @padding-md @padding-md;
 }
 
-.tf-card-content {
-  // height: 48px;
-  @text-ellipsis();
-}
-
-.is_readed {
-  width: 12px;
-  height: 12px;
-  border-radius: 6px;
-  background-color: @red-dark;
+.tf-readed-tag {
   margin-right: 8px;
 }
 

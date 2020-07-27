@@ -8,7 +8,7 @@
             <div class="tf-icon tf-icon-like-fill like-icon"></div>
             <div class="tf-text-sm">我收到了点赞</div>
           </div>
-          <div class="tf-row message-box">
+          <div class="tf-row-vertical-center message-box">
             <div class="tf-icon tf-icon-like-fill tf-text-orange"></div>
             <div class="tf-text-sm tf-text-grey like-number">233</div>
             <div class="tf-text-sm tf-text-grey">关于美好生活家园2020年中秋佳节社区活动</div>
@@ -28,7 +28,7 @@
           </div>
           <div class="content-box">中秋佳节活动策划方案的实施需要物业的全力以赴和广大业主的支持，美好生活家园为了更好地服务于社区业区业区业区业区业</div>
           <div class="tf-row message-box">
-            <div class="tf-text-sm tf-text-primary">233</div>
+            <div class="tf-text-sm tf-text-blue">233</div>
             <div class="tf-text-sm tf-text-grey">：关于美好生活家园2020年中秋佳节社区活动</div>
           </div>
         </template>
@@ -73,7 +73,8 @@ export default {
 
 <style lang="less" scoped>
 .tf-list {
-  flex-direction: column !important;
+  @flex-column();
+  margin-bottom: 0;
 }
 .tf-circle-tag--warning {
   width: 14px;
@@ -116,5 +117,9 @@ export default {
 .reply-icon {
   color: @orange-dark;
   margin-right: 9px;
+}
+.tf-icon-like-fill.tf-text-orange,
+.tf-icon-comment {
+  font-size: 34px;
 }
 </style>

@@ -2,39 +2,32 @@
   <div class="tf-main-container">
     <van-nav-bar title="免费服务" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
-        <van-icon name="clock-o" @click="$router.push('/pages/butler/freeserver/list')"/>
+        <span
+          class="tf-icon tf-icon-time-circle"
+          @click="$router.push('/pages/butler/freeserver/list')"
+        ></span>
       </template>
     </van-nav-bar>
     <van-search v-model="search" @search="searchList" placeholder="请输入关键字搜索" />
-    <div class="tf-bg tf-padding-base">
+    <div class="tf-bg tf-padding">
       <div class="tab-btn-box">
         <div
           class="tab-btn"
-          style="border-color: #448fe4;"
-          :class="{'tf-bg-primary': category_type === 1}"
+          :class="{'tab-btn--blue': category_type === 1}"
           @click="category_type = 1"
+          style="border-color: #448fe4;"
         >
-          <div
-            v-if="category_type !== 1"
-            class="tf-circle-tag--primary"
-            style="margin-right: 10px;"
-          ></div>
+          <div v-if="category_type !== 1" class="tf-circle-tag--blue"></div>
           <div class="tab-btn__text-box tf-row">
-            <div
-              class="tab-btn__text"
-              :class="[category_type === 1 ? 'tf-text-white' : 'tf-text-primary']"
-            >人工服务</div>
-            <div
-              class="tab-btn__text"
-              :class="[category_type === 1 ? 'tf-text-white' : 'tf-text-grey']"
-            >({{rg_num}})</div>
+            <div class="tab-btn__text">人工服务</div>
+            <div>({{rg_num}})</div>
           </div>
         </div>
         <div
           class="tab-btn"
           :class="{'tf-bg-success': category_type === 2}"
-          style="border-color: #55b862;"
           @click="category_type = 2"
+          style="border-color: #55b862;"
         >
           <div
             v-if="category_type !== 2"
@@ -42,14 +35,8 @@
             style="margin-right: 10px;"
           ></div>
           <div class="tab-btn__text-box tf-row">
-            <div
-              class="tab-btn__text"
-              :class="[category_type === 2 ? 'tf-text-white' : 'tf-text-success']"
-            >借用服务</div>
-            <div
-              class="tab-btn__text"
-              :class="[category_type === 2 ? 'tf-text-white' : 'tf-text-grey']"
-            >({{jy_num}})</div>
+            <div class="tab-btn__text">借用服务</div>
+            <div>({{jy_num}})</div>
           </div>
         </div>
       </div>
@@ -59,14 +46,13 @@
 </template>
 
 <script>
-import { NavBar, Search, Icon } from 'vant'
+import { NavBar, Search } from 'vant'
 import serviceCard from './components/service-card.vue'
 import { getFreeServerList } from '@/api/butler/butler.js'
 export default {
   components: {
     serviceCard,
     [NavBar.name]: NavBar,
-    [Icon.name]: Icon,
     [Search.name]: Search
   },
   data () {
@@ -117,7 +103,7 @@ export default {
       getFreeServerList({
         category_type: this.category_type,
         searchName
-      }).then(res => {
+      }).then((res) => {
         if (res.success) {
           const { rg_num, jy_num, records } = res.data
           this.rg_num = rg_num
@@ -145,7 +131,7 @@ export default {
 }
 
 .check-type {
-  flex-direction: row;
+  @flex();
   justify-content: flex-start;
   margin-top: @padding-md;
   margin-bottom: @padding-md;
@@ -165,14 +151,12 @@ export default {
 }
 
 .tab-btn-box {
-  display: flex;
-  flex-direction: row;
-  margin-bottom: @border-radius-lg;
+  @flex();
+  margin-bottom: @padding-lg;
 }
 
 .tab-btn {
-  display: flex;
-  flex-direction: row;
+  @flex();
   align-items: center;
   height: 66px;
   padding: 0 36px;
@@ -181,13 +165,19 @@ export default {
   border-color: #aaa;
   border-radius: 33px;
   margin-right: @padding-md;
+  .tf-circle-tag--blue {
+    margin-right: 10px;
+  }
 }
-.tab-btn__text {
+.tab-btn--blue {
+  background-color: @blue-dark;
+  .tab-btn__text-box {
+    color: #fff;
+  }
+}
+.tab-btn__text-box {
   font-size: 24px;
   line-height: 66px;
-}
-.tf-circle-tag--primary {
-  display: inline-block;
 }
 .tf-main-container {
   padding-top: 88px !important;

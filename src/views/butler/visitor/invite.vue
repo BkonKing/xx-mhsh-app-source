@@ -52,7 +52,7 @@ export default {
   position: relative;
   width: 620px;
   margin: 80px 65px;
-  padding: 60px 0;
+  padding: 60px 66px;
   @flex-column();
   align-items: center;
   background-color: #fff;
@@ -109,6 +109,10 @@ export default {
 .invite-box {
   @flex-column();
   align-items: center;
+}
+
+.tf-divider-dashed {
+  margin: 30px 0;
 }
 
 .invite-nav-bar {

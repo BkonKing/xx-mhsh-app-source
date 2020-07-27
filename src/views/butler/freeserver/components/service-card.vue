@@ -124,7 +124,7 @@ export default {
   .qr-status-box {
     @flex-column();
     align-items: center;
-    margin-top: 70px;
+    margin-top: 26px;
   }
 
   .qr-status {
@@ -139,16 +139,6 @@ export default {
   }
 
   .qr-triangle {
-    width:0px;
-    height:0px;
-    border-bottom-width: 15px;
-    border-top-width: 15px;
-    border-left-width: 12px;
-    border-right-width: 12px;
-    border-style: solid;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    border-bottom-color: @red-dark;
-    border-left-color: transparent;
+    .triangle();
   }
 </style>

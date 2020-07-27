@@ -215,6 +215,7 @@ export default {
 .vote-box {
   position: relative;
   z-index: 1;
+  padding: 10px;
   margin-bottom: 30px;
   background-color: #fff;
   border-radius: @border-radius-md;
@@ -222,13 +223,15 @@ export default {
 
 .vote-progress {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 10px;
+  bottom: 10px;
   z-index: 0;
   width: 40px;
   // height: 120px;
   background-color: @red;
   opacity: 0.2;
+  border-top-left-radius: @border-radius-md;
+  border-bottom-left-radius: @border-radius-md;
 }
 
 .vote-title {
@@ -247,7 +250,7 @@ export default {
   padding-right: 30px;
   color: @gray-7;
   justify-content: center;
-  text-align: center;
+  text-align: right;
 }
 
 .vote-btn {

@@ -332,5 +332,6 @@ export default {
 }
 .tf-icon-message {
   @relative();
+  margin-right: 27px;
 }
 </style>

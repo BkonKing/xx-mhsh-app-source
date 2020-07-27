@@ -57,6 +57,7 @@ export default {
     // this.getComPraiseList()
   },
   methods: {
+    onLoad () {},
     getComPraiseList () {
       // getComPraiseList().then(res => {
       //   if (res.success) {
@@ -88,7 +89,7 @@ export default {
   font-size: 24px;
   text-align: center;
   color: @gray-7;
-  margin: @padding-md;
+  margin: 0 @padding-md @padding-md;
 }
 .reply-box {
   border-top-width: 1px;

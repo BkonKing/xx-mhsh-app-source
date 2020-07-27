@@ -52,7 +52,7 @@ export default {
 .tf-clist-box {
   width: 100%;
   height: 90px;
-  padding: 0 20px;
+  padding: 0 30px;
 }
 .tf-clist-cell {
   @flex();
