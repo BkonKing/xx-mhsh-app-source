@@ -55,24 +55,24 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 .block-session {
-  margin-bottom: 0.3rem;
+  margin-bottom: 30px;
 }
 .logistics-goods {
-  margin-top: 0.3rem;
+  margin-top: 30px;
 }
 .logistics-goods {
-  padding: 0.3rem 0 0.3rem 0.3rem;
+  padding: 30px 0 30px 30px;
   display: flex;
   position: relative;
 }
 .logistics-goods-pic {
-  width: 1.14rem;
-  height: 1.14rem;
-  border-radius: 0.04rem;
+  width: 114px;
+  height: 114px;
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
 }
@@ -81,45 +81,45 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 0.4rem;
+  height: 40px;
   text-align: center;
-  line-height: 0.4rem;
+  line-height: 40px;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
-  font-size: 0.22rem;
+  font-size: 22px;
 }
 .logistics-tip {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 0.2rem;
+  margin-left: 20px;
   color: #222;
 }
 .logistics-tip div {
-  line-height: 0.57rem;
+  line-height: 57px;
 }
 .copy-btn {
   position: absolute;
-  right: 0.2rem;
-  bottom: 0.27rem;
-  padding: 0.1rem;
+  right: 20px;
+  bottom: 27px;
+  padding: 10px;
 }
 .copy-text {
-  height: 0.32rem;
-  line-height: 0.28rem;
-  width: 0.58rem;
+  height: 32px;
+  line-height: 28px;
+  width: 58px;
   color: #ffa110;
-  font-size: 0.22rem;
+  font-size: 22px;
   text-align: center;
-  border: 0.02rem solid #ffa110;
+  border: 2px solid #ffa110;
 }
 .no-logistics {
-  line-height: 1.26rem;
+  line-height: 126px;
   text-align: center;
 }
 .logistics-body {
   position: relative;
-  padding: 0.3rem 0.4rem 0 0.42rem;
+  padding: 30px 40px 0 42px;
   overflow: hidden;
 }
 .logistics-list {
@@ -129,31 +129,31 @@ export default {
 }
 .logistics-item {
   position: relative;
-  padding: 0 0 0.44rem 0.5rem;
+  padding: 0 0 44px 50px;
 }
 .item-msg {
-  line-height: 0.46rem;
+  line-height: 46px;
 }
 .logistics-item:first-child .item-msg {
   color: #222;
 }
 .item-time {
-  font-size: 0.24rem;
-  line-height: 0.38rem;
+  font-size: 24px;
+  line-height: 38px;
   color: #999;
 }
 .item-icon-box {
   position: absolute;
   left: 0;
-  top: 0.06rem;
-  width: 0.16rem;
-  height: 0.36rem;
+  top: 6px;
+  width: 16px;
+  height: 36px;
   background-color: #fff;
-  padding: 0.1rem 0;
+  padding: 10px 0;
 }
 .item-icon {
-  width: 0.16rem;
-  height: 0.16rem;
+  width: 16px;
+  height: 16px;
   background-color: #aaa;
   border-radius: 50%;
 }
@@ -165,9 +165,9 @@ export default {
 }
 .logistics-line {
   position: absolute;
-  top: 0.42rem;
-  bottom: 0.40rem;
-  left: 0.5rem;
+  top: 42px;
+  bottom: 40px;
+  left: 50px;
   width: 1px;
   background-color: #aaa;
 }

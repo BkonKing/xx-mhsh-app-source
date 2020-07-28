@@ -109,80 +109,80 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 
 .logistics-list {
-  margin-top: 0.3rem;
+  margin-top: 30px;
 }
 .logistics-item {
   overflow: hidden;
-  margin-bottom: 0.3rem;
+  margin-bottom: 30px;
 }
 .item-header {
-  width: 6.5rem;
+  width: 650px;
   margin: 0 auto;
-  min-height: 0.9rem;
+  min-height: 90px;
   border-bottom: 1px solid #f0f0f0;
   position: relative;
 }
 .wxchart-code {
   position: absolute;
-  top: 0.23rem;
-  right: 0.05rem;
-  width: 0.44rem;
-  height: 0.44rem;
+  top: 23px;
+  right: 5px;
+  width: 44px;
+  height: 44px;
 }
 .logistics-name {
-  height: 0.8rem;
-  line-height: 0.9rem;
+  height: 80px;
+  line-height: 90px;
   color: #222;
   overflow: hidden;
 }
 .logistics-info {
   position: relative;
   color: #999999;
-  padding: 0 0 0.2rem 0.6rem;
+  padding: 0 0 20px 60px;
 }
 .logistics-icon-circular {
   position: absolute;
-  top: 0.14rem;
-  left: 0.12rem;
-  width: 0.16rem;
-  height: 0.16rem;
+  top: 14px;
+  left: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background-color: #383838;
 }
 .logistics-icon-line {
   position: absolute;
-  top: 0.41rem;
-  bottom: 0.3rem;
-  left: 0.2rem;
-  width: 1px;
+  top: 41px;
+  bottom: 30px;
+  left: 20px;
+  width: 100px;
   border-radius: 50%;
   background-color: #aaa;
 }
 .logistics-text {
-  line-height: 0.44rem;
+  line-height: 44px;
 }
 .logistics-time {
-  font-size: 0.24rem;
-  line-height: 0.4rem;
+  font-size: 24px;
+  line-height: 40px;
 }
 .item-pic-list {
-  width: 6.7rem;
+  width: 670px;
   display: flex;
-  padding: 0.3rem 0 0.1rem;
+  padding: 30px 0 10px;
   margin: 0 auto;
   flex-wrap: wrap;
 }
 .item-pic-item {
-  width: 1.14rem;
-  height: 1.14rem;
-  border-radius: 0.04rem;
+  width: 114px;
+  height: 114px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
-  margin: 0 0.1rem 0.2rem;
+  margin: 0 10px 20px;
 }
 </style>

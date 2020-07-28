@@ -151,12 +151,12 @@ export default {
 @import '../../../styles/nav.css';
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 28px;
 }
 /* 导航 start */
 .nav-item.cur::after {
-  width: 0.66rem;
-  margin-left: -0.33rem;
+  width: 66px;
+  margin-left: -33px;
 }
 /* 导航 end */
 /*.nav-item:nth-child(1).cur::after,.nav-item:nth-child(5).cur::after {

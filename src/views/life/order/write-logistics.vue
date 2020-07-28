@@ -63,7 +63,7 @@
 					</div>
 					<div class="common-item-right">
 						<div class="color-8f8f94 font-28">请选择</div>
-						<van-icon class="van-icon" name="arrow" size="0.32rem" color="#aaa" />
+						<van-icon class="van-icon" name="arrow" size="32px" color="#aaa" />
 						<!-- <img class="common-item-arrow" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode=""/> -->
 					</div>
 				</div>
@@ -74,7 +74,7 @@
 					</div>
 					<div class="common-item-right">
 						<div class="common-item-code">
-							<van-icon class="van-icon" name="scan" size="0.52rem" color="#383838" />
+							<van-icon class="van-icon" name="scan" size="52px" color="#383838" />
 						</div>
 					</div>
 				</div>
@@ -121,9 +121,9 @@
 					</div>
 					<div class="pic-item">
 						<div class="upload-pic">
-							<!-- <van-icon class="van-icon" name="plus" size="0.52rem" color="#aaa" /> -->
+							<!-- <van-icon class="van-icon" name="plus" size="0.52px" color="#aaa" /> -->
 							<van-uploader :after-read="onRead">
-							  <van-icon class="van-icon" name="plus" size="0.52rem" color="#aaa" />
+							  <van-icon class="van-icon" name="plus" size="52px" color="#aaa" />
 							</van-uploader>
 						</div>
 					</div>
@@ -158,40 +158,40 @@ export default {
 @import '../../../styles/life.css';
 @import '../../../styles/order.css';
 .goods-session {
-	margin-top: 0.3rem;
-	padding: 0.4rem 0.3rem 0.1rem;
+	margin-top: 30px;
+	padding: 40px 30px 10px;
 }
 .order-name-text,.order-sku-text {
-	max-width: 5rem;
+	max-width: 500px;
 }
 .common-item-code {
-	width: 0.8rem;
-	height: 0.8rem;
+	width: 80px;
+	height: 80px;
 	display: flex;
 	justify-content: flex-end;
 	align-items:center;
 }
 .code-pic {
-	width: 0.44rem;
-	height: 0.44rem;
+	width: 44px;
+	height: 44px;
 }
 
 .common-list-pic {
 	padding-right: 0;
 }
 .pic-list {
-	height: 1.94rem;
+	height: 194px;
 	display: flex;
 	justify-content: flex-start;
 }
 .pic-item {
-	width: 1.34rem;
-	height: 1.34rem;
+	width: 134px;
+	height: 134px;
 	position: relative;
 }
 .pic-url,.upload-pic {
-	width: 1.14rem;
-	height: 1.14rem;
+	width: 114px;
+	height: 114px;
 	position: absolute;
 	z-index: 2;
 	left: 0;
@@ -201,27 +201,27 @@ export default {
 	position: absolute;
 	top: 0;
 	right: 0;
-	width: 0.54rem;
-	height: 0.54rem;
+	width: 54px;
+	height: 54px;
 	justify-content: center;
 	align-items: center;
 	z-index: 5;
 }
 .del-bg {
-	width: 0.34rem;
-	height: 0.34rem;
-	border-radius: 0.17rem;
+	width: 34px;
+	height: 34px;
+	border-radius: 17px;
 	background-color: #eb5841;
 	z-index: 5;
 	position: relative;
 }
 .del-line {
-	width: 0.2rem;
-	height: 0.02rem;
-	border-radius: 0.01rem;
+	width: 20px;
+	height: 2px;
+	border-radius: 1px;
 	position: absolute;
-	top: 0.16rem;
-	left: 0.07rem;
+	top: 16px;
+	left: 7px;
 	background-color: #fff;
 }
 .upload-pic {
@@ -232,6 +232,6 @@ export default {
 }
 .upload-add {
 	color: #aaa;
-	font-size: 0.6rem;
+	font-size: 60px;
 }
 </style>

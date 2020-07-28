@@ -236,21 +236,21 @@ export default {
 @import '../../../styles/order.css';
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 28px;
 	width: 100%;
 	overflow: hidden;
 }
 
 .collage-header {
-  height: 1.2rem;
-  padding: 0 0.3rem;
+  height: 120px;
+  padding: 0 30px;
   color: #222222;
-  font-size: 0.3rem;
+  font-size: 30px;
 }
 .collage-header span {
-	font-size: 0.34rem;
+	font-size: 34px;
 	font-weight: bold;
-	margin-right: 0.08rem;
+	margin-right: 8px;
 }
 .collage-ing .collage-header {
   background-color: #d2ebff;
@@ -264,10 +264,10 @@ export default {
 }
 .collage-step {
 	border-bottom: 1px dashed #aaa;
-  height: 0.83rem;
-  font-size: 0.22rem;
+  height: 83px;
+  font-size: 22px;
   color: #222;
-  width: 6.5rem;
+  width: 650px;
   margin: 0 auto;
 }
 .collage-step div {
@@ -277,53 +277,53 @@ export default {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.09rem 0 0.09rem 0.1rem;
+  border-width: 9px 0 9px 10px;
   border-color: transparent transparent transparent #383838;
 }
 .collage-num {
-	margin: 0.12rem 0 0 0.3rem;
-	font-size: 0.24rem;
-	height: 0.62rem;
+	margin: 12px 0 0 30px;
+	font-size: 24px;
+	height: 62px;
 }
 .collage-user {
-  width: 6.72rem;
+  width: 672px;
   margin: 0 auto;
-  padding-bottom: 0.3rem;
+  padding-bottom: 30px;
 }
 .collage-user-info {
-  width: 1.12rem;
-  height: 1.3rem;
+  width: 112px;
+  height: 130px;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
 }
 .collage-user-photo {
-  width: 0.88rem;
-  height: 0.88rem;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
 }
 .collage-user-name {
   width: 100%;
-  line-height: 0.42rem;
+  line-height: 42px;
   text-align: center;
   color: #8f8f94;
-  font-size: 0.22rem;
+  font-size: 22px;
 }
 .collage-mask {
 	position: absolute;
 	top: 0;
 	left: 50%;
-	margin-left: -0.44rem;
-	width: 0.88rem;
-	height: 0.88rem;
+	margin-left: -44px;
+	width: 88px;
+	height: 88px;
 	background-color: rgba(0,0,0,0.5);
 	border-radius: 50%;
 }
 .collage-mask span {
-	width: 0.08rem;
-	height: 0.08rem;
-	margin: 0 0.05rem;
+	width: 8px;
+	height: 8px;
+	margin: 0 5px;
 	background-color: #fff;
 	border-radius: 50%;
 }

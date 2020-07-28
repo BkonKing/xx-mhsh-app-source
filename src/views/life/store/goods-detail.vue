@@ -157,13 +157,13 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 /*轮播*/
 .banner {
   width: 100%;
-  height: 7.5rem;
+  height: 750px;
   position: relative;
 }
 .banner .van-swipe {
@@ -175,178 +175,178 @@ export default {
 }
 .custom-indicator {
   position: absolute;
-  bottom: 0.3rem;
-  right: 0.3rem;
-  width: 0.9rem;
-  height: 0.44rem;
-  border-radius: 0.22rem;
+  bottom: 30px;
+  right: 30px;
+  width: 90px;
+  height: 44px;
+  border-radius: 22px;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
-  font-size: 0.24rem;
+  font-size: 24px;
 }
 
 .goods-session {
   background-color: #fff;
-  margin-bottom: 0.3rem;
+  margin-bottom: 30px;
 }
 .goods-info {
-  padding: 0.3rem 0.3rem 0.4rem;
+  padding: 30px 30px 40px;
 }
 .goods-name {
   color: #222;
-  font-size: 0.34rem;
-  line-height: 0.52rem;
+  font-size: 34px;
+  line-height: 52px;
   font-weight: bold;
   text-align: center;
 }
 .goods-price {
-  line-height: 0.92rem;
-  margin-top: 0.1rem;
+  line-height: 92px;
+  margin-top: 10px;
   color: #eb5841;
-  font-size: 0.42rem;
+  font-size: 42px;
   text-align: center;
 }
 .happy-block {
-  height: 0.6rem;
+  height: 60px;
   display: flex;
 }
 .happy-coin {
-  line-height: 0.6rem;
-  height: 0.6rem;
+  line-height: 60px;
+  height: 60px;
   color: #ffa110;
-  font-size: 0.24rem;
-  padding: 0 0.28rem;
+  font-size: 24px;
+  padding: 0 28px;
   background-color: #fff5e7;
   margin: 0 auto;
-  border-radius: 0.3rem;
+  border-radius: 30px;
 }
 
 .link-icon {
-  width: 0.15rem;
-  height: 0.26rem;
+  width: 15px;
+  height: 26px;
 }
 .goods-tip {
-  padding: 0.2rem 0;
+  padding: 20px 0;
   color: #8f8f94;
-  font-size: 0.26rem;
+  font-size: 26px;
 }
 .tip-left {
-  width: 1rem;
-  line-height: 0.44rem;
+  width: 100px;
+  line-height: 44px;
 }
 .tip-left img {
-  width: 0.28rem;
-  height: 0.28rem;
+  width: 28px;
+  height: 28px;
 }
 .tip-right{
-  line-height: 0.44rem;
+  line-height: 44px;
 }
 .logistics-left {
-  padding-left: 0.3rem;
+  padding-left: 30px;
 }
 
 .goods-cont-tit {
-  line-height: 1.1rem;
+  line-height: 110px;
   text-align: center;
-  font-size: 0.34rem;
+  font-size: 34px;
   color: #383838;
 }
 
 /*基础保障*/
 .ensure-mask {
   background-color: #fff;
-  border-radius: 0.1rem 0.1rem 0 0;
+  border-radius: 10px 10px 0 0;
   z-index: 102;
-  padding: 0 0.3rem 0.4rem;
+  padding: 0 30px 40px;
   color: #222;
 }
 .ensure-header {
-  height: 1.12rem;
-  line-height: 1.12rem;
+  height: 112px;
+  line-height: 112px;
   text-align: center;
-  font-size: 0.34rem;
+  font-size: 34px;
   font-weight: bold;
   position: relative;
 }
 /*.ensure-list {
-  padding: 0 0.32rem;
+  padding: 0 0.32px;
 }*/
 .ensure-tit {
-  font-size: 0.3rem;
-  height: 0.44rem;
+  font-size: 30px;
+  height: 44px;
 }
 .ensure-tit img {
-  width: 0.44rem;
-  height: 0.44rem;
-  margin-right: 0.20rem;
+  width: 44px;
+  height: 44px;
+  margin-right: 20px;
 }
 .ensure-cont {
-  padding: 0.12rem 0 0.30rem 0.64rem;
-  line-height: 0.4rem;
+  padding: 12px 0 30px 64px;
+  line-height: 40px;
   color: #8f8f94;
-  font-size: 0.26rem;
+  font-size: 26px;
 }
 /*.ensure-mask .shops-btn {
-  margin: 0.16rem auto;
+  margin: 0.16px auto;
 }*/
 .shop-dclose {
   display: flex;
   position: absolute;
-  top: -0.9rem;
-  right: 0.2rem;
-  width: 0.7rem;
-  height: 0.7rem;
-  padding: 0.1rem;
+  top: -90px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  padding: 10px;
 }
 .ensure-mask .submit-btn {
   color: #fff;
-  font-size: 0.3rem;
+  font-size: 30px;
 }
 
 /* 操作 start */
 .fixed-empty {
-  height: 0.58rem;
+  height: 58px;
 }
 .operate-session {
   display: flex;
-  height: 0.98rem;
+  height: 98px;
   z-index: 20;
   background-color: #fff;
 }
 .kf-btn,.cart-btn {
-  width: 1rem;
+  width: 100px;
   height: 100%;
   position: relative;
 }
 .cart-num {
   position: absolute;
-  top: 0.06rem;
-  left: 0.39rem;
-  min-width: 0.34rem;
-  height: 0.34rem;
-  line-height: 0.34rem;
-  border-radius: 0.17rem;
+  top: 6px;
+  left: 39px;
+  min-width: 34px;
+  height: 34px;
+  line-height: 34px;
+  border-radius: 17px;
   background-color: #eb5841;
   text-align: center;
   color: #fff;
-  font-size: 0.24rem;
-  padding: 0 0.05rem;
+  font-size: 24px;
+  padding: 0 5px;
 }
 .operate-session img {
-  width: 0.44rem;
-  height: 0.44rem;
+  width: 44px;
+  height: 44px;
 }
 .cart-btn img {
-  margin-left: -0.16rem;
+  margin-left: -16px;
 }
 .add-btn,.buy-btn {
-  width: 2.75rem;
+  width: 275px;
   height: 100%;
   flex-grow: 1;
   text-align: center;
-  line-height: 0.98rem;
+  line-height: 98px;
   color: #fff;
-  font-size: 0.3rem;
+  font-size: 30px;
 }
 .add-btn {
   background-color: #ffc017;

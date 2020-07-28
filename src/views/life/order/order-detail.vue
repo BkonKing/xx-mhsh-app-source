@@ -197,7 +197,7 @@ export default {
 @import '../../../styles/order.css';
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 28px;
 	width: 100%;
 	overflow: hidden;
 }

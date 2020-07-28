@@ -208,23 +208,23 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 
 /*菜单*/
 .flash-scroll {
-  height: 2.18rem;
+  height: 218px;
   background-image: linear-gradient(to right, #ffa912, #ffa812);
   position: relative;
 }
 /*倒计时*/
 .flash-time {
-  width: 7.1rem;
-  height: 1rem;
-  margin: 0.3rem auto;
+  width: 710px;
+  height: 1px;
+  margin: 30 auto;
   background-color: #fff;
-  border-radius: 0.1rem;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -232,31 +232,31 @@ export default {
 }
 .count-icon {
   position: absolute;
-  top: -0.44rem;
-  left: 0.42rem;
-  width: 0.28rem;
-  height: 0.82rem;
+  top: -44px;
+  left: 42px;
+  width: 28px;
+  height: 82px;
 }
 .count-icon-right {
   left: auto;
-  right: 0.42rem;
+  right: 42px;
 }
 .count-rectangle {
   position: absolute;
   top: 0;
-  left: 0.08rem;
-  width: 0.12rem;
-  height: 0.66rem;
+  left: 8px;
+  width: 12px;
+  height: 66px;
   background-color: #383838;
-  border-radius: 0.06rem;
+  border-radius: 6px;
   z-index: 5;
 }
 .count-circular {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0.28rem;
-  height: 0.28rem;
+  width: 28px;
+  height: 28px;
   background-image: radial-gradient(#f2f2f4, #e2e2e4);
   border-radius:50%;
   z-index: 3;
@@ -265,100 +265,100 @@ export default {
   color: #999;
 }*/
 .flash-time-text {
-  margin-right: 0.3rem;
+  margin-right: 30px;
 }
 .count-time {
   display: flex;
 }
 .count-num {
-  width: 0.66rem;
-  height: 0.5rem;
-  line-height: 0.5rem;
+  width: 66px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   background-color: #383838;
-  border-radius: 0.1rem;
+  border-radius: 10px;
   color: #fff;
-  font-size: 0.3rem;
+  font-size: 30px;
 }
 .count-colon {
-  height: 0.5rem;
-  width: 0.3rem;
+  height: 50px;
+  width: 30px;
   position: relative;
 }
 .count-colon::before,.count-colon::after {
   content: '';
   position: absolute;
-  width: 0.06rem;
-  height: 0.06rem;
+  width: 6px;
+  height: 6px;
   background-color: #383838;
   border-radius: 50%;
-  left: 0.12rem;
+  left: 12px;
 }
 .count-colon::before {
-  top: 0.14rem;
+  top: 14px;
 }
 .count-colon::after {
-  bottom: 0.14rem;
+  bottom: 14px;
 }
 /* 列表 */
 .flash-list {
-  width: 7.1rem;
-  margin: 0.3rem auto 0;
+  width: 710px;
+  margin: 30rem auto 0;
   overflow: hidden;
 }
 .flash-item {
-  border-radius: 0.1rem;
+  border-radius: 10px;
   overflow: hidden;
   background-color: #fff;
   position: relative;
-  margin-bottom: 0.3rem;
+  margin-bottom: 30px;
 }
 .item-small.flash-item {
-  padding: 0.3rem;
+  padding: 30px;
   display: flex;
   justify-content: space-between;
 }
 .flash-goods-pic {
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 230px;
+  height: 230px;
 }
 .flash-goods-info {
-  width: 3.98rem;
+  width: 398px;
   position: relative;
 }
 .flash-goods-name {
   color: #333;
-  line-height: 0.42rem;
-  height: 0.84rem;
+  line-height: 42px;
+  height: 84px;
 }
 .goods-tip-block {
   display: flex;
-  height: 0.34rem;
-  margin: 0.23rem 0 0.08rem;
+  height: 34px;
+  margin: 23rem 0 8px;
 }
 .goods-tip {
-  font-size: 0.2rem;
+  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.17rem;
+  border-radius: 17px;
   overflow: hidden;
 }
 .tip-pd {
   border: 1px solid #eb5841;
   color: #eb5841;
-  width: 1rem;
+  width: 1px;
 }
 .flash-goods-price {
-  height: 0.78rem;
-  line-height: 0.78rem;
-  font-size: 0.42rem;
+  height: 78px;
+  line-height: 78px;
+  font-size: 42px;
   color: #eb5841;
   font-weight: bold;
 }
 .flash-goods-price span {
   font-weight: normal;
-  font-size: 0.24rem;
+  font-size: 24px;
 }
 .goods-price-span2 {
   color: #999999;
@@ -366,19 +366,19 @@ export default {
 }
 .item-btn {
   position: absolute;
-  right: 0.2rem;
-  bottom: 0.3rem;
-  width: 1.6rem;
-  height: 0.86rem;
-  padding: 0.1rem;
+  right: 20px;
+  bottom: 30px;
+  width: 160px;
+  height: 86px;
+  padding: 10px;
 }
 .item-btn div {
   height: 100%;
-  line-height: 0.66rem;
+  line-height: 66px;
   color: #ffffff;
   text-align: center;
-  border-radius: 0.1rem;
-  font-size: 0.26rem;
+  border-radius: 10px;
+  font-size: 26px;
 }
 .btn-flash {
   background: linear-gradient(to right, #ffa110 , #ffbf17);
@@ -387,11 +387,11 @@ export default {
   background: linear-gradient(to right, #eb5842 , #f9856a);
 }
 .item-btn .btn-remind {
-  border: 0.02rem solid #ffa110;
+  border: 2px solid #ffa110;
   color: #ffa110;
 }
 .item-btn .btn-remind-isset {
-  border: 0.02rem solid #aaa;
+  border: 2px solid #aaa;
   color: #8f8f94;
 }
 .item-btn .btn-over {
@@ -401,59 +401,59 @@ export default {
   text-align: right;
 }
 .btn-remind img {
-  width: 0.36rem;
-  height: 0.38rem;
-  margin-right: 0.1rem;
+  width: 36px;
+  height: 38px;
+  margin-right: 10px;
 }
 .item-big {
-  padding: 0.3rem;
+  padding: 30px;
 }
 .item-big .flash-goods-pic {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 0.2rem;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 20px;
 }
 .item-big .flash-goods-info {
   width: 100%;
   text-align: center;
 }
 .item-big .flash-goods-name {
-  line-height: 0.46rem;
-  height: 0.46rem;
-  font-size: 0.3rem;
+  line-height: 46px;
+  height: 46px;
+  font-size: 30px;
 }
 .item-big .flash-goods-price {
-  height: 0.72rem;
-  margin-left: 0.2rem;
+  height: 72px;
+  margin-left: 20px;
 }
 .item-big .flash-price-tip {
-  height: 0.72rem;
+  height: 72px;
 }
 .item-big .item-btn {
   position: inherit;
-  width: 2.60rem;
-  height: 0.66rem;
+  width: 260px;
+  height: 66px;
   margin: 0 auto;
   padding: 0;
   bottom: 0;
   right: 0;
 }
 .item-big .item-btn div {
-  font-size: 0.28rem;
+  font-size: 28px;
 }
 .item-big .btn-remind image {
-  width: 0.36rem;
-  height: 0.38rem;
-  margin-right: 0.10rem;
+  width: 36px;
+  height: 38px;
+  margin-right: 10px;
 }
 /*弹窗*/
 .mask-block {
-  height: 2.73rem;
-  padding: 0 0.5rem;
+  height: 273px;
+  padding: 0 50px;
 }
 .mask-tit {
-  height: 1.47rem;
-  font-size: 0.3rem;
+  height: 147px;
+  font-size: 30px;
   color: #000;
 }
 </style>

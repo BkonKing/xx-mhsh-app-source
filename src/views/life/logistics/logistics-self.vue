@@ -49,24 +49,24 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 .block-session {
-  margin-bottom: 0.3rem;
+  margin-bottom: 30px;
 }
 .logistics-goods {
-  margin-top: 0.3rem;
+  margin-top: 30px;
 }
 .logistics-goods {
-  padding: 0.3rem 0 0.3rem 0.3rem;
+  padding: 30px 0 30px 30px;
   display: flex;
   position: relative;
 }
 .logistics-goods-pic {
-  width: 1.14rem;
-  height: 1.14rem;
-  border-radius: 0.04rem;
+  width: 114px;
+  height: 114px;
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
 }
@@ -75,22 +75,22 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 0.4rem;
+  height: 40px;
   text-align: center;
-  line-height: 0.4rem;
+  line-height: 40px;
   background-color: rgba(0,0,0,0.5);
   color: #fff;
-  font-size: 0.22rem;
+  font-size: 22px;
 }
 .logistics-tip {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 0.2rem;
+  margin-left: 20px;
   color: #222;
 }
 .logistics-tip div {
-  line-height: 0.57rem;
+  line-height: 57px;
 }
 .logistics-code {
   display: flex;
@@ -99,32 +99,32 @@ export default {
 }
 .logistics-success {
   align-items: center;
-  height: 1.47rem;
+  height: 147px;
 }
 .code-tip {
   color: #8f8f94;
-  line-height: 0.86rem;
-  margin-top: 0.5rem;
+  line-height: 86px;
+  margin-top: 50px;
 }
 .code-pic {
-  width: 3.8rem;
-  height: 3.8rem;
-  margin-bottom: 0.82rem;
+  width: 380px;
+  height: 380px;
+  margin-bottom: 82px;
 }
 .logistics-tick {
-  width: 0.36rem;
-  height: 0.36rem;
-  margin: 0 0.3rem;
+  width: 36px;
+  height: 36px;
+  margin: 0 30px;
 }
 .logistics-status {
-  width: 6.14rem;
-  line-height: 0.5rem;
+  width: 614px;
+  line-height: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .logistics-status div {
-  line-height: 0.46rem;
+  line-height: 46px;
 }
 
 </style>

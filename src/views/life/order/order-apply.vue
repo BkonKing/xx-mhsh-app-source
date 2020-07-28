@@ -68,29 +68,29 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 .apply-tit {
-	padding: 0.1rem 0 0 0.5rem;
-	line-height: 0.82rem;
+	padding: 10px 0 0 50px;
+	line-height: 82px;
 	color: #222;
-	font-size: 0.24rem;
+	font-size: 24px;
 }
 .common-list {
-	padding: 0.1rem 0.3rem;
+	padding: 10px 30px;
 }
 .common-item {
-	height: 1.32rem;
+	height: 132px;
 }
 .common-item:first-child {
 	border-top: 0;
 }
 .link-icon {
-	width: 0.15rem;
-	height: 0.26rem;
+	width: 15px;
+	height: 26px;
 }
 .item-left div {
-	line-height: 0.46rem;
+	line-height: 46px;
 }
 </style>

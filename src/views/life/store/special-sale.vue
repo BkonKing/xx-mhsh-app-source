@@ -87,63 +87,63 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 
 .special-nav {
-  height: 0.98rem;
+  height: 98px;
   background-color: #fff;
 }
 .special-list {
-  width: 7.1rem;
-  margin: 0.3rem auto;
+  width: 710px;
+  margin: 30px auto;
   flex-wrap: wrap;
 }
 .special-item {
-  width: 3.45rem;
-  min-height: 5.33rem;
+  width: 345px;
+  min-height: 533px;
   background-color: #fff;
-  margin-bottom: 0.3rem;
-  border-radius: 0.1rem;
+  margin-bottom: 30px;
+  border-radius: 10px;
   overflow: hidden;
 }
 .special-goods-pic {
   width: 100%;
-  height: 3.45rem;
+  height: 345px;
   display: flex;
 }
 .special-goods-name {
-  font-size: 0.26rem;
+  font-size: 26px;
   color: #222;
-  line-height: 0.44rem;
-  height: 0.88rem;
-  padding: 0 0.2rem;
-  margin: 0.11rem 0;
+  line-height: 44px;
+  height: 88px;
+  padding: 0 20px;
+  margin: 11px 0;
 }
 .special-goods-price {
-  height: 0.48rem;
+  height: 48px;
 }
 .goods-price-bg {
-  height: 0.48rem;
-  min-width: 1.78rem;
-  padding-right: 0.12rem;
-  padding-left: 0.2rem;
+  height: 48px;
+  min-width: 178px;
+  padding-right: 12px;
+  padding-left: 20px;
   color: #fff;
-  font-size: 0.24rem;
+  font-size: 24px;
   background-image: linear-gradient(to right, #eb5841, #f88469);
 }
 .goods-price-bg span {
-  font-size: 0.34rem;
+  font-size: 34px;
 }
 .goods-price-triangle {
-  width: 0.14rem;
-  height: 0.48rem;
+  width: 14px;
+  height: 48px;
 }
 .goods-old-price {
   color: #8f8f94;
-  font-size: 0.24rem;
+  font-size: 24px;
   text-decoration: line-through;
-  margin-left: 0.08rem;
+  margin-left: 8px;
 }
 </style>
