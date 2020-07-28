@@ -184,5 +184,5 @@ export default {
   overflow: hidden;
   display: flex;
   margin: 0 10px 20px;
-}
+} 
 </style>
