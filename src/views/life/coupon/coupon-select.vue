@@ -175,18 +175,18 @@ export default {
 @import '../../../styles/coupon.css';
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 28px;
 }
 .coupon-list .coupon-item:first-child {
 	margin-top: 0;
 }
 .coupon-num {
-  padding-top: 0.1rem;
-  line-height: 0.88rem;
-  font-size: 0.3rem;
-  padding-left: 0.5rem;
+  padding-top: 10px;
+  line-height: 88px;
+  font-size: 30px;
+  padding-left: 50px;
   color: #222;
-  font-size: 0.3rem;
+  font-size: 30px;
   font-weight: bold;
 }
 .coupon-num span {
@@ -194,6 +194,6 @@ export default {
   font-weight: normal;
 }
 .coupon-num.unable-num {
-	padding-top: 0.5rem;
+	padding-top: 50px;
 }
 </style>

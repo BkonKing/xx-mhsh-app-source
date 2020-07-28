@@ -1,65 +1,65 @@
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 8px;
 	overflow: hidden;
 }
 
 .cont-session {
-	width: 7.1rem;
+	width: 710px;
 	background-color: #fff;
-	margin: 0 auto 0.3rem;
-	border-radius: 0.1rem;
+	margin: 0 auto 30px;
+	border-radius: 10px;
 	position: relative;
 	overflow: hidden;
 }
 /* 列表 */
 .goods-session {
-	padding: 0.4rem 0.3rem 0;
+	padding: 40px 30px 0;
 }
 .order-list {
-  padding: 0.3rem 0.2rem;
+  padding: 30px 20px;
 }
 .order-item {
-	padding: 0 0.3rem;
-  min-height: 3.7rem;
-  border-radius: 0.1rem;
+	padding: 0 30px;
+  min-height: 370px;
+  border-radius: 10px;
   overflow: hidden;
 	background-color: #fff;
-	margin: 0 auto 0.3rem;
+	margin: 0 auto 30px;
 }
 .order-header {
-  height: 0.9rem;
+  height: 90px;
 	display: flex;
   align-items: center;
   border-bottom: 1px solid #f0f0f0;
-	margin-bottom: 0.3rem;
+	margin-bottom: 30px;
 }
 .order-no {
-  width: 4.8rem;
+  width: 480px;
   color: #8f8f94;
 }
 .order-status {
   text-align: right;
-	width: 1.7rem;
+	width: 170px;
 	color: #eb5841;
 }
 .order-goods-info {
-  margin-bottom: 0.3rem;
-  min-height: 1.3rem;
+  margin-bottom: 30px;
+  min-height: 130px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
 .order-pic-block {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 130px;
+  height: 130px;
   display: flex;
   overflow: hidden;
-  border-radius: 0.04rem;
+  border-radius: 4px;
   overflow: hidden;
 }
 .order-info {
-  width: 5rem;
+  width: 500px;
 	flex-wrap: wrap;
 }
 .order-name-price,.order-sku-num,.order-action-session {
@@ -69,25 +69,25 @@
 }
 .order-name-price {
 	width: 100%;
-  height: 0.46rem;
+  height: 6px;
   color: #222222;
 }
 .order-sku-num {
-  height: 0.44rem;
+  height: 4px;
   color: #8f8f94;
-	font-size: 0.24rem;
+	font-size: 4px;
 }
 .order-action-session {
-	height: 0.4rem;
-	line-height: 0.3rem;
-	padding-top: 0.1rem;
-	font-size: 0.24rem;
+	height: 40px;
+	line-height: 30px;
+	padding-top: 10px;
+	font-size: 4px;
 	color: #eb5841;
 }
 .order-buy-num {
 	text-align: right;
 	color: #8f8f94;
-	font-size: 0.24rem;
+	font-size: 4px;
 }
 .order-action-text {
 	display: flex;
@@ -97,152 +97,152 @@
 	color: #8f8f94;
 }
 .order-name,.order-sku {
-  max-width: 3.4rem;
+  max-width: 340px;
 }
 .order-action-btn {
-	width: 0.5rem;
-	height: 0.5rem;
-	padding: 0.1rem;
-	margin-top: -0.1rem;
+	width: 50px;
+	height: 50px;
+	padding: 10px;
+	margin-top: -10px;
 }
 .order-goods-btn {
 	width: 100%;
-	height: 0.66rem;
-	margin-top: 0.16rem;
+	height: 6px;
+	margin-top: 6px;
 	display: flex;
 	justify-content: flex-end;
 }
 
 .order-footer {
-	min-height: 0.92rem;
+	min-height: 2px;
 	border-top: 1px solid #f0f0f0;
 }
 .order-total {
-	height: 0.8rem;
+	height: 80px;
 	text-align: right;
-	padding-top: 0.15rem;
+	padding-top: 5px;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
 	color: #8f8f94;
-	font-size: 0.24rem;
+	font-size: 4px;
 }
 .order-price-total {
-	margin-left: 0.18rem;
+	margin-left: 8px;
 	display: flex;
 	align-items: center;
 }
 .order-price-total span {
 	font-weight: bold;
 	color: #222222;
-	font-size: 0.34rem;
+	font-size: 4px;
 }
 .order-btn-box {
-	padding-bottom: 0.3rem;
+	padding-bottom: 30px;
 	display: flex;
 	justify-content: flex-end;
 }
 .order-border-btn {
-	height: 0.66rem;
-	min-width: 1.58rem;
-	border-radius: 0.06rem;
+	height: 6px;
+	min-width: 158px;
+	border-radius: 6px;
 	border: 1px solid #aaa;
-	padding: 0 0.2rem;
+	padding: 0 20px;
 	display: flex;
 	align-items: center;
 	color: #8f8f94;
-	margin-left: 0.2rem;
+	margin-left: 20px;
 }
 .paid-btn {
 	border-width: 0;
 	background-color: #eb5841;
 	color: #fff;
-	font-size: 0.26rem;
+	font-size: 6px;
 }
 	
 .toggle-btn {
-	height: 0.66rem;
-	margin-top: -0.3rem;
+	height: 6px;
+	margin-top: -30px;
 }
 
 
 /* 订单详情 */
 .order-session {
 	position: relative;
-	padding: 0 0.2rem;
+	padding: 0 20px;
 }
 .order-header-bg {
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 2.8rem;
+	height: 280px;
 	background-image: linear-gradient(to right, #f9866b, #eb5841);
 }
 .order-status-session {
-	height: 1.74rem;
+	height: 174px;
 	text-align: center;
-	padding-top: 0.26rem;
+	padding-top: 6px;
 	position: relative;
 	z-index: 6;
 }
 .order-status-name {
-	line-height: 0.66rem;
-	font-size: 0.38rem;
+	line-height: 6px;
+	font-size: 8px;
 	font-weight: bold;
 	color: #fefefe;
 }
 .order-status-tip {
-	line-height: 0.56rem;
-	font-size: 0.28rem;
+	line-height: 6px;
+	font-size: 8px;
 	color: #fefefe;
 }
   /* 订单价格信息 */
 .detail-price-list {
-	padding: 0.16rem 0;
+	padding: 6px 0;
 	border-top: 1px solid #f0f0f0;
 	border-bottom: 1px solid #f0f0f0;
 }
 .detail-price-item {
 	display: flex;
 	justify-content: space-between;
-	height: 0.52rem;
+	height: 2px;
 	align-items: center;
-	font-size: 0.24rem;
+	font-size: 4px;
 	color: #222;
 }
 .flex-sart-item {
 	display: flex;
-	height: 0.52rem;
+	height: 2px;
 	align-items: center;
 }
 .flex-sart-item-left {
-	width: 1.46rem;
+	width: 146px;
 }
 .order-total-detail {
-	height: 0.9rem;
+	height: 90px;
 	padding-top: 0;
 }
 
   /* 收货地址 */
 .address-logistics,.order-remarks {
-	padding: 0 0.3rem;
+	padding: 0 30px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
 .address-logistics {
-	padding: 0.26rem 0.3rem;
+	padding: 6px 30px;
 }
 .shipping-logistics {
-	margin-top: 0.26rem;
-	padding-top: 0.26rem;
+	margin-top: 6px;
+	padding-top: 6px;
 	border-top: 1px solid #f0f0f0;
 }
 .shipping-address-item,.order-remarks-item,.order-message-item {
 	display: flex;
-	height: 0.52rem;
+	height: 2px;
 	align-items: center;
 	position: relative;
 }
@@ -254,119 +254,119 @@
 	align-items: center;
 }
 .shipping-address-item-left,.order-remarks-item-left,.order-message-item-left {
-	width: 1.46rem;
+	width: 146px;
 }
 .shipping-address-item-right,.order-remarks-item-right,.order-message-item-right {
 	display: flex;
-	width: 5.04rem;
+	width: 504px;
 }
 .shipping-address-username {
-	max-width: 2.8rem;
+	max-width: 280px;
 	@extend .p-ellipsis;
 }
 .shipping-address-text,.order-remarks-text {
-	max-width: 5.04rem;
+	max-width: 504px;
 	color: #8f8f94;
-	font-size: 0.24rem;
+	font-size: 4px;
 }
 .shipping-logistics-item-right {
 	position: relative;
-	padding-left: 0.36rem;
+	padding-left: 6px;
 }
 .shipping-address-icon {
 	position: absolute;
 	right: 0;
 	top: 0;
-	width: 0.16rem;
-	height: 0.26rem;
+	width: 6px;
+	height: 6px;
 }
 .shipping-logistics-point {
 	position: absolute;
-	top: 0.16rem;
-	left: 0.08rem;
-	width: 0.08rem;
-	height: 0.08rem;
+	top: 6px;
+	left: 8px;
+	width: 8px;
+	height: 8px;
 	background-color: #aaa;
-	border-radius: 0.04rem;
+	border-radius: 4px;
 }
 .shipping-logistics-line {
 	position: absolute;
-	top: 0.34rem;
-	bottom: 0.1rem;
-	left: 0.11rem;
-	width: 0.02rem;
-	height: 0.36rem;
+	top: 4px;
+	bottom: 10px;
+	left: 1px;
+	width: 2px;
+	height: 6px;
 	background-color: #aaa;
-	border-radius: 0.04rem;
+	border-radius: 4px;
 }
 .shipping-logistics-text {
-	line-height: 0.4rem;
+	line-height: 40px;
 	flex-wrap: wrap;
-	width: 4.66rem;
+	width: 466px;
 	color: #8f8f94;
-	font-size: 0.24rem;
+	font-size: 4px;
 }
 .order-remarks {
-	height: 1.2rem;
+	height: 120px;
 }
    /* 订单信息 */
 .order-message {
-	padding: 0.26rem 0.3rem;
+	padding: 6px 30px;
 	align-items: center;
 	justify-content: center;
 }
 .order-message-item {
-	height: 0.56rem;
+	height: 6px;
 	position: relative;
 }
 .order-tip-item {
-	width: 6.5rem;
+	width: 650px;
 	display: flex;
 	position: relative;
 	justify-content: flex-start;
 	align-items: flex-start;
 }
 .order-tip-item-left {
-	width: 1.46rem;
+	width: 146px;
 }
 .order-tip-item-right {
-	width: 4.66rem;
+	width: 466px;
 }
 .order-tip-text {
-	line-height: 0.56rem;
+	line-height: 6px;
 }
 .van-icon.tip-icon {
 	position: absolute;
 	right: 0;
 	height: 100%;
-	line-height: 0.56rem;
+	line-height: 6px;
 }
 .copy-btn {
 	position: absolute;
-	right: -0.1rem;
+	right: -10px;
 	top: 0;
-	padding: 0.1rem;
+	padding: 10px;
 }
 .copy-text {
-	height: 0.32rem;
-	line-height: 0.28rem;
-	width: 0.58rem;
+	height: 2px;
+	line-height: 8px;
+	width: 8px;
 	color: #ffa110;
-	font-size: 0.22rem;
+	font-size: 2px;
 	text-align: center;
-	border: 0.02rem solid #ffa110;
+	border: 2px solid #ffa110;
 }
   /* 底部按钮 */
 .fixed-empty {
-	height: 1.5rem;
+	height: 150px;
 }
 .btn-fixed-buttom {
 	position: fixed;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	height: 1.2rem;
-	padding-right: 0.2rem;
+	height: 120px;
+	padding-right: 20px;
 	align-items: center;
 	display: flex;
 	justify-content: flex-end;
@@ -376,11 +376,11 @@
 
 /*弹窗*/
 .mask-block {
-	height: 5.28rem;
-	padding: 0 0.5rem;
+	height: 528px;
+	padding: 0 50px;
 }
 .mask-tit {
-	height: 1.2rem;
+	height: 120px;
 	border-bottom-color: #f0f0f0;
 	border-bottom-width: 2px;
 	border-bottom-style: solid;
@@ -389,11 +389,11 @@
 	justify-content: center;
 }
 .mask-cont {
-	margin: 0.58rem 0;
+	margin: 8px 0;
 	overflow: visible;
 }
 .mask-cont-text {
-	line-height: 0.46rem;
+	line-height: 6px;
 }
 .mask-btn div.mask-sure-btn {
 	align-items: center;

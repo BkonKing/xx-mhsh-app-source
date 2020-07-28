@@ -118,12 +118,12 @@ export default {
 @import '../../../styles/coupon.css';
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 0.28rem;
+	font-size: 28px;
 }
 /* 导航 start */
 .nav-item.cur::after {
-  width: 0.92rem;
-  margin-left: -0.46rem;
+  width: 92px;
+  margin-left: -46px;
 }
 /* 导航 end */
 </style>

@@ -1,8 +1,8 @@
 .nav-empty {
-  height: 0.98rem;
+  height: 98px;
 }
 .nav-box {
-  height: 0.98rem;
+  height: 98px;
   width: 100%;
   display: flex;
   position: fixed;
@@ -13,14 +13,14 @@
 }
 .nav-item {
   height: 100%;
-  line-height: 0.98rem;
+  line-height: 98px;
   text-align: center;
   position: relative;
   color: #8f8f94;
   flex: 1;
 }
 .nav-item.cur {
-  font-size: 0.34rem;
+  font-size: 34px;
   color: #222222;
   font-weight: bold;
 }
@@ -29,8 +29,8 @@
   position: absolute;
   left: 50%;
   bottom: 0;
-  height: 0.04rem;
+  height: 4px;
   background-color: #eb5841;
   z-index: 9;
-  border-radius: 0.02rem;
+  border-radius: 2px;
 }

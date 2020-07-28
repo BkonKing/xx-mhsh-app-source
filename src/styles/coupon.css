@@ -1,102 +1,102 @@
 .coupon-list {
   overflow: hidden;
-  /* margin-bottom: 40rem; */
+  /* margin-bottom: 4000px; */
 }
 .coupon-list:last-of-type {
-  padding-bottom: 0.4rem;
+  padding-bottom: 40px;
 }
 .coupon-item {
-  width: 7.1rem;
-  margin: 0.3rem auto 0;
+  width: 710px;
+  margin: 30px auto 0;
   position: relative;
   overflow: hidden;
   background-color: #ebebec;
-  border-radius: 0 0 0.1rem 0.1rem;
+  border-radius: 0 0 10px 10px;
 }
 .coupon-block {
-  height: 1.9rem;
+  height: 190px;
   position: relative;
-  border-radius: 0.1rem;
+  border-radius: 10px;
   overflow: hidden;
   background-color: #fff;
 }
 .coupon-block::before,.coupon-block::after {
   content: '';
   position: absolute;
-  left: 1.96rem;
-  width: 0.28rem;
-  height: 0.28rem;
-  border-radius: 0.14rem;
+  left: 196px;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
   background-color: #f2f2f4;
 }
 .coupon-block::before {
-  top: -0.14rem;
+  top: -14px;
 }
 .coupon-block::after {
-  bottom: -0.14rem;
+  bottom: -14px;
 }
 .coupon-info {
   height: 100%;
-  width: 5.2rem;
+  width: 520px;
 }
 .coupon-price {
-  font-size: 0.72rem;
+  font-size: 72px;
   color: #eb5841;
-  line-height: 1.9rem;
+  line-height: 190px;
   font-weight: bold;
-  width: 2.1rem;
+  width: 210px;
   text-align: center;
   flex-shrink: 0;
   height: 100%;
 }
 .coupon-price span {
-  font-size: 0.3rem;
+  font-size: 30px;
   font-weight: normal;
 }
 .coupon-price.coupon-icon {
   line-height: inherit;
 }
 .coupon-price.coupon-icon .coupon-price-num {
-  height:1.12rem;
-  line-height: 0.94rem;
-  padding-top: 0.18rem;
+  height:112px;
+  line-height: 94px;
+  padding-top: 18px;
 }
 .coupon-icon-block {
-  font-size: 0.24rem;
-  width: 1.2rem;
-  height: 0.4rem;
-  line-height: 0.4rem;
+  font-size: 24px;
+  width: 120px;
+  height: 40px;
+  line-height: 40px;
   text-align: center;
   background-color: #ffa110;
   color: #fff;
   font-weight: bold;
   margin: 0 auto;
-  border-radius: 0.2rem 0 0.2rem 0;
+  border-radius: 20px 0 20px 0;
 }
 .coupon-line {
-  height: 0.76rem;
+  height: 76px;
   width: 0;
   flex-shrink: 0;
   border-right: 1px dashed #aaa;
 }
 .coupon-time {
-  width: 0.3rem;
-  height: 0.76rem;
+  width: 30px;
+  height: 76px;
   flex-grow: 1;
-  font-size: 0.3rem;
+  font-size: 30px;
   color: #222;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-left: 0.25rem;
+  padding-left: 25px;
 }
 .coupon-btn {
-  width: 1.6rem;
-  height: 0.6rem;
-  line-height: 0.6rem;
-  border-radius: 0.3rem;
+  width: 160px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 30px;
   text-align: center;
-  font-size: 0.26rem;
+  font-size: 26px;
   color: #fff;
   text-align: center;
   background: linear-gradient(to right,#eb5841,#f9856a);
@@ -106,63 +106,63 @@
 }
 .invalid-icon {
   position: absolute;
-  top: -0.3rem;
-  right: -0.3rem;
-  width: 1.7rem;
-  height: 1.7rem;
+  top: -30px;
+  right: -30px;
+  width: 170px;
+  height: 170px;
 }
 .coupon-down {
-  min-height: 0.6rem;
+  min-height: 60px;
   position: relative;
-  font-size: 0.24rem;
+  font-size: 24px;
   color: #8f8f94;
-  line-height: 0.6rem;
-  width: 7.1rem;
+  line-height: 60px;
+  width: 710px;
   margin: 0 auto;
 }
 .toggle-box {
-  height: 0.6rem;
-  line-height: 0.6rem;
+  height: 60px;
+  line-height: 60px;
   overflow: hidden;
   z-index: 6;
-  padding: 0 0.3rem;
+  padding: 0 30px;
 }
 .toggle-btn {
   position: absolute;
   top: 0;
   right: 0;
-  width: 0.8rem;
-  height: 0.6rem;
+  width: 80px;
+  height: 60px;
   z-index: 5;
 }
 .toggle-btn::after {
   content: '';
   position: absolute;
-  right: 0.3rem;
-  top: 0.25rem;
+  right: 30px;
+  top: 25px;
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.11rem 0.11rem 0 0.11rem;
+  border-width: 11px 11px 0 11px;
   border-color: #b8babf transparent transparent transparent;
 }
 .toggle-btn.toggle-btn-down {
   top: auto;
-  bottom: 0.06rem;
+  bottom: 6px;
 }
 .toggle-btn.toggle-btn-down::after {
   transform: rotate(-180deg);
 }
 .coupon-detail {
-  padding: 0.14rem 0.3rem 0.15rem;
-  line-height: 0.38rem;
+  padding: 14px 30px 15px;
+  line-height: 38px;
   color: #8f8f94;
-  font-size: 0.22rem;
+  font-size: 22px;
 }
 .point-bg {
   white-space: pre-wrap;
-  padding-left: 0.34rem;
-  background: url('/src/assets/img/icon_08.png') repeat-y left 0.10rem/0.17rem 0.38rem;
+  padding-left: 34px;
+  background: url('/src/assets/img/icon_08.png') repeat-y left 10px/17px 38px;
 }
 
 

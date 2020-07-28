@@ -72,7 +72,7 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 /* 购物车商品列表 start */
@@ -80,79 +80,79 @@ export default {
   overflow: hidden;
 }
 .cart-list {
-  margin: 0.3rem auto 0;
-  width: 7.1rem;
-  padding-bottom: 0.3rem;
+  margin: 30px auto 0;
+  width: 710px;
+  padding-bottom: 30px;
 }
 .cart-item {
   display: flex;
   background-color: #fff;
   position: relative;
-  padding: 0.3rem 0;
-  margin-bottom: 0.3rem;
-  height: 2rem;
-  border-radius: 0.1rem;
+  padding: 30px 0;
+  margin-bottom: 30px;
+  height: 200px;
+  border-radius: 10px;
 }
 .cart-item-sg,.cart-item-tm {
-  height: 2.53rem;
+  height: 253px;
 }
 .cart-item:last-child {
   margin-bottom: 0;
 }
 .cart-checkbox {
-  width: 0.72rem;
+  width: 72px;
   flex-shrink: 0;
   height: 100%;
   display: flex;
   justify-content: center;
 }
 .checkbox-session,.all-checkbox-session {
-  width: 0.32rem;
-  height: 0.32rem;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 0.02rem solid #96a8bb;
-  margin-top: 0.54rem;
+  border: 2px solid #96a8bb;
+  margin-top: 54px;
 }
 .cart-checkbox.cur .checkbox-session,.all-checkbox.cur .all-checkbox-session {
   border: none;
   background: #eb5841 url('https://bht.liwushijian.com/library/img/xcx_img/tick2.png') no-repeat center center/100% 100%;
 }
 .cart-cont {
-  width: 6.38rem;
+  width: 638px;
   flex-grow: 1;
   overflow: hidden;
   display: flex;
   justify-content: space-between;
 }
 .product-pic {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 140px;
+  height: 140px;
   display: flex;
   flex-shrink: 0;
-  border-radius: 0.04rem;
+  border-radius: 4px;
   overflow: hidden;
 }
 .product-info {
-  width: 4.78rem;
+  width: 478px;
 }
 .product-name {
-  line-height: 0.38rem;
+  line-height: 38px;
   color: #222;
-  width: 4.06rem;
+  width: 406px;
 }
 .product-specs {
-  line-height: 0.5rem;
-  font-size: 0.24rem;
+  line-height: 50px;
+  font-size: 24px;
   color: #8f8f94;
 }
 .product-icon {
-  padding: 0 0.1rem;
-  height: 0.44rem;
-  line-height: 0.44rem;
-  border-radius: 0.04rem;
+  padding: 0 10px;
+  height: 44px;
+  line-height: 44px;
+  border-radius: 4px;
   overflow: hidden;
-  font-size: 0.24rem;
-  margin: 0.07rem 0 0.03rem;
+  font-size: 24px;
+  margin: 7px 0 3px;
 }
 .cart-item-tm .product-icon {
   color: #55b862;
@@ -163,13 +163,13 @@ export default {
   background-color: #fdeeec;
 }
 .product-price {
-  padding-top: 0.06rem;
-  line-height: 0.45rem;
-  font-size: 0.24rem;
+  padding-top: 6px;
+  line-height: 45px;
+  font-size: 24px;
   color: #eb5841;
 }
 .product-price span:nth-of-type(1) {
-  font-size: 0.32rem;
+  font-size: 32px;
   font-weight: bold;
 }
 .product-price span:nth-of-type(2) {
@@ -178,50 +178,50 @@ export default {
 }
 .cart-operate {
   position: absolute;
-  right: 0.1rem;
-  bottom: 0.1rem;
-  width: 1.92rem;
-  height: 0.86rem;
+  right: 10px;
+  bottom: 10px;
+  width: 192px;
+  height: 86px;
   display: flex;
   justify-content: space-between;
 }
 .operate-btn {
-  width: 0.87rem;
+  width: 87px;
   height: 100%;
   z-index: 5;
   position: relative;
 }
 .product-sub {
-  background: url('https://bht.liwushijian.com/library/img/xcx_img/sub.png') no-repeat center center/0.16rem 0.16rem;
+  background: url('https://bht.liwushijian.com/library/img/xcx_img/sub.png') no-repeat center center/16px 16px;
 }
 .product-add {
-  background: url('https://bht.liwushijian.com/library/img/xcx_img/add.png') no-repeat center center/0.16rem 0.16rem;
+  background: url('https://bht.liwushijian.com/library/img/xcx_img/add.png') no-repeat center center/16px 16px;
 }
 .operate-btn::after {
   position: absolute;
   content: '';
-  width: 0.47rem;
-  height: 0.44rem;
-  top: 0.2rem;
-  bottom: 0.2rem;
+  width: 47px;
+  height: 44px;
+  top: 20px;
+  bottom: 20px;
   border: 1px solid #aaa;
   box-sizing: border-box;
 }
 .product-sub::after {
-  left: 0.2rem;
+  left: 20px;
 }
 .product-add::after {
-  right: 0.2rem;
+  right: 20px;
 }
 .shop-num {
   position: absolute;
-  top: 0.2rem;
-  left: 0.67rem;
-  right: 0.67rem;
-  height: 0.44rem;
+  top: 20px;
+  left: 67px;
+  right: 67px;
+  height: 44px;
   z-index: 3;
-  line-height: 0.82rem;
-  font-size: 0.26rem;
+  line-height: 82px;
+  font-size: 26px;
   color: #222;
   text-align: center;
   border-top: 1px solid #aaa;
@@ -232,74 +232,74 @@ export default {
 }
 .product-del {
   position: absolute;
-  top: 0.18rem;
-  right: 0.1rem;
-  width: 0.6rem;
-  height: 0.6rem;
-  padding: 0.2rem;
+  top: 18px;
+  right: 10px;
+  width: 60px;
+  height: 60px;
+  padding: 20px;
   display: flex;
   z-index: 5;
 }
 
 /*底部*/
 .cart-empty {
-  height: 1.2rem;
+  height: 120px;
 }
 .cart-data {
-  height: 1.2rem;
+  height: 120px;
   background-color: #fff;
-  line-height: 1.2rem;
+  line-height: 120px;
 }
 .all-checkbox {
-  width: 1.4rem;
+  width: 140px;
   display: flex;
   justify-content: space-between;
-  padding-left: 0.4rem;
+  padding-left: 40px;
   align-items: center;
 }
 .all-checkbox-session {
   margin-top: 0;
 }
 .all-price {
-  width: 3.5rem;
+  width: 350px;
   flex-grow: 1;
   font-weight: bold;
   color: #eb5841;
-  font-size: 0.34rem;
+  font-size: 34px;
   text-align: right;
-  margin-right: 0.3rem;
+  margin-right: 30px;
 }
 .all-price span {
   color: #8f8f94;
-  font-size: 0.24rem;
+  font-size: 24px;
   font-weight: normal;
 }
 .all-go {
-  width: 1.9rem;
-  height: 0.88rem;
+  width: 190px;
+  height: 88px;
   color: #fefefe;
-  font-size: 0.3rem;
+  font-size: 30px;
   background-image: linear-gradient(to right, #f9866b, #eb5841);
-  border-radius: 0.1rem;
-  margin-right: 0.2rem;
+  border-radius: 10px;
+  margin-right: 20px;
 }
 /* 购物车商品列表 end */
 /*.cart-bottom .van-submit-bar__bar {
-	height: 1.2rem;
+	height: 120px;
 	padding: 0;
 }
 .cart-bottom .van-checkbox {
 	height: 100%;
-	padding-left: 0.4rem;
+	padding-left: 40px;
 }
 .cart-bottom .van-checkbox__icon {
-	height: 0.32rem;
-	line-height: 0.32rem;
-	font-size: 0.2rem;
+	height: 32px;
+	line-height: 32px;
+	font-size: 20px;
 }
 .cart-bottom .van-checkbox__label {
-	margin-left: 0.2rem;
+	margin-left: 20px;
   color: #8f8f94;
-  font-size: 0.24rem;
+  font-size: 24px;
 }*/
 </style>

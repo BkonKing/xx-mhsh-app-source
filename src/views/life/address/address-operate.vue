@@ -58,7 +58,7 @@
 					</div>
 					<div class="custom-session flex-center" @click="swalFunc">
 						<template v-if="!isLabel"><div class="color-8f8f94 font-30">自定义</div></template>
-						<van-icon class="van-icon" name="arrow" size="0.32rem" color="#aaa" />
+						<van-icon class="van-icon" name="arrow" size="32px" color="#aaa" />
 						<!-- <img class="custom-session-arrow" src="/resource/images/right.png" /> -->
 					</div>
 				</div>
@@ -489,16 +489,16 @@ export default {
 @import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 .form-list {
   background-color: #fff;
-	margin-bottom: 0.3rem;
+	margin-bottom: 30px;
 }
 .form-item {
-  min-height: 1rem;
-  padding: 0 0.3rem;
+  min-height: 100px;
+  padding: 0 30px;
   position: relative;
 }
 .address-line {
@@ -506,24 +506,24 @@ export default {
   background-color: #f0f0f0;
   position: absolute;
   bottom: 0;
-  left: 0.3rem;
-  right: 0.3rem;
+  left: 30px;
+  right: 30px;
 }
 .address-line2 {
-	left: 1.7rem;
+	left: 170px;
 	bottom: 0;
 }
 .item-name {
 	flex-shrink: 0;
-  width: 1.4rem;
-  height: 1rem;
+  width: 140px;
+  height: 100px;
 }
 .itemt-text {
-  width: 5.5rem;
-  padding: 0.2rem 0;
+  width: 550px;
+  padding: 20px 0;
 }
 .itemt-input,.swal-input {
-	font-size: 0.28rem;
+	font-size: 28px;
 	color: #222222;
 	outline: none;
   border: none;
@@ -532,7 +532,7 @@ export default {
   text-decoration: inherit;
 }
 /*.address-choose .itemt-text {
-  width: 4.88rem;
+  width: 488px;
   flex-grow: 0;
   display: flex;
   align-items: center;
@@ -541,23 +541,23 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 0.38rem;
+  padding-top: 38px;
 }
 .two-text div {
-  max-width: 4.88rem;
+  max-width: 488px;
 }*/
 .itemt-icon {
-  width: 0.44rem;
-  height: 1rem;
+  width: 44px;
+  height: 100px;
 }
 .itemt-icon-url {
-  width: 0.44rem;
-  height: 0.44rem;
+  width: 44px;
+  height: 44px;
 }
 /*.itemt-text input {
   width: 100%;
   height: 100%;
-  font-size: 0.3rem;
+  font-size: 30px;
   color: #212124;
   float: left;
 }*/
@@ -566,7 +566,7 @@ export default {
   padding-right: 0;
 }
 .label-list-session {
-  width: 5.8rem;
+  width: 580px;
   display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -576,15 +576,15 @@ export default {
 }
 .label-list {
   display: flex;
-  height: 0.6rem;
+  height: 60px;
 }
 .label-item {
-  margin-right: 0.2rem;
+  margin-right: 20px;
   border: 1px solid #aaa;
-  height: 0.6rem;
-	line-height: 0.56rem;
-  padding: 0 0.24rem;
-  border-radius: 0.3rem;
+  height: 60px;
+	line-height: 56px;
+  padding: 0 24px;
+  border-radius: 30px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -597,36 +597,36 @@ export default {
   margin-right: 0;
 }*/
 .custom-session {
-  padding-right: 0.3rem;
+  padding-right: 30px;
 	position: absolute;
 	right: 0;
 	top: 0;
 	bottom: 0;
 }
 .custom-session-arrow {
-  width: 0.16rem;
-  height: 0.26rem;
-  margin-left: 0.18rem;
+  width: 16px;
+  height: 26px;
+  margin-left: 18px;
 }
 .default-item-name {
-  width: 2.5rem;
+  width: 250px;
 }
 .default-switch {
   position: relative;
-  width: 0.86rem;
-  height: 0.48rem;
+  width: 86px;
+  height: 48px;
   align-items: center;
   background-color: #aaa;
-  border-radius: 0.24rem;
+  border-radius: 24px;
   transition: all 0.3s linear;
 }
 .default-point {
   position: absolute;
-  left: 0.05rem;
-  top: 0.05rem;
-  bottom: 0.05rem;
-	width: 0.4rem;
-  border-radius: 0.2rem;
+  left: 5px;
+  top: 5px;
+  bottom: 5px;
+	width: 40px;
+  border-radius: 20px;
   background-color: #fff;
   transition: all 0.3s linear;
 }
@@ -634,11 +634,11 @@ export default {
   background-color: #eb5841;
 }
 .default-switch-checked .default-point {
-	right: 0.05rem;
-	left: 0.42rem;
+	right: 5px;
+	left: 42px;
 }
 .del-btn {
-	height: 1rem;
+	height: 100px;
   color: #eb5841;
   background-color: #fff;
 }
@@ -647,67 +647,67 @@ export default {
 .swal-session {
   animation: translateMove 0.5s;
   -webkit-animation: translateMove 0.5s;
-  height: 8rem;
+  height: 800px;
   z-index: 188;
 }
 .close-block {
-	height: 1.1rem;
+	height: 110px;
 	position: relative;
 }
 .close-btn {
   position: absolute;
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 110px;
+  height: 110px;
   top: 0;
   right: 0;
-  padding: 0.3rem;
+  padding: 30px;
 }
 .swal-session-cont {
-  height: 6.9rem;
-  padding: 0 0.3rem;
+  height: 690px;
+  padding: 0 30px;
 	background-color: #fff;
 }
 .swal-tit {
-  height: 1.1rem;
-  line-height: 1.1rem;
+  height: 110px;
+  line-height: 110px;
   text-align: center;
-  font-size: 0.34rem;
+  font-size: 34px;
   color: #60646b;
 }
 .swal-item {
-  height: 0.8rem;
-  margin-bottom: 0.3rem;
+  height: 80px;
+  margin-bottom: 30px;
 }
 .swal-label {
-  width: 0.8rem;
-  height: 0.8rem;
-	line-height: 0.8rem;
+  width: 80px;
+  height: 80px;
+	line-height: 80px;
   background-color: #b8babf;
 	text-align: center;
 }
 .swal-tick {
-  width: 0.44rem;
-  height: 0.8rem;
-  padding: 0.18rem 0;
+  width: 44px;
+  height: 80px;
+  padding: 18px 0;
 }
 .tick-pic {
-	width: 0.44rem;
-	height: 0.44rem;
+	width: 44px;
+	height: 44px;
 }
 .swal-input-block {
-  height: 0.79rem;
-  width: 5.24rem;
+  height: 79px;
+  width: 524px;
   border-bottom: 1px solid #f1f1f1;
-  padding: 0.2rem 0;
+  padding: 20px 0;
 }
 .swal-input {
-  font-size: 0.3rem;
+  font-size: 30px;
   color: #222;
-  line-height: 0.39rem;
+  line-height: 39px;
   width: 100%;
 }
 .swal-sure {
-  margin-top: 0.1rem;
+  margin-top: 10px;
 }
 
 @keyframes translateMove

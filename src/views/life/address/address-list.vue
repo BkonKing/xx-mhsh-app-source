@@ -4,7 +4,7 @@
       <div class="address-item">
         <div class="address-label flex-center">
           <!-- <div class="font-24 color-fff">家</div> -->
-          <!-- <van-icon class="van-icon" name="location-o" size="0.36rem" color="#fff" /> -->
+          <!-- <van-icon class="van-icon" name="location-o" size="36px" color="#fff" /> -->
           <img class="label-icon" src="https://bht.liwushijian.com/library/img/xcx_img/address_05.png" />
         </div>
         <div class="address-info">
@@ -72,80 +72,80 @@ export default {
 @import '../../../styles/life.css';
   .app-body {
     background-color: #f2f2f4;
-    font-size: 0.28rem;
+    font-size: 28px;
     overflow: hidden;
   }
   .address-list {
     background-color: #fff;
   }
   .address-item {
-    height: 1.62rem;
+    height: 162px;
     display: flex;
     position: relative;
   }
   .address-label {
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 80px;
+    height: 80px;
     background-color: #aaa;
-    padding: 0 0.1rem;
-    margin: 0.4rem 0 0 0.3rem;
+    padding: 0 10px;
+    margin: 40px 0 0 30px;
   }
   .label-icon {
-    width: 0.25rem;
-    height: 0.32rem;
+    width: 25px;
+    height: 32px;
   }
   .address-info {
-    margin-left: 0.2rem;
-    width: 5.26rem;
-    height: 0.8rem;
+    margin-left: 20px;
+    width: 526px;
+    height: 80px;
     justify-content: space-between;
-    margin-top: 0.4rem;
+    margin-top: 40px;
   }
   .address-user {
 		display: flex;
     align-items: center;
-    height: 0.36rem;
+    height: 36px;
   }
   .address-name {
-    max-width: 3rem;
-    margin-right: 0.2rem;
+    max-width: 300px;
+    margin-right: 20px;
   }
   .address-detail {
-    height: 0.38rem;
+    height: 38px;
   }
   .address-default {
-    width: 0.6rem;
-    height: 0.3rem;
-    font-size: 0.24rem;
+    width: 60px;
+    height: 30px;
+    font-size: 24px;
     color: #ffffff;
-    line-height: 0.3rem;
-    border-radius: 0.02rem;
+    line-height: 30px;
+    border-radius: 2px;
     text-align: center;
-    margin-right: 0.1rem;
+    margin-right: 10px;
     background-image: -webkit-linear-gradient(to right, #f9866b , #eb5942);
     background-image: linear-gradient(to right, #f9866b , #eb5942);
   }
 	.address-detail-text {
-		max-width: 5.26rem;
+		max-width: 526px;
 	}
 	.default-detail-text {
-		max-width: 4.55rem;
+		max-width: 455px;
 	}
   .address-link {
-    width: 0.94rem;
-    padding-right: 0.3rem;
+    width: 94px;
+    padding-right: 30px;
     justify-content: flex-end;
   }
   .address-edit-icon {
-    width: 0.44rem;
-    height: 0.44rem;
+    width: 44px;
+    height: 44px;
   }
   .address-line {
     height: 1px;
     background-color: #f0f0f0;
     position: absolute;
     bottom: 0;
-    left: 0.3rem;
-    right: 0.3rem;
+    left: 30px;
+    right: 30px;
   }
 </style>

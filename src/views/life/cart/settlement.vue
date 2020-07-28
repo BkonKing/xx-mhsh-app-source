@@ -163,13 +163,13 @@ export default {
 @import '../../../styles/order.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
+  font-size: 28px;
   overflow: hidden;
 }
 /* 收货地址 start */
 .address-session {
-  height: 1.83rem;
-  margin-bottom: 0.3rem;
+  height: 183px;
+  margin-bottom: 30px;
   position: relative;
 }
 .address-bg {
@@ -177,107 +177,107 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: 1rem;
+  height: 100px;
   z-index: 2;
   background-image: linear-gradient(to right, #f9866b, #eb5841);
 }
 .address-info {
-  height: 1.63rem;
-  border-radius: 0.1rem;
+  height: 163px;
+  border-radius: 10px;
   border: none;
   position: absolute;
-  top: 0.2rem;
-  left: 0.2rem;
-  right: 0.2rem;
+  top: 20px;
+  left: 20px;
+  right: 20px;
   z-index: 5;
-  padding: 0 0.3rem;
+  padding: 0 30px;
   display: flex;
-  background: #fff url('../../../assets/img/address_bg.png') repeat-x -0.6rem bottom/auto 0.08rem;
+  background: #fff url('../../../assets/img/address_bg.png') repeat-x -60px bottom/auto 8px;
 }
 .address-icon {
-  width: 0.28rem;
-  height: 0.36rem;
-  margin-right: 0.2rem;
+  width: 28px;
+  height: 36px;
+  margin-right: 20px;
 }
 .no-address-text {
-  width: 3rem;
+  width: 300px;
   flex-grow: 1;
   color: #222222;
-  font-size: 0.34rem;
+  font-size: 34px;
 }
 .link-icon {
-  width: 0.12rem;
-  height: 0.22rem;
+  width: 12px;
+  height: 22px;
   display: flex;
-  margin-left: 0.12rem;
+  margin-left: 12px;
 }
   /* 有地址 */
 .address-text {
-  width: 6rem;
+  width: 600px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
 .address-user {
-  height: 0.72rem;
-  line-height: 0.72rem;
+  height: 72px;
+  line-height: 72px;
   color: #222;
   display: flex;
   justify-content: space-between;
-  margin-top: 0.2rem;
+  margin-top: 20px;
 }
 .address-name {
-  max-width: 3.8rem;
+  max-width: 380px;
   font-weight: bold;
-  margin-right: 0.3rem;
+  margin-right: 30px;
 }
 .address-tel {
-  width: 2rem;
+  width: 200px;
   flex-grow: 1;
 }
 .address-detail {
-  height: 0.3rem;
-  line-height: 0.3rem;
+  height: 30px;
+  line-height: 30px;
   color: #919499;
-  font-size: 0.24rem;
+  font-size: 24px;
   display: flex;
 }
 .address-default {
   flex-shrink: 0;
-  height: 0.3rem;
-  width: 0.6rem;
-  line-height: 0.3rem;
+  height: 30px;
+  width: 60px;
+  line-height: 30px;
   color: #ffffff;
-  font-size: 0.24rem;
+  font-size: 24px;
   text-align: center;
-  border-radius: 0.02rem;
-  margin-right: 0.08rem;
+  border-radius: 2px;
+  margin-right: 8px;
   background-image: linear-gradient(to right, #f9866b, #eb5841);
 }
 /* 收货地址 end */
 .order-goods-info:last-child{
-  padding-bottom: 0.3rem;
+  padding-bottom: 30px;
 }
 .detail-list-block {
-  padding-top: 0.25rem;
+  padding-top: 25px;
 }
 .detail-price-list {
   border-top: none;
   padding-top: 0;
 }
 input.order-remarks-text {
-  width: 5.04rem;
+  width: 504px;
   border: none;
-  font-size: 0.28rem;
+  font-size: 28px;
 }
 .common-item {
-  height: 1.06rem;
+  height: 106px;
 }
 .checkbox-xfb {
-  width: 0.24rem;
-  height: 0.24rem;
+  width: 24px;
+  height: 24px;
   border: 1px solid #eb5841;
-  margin-right: 0.1rem;
+  margin-right: 10px;
 }
 .checkbox-xfb.cur {
   background: url('../../../assets/img/tick3.png') no-repeat center center/100% 100%;
@@ -285,44 +285,44 @@ input.order-remarks-text {
 
 /*底部*/
 .cart-empty {
-  height: 1.2rem;
+  height: 120px;
 }
 .cart-data {
-  height: 1.2rem;
+  height: 120px;
   background-color: #fff;
-  line-height: 1.2rem;
+  line-height: 120px;
 }
 .all-checkbox {
-  width: 1.4rem;
+  width: 140px;
   display: flex;
   justify-content: space-between;
-  padding-left: 0.4rem;
+  padding-left: 40px;
   align-items: center;
 }
 .all-checkbox-session {
   margin-top: 0;
 }
 .all-price {
-  width: 3.5rem;
+  width: 350px;
   flex-grow: 1;
   font-weight: bold;
   color: #eb5841;
-  font-size: 0.34rem;
+  font-size: 34px;
   text-align: right;
-  margin-right: 0.3rem;
+  margin-right: 30px;
 }
 .all-price span {
   color: #8f8f94;
-  font-size: 0.24rem;
+  font-size: 24px;
   font-weight: normal;
 }
 .all-go {
-  width: 1.9rem;
-  height: 0.88rem;
+  width: 190px;
+  height: 88px;
   color: #fefefe;
-  font-size: 0.3rem;
+  font-size: 30px;
   background-image: linear-gradient(to right, #f9866b, #eb5841);
-  border-radius: 0.1rem;
-  margin-right: 0.2rem;
+  border-radius: 10px;
+  margin-right: 20px;
 }
 </style>
