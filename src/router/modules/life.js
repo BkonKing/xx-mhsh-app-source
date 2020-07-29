@@ -117,12 +117,30 @@ const lifeRouter = [
       )
   },
   {
+    path: '/order/apply-barter',
+    name: 'applyBarter',
+    component: () =>
+      import(
+        /* webpackChunkName: "applyBarter" */
+        '@/views/life/order/apply-barter'
+      )
+  },
+  {
     path: '/order/barter-detail',
     name: 'barterDetail',
     component: () =>
       import(
         /* webpackChunkName: "barterDetail" */
         '@/views/life/order/barter-order-detail'
+      )
+  },
+  {
+    path: '/order/apply-refund',
+    name: 'applyRefund',
+    component: () =>
+      import(
+        /* webpackChunkName: "applyRefund" */
+        '@/views/life/order/apply-refund'
       )
   },
   {
@@ -135,7 +153,7 @@ const lifeRouter = [
       )
   },
   {
-    path: '/order/write-logisticsl',
+    path: '/order/write-logistics',
     name: 'writeLogisticsl',
     component: () =>
       import(

@@ -1,0 +1,229 @@
+.apply-tip {
+  height: 92px;
+  padding: 10px 0 0 50px;
+  line-height: 82px;
+  color: #8f8f94;
+  font-size: 24px;
+}
+.cart-checkbox {
+  width: 73px;
+  flex-shrink: 0;
+  height: 130px;
+}
+.checkbox-session,.all-checkbox-session {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #96a8bb;
+}
+.cart-checkbox.cur .checkbox-session,.all-checkbox.cur .all-checkbox-session {
+  border: none;
+  background: url('../assets/img/tick2.png') center center/100% 100%;
+}
+.apply-goods {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  position: relative;
+}
+.apply-goods::after {
+  content: '';
+  position: absolute;
+  height: 1px;
+  background-color: #f0f0f0;
+  left: 30px;
+  right: 0;
+  bottom: 0;
+}
+.apply-goods:last-child {
+  margin-bottom: 0;
+}
+.apply-goods:last-child::after {
+  display: none;
+}
+.apply-goods .order-goods-info {
+  width: 607px;
+  margin-bottom: 0;
+} 
+.apply-goods .order-info {
+  width: 457px;
+}
+.apply-select {
+  width: 100%;
+  height: 127px;
+  background-color: #fce6e3;
+  border-radius: 4px;
+  margin-top: 20px;
+  padding: 0 30px;
+}
+.refund-session .apply-select {
+  height: 90px;
+}
+.select-left {
+  line-height: 44px;
+  font-size: 24px;
+  color: #222;
+}
+.select-right {
+  display: flex;
+  width: 15px;
+  height: 26px;
+}
+
+.not-apply {
+  padding: 0 30px;
+  background-color: #e5e5e5;
+  overflow: hidden;
+  min-height: 90px;
+}
+.can-apply {
+  padding-right: 30px;
+}
+.apply-toggle {
+  height: 89px;
+  line-height: 89px;
+  color: #222;
+  font-size: 24px;
+  position: relative;
+}
+.apply-toggle::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 42px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 14px 11px 0 11px;
+  border-color: #383838 transparent transparent transparent;
+}
+.apply-toggle.cur {
+  transform: rotate(-180deg);
+}
+
+
+.order-name-text,.order-sku-text {
+  max-width: 500px;
+}
+.common-item-code {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: flex-end;
+  align-items:center;
+}
+.code-pic {
+  width: 44px;
+  height: 44px;
+}
+
+.common-list-pic {
+  padding-right: 0;
+}
+.pic-list {
+  height: 154px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.pic-item {
+  width: 134px;
+  height: 134px;
+  position: relative;
+}
+.item-left-name {
+  width: 145px;
+}
+.item-first-text {
+  width: 505px;
+}
+.common-item-second {
+  height: 80px;
+  padding-top: 10px;
+}
+.pic-url,.upload-pic {
+  width: 114px;
+  height: 114px;
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.pic-del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+.del-bg {
+  width: 34px;
+  height: 34px;
+  border-radius: 17px;
+  background-color: #eb5841;
+  z-index: 5;
+  position: relative;
+}
+.del-line {
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  position: absolute;
+  top: 16px;
+  left: 7px;
+  background-color: #fff;
+}
+.upload-pic {
+  background-color: #f2f2f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-add {
+  color: #aaa;
+  font-size: 60px;
+}
+
+
+.refund-session .item-first-text::-webkit-input-placeholder {
+  color: #eb5841;
+}
+.publick-mask.reason-mask {
+  padding-bottom: 60px;
+}
+.action-block {
+  background-color: #fdeeec;
+  height: 66px;
+  line-height: 66px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  color: #eb5841;
+}
+.reason-mask .common-list {
+  padding: 0;
+  color: #666;
+  font-size: 30px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.refund-session .refund-item-number {
+  height: 133px;
+  padding-bottom: 50px;
+  position: relative;
+}
+.item-left-tip {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  line-height: 36px;
+  color: #8f8f94;
+  font-size: 24px;
+}

@@ -22,7 +22,7 @@
 				</div>
 				<div><van-icon class="van-icon" name="arrow" size="0.32rem" color="#aaa" /></div>
 			</div>
-			<div class="life-goods-list flex-align-center">
+			<div class="life-goods-list flex-align-center" @click="linkFunc">
 				<div class="life-goods-item">
 					<div class="life-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
 					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
@@ -47,6 +47,11 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight
     }
+  },
+  methods:{
+    linkFunc () {
+      this.$router.push('/store/goods-detail')
+    },
   }
 }
 </script>
