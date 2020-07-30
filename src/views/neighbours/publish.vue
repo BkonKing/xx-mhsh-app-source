@@ -125,7 +125,7 @@ export default {
     right: 30px;
     margin-top: -7px;
     border: 7px solid;
-    border-color: transparent transparent @text-color @text-color;
+    border-color: transparent transparent #aaa #aaa;
   }
   /deep/ .van-dropdown-item__content {
     position: initial;
@@ -155,5 +155,8 @@ export default {
 }
 .tf-icon-close {
   font-size: 44px;
+}
+.tf-icon-send {
+  color: #aaa;
 }
 </style>

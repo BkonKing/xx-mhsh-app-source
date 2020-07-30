@@ -19,14 +19,23 @@
       <div class="coin-box">
         <div class="coin-box__title">
           幸福币专区
-          <span class="sign-btn">签到</span>
+          <span v-if="0" class="sign-btn">签到</span>
+          <span class="coin-number" v-else>
+            <span class="tf-icon tf-icon-moneycollect"></span>
+            <span>1000</span>
+          </span>
+        </div>
+        <div class="coin-message" v-if="1">
+          <div class="coin-message-name">关于中秋节活动方式投票</div>
+          <div class="coin-message-number">+10</div>
         </div>
         <div class="coin-image-box">
-          <van-image class="coin-image"></van-image>
-          <van-image class="coin-image"></van-image>
-          <van-image class="coin-image"></van-image>
-          <van-image class="coin-image"></van-image>
-          <van-image class="coin-image"></van-image>
+          <van-image class="coin-image" v-for="(item, i) in coinList" :key="i">
+            <div class="coin-tag">
+              <span class="tf-icon tf-icon-moneycollect"></span>
+              <span>1000</span>
+            </div>
+          </van-image>
         </div>
       </div>
       <div class="life-box">
@@ -43,7 +52,11 @@
           惊喜折扣限时抢
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <tf-image-list :data="saleImages" :column="2"></tf-image-list>
+        <tf-image-list :data="saleImages" :column="2">
+          <template v-slot:tag="{img}">
+            <div class="price-tag">{{img}}</div>
+          </template>
+        </tf-image-list>
       </div>
       <div class="community-box">
         <div class="community-box__title">
@@ -106,6 +119,11 @@ export default {
           application: '云门禁'
         }
       ],
+      coinList: [
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        }
+      ],
       saleImages: [
         {
           src: 'https://img.yzcdn.cn/vant/cat.jpeg'
@@ -132,7 +150,7 @@ export default {
 }
 .home-notice {
   height: 66px;
-  margin: 30px 20px 0;
+  margin: 0 20px 0;
   background: #fff;
   /deep/ .van-swipe-item {
     line-height: 66px;
@@ -149,12 +167,12 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 223px;
+  height: 184px;
   background: #cbb685;
   z-index: 9999;
 }
 .tf-main-container {
-  padding-top: 223px;
+  padding-top: 184px;
 }
 .swipe-item__image {
   width: 100%;
@@ -272,7 +290,7 @@ export default {
       height: 66px;
       line-height: 66px;
       background: rgba(0, 0, 0, 0.6);
-      border-radius: 10px 10px 0px 0px;
+      border-radius: 0px 0px 10px 10px;
       font-size: 24px;
       color: #fff;
       text-align: center;
@@ -339,5 +357,68 @@ export default {
   font-size: 26px;
   color: #383838;
   line-height: 1;
+}
+.price-tag {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 140px;
+  height: 60px;
+  line-height: 60px;
+  background: linear-gradient(-90deg, @orange-dark, @orange);
+  border-radius: 30px 30px 0px 30px;
+  color: #fff;
+  text-align: center;
+  font-size: 24px;
+}
+.coin-tag {
+  position: absolute;
+  left: 20px;
+  bottom: 10px;
+  padding: 0 23px;
+  height: 36px;
+  line-height: 36px;
+  font-size: 24px;
+  color: #fff;
+  background: @orange-dark;
+  opacity: 0.8;
+  border-radius: 18px;
+}
+.coin-number {
+  font-size: 36px;
+  font-weight: 500;
+  color: @orange-dark;
+  .tf-icon {
+    font-size: 28px;
+  }
+}
+.coin-message {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 60px;
+  font-size: 24px;
+  padding: 0 20px;
+  border: 1px dashed rgba(170, 170, 170, 0.6);
+  border-radius: 4px;
+  margin-bottom: 30px;
+  color: #8f8f94;
+  &-name {
+    line-height: 66px;
+    display: flex;
+    align-items: center;
+    &::before {
+      content: "";
+      display: block;
+      width: 8px;
+      height: 8px;
+      background: #383838;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+  }
+  &-number {
+    line-height: 60px;
+  }
 }
 </style>

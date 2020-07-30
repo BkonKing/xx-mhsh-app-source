@@ -1,8 +1,8 @@
 <template>
-  <div class="alert-box" :class="`alert-box--${type}`" @click="onClick">
+  <div class="alert-box" :class="[`alert-box--${type}`, `alert-box--${size}`]" @click="onClick">
     <div class="alert-bg"></div>
     <div class="tf-row-vertical-center">
-      <span class="tf-icon alert-box__icon" :class="[`tf-icon-${type}-circle`]"></span>
+      <span v-if="showIcon" class="tf-icon alert-box__icon" :class="[`tf-icon-${type}-circle`]"></span>
     <span class="alert-box__content">{{content}}</span>
     </div>
     <span v-if="showRight" class="tf-icon tf-icon-doubleright"></span>
@@ -28,6 +28,14 @@ export default {
     showRight: {
       type: Boolean,
       default: true
+    },
+    showIcon: {
+      type: Boolean,
+      default: true
+    },
+    size: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -59,6 +67,11 @@ export default {
   padding: 26px 30px;
   border-radius: @border-radius-md;
   color: #fff;
+}
+
+.alert-box--sm {
+  height: 66px;
+  padding: 16px 30px;
 }
 
 .alert-bg {

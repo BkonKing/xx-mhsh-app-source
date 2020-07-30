@@ -17,7 +17,7 @@
             <div class="tf-card-header">
               <userInfo :avatar="item.avatar" :name="item.account" :time="item.ctime">
                 <template v-slot:right>
-                  <div class="tf-icon">2</div>
+                  <div class="group-tag">公告小组</div>
                 </template>
               </userInfo>
             </div>
@@ -153,5 +153,15 @@ export default {
     rgba(249, 134, 107, 1),
     rgba(235, 88, 65, 1)
   );
+}
+.group-tag {
+  height:34px;
+  line-height: 34px;
+  padding: 0 13px;
+  text-align: center;
+  border:2px solid @orange-dark;
+  border-radius:10px 0px 10px 10px;
+  color: @orange-dark;
+  font-size: 22px;
 }
 </style>

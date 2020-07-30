@@ -8,6 +8,7 @@
           <span>+{{ data.length - 3 }}</span>
         </div>
       </template>
+      <slot name="tag" :img="img"></slot>
     </van-grid-item>
   </van-grid>
 </template>

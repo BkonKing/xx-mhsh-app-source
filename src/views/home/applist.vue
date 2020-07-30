@@ -207,6 +207,10 @@ export default {
   position: absolute;
   left: 90px;
   right: 90px;
+  /deep/ input::placeholder {
+    font-size: 24px;
+    color: #8F8F94 !important;
+  }
   /deep/ .van-search {
     .van-search__content {
       height: 44px;
@@ -235,7 +239,7 @@ export default {
   height: 44px;
   line-height: 44px;
   padding: 0 23px;
-  background: #FFA110;
+  background: #ffa110;
   border-radius: 4px;
   color: #fff;
   font-size: 24px;
@@ -257,10 +261,10 @@ export default {
 .module-title {
   font-size: 30px;
   font-weight: 500;
-  padding: 40px 30px;
+  padding: 40px 30px 0;
 }
 .home-app {
-  padding-top: 50px;
+  padding-top: 20px;
   padding-bottom: 40px;
 }
 .app-container {
@@ -274,6 +278,9 @@ export default {
   }
   /deep/ .noborder.app-box--edit::after {
     border-bottom-width: 0;
+  }
+  .module-title {
+    padding: 40px 30px;
   }
 }
 .dragging {

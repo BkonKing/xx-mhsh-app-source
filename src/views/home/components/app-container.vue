@@ -3,7 +3,6 @@
     <app-item
       v-for="(item,i) in data"
       :key="i"
-      class="app-box"
       :class="{'noborder': data.length - data.length % 5 <= i}"
       :src="item.src"
       :name="item.name"

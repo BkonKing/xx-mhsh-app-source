@@ -10,7 +10,7 @@
         <div class="tf-card-header" :class="{'border-none': category === 1 || category === 3}">
           <userInfo :avatar="info.avatar" :name="info.account" :time="info.ctime">
             <template v-slot:right>
-              <div class="tf-icon">2</div>
+              <div class="group-tag">公告小组</div>
             </template>
           </userInfo>
         </div>
@@ -19,7 +19,7 @@
           <div class="article-content"></div>
         </template>
         <template v-else-if="category === 2">
-          <tf-alert type="warning" content="该内容含有违规信息。" :showRight="false"></tf-alert>
+          <tf-alert type="warning" content="该内容含有违规信息。" :showRight="false" :showIcon="false" size="sm"></tf-alert>
           <div class="tf-card-content">{{ info.content }}</div>
           <tf-image-list :data="info.images" mode="show"></tf-image-list>
         </template>
@@ -73,7 +73,7 @@ export default {
   },
   data () {
     return {
-      category: 2,
+      category: 3,
       moreShow: false,
       info: {
         id: '2',
@@ -98,6 +98,9 @@ export default {
 <style lang='less' scoped>
 .tf-main-container {
   padding-bottom: 98px;
+  .tf-icon {
+    color: #8F8F94;
+  }
 }
 .tf-image-box {
   justify-content: flex-start;
@@ -173,13 +176,23 @@ export default {
     width: 150px;
     height: 150px;
     line-height: 150px;
-    background: linear-gradient(135deg, @red, @red-dark);
-    border: 6px solid rgba(235, 88, 65, 0.25);
+    background-image: linear-gradient(to bottom right, @red, @red-dark);
+    border: 6px solid #ffdbd9;
     border-radius: 50%;
     margin-top: 45px;
     font-size: 30px;
     color: #fff;
     text-align: center;
   }
+}
+.group-tag {
+  height:34px;
+  line-height: 34px;
+  padding: 0 13px;
+  text-align: center;
+  border:2px solid @orange-dark;
+  border-radius:10px 0px 10px 10px;
+  color: @orange-dark;
+  font-size: 22px;
 }
 </style>

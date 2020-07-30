@@ -13,8 +13,8 @@
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
-          <div class="reply-cell-content__reply">
-            <div class="reply-cell-content__reply__text" v-for="item in cell.child" :key="item.id">
+          <div v-if="cell.child && cell.child.length" class="reply-cell-content__reply">
+            <div class="reply-cell-content__reply__text" v-for="(item, i) in cell.child" :key="item.id" v-show="i < 2">
               <span style="color: #222;">{{item.name}}</span>：
               <span>
                 {{item.content}}
@@ -26,6 +26,10 @@
                   <span class="tf-icon tf-icon-image"></span>查看图片
                 </span>
               </span>
+            </div>
+            <div v-if="cell.child.length > 2" class="more-btn" @click="goReply(cell.id)">
+              共{{cell.child.length}}条回复
+              <span class="tf-icon tf-icon-right"></span>
             </div>
           </div>
         </div>
@@ -85,6 +89,13 @@ export default {
               ],
               thumbsups: '5',
               ctime: '2020-06-03 16:35:26'
+            },
+            {
+              id: '4',
+              content:
+                '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
+              thumbsups: '5',
+              ctime: '2020-06-03 16:35:26'
             }
           ],
           ctime: '2020-06-03 16:35:26'
@@ -112,6 +123,9 @@ export default {
         }
       }, 20000)
     },
+    goReply (id) {
+      this.$router.push('')
+    },
     lookImg (images) {
       ImagePreview({
         images,
@@ -132,6 +146,7 @@ export default {
   .tf-icon-like {
     font-size: 36px;
     margin-left: 10px;
+    color: #8F8F94;
   }
   .reply-cell {
     padding: 30px 0;
@@ -178,5 +193,9 @@ export default {
       border-bottom: none;
     }
   }
+}
+.more-btn {
+  font-size: 24px;
+  color: @blue-dark;
 }
 </style>
