@@ -185,6 +185,16 @@ const personageRouter = [
         /* webpackChunkName: "happinessCoinBuyRecord" */
         '@/views/personage/happiness-coin/buy-record.vue'
       )
+  },
+  /* 我的互动 */
+  {
+    path: '/pages/personage/interaction/index',
+    name: 'interactionIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "interactionIndex" */
+        '@/views/personage/interaction/index.vue'
+      )
   }
 ]
 

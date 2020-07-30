@@ -5,7 +5,7 @@ const {
   spawn
 } = require('child_process')
 
-const appname = 'mhsh3' // 项目文件名
+const appname = 'mhsh2' // 项目文件名
 const appPort = 10915 // 真机同步端口,浏览器打开端口。
 const scriptActive = process.env.npm_lifecycle_event
 

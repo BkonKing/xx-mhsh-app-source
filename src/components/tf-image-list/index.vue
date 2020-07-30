@@ -1,0 +1,92 @@
+<template>
+  <van-grid class="tf-image-grid" square :border="false" :column-num="column" :gutter="10" style="margin-right: -10px !important;">
+    <van-grid-item v-for="(img, i) in list" :key="i">
+      <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img.src" @click="preview(i)" />
+      <template v-else>
+        <van-image class="tf-image-item" fit="cover" :src="img.src" @click="onclick"/>
+        <div class="tf-image--shade" v-if="i === 2" @click="onclick">
+          <span>+{{ data.length - 3 }}</span>
+        </div>
+      </template>
+    </van-grid-item>
+  </van-grid>
+</template>
+
+<script>
+import { Grid, GridItem, Image, ImagePreview } from 'vant'
+
+export default {
+  components: {
+    [Grid.name]: Grid,
+    [GridItem.name]: GridItem,
+    [ImagePreview.name]: ImagePreview,
+    [Image.name]: Image
+  },
+  props: {
+    data: {
+      type: Array,
+      default: () => []
+    },
+    mode: {
+      type: String,
+      default: 'list'
+    },
+    column: {
+      type: Number,
+      default: 3
+    }
+  },
+  methods: {
+    onclick () {
+      this.$emit('click')
+    },
+    preview (i) {
+      ImagePreview({
+        images: this.data,
+        startPosition: i,
+        onClose () {
+          // do something
+        }
+      })
+    }
+  },
+  computed: {
+    list () {
+      if (this.mode === 'list') {
+        const len = this.data.length
+        return len > 3 ? this.data.slice(0, 3) : this.data
+      }
+      return this.data
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.tf-image-grid {
+  @relative();
+  padding-left: 0 !important;
+  /deep/ .van-grid-item__content--square {
+    padding: 0;
+  }
+}
+.tf-image-item {
+  width: 100%;
+  height: 100%;
+}
+.tf-image--shade {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background-color: #000000;
+  opacity: 0.6;
+  left: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 54px;
+}
+</style>

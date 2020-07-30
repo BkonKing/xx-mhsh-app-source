@@ -2,18 +2,19 @@
   <van-nav-bar class="tf-nav-bar">
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goSelect" v-if="status">
-        <span class="tf-icon">{{ iconLocation }}</span>
+        <span class="tf-icon tf-icon-location"></span>
         <span class="tf-text">{{ name }}</span>
       </div>
       <div class="tf-row-vertical-center room_btn" v-else>
-        <span class="tf-icon">{{ iconLocation }}</span>
+        <span class="tf-icon tf-icon-location"></span>
         <span class="tf-text underline">请认证房间号</span>
       </div>
     </template>
     <template #right>
-      <span class="tf-icon" @click="scan">{{ iconScan }}</span>
+      <span v-if="search" class="tf-icon tf-icon-search" @click="onSearch"></span>
+      <span class="tf-icon tf-icon-scan" @click="scan"></span>
       <div class="notice-box" @click="goMessage">
-        <span class="tf-icon margin-left">{{ iconMail }}</span>
+        <span class="tf-icon tf-icon-mail margin-left"></span>
         <span v-if="status" class="van-info">2</span>
       </div>
     </template>
@@ -22,7 +23,6 @@
 
 <script>
 import { NavBar } from 'vant'
-import { iconLocation, iconScan, iconMail } from '@/const/icon.js'
 export default {
   components: {
     [NavBar.name]: NavBar
@@ -35,13 +35,14 @@ export default {
     name: {
       type: String,
       default: ''
+    },
+    search: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      iconLocation,
-      iconScan,
-      iconMail
     }
   },
   methods: {
@@ -53,6 +54,9 @@ export default {
     },
     scan () {
       this.$router.push('/pages/personage/scanCode/index')
+    },
+    onSearch () {
+
     }
   }
 }

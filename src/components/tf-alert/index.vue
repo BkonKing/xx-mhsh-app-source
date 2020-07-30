@@ -5,7 +5,7 @@
       <span class="tf-icon alert-box__icon" :class="[`tf-icon-${type}-circle`]"></span>
     <span class="alert-box__content">{{content}}</span>
     </div>
-    <span class="tf-icon tf-icon-doubleright"></span>
+    <span v-if="showRight" class="tf-icon tf-icon-doubleright"></span>
   </div>
 </template>
 
@@ -24,6 +24,10 @@ export default {
     content: {
       type: String,
       default: ''
+    },
+    showRight: {
+      type: Boolean,
+      default: true
     }
   },
   data () {

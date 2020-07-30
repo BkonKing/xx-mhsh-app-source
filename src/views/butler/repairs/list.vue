@@ -2,34 +2,19 @@
   <div class="tf-bg">
     <van-nav-bar title="我的报事报修" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="repairList" @load="onLoad">
-        <template v-slot="{item}">
-          <div class="list-item--time">{{item.ctime}}</div>
-          <div class="tf-card" @click="jump(item)">
-            <div class="tf-card-header">
-              <div class="tf-card-header__title">{{item.category}}</div>
-              <div
-                class="tf-card-header__status"
-                :class="{'tf-card-header__status--complete': item.status > 5}"
-              >{{statusText[item.status]}}</div>
-            </div>
-            <div class="tf-card-content">{{item.content}}</div>
-          </div>
-        </template>
-      </refreshList>
+      <list></list>
     </div>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
-import refreshList from '@/components/tf-refresh-list'
-import { statusText } from '@/const/butler.js'
-import { getRepairList } from '@/api/butler/butler.js'
+import list from './components/list'
+
 export default {
   components: {
     [NavBar.name]: NavBar,
-    refreshList
+    list
   },
   data () {
     return {
@@ -45,30 +30,11 @@ export default {
           status: 6,
           ctime: '2020-06-03 16:35:26'
         }
-      ],
-      statusText
+      ]
     }
   },
-  created () {
-    this.getRepairList()
-  },
-  methods: {
-    onLoad () {},
-    getRepairList () {
-      getRepairList({
-        projectId: '',
-        repairId: ''
-      }).then((res) => {
-        if (res.success) {
-          this.repairList = res.data
-        }
-      })
-    },
-    jump (item) {
-      const url = `/pages/butler/repairs/details?id=${item.id}&title=${item.category}`
-      this.$router.push(url)
-    }
-  }
+  created () {},
+  methods: {}
 }
 </script>
 

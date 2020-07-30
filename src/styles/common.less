@@ -3,6 +3,10 @@
   line-height: 1.4;
 }
 
+* ::-webkit-scrollbar {
+  display: none
+}
+
 // @font-face {
 //   font-family: 'iconfont';
 //   src: url('https://at.alicdn.com/t/font_1908587_ppeo1ml9et.ttf') format('truetype');
@@ -212,7 +216,7 @@
 .tf-article-title {
   font-size: 38px;
   color: @text-color;
-  font-weight: bold;
+  font-weight: 500;
   line-height: 58px;
 }
 
@@ -282,6 +286,12 @@
 }
 
 /* 头像*/
+.tf-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+}
+
 .tf-avatar-sm {
   width: 48px;
   height: 48px;
@@ -291,12 +301,6 @@
 .tf-avatar-m {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
-}
-
-.tf-avatar {
-  width: 88px;
-  height: 88px;
   border-radius: 50%;
 }
 
@@ -443,25 +447,12 @@
 
 #app {
 
-  > .tf-bg {
-    height: 100% ;
+  >.tf-bg {
+    height: 100%;
   }
 
-  .view-main > .tf-bg {
-    height: 100% ;
-  }
-
-  .van-notice-bar {
-    padding: 0 30px;
-    border-radius: 10px;
-    .van-icon {
-      font-size: 36px;
-      margin-right: 20px;
-      color: @red-dark;
-    }
-    .van-swipe-item {
-      color: @red-dark;
-    }
+  .view-main>.tf-bg {
+    height: 100%;
   }
 
   /* vant下划线 */
@@ -477,16 +468,9 @@
     .tf-icon {
       font-size: 44px;
     }
-    .tf-icon + .tf-icon {
-      margin-left: 20px;
-    }
-  }
 
-  .van-uploader__upload {
-    width: 114px;
-    height: 114px;
-    .van-icon-photograph {
-      font-size: 44px;
+    .tf-icon+.tf-icon {
+      margin-left: 20px;
     }
   }
 
@@ -494,46 +478,15 @@
     height: 88px;
     border-radius: 10px;
   }
+
   .van-button--plain {
     background: none;
-  }
-  
-  .van-search {
-    .van-search__content {
-      height: 80px;
-      padding-left: @padding-lg;
-    }
-  
-    .van-cell {
-      padding: 0 @padding-lg 0 0;
-  
-      .van-field__left-icon,
-      .van-field__control {
-        line-height: 80px;
-      }
-  
-      .van-field__control {
-        font-size: @font-size-lg;
-      }
-  
-      .van-icon {
-        font-size: 34px;
-      }
-  
-      .van-icon-search {
-        margin-right: 10px;
-      }
-  
-      .van-field__body {
-        line-height: 46px;
-      }
-    }
   }
 
   .van-cell--clickable:active {
     background: none;
   }
-  
+
   /* tab选中下划线 */
   .van-tabs__line {
     width: 64px !important;
@@ -545,11 +498,11 @@
       font-weight: bold;
     }
   }
-  
+
   .van-tag--danger.van-tag--plain {
     color: @red-dark;
   }
-  
+
   .van-tag--success.van-tag--plain {
     color: @green-dark;
   }
@@ -559,19 +512,77 @@
   }
 }
 
-  /* 导航栏右侧文字 */
-  .van-nav-bar__right .van-nav-bar__text  {
-    color: @text-color;
-    font-size: 26px;
-  }
+/* 导航栏右侧文字 */
+.van-nav-bar__right .van-nav-bar__text {
+  color: @text-color;
+  font-size: 26px;
+}
 
-  .van-popup--bottom {
-    .van-icon-close {
-      position: fixed;
-      z-index: 9999;
-      font-size: 50px;
-      color: #fff;
-      top: auto;
-      margin-top: -80px;
+.van-popup--bottom {
+  .van-icon-close {
+    position: fixed;
+    z-index: 9999;
+    font-size: 50px;
+    color: #fff;
+    top: auto;
+    margin-top: -80px;
+  }
+}
+
+.van-uploader__upload {
+  width: 114px;
+  height: 114px;
+
+  .van-icon-photograph {
+    font-size: 44px;
+  }
+}
+
+.app {
+  .van-notice-bar {
+    padding: 0 30px;
+    border-radius: 10px;
+
+    .van-icon {
+      font-size: 36px;
+      margin-right: 20px;
+      color: @red-dark;
+    }
+
+    .van-swipe-item {
+      color: @red-dark;
     }
   }
+
+  .van-search {
+    .van-search__content {
+      height: 80px;
+      padding-left: @padding-lg;
+    }
+
+    .van-cell {
+      padding: 0 @padding-lg 0 0;
+
+      .van-field__left-icon,
+      .van-field__control {
+        line-height: 80px;
+      }
+
+      .van-field__control {
+        font-size: @font-size-lg;
+      }
+
+      .van-icon {
+        font-size: 34px;
+      }
+
+      .van-icon-search {
+        margin-right: 10px;
+      }
+
+      .van-field__body {
+        line-height: 46px;
+      }
+    }
+  }
+}

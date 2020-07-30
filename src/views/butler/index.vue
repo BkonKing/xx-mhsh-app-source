@@ -10,7 +10,7 @@
     <appList :list="appList"></appList>
     <div class="tf-flex-center tf-flex-item">
       <div class="key-box" @click="goEntrance">
-        <span class="tf-icon">{{iconKey}}</span>
+        <span class="tf-icon tf-icon-key"></span>
       </div>
     </div>
   </div>
@@ -20,7 +20,6 @@
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
 import { NoticeBar, swipe, SwipeItem } from 'vant'
-import { iconKey } from '@/const/icon.js'
 import { queryAllApp } from '@/api/butler/butler.js'
 export default {
   components: {
@@ -39,7 +38,6 @@ export default {
   },
   data () {
     return {
-      iconKey,
       noticeList: [
         {
           id: 1,

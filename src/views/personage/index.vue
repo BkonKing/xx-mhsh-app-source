@@ -96,7 +96,7 @@
         <tf-list class="personage-list tf-mb-lg">
           <tf-list-item border title="我的订单" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
           </tf-list-item>
-          <tf-list-item border title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
+          <tf-list-item border title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInteraction">
           </tf-list-item>
           <tf-list-item border title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
           </tf-list-item>
@@ -163,6 +163,10 @@ export default {
     // 幸福币
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
+    },
+    // 我的互动
+    goInteraction () {
+      this.$router.push('/pages/personage/interaction/index')
     }
   }
 }

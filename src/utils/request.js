@@ -37,6 +37,7 @@ service.interceptors.request.use(
     // 请求发送前
     // eslint-disable-next-line no-undef
     const token = api.getGlobalData('access_token')
+    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if (token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key

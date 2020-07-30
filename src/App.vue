@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div class="app" id="app">
     <!-- 全局组件 -->
     <transition :name="transitionName">
       <keep-alive :max="10" :include="keepAlive">
