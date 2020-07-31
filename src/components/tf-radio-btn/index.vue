@@ -36,10 +36,11 @@ export default {
 .radio-btn-group {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .radio-btn__item {
   height: 88px;
+  margin-right: 20px;
   padding: 0 20px;
   background-color: @background-color;
   margin-bottom: @padding-lg;

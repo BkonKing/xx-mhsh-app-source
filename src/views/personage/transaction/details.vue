@@ -95,7 +95,7 @@ import userInfo from '@/components/user-info/index.vue'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { statusText } from '@/const/butler.js'
-import { getRepairInfo, cancelRepair } from '@/api/butler/butler.js'
+import { getRepairInfo, cancelRepair } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

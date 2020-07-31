@@ -44,7 +44,7 @@
 
 <script>
 import { NavBar, List, Cell, PullRefresh } from 'vant'
-import { getNoticeList, setNoticeReaded } from '@/api/butler/butler.js'
+import { getNoticeList, setNoticeReaded } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

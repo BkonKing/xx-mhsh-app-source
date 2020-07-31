@@ -1,17 +1,30 @@
 <template>
   <div class="tf-bg tf-screen">
-    <van-nav-bar title="消息" :fixed="true" :border="false" left-arrow right-text="全部已读" @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      title="消息"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      right-text="全部已读"
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <van-tabs v-model="current">
-        <van-tab v-for="(item, i) in items" :key="i" :badge="badge[i]" @click="onClickItem" :title="item"></van-tab>
+        <van-tab
+          v-for="(item, i) in items"
+          :key="i"
+          :badge="badge[i]"
+          @click="onClickItem"
+          :title="item"
+        ></van-tab>
       </van-tabs>
       <div class="tf-flex-item">
         <message-list type="transaction" v-show="current === 0"></message-list>
-      <interaction v-show="current === 1"></interaction>
-      <message-list type="butler" v-show="current === 2"></message-list>
-      <message-list type="activity" v-show="current === 3"></message-list>
-      <message-list type="system" v-show="current === 4"></message-list>
-      <message-list type="work" v-show="current === 5"></message-list>
+        <interaction v-show="current === 1"></interaction>
+        <message-list type="butler" v-show="current === 2"></message-list>
+        <message-list type="activity" v-show="current === 3"></message-list>
+        <message-list type="system" v-show="current === 4"></message-list>
+        <message-list type="work" v-show="current === 5"></message-list>
       </div>
     </div>
   </div>

@@ -62,7 +62,7 @@ import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 // import uImg from '@/components/uploadImg/uploadImg.vue'
-import { addRepair } from '@/api/butler/butler.js'
+import { addRepair } from '@/api/butler.js'
 export default {
   components: {
     tfAlert,

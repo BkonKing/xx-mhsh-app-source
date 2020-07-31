@@ -48,7 +48,7 @@
 <script>
 import { NavBar, Search } from 'vant'
 import serviceCard from './components/service-card.vue'
-import { getFreeServerList } from '@/api/butler/butler.js'
+import { getFreeServerList } from '@/api/butler.js'
 export default {
   components: {
     serviceCard,

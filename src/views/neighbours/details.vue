@@ -7,36 +7,45 @@
     </van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-card">
-        <div class="tf-card-header" :class="{'border-none': category === 1 || category === 3}">
+        <div class="tf-card-header" style="border-bottom:none" :class="{'border-none': category === 1 || category === 3}">
           <userInfo :avatar="info.avatar" :name="info.account" :time="info.ctime">
             <template v-slot:right>
               <div class="group-tag">公告小组</div>
             </template>
           </userInfo>
         </div>
-        <template v-if="category === 1">
-          <div class="article-title">聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单</div>
-          <div class="article-content"></div>
+        <template v-if="category == 3">
+          <div class="article-title">{{info.title}}</div>
+          <div class="article-content">{{info.content}}</div>
+          <img class="activity-image" :src="info.thumbnail" />
         </template>
-        <template v-else-if="category === 2">
-          <tf-alert type="warning" content="该内容含有违规信息。" :showRight="false" :showIcon="false" size="sm"></tf-alert>
+        <template v-else-if="category == 2">
+          <tf-alert
+            type="warning"
+            content="该内容含有违规信息。"
+            :showRight="false"
+            :showIcon="false"
+            size="sm"
+          ></tf-alert>
           <div class="tf-card-content">{{ info.content }}</div>
           <tf-image-list :data="info.images" mode="show"></tf-image-list>
         </template>
-        <template v-else>
-          <div class="article-title">高考100天抢跑冲刺计划 助力高考抢分好课限时特惠</div>
+        <template v-else-if="category == 1">
+          <div class="article-title">{{info.title}}</div>
           <div class="activity-content">
+            <div class="tf-text tf-mb-base">{{info.content}}</div>
+            <img class="activity-image" :src="info.thumbnail" />
             <div class="apply-box">
               <div class="apply-title">
                 报名人员
                 <span class="tf-text-grey">(123人)</span>
-                <span class="tf-status-tag">我已报名</span>
+                <span v-if="joinStatus" class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
-                <img class="apply-user__avatar" src="/src/assets/app-icon.png" />
+                <img class="apply-user__avatar" :src="info.thumbnail" />
               </div>
             </div>
-            <div class="apply-btn">报名</div>
+            <div v-if="!joinStatus" class="apply-btn" @click="joinActivity">报名</div>
           </div>
         </template>
         <div class="activity-footer">
@@ -52,13 +61,18 @@
 </template>
 
 <script>
-import { NavBar, Popup } from 'vant'
+import { NavBar, Popup, Toast } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
 import comment from './components/comment'
 import morePopup from './components/morePopup'
 import tfImageList from '@/components/tf-image-list'
+import {
+  getActivityInfo,
+  joinActivity,
+  getArticleInfo
+} from '@/api/neighbours'
 
 export default {
   components: {
@@ -74,6 +88,7 @@ export default {
   data () {
     return {
       category: 3,
+      id: '',
       moreShow: false,
       info: {
         id: '2',
@@ -89,7 +104,50 @@ export default {
         thumbsups: '5',
         comments: '3',
         ctime: '2020-06-03 16:35:26'
-      }
+      },
+      joinStatus: false
+    }
+  },
+  created () {
+    const { category, id } = this.$route.query
+    this.category = category
+    this.id = id
+    switch (category) {
+      case '1':
+        this.getActivityInfo()
+        break
+      case '3':
+        this.getArticleInfo()
+        break
+      default:
+        break
+    }
+  },
+  methods: {
+    /* 获取活动详情 */
+    getActivityInfo () {
+      getActivityInfo({
+        id: this.id
+      }).then((res) => {
+        this.info = res.data
+      })
+    },
+    /* 加入活动 */
+    joinActivity () {
+      joinActivity({
+        id: this.id
+      }).then((res) => {
+        Toast.success('活动报名成功')
+        this.joinStatus = true
+      })
+    },
+    /* 获取资讯详情 */
+    getArticleInfo () {
+      getArticleInfo({
+        id: this.id
+      }).then((res) => {
+        this.info = res.data
+      })
     }
   }
 }
@@ -99,7 +157,7 @@ export default {
 .tf-main-container {
   padding-bottom: 98px;
   .tf-icon {
-    color: #8F8F94;
+    color: #8f8f94;
   }
 }
 .tf-image-box {
@@ -157,7 +215,7 @@ export default {
         height: 60px;
         line-height: 60px;
         padding: 0 20px;
-        font-size:30px;
+        font-size: 30px;
       }
     }
     .apply-user {
@@ -186,13 +244,18 @@ export default {
   }
 }
 .group-tag {
-  height:34px;
+  height: 34px;
   line-height: 34px;
   padding: 0 13px;
   text-align: center;
-  border:2px solid @orange-dark;
-  border-radius:10px 0px 10px 10px;
+  border: 2px solid @orange-dark;
+  border-radius: 10px 0px 10px 10px;
   color: @orange-dark;
   font-size: 22px;
+}
+.activity-image {
+  width: 100%;
+  height: 365px;
+  margin-bottom: 20px;
 }
 </style>

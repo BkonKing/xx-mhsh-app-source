@@ -14,7 +14,7 @@
 <script>
 import { NavBar } from 'vant'
 import phoneCard from '../components/phone-card.vue'
-import { getYellowPagesList } from '@/api/butler/butler.js'
+import { getYellowPagesList } from '@/api/butler.js'
 export default {
   components: {
     phoneCard,

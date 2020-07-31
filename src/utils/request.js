@@ -109,15 +109,12 @@ service.interceptors.response.use(
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))
-    } else {
+    } else if (code !== 200) {
       Toast(codeMessage[code])
       return res
+    } else {
+      return res
     }
-  },
-  error => {
-    console.log('err' + error) // for debug
-    Toast(error.message)
-    return Promise.reject(error)
   }
 )
 

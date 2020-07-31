@@ -44,7 +44,7 @@
 import { NavBar, Dialog, Button } from 'vant'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import { statusText } from '@/const/butler.js'
-import { getRepairInfo, cancelRepair } from '@/api/butler/butler.js'
+import { getRepairInfo, cancelRepair } from '@/api/butler.js'
 export default {
   components: {
     tfTimeline,

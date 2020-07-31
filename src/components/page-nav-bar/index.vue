@@ -1,13 +1,10 @@
 <template>
   <van-nav-bar class="tf-nav-bar">
     <template #left>
-      <div class="tf-row-vertical-center room_btn" @click="goSelect" v-if="status">
+      <div class="tf-row-vertical-center room_btn" @click="goSelect">
         <span class="tf-icon tf-icon-location"></span>
-        <span class="tf-text">{{ name }}</span>
-      </div>
-      <div class="tf-row-vertical-center room_btn" v-else>
-        <span class="tf-icon tf-icon-location"></span>
-        <span class="tf-text underline">请认证房间号</span>
+        <span v-if="status" class="tf-text">{{ name }}</span>
+        <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
@@ -42,22 +39,22 @@ export default {
     }
   },
   data () {
-    return {
-    }
+    return {}
   },
   methods: {
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
     goSelect () {
-      this.$router.push('/pages/personage/house/select-community')
+      const url = this.status
+        ? '/pages/personage/house/select-community'
+        : '/pages/personage/house/attestation'
+      this.$router.push(url)
     },
     scan () {
       this.$router.push('/pages/personage/scanCode/index')
     },
-    onSearch () {
-
-    }
+    onSearch () {}
   }
 }
 </script>

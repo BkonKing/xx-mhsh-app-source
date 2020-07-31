@@ -1,18 +1,44 @@
 <template>
   <div class="page tf-screen">
-    <img class="logo" src="@/assets/app-icon.png">
-    <img class="logo-text" src="@/assets/app-icon.png">
+    <img class="logo" src="@/assets/app-icon.png" />
+    <img class="logo-text" src="@/assets/app-icon.png" />
     <div class="form">
       <div class="form-body">
-        <Field v-model="phoneNumber" class="form-input" maxlength="11" type="tel" placeholder="请输入您的手机号" ></Field>
-        <Field v-if="login_type === 1" v-model="phoneCode" key="code" class="form-input" maxlength="11" type="text" placeholder="验证码" >
+        <Field
+          v-model="mobile"
+          class="form-input"
+          maxlength="11"
+          type="tel"
+          placeholder="请输入您的手机号"
+        ></Field>
+        <Field
+          v-if="login_type === 1"
+          v-model="yzm"
+          key="code"
+          class="form-input"
+          maxlength="11"
+          type="text"
+          placeholder="验证码"
+        >
           <template #button>
-            <van-button class="query-btn">获取</van-button>
+            <div class="tf-text-white" v-if="codeStatus">{{countDown}}s</div>
+            <van-button v-else class="query-btn" @click="verifCode">获取</van-button>
           </template>
         </Field>
-        <Field v-if="login_type === 2" v-model="password" class="form-input" key="password" :type="showPassword ? 'text' : 'password'" placeholder="请输入您的密码" >
+        <Field
+          v-if="login_type === 2"
+          v-model="pwd"
+          class="form-input"
+          key="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="请输入您的密码"
+        >
           <template #button>
-            <span class="tf-icon tf-text-white" :class="[showPassword ? 'tf-icon-eye' : 'tf-icon-eye-close']" @click="changePassword"></span>
+            <span
+              class="tf-icon tf-text-white"
+              :class="[showPassword ? 'tf-icon-eye' : 'tf-icon-eye-close']"
+              @click="changePassword"
+            ></span>
           </template>
         </Field>
       </div>
@@ -23,7 +49,10 @@
     <div class="agreement" @click="changeRememberPasswrod">
       <div class="uni-checkbox-wrapper">
         <div class="uni-checkbox-input">
-          <span class="tf-icon uni-checkbox-icon" :class="{ 'uni-checkbox-input-checked': agree }">{{ agree ? '&#xe886;' : '' }}</span>
+          <span
+            class="tf-icon uni-checkbox-icon"
+            :class="{ 'uni-checkbox-input-checked': agree }"
+          >{{ agree ? '&#xe886;' : '' }}</span>
         </div>
       </div>
       <span class="agreement-text" style="color: #fff;">登录即表示您同意《美好生活家园用户协议》</span>
@@ -32,7 +61,9 @@
 </template>
 
 <script>
-import { Field, Button } from 'vant'
+import { Field, Button, Toast } from 'vant'
+import { verifCode } from '@/api/user'
+import { validEmpty } from '@/utils/util'
 export default {
   components: {
     Field,
@@ -40,12 +71,15 @@ export default {
   },
   data () {
     return {
-      phoneNumber: undefined,
-      phoneCode: undefined,
-      password: undefined,
-      login_type: 1,
+      mobile: undefined,
+      yzm: undefined,
+      pwd: undefined,
+      login_type: 1, // 1:验证码登录 2：密码登陆
       agree: true,
-      showPassword: false
+      showPassword: false,
+      codeStatus: false,
+      countDown: 59,
+      timer: null
     }
   },
   created () {},
@@ -56,17 +90,63 @@ export default {
     changePassword () {
       this.showPassword = !this.showPassword
     },
+    /* 登录 */
     login () {
-      this.$store.dispatch('login').then(() => {
+      if (!this.agree) {
+        Toast('请阅读并同意用户协议')
+        return
+      }
+      let params = {}
+      /* 验证码登录 */
+      if (this.login_type === 1) {
+        if (validEmpty(this.mobile, '请输入手机号码') || validEmpty(this.yzm, '请输入验证码')) {
+          return
+        }
+        params = {
+          mobile: this.mobile,
+          yzm: this.yzm
+        }
+      } else if (this.login_type === 2) { /* 密码登录 */
+        if (validEmpty(this.mobile, '请输入手机号码') || validEmpty(this.pwd, '请输入密码')) {
+          return
+        }
+        params = {
+          mobile: this.mobile,
+          pwd: this.pwd
+        }
+      }
+      this.$store.dispatch('login', {
+        type: this.login_type,
+        params
+      }).then(() => {
         this.$router.push('')
       })
+    },
+    /* 发送验证码 */
+    verifCode () {
+      verifCode().then((res) => {
+        this.codeStatus = true
+        this.count()
+      })
+    },
+    /* 验证码倒计时 */
+    count () {
+      if (this.countDown === 0) {
+        clearTimeout(this.timer)
+        this.countDown = 59
+        this.codeStatus = false
+        return
+      }
+      this.timer = setTimeout(() => {
+        this.countDown--
+        this.count()
+      }, 1000)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-
 div,
 span,
 image {

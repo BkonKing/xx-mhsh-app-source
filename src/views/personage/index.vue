@@ -36,16 +36,19 @@
               :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
               @click="sign"
             >
-              <div class="user-btn__text" :style="{ color: signStatus ? '#8F8F94' : '#fff' }">签到</div>
+              <div
+                class="user-btn__text"
+                :style="{ color: signStatus ? '#8F8F94' : '#fff' }"
+              >{{signStatus | signText}}</div>
             </button>
           </div>
         </div>
       </div>
       <div class="functional-box">
-        <div class="module-box">
+        <div v-if="userType == 6 || userType == 7" class="module-box">
           <div class="module-title">事务处理</div>
           <div class="tf-padding-base">
-            <div class="tf-row manage-border-bottom">
+            <div v-if="userType == 6" class="tf-row manage-border-bottom">
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待处理</div>
@@ -94,79 +97,131 @@
           </div>
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item border title="我的订单" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
-          </tf-list-item>
-          <tf-list-item border title="我的互动" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInteraction">
-          </tf-list-item>
-          <tf-list-item border title="我的资料" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goInformation">
-          </tf-list-item>
-          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
-          </tf-list-item>
+          <tf-list-item
+            border
+            title="我的订单"
+            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
+          ></tf-list-item>
+          <tf-list-item
+            border
+            title="我的互动"
+            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
+            @click="goInteraction"
+          ></tf-list-item>
+          <tf-list-item
+            border
+            title="我的资料"
+            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
+            @click="goInformation"
+          ></tf-list-item>
+          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></tf-list-item>
         </tf-list>
         <tf-list class="personage-list">
-          <tf-list-item border title="常见问题" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png">
-          </tf-list-item>
-          <tf-list-item title="意见反馈" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png" @click="goFeedback">
-          </tf-list-item>
+          <tf-list-item
+            border
+            title="常见问题"
+            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
+            @click="goQuestion"
+          ></tf-list-item>
+          <tf-list-item
+            title="意见反馈"
+            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
+            @click="goFeedback"
+          ></tf-list-item>
         </tf-list>
       </div>
     </div>
+    <tf-calendar v-model="showCalendar" :data="signArr" :curYear="cur_year" :curMonth="cur_month"></tf-calendar>
   </div>
 </template>
 
 <script>
 import { NavBar, Tag, Toast } from 'vant'
+import tfCalendar from '@/components/tf-calendar'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [Tag.name]: Tag,
     tfList,
-    tfListItem
+    tfListItem,
+    tfCalendar
   },
   data () {
     return {
-      signStatus: false
+      signStatus: false,
+      userType: undefined,
+      showCalendar: false, // 签到日历是否隐藏
+      cur_year: 0, // 签到日历展示年份
+      cur_month: 0, // 签到日历展示月份
+      signArr: [] // 签到日历展示数据
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  created () {
+    this.userType = this.userInfo.user_type
+  },
   methods: {
+    /* 签到 */
     sign () {
       if (!this.signStatus) {
         Toast({
           message: '签到成功   幸福币+10'
         })
+        this.signStatus = true
       } else {
         // 已签到，弹出签到日历
+        this.showCalendar = true
       }
     },
+    /* 设置 */
     goSetting () {
       this.$router.push('/pages/personage/setting/index')
     },
+    /* 消息 */
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
+    /* 我的资料 */
     goInformation () {
       this.$router.push('/pages/personage/information/index')
     },
+    /* 我的订单 */
     goOrder () {
       this.$router.push('/pages/personage/order-form/index')
     },
+    /**
+     * 事务处理
+     * @param type {number} 1: 待处理 2:：待分派 3：待结案 4：已结案
+     */
     goTransaction (type) {
       const url = `/pages/personage/transaction/index?type=${type}`
       this.$router.push(url)
     },
-    // 意见反馈
+    /* 意见反馈 */
     goFeedback () {
       this.$router.push('/pages/personage/feedback/index')
     },
-    // 幸福币
+    /* 幸福币 */
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
-    // 我的互动
+    /* 我的互动 */
     goInteraction () {
       this.$router.push('/pages/personage/interaction/index')
+    },
+    /* 我的互动 */
+    goQuestion () {
+      this.$router.push('/pages/personage/question/index')
+    }
+  },
+  filters: {
+    signText (value) {
+      return value ? '已签到' : '签到'
     }
   }
 }

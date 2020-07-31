@@ -7,18 +7,18 @@
       </tf-list>
       <tf-list class="tf-mt-lg">
         <tf-list-item title="检查更新" @click="openDialog" border>
-          <template v-slot:right>
+          <template v-if="updateStatus" v-slot:right>
             <div class="right-text tf-text-primary">发现更新版本</div>
           </template>
         </tf-list-item>
         <tf-list-item title="清除缓存">
           <template v-slot:right>
-            <div class="right-text">100MB</div>
+            <div class="right-text">{{sizeText}}</div>
           </template>
         </tf-list-item>
       </tf-list>
       <button class="btn" @click="goAccount">切换账号</button>
-      <button class="btn tf-text-primary">退出登录</button>
+      <button class="btn tf-text-primary" @click="outLogin">退出登录</button>
     </div>
     <tf-dialog v-model="showDialog" title="版本更新" :showFotter="true" okText="更新">
       <div class="dialog-content">更新能容： 1.修复了FaceID和链接收藏弹窗的兼容性问题； 2.修复了链接收藏微信文章没有标题问题。</div>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
@@ -40,18 +40,81 @@ export default {
   },
   data () {
     return {
-      showDialog: false
+      showDialog: false,
+      source: '', // 版本下载地址
+      updateStatus: false, // 是否有版本更新
+      cacheSize: 0
     }
   },
+  computed: {
+    sizeText () {
+      const b = this.cacheSize
+      if (b < 1024) {
+        return `${b.toFixed(2)}B`
+      }
+      const kb = b / 1024
+      if (kb < 1024) {
+        return `${kb.toFixed(2)}KB`
+      }
+      const mb = kb / 1024
+      if (mb < 1024) {
+        return `${mb.toFixed(2)}MB`
+      }
+      const gb = mb / 1024
+      return `${gb.toFixed(2)}GB`
+    }
+  },
+  created () {
+    this.checkUpdate()
+    this.getCacheSize()
+  },
   methods: {
+    /* 检查版本更新 */
+    checkUpdate () {
+      var mam = this.$api.require('mam')
+      mam.checkUpdate((ret, err) => {
+        if (ret) {
+          if (ret.status) {
+            const data = ret.result
+            const { update, source } = data
+            this.updateStatus = update
+            this.source = source
+          }
+        } else {
+          console.error(err)
+        }
+      })
+    },
+    /* 获取缓存数据 */
+    getCacheSize () {
+      this.$api.getCacheSize((ret) => {
+        this.cacheSize = ret.size
+      })
+    },
+    /* 清除缓存 */
+    clearCache () {
+      this.$api.clearCache(() => {
+        Toast('缓存清除完成')
+      })
+    },
+    /* 切换账号 */
     goAccount () {
       this.$router.push('/pages/personage/setting/account')
     },
+    /* 跳转我的资料 */
     goInformation () {
       this.$router.push('/pages/personage/information/index')
     },
+    /* 更新说明提醒 */
     openDialog () {
-      this.showDialog = true
+      if (this.updateStatus) {
+        this.showDialog = true
+      } else {
+        Toast('当前已是最新版本')
+      }
+    },
+    outLogin () {
+      this.$store.dispatch('outLogin')
     }
   }
 }
@@ -76,7 +139,7 @@ export default {
   line-height: 120px;
   font-size: 30px;
   margin-top: 30px;
-    border: none;
+  border: none;
   background-color: #fff;
 }
 /deep/ .tf-clist-box {

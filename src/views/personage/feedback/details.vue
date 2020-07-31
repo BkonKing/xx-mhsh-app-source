@@ -22,7 +22,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getComPraiseInfo } from '@/api/butler/butler.js'
+import { getComPraiseInfo } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar

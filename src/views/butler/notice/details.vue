@@ -15,7 +15,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getNoticInfo } from '@/api/butler/butler.js'
+import { getNoticInfo } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar

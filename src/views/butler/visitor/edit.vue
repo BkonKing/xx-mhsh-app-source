@@ -15,7 +15,7 @@ import { NavBar, Button } from 'vant'
 
 import tfList from '@/components/tf-list/index.vue'
 import visitorForm from './components/form.vue'
-import { addMyVisitor, updateMyVisitor } from '@/api/butler/butler.js'
+import { addMyVisitor, updateMyVisitor } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

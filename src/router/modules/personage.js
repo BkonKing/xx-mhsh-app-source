@@ -195,6 +195,16 @@ const personageRouter = [
         /* webpackChunkName: "interactionIndex" */
         '@/views/personage/interaction/index.vue'
       )
+  },
+  /* 常见问题 */
+  {
+    path: '/pages/personage/question/index',
+    name: 'questionIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "questionIndex" */
+        '@/views/personage/question/index.vue'
+      )
   }
 ]
 

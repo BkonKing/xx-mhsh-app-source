@@ -20,7 +20,7 @@
 <script>
 import { NavBar } from 'vant'
 import questionList from './components/list.vue'
-import { getWjtpList } from '@/api/butler/butler.js'
+import { getWjtpList } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

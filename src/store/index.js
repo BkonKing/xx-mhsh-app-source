@@ -1,19 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { login } from '@/api/user.js'
-import { Toast } from 'vant'
+import {
+  yzmLogin,
+  pwdLogin,
+  outLogin
+} from '@/api/user.js'
+import {
+  Toast
+} from 'vant'
+import router from '@/router'
 
 if (!window.api) {
   window.api = {
     getGlobalData (obj) {
-      const { key: name } = obj
-      const strcookie = document.cookie// 获取cookie字符串
-      const arrcookie = strcookie.split('; ')// 分割
+      const {
+        key: name
+      } = obj
+      const strcookie = document.cookie // 获取cookie字符串
+      const arrcookie = strcookie.split('; ') // 分割
       // 遍历匹配
       for (let i = 0; i < arrcookie.length; i++) {
         var arr = arrcookie[i].split('=')
         if (arr[0] === name) {
-          return arr[1]
+          return JSON.parse(arr[1])
         }
       }
       return ''
@@ -23,9 +32,8 @@ if (!window.api) {
         key: name,
         value
       } = obj
-      document.cookie = name + '=' + escape(value) + ';path=/;'
+      document.cookie = name + '=' + JSON.stringify(value) + ';path=/;'
     }
-
   }
 }
 
@@ -95,25 +103,67 @@ const store = new Vuex.Store({
   getters: {
     currentColor (state) {
       return state.colorList[state.colorIndex]
+    },
+    userInfo (state) {
+      return state.user_info
     }
   },
   actions: {
-    login: async function ({
+    async login ({
       commit,
       state
+    }, {
+      type,
+      params
     }) {
       return await new Promise((resolve, reject) => {
         Toast.loading({
           duration: 0,
-          message: '正在登录中...'
+          message: '正在登录中'
         })
-        login().then((res, reject) => {
+        const loginUrl = type === 1 ? yzmLogin : pwdLogin
+        loginUrl(params).then((res) => {
+          Toast.clear()
           if (res.success) {
-            const { data } = res
+            const {
+              data
+            } = res
             commit('setAccess_token', data.access_token)
             commit('setRefresh_token', data.refresh_token)
             commit('setUser_info', data)
-            Toast.clear()
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      })
+    },
+    async outLogin ({
+      commit
+    }) {
+      return await new Promise((resolve, reject) => {
+        Toast.loading({
+          duration: 0
+        })
+        outLogin().then((res) => {
+          Toast.clear()
+          if (res.success) {
+            commit('setAccess_token', '')
+            commit('setRefresh_token', '')
+            commit('setUser_info', '')
+            api.setGlobalData({
+              key: 'access_token',
+              value: ''
+            })
+            api.setGlobalData({
+              key: 'refresh_token',
+              value: ''
+            })
+            api.setGlobalData({
+              key: 'user_info',
+              value: ''
+            })
+            router.push('/login')
             resolve()
           } else {
             reject()

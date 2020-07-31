@@ -23,7 +23,7 @@
 
 <script>
 import { NavBar, Button, Toast } from 'vant'
-import { getMyVisitorList, deleteMyVisitor } from '@/api/butler/butler.js'
+import { getMyVisitorList, deleteMyVisitor } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

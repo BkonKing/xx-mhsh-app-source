@@ -9,23 +9,35 @@
       </template>
     </van-nav-bar>
     <van-tabs class="pt88" v-model="current" @click="onClickItem">
-      <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
-    </van-tabs>
-    <div class="main-container">
-      <list v-show="current === 0"></list>
-      <div class="group-box" v-show="current === 1">
-        <div class="group-item" v-for="item in group" :key="item.id">
-          <img class="group-img" :src="item.icon_images" />
-          <div class="group-name">{{item.category}}</div>
+      <van-tab title="最新">
+        <list key="list" :data="list"></list>
+      </van-tab>
+      <van-tab title="小组">
+        <div class="group-box">
+          <div class="group-item" v-for="item in group" :key="item.id">
+            <img class="group-img" :src="item.icon_images" />
+            <div class="group-name">{{item.category}}</div>
+          </div>
         </div>
-      </div>
-    </div>
+      </van-tab>
+      <van-tab title="活动">
+        <list key="activityList" :data="activityList" :category="1"></list>
+      </van-tab>
+      <van-tab title="资讯">
+        <list key="articleList" :data="articleList" :category="3"></list></van-tab>
+    </van-tabs>
   </div>
 </template>
 
 <script>
 import { NavBar, Tab, Tabs, Popup } from 'vant'
 import list from './components/list'
+import {
+  getNewestList,
+  getPostBarCategoryList,
+  getActivityList,
+  getArticleList
+} from '@/api/neighbours'
 
 export default {
   components: {
@@ -38,41 +50,68 @@ export default {
   data () {
     return {
       status: 1,
-      items: ['最新', '小组', '活动', '资讯'],
       current: 0,
-      group: [
-        {
-          id: '1',
-          category: '爱分享',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-        },
-        {
-          id: '2',
-          category: '爱分享',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-        },
-        {
-          id: '3',
-          category: '爱分享',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-        }
-      ]
+      group: [],
+      list: [],
+      activityList: [],
+      articleList: []
     }
   },
+  created () {
+    this.getNewestList()
+  },
   methods: {
+    /* 发布 */
     goEdit () {
       this.$router.push('/pages/neighbours/publish')
     },
+    /* 跳转消息 */
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
+    /* tab切换 */
     onClickItem (currentIndex) {
       if (this.current !== currentIndex) {
         this.current = currentIndex
       }
+      switch (currentIndex) {
+        case 0:
+          this.getNewestList()
+          break
+        case 1:
+          this.getPostBarCategoryList()
+          break
+        case 2:
+          this.getActivityList()
+          break
+        case 3:
+          this.getArticleList()
+          break
+      }
+    },
+    /* 获取最新列表 */
+    getNewestList () {
+      getNewestList().then((res) => {
+        this.list = res.data
+      })
+    },
+    /* 获取话题小组 */
+    getPostBarCategoryList () {
+      getPostBarCategoryList().then((res) => {
+        this.group = res.data
+      })
+    },
+    /* 获取活动列表 */
+    getActivityList () {
+      getActivityList().then((res) => {
+        this.activityList = res.data
+      })
+    },
+    /* 获取资讯列表 */
+    getArticleList () {
+      getArticleList().then((res) => {
+        this.articleList = res.data
+      })
     }
   }
 }
@@ -103,7 +142,7 @@ export default {
   @flex();
   justify-content: space-between;
   flex-wrap: wrap;
-  padding: 10px 30px;
+  padding: 20px 30px;
   .group-item {
     position: relative;
     width: 335px;
@@ -130,5 +169,4 @@ export default {
     color: #fff;
   }
 }
-
 </style>

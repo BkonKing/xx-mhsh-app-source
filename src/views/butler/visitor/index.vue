@@ -73,7 +73,7 @@ import { NavBar, Toast, Picker, DatetimePicker, Popup, Button } from 'vant'
 import visitorForm from './components/form.vue'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
-import { addVisitorLog } from '@/api/butler/butler.js'
+import { addVisitorLog } from '@/api/butler.js'
 import { getDate } from '@/utils/util.js'
 export default {
   components: {

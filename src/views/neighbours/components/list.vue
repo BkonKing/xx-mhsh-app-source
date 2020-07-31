@@ -2,11 +2,16 @@
   <div>
     <refreshList :list.sync="list" @load="onLoad">
       <template v-slot="{item}">
-        <div v-if="item.category === 1" class="activity-cell">
-          <img class="activity-image" :src="item.images && item.images[0]" />
-          <div class="tf-status-tag">活动</div>
-          <div class="activity-title">{{item.content}}</div>
-          <div class="activity-time">{{item.ctime}}</div>
+        <div v-if="category === 1 || item.category === 1" class="activity-cell">
+          <div @click="goDetails(1, item.id)">
+            <div class="activity-image-box">
+              <img class="activity-image" :src="item.thumbnail" />
+              <div class="activity-join">{{item.joins || 0}}人已报名</div>
+            </div>
+            <div class="tf-status-tag">活动</div>
+            <div class="activity-title">{{item.title}}</div>
+            <div class="activity-time">{{item.ctime}}</div>
+          </div>
           <div class="activity-footer">
             <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
             <div class="tf-icon tf-icon-message">{{item.comments}}</div>
@@ -21,8 +26,8 @@
                 </template>
               </userInfo>
             </div>
-            <div class="tf-card-content" @click="goDetails">{{ item.content }}</div>
-            <tf-image-list :data="item.images" @click="goDetails"></tf-image-list>
+            <div class="tf-card-content" @click="goDetails(2)">{{ item.content }}</div>
+            <tf-image-list :data="item.images" @click="goDetails(2)"></tf-image-list>
             <div class="activity-footer">
               <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
               <div class="tf-icon tf-icon-message">{{item.comments}}</div>
@@ -30,10 +35,12 @@
             </div>
           </div>
         </div>
-        <div class="activity-cell" v-else>
-          <img class="activity-image" :src="item.images && item.images[0]" />
-          <div class="tf-status-tag">资讯</div>
-          <div class="activity-title">{{item.content}}</div>
+        <div class="activity-cell" v-else-if="category === 3 || item.category === 3">
+          <div @click="goDetails(3, item.id)">
+            <img class="activity-image" :src="item.thumbnail" />
+            <div class="tf-status-tag">资讯</div>
+            <div class="activity-title">{{item.content}}</div>
+          </div>
           <div class="activity-footer">
             <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
             <div class="tf-icon tf-icon-message">{{item.comments}}</div>
@@ -58,49 +65,37 @@ export default {
     UserInfo,
     morePopup
   },
+  props: {
+    data: {
+      type: Array,
+      defautl: () => []
+    },
+    category: {
+      type: Number,
+      defautl: undefined
+    }
+  },
   data () {
     return {
       moreShow: false,
-      list: [
-        {
-          id: '2',
-          content:
-            '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          category: 2,
-          account: '小雪',
-          avatar: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          thumbsups: '5',
-          comments: '3',
-          ctime: '2020-06-03 16:35:26'
-        },
-        {
-          id: '3',
-          content:
-            '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          category: 3,
-          account: '小雪',
-          avatar: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          thumbsups: '5',
-          comments: '3',
-          ctime: '2020-06-03 16:35:26'
-        }
-      ]
+      list: this.data
     }
   },
   methods: {
     onLoad () {},
-    goDetails () {
-      this.$router.push('/pages/neighbours/details')
+    goDetails (category, id) {
+      this.$router.push({
+        path: '/pages/neighbours/details',
+        query: {
+          category,
+          id
+        }
+      })
+    }
+  },
+  watch: {
+    data (value) {
+      this.list = value
     }
   }
 }
@@ -116,10 +111,28 @@ export default {
   background: #fff;
   border-radius: 10px;
   padding: 30px 30px 0;
-  .activity-image {
+  .activity-image-box {
+    position: relative;
     width: 100%;
     height: 365px;
     margin-bottom: 10px;
+  }
+  .activity-image {
+    width: 100%;
+    height: 365px;
+  }
+  .activity-join {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 66px;
+    line-height: 66px;
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 0 0 4px 4px;
+    font-size: 24px;
   }
   .activity-title {
     font-size: 30px;
@@ -142,6 +155,7 @@ export default {
     text-align: center;
     width: 33.3%;
     font-size: 36px;
+    color: #aaa;
   }
 }
 .tf-status-tag {
@@ -155,12 +169,12 @@ export default {
   );
 }
 .group-tag {
-  height:34px;
+  height: 34px;
   line-height: 34px;
   padding: 0 13px;
   text-align: center;
-  border:2px solid @orange-dark;
-  border-radius:10px 0px 10px 10px;
+  border: 2px solid @orange-dark;
+  border-radius: 10px 0px 10px 10px;
   color: @orange-dark;
   font-size: 22px;
 }

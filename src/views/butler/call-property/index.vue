@@ -23,37 +23,26 @@
         ></phone-card>
       </div>
       <div class="tf-bg-white">
-        <text class="module-title">常见问题</text>
-        <van-collapse v-model="activeNames">
-          <van-collapse-item v-for="(item, i) in eqList" :key="i" :name="i">
-            <template #title>
-              <div class="tf-van-collapse-item__title tf-row">
-                <div class="question-index-box">Q{{i + 1}}</div>
-                {{item.question}}
-              </div>
-            </template>
-            <div class="question-content">{{item.answer}}</div>
-          </van-collapse-item>
-        </van-collapse>
+        <div class="module-title">常见问题</div>
+        <FAQ :data="eqList"></FAQ>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Collapse, CollapseItem } from 'vant'
+import { NavBar } from 'vant'
+import FAQ from './components/FAQ'
 import phoneCard from '../components/phone-card.vue'
-import { getCallWYList } from '@/api/butler/butler.js'
+import { getCallWYList } from '@/api/butler.js'
 export default {
   components: {
     phoneCard,
-    [NavBar.name]: NavBar,
-    [Collapse.name]: Collapse,
-    [CollapseItem.name]: CollapseItem
+    FAQ,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
-      activeNames: [],
       project_name: '郑州美好生活家园',
       remarks:
         '郑州美好生活家园郑州美好生活家园郑州美好生活家园郑州美好生活家园',
@@ -75,20 +64,19 @@ export default {
           remarks: '24小时在线'
         }
       ],
-      eqList: [
-        {
-          id: '1',
-          question: '门禁二维码打不开门？',
-          answer:
-            '智能门禁摄像头需要读到二维码信息后才能发送开幕指令给门禁，正确的使用方法是将二维码对准摄像头'
-        },
-        {
-          id: '2',
-          question: '门禁二维码打不开门？',
-          answer:
-            '智能门禁摄像头需要读到二维码信息后才能发送开幕指令给门禁，正确的使用方法是将二维码对准摄像头'
-        }
-      ]
+      eqList: [{
+        id: '1',
+        question: '业主与物管企业是否为“主仆”关系？',
+        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
+      }, {
+        id: '2',
+        question: '业主与物管企业是否为“主仆”关系？',
+        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
+      }, {
+        id: '3',
+        question: '业主与物管企业是否为“主仆”关系？',
+        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
+      }]
     }
   },
   created () {
@@ -165,31 +153,6 @@ export default {
   font-size: @font-size-lg;
   font-weight: bold;
   color: @text-color;
-  padding: @padding-md;
-}
-.question-index-box {
-  width: 72px;
-  height: 45px;
-  line-height: 45px;
-  font-size: 24px;
-  margin-right: @padding-md;
-  color: #fff;
-  background-color: @gray-8;
-  text-align: center;
-}
-.question-content {
-  font-size: 26px;
-  color: #666;
-  line-height: 54px;
-  padding: 0 30px 50px;
-}
-
-/deep/ .van-collapse-item__title {
-  display: flex;
-  align-items: center;
-}
-.tf-van-collapse-item__title {
-  padding: 30px;
-  align-items: center;
+  padding: 40px 30px;
 }
 </style>

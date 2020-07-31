@@ -2,21 +2,29 @@
   <div class="tf-bg-white">
     <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-h3">切换账户登录</div>
-    <div class="account" :class="{'account-active': active}">
-      <img class="user-avatar" src="/static/app-icon.png" mode="aspectFill" />
+    <div
+      class="account"
+      v-for="(item, i) in accountList"
+      :key="i"
+      :class="{'account-active': active === i}"
+      @click="active = i"
+    >
+      <img class="user-avatar" :src="item.avatar" mode="aspectFill" />
       <div class="tf-space-around">
-        <div class="user-name">这是一个默认昵称</div>
-        <div class="tf-text-grey">15022223333</div>
+        <div class="user-name">{{item.name}}</div>
+        <div class="tf-text-grey">{{item.phone}}</div>
       </div>
-      <div v-if="active" class="checked-tag"></div>
-      <div class="tf-icon tf-icon-check"></div>
+      <template v-if="active === i">
+        <div class="checked-tag"></div>
+        <div class="tf-icon tf-icon-check"></div>
+      </template>
     </div>
-    <van-button class="account-btn" type="danger">换个账户登录</van-button>
+    <van-button class="account-btn" type="danger" @click="login">换个账户登录</van-button>
   </div>
 </template>
 
 <script>
-import { NavBar, Button } from 'vant'
+import { NavBar, Button, Toast } from 'vant'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -24,7 +32,19 @@ export default {
   },
   data () {
     return {
-      active: 1
+      active: undefined,
+      accountList: [
+        {
+          avatar: '/static/app-icon.png',
+          name: '这是一个默认昵称',
+          phone: '15022223333'
+        }
+      ]
+    }
+  },
+  methods: {
+    login () {
+
     }
   }
 }

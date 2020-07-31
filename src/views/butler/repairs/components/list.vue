@@ -19,7 +19,7 @@
 <script>
 import refreshList from '@/components/tf-refresh-list'
 import { statusText } from '@/const/butler.js'
-import { getRepairList } from '@/api/butler/butler.js'
+import { getRepairList } from '@/api/butler.js'
 export default {
   components: {
     refreshList

@@ -22,7 +22,7 @@
 <script>
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
-import { getMyFreeServerList } from '@/api/butler/butler.js'
+import { getMyFreeServerList } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

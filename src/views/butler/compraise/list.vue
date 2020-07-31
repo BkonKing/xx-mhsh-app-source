@@ -32,7 +32,7 @@
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import userInfo from '@/components/user-info/index.vue'
-import { getComPraiseList } from '@/api/butler/butler.js'
+import { getComPraiseList } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

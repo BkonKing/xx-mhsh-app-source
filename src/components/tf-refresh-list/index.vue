@@ -73,7 +73,7 @@ export default {
   watch: {
     list (value) {
       this.listChild = value
-      console.log(this.listChild)
+      // console.log(this.listChild)
       this.loading = false
       this.refreshing = false
     }

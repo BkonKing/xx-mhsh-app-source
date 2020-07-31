@@ -67,7 +67,7 @@
 <script>
 import { NavBar } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
-import { getQrCode, ycOpenDoor } from '@/api/butler/butler.js'
+import { getQrCode, ycOpenDoor } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

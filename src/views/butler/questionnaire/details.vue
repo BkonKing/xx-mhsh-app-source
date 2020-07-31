@@ -61,7 +61,7 @@
 <script>
 import { NavBar, Toast, Button } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
-import { addWjtp, getWjtpInfo } from '@/api/butler/butler.js'
+import { addWjtp, getWjtpInfo } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

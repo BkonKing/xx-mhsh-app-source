@@ -20,7 +20,7 @@
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
 import { NoticeBar, swipe, SwipeItem } from 'vant'
-import { queryAllApp } from '@/api/butler/butler.js'
+import { queryAllApp } from '@/api/butler.js'
 export default {
   components: {
     pageNavBar,

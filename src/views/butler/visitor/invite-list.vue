@@ -49,7 +49,7 @@
 <script>
 import { NavBar, Tab, Tabs } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
-import { getVisitorLogList } from '@/api/butler/butler.js'
+import { getVisitorLogList } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

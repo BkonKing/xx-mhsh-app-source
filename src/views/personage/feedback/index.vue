@@ -54,7 +54,7 @@
 <script>
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
-import { addComPraise } from '@/api/butler/butler.js'
+import { addComPraise } from '@/api/butler.js'
 export default {
   components: {
     tfRadioBtn,
