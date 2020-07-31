@@ -199,6 +199,5 @@ export default {
 	background-color: #f2f2f4;
 	font-size: 28px;
 	width: 100%;
-	overflow: hidden;
 }
 </style>

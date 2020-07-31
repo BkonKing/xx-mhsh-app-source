@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
 		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -224,7 +224,7 @@ export default {
   },
   data () {
     return {
-
+    	windowHeight: document.documentElement.clientHeight,
     }
   },
   methods: {
@@ -240,7 +240,6 @@ export default {
 	background-color: #f2f2f4;
 	font-size: 28px;
 	width: 100%;
-	overflow: hidden;
 }
 
 .collage-header {
