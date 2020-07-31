@@ -63,8 +63,8 @@
 					</div>
 					<div class="common-item-right">
 						<div class="color-8f8f94 font-28">请选择</div>
-						<van-icon class="van-icon" name="arrow" size="32px" color="#aaa" />
-						<!-- <img class="common-item-arrow" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode=""/> -->
+						<!-- <van-icon class="van-icon" name="arrow" size="32px" color="#aaa" /> -->
+						<img class="common-item-arrow" src="@/assets/img/right.png" mode=""/>
 					</div>
 				</div>
 				<div class="common-item">
@@ -74,7 +74,7 @@
 					</div>
 					<div class="common-item-right">
 						<div class="common-item-code">
-							<van-icon class="van-icon" name="scan" size="52px" color="#383838" />
+							<van-icon class="van-icon" name="scan" size="26px" color="#383838" />
 						</div>
 					</div>
 				</div>
@@ -123,7 +123,7 @@
 						<div class="upload-pic">
 							<!-- <van-icon class="van-icon" name="plus" size="0.52px" color="#aaa" /> -->
 							<van-uploader :after-read="onRead">
-							  <van-icon class="van-icon" name="plus" size="52px" color="#aaa" />
+							  <van-icon class="van-icon" name="plus" size="26px" color="#aaa" />
 							</van-uploader>
 						</div>
 					</div>
@@ -140,9 +140,12 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
-// import '@/styles/order.css'
+import { NavBar,Icon } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+    [Icon.name]: Icon,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight

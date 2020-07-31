@@ -1,51 +1,199 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
 		<div class="life-header">
 			<div class="header-tit flex-between">
-				<div class="color-222 font-34 font-weight">美好生活</div>
-				<div class="header-right flex-center"></div>
-			</div>
-			<div class="header-search">
-				<div class="flex-center"><img src="" alt="">夏季防晒</div>
+				<div class="font-34 font-weight">美好生活</div>
+				<div class="header-right flex-align-center">
+					<div class="header-link"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
+					<div class="header-link"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+				</div>
 			</div>
 		</div>
+		<div v-if="1==1" class="publick-nav">
+      <van-tabs class="pt88" v-model="current" @click="onClickItem">
+        <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
+      </van-tabs>
+    </div>
 		<div class="life-swipe">
 			<van-swipe :autoplay="3000" indicator-color="white">
-			  <van-swipe-item><img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" alt=""></van-swipe-item>
-			  <van-swipe-item><img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" alt=""></van-swipe-item>
+			  <van-swipe-item>
+			  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
+			  </van-swipe-item>
+			  <van-swipe-item>
+			  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+			  </van-swipe-item>
 			</van-swipe>
 		</div>
-		<div class="block-session life-session">
-			<div class="life-tit flex-between">
-				<div class="color-222 font-34 font-weight flex-align-center">
+		<div class="life-session">
+			<div class="life-tit life-special-tit flex-between">
+				<div class="font-34 font-weight flex-align-center">
 					<span>9.9特卖</span>
 				</div>
-				<div><van-icon class="van-icon" name="arrow" size="0.32rem" color="#aaa" /></div>
+				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
 			</div>
 			<div class="life-goods-list flex-align-center" @click="linkFunc">
 				<div class="life-goods-item">
-					<div class="life-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
 					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price"><span>￥2200</span> <span>￥2400</span></div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
 				</div>
 			</div>
 		</div>
+		<div class="life-session">
+			<div class="life-tit flex-between">
+				<div class="font-34 font-weight flex-align-center">
+					<span>限时闪购</span>
+					<div class="life-countdown flex-align-center">
+						<div class="countdown-time">23</div>
+						<div class="countdown-point">:</div>
+						<div class="countdown-time">23</div>
+						<div class="countdown-point">:</div>
+						<div class="countdown-time">23</div>
+					</div>
+				</div>
+				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+			</div>
+			<div class="life-goods-list flex-align-center" @click="linkFunc">
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="special-session flex-between">
+			<div class="flex-between special-list">
+				<div class="height-440">
+					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					<div class="special-tip">
+						<div>湿热的梅雨季</div>
+						<div>如何在家干爽舒适如晴天？</div>
+					</div>
+				</div>
+				<div class="height-345">
+					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					<div class="special-tip">
+						<div>百变酷炫蓝牙音箱</div>
+						<div>要的就是这个范</div>
+					</div>
+				</div>
+			</div>
+			<div class="flex-between special-list">
+				<div class="height-345">
+					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					<div class="special-tip">
+						<div>百变酷炫蓝牙音箱</div>
+						<div>要的就是这个范</div>
+					</div>
+				</div>
+				<div class="height-440">
+					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					<div class="special-tip">
+						<div>湿热的梅雨季</div>
+						<div>如何在家干爽舒适如晴天？</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="life-session">
+			<div class="life-tit life-area-tit flex-between">
+				<div class="font-34 font-weight flex-column-center">
+					<div class="area-text-tit">夏天的幸福感</div>
+					<div class="area-text-detail">来自于这些清凉神器</div>
+				</div>
+				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+			</div>
+			<div class="life-goods-list flex-align-center" @click="linkFunc">
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+				<div class="life-goods-item">
+					<div class="life-goods-pic">
+						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+					</div>
+					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+				</div>
+			</div>
+		</div>
+		<div class="banner-session">
+			<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+		</div>
+		<div class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num">19</div></div>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon } from 'vant'
-
-// import '@/styles/life.css'
+import { Swipe, SwipeItem, Icon, Tab, Tabs } from 'vant'
 export default {
   components: {
     [Icon.name]: Icon,
     [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem
+    [SwipeItem.name]: SwipeItem,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight
+      windowHeight: document.documentElement.clientHeight,
+      items: ['全部', '商品', '帖子', '应用'],
     }
   },
   methods:{
@@ -59,42 +207,37 @@ export default {
 <style  scoped>
 @import '../../styles/life.css';
 .app-body {
-  background-color: #f2f2f4;
+  background-color: #fff;
   font-size: 0.28rem;
-  overflow: hidden;
+  color: #222;
 }
 .life-header {
 	background-color: #fff;
 }
 .header-tit {
-	height: 0.88rem;
+	height: 88px;
 	padding-left: 0.3rem;
 }
 .header-right {
-	width: 1.04rem;
 	height: 100%;
 }
-.header-right img {
-	width: 0.44rem;
-	height: 0.44rem;
-}
-.header-search {
-	height: 0.88rem;
-	padding: 0 0.3rem 0.22rem;
-}
-.header-search div {
+.header-link {
 	height: 100%;
-	color: #8f8f94;
-	background-color: #f2f2f4;
+	width: 72px;
+	height: 72px;
+	padding: 14px;
 }
-.header-search div img {
-	width: 0.32rem;
-	height: 0.32rem;
-	margin-right: 0.1rem;
+.header-link:last-child {
+	margin-right: 16px;
 }
+
 /*轮播*/
 .life-swipe {
-	height: 2.4rem;
+	height: 326px;
+	width: 710px;
+	border-radius: 10px;
+	overflow: hidden;
+	margin: 30px auto 40px;
 }
 .life-swipe .van-swipe {
 	height: 100%;
@@ -103,32 +246,177 @@ export default {
 	width: 100%;
 	height: 100%;
 }
-/*特卖、专区*/
+/*特卖、闪购、专区*/
 .life-session {
-	margin-top: 0.3rem;
+	/*margin-top: 0.3rem;*/
 }
 .life-tit {
-	height: 1.02rem;
-	padding: 0.1rem 0.3rem 0;
+	padding: 0 30px;
+	height: 104px;
+}
+.life-arrow-right {
+	width: 15px;
+	height: 26px;
+}
+.life-special-tit {
+	padding-top: 12px;
 }
 .life-goods-list {
-	width: 6.5rem;
-	margin: 0 auto;
-	height: 3.42rem;
+	/*width: 720px;
+	margin-left: 30px;*/
+	padding-left: 30px;
+	height: 367px;
 	overflow-x: auto;
+	white-space: nowrap;
+}
+.life-goods-list::-webkit-scrollbar {
+  display: none;
 }
 .life-goods-item {
-	width: 2.2rem;
+	width: 230px;
 	height: 100%;
-	margin-right: 0.2rem;
-	border: 1px solid #000;
+	margin-right: 20px;
+	flex-shrink: 0;
 }
 .life-goods-pic {
 	display: flex;
 	width: 100%;
-	height: 2.2rem;
+	height: 230px;
 }
 .life-goods-name {
-	line-height: 0.62rem;
+	line-height: 42px;
+	margin-top: 10px;
+	font-size: 24px;
+}
+.life-goods-price {
+	font-size: 30px;
+	color: #eb5841;
+	font-weight: bold;
+	line-height: 44px;
+}
+.life-goods-price span {
+	font-weight: normal;
+	font-size: 24px;
+	color: #8f8f94;
+}
+.life-countdown {
+	height: 44px;
+	margin-left: 20px;
+}
+.life-countdown div {
+	height: 100%;
+	line-height: 44px;
+	text-align: center;
+}
+.countdown-time {
+	width: 66px;
+	text-align: center;
+	background-color: #ffa110;
+	color: #fff;
+	font-size: 26px;
+}
+.countdown-time:nth-of-type(1) {
+	border-radius: 22px 0 0 22px;
+}
+.countdown-time:nth-child(5) {
+	border-radius: 0 22px 22px 0;
+}
+.countdown-point {
+	width: 20px;
+	font-size: 26px;
+	color: #ffa110;
+	font-weight: bold;
+}
+
+.special-session {
+	margin: 34px auto 48px;
+	width: 710px;
+	height: 805px;
+}
+.special-list {
+	height: 100%;
+	width: 345px;
+	flex-direction: column;
+}
+.special-list > div {
+	width: 100%;
+	position: relative;
+}
+.height-440 {
+	height: 440px;
+}
+.height-345 {
+	height: 345px;
+}
+.special-tip {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	color: #fff;
+}
+.special-tip div:nth-child(1) {
+	font-size: 30px;
+	font-weight: bold;
+	line-height: 46px
+}
+.special-tip div:nth-child(2) {
+	font-size: 24px;
+	line-height: 40px
+}
+.life-area-tit {
+	height: 138px;
+}
+.life-area-tit .life-arrow-right {
+	margin-top: 52px;
+	height: 86px;
+	padding: 30px 0;
+}
+.area-text-tit {
+	line-height: 52px;
+}
+.area-text-detail {
+	line-height: 42px;
+	font-weight: normal;
+	font-size: 24px;
+	color: #8f8f94;
+}
+.banner-session {
+	margin: 34px auto 74px;
+	width: 710px;
+	height: 326px;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+/*购物车*/
+.cart-fixed {
+	position: fixed;
+	right: 20px;
+	bottom: 138px;
+	width: 110px;
+	height: 110px;
+	border-radius: 50%;
+	background-color: #fff;
+	box-shadow: 0 4px 13px rgba(160,160,160,0.4);
+	z-index: 55;
+	display: flex;
+}
+.cart-fixed img {
+	width: 60px;
+	height: 60px;
+	margin: 25px 0 0 25px;
+}
+.cart-num {
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 34px;
+	height: 34px;
+	background-color: #eb5841;
+	border-radius: 17px;
+	padding: 0 8px;
+	text-align: center;
+	font-size: 24px;
+	color: #fff;
 }
 </style>

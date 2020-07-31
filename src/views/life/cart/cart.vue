@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
     <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="cart-session">
@@ -26,7 +26,7 @@
 	          </div>
 	          <div class="operate-btn product-add not-add flex-between" data-types="1" data-index="" bindtap=""></div>
 	        </div>
-	        <div class="product-del" catchtap="delCarts" data-index=""><img class="width-100" mode="aspectFill" src="/resource/images/close_02.png" /></div>
+	        <div class="product-del" catchtap="delCarts" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>
 	    </div>
 		</div>
@@ -51,8 +51,11 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
@@ -115,7 +118,7 @@ export default {
 }
 .cart-checkbox.cur .checkbox-session,.all-checkbox.cur .all-checkbox-session {
   border: none;
-  background: #eb5841 url('https://bht.liwushijian.com/library/img/xcx_img/tick2.png') no-repeat center center/100% 100%;
+  background: url('../../../assets/img/tick2.png') no-repeat center center/100% 100%;
 }
 .cart-cont {
   width: 638px;

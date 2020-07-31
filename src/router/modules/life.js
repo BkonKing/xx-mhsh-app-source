@@ -9,6 +9,15 @@ const lifeRouter = [
       )
   },
   {
+    path: '/store/goods-classify',
+    name: 'goodsClassify',
+    component: () =>
+      import(
+        /* webpackChunkName: "goodsClassify" */
+        '@/views/life/store/goods-classify'
+      )
+  },
+  {
     path: '/store/flash-purchase',
     name: 'flashPurchase',
     component: () =>
@@ -42,6 +51,15 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "goodsDetail" */
         '@/views/life/store/goods-detail'
+      )
+  },
+  {
+    path: '/store/search',
+    name: 'search',
+    component: () =>
+      import(
+        /* webpackChunkName: "search" */
+        '@/views/life/store/search'
       )
   },
   {

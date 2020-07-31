@@ -5,24 +5,17 @@
 
     <div class="banner">
       <van-swipe @change="onChange">
-        <van-swipe-item @click="predivPic">
-          <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" alt="">
+        <van-swipe-item @click="predivPic(0)">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
         </van-swipe-item>
-        <van-swipe-item @click="predivPic">
-          <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" alt="">
+        <van-swipe-item @click="predivPic(1)">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
         </van-swipe-item>
         <div class="custom-indicator flex-center" slot="indicator">
           {{ current + 1 }}/2
         </div>
       </van-swipe>
     </div>
-    <van-image-prediv
-      v-model="show"
-      :images="images"
-      @change="onChange2"
-    >
-      <template v-slot:index>第{{index+1}}页</template>
-    </van-image-prediv>
 
     <div class="flash-session flash-session-bg">
       <div class="flash-limit">
@@ -247,22 +240,21 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, NavBar } from 'vant'
-// import '@/styles/life.css'
+import { Swipe, SwipeItem, Icon, ImagePreview, NavBar } from 'vant'
 export default {
   components: {
-    [Icon.name]: Icon,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    [NavBar.name]: NavBar,
+    [Icon.name]: Icon,
+    [ImagePreview.name]: ImagePreview,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       current: 0,
 
-      show: false,
-      index: 0,
+      // show: false,
       images: [
         'https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png',
         'https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png'
@@ -273,11 +265,14 @@ export default {
     onChange (index) {
       this.current = index
     },
-    onChange2 (index) {
-      this.index = index
-    },
-    predivPic () {
-      this.show = true
+    predivPic(index) {
+      ImagePreview({
+      images: this.images,
+      startPosition: index,
+      onClose() {
+        // do something
+      }
+    })
     }
   }
 }

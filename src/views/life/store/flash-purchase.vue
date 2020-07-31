@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
     <div class="order-bar bar-flash"><van-nav-bar title="限时闪购" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
@@ -15,27 +15,27 @@
           </template>
         </div> -->
         <div class="flash-nav" data-index="0" catchtap="navFunc">
-          <div class="nav-time"><text>4月30日\n21:00</text></div>
+          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">已结束</div>
         </div>
         <div class="flash-nav" data-index="1" catchtap="navFunc">
-          <div class="nav-time"><text>4月30日\n21:00</text></div>
+          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">已结束</div>
         </div>
         <div class="flash-nav cur" data-index="2" catchtap="navFunc">
-          <div class="nav-time"><text>4月30日\n21:00</text></div>
+          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">即将开始</div>
         </div>
         <div :class="[3 == tapIndex ? 'cur' : '','flash-nav']" data-index="3" catchtap="navFunc">
-          <div class="nav-time"><text>4月30日\n21:00</text></div>
+          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">即将开始</div>
         </div>
         <div class="flash-nav" catchtap="navFunc">
-          <div class="nav-time"><text>4月30日\n21:00</text></div>
+          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">即将开始</div>
         </div>
@@ -52,19 +52,32 @@
         <div class="count-circular"></div>
       </div>
       <div class="flash-time-text">本场还剩</div>
-      <div class="count-time">
+
+      <van-count-down class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
+        <template v-slot="timeData">
+          <span class="count-num">{{ timeData.hours }}</span>
+          <div class="count-colon"></div>
+          <span class="count-num">{{ timeData.minutes }}</span>
+          <div class="count-colon"></div>
+          <span class="count-num">{{ timeData.seconds }}</span>
+        </template>
+      </van-count-down>
+
+      <!-- <div class="count-time">
         <div class="count-num">23</div>
         <div class="count-colon"></div>
         <div class="count-num">23</div>
         <div class="count-colon"></div>
         <div class="count-num">23</div>
-      </div>
+      </div> -->
     </div>
 
     <div class="flash-list">
       <template v-if="1==1">
         <div class="flash-item item-big">
-          <div class="flash-goods-pic"><img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" /></div>
+          <div class="flash-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
           <div class="flash-goods-info">
             <div class="flash-goods-name p-nowrap">爱的诗意黑巧克力礼盒</div>
             <div class="flash-price-tip flex-center">
@@ -85,7 +98,9 @@
 
         </div>
         <div class="flash-item item-small">
-          <div class="flash-goods-pic"><img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" /></div>
+          <div class="flash-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
           <div class="flash-goods-info">
             <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
             <div class="goods-tip-block">
@@ -105,7 +120,9 @@
           </div>
         </div>
         <div class="flash-item item-small">
-          <div class="flash-goods-pic"><img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" /></div>
+          <div class="flash-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
           <div class="flash-goods-info">
             <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
             <div class="flash-goods-price">
@@ -122,7 +139,9 @@
           </div>
         </div>
         <div class="flash-item item-small">
-          <div class="flash-goods-pic"><img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" /></div>
+          <div class="flash-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
           <div class="flash-goods-info">
             <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒</div>
             <div class="goods-tip-block">
@@ -142,7 +161,9 @@
           </div>
         </div>
         <div class="flash-item item-small">
-          <div class="flash-goods-pic"><img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" /></div>
+          <div class="flash-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
           <div class="flash-goods-info">
             <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒</div>
             <div class="flash-goods-price">
@@ -161,7 +182,7 @@
       </template>
     </div>
 
-    <div class="mask-bg">
+    <div v-show="false" class="mask-bg">
       <div class="mask-block">
         <div class="mask-close">
           <img class="img-100" src="@/assets/img/close.png" />
@@ -180,16 +201,18 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, CountDown } from 'vant'
 
 // import '@/styles/life.css'
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    [CountDown.name]: CountDown
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
+      time: 11 * 60 * 60 * 1000,
       navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶'],
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
@@ -199,7 +222,19 @@ export default {
   methods: {
     onSubmit: function () {
 
-    }
+    },
+    //倒计时开始
+    start() {
+      this.$refs.countDown.start();
+    },
+    //倒计时暂停
+    pause() {
+      this.$refs.countDown.pause();
+    },
+    //倒计时结束
+    finish() {
+      Toast('倒计时结束');
+    },
   }
 }
 </script>
@@ -217,18 +252,74 @@ export default {
   height: 218px;
   background-image: linear-gradient(to right, #ffa912, #ffa812);
   position: relative;
+  display: flex;
+  overflow-x: auto;
+}
+.flash-scroll::-webkit-scrollbar {
+  display: none;
+}
+.nav-block {
+  display: flex;
+  justify-content: center;
+}
+.flash-nav {
+  flex-shrink: 0;
+  width: 190px;
+  position: relative;
+  color: #fff;
+  text-align: center;
+  overflow: hidden;
+  opacity: 0.6;
+}
+.nav-time {
+  line-height: 42px;
+  font-size: 30px;
+  height: 122px;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-line {
+  height: 2px;
+  width: 100px;
+  background-color: #fff;
+  margin: 0 auto 8px;
+}
+.nav-status {
+  height: 48px;
+  line-height: 48px;
+  width: 160px;
+  font-size: 24px;
+  margin: 0 auto;
+}
+.flash-nav.cur {
+  opacity: 1;
+}
+.flash-nav.cur .nav-line {
+  opacity: 0;
+}
+.flash-nav.cur .nav-status {
+  background-color: #ffffff;
+  border-radius: 24px;
+  color: #ffa110;
+}
+.flash-nav.cur .nav-time {
+  line-height: 52px;
+  font-size: 34px;
 }
 /*倒计时*/
 .flash-time {
   width: 710px;
-  height: 1px;
-  margin: 30 auto;
+  height: 100px;
+  margin: 30px auto;
   background-color: #fff;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
+  box-shadow: 4px 0 9px rgba(0,0,0,0.1)
 }
 .count-icon {
   position: absolute;
@@ -303,7 +394,7 @@ export default {
 /* 列表 */
 .flash-list {
   width: 710px;
-  margin: 30rem auto 0;
+  margin: 30px auto 0;
   overflow: hidden;
 }
 .flash-item {
@@ -334,7 +425,7 @@ export default {
 .goods-tip-block {
   display: flex;
   height: 34px;
-  margin: 23rem 0 8px;
+  margin: 23px 0 8px;
 }
 .goods-tip {
   font-size: 20px;
@@ -345,9 +436,9 @@ export default {
   overflow: hidden;
 }
 .tip-pd {
-  border: 1px solid #eb5841;
+  border: 1.5px solid #eb5841;
   color: #eb5841;
-  width: 1px;
+  width: 100px;
 }
 .flash-goods-price {
   height: 78px;
@@ -409,8 +500,8 @@ export default {
   padding: 30px;
 }
 .item-big .flash-goods-pic {
-  width: 30px;
-  height: 30px;
+  width: 300px;
+  height: 300px;
   margin: 0 auto 20px;
 }
 .item-big .flash-goods-info {

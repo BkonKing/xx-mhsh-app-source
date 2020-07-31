@@ -1,8 +1,6 @@
 <template>
-	<div class="app-body tf-bg">
-		<van-nav-bar title="我的订单" fixed left-text="返回" left-arrow>
-		  <van-icon name="search" slot="right" />
-		</van-nav-bar>
+	<div class="app-body">
+		<div class="order-bar bar-white"><van-nav-bar title="我的订单" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="nav-empty"></div>
 		<div class="nav-box">
@@ -126,9 +124,11 @@
 </template>
 
 <script>
-// import '@/styles/order.css'
-// Vue.use(NavBar);
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       typeVal: 0,

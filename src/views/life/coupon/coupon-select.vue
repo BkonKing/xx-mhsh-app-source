@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
 		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
 	  <div class="bar-empty"></div>
     <div class="coupon-num">可用优惠券<span>（5张）</span></div>
@@ -150,8 +150,11 @@
 </template>
 
 <script>
-// Vue.use(NavBar);
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
@@ -186,7 +189,6 @@ export default {
   font-size: 30px;
   padding-left: 50px;
   color: #222;
-  font-size: 30px;
   font-weight: bold;
 }
 .coupon-num span {

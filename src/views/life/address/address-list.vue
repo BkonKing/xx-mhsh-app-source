@@ -1,5 +1,7 @@
 <template>
-  <div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+  <div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+    <div class="order-bar bar-white"><van-nav-bar title="收货地址" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="bar-empty"></div>
     <div class="address-list">
       <div class="address-item">
         <div class="address-label flex-center">
@@ -18,7 +20,7 @@
           </div>
         </div>
         <div class="address-link flex-align-center" data-eventid="10" data-url="">
-          <img class="address-edit-icon" src="edit_01.png" />
+          <img class="address-edit-icon" src="@/assets/img/edit_01.png" />
         </div>
         <div class="address-line"></div>
       </div>
@@ -37,7 +39,7 @@
 			    </div>
 			  </div>
 			  <div class="address-link flex-align-center" data-eventid="10" data-url="">
-			    <img class="address-edit-icon" src="edit_01.png" />
+			    <img class="address-edit-icon" src="@/assets/img/edit_01.png" />
 			  </div>
 			  <div class="address-line"></div>
 			</div>
@@ -52,8 +54,11 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight

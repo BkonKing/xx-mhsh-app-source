@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
     <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="special-nav">
@@ -26,7 +26,9 @@
     </div>
     <div class="special-list flex-between">
       <div class="special-item">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
+        <div class="special-goods-pic">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        </div>
         <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
         <div class="special-goods-price flex-align-center">
           <div class="goods-price-icon flex-align-center">
@@ -37,7 +39,9 @@
         </div>
       </div>
       <div class="special-item">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
+        <div class="special-goods-pic">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        </div>
         <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
         <div class="special-goods-price flex-align-center">
           <div class="goods-price-icon flex-align-center">
@@ -48,7 +52,9 @@
         </div>
       </div>
       <div class="special-item">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
+        <div class="special-goods-pic">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        </div>
         <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
         <div class="special-goods-price flex-align-center">
           <div class="goods-price-icon flex-align-center">
@@ -64,7 +70,6 @@
 
 <script>
 import { NavBar } from 'vant'
-// import '@/styles/life.css'
 export default {
   components: {
     [NavBar.name]: NavBar

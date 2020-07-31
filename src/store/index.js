@@ -22,7 +22,7 @@ if (!window.api) {
       for (let i = 0; i < arrcookie.length; i++) {
         var arr = arrcookie[i].split('=')
         if (arr[0] === name) {
-          return JSON.parse(arr[1])
+          return arr[1]
         }
       }
       return ''

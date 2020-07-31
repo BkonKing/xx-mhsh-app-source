@@ -1,5 +1,7 @@
 <template>
-  <div class="tf-bg app-body" :style="{ 'min-height': windowHeight+'px' }">
+  <div class="app-body" :style="{ 'min-height': windowHeight+'px' }">
+    <div class="order-bar bar-white"><van-nav-bar title="添加/修改地址" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="bar-empty"></div>
 		<div class="form-list">
 			<div class="form-item flex-align-center">
 				<div class="item-name flex-align-center"><div class="color-222 font-28">收货人</div></div>
@@ -31,7 +33,7 @@
 						<input class="itemt-input" type="text" readonly name="ucity" placeholder="小区/写字楼等"/>
 					</div>
 				</template>
-				<div class="itemt-icon flex-center"><img class="itemt-icon-url" src="/resource/images/address_04.png" /></div>
+				<div class="itemt-icon flex-center"><img class="itemt-icon-url" src="@/assets/img/address_03.png" /></div>
 				<div class="address-line address-line2"></div>
 			</div>
 
@@ -58,8 +60,8 @@
 					</div>
 					<div class="custom-session flex-center" @click="swalFunc">
 						<template v-if="!isLabel"><div class="color-8f8f94 font-30">自定义</div></template>
-						<van-icon class="van-icon" name="arrow" size="32px" color="#aaa" />
-						<!-- <img class="custom-session-arrow" src="/resource/images/right.png" /> -->
+						<!-- <van-icon class="van-icon" name="arrow" size="32px" color="#aaa" /> -->
+						<img class="custom-session-arrow" src="@/assets/img/right.png" />
 					</div>
 				</div>
 				<div class="address-line"></div>
@@ -86,7 +88,7 @@
     <div class="mask-bg" catchtouchmove="true" v-if="!swalHidden" @click.stop="swalFunc"></div>
     <div class="swal-session bottom-fixed" v-if="!swalHidden" data-nohide="true" @click.stop="swalFunc">
 			<div class="close-block" @click.stop="swalFunc">
-				<div class="close-btn flex-center"><img src="/resource/images/close.png" class="width-100" /></div>
+				<div class="close-btn flex-center"><img class="img-100" src="@/assets/img/close.png" /></div>
 			</div>
 			<div class="swal-session-cont">
 				<div class="swal-tit">选择地址标签</div>
@@ -96,19 +98,19 @@
 				    <div class="swal-input-block">
 				      <input class="swal-input" type="text" name="name" placeholder="默认显示前两个字，可输入自定义标签" maxlength='10' @input="getCustomVal" />
 				    </div>
-				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 0" src="/resource/images/tick.png" /></div>
+				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 0" src="@/assets/img/tick.png" /></div>
 				  </div>
 				  <div class="swal-item flex-between" data-index="1" @click.stop="selectLabel">
 				    <div class="swal-label color-fff font-24">家</div>
-				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 1" src="/resource/images/tick.png" /></div>
+				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 1" src="@/assets/img/tick.png" /></div>
 				  </div>
 				  <div class="swal-item flex-between" data-index="2" @click.stop="selectLabel">
 				    <div class="swal-label color-fff font-24">公司</div>
-				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 2" src="/resource/images/tick.png" /></div>
+				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 2" src="@/assets/img/tick.png" /></div>
 				  </div>
 				  <div class="swal-item flex-between" data-index="3" @click.stop="selectLabel">
 				    <div class="swal-label color-fff font-24">学校</div>
-				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 3" src="/resource/images/tick.png" /></div>
+				    <div class="swal-tick"><img class="tick-pic" v-if="swalIndex == 3" src="@/assets/img/tick.png" /></div>
 				  </div>
 				</div>
 				<div class="submit-btn swal-sure" @click.stop="sureFunc">
@@ -120,8 +122,12 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { NavBar, Toast } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+    [Toast.name]: Toast
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
@@ -551,8 +557,8 @@ export default {
   height: 100px;
 }
 .itemt-icon-url {
-  width: 44px;
-  height: 44px;
+  width: 29px;
+  height: 36px;
 }
 /*.itemt-text input {
   width: 100%;
@@ -580,7 +586,7 @@ export default {
 }
 .label-item {
   margin-right: 20px;
-  border: 1px solid #aaa;
+  border: 1.3px solid #aaa;
   height: 60px;
 	line-height: 56px;
   padding: 0 24px;
@@ -671,8 +677,8 @@ export default {
   height: 110px;
   line-height: 110px;
   text-align: center;
-  font-size: 34px;
-  color: #60646b;
+  font-size: 30px;
+  color: #222;
 }
 .swal-item {
   height: 80px;

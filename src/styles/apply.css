@@ -151,6 +151,7 @@
   bottom: 0;
   border-radius: 4px;
   overflow: hidden;
+  object-fit: cover;
 }
 .pic-del {
   position: absolute;

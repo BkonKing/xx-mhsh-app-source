@@ -123,11 +123,11 @@ div.no-top-border {
 .common-item-right .van-icon-arrow {
 	margin-left: 10px;
 }
-/*.common-item-arrow {
+.common-item-arrow {
 	width: 16px;
 	height: 26px;
 	margin-left: 20px;
-}*/
+}
 
 .bottom-fixed {
   position: fixed;

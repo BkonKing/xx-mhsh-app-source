@@ -1,0 +1,298 @@
+<template>
+	<div class="app-body white-bg" :style="{ 'min-height': windowHeight+'px'}">
+    <div class="fixed-top">
+      <div class="search-input-block flex-between">
+        <div class="search-back flex-center">
+          <img class="img-100" src="@/assets/img/icon_19.png" />
+        </div>
+        <div class="search-input-session flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <input class="search-input" type="text" placeholder="输入关键词搜索" />
+        </div>
+      </div>
+      
+      <div class="right-header">
+        <div class="right-nav">
+          影音娱乐
+        </div>
+        <div class="sort-session flex-align-center">
+          <div class="price-sort cur desc">价格</div>
+          <div class="sales-sort">销量</div>
+        </div>
+      </div>
+    </div>
+    <div v-if="1==2" class="empty-188"></div>
+    <div v-else class="empty-276"></div>
+		
+    <!-- <div class="">
+      <van-tree-select
+  height="55vw"
+  :items="items"
+  :main-active-index.sync="activeIndex"
+/>
+    </div> -->
+    <div class="classify-cont">
+      <div class="classify-nav">
+        <div class="nav-item">休闲零食</div>
+        <div class="nav-item cur">休闲零食</div>
+        <div class="nav-item">休闲零食</div>
+      </div>
+      <div class="classify-right">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
+          <div class="classify-list">
+            <div v-for="(item,index) in list" class="classify-item flex-between">
+              <img class="res-goods-pic" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
+              <div class="res-goods-info">
+                <div class="res-goods-name res-name p-nowrap">拍立得相机富士mini90 热门复古相</div>
+                <div class="flex-align-center">
+                  <div class="res-goods-label res-goods-label-tm">特卖</div>
+                </div>
+                <div class="res-goods-price">￥3800.00 <span>￥4000.00</span></div>
+              </div>
+            </div>
+          </div>
+        </van-list>
+      </div>
+    </div>
+    
+	</div>
+</template>
+
+<script>
+import { TreeSelect, List } from 'vant'
+export default {
+  components: {
+    [TreeSelect.name]: TreeSelect,
+    [List.name]: List,
+  },
+  data () {
+    return {
+      windowHeight: document.documentElement.clientHeight,
+      activeIndex: 0,
+      items: [
+        { text: '浙江', children: [], dot: true },
+        { text: '江苏', children: [], info: 5 }
+      ],
+
+      list: [1,2,3,4],
+      loading: false,
+      finished: false
+    }
+  },
+  methods: {
+    onSubmit: function () {
+
+    },
+    onLoad() {
+      
+      // 异步更新数据
+      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
+      if (this.list.length >= 40) {
+        this.finished = true;
+        console.log(222);
+      }else {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1);
+        }
+
+        // 加载状态结束
+        this.loading = false;
+      }
+    
+      // setTimeout(() => {
+        
+      // }, 1000);
+    }
+  }
+}
+</script>
+
+<style scoped>
+@import '../../../styles/life.css';
+.app-body {
+  background-color: #f2f2f4;
+  font-size: 28px;
+  overflow: hidden;
+}
+.white-bg.app-body {
+  background-color: #fff;
+}
+
+.fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 22;
+}
+/*搜索*/
+.search-input-block {
+  height: 88px;
+  padding-right: 30px;
+  background-color: #fff;
+}
+.empty-188 {
+  height: 188px;
+}
+.empty-276 {
+  height: 276px;
+}
+.search-input-session {
+  width: 640px;
+  height: 66px;
+  background-color: #f2f2f4;
+  border-radius: 10px;
+  display: flex;
+}
+.search-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  margin: 0 14px 0 20px;
+}
+.search-input {
+  width: 570px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 28px;
+  background-color: #f2f2f4;
+}
+.search-back {
+  width: 80px;
+  height: 100%;
+  padding: 29px 31px;
+}
+
+.classify-cont {
+  padding-left: 190px;
+}
+/*左侧菜单*/
+.classify-nav {
+  position: fixed;
+  top: 88px;
+  bottom: 0;
+  left: 0;
+  width: 160px;
+  background-color: #f2f2f4;
+  z-index: 6;
+  overflow-y: auto;
+}
+.nav-item {
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  font-size: 24px;
+  color: #666;
+}
+.nav-item.cur{
+  background-color: #fff;
+  color: #eb5841;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+ 
+/*右侧列表*/
+.classify-right {
+  position: relative;
+}
+.right-header {
+  width: 560px;
+  margin-left: 190px;
+  background-color: #fff;
+}
+.right-nav {
+  height: 100px;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 20;
+}
+.sort-session {
+  height: 88px;
+}
+.sort-session > div {
+  height: 76px;
+  width: 154px;
+  line-height: 76px;
+  text-align: center;
+  color: #8f8f94;
+}
+.price-sort {
+  margin: 0 139px 0 50px;
+  position: relative;
+}
+.price-sort::before,.price-sort::after {
+  content: '';
+  position: absolute;
+  right: 25px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+.price-sort::before {
+  top: 27px;
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent #ccc transparent;
+}
+.price-sort::after {
+  bottom: 27px;
+  border-width: 8px 8px 0 8px;
+  border-color: #ccc transparent transparent transparent;
+}
+.price-sort.cur.asc::before {
+  border-color: transparent transparent #eb5841 transparent;
+}
+.price-sort.cur.desc::after {
+  border-color: #eb5841 transparent transparent transparent;
+}
+.classify-item {
+  height: 160px;
+  width: 530px;
+  margin-bottom: 30px;
+}
+.res-goods-pic {
+  width: 160px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.res-goods-info {
+  width: 350px;
+  height: 100%;
+}
+.res-goods-name {
+  height: 46px;
+  line-height: 46px;
+}
+.res-goods-label {
+  height: 44px;
+  line-height: 44px;
+  padding: 0 11px;
+  border-radius: 4px;
+  font-size: 24px;
+  margin: 10px 0 6px;
+}
+.res-goods-label-tm {
+  color: #55b862;
+  background-color: #eef8ef;
+}
+.res-goods-label-xssg {
+  color: #eb5841;
+  background-color: #fdeeec;
+}
+.res-goods-price {
+  padding-top: 10px;
+  line-height: 44px;
+  font-size: 32px;
+  color: #eb5841;
+}
+.res-goods-price span {
+  font-size: 24px;
+  color: #8f8f94;
+  text-decoration: line-through;
+}
+</style>

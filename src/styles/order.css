@@ -144,8 +144,8 @@
 .order-border-btn {
 	height: 66px;
 	min-width: 158px;
-	border-radius: 66px;
-	border: 1px solid #aaa;
+	border-radius: 6px;
+	border: 1.3px solid #aaa;
 	padding: 0 20px;
 	display: flex;
 	align-items: center;

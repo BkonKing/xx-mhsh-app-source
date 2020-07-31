@@ -1,6 +1,6 @@
 <template>
-	<div class="app-body tf-bg">
-		<van-nav-bar title="换货详情" :border="false" fixed left-text="" left-arrow></van-nav-bar>
+	<div class="app-body">
+		<div class="order-bar"><van-nav-bar title="换货详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
@@ -136,16 +136,18 @@
 		</div>
 		<div class="fixed-empty"></div>
 		<div class="btn-fixed-buttom">
-			<navigator class="order-border-btn" hover-class="none"><div class="color-8f8f94 font-28">取消换货</div></navigator>
+			<div class="order-border-btn" hover-class="none"><div class="color-8f8f94 font-28">取消换货</div></div>
 			<div class="order-border-btn paid-btn"><div class="color-fff font-26">填写寄出物流</div></div>
 		</div>
 	</div>
 </template>
 
 <script>
-// import '@/styles/life.css'
-// import '@/styles/order.css'
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
 

@@ -29,8 +29,11 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,

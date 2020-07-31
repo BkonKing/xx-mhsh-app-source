@@ -1,8 +1,6 @@
 <template>
-	<div class="app-body tf-bg">
-		<div class="order-bar">
-			<van-nav-bar title="订单详情" :border="false" fixed left-text="" left-arrow></van-nav-bar>
-		</div>
+	<div class="app-body">
+		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
@@ -178,9 +176,11 @@
 </template>
 
 <script>
-// import '@/styles/life.css'
-// import '@/styles/order.css'
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
 

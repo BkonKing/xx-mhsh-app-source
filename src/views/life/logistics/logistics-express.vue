@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
     <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="block-session logistics-goods">
@@ -36,7 +36,11 @@
 </template>
 
 <script>
+import { NavBar } from 'vant'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
@@ -168,7 +172,7 @@ export default {
   top: 42px;
   bottom: 40px;
   left: 50px;
-  width: 1px;
+  width: 1.3px;
   background-color: #aaa;
 }
 </style>

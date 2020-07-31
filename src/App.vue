@@ -104,4 +104,38 @@ export default {
   opacity: 0;
   transform: translate3d(-100%, 0, 0);
 }
+
+/*导航栏标题*/
+.bar-empty {
+  height: 88px;
+}
+.order-bar .van-nav-bar {
+  background-image: linear-gradient(to right, #f9866b, #eb5841);
+  z-index: 99;
+}
+.bar-flash.order-bar .van-nav-bar {
+  background-image: linear-gradient(to right, #ffa912, #ffa812);
+}
+.bar-nobg.order-bar .van-nav-bar {
+  background-color: rgba(0,0,0,0);
+  background-image: none;
+}
+.order-bar .van-nav-bar .van-nav-bar__title {
+  color: #fefefe;
+  font-weight: bold;
+  font-size: 34px;
+}
+.order-bar .van-icon-arrow-left::before {
+  color: #fff;
+  font-size: 36px;
+}
+.bar-white.order-bar .van-nav-bar {
+  background-image: none;
+}
+.bar-white.order-bar .van-nav-bar .van-nav-bar__title {
+  color: #222;
+}
+.bar-white.order-bar .van-icon-arrow-left::before {
+  color: #222;
+}
 </style>
