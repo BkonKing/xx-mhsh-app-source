@@ -65,6 +65,16 @@ const butlerRouter = [
         '@/views/butler/repairs/list.vue'
       )
   },
+  // 评价
+  {
+    path: '/pages/butler/repairs/evaluate',
+    name: 'repairsEvaluate',
+    component: () =>
+      import(
+        /* webpackChunkName: "repairsEvaluate" */
+        '@/views/butler/repairs/evaluate.vue'
+      )
+  },
   /* 免费服务 */
   {
     path: '/pages/butler/freeserver/index',

@@ -163,7 +163,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created () {
-    this.userType = this.userInfo.user_type
+    this.userType = 6 || this.userInfo.user_type
   },
   methods: {
     /* 签到 */
