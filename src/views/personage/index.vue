@@ -142,6 +142,7 @@ import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'personage',
   components: {
     [NavBar.name]: NavBar,
     [Tag.name]: Tag,

@@ -65,6 +65,7 @@ export default {
   methods: {
     close () {
       this.$emit('input', false)
+      this.$emit('closed')
     },
     confirm () {
       this.$emit('confirm')

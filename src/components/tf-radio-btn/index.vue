@@ -1,7 +1,17 @@
 <template>
   <div class="radio-btn-group">
-    <div class="radio-btn__item" v-for="(item, i) in data" :key="i" :class="{'radio-btn--active': value === item.value}" @click="change(item.value)" :style="{'border-radius': `${radius}px`}">
-      <div class="radio-btn__text" :class="{'radio-btn__text--active': value === item.value}">{{item.name}}</div>
+    <div
+      class="radio-btn__item"
+      v-for="(item, i) in data"
+      :key="i"
+      :class="{'radio-btn--active': value === item.value}"
+      @click="change(item.value)"
+      :style="{'border-radius': `${radius}px`}"
+    >
+      <div
+        class="radio-btn__text"
+        :class="{'radio-btn__text--active': value === item.value}"
+      >{{item.name}}</div>
     </div>
   </div>
 </template>
@@ -9,6 +19,10 @@
 <script>
 export default {
   props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    },
     data: {
       type: Array,
       default: () => []
@@ -20,12 +34,11 @@ export default {
   },
   data () {
     return {
-      value: ''
     }
   },
   methods: {
     change (value) {
-      this.value = value
+      this.$emit('input', value)
       this.$emit('change', value)
     }
   }

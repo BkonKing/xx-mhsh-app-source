@@ -9,12 +9,17 @@
           </template>
         </userInfo>
         <div class="reply-cell-content">
-          <div class="reply-cell-content__text">{{cell.content}}</div>
+          <div class="reply-cell-content__text" @click="operate">{{cell.content}}</div>
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
-          <div v-if="cell.child && cell.child.length" class="reply-cell-content__reply">
-            <div class="reply-cell-content__reply__text" v-for="(item, i) in cell.child" :key="item.id" v-show="i < 2">
+          <div v-if="cell.child && cell.child.length" class="reply-cell-content__reply" @click="goReply(cell.id)">
+            <div
+              class="reply-cell-content__reply__text van-multi-ellipsis--l3"
+              v-for="(item, i) in cell.child"
+              :key="item.id"
+              v-show="i < 2"
+            >
               <span style="color: #222;">{{item.name}}</span>：
               <span>
                 {{item.content}}
@@ -27,7 +32,7 @@
                 </span>
               </span>
             </div>
-            <div v-if="cell.child.length > 2" class="more-btn" @click="goReply(cell.id)">
+            <div v-if="cell.child.length > 2" class="more-btn">
               共{{cell.child.length}}条回复
               <span class="tf-icon tf-icon-right"></span>
             </div>
@@ -35,25 +40,46 @@
         </div>
       </van-cell>
     </van-list>
+    <more-popup
+      :moreShow.sync="moreShow"
+      :comment="!oneself"
+      :complain="!oneself && category == 2"
+      :deleteProp="oneself"
+      @comment="comment"
+    ></more-popup>
+    <div class="comment-box">
+      <span class="tf-icon tf-icon-like"></span>
+      <van-field placeholder="写评论" @click="showPopup" />
+    </div>
+    <comment v-model="show"></comment>
   </div>
 </template>
 
 <script>
-import { List, Cell, ImagePreview } from 'vant'
+import { List, Cell, ImagePreview, Field } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
+import comment from './comment'
+import morePopup from './morePopup'
 
 export default {
   props: {
     grayTheme: {
       type: Boolean,
       default: false
+    },
+    category: {
+      type: [String, Number],
+      default: ''
     }
   },
   components: {
     [List.name]: List,
     [Cell.name]: Cell,
     [ImagePreview.name]: ImagePreview,
-    UserInfo
+    [Field.name]: Field,
+    UserInfo,
+    morePopup,
+    comment
   },
   data () {
     return {
@@ -102,7 +128,10 @@ export default {
         }
       ],
       loading: false,
-      finished: false
+      finished: false,
+      moreShow: false,
+      oneself: false,
+      show: false
     }
   },
   methods: {
@@ -131,6 +160,15 @@ export default {
         images,
         closeable: true
       })
+    },
+    operate () {
+      this.moreShow = true
+    },
+    comment () {
+      this.show = true
+    },
+    showPopup () {
+      this.show = true
     }
   }
 }
@@ -146,7 +184,7 @@ export default {
   .tf-icon-like {
     font-size: 36px;
     margin-left: 10px;
-    color: #8F8F94;
+    color: #8f8f94;
   }
   .reply-cell {
     padding: 30px 0;
@@ -187,7 +225,7 @@ export default {
   .reply-cell {
     padding: 30px 20px;
     margin-bottom: 30px;
-    border-radius:10px;
+    border-radius: 10px;
     .reply-cell-content {
       padding-bottom: 0;
       border-bottom: none;
@@ -197,5 +235,27 @@ export default {
 .more-btn {
   font-size: 24px;
   color: @blue-dark;
+}
+.comment-box {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  @flex();
+  width: 100%;
+  height: 98px;
+  padding: 15px 30px;
+  background: #fff;
+  box-shadow: 0px 1px 0px 0px @gray-2;
+  .tf-icon-like {
+    font-size: 44px;
+    margin-right: 30px;
+  }
+  /deep/ .van-field {
+    border-radius: 4px;
+    background: @background-color;
+    .van-field__body {
+      height: 48px;
+    }
+  }
 }
 </style>

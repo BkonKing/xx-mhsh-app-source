@@ -51,13 +51,12 @@ export default {
   },
   methods: {
     setRouteKeepAlive (routes) {
-      routes.map(item => {
+      routes.map((item, i) => {
         if (item.children && Array.isArray(item.children)) {
           this.setRouteKeepAlive(item.children)
-        } else {
-          if (item.meta && item.meta.keepAlive) {
-            this.keepAlive.push(item.name)
-          }
+        }
+        if (item.meta && item.meta.keepAlive) {
+          this.keepAlive.push(item.name)
         }
       })
     }

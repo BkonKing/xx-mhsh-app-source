@@ -76,6 +76,19 @@ export function validEmpty (val, message) {
   return status
 }
 
+export function validForm (arr) {
+  const status = arr.some(obj => {
+    return validEmpty(obj.value, obj.message)
+  })
+  return new Promise((resolve, reject) => {
+    if (!status) {
+      resolve(status)
+    } else {
+      reject(status)
+    }
+  })
+}
+
 export {
   friendlyDate,
   getDate

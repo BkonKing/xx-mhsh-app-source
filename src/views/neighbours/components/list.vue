@@ -12,10 +12,7 @@
             <div class="activity-title">{{item.title}}</div>
             <div class="activity-time">{{item.ctime}}</div>
           </div>
-          <div class="activity-footer">
-            <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
-            <div class="tf-icon tf-icon-message">{{item.comments}}</div>
-          </div>
+          <operation :item="item" :key="item.id"></operation>
         </div>
         <div v-else-if="item.category === 2">
           <div class="tf-card">
@@ -26,13 +23,21 @@
                 </template>
               </userInfo>
             </div>
-            <div class="tf-card-content" @click="goDetails(2)">{{ item.content }}</div>
-            <tf-image-list :data="item.images" @click="goDetails(2)"></tf-image-list>
-            <div class="activity-footer">
-              <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
-              <div class="tf-icon tf-icon-message">{{item.comments}}</div>
-              <div class="tf-icon tf-icon-ellipsis" @click="moreShow = true"></div>
-            </div>
+            <div class="tf-card-content" @click="goDetails(2, item.id)">{{ item.content }}</div>
+            <img
+              width="33%"
+              :src="item.images[0]"
+              v-if="item.images.length === 1"
+              @click="goDetails(2, item.id)"
+            />
+            <tf-image-list
+              v-else-if="item.images.length > 1"
+              :data="item.images"
+              @click="goDetails(2, item.id)"
+            ></tf-image-list>
+            <operation :item="item" :key="item.id">
+              <div class="tf-icon tf-icon-ellipsis" @click="moreShow = true;status = item.oneself"></div>
+            </operation>
           </div>
         </div>
         <div class="activity-cell" v-else-if="category === 3 || item.category === 3">
@@ -41,14 +46,11 @@
             <div class="tf-status-tag">资讯</div>
             <div class="activity-title">{{item.content}}</div>
           </div>
-          <div class="activity-footer">
-            <div class="tf-icon tf-icon-like">{{item.thumbsups}}</div>
-            <div class="tf-icon tf-icon-message">{{item.comments}}</div>
-          </div>
+          <operation :item="item" :key="item.id"></operation>
         </div>
       </template>
     </refreshList>
-    <more-popup :moreShow.sync="moreShow"></more-popup>
+    <more-popup :moreShow.sync="moreShow" :deleteProp="status" :complain="!status"></more-popup>
   </div>
 </template>
 
@@ -57,13 +59,15 @@ import tfImageList from '@/components/tf-image-list'
 import refreshList from '@/components/tf-refresh-list'
 import UserInfo from '@/components/user-info/index.vue'
 import morePopup from './morePopup'
+import operation from './operation'
 
 export default {
   components: {
     tfImageList,
     refreshList,
     UserInfo,
-    morePopup
+    morePopup,
+    operation
   },
   props: {
     data: {
@@ -78,7 +82,8 @@ export default {
   data () {
     return {
       moreShow: false,
-      list: this.data
+      list: this.data,
+      status: true // 是否是本人发的帖
     }
   },
   methods: {
@@ -144,18 +149,6 @@ export default {
     font-size: 24px;
     color: @gray-7;
     margin-bottom: 10px;
-  }
-}
-.activity-footer {
-  margin-top: 20px;
-  @flex();
-  padding: 20px 0;
-  border-top: 1px solid @divider-color;
-  .tf-icon {
-    text-align: center;
-    width: 33.3%;
-    font-size: 36px;
-    color: #aaa;
   }
 }
 .tf-status-tag {

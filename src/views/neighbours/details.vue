@@ -7,7 +7,11 @@
     </van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-card">
-        <div class="tf-card-header" style="border-bottom:none" :class="{'border-none': category === 1 || category === 3}">
+        <div
+          class="tf-card-header"
+          style="border-bottom:none"
+          :class="{'border-none': category === 1 || category === 3}"
+        >
           <userInfo :avatar="info.avatar" :name="info.account" :time="info.ctime">
             <template v-slot:right>
               <div class="group-tag">公告小组</div>
@@ -49,12 +53,11 @@
           </div>
         </template>
         <div class="activity-footer">
-          <div class="tf-icon tf-icon-like">{{info.thumbsups}}</div>
+          <div class="tf-icon tf-icon-like" @click="thumbsUp(info)">{{info.thumbsups}}</div>
           <div class="tf-icon tf-icon-message">{{info.comments}}</div>
         </div>
       </div>
-      <reply class="tf-mt-lg"></reply>
-      <comment></comment>
+      <reply class="tf-mt-lg" :category="category"></reply>
     </div>
     <more-popup :moreShow.sync="moreShow" :share="true"></more-popup>
   </div>
@@ -65,13 +68,14 @@ import { NavBar, Popup, Toast } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
-import comment from './components/comment'
 import morePopup from './components/morePopup'
 import tfImageList from '@/components/tf-image-list'
 import {
   getActivityInfo,
   joinActivity,
-  getArticleInfo
+  getArticleInfo,
+  getPostBarInfo,
+  thumbsUp
 } from '@/api/neighbours'
 
 export default {
@@ -81,7 +85,6 @@ export default {
     UserInfo,
     TfAlert,
     reply,
-    comment,
     morePopup,
     tfImageList
   },
@@ -110,20 +113,29 @@ export default {
   },
   created () {
     const { category, id } = this.$route.query
-    this.category = category
+    this.category = parseInt(category)
     this.id = id
     switch (category) {
-      case '1':
+      case 1:
         this.getActivityInfo()
         break
-      case '3':
-        this.getArticleInfo()
+      case 2:
+        this.getPostBarInfo()
         break
-      default:
+      case 3:
+        this.getArticleInfo()
         break
     }
   },
   methods: {
+    /* 获取小组帖子详情 */
+    getPostBarInfo () {
+      getPostBarInfo({
+        id: this.id
+      }).then((res) => {
+        this.info = res.data
+      })
+    },
     /* 获取活动详情 */
     getActivityInfo () {
       getActivityInfo({
@@ -147,6 +159,20 @@ export default {
         id: this.id
       }).then((res) => {
         this.info = res.data
+      })
+    },
+    thumbsUp (item) {
+      // 判断是否点过赞，点过赞无法取消
+      if (item.thumbsupStatus) {
+        return
+      }
+      thumbsUp({
+        id: item.id,
+        t_type: 1
+      }).then((res) => {
+        // 点赞图标点亮
+        item.thumbsups++
+        item.thumbsupStatus = 1
       })
     }
   }
