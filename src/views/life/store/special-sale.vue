@@ -3,26 +3,17 @@
     <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="special-nav">
-      <!-- <van-tabs>
-        <van-tab v-for="(item,index) in navList" :title="item">
-          {{ item }}
-        </van-tab>
-      </van-tabs> -->
-
-      <!-- <van-tabs v-model="active" swipeable>
-        <van-tab v-for="(item,index) in navList" :title="item">
-          内容 {{ index }}
-        </van-tab>
-      </van-tabs> -->
-      <!-- <van-tabs v-model="active">
-        <van-tab v-for="index in 5">
-          <div slot="title">
-            <div>dgewgaw</div>
-          </div>
-          内容 {{ index }}
-        </van-tab>
-      </van-tabs> -->
-
+      <scrollBar direction="x" :activeIndex="activeIndex">
+        <div
+          class="scroll-barItem"
+          v-for="(item, index) in options"
+          :key="index"
+          @click="changeNav(item, index)"
+          :class="index === activeIndex ? 'active' : null"
+        >
+          <div>{{item.name}}</div>
+        </div>
+      </scrollBar>
     </div>
     <div class="special-list flex-between">
       <div class="special-item">
@@ -70,19 +61,30 @@
 
 <script>
 import { NavBar } from 'vant'
+import scrollBar from '@/components/scroll-bar'
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    scrollBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶']
+      activeIndex: 0,
+      options: [
+        {id: 1, name: '全部'},
+        {id: 2, name: '9.9封顶'},
+        {id: 3, name: '19.9封顶'},
+        {id: 4, name: '29.9封顶'},
+      ]
     }
   },
   methods: {
     onSubmit: function () {
 
+    },
+    changeNav(item, index) {
+      this.activeIndex = index;
     }
   }
 }
@@ -99,6 +101,33 @@ export default {
 .special-nav {
   height: 98px;
   background-color: #fff;
+  padding: 0 30px;
+}
+.scroll-barItem {
+  font-size: 30px;
+}
+.scroll-barItem div {
+  height: 98px;
+  line-height: 98px;
+  padding: 0 30px;
+  color: #8f8f94;
+  position: relative;
+}
+.scroll-barItem.active div {
+  color: #222;
+  font-size: 34px;
+  font-weight: bold;
+}
+.scroll-barItem.active div:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin-left: -33px;
+  width: 66px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #eb5841;
 }
 .special-list {
   width: 710px;

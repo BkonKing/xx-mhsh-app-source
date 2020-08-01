@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="商品详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar title="商品详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
     <div class="banner">

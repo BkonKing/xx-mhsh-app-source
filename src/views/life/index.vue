@@ -1,19 +1,31 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="life-header">
-			<div class="header-tit flex-between">
-				<div class="font-34 font-weight">美好生活</div>
-				<div class="header-right flex-align-center">
-					<div class="header-link"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
-					<div class="header-link"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+		<div class="fixed-top">
+			<div class="life-header">
+				<div class="header-tit flex-between">
+					<div class="font-34 font-weight">美好生活</div>
+					<div class="header-right flex-align-center">
+						<div class="header-link"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
+						<div class="header-link"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+					</div>
 				</div>
 			</div>
+			<div v-if="1==1" class="public-nav">
+	      <scrollBar direction="x" :activeIndex="activeIndex">
+	        <div
+	          class="scroll-barItem"
+	          v-for="(item, index) in options"
+	          :key="index"
+	          @click="changeNav(item, index)"
+	          :class="index === activeIndex ? 'active' : null"
+	        >
+	          <div>{{item.name}}</div>
+	        </div>
+	      </scrollBar>
+	    </div>
 		</div>
-		<div v-if="1==1" class="publick-nav">
-      <van-tabs class="pt88" v-model="current" @click="onClickItem">
-        <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
-      </van-tabs>
-    </div>
+		<div class="fixed-empty"></div>
+		
 		<div class="life-swipe">
 			<van-swipe :autoplay="3000" indicator-color="white">
 			  <van-swipe-item>
@@ -66,13 +78,15 @@
 			<div class="life-tit flex-between">
 				<div class="font-34 font-weight flex-align-center">
 					<span>限时闪购</span>
-					<div class="life-countdown flex-align-center">
-						<div class="countdown-time">23</div>
-						<div class="countdown-point">:</div>
-						<div class="countdown-time">23</div>
-						<div class="countdown-point">:</div>
-						<div class="countdown-time">23</div>
-					</div>
+					<van-count-down class="life-countdown flex-align-center" ref="countDown" :auto-start="false" :time="time" @finish="finish">
+		        <template v-slot="timeData">
+		          <span class="countdown-time">{{ timeData.hours }}</span>
+		          <div class="countdown-point"></div>
+		          <span class="countdown-time">{{ timeData.minutes }}</span>
+		          <div class="countdown-point"></div>
+		          <span class="countdown-time">{{ timeData.seconds }}</span>
+		        </template>
+		      </van-count-down>
 				</div>
 				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
 			</div>
@@ -181,24 +195,50 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, Tab, Tabs } from 'vant'
+import { Swipe, SwipeItem, Icon, CountDown } from 'vant'
+import scrollBar from '@/components/scroll-bar'
+import {pagesArr} from '../../const/pages_url.js'
 export default {
   components: {
     [Icon.name]: Icon,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
+    [CountDown.name]: CountDown,
+    scrollBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      items: ['全部', '商品', '帖子', '应用'],
+      time: 11 * 60 * 60 * 1000,
+      activeIndex: 0,
+      options: [
+        {id: 1, name: '首页'},
+        {id: 2, name: '精选'},
+        {id: 3, name: '限时抢购'},
+        {id: 4, name: '热门推荐'},
+        {id: 5, name: '聚划算'},
+        {id: 6, name: '热门推荐'}, 
+      ],
     }
   },
   methods:{
     linkFunc () {
-      this.$router.push('/store/goods-detail')
+      this.$router.push(pagesArr[5])
+    },
+    changeNav(item, index) {
+      this.activeIndex = index;
+    },
+    //倒计时开始
+    start() {
+      this.$refs.countDown.start();
+    },
+    //倒计时暂停
+    pause() {
+      this.$refs.countDown.pause();
+    },
+    //倒计时结束
+    finish() {
+      Toast('倒计时结束');
     },
   }
 }
@@ -210,6 +250,16 @@ export default {
   background-color: #fff;
   font-size: 0.28rem;
   color: #222;
+}
+.fixed-top {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 20;
+}
+.fixed-empty {
+	height: 196px;
 }
 .life-header {
 	background-color: #fff;
@@ -229,6 +279,39 @@ export default {
 }
 .header-link:last-child {
 	margin-right: 16px;
+}
+
+/*导航*/
+.public-nav {
+  height: 89px;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+.scroll-barItem {
+  font-size: 30px;
+}
+.scroll-barItem div {
+  height: 88px;
+  line-height: 88px;
+  padding: 0 30px;
+  color: #222;
+  position: relative;
+}
+.scroll-barItem.active div {
+  color: #eb5841;
+  font-size: 34px;
+  font-weight: bold;
+}
+.scroll-barItem.active div:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin-left: -30px;
+  width: 60px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #eb5841;
 }
 
 /*轮播*/

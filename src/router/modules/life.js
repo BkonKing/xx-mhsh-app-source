@@ -63,7 +63,7 @@ const lifeRouter = [
       )
   },
   {
-    path: '/cart',
+    path: '/life/cart',
     name: 'cart',
     component: () =>
       import(
@@ -72,7 +72,7 @@ const lifeRouter = [
       )
   },
   {
-    path: '/settlement',
+    path: '/life/settlement',
     name: 'settlement',
     component: () =>
       import(

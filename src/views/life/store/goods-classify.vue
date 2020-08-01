@@ -13,7 +13,17 @@
       
       <div class="right-header">
         <div class="right-nav">
-          影音娱乐
+          <scrollBar direction="x" :activeIndex="activeIndex">
+            <div
+              class="scroll-barItem"
+              v-for="(item, index) in options"
+              :key="index"
+              @click="changeNav(item, index)"
+              :class="index === activeIndex ? 'active' : null"
+            >
+              <div>{{item.name}}</div>
+            </div>
+          </scrollBar>
         </div>
         <div class="sort-session flex-align-center">
           <div class="price-sort cur desc">价格</div>
@@ -65,18 +75,24 @@
 
 <script>
 import { TreeSelect, List } from 'vant'
+import scrollBar from '@/components/scroll-bar'
 export default {
   components: {
     [TreeSelect.name]: TreeSelect,
     [List.name]: List,
+    scrollBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       activeIndex: 0,
-      items: [
-        { text: '浙江', children: [], dot: true },
-        { text: '江苏', children: [], info: 5 }
+      options: [
+        {id: 1, name: '首页'},
+        {id: 2, name: '精选'},
+        {id: 3, name: '限时抢购'},
+        {id: 4, name: '热门推荐'},
+        {id: 5, name: '聚划算'},
+        {id: 6, name: '热门推荐'}, 
       ],
 
       list: [1,2,3,4],
@@ -107,7 +123,10 @@ export default {
       // setTimeout(() => {
         
       // }, 1000);
-    }
+    },
+    changeNav(item, index) {
+      this.activeIndex = index;
+    },
   }
 }
 </script>
@@ -117,7 +136,6 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 .white-bg.app-body {
   background-color: #fff;
@@ -207,9 +225,33 @@ export default {
   background-color: #fff;
 }
 .right-nav {
-  height: 100px;
+  height: 101px;
   border-bottom: 1px solid #f0f0f0;
   z-index: 20;
+}
+.scroll-barItem {
+  font-size: 26px;
+}
+.scroll-barItem div {
+  height: 100px;
+  line-height: 100px;
+  padding: 0 20px;
+  color: #8f8f94;
+  position: relative;
+}
+.scroll-barItem.active div {
+  color: #222222;
+}
+.scroll-barItem.active div:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin-left: -35px;
+  width: 70px;
+  height: 3px;
+  border-radius: 1.5px;
+  background-color: #eb5841;
 }
 .sort-session {
   height: 88px;
