@@ -10,11 +10,11 @@
     </van-nav-bar>
     <van-tabs class="pt88" v-model="current" @click="onClickItem">
       <van-tab title="最新">
-        <list key="list" :data="list"></list>
+        <list key="list" :data="newestList"></list>
       </van-tab>
       <van-tab title="小组">
         <div class="group-box">
-          <div class="group-item" v-for="item in group" :key="item.id">
+          <div class="group-item" v-for="item in group" :key="item.id" @click="goGroupList(item)">
             <img class="group-img" :src="item.icon_images" />
             <div class="group-name">{{item.category}}</div>
           </div>
@@ -24,7 +24,8 @@
         <list key="activityList" :data="activityList" :category="1"></list>
       </van-tab>
       <van-tab title="资讯">
-        <list key="articleList" :data="articleList" :category="3"></list></van-tab>
+        <list key="articleList" :data="articleList" :category="3"></list>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
@@ -40,6 +41,7 @@ import {
 } from '@/api/neighbours'
 
 export default {
+  name: 'neighbours',
   components: {
     [NavBar.name]: NavBar,
     [Tab.name]: Tab,
@@ -52,7 +54,7 @@ export default {
       status: 1,
       current: 0,
       group: [],
-      list: [],
+      newestList: [],
       activityList: [],
       articleList: []
     }
@@ -60,6 +62,7 @@ export default {
   created () {
     this.getNewestList()
   },
+  activated () {},
   methods: {
     /* 发布 */
     goEdit () {
@@ -68,6 +71,16 @@ export default {
     /* 跳转消息 */
     goMessage () {
       this.$router.push('/pages/personage/message/index')
+    },
+    /* 跳转小组列表 */
+    goGroupList ({ id, category }) {
+      this.$router.push({
+        path: '/pages/neighbours/groupList',
+        query: {
+          categoryId: id,
+          category
+        }
+      })
     },
     /* tab切换 */
     onClickItem (currentIndex) {
@@ -92,7 +105,7 @@ export default {
     /* 获取最新列表 */
     getNewestList () {
       getNewestList().then((res) => {
-        this.list = res.data
+        this.newestList = res.data
       })
     },
     /* 获取话题小组 */

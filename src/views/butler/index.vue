@@ -22,6 +22,7 @@ import appList from './components/app-list.vue'
 import { NoticeBar, swipe, SwipeItem } from 'vant'
 import { queryAllApp } from '@/api/butler.js'
 export default {
+  name: 'butler',
   components: {
     pageNavBar,
     appList,

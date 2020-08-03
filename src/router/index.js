@@ -28,7 +28,11 @@ Vue.use(VueRouter)
  */
 const routes = [{
   path: '/',
+  name: 'mainIndex',
   component: Index,
+  meta: {
+    keepAlive: true
+  },
   children: [{
     path: '',
     name: 'home',
@@ -107,7 +111,8 @@ const routes = [{
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,
-...personageRouter]
+...personageRouter
+]
 
 const router = new VueRouter({
   routes

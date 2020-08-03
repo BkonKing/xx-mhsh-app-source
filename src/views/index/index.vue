@@ -3,7 +3,9 @@
     <div class="view-main-container">
       <div class="placeholder-box" :style="{height: `${statusBarHeight}px`}"></div>
       <div class="view-main">
-        <router-view />
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
       </div>
     </div>
     <footer>
@@ -17,6 +19,7 @@
 import Tabbar from './components/tabbar'
 
 export default {
+  name: 'mainIndex',
   components: {
     Tabbar
   },
@@ -48,8 +51,7 @@ export default {
       ]
     }
   },
-  created () {
-  },
+  created () {},
   methods: {
     getStatusBarHeight () {
       const statusBar = this.$api.require('statusBar')

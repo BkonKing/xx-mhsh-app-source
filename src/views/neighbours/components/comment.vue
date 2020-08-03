@@ -2,26 +2,28 @@
   <div>
     <div class="comment-box">
       <span class="tf-icon tf-icon-like"></span>
-      <van-field v-model="value" placeholder="写评论" @click="showPopup" />
+      <van-field placeholder="写评论" @click="showPopup" />
     </div>
     <van-popup v-model="show" position="bottom">
       <div class="comment-popup">
         <div class="comment-popup-left">
           <van-field
             type="textarea"
-            autosize
-            maxlength="300"
+            rows="3"
+            maxlength="100"
             show-word-limit
-            v-model="value"
+            v-model="content"
             placeholder="写评论"
           />
-          <div class="comment-image-box">
-            <img class="comment-image" src="/src/assets/app-icon.png">
+          <div v-if="images" class="comment-image-box">
+            <img class="comment-image" :src="images" />
           </div>
         </div>
         <div class="comment-popup-right">
-          <span class="tf-icon tf-icon-image"></span>
-          <div class="send-btn">发送</div>
+          <van-uploader :max-count="1">
+            <span class="tf-icon tf-icon-image"></span>
+          </van-uploader>
+          <div class="send-btn" :class="{'tf-text-primary': content}" @click="addComment">发送</div>
         </div>
       </div>
     </van-popup>
@@ -29,21 +31,46 @@
 </template>
 
 <script>
-import { Field, Popup } from 'vant'
+import { Field, Popup, Uploader } from 'vant'
+import { addComment } from '@/api/neighbours'
 export default {
   components: {
     [Field.name]: Field,
+    [Uploader.name]: Uploader,
     [Popup.name]: Popup
+  },
+  props: {
+    value: {
+      type: [Boolean, Number],
+      default: false
+    }
   },
   data () {
     return {
-      value: '',
-      show: false
+      content: '',
+      show: this.value,
+      images: ''
     }
   },
   methods: {
     showPopup () {
       this.show = true
+    },
+    addComment () {
+      if (!this.content) {
+        return
+      }
+      addComment().then(res => {
+
+      })
+    }
+  },
+  watch: {
+    show (value) {
+      this.$emit('input', value)
+    },
+    value (value) {
+      this.show = value
     }
   }
 }

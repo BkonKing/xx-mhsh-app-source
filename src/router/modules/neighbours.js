@@ -18,6 +18,16 @@ const neighboursRouter = [
         /* webpackChunkName: "neighboursDetails" */
         '@/views/neighbours/details.vue'
       )
+  },
+  /* 小组列表 */
+  {
+    path: '/pages/neighbours/groupList',
+    name: 'neighboursGroupList',
+    component: () =>
+      import(
+        /* webpackChunkName: "neighboursGroupList" */
+        '@/views/neighbours/groupList.vue'
+      )
   }
 ]
 

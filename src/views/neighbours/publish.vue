@@ -2,16 +2,16 @@
   <div class="tf-bg-white">
     <van-nav-bar :fixed="true" border>
       <template #left>
-        <span class="tf-icon tf-icon-close" @click="$router.go(-1)"></span>
+        <span class="tf-icon tf-icon-close" @click="closePublish"></span>
       </template>
       <template #right>
-        <span class="tf-icon tf-icon-send" @click="goMyList"></span>
+        <span class="tf-icon tf-icon-send" @click="addPostBar"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
       <van-dropdown-menu class="publish-type" :overlay="false" :close-on-click-outside="false">
         <van-dropdown-item title="发布类型" ref="item">
-          <tf-radio-btn :data="types" @change="handRadioChange"></tf-radio-btn>
+          <tf-radio-btn v-model="category_id" :data="types" @change="handRadioChange"></tf-radio-btn>
         </van-dropdown-item>
       </van-dropdown-menu>
       <van-field
@@ -24,7 +24,7 @@
         show-word-limit
       />
       <van-divider />
-        <van-uploader :after-read="uploadSuccess" />
+      <van-uploader max-count="9" />
     </div>
   </div>
 </template>
@@ -36,9 +36,12 @@ import {
   DropdownItem,
   Field,
   Divider,
-  Uploader
+  Uploader,
+  Dialog
 } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
+import { addPostBar } from '@/api/neighbours'
+import { validForm } from '@/utils/util'
 
 export default {
   components: {
@@ -48,6 +51,7 @@ export default {
     [Field.name]: Field,
     [Divider.name]: Divider,
     [Uploader.name]: Uploader,
+    [Dialog.name]: Dialog,
     tfRadioBtn
   },
   data () {
@@ -83,14 +87,56 @@ export default {
           value: 7,
           name: '社区工作组'
         }
-      ]
+      ],
+      images: []
     }
   },
-  created () {},
+  created () {
+    this.category_id = this.$route.query.category_id || ''
+  },
+  mounted () {
+    this.$refs.item.toggle()
+  },
   methods: {
-    // 选择类型
+    /* 选择完类型自动折叠起类型选择区域 */
     handRadioChange (value) {
-      this.category_id = value
+      this.$refs.item.toggle()
+    },
+    /* 无内容(图片、文字)时直接返回；有内容时弹窗提示 */
+    closePublish () {
+      if (this.category_id || this.content || this.images.length > 0) {
+        Dialog.confirm({
+          message: '确定放弃发布'
+        })
+          .then(() => {
+            this.$router.go(-1)
+          })
+          .catch(() => {
+            // on cancel
+          })
+      } else {
+        this.$router.go(-1)
+      }
+    },
+    // 发布
+    addPostBar () {
+      const validator = [
+        {
+          value: this.category_id,
+          message: '请选择发布类型'
+        },
+        {
+          value: this.content,
+          message: '请输入要发布的内容'
+        }
+      ]
+      validForm(validator).then((res) => {
+        addPostBar({
+          category_id: this.category_id,
+          content: this.content,
+          images: this.images
+        }).then((res) => {})
+      })
     }
   }
 }

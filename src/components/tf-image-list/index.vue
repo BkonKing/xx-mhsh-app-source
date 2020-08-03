@@ -1,9 +1,9 @@
 <template>
-  <van-grid class="tf-image-grid" square :border="false" :column-num="column" :gutter="10" style="margin-right: -10px !important;">
+  <van-grid class="tf-image-grid" :square="square" :border="false" :column-num="column" :gutter="10" style="margin-right: -10px !important;">
     <van-grid-item v-for="(img, i) in list" :key="i">
-      <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img.src" @click="preview(i)" />
+      <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="preview(i)" />
       <template v-else>
-        <van-image class="tf-image-item" fit="cover" :src="img.src" @click="onclick"/>
+        <van-image class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="onclick"/>
         <div class="tf-image--shade" v-if="i === 2" @click="onclick">
           <span>+{{ data.length - 3 }}</span>
         </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { Grid, GridItem, Image, ImagePreview } from 'vant'
+import { Grid, GridItem, Image, ImagePreview, Lazyload } from 'vant'
 
 export default {
   components: {
@@ -35,6 +35,10 @@ export default {
     column: {
       type: Number,
       default: 3
+    },
+    square: {
+      type: Boolean,
+      default: true
     }
   },
   methods: {
@@ -59,6 +63,9 @@ export default {
       }
       return this.data
     }
+  },
+  directives: {
+    lazy: Lazyload
   }
 }
 </script>

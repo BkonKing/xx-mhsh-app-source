@@ -96,6 +96,7 @@ import { Swipe, SwipeItem, Grid, GridItem, Image, NoticeBar } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 export default {
+  name: 'home',
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,

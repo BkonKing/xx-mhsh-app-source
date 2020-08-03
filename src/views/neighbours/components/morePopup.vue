@@ -1,11 +1,12 @@
 <template>
   <div>
     <van-popup class="more-dialog" v-model="moreShowChild">
+      <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
       <div v-if="share" class="more-btn" @click="clickShare">分享</div>
-      <div class="more-btn" @click="complain">投诉</div>
-      <div class="more-btn tf-text-primary">删除</div>
+      <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
+      <div v-if="deleteProp" class="more-btn tf-text-primary">删除</div>
     </van-popup>
-    <van-popup class="complain-dialog" v-model="complainShow" position="bottom">
+    <van-popup class="complain-dialog" v-model="complainShow" position="bottom" @closed="category_id = ''">
       <i
         class="van-icon van-icon-close van-popup__close-icon van-popup__close-icon--top-right"
         @click="complainShow = false"
@@ -17,8 +18,8 @@
         ：{{'加入微信群，无需缴费即可获得至尊D站年
         度VIP，每天免费领取金豆豆...'}}
       </div>
-      <tf-radio-btn :data="types" @change="handRadioChange"></tf-radio-btn>
-      <div class="complain-footer">提交</div>
+      <tf-radio-btn v-model="category_id" :data="types"></tf-radio-btn>
+      <div class="complain-footer" :class="{'primary-btn': category_id}" @click="submitComplain">提交</div>
     </van-popup>
     <van-share-sheet v-model="showShare" :options="options" @select="onSelect" />
   </div>
@@ -36,11 +37,27 @@ export default {
   },
   props: {
     moreShow: {
-      type: Boolean,
+      type: [Boolean],
       default: false
     },
     share: {
-      type: Boolean,
+      type: [Boolean, Number],
+      default: false
+    },
+    deleteProp: {
+      type: [Boolean, Number],
+      default: false
+    },
+    complain: {
+      type: [Boolean, Number],
+      default: true
+    },
+    complainInfo: {
+      type: Object,
+      default: () => {}
+    },
+    comment: {
+      type: [Boolean, Number],
       default: false
     }
   },
@@ -86,24 +103,28 @@ export default {
       options: [
         { name: '微信', icon: 'wechat' },
         { name: '朋友圈', icon: 'weibo' }
-      ]
+      ],
+      category_id: ''
     }
   },
   methods: {
     clickShare () {
       this.showShare = true
     },
-    complain () {
+    clickComplain () {
       // this.moreShowChild = false
       this.complainShow = true
     },
-    // 选择类型
-    handRadioChange (value) {
-      this.category_id = value
-    },
     onSelect (option) {
-      console.log(option.name)
       this.showShare = false
+    },
+    clickComment () {
+      this.$emit('comment')
+    },
+    submitComplain () {
+      if (this.category_id) {
+
+      }
     }
   },
   watch: {
@@ -154,8 +175,11 @@ export default {
     margin-top: 10px;
     border-top: 1px solid @divider-color;
     font-size: 28px;
-    color: @red-dark;
+    color: @gray-7;
     text-align: center;
+  }
+  .primary-btn {
+    color: @red-dark;
   }
   /deep/ .radio-btn-group {
     .radio-btn--active {
@@ -164,6 +188,9 @@ export default {
     }
     .radio-btn__text--active {
       color: #fff;
+    }
+    .radio-btn__text {
+      font-size: 24px
     }
   }
 }
