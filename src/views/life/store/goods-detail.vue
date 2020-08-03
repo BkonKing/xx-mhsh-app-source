@@ -252,6 +252,7 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
+      id: '',   //商品id
       current: 0,
 
       // show: false,
@@ -260,6 +261,10 @@ export default {
         'https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png'
       ]
     }
+  },
+  created(){
+    this.id = this.$route.query.id;
+    console.log(this.id);
   },
   methods: {
     onChange (index) {

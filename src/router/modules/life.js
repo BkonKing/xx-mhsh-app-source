@@ -33,7 +33,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "specialSale" */
         '@/views/life/store/special-sale'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/special-area',

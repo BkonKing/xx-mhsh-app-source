@@ -5,8 +5,8 @@
 				<div class="header-tit flex-between">
 					<div class="font-34 font-weight">美好生活</div>
 					<div class="header-right flex-align-center">
-						<div class="header-link"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
-						<div class="header-link"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+						<div class="header-link" @click="linkFunc(6)"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
+						<div class="header-link" @click="linkFunc(1)"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
 					</div>
 				</div>
 			</div>
@@ -37,13 +37,13 @@
 			</van-swipe>
 		</div>
 		<div class="life-session">
-			<div class="life-tit life-special-tit flex-between">
+			<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
 				<div class="font-34 font-weight flex-align-center">
 					<span>9.9特卖</span>
 				</div>
 				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
 			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc">
+			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
 				<div class="life-goods-item">
 					<div class="life-goods-pic">
 						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -75,7 +75,7 @@
 			</div>
 		</div>
 		<div class="life-session">
-			<div class="life-tit flex-between">
+			<div class="life-tit flex-between" @click="linkFunc(2)">
 				<div class="font-34 font-weight flex-align-center">
 					<span>限时闪购</span>
 					<van-count-down class="life-countdown flex-align-center" ref="countDown" :auto-start="false" :time="time" @finish="finish">
@@ -90,7 +90,7 @@
 				</div>
 				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
 			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc">
+			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
 				<div class="life-goods-item">
 					<div class="life-goods-pic">
 						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -149,14 +149,14 @@
 			</div>
 		</div>
 		<div class="life-session">
-			<div class="life-tit life-area-tit flex-between">
+			<div class="life-tit life-area-tit flex-between" @click="linkFunc(4)">
 				<div class="font-34 font-weight flex-column-center">
 					<div class="area-text-tit">夏天的幸福感</div>
 					<div class="area-text-detail">来自于这些清凉神器</div>
 				</div>
 				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
 			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc">
+			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
 				<div class="life-goods-item">
 					<div class="life-goods-pic">
 						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -197,7 +197,6 @@
 <script>
 import { Swipe, SwipeItem, Icon, CountDown } from 'vant'
 import scrollBar from '@/components/scroll-bar'
-import {pagesArr} from '../../const/pages_url.js'
 export default {
   components: {
     [Icon.name]: Icon,
@@ -222,8 +221,32 @@ export default {
     }
   },
   methods:{
-    linkFunc () {
-      this.$router.push(pagesArr[5])
+    linkFunc (type) {
+    	switch (type){
+    		case 1:
+    		this.$router.push('/store/goods-classify');
+    		break;
+    		case 2:
+    		this.$router.push('/store/flash-purchase');
+    		break;
+    		case 3:
+    		this.$router.push('/store/special-sale');
+    		break;
+    		case 4:
+    		this.$router.push('/store/special-area');
+    		break;
+    		case 5:
+    		this.$router.push({
+	      	path: '/store/goods-detail',
+	      	query: {
+	      		id: 1
+	      	}
+	      })
+    		break;
+    		case 6:
+    		this.$router.push('/store/search');
+    		break;
+    	}
     },
     changeNav(item, index) {
       this.activeIndex = index;
@@ -243,7 +266,6 @@ export default {
   }
 }
 </script>
-
 <style  scoped>
 @import '../../styles/life.css';
 .app-body {

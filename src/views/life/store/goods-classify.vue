@@ -2,10 +2,10 @@
 	<div class="app-body white-bg" :style="{ 'min-height': windowHeight+'px'}">
     <div class="fixed-top">
       <div class="search-input-block flex-between">
-        <div class="search-back flex-center">
+        <div class="search-back flex-center" @click="$router.go(-1)">
           <img class="img-100" src="@/assets/img/icon_19.png" />
         </div>
-        <div class="search-input-session flex-align-center">
+        <div class="search-input-session flex-align-center" @click="linkFunc(6)">
           <img class="search-icon" src="@/assets/img/icon_11.png" />
           <input class="search-input" type="text" placeholder="输入关键词搜索" />
         </div>
@@ -26,8 +26,8 @@
           </scrollBar>
         </div>
         <div class="sort-session flex-align-center">
-          <div class="price-sort cur desc">价格</div>
-          <div class="sales-sort">销量</div>
+          <div :class="['price-sort', sort_val == 2 ? 'cur asc' : '',sort_val == 3 ? 'cur desc' : '']" @click="sortFunc(23)">价格</div>
+          <div :class="['sales-sort', sort_val == 1 ? 'cur' : '']" @click="sortFunc(1)">销量</div>
         </div>
       </div>
     </div>
@@ -43,9 +43,7 @@
     </div> -->
     <div class="classify-cont">
       <div class="classify-nav">
-        <div class="nav-item">休闲零食</div>
-        <div class="nav-item cur">休闲零食</div>
-        <div class="nav-item">休闲零食</div>
+        <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category}}</div>
       </div>
       <div class="classify-right">
         <van-list
@@ -55,7 +53,7 @@
           @load="onLoad"
         >
           <div class="classify-list">
-            <div v-for="(item,index) in list" class="classify-item flex-between">
+            <div v-for="(item,index) in list" class="classify-item flex-between" :data-id="2" @click="linkFunc(5,{id:2})">
               <img class="res-goods-pic" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
               <div class="res-goods-info">
                 <div class="res-goods-name res-name p-nowrap">拍立得相机富士mini90 热门复古相</div>
@@ -85,7 +83,14 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      activeIndex: 0,
+      leftActiveIndex: 0,
+      leftNav: [
+        {id: 2, category: '休闲零食' },
+        {id: 3, category: '酒水' },
+        {id: 4, category: '冰饮' },
+        {id: 7, category: '休闲零食' }
+      ],
+      activeIndex: 0,  //右侧菜单选中项
       options: [
         {id: 1, name: '首页'},
         {id: 2, name: '精选'},
@@ -95,6 +100,8 @@ export default {
         {id: 6, name: '热门推荐'}, 
       ],
 
+      sort_val: 0,         //排序（0.默认/无筛选 1.销量降序 2.价格升序 3.价格降序）
+
       list: [1,2,3,4],
       loading: false,
       finished: false
@@ -103,6 +110,21 @@ export default {
   methods: {
     onSubmit: function () {
 
+    },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+        case 6:
+        this.$router.push('/store/search');
+        break;
+      }
     },
     onLoad() {
       
@@ -124,8 +146,48 @@ export default {
         
       // }, 1000);
     },
+    //左侧菜单点击
+    categoryNav(index, id) {
+      this.leftActiveIndex = index;
+    },
+    //右侧菜单点击
     changeNav(item, index) {
       this.activeIndex = index;
+    },
+    // 排序
+    sortFunc: function (sort='') {
+      
+      if(sort == 23){
+        if(this.sort_val == 0 || this.sort_val == 1 || this.sort_val == 3){
+          this.sort_val = 2;
+        }else {
+          this.sort_val = 3;
+        }
+      }else {
+        this.sort_val = sort;
+      }
+      console.log(this.sort_val);
+      return;
+      
+      if (sort_type =='default'){
+        self.setData({
+          sort_val: 1
+        })
+      }else {
+        if (self.data.sort_val == 2){
+          self.setData({
+            sort_val: 3
+          })
+        }else {
+          self.setData({
+            sort_val: 2
+          })
+        }
+      }
+      wx.pageScrollTo({
+        scrollTop: 0,
+        duration: 0
+      })
     },
   }
 }
@@ -197,7 +259,7 @@ export default {
   left: 0;
   width: 160px;
   background-color: #f2f2f4;
-  z-index: 6;
+  z-index: 30;
   overflow-y: auto;
 }
 .nav-item {
@@ -266,6 +328,9 @@ export default {
 .price-sort {
   margin: 0 139px 0 50px;
   position: relative;
+}
+.sort-session .cur {
+  color: #eb5841;
 }
 .price-sort::before,.price-sort::after {
   content: '';

@@ -1,25 +1,32 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-flash"><van-nav-bar title="限时闪购" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-flash"><van-nav-bar title="限时闪购" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
     <div class="flash-header">
-      <div scroll-x class="flash-scroll" scroll-left="scrollLeft">
-        <!-- <div :class="[navList.length < 5 ? 'nav-block' : '']">
-          <template v-for="(item,index) in navList">
-            <div class="flash-nav cur" data-index="index" catchtap="navFunc">
-              <div class="nav-time"><text>{{item.start_time_val}}</text></div>
+      <div class="flash-scroll">
+        <scrollBar direction="x" :activeIndex="activeIndex">
+          <div
+            class=""
+            v-for="(item, index) in options"
+            :key="index"
+            @click="changeNav(item, index)"
+            :class="index === activeIndex ? 'active' : null"
+          >
+            <div :class="[activeIndex == index ? 'cur' : '','flash-nav']">
+              <div class="nav-time" v-html="item.start_time_val"></div>
               <div class="nav-line"></div>
               <div class="nav-status">{{item.status_txt}}</div>
             </div>
-          </template>
-        </div> -->
-        <div class="flash-nav" data-index="0" catchtap="navFunc">
+          </div>
+        </scrollBar>
+
+        <!-- <div class="flash-nav" data-index="0" catchtap="navFunc">
           <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">已结束</div>
-        </div>
-        <div class="flash-nav" data-index="1" catchtap="navFunc">
+        </div> -->
+        <!-- <div class="flash-nav" data-index="1" catchtap="navFunc">
           <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">已结束</div>
@@ -38,7 +45,7 @@
           <div class="nav-time" v-html="'4月30日\n21:00'"></div>
           <div class="nav-line"></div>
           <div class="nav-status">即将开始</div>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- <div class="flash-time flash-time-over" wx:if="{{navList[tapIndex].status == 1}}">本场已结束</div> -->
@@ -155,7 +162,7 @@
           <div class="item-btn">
             <!-- <div class="btn-flash">马上抢</div> -->
             <!-- <div class="btn-collage">邀请拼单</div> -->
-            <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div>
+            <div class="btn-remind flex-center" @click.stop="remindFunc(index,item.id)"><img src="@/assets/img/icon_01.png" />提醒</div>
             <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
             <!-- <div class="btn-over">已抢光</div> -->
           </div>
@@ -182,6 +189,11 @@
       </template>
     </div>
 
+    <remind-swal 
+    :show-swal="showSwal"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal()"></remind-swal>
+
     <div v-show="false" class="mask-bg">
       <div class="mask-block">
         <div class="mask-close">
@@ -202,12 +214,14 @@
 
 <script>
 import { NavBar, CountDown } from 'vant'
-
-// import '@/styles/life.css'
+import scrollBar from '@/components/scroll-bar'
+import remindSwal from './../components/remind-swal'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    [CountDown.name]: CountDown
+    [CountDown.name]: CountDown,
+    scrollBar,
+    remindSwal
   },
   data () {
     return {
@@ -216,7 +230,40 @@ export default {
       navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶'],
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
-      scrollLeft: '' // 滚动菜单移动距离
+
+      activeIndex: 2,
+      options: [
+        {
+          start_time_val: '4月30日\n21:00',
+          status_txt: "已结束"
+        },
+        {
+          start_time_val: "07月15日<br />08:00",
+          status_txt: "已结束"
+        }, 
+        {
+          start_time_val: '08月01日\n08:00',
+          status_txt: "正在进行"
+        },
+        {
+          start_time_val: "09月13日\n08:00",
+          status_txt: "即将开始"
+        },
+        {
+          start_time_val: "09月13日\n08:00",
+          status_txt: "即将开始"
+        },
+      ],
+
+      showSwal: false,       //提醒弹窗
+      set_id: '',            //提醒的商品id
+      set_index: '',         //点击提醒的商品index
+      ollage_id: '',         //当前选中的闪购id
+      navList: [],           //菜单列表
+      listData: [],          //页面数据列表
+      noMoreHidden: true,    //上拉加载更多，没有更多是否隐藏
+      userId: '',            //用户uid   
+      page: 1,               //分页页码
     }
   },
   methods: {
@@ -235,6 +282,93 @@ export default {
     finish() {
       Toast('倒计时结束');
     },
+    //菜单点击
+    changeNav(item, index) {
+      this.activeIndex = index;return;
+
+      const self = this;
+      let tapIndex = e.currentTarget.dataset.index;
+      self.setData({
+        tapIndex: tapIndex,
+        tapStatus: self.data.navList[tapIndex].status,
+      })
+      self.data.page = 1;
+      self.data.noMoreHidden = true;
+      self.data.ollage_id = self.data.navList[tapIndex].id;
+      //如果当前点击的是即将开始，判断当前时间是否大于开始时间
+      let newTime = parseInt(new Date().getTime()/1000);
+      let startTime = self.data.navList[tapIndex].start_time;
+      if(newTime >=startTime && self.data.tapStatus == 3){   //当前时间大于等于活动开始时间
+        self.getData();
+      }else {
+        self.getGoods();
+      }
+    },
+    closeSwal(data){
+      console.log(data)
+      this.showSwal = data == 1 ? true : false;
+    },
+
+    /**
+     * 提醒
+    */
+    remindFunc: function (e) {
+      const self = this;
+      let set_id =  e.currentTarget.dataset.id;
+      let tap_index = e.currentTarget.dataset.index;
+      self.data.set_id = set_id;
+      self.data.set_index = tap_index;
+      let newTime = parseInt(new Date().getTime()/1000);
+      let overTime = self.data.navList[self.data.tapIndex].start_time;
+      console.log(newTime);
+      if(newTime >=overTime){   //当前时间大于等于活动开始时间
+        wx.showToast({
+          title: '该商品已开抢',
+          icon: 'none'
+        })
+        setTimeout(() => {
+          self.data.page = 1;
+          self.getData();
+        }, 1500);
+      }else {
+        self.data.set_status =  newTime+600<overTime ? 0 : 1;
+        self.setData({
+          'swalObj.swalTxt': newTime+600<overTime ? self.data.model_list[0] : self.data.model_list[1],
+          'swalObj.swalShow': true
+        })
+      }
+    },
+    /**
+     * 提醒回调
+    */
+    sureSwal: function (e) {
+      this.closeSwal(0);
+      console.log(11);return;
+      const self = this;
+      app.util.getMessageSucess(function () {
+        console.log('成功')
+        app.util.request({
+          'url': '/xcx/wxactivityjson/messages_json',
+          'cachetime': '0',
+          data: {
+            uid: self.data.userId,
+            is_vip: self.data.is_vip,
+            type: 2,
+            goods_id: self.data.set_id,
+            activity_id: self.data.ollage_id
+          },
+          success(res) {
+            let result = res.data;
+            if (result.code == '0000') {
+              let u = "listData["+self.data.set_index+"].is_set";
+              self.setData({
+                [u]: true
+              })
+            }
+          }
+        })
+      }, [self.data.tmplIds_str[self.data.set_status]]);
+    },
   }
 }
 </script>
@@ -244,7 +378,6 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 
 /*菜单*/
@@ -258,6 +391,7 @@ export default {
 .flash-scroll::-webkit-scrollbar {
   display: none;
 }
+
 .nav-block {
   display: flex;
   justify-content: center;
@@ -279,6 +413,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: normal;
 }
 .nav-line {
   height: 2px;

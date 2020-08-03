@@ -4,8 +4,8 @@
     <div class="bar-empty"></div>
 		<div class="cart-session">
 			<div class="cart-list">
-	      <div class="cart-item cart-item-sg" v-for="(item,key) in carts">
-	        <div class="cart-checkbox cur" bindtap="checkboxOne" data-index="">
+	      <div class="cart-item cart-item-sg" v-for="(item,index) in carts" @click="linkFunc(5)">
+	        <div class="cart-checkbox cur" @click.stop="checkboxOne(index)" data-index="">
 	          <div class="checkbox-session"></div>
 	        </div>
 	        <div class="cart-cont" hover-class="none">
@@ -20,52 +20,172 @@
 	          </div>
 	        </div>
 	        <div class="cart-operate">
-	          <div class="operate-btn product-sub flex-between" data-types="-1" data-index="" bindtap="countTab"></div>
+	          <div class="operate-btn product-sub flex-between" @click.stop="countTab(-1,index)"></div>
 	          <div class="shop-btn-block">
 	            <div class="shop-num">11</div>
 	          </div>
-	          <div class="operate-btn product-add not-add flex-between" data-types="1" data-index="" bindtap=""></div>
+	          <div class="operate-btn product-add not-add flex-between" data-types="1" @click.stop="countTab(1,index)"></div>
 	        </div>
-	        <div class="product-del" catchtap="delCarts" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
+	        <div class="product-del" @click.stop="delCarts(index)" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>
 	    </div>
 		</div>
     <div class="cart-empty"></div>
     <div class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
-        <div class="all-checkbox" catchtap="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
+        <div class="all-checkbox" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
         <div class="all-price"><span>合计：</span>￥55</div>
-        <div class="all-go flex-center" catchtap="payFunc">结算(2)</div>
+        <div class="all-go flex-center" @click="payFunc">结算(2)</div>
       </div>
     </div>
-		<!-- <div class="cart-bottom">
-			<van-submit-bar
-			  :price="3050"
-			  button-text="提交订单"
-			  @submit="onSubmit"
-			>
-			  <van-checkbox v-model="checked">全选</van-checkbox>
-			</van-submit-bar>
-		</div> -->
 	</div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Toast.name]: Toast,
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       checked: false,
-      carts: [1, 2, 3, 4, 5, 6]
+      carts: [1, 2, 3, 4, 5, 6],
+
+      // carts: [],           //购物车
+      priceTotal: '',      //支付总额
+      numTotal: '',        //支付商品总件数
+      noneHidden: true,    //购物车是否为空
+      allSelected: true,   //全选
+      discountInfo: '',    //优惠信息
     }
   },
   methods: {
-    onSubmit: function () {
-
+    linkFunc (type) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: 1
+          }
+        })
+        break;
+        case 8:
+        this.$router.push({
+          path: '/life/settlement',
+          query: {
+            id: 1
+          }
+        })
+        break;
+      }
+    },
+    // 商品数量加减
+    countTab(types,index) {
+      let indexTab = index;
+      if (parseInt(this.carts[indexTab].count) + types > 0) {
+        let arrcount_val = "carts[" + indexTab + "].count";
+        this.carts[" + indexTab + "].count = parseInt(this.carts[indexTab].count) + types;
+      } else {
+        this.delOne(indexTab);
+      }
+      localStorage.setItem('cart', this.carts);
+      this.total();
+    },
+    //点击删除按钮
+    delCarts(index) {
+      let indexTab = index;
+      this.delOne(indexTab);
+      localStorage.setItem('cart', this.carts);
+      this.total();
+    },
+    // 删除购物车中的某个商品
+    delOne(index) {
+      let indexTab = index;
+      let carts_arr = this.carts;
+      carts_arr.splice(indexTab, 1);
+      this.carts = carts_arr;
+      if (this.carts.length < 1) {
+        this.noneHidden = false;
+      }
+    },
+    /**
+     * 勾选/取消单个商品
+    */
+    checkboxOne(index) {
+      let indexTab = index;
+      let u = "carts[" + indexTab + "].is_checked";
+      this.carts[" + indexTab + "].is_checked = !this.carts[indexTab].is_checked
+      localStorage.setItem('cart', this.carts);
+      this.total();
+    },
+    /**
+     * 全选/全不选
+    */
+    checkboxAll() {
+      let carts_arr = this.carts;
+      let is_checked= this.allSelected;
+      for (let i = 0; i < carts_arr.length; i++) {
+        carts_arr[i].is_checked = !is_checked;
+      }
+      this.carts = carts_arr;
+      this.allSelected = !is_checked;
+      wx.setStorageSync('cart', this.carts);
+      this.total();
+    },
+    /**
+     * 计算商品数量/价格
+     */
+    total() {
+      let carts_arr = this.carts;
+      let carts_list = [];
+      let numTotal = 0;
+      let priceTotal = 0;
+      let checked_num = 0;
+      for (var j in carts_arr) {
+        if (carts_arr[j].is_checked){
+          checked_num++;
+          numTotal += parseInt(carts_arr[j].count);
+          priceTotal += parseFloat(carts_arr[j].count * carts_arr[j].pay_price);
+        }
+      }
+      this.allSelected = checked_num === carts_arr.length ? true : false;
+      this.numTotal = numTotal;
+      this.priceTotal = 0 ? '0.00' : priceTotal.toFixed(2);
+      if (numTotal > 0) {
+        app.util.request({
+          'url': '/xcx/wxvipjson/common_pay',
+          'cachetime': '0',
+          'showLoading': false,
+          'data': {
+            uid: this.userId,
+            giftbag: JSON.stringify(this.carts),
+          },
+          success(res) {
+            let result = res.data;
+            // that.setData({
+            //   discountInfo: result.data,
+            //   carts: result.goods_arr,
+            //   priceTotal: (result.data.total_pay_price).toFixed(2)
+            // })
+            wx.setStorageSync('cart', result.goods_arr);
+          }
+        });
+      }
+    },
+    /**
+     * 结算
+    */
+    payFunc() {
+      Toast('请选择要结算的商品');
+      if(this.numTotal === 0){
+        Toast('请选择要结算的商品');
+      }else {
+        this.linkFunc(8);
+      }
     }
   }
 }
@@ -76,7 +196,6 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 /* 购物车商品列表 start */
 .cart-session {

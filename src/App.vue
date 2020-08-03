@@ -137,4 +137,12 @@ export default {
 .bar-white.order-bar .van-icon-arrow-left::before {
   color: #222;
 }
+//轮播
+.life-swipe .van-swipe__indicator {
+  width: 10px;
+  height: 10px;
+  margin: 0 10px;
+  background-color: rgba(255,255,255,0.4);
+  border-radius: 50%;
+}
 </style>

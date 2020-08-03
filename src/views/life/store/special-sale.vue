@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="special-nav">
       <scrollBar direction="x" :activeIndex="activeIndex">
@@ -15,7 +15,55 @@
         </div>
       </scrollBar>
     </div>
-    <div class="special-list flex-between">
+    <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+      <div class="special-list flex-between">
+        <div v-for="(item,index) in list" class="special-item" @click="linkFunc(5)">
+          <div class="special-goods-pic">
+            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+          </div>
+          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
+          <div class="special-goods-price flex-align-center">
+            <div class="goods-price-icon flex-align-center">
+              <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
+              <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
+            </div>
+            <div class="goods-old-price">￥46</div>
+          </div>
+        </div>
+      </div>
+    </van-list>
+    <div v-show="false" class="special-list flex-between">
+      <div class="special-item">
+        <div class="special-goods-pic">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        </div>
+        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
+        <div class="special-goods-price flex-align-center">
+          <div class="goods-price-icon flex-align-center">
+            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
+            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
+          </div>
+          <div class="goods-old-price">￥46</div>
+        </div>
+      </div>
+      <div class="special-item">
+        <div class="special-goods-pic">
+          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        </div>
+        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
+        <div class="special-goods-price flex-align-center">
+          <div class="goods-price-icon flex-align-center">
+            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
+            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
+          </div>
+          <div class="goods-old-price">￥46</div>
+        </div>
+      </div>
       <div class="special-item">
         <div class="special-goods-pic">
           <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -60,11 +108,13 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 export default {
+  name:'specialSale',
   components: {
     [NavBar.name]: NavBar,
+    [List.name]: List,
     scrollBar
   },
   data () {
@@ -76,16 +126,48 @@ export default {
         {id: 2, name: '9.9封顶'},
         {id: 3, name: '19.9封顶'},
         {id: 4, name: '29.9封顶'},
-      ]
+      ],
+
+      list: [1,2,3,4],
+      loading: false,
+      finished: false
     }
   },
   methods: {
-    onSubmit: function () {
-
-    },
     changeNav(item, index) {
       this.activeIndex = index;
-    }
+    },
+    onLoad() {
+      // 异步更新数据
+      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
+      if (this.list.length >= 40) {
+        this.finished = true;
+        console.log(222);
+      }else {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1);
+        }
+
+        // 加载状态结束
+        this.loading = false;
+      }
+    
+      // setTimeout(() => {
+        
+      // }, 1000);
+    },
+    linkFunc(type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+      }
+    },
   }
 }
 </script>
@@ -95,7 +177,6 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 
 .special-nav {

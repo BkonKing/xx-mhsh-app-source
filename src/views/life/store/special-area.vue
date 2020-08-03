@@ -2,7 +2,7 @@
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
     <div class="area-header">
       <div class="order-bar bar-nobg">
-        <van-nav-bar title="" :border="false" fixed left-text="" left-arrow></van-nav-bar>
+        <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
       </div>
       <div class="header-session">
         <div class="area-tit">3C爱好者专区</div>
