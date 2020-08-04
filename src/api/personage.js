@@ -34,3 +34,48 @@ export function updatePayPassword (data) {
 export function resetPayPassword (data) {
   return request.post('/my/password/resetPayPassword', data)
 }
+
+/* 设置登录密码 */
+export function setPassword (data) {
+  return request.post('/my/password/setPassword', data)
+}
+
+/* 设置登录密码 */
+export function updatePassword (data) {
+  return request.post('/my/password/updatePassword', data)
+}
+
+/* 成员列表 */
+export function getMemberList (params) {
+  return request.get('/my/member/getMemberList', { params })
+}
+
+/* 新增报备成员 */
+export function addMember (data) {
+  return request.post('/my/member/addMember', data)
+}
+
+/* 修改报备成员 */
+export function updateMember (data) {
+  return request.post('/my/member/updateMember', data)
+}
+
+/* 房间认证 */
+export function roomAttest (data) {
+  return request.post('/room/binding/roomAttest', data)
+}
+
+/* 认证房间详情 */
+export function bindingRoomInfo (params) {
+  return request.get('/room/binding/bindingRoomInfo', params)
+}
+
+/* 设置当前房间 */
+export function bindingDefault (data) {
+  return request.post('/room/binding/bindingDefault', data)
+}
+
+/* 解除绑定房间 */
+export function unBinding (data) {
+  return request.post('/room/binding/unBinding', data)
+}

@@ -39,6 +39,10 @@ if (!window.api) {
 
 Vue.use(Vuex)
 
+const userInfo = api.getGlobalData({
+  key: 'user_info'
+})
+
 const store = new Vuex.Store({
   state: {
     access_token: api.getGlobalData({
@@ -47,9 +51,7 @@ const store = new Vuex.Store({
     refresh_token: api.getGlobalData({
       key: 'refresh_token'
     }) || '',
-    user_info: api.getGlobalData({
-      key: 'user_info'
-    }) || '',
+    user_info: userInfo ? JSON.parse(userInfo) : '',
     hasLogin: false,
     loginProvider: '',
     openid: null,

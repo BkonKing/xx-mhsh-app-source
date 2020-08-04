@@ -27,7 +27,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "informationIndex" */
         '@/views/personage/information/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 新增房产 */
   {
@@ -37,7 +40,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "houseAttestation" */
         '@/views/personage/house/attestation.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 选择小区 */
   {

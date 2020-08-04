@@ -3,18 +3,18 @@
     <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-h3 tf-center">{{status ? '修改' : '设置'}}支付密码</div>
-      <div v-if="status" class="tf-text-lg tf-center">请输入支付密码，以验证身份</div>
+      <div v-if="status && steps === 1" class="tf-text-lg tf-center">请输入支付密码，以验证身份</div>
       <div v-else class="tf-text-lg tf-center">请设置支付密码，用于支付验证</div>
       <div class="item">
         <van-password-input
-          v-if="status"
+          v-if="status && steps === 1"
           :value="old_paypassword"
           :gutter="7"
           :focused="showKeyboard"
           @focus="showKeyboard = true"
         />
         <van-password-input
-          v-if="!status"
+          v-else
           :value="paypassword"
           :gutter="7"
           :focused="showKeyboard"
@@ -33,7 +33,7 @@
 </template>
 <script>
 import { NavBar, PasswordInput, NumberKeyboard, Toast, Dialog } from 'vant'
-import { setPayPassword, updatePayPassword } from '@/api/personage.js'
+import { setPayPassword, updatePayPassword } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -44,15 +44,34 @@ export default {
     return {
       showKeyboard: true,
       status: undefined,
+      steps: 0,
       paypassword: '', // 输入的内容
       old_paypassword: ''
     }
   },
   created () {
     this.status = parseInt(this.$route.query.status)
+    this.steps = parseInt(this.$route.query.steps) || 1
   },
   methods: {
     onInput (key) {
+      /* 修改密码且还是当前第一步验证密码 */
+      if (this.status && this.steps === 1) {
+        this.validPassword(key)
+      } else {
+        this.setPassword(key)
+      }
+    },
+    /* 验证密码 */
+    validPassword (key) {
+      this.old_paypassword = (this.old_paypassword + key).slice(0, 6)
+      if (this.old_paypassword.length === 6) {
+        // todo: 验证密码看是否需要请求后台验证一次，而不是一次性提交
+        this.steps = 2
+      }
+    },
+    /* 判断修改还是设置密码 */
+    setPassword (key) {
       this.paypassword = (this.paypassword + key).slice(0, 6)
       if (this.paypassword.length === 6) {
         if (this.status) {
@@ -64,25 +83,50 @@ export default {
     },
     /* 修改支付密码 */
     updatePayPassword () {
-      updatePayPassword().then((res) => {})
+      updatePayPassword({
+        paypassword: this.paypassword,
+        old_paypassword: this.old_paypassword
+      }).then((res) => {
+        this.setSuccess('支付密码修改成功')
+      })
     },
     /* 设置支付密码 */
     setPayPassword () {
       setPayPassword({
         paypassword: this.paypassword
       }).then((res) => {
-        Dialog.alert({
-          title: '支付密码设置成功'
-        }).then(() => {
+        this.setSuccess('支付密码设置成功')
+      })
+    },
+    setSuccess (title) {
+      Dialog.alert({
+        title
+      }).then(() => {
+        if (this.steps === 2) {
+          this.$router.replace('/pages/personage/information/index')
+        } else {
           this.$router.go(-1)
-        })
+        }
       })
     },
     onDelete () {
-      this.paypassword = this.paypassword.slice(0, this.paypassword.length - 1)
+      if (this.status && this.steps === 1) {
+        this.old_paypassword = this.old_paypassword.slice(
+          0,
+          this.old_paypassword.length - 1
+        )
+      } else {
+        this.paypassword = this.paypassword.slice(
+          0,
+          this.paypassword.length - 1
+        )
+      }
     },
     jumpForget () {
-      this.$router.push('/pages/personage/information/forget-payment-code')
+      this.$router.push({
+        path: '/pages/personage/information/forget-payment-code',
+        type: 1
+      })
     }
   }
 }

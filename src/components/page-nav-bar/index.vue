@@ -47,8 +47,8 @@ export default {
     },
     goSelect () {
       const url = this.status
-        ? '/pages/personage/house/select-community'
-        : '/pages/personage/house/attestation'
+        ? '/pages/personage/house/select-house'
+        : '/pages/personage/house/attestation?type=1&mode=0'
       this.$router.push(url)
     },
     scan () {

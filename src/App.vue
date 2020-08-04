@@ -66,19 +66,26 @@ export default {
   },
   watch: {
     $route (to, from) {
-      const index = this.historyList.indexOf(to.name)
-      // console.log(index, to.name)
-      if (index === -1) {
+      // console.log(to)
+      // console.log(from)
+      // const index = this.historyList.indexOf(to.name)
+      const len = this.historyList.length
+      const lastPath = this.historyList[len - 2] // 上一次路由name
+      // eslint-disable-next-line eqeqeq
+      if (to.fullPath === lastPath && to.query.forward != '1') {
+        // 返回
+        const delIndex = this.historyList.indexOf(from.fullPath)
+        this.transitionName = 'slide-right'
+        this.historyList.splice(delIndex)
+      } else {
         if (this.historyList.length > 0) {
           this.transitionName = 'slide-left'
         }
-        if (to.name) {
-          this.historyList.push(to.name)
+        const index = this.historyList.indexOf(to.fullPath)
+        if (index !== -1) {
+          this.historyList.splice(index)
         }
-      } else {
-        const delIndex = this.historyList.indexOf(from.name)
-        this.transitionName = 'slide-right'
-        this.historyList.splice(delIndex, 1)
+        to.fullPath && this.historyList.push(to.fullPath)
       }
       // console.log(this.historyList)
     }
@@ -100,7 +107,7 @@ export default {
 .slide-left-enter-active,
 .slide-left-leave-active {
   will-change: transform;
-  transition: all 250ms;
+  transition: all 500ms;
   position: absolute;
   top: 0;
   left: 0;
@@ -164,7 +171,7 @@ export default {
   width: 10px;
   height: 10px;
   margin: 0 10px;
-  background-color: rgba(255,255,255,0.4);
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 50%;
 }
 </style>
