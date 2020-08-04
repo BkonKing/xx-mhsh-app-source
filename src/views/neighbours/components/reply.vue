@@ -5,7 +5,11 @@
         <userInfo :avatar="cell.avatar || ''" :name="cell.account" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
             <span class="thumbsups-number">{{cell.thumbsups}}</span>
-            <span class="tf-icon tf-icon-like"></span>
+            <span
+              class="tf-icon tf-icon-like"
+              :class="{'like-active': cell.thumbsupStatus}"
+              @click="thumbsUp(cell)"
+            ></span>
           </template>
         </userInfo>
         <div class="reply-cell-content">
@@ -13,7 +17,11 @@
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
-          <div v-if="cell.child && cell.child.length" class="reply-cell-content__reply" @click="goReply(cell.id)">
+          <div
+            v-if="cell.child && cell.child.length"
+            class="reply-cell-content__reply"
+            @click="goReply(cell)"
+          >
             <div
               class="reply-cell-content__reply__text van-multi-ellipsis--l3"
               v-for="(item, i) in cell.child"
@@ -51,7 +59,12 @@
       <span class="tf-icon tf-icon-like"></span>
       <van-field placeholder="写评论" @click="showPopup" />
     </div>
-    <comment v-model="show"></comment>
+    <comment
+      ref="comment"
+      v-model="show"
+      :thumbsupStatus="thumbsupStatus"
+      @thumbsup="$emit('thumbsup')"
+    ></comment>
   </div>
 </template>
 
@@ -60,6 +73,7 @@ import { List, Cell, ImagePreview, Field } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import comment from './comment'
 import morePopup from './morePopup'
+import { thumbsUp, getCommentList } from '@/api/neighbours'
 
 export default {
   props: {
@@ -69,6 +83,18 @@ export default {
     },
     category: {
       type: [String, Number],
+      default: ''
+    },
+    thumbsupStatus: {
+      type: [Boolean, Number],
+      default: false
+    },
+    articleId: {
+      type: String,
+      default: ''
+    },
+    parentId: {
+      type: String,
       default: ''
     }
   },
@@ -83,56 +109,18 @@ export default {
   },
   data () {
     return {
-      list: [
-        {
-          id: '1',
-          content:
-            '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          thumbsups: '5',
-          child: [
-            {
-              id: '2',
-              content:
-                '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-              images: [
-                'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-                'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-              ],
-              thumbsups: '5',
-              ctime: '2020-06-03 16:35:26'
-            },
-            {
-              id: '3',
-              content:
-                '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-              images: [
-                'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-                'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-              ],
-              thumbsups: '5',
-              ctime: '2020-06-03 16:35:26'
-            },
-            {
-              id: '4',
-              content:
-                '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-              thumbsups: '5',
-              ctime: '2020-06-03 16:35:26'
-            }
-          ],
-          ctime: '2020-06-03 16:35:26'
-        }
-      ],
+      list: [],
       loading: false,
       finished: false,
       moreShow: false,
       oneself: false,
-      show: false
+      show: false,
+      path: ''
     }
+  },
+  created () {
+    this.path = this.$route.path
+    this.getCommentList()
   },
   methods: {
     onLoad () {
@@ -152,8 +140,19 @@ export default {
         }
       }, 20000)
     },
-    goReply (id) {
-      this.$router.push('')
+    goReply (data) {
+      if (this.path.indexOf('reply') === -1) {
+        const params = JSON.parse(JSON.stringify(data))
+        delete params.child
+        this.$router.push({
+          path: '/pages/neighbours/reply',
+          query: {
+            category: this.category,
+            articleId: this.articleId,
+            data: JSON.stringify(params)
+          }
+        })
+      }
     },
     lookImg (images) {
       ImagePreview({
@@ -169,6 +168,28 @@ export default {
     },
     showPopup () {
       this.show = true
+    },
+    thumbsUp (item) {
+      // 判断是否点过赞，点过赞无法取消
+      if (item.thumbsupStatus) {
+        return
+      }
+      thumbsUp({
+        id: item.id,
+        t_type: 1
+      }).then((res) => {
+        // 点赞图标点亮
+        item.thumbsups++
+        item.thumbsupStatus = 1
+      })
+    },
+    getCommentList () {
+      getCommentList({
+        articleId: this.articleId,
+        parentId: this.parentId
+      }).then((res) => {
+        this.list = res.data
+      })
     }
   }
 }
@@ -185,6 +206,9 @@ export default {
     font-size: 36px;
     margin-left: 10px;
     color: #8f8f94;
+  }
+  .like-active::before {
+    color: @orange-dark;
   }
   .reply-cell {
     padding: 30px 0;

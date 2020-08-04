@@ -87,6 +87,7 @@ export default {
   width: 100%;
   padding: 20px;
   overflow: auto;
+  -webkit-transform: translateZ(0px);
 }
 .tf-van-cell {
   background: none;

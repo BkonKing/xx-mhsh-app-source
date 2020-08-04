@@ -24,7 +24,6 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
-      Toast.clear()
     } else {
       next()
     }
@@ -36,9 +35,9 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)
-      Toast.clear()
     }
   }
+  Toast.clear()
 })
 
 router.afterEach(() => {

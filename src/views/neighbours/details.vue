@@ -53,11 +53,26 @@
           </div>
         </template>
         <div class="activity-footer">
-          <div class="tf-icon tf-icon-like" @click="thumbsUp(info)">{{info.thumbsups}}</div>
-          <div class="tf-icon tf-icon-message">{{info.comments}}</div>
+          <div
+            class="tf-icon tf-icon-like"
+            :class="{'like-active': info.thumbsupStatus}"
+            @click="thumbsUp(info)"
+          >
+            <span class="tf-text-sm">{{info.thumbsups | numberText}}</span>
+          </div>
+          <div class="tf-icon tf-icon-message" @click="$refs.reply.comment()">
+            <span class="tf-text-sm">{{info.comments | numberText}}</span>
+          </div>
         </div>
       </div>
-      <reply class="tf-mt-lg" :category="category"></reply>
+      <reply
+        ref="reply"
+        class="tf-mt-lg"
+        :articleId="info.id"
+        :category="category"
+        :thumbsupStatus="info.thumbsupStatus"
+        @thumbsup="thumbsUp(info)"
+      ></reply>
     </div>
     <more-popup :moreShow.sync="moreShow" :share="true"></more-popup>
   </div>
@@ -175,6 +190,17 @@ export default {
         item.thumbsupStatus = 1
       })
     }
+  },
+  filters: {
+    numberText (value) {
+      let text = ''
+      if (value < 10000 && value > 0) {
+        text = value
+      } else if (value >= 10000) {
+        text = `${Math.floor(value / 10000)}万+`
+      }
+      return text
+    }
   }
 }
 </script>
@@ -283,5 +309,8 @@ export default {
   width: 100%;
   height: 365px;
   margin-bottom: 20px;
+}
+.like-active::before {
+  color: @orange-dark;
 }
 </style>

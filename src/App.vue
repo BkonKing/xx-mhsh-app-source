@@ -17,7 +17,8 @@ export default {
   data () {
     return {
       transitionName: '',
-      keepAlive: []
+      keepAlive: [],
+      historyList: []
     }
   },
   created () {
@@ -30,16 +31,18 @@ export default {
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     this.setRouteKeepAlive(router.options.routes)
     // 记录路由,动态给定动画
-    this.$navigation.on('forward', to => {
-      this.transitionName = to.route.meta.isTransition ? 'slide-left' : ''
-    })
-    this.$navigation.on('back', (to, from) => {
-      if (to.route.meta.isTransition || from.route.meta.isTransition) {
-        this.transitionName = 'slide-right'
-      } else {
-        this.transitionName = ''
-      }
-    })
+    // this.$navigation.on('forward', to => {
+    //   this.transitionName = 'slide-left'
+    //   // this.transitionName = to.route.meta.isTransition ? 'slide-left' : ''
+    // })
+    // this.$navigation.on('back', (to, from) => {
+    //   this.transitionName = 'slide-right'
+    //   // if (to.route.meta.isTransition || from.route.meta.isTransition) {
+    //   //   this.transitionName = 'slide-right'
+    //   // } else {
+    //   //   this.transitionName = ''
+    //   // }
+    // })
   },
   mounted () {
     // console.log(this.keepAlive) // 设置缓存匹配
@@ -60,6 +63,25 @@ export default {
         }
       })
     }
+  },
+  watch: {
+    $route (to, from) {
+      const index = this.historyList.indexOf(to.name)
+      // console.log(index, to.name)
+      if (index === -1) {
+        if (this.historyList.length > 0) {
+          this.transitionName = 'slide-left'
+        }
+        if (to.name) {
+          this.historyList.push(to.name)
+        }
+      } else {
+        const delIndex = this.historyList.indexOf(from.name)
+        this.transitionName = 'slide-right'
+        this.historyList.splice(delIndex, 1)
+      }
+      // console.log(this.historyList)
+    }
   }
 }
 </script>
@@ -78,7 +100,7 @@ export default {
 .slide-left-enter-active,
 .slide-left-leave-active {
   will-change: transform;
-  transition: all 450ms;
+  transition: all 250ms;
   position: absolute;
   top: 0;
   left: 0;
@@ -116,7 +138,7 @@ export default {
   background-image: linear-gradient(to right, #ffa912, #ffa812);
 }
 .bar-nobg.order-bar .van-nav-bar {
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   background-image: none;
 }
 .order-bar .van-nav-bar .van-nav-bar__title {

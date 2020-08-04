@@ -55,7 +55,12 @@ export function thumbsUp (data) {
   return request.post('/neighbours/newest/thumbs_up', data)
 }
 
-// 文章/评论点赞
+// 新增评论
 export function addComment (data) {
   return request.post('/neighbours/comment/addComment', data)
+}
+
+// 评论列表
+export function getCommentList (params) {
+  return request.get('/neighbours/comment/getCommentList', { params })
 }

@@ -1,12 +1,6 @@
 <template>
   <div class="tf-bg tf-padding-base tf-main-container">
-    <van-nav-bar
-      title="意见反馈"
-      :fixed="true"
-      :border="false"
-      left-arrow
-      @click-left="$router.go(-1)"
-    >
+    <van-nav-bar title="意见反馈" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
         <span class="tf-icon tf-icon-time-circle" @click="goList"></span>
       </template>
@@ -14,7 +8,7 @@
     <div class="tf-card">
       <div class="tf-card-header">选择类型</div>
       <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
+        <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
       </div>
     </div>
     <div class="tf-card">
@@ -34,17 +28,7 @@
     <div class="tf-card">
       <div class="tf-card-header">图片上传</div>
       <div class="tf-card-content">
-        <van-uploader :after-read="uploadSuccess" />
-        <!-- <uImg
-            ref="upimg"
-            :canUploadFile="true"
-            :limit="limitNum"
-            :uploadFileUrl="uploadFileUrl"
-            :heaer="header"
-            :fileKeyName="name"
-            :uImgList.sync="images"
-            @uploadSuccess="uploadSuccess"
-        ></uImg>-->
+        <van-uploader :after-read="uploadSuccess" :max-count="6" />
       </div>
     </div>
     <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
@@ -54,7 +38,8 @@
 <script>
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
-import { addComPraise } from '@/api/butler.js'
+import { addFeedback } from '@/api/personage.js'
+import { validForm } from '@/utils/util'
 export default {
   components: {
     tfRadioBtn,
@@ -70,11 +55,15 @@ export default {
       items: [
         {
           value: 1,
-          name: '投诉'
+          name: '功能使用'
         },
         {
           value: 2,
-          name: '表扬'
+          name: '产品建议'
+        },
+        {
+          value: 3,
+          name: '其他'
         }
       ],
       content: '',
@@ -89,40 +78,39 @@ export default {
     }
   },
   methods: {
-    formSubmit (e) {
-      const { content } = e.detail.value
-      if (!this.info_type) {
-        Toast('请选择类型')
-        return
-      } else if (!this.content) {
-        Toast('请输入内容')
-        return
-      }
-      this.addComPraise({
-        content: this.content,
-        images: this.uImgList,
-        info_type: this.info_type,
-        project_id: '2',
-        house_id: '1'
+    formSubmit () {
+      const validator = [
+        {
+          value: this.info_type,
+          message: '请选择类型'
+        },
+        {
+          value: this.content,
+          message: '请输入反馈内容'
+        }
+      ]
+      validForm(validator).then((res) => {
+        this.addFeedback({
+          content: this.content,
+          images: this.uImgList,
+          info_type: this.info_type,
+          project_id: '2',
+          house_id: '1'
+        })
       })
     },
-    addComPraise (params) {
-      addComPraise(params).then(res => {
+    addFeedback (params) {
+      addFeedback(params).then((res) => {
         if (res.success) {
           Dialog.alert({
-            title: '提交成功'
+            title: '感谢您的反馈'
           }).then(() => {
-            setTimeout(() => {
-              this.goList()
-            }, 1500)
+            this.$router.go(-1)
           })
         } else {
           Toast.fail('提交失败')
         }
       })
-    },
-    handRadioChange (value) {
-      this.info_type = value
     },
     uploadSuccess (result) {
       if (result.statusCode === 200) {
@@ -140,16 +128,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .tf-card {
-    margin-top: @padding-lg;
-  }
-  .tf-card-header {
-    font-size: @font-size-md !important;
-    font-weight: bold;
-  }
-  .uni-input {
-    flex: 1;
-    font-size: @font-size-md !important;
-    padding: 0;
-  }
+.tf-card {
+  margin-top: @padding-lg;
+}
+.tf-card-header {
+  font-size: @font-size-md !important;
+  font-weight: bold;
+}
+.uni-input {
+  flex: 1;
+  font-size: @font-size-md !important;
+  padding: 0;
+}
 </style>

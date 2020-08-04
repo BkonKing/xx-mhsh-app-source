@@ -28,6 +28,16 @@ const neighboursRouter = [
         /* webpackChunkName: "neighboursGroupList" */
         '@/views/neighbours/groupList.vue'
       )
+  },
+  /* 回复页面 */
+  {
+    path: '/pages/neighbours/reply',
+    name: 'neighboursReply',
+    component: () =>
+      import(
+        /* webpackChunkName: "neighboursReply" */
+        '@/views/neighbours/reply.vue'
+      )
   }
 ]
 

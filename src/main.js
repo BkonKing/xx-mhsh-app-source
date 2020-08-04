@@ -8,16 +8,16 @@ import '../public/js/api.js' // 引入apiCloud-api
 // import * as method from '@/utils/utils.js' // 引入全局方法
 // vconsole 悬浮console
 import VConsole from 'vconsole'
-import Navigation from 'vue-navigation'
+// import Navigation from 'vue-navigation'
 import './permission'
 import './styles/common.less'
 import './styles/components.less'
 import './styles/iconfont.css'
 import 'amfe-flexible'
 
-Vue.use(Navigation, {
-  router
-})
+// Vue.use(Navigation, {
+//   router
+// })
 Vue.config.productionTip = false
 // 全局引入公用方法，也可以在组件中单独引入，推荐在组件中单独引入。
 // Vue.prototype.$METHOD = method

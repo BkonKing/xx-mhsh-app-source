@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="comment-container">
     <div class="comment-box">
-      <span class="tf-icon tf-icon-like"></span>
+      <span v-if="thumbsupshow" class="tf-icon tf-icon-like" :class="{'like-active': thumbsupStatus}" @click="thumbsup"></span>
       <van-field placeholder="写评论" @click="showPopup" />
     </div>
     <van-popup v-model="show" position="bottom">
@@ -43,6 +43,14 @@ export default {
     value: {
       type: [Boolean, Number],
       default: false
+    },
+    thumbsupStatus: {
+      type: [Boolean, Number],
+      default: false
+    },
+    thumbsupshow: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -55,6 +63,9 @@ export default {
   methods: {
     showPopup () {
       this.show = true
+    },
+    thumbsup () {
+      this.$emit('thumbsup')
     },
     addComment () {
       if (!this.content) {
@@ -135,5 +146,8 @@ export default {
       font-size: 24px;
     }
   }
+}
+.like-active::before {
+  color: @orange-dark;
 }
 </style>

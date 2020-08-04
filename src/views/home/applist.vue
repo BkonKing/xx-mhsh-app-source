@@ -7,15 +7,15 @@
           class="van-icon van-icon-arrow-left van-nav-bar__arrow"
           @click="$router.go(-1)"
         ></i>
-        <span v-show="editMode" class="font-26" @click="editMode = false">取消</span>
+        <span v-show="editMode" class="font-26" @click="cancelEdit">取消</span>
       </div>
       <div v-show="!editMode" class="search-box">
         <van-search v-model="value" placeholder="全部应用" />
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
-        <span v-show="!editMode" @click="editMode = true">编辑</span>
-        <span class="comfirm-btn" v-show="editMode" @click="editMode = false">完成</span>
+        <span v-show="!editMode" @click="edit">编辑</span>
+        <span class="comfirm-btn" v-show="editMode" @click="saveMyApp">完成</span>
       </div>
     </div>
     <div class="tf-main-container" :class="{'app-container--edit': editMode}">
@@ -25,7 +25,7 @@
         <draggable
           class="app-container"
           :class="{'dragging': isDragging}"
-          v-model="homeList"
+          v-model="myAppList"
           :options="{
             animation: 0,
             group: 'description',
@@ -37,11 +37,11 @@
           @end="isDragging=false"
         >
           <app-item
-            v-for="(item,i) in homeList"
-            :class="{'noborder': homeList.length - homeList.length % 5 <= i}"
+            v-for="(item,i) in myAppList"
+            :class="{'noborder': myAppList.length - myAppList.length % 5 <= i}"
             :key="i"
-            :src="item.src"
-            :name="item.name"
+            :src="item.icon_image"
+            :name="item.application"
             :status="item.status"
             :editMode="editMode"
             mode="remove"
@@ -68,10 +68,11 @@
 </template>
 
 <script>
-import { NavBar, Divider, Search } from 'vant'
+import { NavBar, Divider, Search, Toast } from 'vant'
 import appContainer from './components/app-container'
 import appItem from './components/app-item'
 import draggable from 'vuedraggable'
+import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -86,98 +87,40 @@ export default {
       value: '',
       editMode: false,
       isDragging: false,
-      homeList: [
-        {
-          id: '1',
-          src: '/src/assets/logo.png',
-          name: '云门禁',
-          status: 0
-        },
-        {
-          id: '2',
-          src: '/src/assets/logo.png',
-          name: '公告通知',
-          status: 2
-        }
-      ],
-      latelyList: [
-        {
-          id: '1',
-          src: '/src/assets/logo.png',
-          name: '云门禁',
-          status: 0
-        }
-      ],
-      butlerList: [
-        {
-          id: '1',
-          src: '/src/assets/logo.png',
-          name: '云门禁',
-          status: 0
-        },
-        {
-          id: '2',
-          src: '/src/assets/logo.png',
-          name: '公告通知',
-          status: 2
-        },
-        {
-          id: '3',
-          src: '/src/assets/logo.png',
-          name: '报事报修',
-          status: 0
-        },
-        {
-          id: '4',
-          src: '/src/assets/logo.png',
-          name: '免费服务',
-          status: 0
-        },
-        {
-          id: '5',
-          src: '/src/assets/logo.png',
-          name: '访客邀约',
-          status: 0
-        },
-        {
-          id: '6',
-          src: '/src/assets/logo.png',
-          name: '投诉表扬',
-          status: 1
-        },
-        {
-          id: '7',
-          src: '/src/assets/logo.png',
-          name: '小区活动',
-          status: 1
-        }
-      ],
-      neighbourList: [
-        {
-          id: '8',
-          src: '/src/assets/logo.png',
-          name: '活动',
-          status: 1
-        },
-        {
-          id: '9',
-          src: '/src/assets/logo.png',
-          name: '资讯',
-          status: 1
-        }
-      ]
+      myAppList: [],
+      latelyList: [],
+      butlerList: [],
+      neighbourList: [],
+      myAppList_copy: [],
+      allAppList_copy: {}
     }
+  },
+  created () {
+    this.getAllApp()
+    this.getMyApp()
   },
   methods: {
     edit () {
       this.editMode = true
+      this.myAppList_copy = this.cloneObject(this.myAppList)
+      this.allAppList_copy = this.cloneObject({
+        latelyList: this.latelyList,
+        butlerList: this.butlerList,
+        neighbourList: this.neighbourList
+      })
     },
+    /* 添加应用 */
     add (item) {
+      if (this.myAppList.length >= 9) {
+        Toast('数量已经到达上限')
+        return
+      }
       item.status = 2
-      this.homeList.push(item)
+      this.myAppList.push(item)
     },
+    /* 删除应用 */
     remove (item, i) {
-      this.homeList.splice(i, 1)
+      this.myAppList.splice(i, 1)
       const { id } = item
       const changeStatus = (obj) => {
         if (obj.id === id) {
@@ -197,6 +140,47 @@ export default {
       return (
         (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
       )
+    },
+    /* 取消编辑 */
+    cancelEdit () {
+      this.myAppList = this.myAppList_copy
+      this.toTypeList(this.allAppList_copy)
+      this.editMode = false
+    },
+    getAllApp () {
+      getAllApp().then((res) => {
+        this.toTypeList(res.data)
+      })
+    },
+    /* 给所有应用分类赋值 */
+    toTypeList (obj) {
+      const { latelyList, butlerList, neighbourList } = obj
+      this.latelyList = latelyList
+      this.butlerList = butlerList
+      this.neighbourList = neighbourList
+    },
+    getMyApp () {
+      Toast.loading({
+        overlay: true,
+        duration: 0,
+        message: '加载中'
+      })
+      getMyApp().then((res) => {
+        this.myAppList = res.data
+        Toast.clear()
+      })
+    },
+    saveMyApp () {
+      const ids = this.myAppList.map((obj) => obj.id)
+      const params = {
+        appids: ids.join(',')
+      }
+      saveMyApp(params).then((res) => {
+        this.editMode = false
+      })
+    },
+    cloneObject (obj) {
+      return JSON.parse(JSON.stringify(obj))
     }
   }
 }
@@ -209,7 +193,7 @@ export default {
   right: 90px;
   /deep/ input::placeholder {
     font-size: 24px;
-    color: #8F8F94 !important;
+    color: #8f8f94 !important;
   }
   /deep/ .van-search {
     .van-search__content {

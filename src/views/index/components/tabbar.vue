@@ -1,10 +1,11 @@
 <template>
-  <van-tabbar v-model="active" @change="onChange">
+  <van-tabbar v-model="active" @change="onChange" route>
     <van-tabbar-item
       v-for="(item, index) in tabList"
       :key="index"
       :icon="item.icon"
       :to="item.path"
+      replace
     >
       <!-- <span>{{item.title}}</span>
       <template #icon="props">
@@ -47,7 +48,7 @@ export default {
   },
   created () {
     this.active = this.tabList.findIndex(
-      item => item.path === this.$route.path
+      (item) => item.path === this.$route.path
     )
     // window.addEventListener('popstate', () => {
     //   this.active = this.tabList.findIndex(
@@ -58,6 +59,13 @@ export default {
   methods: {
     onChange (value) {
       // console.log(value)
+    }
+  },
+  watch: {
+    $route (route) {
+      this.active = this.tabList.findIndex(
+        (item) => item.path === route.path
+      )
     }
   }
 }

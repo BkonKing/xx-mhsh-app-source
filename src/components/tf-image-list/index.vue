@@ -3,8 +3,8 @@
     <van-grid-item v-for="(img, i) in list" :key="i">
       <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="preview(i)" />
       <template v-else>
-        <van-image class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="onclick"/>
-        <div class="tf-image--shade" v-if="i === 2" @click="onclick">
+        <van-image class="tf-image-item" fit="cover" :src="img | imgsrc(srcKey)" v-lazy="img" @click="onclick(img)"/>
+        <div class="tf-image--shade" v-if="i === 2" @click="onclick(img)">
           <span>+{{ data.length - 3 }}</span>
         </div>
       </template>
@@ -39,11 +39,15 @@ export default {
     square: {
       type: Boolean,
       default: true
+    },
+    srcKey: {
+      type: String,
+      default: ''
     }
   },
   methods: {
-    onclick () {
-      this.$emit('click')
+    onclick (data) {
+      this.$emit('click', data)
     },
     preview (i) {
       ImagePreview({
@@ -66,6 +70,15 @@ export default {
   },
   directives: {
     lazy: Lazyload
+  },
+  filters: {
+    imgsrc (value, srcKey) {
+      if (typeof value === 'string') {
+        return value
+      } else {
+        return value[srcKey]
+      }
+    }
   }
 }
 </script>

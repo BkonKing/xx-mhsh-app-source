@@ -60,7 +60,11 @@ export default {
     }
   },
   created () {
-    this.getNewestList()
+    const { active } = this.$route.query
+    if (active) {
+      this.current = parseInt(active)
+    }
+    this.getList()
   },
   activated () {},
   methods: {
@@ -87,7 +91,11 @@ export default {
       if (this.current !== currentIndex) {
         this.current = currentIndex
       }
-      switch (currentIndex) {
+      this.getList()
+    },
+    /* 获取相应列表 */
+    getList () {
+      switch (this.current) {
         case 0:
           this.getNewestList()
           break
@@ -125,6 +133,15 @@ export default {
       getArticleList().then((res) => {
         this.articleList = res.data
       })
+    }
+  },
+  watch: {
+    $route (route) {
+      const { active } = route.query
+      if (active) {
+        this.current = parseInt(active)
+      }
+      this.getList()
     }
   }
 }

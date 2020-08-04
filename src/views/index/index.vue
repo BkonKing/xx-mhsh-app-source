@@ -30,23 +30,28 @@ export default {
       tabList: [
         {
           title: '首页',
-          path: '/'
+          path: '/',
+          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '生活',
-          path: '/life'
+          path: '/life',
+          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '管家',
-          path: '/butler'
+          path: '/butler',
+          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '邻里',
-          path: '/neighbours'
+          path: '/neighbours',
+          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '我的',
-          path: '/personage'
+          path: '/personage',
+          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         }
       ]
     }

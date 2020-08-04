@@ -1,11 +1,15 @@
 <template>
   <div class="tf-bg-white">
-    <div class="home-header">
+    <div class="home-header" :style="{'background': headerColor}">
       <page-nav-bar search></page-nav-bar>
-      <van-notice-bar class="home-notice" left-icon="volume-o" text="关于未来一周暴雨天气温馨提示。" />
+      <van-notice-bar class="home-notice" left-icon="volume-o" :scrollable="false">
+        <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+          <van-swipe-item v-for="(item, i) in 6" :key="i">关于未来一周暴雨天气温馨提示。</van-swipe-item>
+        </van-swipe>
+      </van-notice-bar>
     </div>
     <div class="tf-main-container">
-      <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
+      <van-swipe class="my-swipe" :autoplay="6000" indicator-color="#fff" @change="swipeChange">
         <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
           <van-image class="swipe-item__image" :src="item.icon_image" />
         </van-swipe-item>
@@ -17,20 +21,37 @@
         </van-grid-item>
       </van-grid>
       <div class="coin-box">
-        <div class="coin-box__title">
+        <div class="coin-box__title" @click="goHappiness">
           幸福币专区
-          <span v-if="0" class="sign-btn">签到</span>
+          <span v-if="1" class="sign-btn" @click.stop="sign">签到</span>
           <span class="coin-number" v-else>
             <span class="tf-icon tf-icon-moneycollect"></span>
             <span>1000</span>
           </span>
         </div>
-        <div class="coin-message" v-if="1">
-          <div class="coin-message-name">关于中秋节活动方式投票</div>
-          <div class="coin-message-number">+10</div>
-        </div>
+        <van-notice-bar
+          v-if="1"
+          class="coin-message"
+          :scrollable="false"
+          color="#8F8F94"
+          background="#fff"
+          @click="goHappiness"
+        >
+          <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+            <van-swipe-item v-for="(item, i) in 6" :key="i">
+              <div class="coin-message-name">关于中秋节活动方式投票</div>
+              <div class="coin-message-number">+10</div>
+            </van-swipe-item>
+          </van-swipe>
+        </van-notice-bar>
         <div class="coin-image-box">
-          <van-image class="coin-image" v-for="(item, i) in coinList" :key="i">
+          <van-image
+            class="coin-image"
+            v-for="(item, i) in coinList"
+            :key="i"
+            :src="item.icon_image"
+            @click="goCoinCommodity"
+          >
             <div class="coin-tag">
               <span class="tf-icon tf-icon-moneycollect"></span>
               <span>1000</span>
@@ -39,32 +60,45 @@
         </div>
       </div>
       <div class="life-box">
-        <div class="life-box__title">9.9特卖</div>
-        <div class="life-box__description">
+        <div class="life-box__title" @click="goSpecialSale">9.9特卖</div>
+        <div class="life-box__description" @click="goSpecialSale">
           省钱好机会
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <tf-image-list :data="saleImages" :column="3"></tf-image-list>
+        <!-- <div class="coin-image-box">
+          <van-image
+            class="coin-image"
+            v-for="(item, i) in saleImages"
+            :key="i"
+            @click="goCoinCommodity"
+          >
+            <div class="coin-tag">
+              <span class="tf-icon tf-icon-moneycollect"></span>
+              <span>1000</span>
+            </div>
+          </van-image>
+        </div> -->
+        <tf-image-list :data="saleImages" :column="3" srcKey="src" @click="clickSpecialSale"></tf-image-list>
       </div>
       <div class="life-box tf-mt-base">
-        <div class="life-box__title">限时闪购</div>
-        <div class="life-box__description">
+        <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
+        <div class="life-box__description" @click="goTimeLimit">
           惊喜折扣限时抢
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <tf-image-list :data="saleImages" :column="2">
+        <tf-image-list :data="timeLimitImages" :column="2" srcKey="src" @click="clickTimeLimit">
           <template v-slot:tag="{img}">
-            <div class="price-tag">{{img}}</div>
+            <div class="price-tag">{{img.price}}</div>
           </template>
         </tf-image-list>
       </div>
       <div class="community-box">
-        <div class="community-box__title">
+        <div class="community-box__title" @click="goCommunity">
           社区活动
           <span class="tf-icon tf-icon-right"></span>
         </div>
         <div class="activity-list">
-          <div v-for="i in 3" :key="i" class="activity-item">
+          <div v-for="(item, i) in 3" :key="i" class="activity-item" @click="goActivity(item)">
             <van-image class="activity-item__image">
               <template v-slot>
                 <div class="activity-item__description">233人已报名</div>
@@ -83,10 +117,23 @@
           </div>
         </div>
       </div>
-      <div class="front-page">
-        <div class="front-page__tag">美好头条</div>
-        <div class="front-page__text">聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单</div>
-      </div>
+      <van-notice-bar class="front-page" :scrollable="false">
+        <template v-slot:left-icon>
+          <div class="front-page__tag">美好头条</div>
+        </template>
+        <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+          <van-swipe-item v-for="(item, i) in twoFrontList" :key="i">
+            <div
+              class="front-page__text van-ellipsis"
+              @click="clickFront(item[0])"
+            >{{item[0].content}}</div>
+            <div
+              class="front-page__text van-ellipsis"
+              @click="clickFront(item[1])"
+            >{{item[1].content}}</div>
+          </van-swipe-item>
+        </van-swipe>
+      </van-notice-bar>
     </div>
   </div>
 </template>
@@ -109,9 +156,16 @@ export default {
   },
   data () {
     return {
+      headerColor: '#fff', // 头部颜色
       swipeImages: [
         {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
+          color: '#4d896f'
+        },
+        {
+          icon_image:
+            'https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/93bb85056504405b8e2b15ada810c82c.jpg!sswm',
+          color: '#a2dae2'
         }
       ],
       appList: [
@@ -123,14 +177,67 @@ export default {
       coinList: [
         {
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
+        },
+        {
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
         }
       ],
       saleImages: [
         {
-          src: 'https://img.yzcdn.cn/vant/cat.jpeg'
+          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
+          id: '1'
+        }
+      ],
+      timeLimitImages: [
+        {
+          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
+          price: '123',
+          id: '1'
         },
         {
-          src: ''
+          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
+          price: '1233',
+          id: '2'
+        }
+      ],
+      frontList: [
+        {
+          id: '1',
+          content:
+            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
+        },
+        {
+          id: '2',
+          content:
+            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
+        },
+        {
+          id: '4',
+          content:
+            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
+        },
+        {
+          id: '3',
+          content:
+            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
         }
       ]
     }
@@ -141,6 +248,75 @@ export default {
       application: '全部',
       url: '/applist'
     })
+    this.headerColor = this.swipeImages[0].color
+  },
+  methods: {
+    swipeChange (index) {
+      this.headerColor = this.swipeImages[index].color
+    },
+    /* 签到 */
+    sign () {
+      console.log('签到')
+    },
+    /* 幸福币 */
+    goHappiness () {
+      this.$router.push('/pages/personage/happiness-coin/index')
+    },
+    /* 幸福币专区商品详情 */
+    goCoinCommodity () {
+      console.log('幸福币专区')
+    },
+    /* 跳转9.9特卖专区 */
+    goSpecialSale () {
+      console.log('9.9特卖专区')
+      // this.$router.push("")
+    },
+    /* 9.9特卖专区图片点击 */
+    clickSpecialSale ({ id }) {
+      console.log(id)
+    },
+    /* 跳转限时闪购 */
+    goTimeLimit () {
+      console.log('限时闪购')
+      // this.$router.push("")
+    },
+    /* 限时闪购图片点击 */
+    clickTimeLimit (id) {
+      console.log(id)
+      // this.$router.push("")
+    },
+    /* 跳转活动详情 */
+    goActivity (item) {
+      console.log(item)
+      // this.$router.push("")
+    },
+    /* 跳转社区活动 */
+    goCommunity () {
+      this.$router.push({
+        path: '/neighbours',
+        query: {
+          active: 2
+        }
+      })
+    },
+    /* 点击头条跳转相应内容 */
+    clickFront (item) {
+      console.log(item)
+      // this.$router.push("")
+    }
+  },
+  computed: {
+    twoFrontList () {
+      const arr = []
+      this.frontList.forEach((obj, index) => {
+        const i = Math.floor(index / 2)
+        if (!arr[i]) {
+          arr[i] = []
+        }
+        arr[i].push(obj)
+      })
+      return arr
+    }
   }
 }
 </script>
@@ -153,8 +329,12 @@ export default {
   height: 66px;
   margin: 0 20px 0;
   background: #fff;
-  /deep/ .van-swipe-item {
-    line-height: 66px;
+  /deep/ .notice-swipe {
+    height: 66px;
+    .van-swipe-item {
+      line-height: 66px;
+      color: #222;
+    }
   }
   /deep/ .van-notice-bar__content {
     color: #222;
@@ -169,7 +349,6 @@ export default {
   left: 0;
   width: 100%;
   height: 184px;
-  background: #cbb685;
   z-index: 9999;
 }
 .tf-main-container {
@@ -229,6 +408,9 @@ export default {
     .coin-image + .coin-image {
       margin-left: 20px;
     }
+  }
+  /deep/ .van-notice-bar__content.van-ellipsis {
+    width: 100%;
   }
 }
 /* 专区 */
@@ -327,18 +509,25 @@ export default {
   }
 }
 .front-page {
-  display: flex;
-  align-items: center;
   margin: 80px 20px;
   padding: 24px 30px 30px;
   height: 142px;
   background: @background-color;
   border-radius: 10px;
+  .notice-swipe {
+    height: 88px;
+    /deep/ .van-swipe-item {
+      line-height: 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
   &__tag {
     font-size: 16px;
     width: 88px;
     height: 88px;
-    padding: 16px 14px;
+    padding: 8px 14px;
     background: #fff;
     border: 1px solid #f0f0f0;
     border-radius: 10px;
@@ -348,7 +537,8 @@ export default {
   &__text {
     flex: 1;
     font-size: 26px;
-    .text-multiple-ellipsis(2);
+    line-height: 44px;
+    color: #222;
   }
 }
 .tf-mt-base {
@@ -404,6 +594,16 @@ export default {
   border-radius: 4px;
   margin-bottom: 30px;
   color: #8f8f94;
+  .notice-swipe {
+    height: 60px;
+    /deep/ .van-swipe-item {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      line-height: 60px;
+      color: @gray-7;
+    }
+  }
   &-name {
     line-height: 66px;
     display: flex;

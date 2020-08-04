@@ -17,7 +17,7 @@
           key="code"
           class="form-input"
           maxlength="11"
-          type="text"
+          type="digit"
           placeholder="验证码"
         >
           <template #button>

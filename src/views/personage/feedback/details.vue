@@ -4,13 +4,11 @@
     <div class="tf-main-container">
       <div class="tf-bg-white padding">
         <div class="tf-row-space-between tf-divider">
-          <div class="tf-text-lg">产品反馈</div>
-          <div class="tf-text tf-text-grey">2020-07-07 12:00</div>
+          <div class="tf-text-lg">{{info_type}}</div>
+          <div class="tf-text tf-text-grey">{{ctime}}</div>
         </div>
         <div class="tf-auxiliary-content tf-mt-lg">{{content}}</div>
-        <div class="tf-image-box tf-mt-base">
-          <img class="image" v-for="(item, i) in images" :key="i" :src="item.src" mode="aspectFill" />
-        </div>
+        <tf-image-list :data="images" mode="show" class="tf-mt-base"></tf-image-list>
       </div>
       <div v-if="reply" class="tf-card tf-mt-lg">
         <div class="tf-card-header">回复</div>
@@ -22,38 +20,39 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getComPraiseInfo } from '@/api/butler.js'
+import { getFeedbackInfo } from '@/api/personage.js'
+import tfImageList from '@/components/tf-image-list'
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    tfImageList
   },
   data () {
     return {
       id: '',
-      content: '厨房下水道堵了都没有及时来处理',
-      info_type: '2',
-      ctime: '2020-06-03 16:35:26',
-      reply: '已经分派相关工作人员去处理了',
-      images: [
-        { src: '/static/app-icon.png' },
-        { src: '/static/app-icon.png' },
-        { src: '/static/app-icon.png' },
-        { src: '/static/app-icon.png' }
-      ]
+      content: '',
+      info_type: '',
+      ctime: '',
+      reply: '',
+      images: []
     }
   },
   created () {
     this.id = this.$route.query.id
-    this.getComPraiseInfo()
+    this.getFeedbackInfo()
   },
   methods: {
-    getComPraiseInfo () {
-      getComPraiseInfo({
-        compraiseId: this.id
+    getFeedbackInfo () {
+      getFeedbackInfo({
+        id: this.id
       }).then((res) => {
         if (res.success) {
-          const { content } = res.data
+          const { content, info_type, ctime, reply, images } = res.data
           this.content = content
+          this.info_type = info_type
+          this.ctime = ctime
+          this.reply = reply
+          this.images = images
         }
       })
     }
