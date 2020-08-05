@@ -1,29 +1,26 @@
 <template>
-    <refreshList :list.sync="data" @load="onLoad">
-        <template v-slot="slotProps">
-          <div class="question-box" @click="jump(slotProps.item)">
-          <div class="question-status-box">
-            <div class="question-type">{{ slotProps.item.wjtp_type }}</div>
-          </div>
-          <div class="question-box__right">
-            <div class="question-title">{{ slotProps.item.title }}</div>
-            <div class="question-info">
-              <div class="tf-row-vertical-center">
-                <div
-                  class="tf-gradient-tag--warning"
-                  v-if="slotProps.item.virtual_coin > 0"
-                >+{{ slotProps.item.virtual_coin }}</div>
-                <div
-                  class="participate-status"
-                  :class="slotProps.item.status ? 'participate-status--proceed' : 'participate-status--end'"
-                >{{ slotProps.item.joins }}人参加</div>
-              </div>
-              <div class="question-info__time">{{ slotProps.item.stime }}</div>
+  <refreshList :list.sync="list" @load="onLoad">
+    <template v-slot="{item}">
+      <div class="question-box" :class="{'question-finish-box': !item.status}" @click="jump(item)">
+        <div class="question-status-box">
+          <span class="question-type">{{ item.wjtp_type }}</span>
+        </div>
+        <div class="question-box__right">
+          <div class="question-title">{{ item.title }}</div>
+          <div class="question-info">
+            <div class="tf-row-vertical-center">
+              <div
+                class="tf-gradient-tag--warning"
+                v-if="item.virtual_coin > 0"
+              >+{{ item.virtual_coin }}</div>
+              <div class="participate-status participate-status--proceed">{{ item.joins }}人参加</div>
             </div>
+            <div class="question-info__time">{{ item.stime }}</div>
           </div>
         </div>
-        </template>
-      </refreshList>
+      </div>
+    </template>
+  </refreshList>
 </template>
 
 <script>
@@ -38,13 +35,24 @@ export default {
       default: () => []
     }
   },
+  data () {
+    return {
+      list: this.data
+    }
+  },
   methods: {
     jump (item) {
       const url = `/pages/butler/questionnaire/details?id=${item.id}`
       this.$router.push(url)
     },
-    onLoad () {
-
+    onLoad () {}
+  },
+  watch: {
+    list (value) {
+      this.$emit('update:data', value)
+    },
+    data (value) {
+      this.list = value
     }
   }
 }
@@ -58,15 +66,27 @@ export default {
   border-radius: @border-radius-md;
 }
 
+.question-finish-box {
+  .question-status-box {
+    background: #aaa;
+  }
+  .participate-status--proceed {
+    color: @gray-7;
+  }
+  .tf-gradient-tag--warning {
+    background: #AAAAAA;
+  }
+}
+
 .question-status-box {
   width: 170px;
   // height: 170px;
   background-color: @gray-1;
   border-top-left-radius: @border-radius-md;
   border-bottom-left-radius: @border-radius-md;
+  text-align: center;
 }
 .question-type {
-  text-align: center;
   line-height: 170px;
 }
 .question-box__right {
@@ -88,12 +108,7 @@ export default {
 }
 .participate-status {
   font-size: 24px;
-}
-.participate-status--proceed {
   color: @red-dark;
-}
-.participate-status--end {
-  color: @gray-7;
 }
 .tf-gradient-tag--warning {
   margin-right: 30px;

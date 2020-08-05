@@ -12,10 +12,10 @@
 
 <script>
 import { NavBar, Button } from 'vant'
-
 import tfList from '@/components/tf-list/index.vue'
 import visitorForm from './components/form.vue'
 import { addMyVisitor, updateMyVisitor } from '@/api/butler.js'
+import { validForm } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -37,32 +37,41 @@ export default {
       this.formData = JSON.parse(info)
     }
   },
-  onReady () {
-    if (this.type == 0) {
-      this.$refs.form.setData(this.formData)
-    }
+  mounted () {
+    this.type === '0' && this.$refs.form.setData(this.formData)
   },
   methods: {
     save () {
       const params = this.$refs.form.getData()
-      console.log(params)
-      if (this.type === '1') {
-        this.addMyVisitor(params)
-      } else {
-        this.updateMyVisitor(params)
-      }
+      const validator = [
+        {
+          value: params.realname,
+          message: '请填写访客姓名'
+        },
+        {
+          value: params.gender,
+          message: '请选择性别'
+        }
+      ]
+      validForm(validator).then(() => {
+        if (this.type === '1') {
+          this.addMyVisitor(params)
+        } else {
+          this.updateMyVisitor(params)
+        }
+      })
     },
     addMyVisitor () {
       addMyVisitor().then(res => {
         if (res.success) {
-          uni.navigateBack()
+          this.$router.go(-1)
         }
       })
     },
     updateMyVisitor () {
       updateMyVisitor().then(res => {
         if (res.success) {
-          uni.navigateBack()
+          this.$router.go(-1)
         }
       })
     }

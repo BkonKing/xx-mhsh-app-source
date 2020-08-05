@@ -1,12 +1,6 @@
 <template>
   <div class="tf-article-box">
-    <van-nav-bar
-      title="通知详情"
-      :fixed="true"
-      :border="false"
-      left-arrow
-      @click-left="goBack"
-    />
+    <van-nav-bar title="通知详情" :fixed="true" :border="false" left-arrow @click-left="goBack" />
     <div class="tf-article-title">{{title}}</div>
     <div class="tf-article-info">{{ctime}}</div>
     <div class="tf-article-content">{{content}}</div>
@@ -26,17 +20,16 @@ export default {
   },
   data () {
     return {
-      title: '标题标题标题标题标题标题标题标题标题',
-      ctime: '2020-06-06  12:12',
-      content:
-        '内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容'
+      title: '',
+      ctime: '',
+      content: ''
     }
   },
   methods: {
     getNoticInfo (noticeId) {
       getNoticInfo({
         noticeId
-      }).then(res => {
+      }).then((res) => {
         if (res.success) {
           const { title, content, ctime } = res.data
           this.title = title

@@ -1,14 +1,13 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
-    </van-nav-bar>
+    <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-main-container">
       <div class="introduce-box">
         <img class="bg-image" src="@/assets/app-icon.png" mode="aspectFit" />
         <div class="logo-badge">
           <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
         </div>
-        <div class="property-title">{{ project_name }}</div>
+        <div class="property-title">{{ projectName }}</div>
         <div class="property-content">{{ remarks }}</div>
       </div>
       <div class="tf-bg tf-padding-base">
@@ -43,51 +42,21 @@ export default {
   },
   data () {
     return {
-      project_name: '郑州美好生活家园',
-      remarks:
-        '郑州美好生活家园郑州美好生活家园郑州美好生活家园郑州美好生活家园',
-      phoneList: [
-        {
-          id: '1',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          title: '物业热线1',
-          telephone: '15050505050',
-          remarks: '24小时在线'
-        },
-        {
-          id: '2',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          title: '物业热线2',
-          telephone: '15050505050',
-          remarks: '24小时在线'
-        }
-      ],
-      eqList: [{
-        id: '1',
-        question: '业主与物管企业是否为“主仆”关系？',
-        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
-      }, {
-        id: '2',
-        question: '业主与物管企业是否为“主仆”关系？',
-        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
-      }, {
-        id: '3',
-        question: '业主与物管企业是否为“主仆”关系？',
-        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
-      }]
+      projectName: '',
+      remarks: '',
+      phoneList: [],
+      eqList: []
     }
   },
   created () {
-    // this.getCallWYList()
+    this.getCallWYList()
   },
   methods: {
     getCallWYList () {
       getCallWYList().then((res) => {
         if (res.success) {
           const { project_name, remarks, records, eq } = res.data
-          this.project_name = project_name
+          this.projectName = project_name
           this.remarks = remarks
           this.phoneList = records
           this.eqList = eq

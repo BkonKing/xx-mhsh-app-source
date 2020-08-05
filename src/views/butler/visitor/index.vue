@@ -2,21 +2,35 @@
   <div class="tf-bg tf-padding-base">
     <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
-        <span class="tf-icon tf-icon-solution" @click="goVisitorList"></span>
+        <span class="tf-icon tf-icon-solution" @click="goVisitorList(1)"></span>
         <span class="tf-icon tf-icon-time-circle" @click="goInviteList"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
       <tf-list>
         <div class="list-title">邀约设置</div>
-        <tf-list-item border title="来访日期">
+        <tf-list-item border title="来访日期" :required="true">
           <template v-slot:right>
-            <div class="tf-text text-right" @click="showDatePicker = true">{{ form.stime }}</div>
+            <tf-date-time-picker v-model="form.stime" title="选择时间">
+              <template>
+                <div class="tf-text text-right">{{form.stime || 选择时间}}</div>
+              </template>
+            </tf-date-time-picker>
           </template>
         </tf-list-item>
         <tf-list-item border title="进出次数">
           <template v-slot:right>
-            <div class="tf-text text-right" @click="showPicker = true">{{ vtimes }}</div>
+            <tf-picker
+              v-model="form.vtimes"
+              title="进出次数"
+              value-key="label"
+              selected-key="value"
+              :columns="array"
+            >
+              <template v-slot="{valueText}">
+                <div class="tf-text text-right">{{valueText}}</div>
+              </template>
+            </tf-picker>
           </template>
         </tf-list-item>
         <tf-list-item border title="同行人数" :showArrow="false">
@@ -30,7 +44,7 @@
           </template>
         </tf-list-item>
       </tf-list>
-      <div class="visitor-btn" @click="goVisitorList">
+      <div class="visitor-btn" @click="goVisitorList(2)">
         <span class="tf-icon tf-icon-solution"></span>
         <div class="visitor-btn__text">选择访客</div>
       </div>
@@ -47,24 +61,6 @@
       </tf-list>
       <van-button class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
     </div>
-    <van-popup v-model="showDatePicker" round position="bottom">
-      <van-datetime-picker
-        v-model="form.stime"
-        type="datetime"
-        title="选择时间"
-        @cancel="showDatePicker = false"
-        @confirm="showDatePicker = false"
-      />
-    </van-popup>
-    <van-popup v-model="showPicker" round position="bottom">
-      <van-picker
-        show-toolbar
-        :columns="array"
-        value-key="label"
-        @cancel="showPicker = false"
-        @confirm="bindNumChange"
-      />
-    </van-popup>
   </div>
 </template>
 
@@ -73,9 +69,12 @@ import { NavBar, Toast, Picker, DatetimePicker, Popup, Button } from 'vant'
 import visitorForm from './components/form.vue'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import tfPicker from '@/components/tf-picker/index'
+import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import { addVisitorLog } from '@/api/butler.js'
-import { getDate } from '@/utils/util.js'
+import { getTime } from '@/utils/util.js'
 export default {
+  name: 'visitorIndex',
   components: {
     [NavBar.name]: NavBar,
     [Picker.name]: Picker,
@@ -84,12 +83,11 @@ export default {
     [Button.name]: Button,
     tfList,
     tfListItem,
+    tfPicker,
+    tfDateTimePicker,
     visitorForm
   },
   data () {
-    const currentDate = getDate({
-      format: true
-    })
     return {
       title: 'picker',
       array: [
@@ -107,9 +105,9 @@ export default {
         }
       ],
       form: {
-        stime: currentDate,
+        stime: getTime(),
         time: '12:01',
-        vtimes: 0,
+        vtimes: 1,
         num: '',
         remark: ''
       },
@@ -119,13 +117,10 @@ export default {
   },
   computed: {
     startDate () {
-      return getDate('start')
+      return getTime('start')
     },
     endDate () {
-      return getDate('end')
-    },
-    vtimes () {
-      return this.array[this.form.vtimes].label
+      return getTime('end')
     }
   },
   methods: {
@@ -146,29 +141,25 @@ export default {
           message: '请选择访客性别'
         })
       }
-      addVisitorLog().then(res => {
+      addVisitorLog().then((res) => {
         if (res.success) {
           this.sendInvite()
         }
       })
     },
-    goVisitorList () {
-      this.$router.push('/pages/butler/visitor/visitor-list')
+    goVisitorList (type) {
+      this.$router.push({
+        path: '/pages/butler/visitor/visitor-list',
+        query: {
+          type
+        }
+      })
     },
     goInviteList () {
       this.$router.push('/pages/butler/visitor/invite-list')
     },
     sendInvite () {
       this.$router.push('/pages/butler/visitor/invite')
-    },
-    bindNumChange (value) {
-      this.form.vtimes = parseInt(value)
-    },
-    bindDateChange (e) {
-      this.form.stime = e.detail.value
-    },
-    bindTimeChange (e) {
-      this.time = e.target.value
     }
   }
 }

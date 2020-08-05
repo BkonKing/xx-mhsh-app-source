@@ -14,7 +14,7 @@
     <div class="tf-card">
       <div class="tf-card-header">选择类型</div>
       <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
+        <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
       </div>
     </div>
     <div class="tf-card">
@@ -55,6 +55,7 @@
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 import { addComPraise } from '@/api/butler.js'
+import { validForm } from '@/utils/util'
 export default {
   components: {
     tfRadioBtn,
@@ -89,25 +90,29 @@ export default {
     }
   },
   methods: {
-    formSubmit (e) {
-      const { content } = e.detail.value
-      if (!this.info_type) {
-        Toast('请选择类型')
-        return
-      } else if (!this.content) {
-        Toast('请输入内容')
-        return
-      }
-      this.addComPraise({
+    formSubmit () {
+      const validator = [
+        {
+          value: this.info_type,
+          message: '请选择类型'
+        },
+        {
+          value: this.content,
+          message: '请输入内容'
+        }
+      ]
+      validForm(validator).then(res => {
+        this.addComPraise()
+      })
+    },
+    addComPraise () {
+      addComPraise({
         content: this.content,
         images: this.uImgList,
         info_type: this.info_type,
         project_id: '2',
         house_id: '1'
-      })
-    },
-    addComPraise (params) {
-      addComPraise(params).then(res => {
+      }).then(res => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
@@ -120,9 +125,6 @@ export default {
           Toast.fail('提交失败')
         }
       })
-    },
-    handRadioChange (value) {
-      this.info_type = value
     },
     uploadSuccess (result) {
       if (result.statusCode === 200) {

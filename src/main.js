@@ -18,6 +18,9 @@ import 'amfe-flexible'
 // Vue.use(Navigation, {
 //   router
 // })
+Vue.config.errorHandler = function (err, vm, info) {
+  console.error(err, info)
+}
 Vue.config.productionTip = false
 // 全局引入公用方法，也可以在组件中单独引入，推荐在组件中单独引入。
 // Vue.prototype.$METHOD = method

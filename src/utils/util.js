@@ -68,6 +68,21 @@ function getDate (type) {
   return `${year}-${month}-${day}`
 }
 
+export function getTime () {
+  const currentDate = getDate()
+  const date = new Date()
+  let hour = date.getHours() // 获取当前小时数(0-23)
+  let minute = date.getMinutes() // 获取当前分钟数(0-59)
+  hour = hour > 9 ? hour : '0' + hour
+  minute = minute > 9 ? minute : '0' + minute
+  return `${currentDate} ${hour}:${minute}:00`
+}
+
+export function formatDateTime (time) {
+  const date = new Date(time + 8 * 3600 * 1000) // 增加8小时
+  return date.toJSON().substr(0, 19).replace('T', ' ')
+}
+
 export function validEmpty (val, message) {
   const status = typeof val === 'undefined' || val === null || val === ''
   if (status) {

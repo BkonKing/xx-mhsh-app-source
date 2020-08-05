@@ -102,7 +102,10 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "visitorIndex" */
         '@/views/butler/visitor/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/butler/visitor/invite',

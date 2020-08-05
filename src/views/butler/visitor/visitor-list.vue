@@ -2,27 +2,25 @@
   <div class="tf-padding-base tf-bg">
     <van-nav-bar title="访客" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-
-    <div v-for="(item, i) in data" :key="i" class="list-item tf-row-space-between">
-      <div class="tf-row">
-        <div class="tf-text">{{ item.realname }}</div>
-        <div class="tf-text">{{ item.gender | sex}}</div>
-        <div class="tf-text tf-text-grey">{{ item.mobile }}</div>
-        <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
+      <div v-for="(item, i) in data" :key="i" class="list-item tf-row-space-between" @click="onClick(item)">
+        <div class="tf-row">
+          <div class="tf-text">{{ item.realname }}</div>
+          <div class="tf-text">{{ item.gender | sex}}</div>
+          <div class="tf-text tf-text-grey">{{ item.mobile }}</div>
+          <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
+        </div>
+        <div class="tf-row">
+          <span class="tf-icon tf-icon-edit-square" @click="jump(0, item)"></span>
+          <span class="tf-icon tf-icon-delete icon--remove" @click="deleteMyVisitor(item.id)"></span>
+        </div>
       </div>
-      <div class="tf-row">
-        <span class="tf-icon tf-icon-edit-square" @click="jump(0, item)"></span>
-        <span class="tf-icon tf-icon-delete icon--remove" @click="deleteMyVisitor(item.id)"></span>
-      </div>
+      <van-button type="danger" size="large" @click="jump(1)">新增访客</van-button>
     </div>
-    <van-button type="danger" size="large" @click="jump(1)">新增访客</van-button>
-    </div>
-
   </div>
 </template>
 
 <script>
-import { NavBar, Button, Toast } from 'vant'
+import { NavBar, Button, Toast, Dialog } from 'vant'
 import { getMyVisitorList, deleteMyVisitor } from '@/api/butler.js'
 export default {
   components: {
@@ -31,8 +29,7 @@ export default {
   },
   data () {
     return {
-      items: ['待来访', '已过期', '已到访'],
-      current: 0,
+      type: undefined,
       data: [
         {
           id: '1',
@@ -51,20 +48,37 @@ export default {
       ]
     }
   },
+  created () {
+    this.type = this.$route.query.type
+  },
   methods: {
+    onClick (item) {
+      if (this.type === '2') {
+        this.$router.push({
+          name: 'visitorIndex',
+          query: {
+            item: JSON.stringify()
+          }
+        })
+      }
+    },
     getMyVisitorList () {
-      getMyVisitorList().then(res => {
+      getMyVisitorList().then((res) => {
         if (res.success) {
           this.data = res.data
         }
       })
     },
     deleteMyVisitor ({ id }) {
-      deleteMyVisitor({
-        id
-      }).then(res => {
-        Toast({
-          message: '删除成功'
+      Dialog.alert({
+        title: '是否删除该访客信息'
+      }).then(() => {
+        deleteMyVisitor({
+          id
+        }).then((res) => {
+          Toast({
+            message: '删除成功'
+          })
         })
       })
     },

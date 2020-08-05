@@ -5,12 +5,30 @@
       <div class="tf-card">
         <div class="repair-list__title" @click="jump(item)">
           <div class="font-bold">{{item.category}}</div>
-          <div>{{statusText[item.status]}}</div>
+          <div
+            :class="{'tf-text-primary': item.status == 1 || item.status == 5}"
+          >{{statusText[item.status]}}</div>
         </div>
         <div class="repair-list__content" @click="jump(item)">{{item.content}}</div>
         <div class="repair-list__footer">
-          <van-button class="repair-list__btn" size="small" @click="goEvaluate">评价</van-button>
-          <!-- <van-button class="repair-list__btn" size="small" type="danger">评价</van-button> -->
+          <van-button
+            v-if="item.status == 6"
+            class="repair-list__btn"
+            size="small"
+            @click="goEvaluate"
+          >评价</van-button>
+          <van-button
+            v-else-if="item.status == 5"
+            class="repair-list__btn"
+            size="small"
+            type="danger"
+          >确认完成</van-button>
+          <van-button
+            v-else-if="item.status == 4"
+            class="repair-list__btn"
+            size="small"
+            type="danger"
+          >确认协商信息</van-button>
         </div>
       </div>
     </template>
@@ -42,25 +60,25 @@ export default {
           ctime: '2020-06-03 16:35:26'
         },
         {
-          id: '1',
+          id: '2',
           category: '居家报修',
           content: '厨房下水道堵了',
           images: [
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
           ],
-          status: 6,
+          status: 4,
           ctime: '2020-06-03 16:35:26'
         },
         {
-          id: '1',
+          id: '3',
           category: '居家报修',
           content: '厨房下水道堵了',
           images: [
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
           ],
-          status: 6,
+          status: 5,
           ctime: '2020-06-03 16:35:26'
         }
       ],
@@ -127,7 +145,7 @@ export default {
 .repair-list__content {
   padding: 30px;
   line-height: 46px;
-  border: 1px dashed #AAAAAA;
+  border: 1px dashed #aaaaaa;
   border-radius: 4px;
   font-size: 30px;
 }
@@ -137,6 +155,10 @@ export default {
   margin-top: 30px;
   .repair-list__btn {
     min-width: 300px;
+    font-size: 30px;
+  }
+  .repair-list__btn.van-button--default {
+    border-color: #222;
   }
 }
 </style>

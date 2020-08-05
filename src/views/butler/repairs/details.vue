@@ -30,19 +30,17 @@
       <div class="time-line-box">
         <tfTimeline class="tf-bg-white tf-mt-base tf-padding-base" :options="timelineList"></tfTimeline>
         <div class="transaction-btn-box">
-          <div class="tf-icon tf-icon-star transaction-btn" @click="evaluateDialog = true"></div>
+          <div v-if="status == 6" class="tf-icon tf-icon-star transaction-btn" @click="evaluateDialog = true"></div>
           <div class="tf-icon tf-icon-image transaction-btn">
             <span class="van-info">2</span>
           </div>
-          <div class="tf-icon tf-icon-filedone transaction-btn" @click="negotiateShow = true"></div>
+          <div v-if="status == 5" class="tf-icon tf-icon-filedone transaction-btn" @click="negotiateShow = true"></div>
         </div>
       </div>
-      <div v-if="status === 3 || status === 4" class="operation-box">
-        <div v-if="status === 3" class="tf-row-space-between">
-          <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-          <div class="tf-btn tf-btn-primary" @click="negotiateConfirm = true">确认协商信息</div>
-        </div>
-        <div v-if="status === 4" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
+      <div class="operation-box">
+        <div v-if="status < 6" class="tf-btn" @click="cancelRepair">撤销提报</div>
+        <div v-if="status === 4" class="tf-btn tf-btn-primary" @click="negotiateConfirm = true">确认协商信息</div>
+        <div v-if="status === 5" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
       </div>
     </div>
     <tf-dialog v-model="negotiateConfirm" title="请确认协商信息">
@@ -56,7 +54,12 @@
         <div class="tf-text tf-mb-lg">预约处理时间：2020-07-08 12:00</div>
         <div class="dialog-footer">
           <van-button size="small" style="width: 48%;" @click="refuseDialog = true">拒绝</van-button>
-          <van-button size="small" type="danger" style="width: 48%;" @click="negotiateConfirm = false;negotiateShow = true">确认</van-button>
+          <van-button
+            size="small"
+            type="danger"
+            style="width: 48%;"
+            @click="negotiateConfirm = false;negotiateShow = true"
+          >确认</van-button>
         </div>
       </template>
     </tf-dialog>
@@ -156,7 +159,7 @@ export default {
       title: '报事报修',
       content: '厨房下水道堵了',
       images: ['https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'],
-      status: 4,
+      status: 5,
       ctime: '2020-06-03 16:35:26',
       timelineList: [
         {
@@ -201,8 +204,7 @@ export default {
     // 撤销提报
     cancelRepair () {
       Dialog.confirm({
-        title: '提示',
-        message: '确定撤销吗'
+        title: '确定撤销吗'
       }).then(() => {
         cancelRepair().then((res) => {
           if (res.success) {
@@ -227,9 +229,14 @@ export default {
   position: fixed;
   left: 0;
   bottom: 0;
+  display: flex;
+  justify-content: space-between;
   width: 100%;
   padding: 20px 20px 20px;
   background-color: #fff;
+  .tf-btn + .tf-btn {
+    margin-left: 30px;
+  }
 }
 
 .tf-card-content {

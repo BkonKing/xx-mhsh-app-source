@@ -11,7 +11,7 @@
         <div class="rate-box">
           <van-rate v-model="value" :size="33" color="#FFA110" void-icon="star" void-color="#aaa" />
         </div>
-        <tf-radio-btn :radius="2" :data="items" @change="handRadioChange"></tf-radio-btn>
+        <tf-radio-btn v-model="category_id" :radius="2" :data="items"></tf-radio-btn>
         <div class="tf-form-label">其他补充：</div>
         <van-field
           v-model="reason"
@@ -24,7 +24,7 @@
           show-word-limit
         />
       </div>
-      <van-button type="primary" size="large">匿名提交</van-button>
+      <van-button type="primary" size="large" @click="submit">匿名提交</van-button>
     </div>
   </div>
 </template>
@@ -75,9 +75,8 @@ export default {
     }
   },
   methods: {
-    // 选择类型
-    handRadioChange (value) {
-      this.category_id = value
+    submit () {
+      this.$router.go(-1)
     }
   }
 }

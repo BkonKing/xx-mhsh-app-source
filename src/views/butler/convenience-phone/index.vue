@@ -22,21 +22,11 @@ export default {
   },
   data () {
     return {
-      phoneList: [
-        {
-          id: '1',
-          title: '保洁阿姨',
-          telephone: '15050505050',
-          remarks: ''
-        },
-        {
-          id: '2',
-          title: '疾病控制预防中心',
-          telephone: '15050505050',
-          remarks: '24小时   疾病控制预防'
-        }
-      ]
+      phoneList: []
     }
+  },
+  created () {
+    this.getYellowPagesList()
   },
   methods: {
     getYellowPagesList () {

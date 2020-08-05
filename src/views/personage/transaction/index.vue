@@ -12,8 +12,8 @@
       <div class="transaction-underline"></div>
     </div>
     <div class="tf-main-container">
-      <van-sticky>
-        <div class="transaction-tab-box">
+      <van-sticky offset-top="2.42666rem" @scroll="scrollSticky">
+        <div class="transaction-tab-box" :class="{'tf-bg-white': isFixed}">
           <div
             v-for="(item, i) in typeList"
             :key="i"
@@ -47,7 +47,10 @@
                 结案
                 <span class="tf-text-primary">(剩余3天 00:10:24)</span>
               </div>
-              <van-button type="danger">确认结案</van-button>
+              <van-button v-if="item.status == 1">去处理</van-button>
+              <van-button v-else-if="item.status == 3" type="danger">去分派</van-button>
+              <van-button v-else-if="item.status == 4">接受任务</van-button>
+              <van-button v-else-if="item.status == 5" type="danger">确认结案</van-button>
             </div>
             <!-- <div
               class="tf-card-header__status"
@@ -102,10 +105,11 @@ export default {
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
             'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
           ],
-          status: 6,
+          status: 3,
           ctime: '2020-06-03 16:35:26'
         }
-      ]
+      ],
+      isFixed: false
     }
   },
   computed: {
@@ -119,6 +123,9 @@ export default {
     jump (item) {
       const url = `/pages/personage/transaction/details?id=${item.id}&title=${item.category}`
       this.$router.push(url)
+    },
+    scrollSticky ({ isFixed }) {
+      this.isFixed = isFixed
     }
   }
 }

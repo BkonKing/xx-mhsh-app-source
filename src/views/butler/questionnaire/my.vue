@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <questionList :data="list"></questionList>
+      <questionList :data.sync="list"></questionList>
     </div>
   </div>
 </template>

@@ -36,6 +36,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
 .app-body {
   height: 100%;
   overflow-y: auto;
@@ -338,9 +339,6 @@
   border-radius: 50%;
 }
 
-/* 分割线*/
-.tf-divider-line {}
-
 /* 圆角*/
 .tf-radius-base {
   border-radius: @border-radius-md;
@@ -469,6 +467,38 @@
   background-color: @red-dark;
 }
 
+.required {
+  position: relative;
+}
+
+/* 必填星号 */
+.required:before {
+  position: absolute;
+  content: '*';
+  display: block;
+  left: -15px;
+  top: calc(50% - 14px);
+  align-items: center;
+  font-size: 28px;
+  color: @red-dark;
+}
+
+.required-after {
+  position: relative;
+}
+
+/* 必填星号 */
+.required-after:after {
+  position: absolute;
+  content: '*';
+  display: block;
+  right: -15px;
+  top: calc(50% - 14px);
+  align-items: center;
+  font-size: 28px;
+  color: @red-dark;
+}
+
 /* 徽章 */
 .van-info {
   min-width: 34px;
@@ -576,6 +606,7 @@
   .van-nav-bar {
     z-index: 999;
   }
+
   .van-notice-bar {
     padding: 0 30px;
     border-radius: 10px;

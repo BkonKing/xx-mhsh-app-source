@@ -1,13 +1,23 @@
 <template>
   <div>
-    <tf-list-item border title="访客姓名" :showArrow="false">
+    <tf-list-item border title="访客姓名" :showArrow="false" :required="true">
       <template v-slot:right>
         <input v-model="realname" class="tf-input" />
       </template>
     </tf-list-item>
-    <tf-list-item border title="性别">
+    <tf-list-item border title="性别" :required="true">
       <template v-slot:right>
-        <div class="tf-text" @click="showPicker = true">{{ sexText }}</div>
+        <tf-picker
+          v-model="gender"
+          title="性别"
+          value-key="label"
+          selected-key="value"
+          :columns="sexArray"
+        >
+          <template v-slot="{valueText}">
+            <div class="tf-text">{{valueText}}</div>
+          </template>
+        </tf-picker>
       </template>
     </tf-list-item>
     <tf-list-item border title="手机号" :showArrow="false">
@@ -20,25 +30,15 @@
         <input v-model="car_number" class="tf-input" />
       </template>
     </tf-list-item>
-    <van-popup v-model="showPicker" round position="bottom">
-      <van-picker
-        show-toolbar
-        :columns="sexArray"
-        value-key="label"
-        @cancel="showPicker = false"
-        @confirm="bindSexChange"
-      />
-    </van-popup>
   </div>
 </template>
 
 <script>
-import { Picker, Popup } from 'vant'
 import tfListItem from '@/components/tf-list/item.vue'
+import tfPicker from '@/components/tf-picker/index'
 export default {
   components: {
-    [Picker.name]: Picker,
-    [Popup.name]: Popup,
+    tfPicker,
     tfListItem
   },
   data () {
@@ -54,7 +54,7 @@ export default {
           value: 2
         }
       ],
-      gender: 0,
+      gender: 1,
       realname: '',
       mobile: '',
       car_number: ''
@@ -66,10 +66,6 @@ export default {
     }
   },
   methods: {
-    bindSexChange: function (value) {
-      this.gender = parseInt(value)
-      this.showPicker = false
-    },
     setData (formData) {
       const { gender, realname, mobile, car_number } = formData
       this.gender = gender - 1

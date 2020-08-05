@@ -1,26 +1,30 @@
 <template>
-  <div class="tf-bg tf-padding-base tf-main-container">
-    <van-nav-bar
-      title="报事报修"
-      :fixed="true"
-      :border="false"
-      left-arrow
-      @click-left="$router.go(-1)"
-    >
+  <div class="tf-bg tf-main-container">
+    <van-nav-bar title="报事报修" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
         <span class="tf-icon tf-icon-time-circle" @click="goList"></span>
       </template>
     </van-nav-bar>
-    <tf-alert
+    <van-notice-bar
       v-if="progressList.length"
-      type="warning"
-      content="您有正在进行中的报事报修，点击查看进度"
-      @click="goProgress"
-    ></tf-alert>
+      class="swiper-nav"
+      left-icon="warning-o"
+      mode="link"
+      background="rgba(249,134,107,0.2)"
+      :scrollable="false"
+    >
+      <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
+        <van-swipe-item
+          v-for="item in progressList"
+          :key="item.id"
+          @click="goProgress(item)"
+        >{{item.content}}</van-swipe-item>
+      </van-swipe>
+    </van-notice-bar>
     <div class="tf-card">
       <div class="tf-card-header">选择类型</div>
       <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
+        <tf-radio-btn v-model="category_id" :data="items"></tf-radio-btn>
       </div>
     </div>
     <div class="tf-card">
@@ -40,7 +44,7 @@
     <div class="tf-card">
       <div class="tf-card-header">上传图片</div>
       <div class="tf-card-content">
-        <van-uploader :after-read="uploadSuccess" />
+        <van-uploader :after-read="uploadSuccess" :max-count="6" />
         <!-- <uImg
             ref="upimg"
             :canUploadFile="true"
@@ -58,11 +62,22 @@
 </template>
 
 <script>
-import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
+import {
+  NavBar,
+  Field,
+  Uploader,
+  Button,
+  Toast,
+  Dialog,
+  NoticeBar,
+  swipe,
+  SwipeItem
+} from 'vant'
 import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 // import uImg from '@/components/uploadImg/uploadImg.vue'
 import { addRepair } from '@/api/butler.js'
+import { validForm } from '@/utils/util'
 export default {
   components: {
     tfAlert,
@@ -71,6 +86,9 @@ export default {
     [Uploader.name]: Uploader,
     [Button.name]: Button,
     [Toast.name]: Toast,
+    [NoticeBar.name]: NoticeBar,
+    [swipe.name]: swipe,
+    [SwipeItem.name]: SwipeItem,
     [Field.name]: Field
     // uImg
   },
@@ -78,7 +96,9 @@ export default {
     return {
       progressList: [
         {
-          id: 1
+          id: 1,
+          content: '您有正在进行的报事报修，点击查看进度',
+          category: '报事报修'
         }
       ], // 进行中的报事报修数量
       category_id: '',
@@ -131,46 +151,47 @@ export default {
   },
   methods: {
     formSubmit: function () {
-      if (!this.category_id) {
-        Toast('请选择类型')
-        return
-      } else if (!this.content) {
-        Toast('请输入内容')
-        return
-      }
-      this.addRepair({
+      const validator = [
+        {
+          value: this.category_id,
+          message: '请选择类型'
+        },
+        {
+          value: this.content,
+          message: '请输入内容'
+        }
+      ]
+      validForm(validator).then(res => {
+        this.addRepair()
+      })
+    },
+    // 新增报事报修
+    addRepair () {
+      addRepair({
         content: this.content,
         images: this.images,
         category_id: this.category_id,
         project_id: '2',
         house_id: '1'
-      })
-    },
-    // 新增报事报修
-    addRepair (data) {
-      addRepair(data).then(res => {
+      }).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
           }).then(() => {
             setTimeout(() => {
               this.goList()
-            }, 1500)
+            }, 1000)
           })
         } else {
           Toast.fail('提交失败')
         }
       })
     },
-    // 选择类型
-    handRadioChange (value) {
-      this.category_id = value
-    },
     /* 判断进行中数量，若是只有一个正在进行中，跳转至详情页；
         若是有多个正在进行中，跳转至记录列表页； */
-    goProgress () {
+    goProgress (item) {
       if (this.progressList.length === 1) {
-        this.goRepairDetails(this.progressList[0])
+        this.goRepairDetails(item)
       } else {
         this.goList()
       }
@@ -202,6 +223,19 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-main-container {
+  padding: 118px 20px 30px;
+}
+.swiper-nav {
+  height: 88px;
+  border-radius: 10px;
+  .notice-swipe {
+    height: 88px;
+    /deep/ .van-swipe-item {
+      line-height: 88px;
+    }
+  }
+}
 .tf-card {
   margin-top: @padding-lg;
 }

@@ -9,48 +9,32 @@
       @click-right="setNoticeReaded(0)"
     />
     <div class="tf-flex-item">
-      <van-pull-refresh
-        style="text-align: center"
-        v-model="refreshing"
-        success-text="刷新成功"
-        @refresh="onRefresh"
-      >
-        <van-list
-          class="tf-van-list"
-          v-model="loading"
-          :finished="finished"
-          loading-text="加载中"
-          finished-text="没有更多了"
-          error-text="请重新加载"
-          @load="onLoad"
-        >
-          <van-cell class="tf-van-cell" v-for="(item, i) in noticeList" :key="i">
-            <div class="list-item--time">{{item.ctime}}</div>
-            <div class="tf-card" @click="jump(item)">
-              <div class="tf-card-header" style="justify-content: flex-start;">
-                <span v-if="item.is_readed === '1'" class="tf-readed-tag"></span>
-                <span class="tf-card-header__title">{{item.title}}</span>
-              </div>
-              <div class="tf-card-content">
-                <div class="van-multi-ellipsis--l2">{{item.content}}</div>
-              </div>
+      <refreshList :list.sync="noticeList" @load="onLoad">
+        <template v-slot="{item}">
+          <div class="list-item--time">{{item.ctime}}</div>
+          <div class="tf-card" @click="jump(item)">
+            <div class="tf-card-header" style="justify-content: flex-start;">
+              <span v-if="item.is_readed === '1'" class="tf-readed-tag"></span>
+              <span class="tf-card-header__title">{{item.title}}</span>
             </div>
-          </van-cell>
-        </van-list>
-      </van-pull-refresh>
+            <div class="tf-card-content">
+              <div class="van-multi-ellipsis--l2">{{item.content}}</div>
+            </div>
+          </div>
+        </template>
+      </refreshList>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, List, Cell, PullRefresh } from 'vant'
+import { NavBar } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
 import { getNoticeList, setNoticeReaded } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    [PullRefresh.name]: PullRefresh,
-    [List.name]: List,
-    [Cell.name]: Cell
+    refreshList
   },
   data () {
     return {
@@ -58,57 +42,14 @@ export default {
       finished: false,
       refreshing: false,
       isAllRead: false,
-      noticeList: [
-        {
-          id: '1',
-          title: '关于暴雨天气温馨提示',
-          content:
-            '福州市气象台于2020年06月05日08时40分发布暴福州市气象台于2020年06月05日08时40分发布暴福州市气象台于2020年06月05日08时40分发布暴',
-          is_readed: '1',
-          ctime: '2020-06-20 15:12:36'
-        },
-        {
-          id: '2',
-          title: '关于暴雨天气温馨提示2',
-          content: '福州市气象台于2020年06月05日08时40分发布暴',
-          is_readed: '0',
-          ctime: '2020-06-21 15:12:36'
-        }
-      ]
+      noticeList: []
     }
   },
   created () {
-    // this.getNoticeList()
+    this.getNoticeList()
   },
   methods: {
-    // 上拉刷新
-    onLoad () {
-      // this.getList();
-      if (this.refreshing) {
-        this.noticeList = []
-        this.refreshing = false
-      }
-      setTimeout(() => {
-        this.noticeList.push({
-          id: '2',
-          title: '关于暴雨天气温馨提示2',
-          content:
-            '福州市气象台于2020年06月05日08时40分发布暴福州市气象台于2020年06月05日08时40分发布暴福州市气象台于2020年06月05日08时40分发布暴',
-          is_readed: '0',
-          ctime: '2020-06-21 15:12:36'
-        })
-        this.loading = false
-        this.refreshing = false
-      }, 30000)
-    },
-    // 下拉刷新
-    onRefresh () {
-      this.finished = false
-      // 重新加载数据
-      // 将 loading 设置为 true，表示处于加载状态
-      this.loading = true
-      this.onLoad()
-    },
+    onLoad () {},
     // 获取公告通知列表
     getNoticeList () {
       return getNoticeList({

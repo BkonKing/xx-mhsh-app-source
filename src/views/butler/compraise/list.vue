@@ -2,7 +2,7 @@
   <div class="tf-bg">
     <van-nav-bar title="我的投诉表扬" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="getComPraiseList">
+      <refreshList :list.sync="data" @load="onLoad">
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
           <div class="tf-card-header">
@@ -13,10 +13,7 @@
             </userInfo>
           </div>
           <div class="tf-card-content">{{ item.content }}</div>
-          <div class="tf-image-box">
-            <img class="details-image" mode="aspectFill" v-for="(item, i) in item.images" :key="i" :src="item.src" v-if="i < 3">
-            <div class="details-image--shade" v-if="item.images.length > 3">+{{ item.images.length - 3 }}</div>
-          </div>
+          <tf-image-list :data="item.images"></tf-image-list>
           <div v-if="item.reply" class="reply-box">
             <div class="reply-title">社区回复</div>
             <div class="reply-content">{{ item.reply }}</div>
@@ -33,64 +30,24 @@ import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import userInfo from '@/components/user-info/index.vue'
 import { getComPraiseList } from '@/api/butler.js'
+import tfImageList from '@/components/tf-image-list'
 export default {
   components: {
     [NavBar.name]: NavBar,
     refreshList,
+    tfImageList,
     userInfo
   },
   data () {
     return {
-      data: [
-        {
-          id: '1',
-          content: '厨房下水道堵了都没有及时来处理',
-          info_type: 1,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了',
-          images: [
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            }
-          ]
-        },
-        {
-          id: '2',
-          content: '厨房下水道堵了都没有及时来处理2',
-          info_type: 2,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了',
-          images: [
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            }
-          ]
-        }
-      ]
+      data: []
     }
   },
   created () {
     this.getComPraiseList()
   },
   methods: {
+    onLoad () {},
     getComPraiseList () {
       getComPraiseList().then(res => {
         if (res.success) {
@@ -143,23 +100,4 @@ export default {
   padding-bottom: 30px;
 }
 
-.details-image {
-  width: 200px;
-  height: 200px;
-}
-
-.details-image--shade {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  line-height: 200px;
-  z-index: 1;
-  background-color: #000000;
-  opacity: 0.6;
-  top: 0;
-  right: 0;
-  text-align: center;
-  color: #fff;
-  font-size: 54px;
-}
 </style>

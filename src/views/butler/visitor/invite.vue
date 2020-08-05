@@ -5,7 +5,7 @@
       title="访客通行证"
       left-arrow
       :border="false"
-      @click-left="$router.go(-1)"
+      @click-left="goList"
     />
     <div class="invite-box">
       <div class="share-box">
@@ -36,6 +36,13 @@ export default {
   data () {
     return {
       height: 'auto'
+    }
+  },
+  methods: {
+    goList () {
+      this.$router.replace({
+        name: 'visitorInviteList'
+      })
     }
   }
 }
