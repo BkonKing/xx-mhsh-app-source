@@ -10,8 +10,8 @@
           <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
         </div>
         <div class="tf-row">
-          <span class="tf-icon tf-icon-edit-square" @click="jump(0, item)"></span>
-          <span class="tf-icon tf-icon-delete icon--remove" @click="deleteMyVisitor(item.id)"></span>
+          <span class="tf-icon tf-icon-edit-square" @click.stop="jump(0, item)"></span>
+          <span class="tf-icon tf-icon-delete icon--remove" @click.stop="deleteMyVisitor(item.id)"></span>
         </div>
       </div>
       <van-button type="danger" size="large" @click="jump(1)">新增访客</van-button>
@@ -53,13 +53,10 @@ export default {
   },
   methods: {
     onClick (item) {
-      if (this.type === '2') {
-        this.$router.push({
-          name: 'visitorIndex',
-          query: {
-            item: JSON.stringify()
-          }
-        })
+      // eslint-disable-next-line eqeqeq
+      if (this.type == '2') {
+        this.$store.commit('setVisitorList', item)
+        this.$router.go(-1)
       }
     },
     getMyVisitorList () {

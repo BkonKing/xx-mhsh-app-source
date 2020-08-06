@@ -57,7 +57,9 @@ const store = new Vuex.Store({
     openid: null,
     testvuex: false,
     colorIndex: 0,
-    colorList: ['#FF0000', '#00FF00', '#0000FF']
+    colorList: ['#FF0000', '#00FF00', '#0000FF'],
+    visitorList: null,
+    houseSelected: null
   },
   mutations: {
     setAccess_token (state, value) {
@@ -100,6 +102,12 @@ const store = new Vuex.Store({
     },
     setColorIndex (state, index) {
       state.colorIndex = index
+    },
+    setVisitorList (state, list) {
+      state.visitorList = list
+    },
+    setHouseSelected (state, obj) {
+      state.houseSelected = obj
     }
   },
   getters: {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import router from '../router'
+import qs from 'qs'
 import {
   Toast,
   Dialog
@@ -26,6 +27,7 @@ const codeMessage = {
 
 // create an axios instance
 const service = axios.create({
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 30000 // request timeout
@@ -37,13 +39,14 @@ service.interceptors.request.use(
     // 请求发送前
     // eslint-disable-next-line no-undef
     const token = api.getGlobalData('access_token')
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if (token) {
       // let each request carry token
       // ['X-Token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers.Authorization = 'Bearer ' + token
     }
+    config.data = qs.stringify(config.data)
     return config
   },
   error => {
@@ -76,7 +79,7 @@ service.interceptors.response.use(
     } = res
 
     // if the custom code is not 20000, it is judged as an error.
-    if (status === 401 || code === 401) {
+    if (status === 401 || code === '401') {
       const isGetToken = config.url.indexOf('getToken') !== -1
       // const res = !isGetToken &&
       //   (await getToken({
@@ -109,7 +112,7 @@ service.interceptors.response.use(
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))
-    } else if (code !== 200) {
+    } else if (code !== '200') {
       Toast(codeMessage[code])
       return res
     } else {

@@ -183,7 +183,7 @@ export default {
   },
   created () {
     const { id, title } = this.$route.query
-    // this.getRepairInfo(id)
+    this.getRepairInfo(id)
     this.title = title
   },
   methods: {

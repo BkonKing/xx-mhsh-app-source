@@ -5,7 +5,7 @@
       :fixed="true"
       :border="false"
       left-arrow
-      @click-left="$router.go(-1)"
+      @click-left="goback"
     >
       <template #right>
         <span v-if="mode && !editMode" class="tf-icon tf-icon-edit-square" @click="goEdit"></span>
@@ -15,8 +15,8 @@
       <tf-list class="tf-mb-lg">
         <tf-list-item title="房屋">
           <template v-slot:right>
-            <div v-if="mode === 1 && !editMode" class="tf-text">{{houseName}}</div>
-            <div v-else class="tf-text" @click="goCheckHouse">{{ houseName || '请选择'}}</div>
+            <div v-if="mode === 1 && !editMode" class="tf-text">{{house_name}}</div>
+            <div v-else class="tf-text" @click="goCheckHouse">{{ house_name || '请选择'}}</div>
           </template>
         </tf-list-item>
       </tf-list>
@@ -86,6 +86,7 @@ import { addMember, updateMember, roomAttest, bindingRoomInfo, bindingDefault, u
 import { validForm } from '@/utils/util'
 
 export default {
+  name: 'houseAttestation',
   components: {
     tfRadioBtn,
     tfList,
@@ -108,7 +109,7 @@ export default {
       project_id: '',
       building_id: '',
       unit_id: '',
-      houseName: '',
+      house_name: '',
       house_role: '',
       realname: '',
       mobile: '',
@@ -141,12 +142,24 @@ export default {
       this.realname = realname
       this.mobile = mobile
       this.house_role = house_role
-      this.houseName = houseName
+      this.house_name = houseName
     } else if (this.type === 1 && this.mode === 1) {
       this.house_id = this.$route.query.id
       this.bindingRoomInfo()
     }
     this.title = this.type ? '房屋认证' : this.mode ? '成员' : '添加成员'
+  },
+  activated () {
+    const { houseSelected } = this.$store.state
+    if (houseSelected) {
+      const { house_name, house_id, project_id, building_id, unit_id } = houseSelected
+      this.house_name = house_name
+      this.house_id = house_id
+      this.project_id = project_id
+      this.building_id = house_name
+      this.unit_id = unit_id
+      this.$store.commit('setHouseSelected', null)
+    }
   },
   methods: {
     submit () {
@@ -252,7 +265,7 @@ export default {
         this.realname = realname
         this.mobile = mobile
         this.house_role = house_role
-        this.houseName = houseName
+        this.house_name = houseName
       })
     },
     /* 设置当前房间 */
@@ -277,6 +290,10 @@ export default {
     goEdit () {
       this.agreeValue = true
       this.editMode = true
+    },
+    goback () {
+      this.$router.go(-1)
+      this.$destroy()
     }
   }
 }

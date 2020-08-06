@@ -1,7 +1,6 @@
 <template>
   <div class="view-container">
     <div class="view-main-container">
-      <div class="placeholder-box" :style="{height: `${statusBarHeight}px`}"></div>
       <div class="view-main">
         <keep-alive>
           <router-view></router-view>
@@ -58,10 +57,6 @@ export default {
   },
   created () {},
   methods: {
-    getStatusBarHeight () {
-      const statusBar = this.$api.require('statusBar')
-      this.statusBarHeight = statusBar.getStatusBarHeight()
-    },
     onClickRight () {}
   }
 }

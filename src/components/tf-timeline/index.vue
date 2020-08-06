@@ -1,54 +1,42 @@
 <template>
   <div class="tf-timeline">
-    <div :class="[direction==='column'?'tf-timeline__column':'tf-timeline__row']">
-      <div
-        :class="[direction==='column'?'tf-timeline__column-text-container':'tf-timeline__row-text-container']"
-      >
-        <div class="tf-timeline__column-text-box" v-for="(item,index) in options" :key="index">
-          <div
-            :class="[direction==='column'?'tf-timeline__column-time':'tf-timeline__row-time']"
-          >{{item.ctime}}</div>
-          <div
-            v-if="item.remark"
-            :class="[direction==='column'?'tf-timeline__column-desc':'tf-timeline__row-desc']"
-          >{{item.remark}}</div>
-          <template v-else>
-            <span
-              :class="[direction==='column'?'tf-timeline__column-desc':'tf-timeline__row-desc']"
-            >{{item.designee}}</span>
-            <span
-              :class="[direction==='column'?'tf-timeline__column-desc':'tf-timeline__row-desc', 'phone-number']"
-              @click="makePhoneCall(item.mobile)"
-            >{{item.mobile}}</span>
-          </template>
+    <div class="tf-timeline__column">
+      <div class="tf-timeline__column-text-container">
+        <div
+          v-for="(item,index) in optionsReverse"
+          :key="index"
+          class="tf-timeline__column-text-box"
+          :class="{'tf-timeline__column-text-grey': index>active}"
+        >
+          <div class="tf-timeline__column-time">{{item.ctime}}</div>
+          <div v-if="item.remark" class="tf-timeline__column-desc">{{item.remark}}</div>
+          <div class="tf-timeline__column-desc" v-else>
+            <span>{{item.designee}}</span>
+            <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
+          </div>
         </div>
       </div>
-      <div
-        :class="[direction==='column'?'tf-timeline__column-container':'tf-timeline__row-container']"
-      >
+      <div class="tf-timeline__column-container">
         <div
-          :class="[direction==='column'?'tf-timeline__column-line-item':'tf-timeline__row-line-item']"
-          v-for="(item,index) in options"
+          class="tf-timeline__column-line-item"
+          v-for="(item,index) in optionsReverse"
           :key="index"
         >
           <div
-            :class="[direction==='column'?'tf-timeline__column-line':'tf-timeline__row-line',direction==='column'?'tf-timeline__column-line--before':'tf-timeline__row-line--before']"
+            class="tf-timeline__column-line tf-timeline__column-line--before"
             :style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}"
           ></div>
           <div
-            :class="[direction==='column'?'tf-timeline__column-check':'tf-timeline__row-check']"
+            class="tf-timeline__column-check"
             :style="{'background-color':index===active?activeColor:deactiveColor}"
             v-if="index === active"
           ></div>
           <div
-            :class="[direction==='column'?'tf-timeline__column-circle':'tf-timeline__row-circle']"
+            class="tf-timeline__column-circle"
             v-else
             :style="{backgroundColor:index<active?activeColor:deactiveColor}"
           ></div>
-          <div
-            :class="[direction==='column'?'tf-timeline__column-line':'tf-timeline__row-line',direction==='column'?'tf-timeline__column-line--after':'tf-timeline__row-line--after']"
-            :style="{backgroundColor:index<active&&index!==options.length-1?activeColor:index===options.length-1?'transparent':deactiveColor}"
-          ></div>
+          <div class="tf-timeline__column-line tf-timeline__column-line--after"></div>
         </div>
       </div>
     </div>
@@ -87,7 +75,15 @@ export default {
     } // 数据
   },
   data () {
-    return {}
+    return {
+      optionsReverse: []
+    }
+  },
+  watch: {
+    options (value) {
+      const data = JSON.parse(JSON.stringify(value))
+      this.optionsReverse = data.reverse()
+    }
   },
   methods: {
     makePhoneCall (phoneNumber) {
@@ -150,9 +146,9 @@ export default {
 .tf-timeline__column-time {
   font-size: 24px;
   text-align: left;
-  line-height: 18px;
+  line-height: 1;
   color: @gray-7;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .tf-timeline__row-desc {
@@ -165,7 +161,10 @@ export default {
   font-size: 30px;
   text-align: left;
   color: @text-color;
-  line-height: 46px;
+  line-height: 1;
+  > span {
+    line-height: 1;
+  }
 }
 
 .tf-timeline__row-container {
@@ -263,6 +262,11 @@ export default {
 .tf-timeline__column-text-box {
   padding: 6px 8px 60px;
   flex: 1;
+}
+.tf-timeline__column-text-grey {
+  .tf-timeline__column-desc {
+    color: @gray-7;
+  }
 }
 .phone-number {
   color: @blue-dark !important;

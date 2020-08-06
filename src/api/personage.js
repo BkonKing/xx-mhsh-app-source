@@ -67,7 +67,7 @@ export function roomAttest (data) {
 
 /* 认证房间详情 */
 export function bindingRoomInfo (params) {
-  return request.get('/room/binding/bindingRoomInfo', params)
+  return request.get('/room/binding/bindingRoomInfo', { params })
 }
 
 /* 设置当前房间 */
@@ -78,4 +78,24 @@ export function bindingDefault (data) {
 /* 解除绑定房间 */
 export function unBinding (data) {
   return request.post('/room/binding/unBinding', data)
+}
+
+/* 检索小区 */
+export function searchProject (params) {
+  return request.get('/room/binding/searchProject', { params })
+}
+
+/* 检索楼栋 */
+export function searchBuilding (params) {
+  return request.get('/room/binding/searchBuilding', { params })
+}
+
+/* 检索单元 */
+export function searchUnit (params) {
+  return request.get('/room/binding/searchUnit', { params })
+}
+
+/* 检索房屋 */
+export function searchHouse (params) {
+  return request.get('/room/binding/searchHouse', { params })
 }

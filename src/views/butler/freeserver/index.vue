@@ -8,7 +8,7 @@
         ></span>
       </template>
     </van-nav-bar>
-    <van-search v-model="search" @search="searchList" placeholder="请输入关键字搜索" />
+    <van-search v-model="search" placeholder="请输入关键字搜索" />
     <div class="tf-bg tf-padding">
       <div class="tab-btn-box">
         <div
@@ -20,7 +20,7 @@
           <div v-if="category_type !== 1" class="tf-circle-tag--blue"></div>
           <div class="tab-btn__text-box tf-row">
             <div class="tab-btn__text">人工服务</div>
-            <div>({{rg_num}})</div>
+            <div class="tf-text-grey">({{rg_num}})</div>
           </div>
         </div>
         <div
@@ -29,18 +29,14 @@
           @click="category_type = 2"
           style="border-color: #55b862;"
         >
-          <div
-            v-if="category_type !== 2"
-            class="tf-circle-tag--success"
-            style="margin-right: 10px;"
-          ></div>
+          <div v-if="category_type !== 2" class="tf-circle-tag--success"></div>
           <div class="tab-btn__text-box tf-row">
             <div class="tab-btn__text">借用服务</div>
-            <div>({{jy_num}})</div>
+            <div class="tf-text-grey">({{jy_num}})</div>
           </div>
         </div>
       </div>
-      <service-card :data="serviceList"></service-card>
+      <service-card :active="category_type" :search="search" :data="serviceList"></service-card>
     </div>
   </div>
 </template>
@@ -61,38 +57,7 @@ export default {
       category_type: 0,
       rg_num: 0, // 人工服务数量
       jy_num: 0, // 借用服务数量
-      serviceList: [
-        {
-          id: '1',
-          category: '按摩(60岁以上老人)',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          category_type: 1,
-          status: 1,
-          sy_num: '0',
-          pd_num: '3'
-        },
-        {
-          id: '2',
-          category: '发布二手物品置换信息',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          category_type: 1,
-          status: 1,
-          sy_num: '0',
-          pd_num: '6'
-        },
-        {
-          id: '3',
-          category: '借用充电宝',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          category_type: 2,
-          status: 1,
-          sy_num: '1',
-          pd_num: '0'
-        }
-      ]
+      serviceList: []
     }
   },
   created () {
@@ -118,7 +83,7 @@ export default {
   },
   watch: {
     category_type () {
-      this.getFreeServerList()
+      // this.getFreeServerList()
     }
   }
 }
@@ -158,20 +123,27 @@ export default {
 .tab-btn {
   @flex();
   align-items: center;
+  min-width: 200px;
   height: 66px;
-  padding: 0 36px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: #aaa;
+  padding: 0 20px;
+  border: 2px solid #aaa;
   border-radius: 33px;
   margin-right: @padding-md;
-  .tf-circle-tag--blue {
+  justify-content: center;
+  .tf-circle-tag--blue,
+  .tf-circle-tag--success {
     margin-right: 10px;
   }
 }
 .tab-btn--blue {
   background-color: @blue-dark;
-  .tab-btn__text-box {
+  .tab-btn__text-box,
+  .tf-text-grey {
+    color: #fff;
+  }
+}
+.tf-bg-success {
+  .tf-text-grey {
     color: #fff;
   }
 }

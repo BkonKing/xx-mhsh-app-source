@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg tf-padding-base">
-    <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+    <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="goback">
       <template #right>
         <span class="tf-icon tf-icon-solution" @click="goVisitorList(1)"></span>
         <span class="tf-icon tf-icon-time-circle" @click="goInviteList"></span>
@@ -50,22 +50,38 @@
       </div>
       <tf-list>
         <div class="list-title">访客信息</div>
-        <visitor-form v-if="1" ref="form"></visitor-form>
-        <div v-else class="visitor-info">
-          <div class="tf-row">
-            <div class="visitor-info__text tf-mr-base">鲁班七号 男</div>
-            <div class="visitor-info__text tf-text-grey">15066668888 闽A23333</div>
+        <template v-if="visitorList.length > 0">
+          <div v-for="(item, i) in visitorList" :key="i" class="visitor-info">
+            <div class="tf-row">
+              <div
+                class="visitor-info__text tf-mr-base"
+              >{{item.realname}} {{item.gender ? '男' : '女'}}</div>
+              <div class="visitor-info__text tf-text-grey">{{item.mobile}} {{item.car_number}}</div>
+            </div>
+            <div class="tf-icon tf-icon-delete" @click="deleteVisitor(i)"></div>
           </div>
-          <div class="tf-icon tf-icon-delete"></div>
-        </div>
+        </template>
+        <visitor-form v-else ref="form"></visitor-form>
       </tf-list>
+      <van-checkbox class="agreement-checkbox" v-model="agreeValue" shape="square">
+        阅读并同意
+        <router-link class="tf-text-blue" to>《XXX协议》</router-link>
+      </van-checkbox>
       <van-button class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Toast, Picker, DatetimePicker, Popup, Button } from 'vant'
+import {
+  NavBar,
+  Toast,
+  Picker,
+  DatetimePicker,
+  Popup,
+  Button,
+  Checkbox
+} from 'vant'
 import visitorForm from './components/form.vue'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
@@ -81,6 +97,7 @@ export default {
     [DatetimePicker.name]: DatetimePicker,
     [Popup.name]: Popup,
     [Button.name]: Button,
+    [Checkbox.name]: Checkbox,
     tfList,
     tfListItem,
     tfPicker,
@@ -112,7 +129,9 @@ export default {
         remark: ''
       },
       showDatePicker: false,
-      showPicker: false
+      showPicker: false,
+      agreeValue: false,
+      visitorList: []
     }
   },
   computed: {
@@ -123,29 +142,53 @@ export default {
       return getTime('end')
     }
   },
+  activated () {
+    const visitorInfo = this.$store.state.visitorList
+    if (visitorInfo) {
+      if (
+        this.visitorList.findIndex((obj) => obj.id === visitorInfo.id) === -1
+      ) {
+        this.visitorList.push(visitorInfo)
+        this.$store.commit('setVisitorList', null)
+      }
+    }
+  },
   methods: {
     addVisitorLog () {
-      this.sendInvite()
-      const visitorData = this.$refs.form.getData()
+      if (!this.agreeValue) {
+        Toast({
+          message: '请阅读并同意用户协议'
+        })
+        return
+      }
+      const visitorData = this.visitorList.length === 0 && this.$refs.form.getData()
       const params = Object.assign({}, visitorData, this.form)
       if (!this.form.stime) {
         Toast({
           message: '请选择来访日期'
         })
-      } else if (!visitorData.realname) {
-        Toast({
-          message: '请填写访客姓名'
-        })
-      } else if (!visitorData.gender) {
-        Toast({
-          message: '请选择访客性别'
-        })
+        return
+      } else if (this.visitorList.length === 0) {
+        if (!visitorData.realname) {
+          Toast({
+            message: '请填写访客姓名'
+          })
+          return
+        } else if (!visitorData.gender) {
+          Toast({
+            message: '请选择访客性别'
+          })
+          return
+        }
       }
       addVisitorLog().then((res) => {
         if (res.success) {
           this.sendInvite()
         }
       })
+    },
+    deleteVisitor (index) {
+      this.visitorList.splice(index, 1)
     },
     goVisitorList (type) {
       this.$router.push({
@@ -159,7 +202,12 @@ export default {
       this.$router.push('/pages/butler/visitor/invite-list')
     },
     sendInvite () {
-      this.$router.push('/pages/butler/visitor/invite')
+      this.$destroy()
+      this.$router.replace('/pages/butler/visitor/invite')
+    },
+    goback () {
+      this.$router.go(-1)
+      this.$destroy()
     }
   }
 }
@@ -199,16 +247,43 @@ export default {
 }
 
 .visitor-info {
-  flex-direction: row;
+  display: flex;
   justify-content: space-between;
   padding: 35px 30px;
 }
 
 .visitor-info__text {
   font-size: 30px;
+  line-height: 50px;
 }
 
 .text-right {
   text-align: right;
+}
+
+.tf-icon-delete {
+  font-size: 36px;
+}
+
+.agreement-checkbox {
+  font-size: 24px;
+  color: #8f8f94;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  /deep/ .van-checkbox__icon--checked .van-icon {
+    color: @red-dark;
+    background: none;
+    border-color: @red-dark;
+  }
+  /deep/ .van-checkbox__icon {
+    height: 28px;
+    line-height: 28px;
+    .van-icon {
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+    }
+  }
 }
 </style>

@@ -1,11 +1,13 @@
 <template>
   <div class="app" id="app">
+    <div class="w100" :style="{height: `${paddingTop}px`}"></div>
     <!-- 全局组件 -->
     <transition :name="transitionName">
       <keep-alive :max="10" :include="keepAlive">
         <router-view></router-view>
       </keep-alive>
     </transition>
+    <div class="w100" :style="{height: `${paddingBottom}px`}"></div>
   </div>
 </template>
 
@@ -18,39 +20,22 @@ export default {
     return {
       transitionName: '',
       keepAlive: [],
-      historyList: []
+      historyList: [],
+      paddingTop: 0,
+      paddingBottom: 0
     }
   },
   created () {
-    // this.$api.alert(
-    //   {
-    //     title: '静默更新',
-    //     msg: '可行'
-    //   }
-    // )
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     this.setRouteKeepAlive(router.options.routes)
-    // 记录路由,动态给定动画
-    // this.$navigation.on('forward', to => {
-    //   this.transitionName = 'slide-left'
-    //   // this.transitionName = to.route.meta.isTransition ? 'slide-left' : ''
-    // })
-    // this.$navigation.on('back', (to, from) => {
-    //   this.transitionName = 'slide-right'
-    //   // if (to.route.meta.isTransition || from.route.meta.isTransition) {
-    //   //   this.transitionName = 'slide-right'
-    //   // } else {
-    //   //   this.transitionName = ''
-    //   // }
-    // })
   },
   mounted () {
-    // console.log(this.keepAlive) // 设置缓存匹配
-    // console.log(this.$APICLOUD) // 只有在apicloud环境下才能获取
     // 接口调用
     // api.getTodayFortune({ typeid: 1 }).then(res => {
     //   console.log(res)
     // })
+    this.paddingTop = api.safeArea.top
+    this.paddingBottom = api.safeArea.bottom
   },
   methods: {
     setRouteKeepAlive (routes) {
@@ -101,6 +86,9 @@ export default {
   height: 100%;
   overflow: hidden;
   background-color: #f5f5f5;
+}
+.w100 {
+  width: 100%;
 }
 .slide-right-enter-active,
 .slide-right-leave-active,
