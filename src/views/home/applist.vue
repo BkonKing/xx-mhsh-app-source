@@ -25,7 +25,9 @@
         <draggable
           class="app-container"
           :class="{'dragging': isDragging}"
+          id="app-container"
           v-model="myAppList"
+          handle="#app-container"
           :options="{
             animation: 0,
             group: 'description',
@@ -269,7 +271,7 @@ export default {
 }
 .dragging {
   /deep/ .sortable-drag::after {
-    border-width: 1px !important;
+    border: 1px solid @divider-color !important;
   }
 }
 </style>

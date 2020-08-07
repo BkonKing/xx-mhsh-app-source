@@ -88,6 +88,7 @@ export default {
           obj.current = false
         })
         this.houseList[index].current = true
+        this.$store.commit('setCurrentProject', this.houseList[index])
       })
     }
   }

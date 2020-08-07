@@ -79,7 +79,7 @@ service.interceptors.response.use(
     } = res
 
     // if the custom code is not 20000, it is judged as an error.
-    if (status === 401 || code === '401') {
+    if (status == 401 || code == '401') {
       const isGetToken = config.url.indexOf('getToken') !== -1
       // const res = !isGetToken &&
       //   (await getToken({
@@ -93,8 +93,14 @@ service.interceptors.response.use(
         const {
           data: info
         } = res
-        store.commit('setAccess_token', info.access_token)
-        store.commit('setRefresh_token', info.refresh_token)
+        api.setGlobalData({
+          key: 'access_token',
+          value: info.access_token
+        })
+        api.setGlobalData({
+          key: 'refresh_token',
+          value: info.refresh_token
+        })
         Toast('请重新操作')
       } else {
         Dialog.alert({
@@ -105,14 +111,12 @@ service.interceptors.response.use(
             location.reload()
           })
         })
-        store.commit('setAccess_token', '')
-        store.commit('setRefresh_token', '')
         router.replace({
           pathname: '/login'
         })
       }
       return Promise.reject(new Error(res.message || 'Error'))
-    } else if (code !== '200') {
+    } else if (code != '200') {
       Toast(codeMessage[code])
       return res
     } else {

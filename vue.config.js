@@ -124,7 +124,7 @@ module.exports = {
     proxy: {
       /** 解决本地测试跨域问题 */
       '/api': {
-        target: 'https://hy.yixueqm.com/interface/index.php/',
+        target: 'https://test.mhshjy.com/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }

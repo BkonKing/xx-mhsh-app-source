@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="tf-picker">
     <div @click="showPicker = true">
-      <slot :valueText="valueText"></slot>
+      <slot :valueText="valueText" @click="showPicker = true"></slot>
     </div>
-    <van-popup v-model="showPicker" round position="bottom">
+    <van-popup v-model="showPicker" round position="bottom" get-container="body">
       <van-picker
         show-toolbar
         :columns="columns"
@@ -46,6 +46,9 @@ export default {
   computed: {
     valueText () {
       const valueKey = this.$attrs['value-key']
+      if (this.index === -1) {
+        return '请选择'
+      }
       return valueKey ? this.columns[this.index][valueKey] : this.columns[this.index]
     }
   },

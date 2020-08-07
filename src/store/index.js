@@ -1,5 +1,3 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import {
   yzmLogin,
   pwdLogin,
@@ -37,21 +35,9 @@ if (!window.api) {
   }
 }
 
-Vue.use(Vuex)
-
-const userInfo = api.getGlobalData({
-  key: 'user_info'
-})
-
-const store = new Vuex.Store({
+const store = {
   state: {
-    access_token: api.getGlobalData({
-      key: 'access_token'
-    }) || '',
-    refresh_token: api.getGlobalData({
-      key: 'refresh_token'
-    }) || '',
-    user_info: userInfo ? JSON.parse(userInfo) : '',
+    user_info: '',
     hasLogin: false,
     loginProvider: '',
     openid: null,
@@ -59,29 +45,12 @@ const store = new Vuex.Store({
     colorIndex: 0,
     colorList: ['#FF0000', '#00FF00', '#0000FF'],
     visitorList: null,
-    houseSelected: null
+    houseSelected: null,
+    current_project: null
   },
   mutations: {
-    setAccess_token (state, value) {
-      state.access_token = value
-      api.setGlobalData({
-        key: 'access_token',
-        value
-      })
-    },
-    setRefresh_token (state, value) {
-      state.refresh_token = value
-      api.setGlobalData({
-        key: 'refresh_token',
-        value
-      })
-    },
     setUser_info (state, value) {
       state.user_info = value
-      api.setGlobalData({
-        key: 'user_info',
-        value
-      })
     },
     login (state, provider) {
       state.hasLogin = true
@@ -108,6 +77,13 @@ const store = new Vuex.Store({
     },
     setHouseSelected (state, obj) {
       state.houseSelected = obj
+    },
+    setCurrentProject (state, obj) {
+      state.current_project = obj
+      api.setGlobalData({
+        key: 'currentProject',
+        value: obj
+      })
     }
   },
   getters: {
@@ -116,17 +92,20 @@ const store = new Vuex.Store({
     },
     userInfo (state) {
       return state.user_info
+    },
+    currentProject (state) {
+      return state.current_project
     }
   },
   actions: {
-    async login ({
+    login ({
       commit,
       state
     }, {
       type,
       params
     }) {
-      return await new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         Toast.loading({
           duration: 0,
           message: '正在登录中'
@@ -138,12 +117,21 @@ const store = new Vuex.Store({
             const {
               data
             } = res
-            commit('setAccess_token', data.access_token)
-            commit('setRefresh_token', data.refresh_token)
-            commit('setUser_info', data)
+            api.setGlobalData({
+              key: 'access_token',
+              value: data.access_token
+            })
+            api.setGlobalData({
+              key: 'refresh_token',
+              value: data.refresh_token
+            })
+            api.setGlobalData({
+              key: 'user_info',
+              value: data
+            })
             resolve()
           } else {
-            reject()
+            reject(res.message)
           }
         })
       })
@@ -158,20 +146,17 @@ const store = new Vuex.Store({
         outLogin().then((res) => {
           Toast.clear()
           if (res.success) {
-            commit('setAccess_token', '')
-            commit('setRefresh_token', '')
-            commit('setUser_info', '')
+            api.setGlobalData({
+              key: 'user_info',
+              value: null
+            })
             api.setGlobalData({
               key: 'access_token',
-              value: ''
+              value: undefined
             })
             api.setGlobalData({
               key: 'refresh_token',
-              value: ''
-            })
-            api.setGlobalData({
-              key: 'user_info',
-              value: ''
+              value: undefined
             })
             router.push('/login')
             resolve()
@@ -182,6 +167,7 @@ const store = new Vuex.Store({
       })
     }
   }
-})
+}
+// module.exports = store
 
 export default store

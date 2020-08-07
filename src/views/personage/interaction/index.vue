@@ -15,7 +15,7 @@
         <neighbour-list key="activity"></neighbour-list>
       </van-tab>
       <van-tab title="问卷投票">
-        <repair-list></repair-list>
+        <!-- <repair-list></repair-list> -->
       </van-tab>
     </van-tabs>
   </div>
@@ -23,7 +23,7 @@
 
 <script>
 import { NavBar, Tab, Tabs } from 'vant'
-import repairList from '@/views/butler/repairs/components/list'
+// import repairList from '@/views/butler/repairs/components/list'
 import neighbourList from '@/views/neighbours/components/list'
 import replyList from '@/views/neighbours/components/reply'
 export default {
@@ -31,7 +31,7 @@ export default {
     [NavBar.name]: NavBar,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
-    repairList,
+    // repairList,
     neighbourList,
     replyList
   },

@@ -7,7 +7,7 @@
           <div class="tf-card tf-mb-base">
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
-              <div v-if="item.status == 1" class="tf-icon tf-icon-qrcode"></div>
+              <div v-if="item.status == 1" class="tf-icon tf-icon-qrcode" @click="showQrcode(item)"></div>
             </div>
             <div class="tf-card-content">
               <template v-if="item.category_type == 1">
@@ -31,21 +31,34 @@
         </template>
       </refreshList>
     </div>
+    <tfDialog v-model="dialog" :title="active.category">
+      <div class="qr-box">
+        <img class="qr-img" src="@/assets/app-icon.png" />
+        <div class="qr-status-box">
+          <div class="qr-triangle"></div>
+          <div class="qr-status">{{active.categoryType == 1 ? '开始享受服务' : '归还'}}</div>
+        </div>
+      </div>
+    </tfDialog>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
+import tfDialog from '@/components/tf-dialog/index.vue'
 import { getMyFreeServerList } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    refreshList
+    refreshList,
+    tfDialog
   },
   data () {
     return {
-      data: []
+      data: [],
+      dialog: false,
+      active: {}
     }
   },
   created () {
@@ -70,6 +83,11 @@ export default {
           this.data = res.data
         }
       })
+    },
+    /* 二维码显示 */
+    showQrcode (item) {
+      this.active = item
+      this.dialog = true
     }
   }
 }
@@ -92,5 +110,34 @@ export default {
 .tf-icon-qrcode {
   font-size: 42px;
   line-height: 1;
+}
+.qr-box {
+  padding: 40px 70px;
+}
+
+.qr-img {
+  width: 320px;
+  height: 320px;
+}
+
+.qr-status-box {
+  @flex-column();
+  align-items: center;
+  margin-top: 26px;
+}
+
+.qr-status {
+  width: 320px;
+  height: 66px;
+  line-height: 66px;
+  font-size: 30px;
+  border-radius: 33px;
+  color: #fff;
+  background-color: @red-dark;
+  text-align: center;
+}
+
+.qr-triangle {
+  .triangle();
 }
 </style>

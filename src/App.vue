@@ -26,6 +26,15 @@ export default {
     }
   },
   created () {
+    const userInfo = api.getGlobalData({
+      key: 'user_info'
+    })
+    userInfo && this.$store.commit('setUser_info', JSON.parse(userInfo))
+    // 看是否有当前项目
+    const currentProject = api.getGlobalData({
+      key: 'currentProject'
+    })
+    currentProject && this.$store.commit('setCurrentProject', JSON.parse(currentProject))
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     this.setRouteKeepAlive(router.options.routes)
   },
@@ -89,6 +98,7 @@ export default {
 }
 .w100 {
   width: 100%;
+  background: #fff;
 }
 .slide-right-enter-active,
 .slide-right-leave-active,

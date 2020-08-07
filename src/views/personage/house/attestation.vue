@@ -1,12 +1,6 @@
 <template>
   <div class="tf-bg tf-padding-base">
-    <van-nav-bar
-      :title="title"
-      :fixed="true"
-      :border="false"
-      left-arrow
-      @click-left="goback"
-    >
+    <van-nav-bar :title="title" :fixed="true" :border="false" left-arrow @click-left="goback">
       <template #right>
         <span v-if="mode && !editMode" class="tf-icon tf-icon-edit-square" @click="goEdit"></span>
       </template>
@@ -48,7 +42,12 @@
       <tf-list v-if="type === 1 && mode === 1 && !editMode">
         <tf-list-item title="设置当前房屋" :showArrow="false">
           <template v-slot:right>
-            <van-switch v-model="checked" size="24" @change="bindingDefault" active-color="#EB5841" />
+            <van-switch
+              v-model="checked"
+              size="24"
+              @change="bindingDefault"
+              active-color="#EB5841"
+            />
           </template>
         </tf-list-item>
       </tf-list>
@@ -82,7 +81,14 @@ import { NavBar, Switch, Button, Checkbox, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index'
 import tfList from '@/components/tf-list/index'
 import tfListItem from '@/components/tf-list/item'
-import { addMember, updateMember, roomAttest, bindingRoomInfo, bindingDefault, unBinding } from '@/api/personage'
+import {
+  addMember,
+  updateMember,
+  roomAttest,
+  bindingRoomInfo,
+  bindingDefault,
+  unBinding
+} from '@/api/personage'
 import { validForm } from '@/utils/util'
 
 export default {
@@ -101,6 +107,7 @@ export default {
       title: '',
       type: 0, // 0：成员 1：房屋
       mode: 0, // 0：新增 1：修改
+      select: undefined, // 是否认证完自动选中当前房屋
       editMode: false,
       checked: false,
       agreeValue: false,
@@ -136,8 +143,11 @@ export default {
   created () {
     this.type = parseInt(this.$route.query.type)
     this.mode = parseInt(this.$route.query.mode)
+    this.select = parseInt(this.$route.query.select)
     if (this.type === 0 && this.mode === 1) {
-      const { realname, mobile, house_role, houseName, id } = JSON.parse(this.$route.query.info)
+      const { realname, mobile, house_role, houseName, id } = JSON.parse(
+        this.$route.query.info
+      )
       this.id = id
       this.realname = realname
       this.mobile = mobile
@@ -152,7 +162,13 @@ export default {
   activated () {
     const { houseSelected } = this.$store.state
     if (houseSelected) {
-      const { house_name, house_id, project_id, building_id, unit_id } = houseSelected
+      const {
+        house_name,
+        house_id,
+        project_id,
+        building_id,
+        unit_id
+      } = houseSelected
       this.house_name = house_name
       this.house_id = house_id
       this.project_id = project_id
@@ -162,6 +178,7 @@ export default {
     }
   },
   methods: {
+    /* 提交验证 */
     submit () {
       if (!this.agreeValue && this.type === 0) {
         Toast('请先阅读并同意会员协议')
@@ -243,14 +260,25 @@ export default {
     },
     /* 房屋认证 */
     roomAttest () {
-      roomAttest({
+      const params = {
         house_id: this.house_id,
+        project_id: this.project_id,
+        building_id: this.building_id,
+        unit_id: this.unit_id,
+        house_name: this.house_name,
         realname: this.realname,
         mobile: this.mobile,
         house_role: this.house_role
-      }).then((res) => {
+      }
+      roomAttest(params).then((res) => {
         if (res.success) {
           Toast.success('审核成功')
+          if (this.select == '1') {
+            setTimeout(() => {
+              this.$store.commit('setCurrentProject', params)
+              this.$router.go(-1)
+            }, 1000)
+          }
         } else {
           Toast.fail('提交失败')
         }
@@ -260,7 +288,7 @@ export default {
     bindingRoomInfo () {
       bindingRoomInfo({
         binding_id: this.house_id
-      }).then(res => {
+      }).then((res) => {
         const { realname, mobile, house_role, houseName } = res.data
         this.realname = realname
         this.mobile = mobile
@@ -272,25 +300,24 @@ export default {
     bindingDefault () {
       bindingDefault({
         binding_id: this.binding_id
-      }).then(res => {
-
-      })
+      }).then((res) => {})
     },
     /* 解除绑定房间 */
     unBinding () {
       unBinding({
         binding_id: this.binding_id
-      }).then(res => {
-
-      })
+      }).then((res) => {})
     },
+    /* 选择房屋跳转 */
     goCheckHouse () {
       this.$router.push('/pages/personage/house/select-community')
     },
+    /* 查看转编辑 */
     goEdit () {
       this.agreeValue = true
       this.editMode = true
     },
+    /* 返回并销毁当前实例 */
     goback () {
       this.$router.go(-1)
       this.$destroy()

@@ -75,14 +75,13 @@ export default {
       yzm: undefined,
       pwd: undefined,
       login_type: 1, // 1:验证码登录 2：密码登陆
-      agree: true,
+      agree: false,
       showPassword: false,
       codeStatus: false,
       countDown: 59,
       timer: null
     }
   },
-  created () {},
   methods: {
     changeRememberPasswrod () {
       this.agree = !this.agree
@@ -119,7 +118,9 @@ export default {
         type: this.login_type,
         params
       }).then(() => {
-        this.$router.push('')
+        this.$router.push({
+          name: 'home'
+        })
       })
     },
     /* 发送验证码 */
@@ -155,8 +156,8 @@ image {
   position: relative;
 }
 .page {
-  width: 750px;
-  padding-top: 120px;
+  width: 100%;
+  padding-top: 84px;
   flex: 1;
   align-items: center;
   background-color: #333;
@@ -276,7 +277,7 @@ image {
   color: #fff;
   text-align: center;
   margin-top: 50px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 .uni-checkbox-wrapper {
   align-items: center;

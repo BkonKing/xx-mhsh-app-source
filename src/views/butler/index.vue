@@ -78,7 +78,7 @@ export default {
         {
           icon_image: '/static/logo.png',
           application: '小区活动',
-          url: '/neighbours'
+          url: '/neighbours?active=2'
         },
         {
           icon_image: '/static/logo.png',
@@ -125,6 +125,9 @@ export default {
   border-radius: @border-radius-sm;
   background-color: #fff;
   opacity: 0.6;
+  /deep/ .van-notice-bar__content {
+    width: 100%;
+  }
 }
 .notice-swipe {
   height: 88px;

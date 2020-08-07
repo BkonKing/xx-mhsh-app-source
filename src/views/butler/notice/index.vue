@@ -105,8 +105,9 @@ export default {
 .list-item--time {
   font-size: 24px;
   text-align: center;
+  line-height: 1;
   color: @gray-7;
-  margin: 0 @padding-md @padding-md;
+  margin: 20px @padding-md @padding-md;
 }
 
 .tf-readed-tag {
@@ -127,6 +128,10 @@ export default {
   bottom: 0;
   left: 20px;
   right: 20px;
+}
+
+.tf-card-header__title {
+  flex: 1;
 }
 /deep/ .van-pull-refresh {
   width: 100%;

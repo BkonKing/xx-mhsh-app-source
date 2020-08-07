@@ -1,9 +1,8 @@
 import router from './router'
 import store from './store'
 import { Toast } from 'vant'
-// import getPageTitle from '@/utils/get-page-title'
 
-const whiteList = ['/login'] // no redirect whitelist
+const whiteList = ['/login']
 
 router.beforeEach(async (to, from, next) => {
   Toast.loading({
@@ -12,15 +11,12 @@ router.beforeEach(async (to, from, next) => {
     forbidClick: true
   })
 
-  // set page title
-  // document.title = getPageTitle(to.meta.title)
-
-  // determine whether the user has logged in
   const hasToken = api.getGlobalData({
     key: 'access_token'
   })
 
-  if (hasToken) {
+  // eslint-disable-next-line eqeqeq
+  if (hasToken != 'undefined' && hasToken != '') {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })

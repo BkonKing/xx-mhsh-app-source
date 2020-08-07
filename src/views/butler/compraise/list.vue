@@ -5,20 +5,23 @@
       <refreshList :list.sync="data" @load="onLoad">
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
-          <div class="tf-card-header">
-            <userInfo avatar="/static/app-icon.png" :name="item.name" :time="item.ctime">
-              <template v-slot:right>
-                <div class="tf-icon">{{item.info_type}}</div>
-              </template>
-            </userInfo>
+            <div class="tf-card-header">
+              <userInfo avatar="/static/app-icon.png" :name="item.name" :time="item.ctime">
+                <template v-slot:right>
+                  <div
+                    class="tf-icon"
+                    :class="{'tf-text-primary': item.info_type==2}"
+                  >{{item.info_type}}</div>
+                </template>
+              </userInfo>
+            </div>
+            <div class="tf-card-content">{{ item.content }}</div>
+            <tf-image-list class="pb10" :data="item.images"></tf-image-list>
+            <div v-if="item.reply" class="reply-box">
+              <div class="reply-title">社区回复</div>
+              <div class="reply-content">{{ item.reply }}</div>
+            </div>
           </div>
-          <div class="tf-card-content">{{ item.content }}</div>
-          <tf-image-list :data="item.images"></tf-image-list>
-          <div v-if="item.reply" class="reply-box">
-            <div class="reply-title">社区回复</div>
-            <div class="reply-content">{{ item.reply }}</div>
-          </div>
-        </div>
         </template>
       </refreshList>
     </div>
@@ -49,7 +52,7 @@ export default {
   methods: {
     onLoad () {},
     getComPraiseList () {
-      getComPraiseList().then(res => {
+      getComPraiseList().then((res) => {
         if (res.success) {
           this.data = res.data
         }
@@ -90,7 +93,7 @@ export default {
   color: @gray-7;
   font-size: 24px;
   line-height: 52px;
-  border-radius:10px;
+  border-radius: 10px;
 }
 
 .tf-image-box {
@@ -100,4 +103,13 @@ export default {
   padding-bottom: 30px;
 }
 
+.pb10 {
+  padding-bottom: 10px;
+}
+
+.tf-icon {
+  font-size: 36px;
+  line-height: 88px;
+  color: #383838;
+}
 </style>

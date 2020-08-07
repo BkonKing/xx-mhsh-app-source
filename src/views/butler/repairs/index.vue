@@ -45,16 +45,6 @@
       <div class="tf-card-header">上传图片</div>
       <div class="tf-card-content">
         <van-uploader :after-read="uploadSuccess" :max-count="6" />
-        <!-- <uImg
-            ref="upimg"
-            :canUploadFile="true"
-            :limit="limitNum"
-            :uploadFileUrl="uploadFileUrl"
-            :heaer="header"
-            :fileKeyName="name"
-            :uImgList.sync="images"
-            @uploadSuccess="uploadSuccess"
-        ></uImg>-->
       </div>
     </div>
     <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
@@ -161,7 +151,7 @@ export default {
           message: '请输入内容'
         }
       ]
-      validForm(validator).then(res => {
+      validForm(validator).then((res) => {
         this.addRepair()
       })
     },
@@ -233,6 +223,13 @@ export default {
     height: 88px;
     /deep/ .van-swipe-item {
       line-height: 88px;
+    }
+  }
+  /deep/ .van-icon-arrow {
+    font-size: 24px !important;
+    &::before {
+      font-family: tficonfont;
+      content: '\e85d'
     }
   }
 }

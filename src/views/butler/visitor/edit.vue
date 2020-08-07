@@ -61,15 +61,15 @@ export default {
         }
       })
     },
-    addMyVisitor () {
-      addMyVisitor().then(res => {
+    addMyVisitor (params) {
+      addMyVisitor(params).then(res => {
         if (res.success) {
           this.$router.go(-1)
         }
       })
     },
-    updateMyVisitor () {
-      updateMyVisitor().then(res => {
+    updateMyVisitor (params) {
+      updateMyVisitor(params).then(res => {
         if (res.success) {
           this.$router.go(-1)
         }

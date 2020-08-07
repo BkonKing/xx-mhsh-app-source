@@ -18,19 +18,7 @@ export default {
   },
   data () {
     return {
-      repairList: [
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 6,
-          ctime: '2020-06-03 16:35:26'
-        }
-      ]
+
     }
   },
   created () {},

@@ -66,6 +66,7 @@ export default {
     }
   },
   methods: {
+    /* 回填 */
     setData (formData) {
       const { gender, realname, mobile, car_number } = formData
       this.gender = gender - 1
@@ -73,9 +74,10 @@ export default {
       this.mobile = mobile
       this.car_number = car_number
     },
+    /* 获取值 */
     getData () {
       return {
-        gender: this.sexArray[this.gender].value,
+        gender: this.gender,
         realname: this.realname,
         mobile: this.mobile,
         car_number: this.car_number

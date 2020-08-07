@@ -6,74 +6,88 @@
       :border="false"
       left-arrow
       @click-left="$router.go(-1)"
-    />
+    >
+      <template #right>
+        <span class="tf-icon tf-icon-customerservice"></span>
+      </template>
+    </van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-card">
         <div class="tf-card-header">
           <div class="tf-card-header__title">内容描述</div>
           <div
-            class="tf-card-header__status"
-            :class="{'tf-card-header__status--complete': status > 5}"
+            class="tf-text-lg"
+            :class="{'tf-text-primary': status == 5 || status == 1}"
           >{{statusText[status]}}</div>
         </div>
         <div class="tf-card-content">{{content}}</div>
-        <div class="tf-image-box">
-          <img
-            class="tf-image"
-            v-for="(item, i) in images"
-            :src="item.src"
-            :key="i"
-            mode="widthFix"
-          />
-        </div>
+        <tf-image-list v-if="images.length" :data="images" :column="5" mode="show"></tf-image-list>
       </div>
       <div class="time-line-box">
         <tfTimeline class="tf-bg-white tf-mt-base tf-padding-base" :options="timelineList"></tfTimeline>
         <div class="transaction-btn-box">
-          <div v-if="status == 6" class="tf-icon tf-icon-star transaction-btn" @click="evaluateDialog = true"></div>
-          <div class="tf-icon tf-icon-image transaction-btn">
+          <div
+            v-if="status == 6"
+            class="tf-icon tf-icon-star transaction-btn"
+            @click="evaluateDialog = true"
+          ></div>
+          <div v-if="status == 6" class="tf-icon tf-icon-image transaction-btn">
             <span class="van-info">2</span>
           </div>
-          <div v-if="status == 5" class="tf-icon tf-icon-filedone transaction-btn" @click="negotiateShow = true"></div>
+          <div
+            v-if="status == 6"
+            class="tf-icon tf-icon-filedone transaction-btn"
+            @click="negotiateShow = true"
+          ></div>
         </div>
       </div>
       <div class="operation-box">
         <div v-if="status < 6" class="tf-btn" @click="cancelRepair">撤销提报</div>
-        <div v-if="status === 4" class="tf-btn tf-btn-primary" @click="negotiateConfirm = true">确认协商信息</div>
-        <div v-if="status === 5" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
+        <div
+          v-if="status === 5"
+          class="tf-btn tf-btn-primary"
+          @click="negotiateConfirm = true"
+        >确认协商信息</div>
+        <div v-if="status === 6" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
       </div>
     </div>
-    <tf-dialog v-model="negotiateConfirm" title="请确认协商信息">
+    <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
       <template>
         <div class="plan-alert">若与处理人员协商不一致，可拒绝</div>
         <div class="tf-text tf-mt-lg tf-mb-lg">
-          <span>收 费：预计</span>
+          <span class="lp112">费</span>
+          <span>用：预计</span>
           <span>120</span>
           元
         </div>
         <div class="tf-text tf-mb-lg">预约处理时间：2020-07-08 12:00</div>
         <div class="dialog-footer">
           <van-button size="small" style="width: 48%;" @click="refuseDialog = true">拒绝</van-button>
-          <van-button
-            size="small"
-            type="danger"
-            style="width: 48%;"
-            @click="negotiateConfirm = false;negotiateShow = true"
-          >确认</van-button>
+          <van-button size="small" type="danger" style="width: 48%;" @click="confirmNegotiate">确认</van-button>
         </div>
       </template>
     </tf-dialog>
-    <tf-dialog v-model="negotiateShow" title="协商信息">
+    <!-- 协商信息确认结果 -->
+    <tf-dialog class="negotiate-dialog" v-model="negotiateShow" title="协商信息">
       <div class="padding40">
-        <div class="tf-text tf-mt-lg tf-mb-lg">
-          <span>收 费：预计</span>
+        <div class="tf-text">
+          <span class="lp112">费</span>
+          <span>用：预计</span>
           <span>120</span>
           元
         </div>
-        <div class="tf-text tf-mb-lg">预约处理时间：2020-07-08 12:00</div>
-        <div class="confirm-btn">已确认/已拒绝</div>
+        <div class="tf-text">预约处理时间：2020-07-08 12:00</div>
+        <div v-if="!negotiateStatus" class="tf-text tf-row">
+          <div>
+            <span class="lp18">拒绝原</span>
+            因：
+          </div>
+          <div class="tf-flex-item">{{refuseArray[refuseReason].label}}({{refuseExplain}})</div>
+        </div>
+        <div class="confirm-btn">{{negotiateStatus ? '已确认' : '已拒绝'}}</div>
       </div>
     </tf-dialog>
+    <!-- 确认完场弹窗 -->
     <tf-dialog v-model="finishShow">
       <div class="padding40">
         <div class="finish-title">处理人员是否处理完成？</div>
@@ -81,26 +95,37 @@
         <van-button size="small" type="primary" style="width: 100%;" @click="goEvaluate">确定完成</van-button>
       </div>
     </tf-dialog>
-    <tf-dialog v-model="refuseDialog" :showFotter="true" :hiddenOff="true" title="拒绝原因">
+    <!-- 拒绝协商信息原因 -->
+    <tf-dialog
+      v-model="refuseDialog"
+      :showFotter="true"
+      :hiddenOff="true"
+      title="拒绝原因"
+      @confirm="refuse"
+    >
       <template>
         <div class="tf-form-box">
-          <div class="tf-form-label">拒绝原因：</div>
+          <div class="tf-form-label required">拒绝原因：</div>
           <div class="tf-form-item">
-            <!-- <van-picker
+            <tf-picker
               class="tf-form-item__input"
-              @change="bindPickerChange"
-              :columns="array"
-            >-->
-            <div v-if="array[index]" class="tf-form-item__input">{{ array[index] }}</div>
-            <div v-else class="tf-form-item__input--placeholder">请选择</div>
-            <!-- </van-picker> -->
-            <div class="tf-icon tf-icon-bottom tf-form-item__icon"></div>
+              v-model="refuseReason"
+              title="拒绝原因"
+              value-key="label"
+              selected-key="value"
+              :columns="refuseArray"
+            >
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
           </div>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">拒绝说明：</div>
           <van-field
-            v-model="reason"
+            v-model="refuseExplain"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -112,6 +137,7 @@
         </div>
       </template>
     </tf-dialog>
+    <!-- 评价信息 -->
     <tf-dialog v-model="evaluateDialog" title="评价">
       <template>
         <div class="tf-form-box">
@@ -129,6 +155,13 @@
               readonly
             />
           </div>
+          <div class="rate-tag-box">
+            <div class="rate-tag">专业</div>
+            <div class="rate-tag">速度快</div>
+            <div class="rate-tag">速度快</div>
+            <div class="rate-tag">速度快</div>
+            <div class="rate-tag">速度快</div>
+          </div>
           <div class="tf-form-label">其他补充：</div>
           <div class="textarea-box">师傅态度很好，还很热心地帮忙购买需要 替换的水管</div>
         </div>
@@ -138,15 +171,20 @@
 </template>
 
 <script>
-import { NavBar, Dialog, Button, Picker, Field, Rate } from 'vant'
+import { NavBar, Dialog, Button, Picker, Field, Rate, Toast } from 'vant'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { statusText } from '@/const/butler.js'
 import { getRepairInfo, cancelRepair } from '@/api/butler.js'
+import tfImageList from '@/components/tf-image-list'
+import tfPicker from '@/components/tf-picker/index'
+import { validForm } from '@/utils/util'
 export default {
   components: {
     tfTimeline,
     tfDialog,
+    tfImageList,
+    tfPicker,
     [NavBar.name]: NavBar,
     [Field.name]: Field,
     [Picker.name]: Picker,
@@ -156,20 +194,12 @@ export default {
   data () {
     return {
       statusText,
-      title: '报事报修',
-      content: '厨房下水道堵了',
-      images: ['https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'],
-      status: 5,
-      ctime: '2020-06-03 16:35:26',
-      timelineList: [
-        {
-          id: '1',
-          remark: '已提交，等待物业人员受理。',
-          designee: '',
-          mobile: '',
-          ctime: '2020-06-03 16:35:26'
-        }
-      ],
+      title: '',
+      content: '',
+      images: [],
+      status: 0,
+      ctime: '',
+      timelineList: [],
       negotiateConfirm: false,
       negotiateShow: false,
       finishShow: false,
@@ -177,25 +207,41 @@ export default {
       evaluateDialog: false,
       index: undefined,
       array: [],
-      reason: '',
-      value: 3
+      value: 3,
+      negotiateStatus: 0, // 协商状态 0：拒绝 1：确认
+      refuseExplain: '', // 拒绝说明
+      refuseReason: 0, // 拒绝原因值
+      // 拒绝原因数组
+      refuseArray: [
+        {
+          label: '没时间',
+          value: 1
+        },
+        {
+          label: '价格不合适',
+          value: 2
+        }
+      ]
     }
   },
   created () {
-    const { id, title } = this.$route.query
+    const { id, title, type } = this.$route.query
     this.getRepairInfo(id)
     this.title = title
+    if (type) {
+      this[type] = true
+    }
   },
   methods: {
+    /* 获取报事报修详情 */
     getRepairInfo (repairId) {
       getRepairInfo({
-        projectId: '',
         repairId
       }).then((res) => {
         if (res.success) {
-          const { category, content, images, status, records } = res.data
+          const { content, images, status, records } = res.data
           this.status = status
-          this.imgList = images
+          this.images = images
           this.timelineList = records
           this.content = content
         }
@@ -208,9 +254,38 @@ export default {
       }).then(() => {
         cancelRepair().then((res) => {
           if (res.success) {
+            this.$router.go(-1)
           }
         })
       })
+    },
+    /* 拒绝协商信息 */
+    refuse () {
+      const validator = [
+        {
+          value: this.refuseReason,
+          message: '请选择拒绝原因'
+        }
+      ]
+      validForm(validator).then(() => {
+        const params = {
+          refuseExplain: this.refuseExplain,
+          refuseReason: this.refuseReason
+        }
+        // 请求成功后
+        Toast('已拒绝该协商信息')
+        this.refuseDialog = false
+        this.negotiateConfirm = false
+        this.negotiateStatus = 0
+        this.negotiateShow = true
+      })
+    },
+    /* 确认协商信息 */
+    confirmNegotiate () {
+      // 请求成功后
+      this.negotiateStatus = 1
+      this.negotiateConfirm = false
+      this.negotiateShow = true
     },
     bindPickerChange () {},
     goEvaluate () {
@@ -223,6 +298,12 @@ export default {
 <style lang="less" scoped>
 .tf-main-container {
   padding: 118px 20px 217px;
+}
+
+.reason-text {
+  font-size: 28px;
+  line-height: 66px;
+  color: #8f8f94;
 }
 
 .operation-box {
@@ -293,11 +374,11 @@ export default {
   width: 100%;
   height: 66px;
   line-height: 66px;
-  background: #f2f2f4;
   border-radius: 4px;
   text-align: center;
   font-size: 30px;
   color: #666;
+  border: 2px solid #aaa;
 }
 
 .dialog-footer {
@@ -340,5 +421,37 @@ export default {
 }
 .padding40 {
   padding: 40px 0;
+}
+.lp112 {
+  letter-spacing: 113px;
+}
+.lp18 {
+  letter-spacing: 18px;
+}
+.negotiate-dialog {
+  .tf-text {
+    margin-bottom: 60px;
+    line-height: 1;
+  }
+}
+.rate-tag-box {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+  padding: 0 50px;
+  .rate-tag {
+    padding: 0 20px;
+    height: 60px;
+    line-height: 60px;
+    background: rgba(255, 192, 23, 0.1);
+    border-radius: 4px;
+    color: #FFA110;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .rate-tag + .rate-tag  {
+    margin-left: 20px;
+  }
 }
 </style>

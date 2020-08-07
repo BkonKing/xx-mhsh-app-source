@@ -1,9 +1,9 @@
 <template>
   <van-nav-bar class="tf-nav-bar">
     <template #left>
-      <div class="tf-row-vertical-center room_btn" @click="goSelect">
+      <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-location"></span>
-        <span v-if="status" class="tf-text">{{ name }}</span>
+        <span v-if="currentProject" class="tf-text">{{ currentProject.house_name }}</span>
         <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
@@ -20,6 +20,7 @@
 
 <script>
 import { NavBar } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar
@@ -41,14 +42,18 @@ export default {
   data () {
     return {}
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   methods: {
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
-    goSelect () {
-      const url = this.status
+    /* 跳转房屋认证 */
+    goAttestation () {
+      const url = this.currentProject
         ? '/pages/personage/house/select-house'
-        : '/pages/personage/house/attestation?type=1&mode=0'
+        : '/pages/personage/house/attestation?type=1&mode=0&select=1'
       this.$router.push(url)
     },
     scan () {
@@ -69,6 +74,10 @@ export default {
 .tf-icon {
   font-size: 44px;
   color: #fff;
+}
+
+.tf-icon-location {
+  margin-right: 5px;
 }
 
 .tf-text {

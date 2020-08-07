@@ -3,7 +3,6 @@
     <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-main-container">
       <div class="introduce-box">
-        <img class="bg-image" src="@/assets/app-icon.png" mode="aspectFit" />
         <div class="logo-badge">
           <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
         </div>
@@ -68,19 +67,25 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-main-container {
+  padding-top: 88px;
+}
 .introduce-box {
   @relative();
   width: 100%;
-  height: 350px;
+  // height: 350px;
   align-items: center;
+  padding-top: 30px;
+  padding-bottom: 30px;
   margin-bottom: 20px;
+  background: url('../../../assets/app-icon.png')
 }
 
 .logo-badge {
   @flex();
   justify-content: center;
   align-items: center;
-  margin: 30px auto;
+  margin: 0 auto 30px;
   width: 120px;
   height: 120px;
   border-width: 3px;
@@ -114,7 +119,7 @@ export default {
 
 .bg-image {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   width: 100%;
   height: 350px;
 }

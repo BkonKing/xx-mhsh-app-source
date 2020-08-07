@@ -1,11 +1,11 @@
 <template>
-  <div class="phone-box"  :class="{'have-padding': true}">
+  <div class="phone-box"  :class="{'have-padding': true}" @click="makePhoneCall(number)">
     <div class="phone-info" :class="{'phone-info__divider': info}">
       <div v-if="tag" class="phone-name-tag">
         <div class="phone-name-tag__text">{{name}}</div>
       </div>
       <div v-else class="phone-name">{{name}}</div>
-      <div class="tf-row-vertical-center" @click="makePhoneCall(number)">
+      <div class="tf-row-vertical-center">
         <div class="phone-number">{{number}}</div>
         <div class="tf-icon">{{iconPhone}}</div>
       </div>
@@ -119,5 +119,6 @@ export default {
   }
   .tf-card-content {
     padding: 20px 0;
+    color: @gray-7;
   }
 </style>

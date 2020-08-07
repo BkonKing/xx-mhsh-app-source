@@ -65,8 +65,8 @@ export default {
     }
   },
   created () {
-    this.checkUpdate()
-    this.getCacheSize()
+    // this.checkUpdate()
+    // this.getCacheSize()
   },
   methods: {
     /* 检查版本更新 */

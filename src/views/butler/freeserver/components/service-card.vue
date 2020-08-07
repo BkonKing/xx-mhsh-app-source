@@ -84,10 +84,11 @@ export default {
       statusText: '',
       show: false,
       success: false,
-      activeServe: {}
+      activeServe: {} // 当前选中服务
     }
   },
   methods: {
+    /* 点击服务显示二维码 */
     showService (item) {
       const {
         category_type: categoryType,
@@ -96,12 +97,14 @@ export default {
         disable,
         sy_num: syNum
       } = item
+      // 暂停使用或者没有可借的借用服务直接返回
       // eslint-disable-next-line eqeqeq
       if (disable == 1 || (syNum == 0 && categoryType == 2)) {
         return
       }
       this.activeServe = item
       this.statusText = ''
+      // categoryType: 1-人工 2-借用
       // eslint-disable-next-line eqeqeq
       if (categoryType == 1) {
         this.statusText = status === 0 ? '开始排队' : '开始享受服务'

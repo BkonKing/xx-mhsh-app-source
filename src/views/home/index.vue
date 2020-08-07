@@ -14,49 +14,53 @@
           <van-image class="swipe-item__image" :src="item.icon_image" />
         </van-swipe-item>
       </van-swipe>
-      <van-grid class="app-box" :border="false" :column-num="5" square>
+      <van-grid class="app-box" :border="false" :column-num="5">
         <van-grid-item v-for="(item, index) in appList" :key="index" :to="item.url">
           <van-image class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{item.application}}</span>
         </van-grid-item>
       </van-grid>
       <div class="coin-box">
-        <div class="coin-box__title" @click="goHappiness">
-          幸福币专区
-          <span v-if="1" class="sign-btn" @click.stop="sign">签到</span>
-          <span class="coin-number" v-else>
-            <span class="tf-icon tf-icon-moneycollect"></span>
-            <span>1000</span>
-          </span>
-        </div>
-        <van-notice-bar
-          v-if="1"
-          class="coin-message"
-          :scrollable="false"
-          color="#8F8F94"
-          background="#fff"
-          @click="goHappiness"
-        >
-          <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
-            <van-swipe-item v-for="(item, i) in 6" :key="i">
-              <div class="coin-message-name">关于中秋节活动方式投票</div>
-              <div class="coin-message-number">+10</div>
-            </van-swipe-item>
-          </van-swipe>
-        </van-notice-bar>
-        <div class="coin-image-box">
-          <van-image
-            class="coin-image"
-            v-for="(item, i) in coinList"
-            :key="i"
-            :src="item.icon_image"
-            @click="goCoinCommodity"
-          >
-            <div class="coin-tag">
+        <div class="coin-box__header">
+          <div class="coin-box__title" @click="goHappiness">
+            幸福币专区
+            <span v-if="1" class="sign-btn" @click.stop="sign">签到</span>
+            <span class="coin-number" v-else>
               <span class="tf-icon tf-icon-moneycollect"></span>
               <span>1000</span>
-            </div>
-          </van-image>
+            </span>
+          </div>
+          <van-notice-bar
+            v-if="1"
+            class="coin-message"
+            :scrollable="false"
+            color="#8F8F94"
+            background="#fff"
+            @click="goHappiness"
+          >
+            <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+              <van-swipe-item v-for="(item, i) in 6" :key="i">
+                <div class="coin-message-name">关于中秋节活动方式投票</div>
+                <div class="coin-message-number">+10</div>
+              </van-swipe-item>
+            </van-swipe>
+          </van-notice-bar>
+        </div>
+        <div class="coin-box__content">
+          <div class="coin-image-box">
+            <van-image
+              class="coin-image"
+              v-for="(item, i) in coinList"
+              :key="i"
+              :src="item.icon_image"
+              @click="goCoinCommodity"
+            >
+              <div class="coin-tag">
+                <span class="tf-icon tf-icon-moneycollect"></span>
+                <span>1000</span>
+              </div>
+            </van-image>
+          </div>
         </div>
       </div>
       <div class="life-box">
@@ -77,7 +81,7 @@
               <span>1000</span>
             </div>
           </van-image>
-        </div> -->
+        </div>-->
         <tf-image-list :data="saleImages" :column="3" srcKey="src" @click="clickSpecialSale"></tf-image-list>
       </div>
       <div class="life-box tf-mt-base">
@@ -107,7 +111,7 @@
             <div class="activity-info">
               <div class="activity-info__day">
                 <span class="tf-text">23</span>
-                <span>五月</span>
+                <span class="font20">五月</span>
               </div>
               <div class="activity-info__right">
                 <div class="activity-info__title">高考100天抢跑冲刺计划 助力助力助力</div>
@@ -157,6 +161,8 @@ export default {
   data () {
     return {
       headerColor: '#fff', // 头部颜色
+      projectStatus: undefined,
+      projectName: '',
       swipeImages: [
         {
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
@@ -251,8 +257,14 @@ export default {
     this.headerColor = this.swipeImages[0].color
   },
   methods: {
+    /* 轮播图change事件 */
     swipeChange (index) {
       this.headerColor = this.swipeImages[index].color
+    },
+    /* 设置当前房屋 */
+    setCurProject ({ house_name }) {
+      this.projectStatus = 1
+      this.projectName = house_name
     },
     /* 签到 */
     sign () {
@@ -368,20 +380,30 @@ export default {
   &__text {
     margin-top: 20px;
     font-size: 24px;
+    line-height: 1;
+  }
+  /deep/ .van-grid-item__content {
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 /* 幸福币专区 */
 .coin-box {
   margin: 0 20px;
-  padding: 0 30px 30px;
+  padding-bottom: 30px;
   box-shadow: 0px 0px 12px 1px rgba(99, 99, 99, 0.2);
   border-radius: 10px;
+  &__header {
+    padding: 30px;
+    border-radius: 10px;
+    background: linear-gradient(0deg, #ffffff, #ffdec8);
+  }
   &__title {
     display: flex;
     justify-content: space-between;
-    padding: 27px 0;
     font-size: 34px;
     font-weight: 500;
+    color: #ca864e;
     .sign-btn {
       padding: 0 30px;
       height: 44px;
@@ -392,6 +414,9 @@ export default {
       text-align: center;
       color: #fff;
     }
+  }
+  &__content {
+    padding: 0 30px;
   }
   .coin-image-box {
     display: flex;
@@ -562,7 +587,7 @@ export default {
   text-align: center;
   font-size: 24px;
 }
-.coin-tag {
+/deep/ .coin-tag {
   position: absolute;
   left: 20px;
   bottom: 10px;
@@ -574,6 +599,9 @@ export default {
   background: @orange-dark;
   opacity: 0.8;
   border-radius: 18px;
+  .tf-icon {
+    margin-right: 6px;
+  }
 }
 .coin-number {
   font-size: 36px;
@@ -590,10 +618,11 @@ export default {
   height: 60px;
   font-size: 24px;
   padding: 0 20px;
-  border: 1px dashed rgba(170, 170, 170, 0.6);
+  border: 1px dashed #CA864E;
   border-radius: 4px;
-  margin-bottom: 30px;
-  color: #8f8f94;
+  margin-top: 30px;
+  color: #CA864E;
+  background: none !important;
   .notice-swipe {
     height: 60px;
     /deep/ .van-swipe-item {
@@ -601,7 +630,7 @@ export default {
       display: flex;
       justify-content: space-between;
       line-height: 60px;
-      color: @gray-7;
+      color: #CA864E;
     }
   }
   &-name {
@@ -613,7 +642,7 @@ export default {
       display: block;
       width: 8px;
       height: 8px;
-      background: #383838;
+      background: #CA864E;
       border-radius: 50%;
       margin-right: 10px;
     }
@@ -621,5 +650,8 @@ export default {
   &-number {
     line-height: 60px;
   }
+}
+.font20 {
+  font-size: 20px;
 }
 </style>

@@ -54,7 +54,7 @@ export default {
   data () {
     return {
       search: '',
-      category_type: 0,
+      category_type: 0, // 当前类型
       rg_num: 0, // 人工服务数量
       jy_num: 0, // 借用服务数量
       serviceList: []
@@ -64,11 +64,12 @@ export default {
     this.getFreeServerList()
   },
   methods: {
+    /* 获取全部免费服务类型 */
     getFreeServerList (searchName) {
-      getFreeServerList({
+      getFreeServerList(/* {
         category_type: this.category_type,
         searchName
-      }).then((res) => {
+      } */).then((res) => {
         if (res.success) {
           const { rg_num, jy_num, records } = res.data
           this.rg_num = rg_num
@@ -77,13 +78,9 @@ export default {
         }
       })
     },
+    /* 搜索服务（暂时弃用） */
     searchList ({ value }) {
       this.getFreeServerList(value)
-    }
-  },
-  watch: {
-    category_type () {
-      // this.getFreeServerList()
     }
   }
 }

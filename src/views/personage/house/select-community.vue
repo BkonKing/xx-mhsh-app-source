@@ -127,14 +127,14 @@ export default {
       this.$router.go(-1)
     },
     nextStep () {
-      this.transitionName = 'slide-left'
+      this.transitionName = 'slide-to-left'
       this.step++
     },
     goback () {
       if (this.step === 0) {
         this.$router.go(-1)
       } else {
-        this.transitionName = 'slide-right'
+        this.transitionName = 'slide-to-right'
         this.step--
       }
     }
@@ -155,14 +155,34 @@ export default {
 /deep/ .tf-clist {
   border-radius: 0;
 }
-.slide-right-enter-active,
-.slide-right-leave-active,
-.slide-left-enter-active,
-.slide-left-leave-active {
+.slide-to-right-enter-active,
+.slide-to-right-leave-active,
+.slide-to-left-enter-active,
+.slide-to-left-leave-active {
+  will-change: transform;
   transition: all 500ms;
+  position: absolute;
   top: 208px;
   left: 0;
   right: 0;
   bottom: auto;
+  backface-visibility: hidden;
+  perspective: 800;
+}
+.slide-to-right-enter {
+  opacity: 1;
+  transform: translate3d(-100%, 0, 0);
+}
+.slide-to-right-leave-active {
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
+}
+.slide-to-left-enter {
+  opacity: 1;
+  transform: translate3d(100%, 0, 0);
+}
+.slide-to-left-leave-active {
+  opacity: 0;
+  transform: translate3d(-100%, 0, 0);
 }
 </style>

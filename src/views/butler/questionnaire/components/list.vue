@@ -2,7 +2,10 @@
   <refreshList :list.sync="list" @load="onLoad">
     <template v-slot="{item}">
       <div class="question-box" :class="{'question-finish-box': !item.status}" @click="jump(item)">
-        <div class="question-status-box">
+        <div
+          class="question-status-box"
+          :style="{'background': item.wjtp_type == 1 ? '#448FE4' : '#55B862'}"
+        >
           <span class="question-type">{{ item.wjtp_type }}</span>
         </div>
         <div class="question-box__right">
@@ -68,13 +71,13 @@ export default {
 
 .question-finish-box {
   .question-status-box {
-    background: #aaa;
+    background: #aaa !important;
   }
   .participate-status--proceed {
     color: @gray-7;
   }
   .tf-gradient-tag--warning {
-    background: #AAAAAA;
+    background: #aaaaaa;
   }
 }
 
@@ -88,6 +91,8 @@ export default {
 }
 .question-type {
   line-height: 170px;
+  font-size: 100px;
+  color: #fff;
 }
 .question-box__right {
   @flex-column();
