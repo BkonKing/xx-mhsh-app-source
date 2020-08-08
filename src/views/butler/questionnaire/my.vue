@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <questionList :data.sync="list"></questionList>
+      <questionList :data.sync="list" @load="onLoad"></questionList>
     </div>
   </div>
 </template>
@@ -24,17 +24,7 @@ export default {
   },
   data () {
     return {
-      list: [
-        {
-          id: '1',
-          title: '小区门禁更换投票',
-          remarks: '小区门禁已使用多年部门功能已损坏需要更换',
-          wjtp_type: '2',
-          virtual_coin: '10',
-          joins: '300',
-          stime: '2020-06-03 16:35:26'
-        }
-      ]
+      list: []
     }
   },
   created () {
@@ -47,7 +37,8 @@ export default {
           this.list = res.data
         }
       })
-    }
+    },
+    onLoad () {}
   }
 }
 </script>

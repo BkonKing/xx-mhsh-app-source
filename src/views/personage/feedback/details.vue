@@ -65,6 +65,7 @@ export default {
   padding: 10px 30px;
 }
 .tf-row-space-between {
+  align-items: center;
   padding-bottom: 30px;
 }
 .tf-text-lg {

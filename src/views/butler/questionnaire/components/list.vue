@@ -15,7 +15,7 @@
               <div
                 class="tf-gradient-tag--warning"
                 v-if="item.virtual_coin > 0"
-              >+{{ item.virtual_coin }}</div>
+              ><span class="tf-icon tf-icon-moneycollect"></span>+{{ item.virtual_coin }}</div>
               <div class="participate-status participate-status--proceed">{{ item.joins }}人参加</div>
             </div>
             <div class="question-info__time">{{ item.stime }}</div>
@@ -48,7 +48,9 @@ export default {
       const url = `/pages/butler/questionnaire/details?id=${item.id}`
       this.$router.push(url)
     },
-    onLoad () {}
+    onLoad () {
+      this.$emit('load')
+    }
   },
   watch: {
     list (value) {

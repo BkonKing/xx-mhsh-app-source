@@ -14,12 +14,12 @@
       <div class="coin-list">
         <refreshList :list.sync="list" @load="onLoad">
           <template v-slot="{item}">
-            <div class="coin-list-item">
+            <div v-show="current === 0 || item.type === current" class="coin-list-item">
               <div class="coin-list-item-left">
                 <div class="coin-list-item__name">{{item.name}}</div>
                 <div class="coin-list-item__time">{{item.time}}</div>
               </div>
-              <div class="coin-list-item__number">{{item.number}}</div>
+              <div class="coin-list-item__number" :class="{'tf-text-primary': item.status}">{{item.status ? '+' : '-'}}{{item.number}}</div>
             </div>
           </template>
         </refreshList>
@@ -45,15 +45,19 @@ export default {
       list: [
         {
           id: 1,
+          type: 1,
           name: '签到送积分',
           time: '2020-07-07 12:00:00',
-          number: '+1'
+          number: '1',
+          status: 1
         },
         {
-          id: 1,
+          id: 2,
+          type: 2,
           name: '签到送积分',
           time: '2020-07-07 12:00:00',
-          number: '+1'
+          number: '1',
+          status: 0
         }
       ]
     }

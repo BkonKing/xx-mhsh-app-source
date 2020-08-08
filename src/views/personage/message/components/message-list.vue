@@ -5,16 +5,17 @@
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)" v-longtap="{tap: operate, params: item}">
           <img
-            v-if="type !== 'system'"
+            v-if="type == 'transaction'"
             class="tf-list-image"
             :src="item.image"
-            :class="[`list-image__${type}`]"
             mode="aspectFit"
           />
+          <template v-else-if="type !== 'system'">
+            <div class="list-icon-box"></div>
+          </template>
           <div class="tf-space-around">
             <div class="tf-row-vertical-center" :class="{'tf-mb-base': type === 'system'}">
-              <div class="tf-list-title">{{item.title}}</div>
-              <div v-if="item.status" class="tf-circle-tag--warning"></div>
+              <div class="tf-list-title" :class="{'tf-read-after-tag': item.status}">{{item.title}}</div>
             </div>
             <div class="tf-list-content">{{item.content}}</div>
           </div>
@@ -66,19 +67,25 @@ export default {
       this.isRead = status
       this.moreShowChild = true
     },
-    mark () {
+    mark () {},
+    jump () {
+      switch (this.type) {
+        case 'transaction':
+          break
 
+        default:
+          break
+      }
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.list-image__butler,
-.list-image__activity,
-.list-image__work {
+.list-icon-box {
   width: 80px;
   height: 80px;
+  border-radius:10px;
 }
 .tf-list-title,
 .tf-list-content {

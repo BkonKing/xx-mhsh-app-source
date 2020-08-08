@@ -9,8 +9,8 @@
             <div class="buy-list-item-right">
               <div class="buy-list-item__name">{{item.name}}</div>
               <div class="buy-list-item__specification">规格：{{item.specification}}</div>
-              <div class="tf-row">
-                <div class="tf-icon buy-list-item__price">{{item.time}}</div>
+              <div class="tf-row-vertical-center">
+                <div class="tf-icon tf-icon-moneycollect"></div>
                 <div class="buy-list-item__price">{{item.number}}</div>
               </div>
             </div>
@@ -90,5 +90,10 @@ export default {
 }
 .buy-list-item__price {
   font-size: 28px;
+}
+.tf-icon-moneycollect {
+  font-size: 28px;
+  color: #FFA110;
+  margin-right: 6px;
 }
 </style>

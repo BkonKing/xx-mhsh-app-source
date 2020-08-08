@@ -293,11 +293,11 @@ export default {
   margin: 0 23px;
 }
 .gray-month {
-  color: #999;
+  color: #222;
 }
 .days-sign {
   background-color: #ffae00;
-  color: #fff;
+  // color: #fff;
 }
 .start-sign {
   border-top-left-radius: 36px;

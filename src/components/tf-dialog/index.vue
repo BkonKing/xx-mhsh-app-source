@@ -1,5 +1,5 @@
 <template>
-  <van-popup class="tf-van-popup" v-model="value">
+  <van-popup class="tf-van-popup" v-model="value" @click-overlay="close" :close-on-click-overlay="false">
     <div class="tf-dialog__wrapper-box">
       <span class="tf-icon" @click="close">&#xe781;</span>
       <div class="tf-dialog">

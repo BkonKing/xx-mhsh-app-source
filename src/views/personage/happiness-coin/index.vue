@@ -15,7 +15,7 @@
           <div class="tf-icon tf-icon-moneycollect coin-icon"></div>
           <div class="coin-number">2333</div>
         </div>
-        <div class="sign-tag sign-tag--complete" @click="showCalendar = true">签到</div>
+        <div class="sign-tag" :class="{'sign-tag--complete': true}" @click="signIn(true)">{{true ? '已签到' : '签到'}}</div>
       </div>
     </div>
     <div class="coin-main-box">
@@ -37,19 +37,19 @@
       </div>
       <div class="happiness-coin-title">幸福币任务</div>
       <div class="task-box">
-        <div class="task-item">
+        <div class="task-item" v-for="(item, i) in taskList" :key="i">
           <div class="tf-row tf-flex-item">
             <div class="task-item__icon"></div>
             <div class="tf-space-between">
-              <div class="task-item__title">完成房间认证</div>
+              <div class="task-item__title">{{item.name}}</div>
               <div class="tf-row">
-                <div class="task-item__remarks">开门认证成功获得</div>
-                <div class="task-item__remarks--gold">20幸福币</div>
+                <div class="task-item__remarks">{{item.content}}获得</div>
+                <div class="task-item__remarks--gold">{{item.coin}}幸福币</div>
               </div>
             </div>
           </div>
-          <div class="task-item__number">+20</div>
-          <!-- <div class="task-item__btn">去完成</div> -->
+          <div v-if="item.status" class="task-item__number">+{{item.coin}}</div>
+          <div v-else class="task-item__btn">去完成</div>
         </div>
       </div>
       <div class="sale-box">
@@ -57,32 +57,14 @@
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
       </div>
       <div class="sale-area">
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
+        <div class="commodity-box" v-for="(item, i) in saleList" :key="i">
+          <img class="commodity-image" :src="item.image" />
+          <div class="commodity-name">{{item.name}}</div>
           <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
+            <div class="commodity-current-price">￥{{item.specialPrice}}</div>
+            <div class="commodity-original-price">￥{{item.originalPrice}}</div>
           </div>
-          <div class="commodity-coin">1000幸福币</div>
-        </div>
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
-          <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
-          </div>
-          <div class="commodity-coin">1000幸福币</div>
-        </div>
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
-          <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
-          </div>
-          <div class="commodity-coin">1000幸福币</div>
+          <div class="commodity-coin">{{item.coin}}幸福币</div>
         </div>
       </div>
     </div>
@@ -103,7 +85,30 @@ export default {
       showCalendar: false, // 签到日历是否隐藏
       cur_year: 0, // 签到日历展示年份
       cur_month: 0, // 签到日历展示月份
-      signArr: [] // 签到日历展示数据
+      signArr: [], // 签到日历展示数据
+      taskList: [
+        {
+          name: '完成房间认证',
+          content: '开门认证成功',
+          coin: 20,
+          status: 1
+        },
+        {
+          name: '完成房间认证2',
+          content: '开门认证成功2',
+          coin: 20,
+          status: 0
+        }
+      ],
+      saleList: [
+        {
+          image: '/static/app-icon.png',
+          name: '雨前西湖龙井',
+          specialPrice: '240',
+          originalPrice: '260',
+          coin: '2400'
+        }
+      ]
     }
   },
   created () {
@@ -426,6 +431,19 @@ export default {
     this.signArr = signArr
   },
   methods: {
+    /* 签到事件 */
+    signIn (status) {
+      // 已签到，则打开签到日历
+      if (status) {
+        this.showCalendar = true
+      } else {
+        this.signReq()
+      }
+    },
+    /* 签到请求 */
+    signReq () {
+
+    },
     goCoinRecord () {
       this.$router.push('/pages/personage/happiness-coin/coin-record')
     },
@@ -547,6 +565,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   height: 90px;
+}
+.task-item + .task-item {
+  margin-top: 60px;
 }
 .task-item__icon {
   width: 90px;

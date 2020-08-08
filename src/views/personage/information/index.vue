@@ -244,6 +244,7 @@ export default {
 .tf-card-content {
   @flex();
   align-items: center;
+  color: #222;
 }
 
 /deep/ .van-dropdown-menu__bar {

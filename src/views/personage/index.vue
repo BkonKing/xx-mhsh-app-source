@@ -33,14 +33,10 @@
           </div>
           <div class="tf-flex-item tf-column tf-flex-center">
             <button
+              class="user-btn__text"
               :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
               @click="sign"
-            >
-              <div
-                class="user-btn__text"
-                :style="{ color: signStatus ? '#8F8F94' : '#fff' }"
-              >{{signStatus | signText}}</div>
-            </button>
+            >{{signStatus | signText}}</button>
           </div>
         </div>
       </div>
@@ -52,7 +48,7 @@
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待处理</div>
-                <span class="van-info personage-badge">3</span>
+                <span class="personage-badge">3</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
@@ -77,6 +73,7 @@
             <div class="order-box">
               <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
               <div class="text-sm">待付款</div>
+              <span class="personage-badge">3</span>
             </div>
             <div class="order-box">
               <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
@@ -317,20 +314,20 @@ export default {
   line-height: 66px;
   border-radius: 33px;
   border-width: 0;
+  font-size: 30px;
+  padding: 0;
 }
 .user-btn--signin {
   background-image: linear-gradient(to right, #f9866b, #eb5841);
+  color: #fff;
 }
 .user-btn--unsign {
   background-image: none;
   background-color: #f2f2f4;
-  color: @gray-7;
-}
-.user-btn__text {
-  font-size: 30px;
-  line-height: 66px;
+  color: #8f8f94;
 }
 .manage-box {
+  position: relative;
   flex: 1;
   height: 144px;
   @flex-column();
@@ -343,11 +340,15 @@ export default {
   border-radius: 8px;
 }
 .order-box {
+  position: relative;
   @flex-column();
   flex: 1;
   justify-content: center;
   align-items: center;
   height: 174px;
+  .personage-badge {
+    top: 26px;
+  }
 }
 .text-sm {
   font-size: 24px;
@@ -374,12 +375,14 @@ export default {
   position: absolute;
   top: 0;
   right: 20px;
+  min-width: 34px;
   height: 34px;
-  line-height: 32px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: @red-dark;
+  line-height: 34px;
+  border: 1px solid @red-dark;
   border-radius: 50%;
+  font-size: 24px;
+  color: @red-dark;
+  text-align: center;
 }
 .tf-main-container {
   overflow: hidden;

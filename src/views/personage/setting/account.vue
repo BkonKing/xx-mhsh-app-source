@@ -6,15 +6,15 @@
       class="account"
       v-for="(item, i) in accountList"
       :key="i"
-      :class="{'account-active': active === i}"
-      @click="active = i"
+      :class="{'account-active': active.id === item.id}"
+      @click="switchAccount(item)"
     >
       <img class="user-avatar" :src="item.avatar" mode="aspectFill" />
       <div class="tf-space-around">
-        <div class="user-name">{{item.name}}</div>
-        <div class="tf-text-grey">{{item.phone}}</div>
+        <div class="user-name">{{item.realname}}</div>
+        <div class="tf-text-grey">{{item.mobile}}</div>
       </div>
-      <template v-if="active === i">
+      <template v-if="active.id === item.id">
         <div class="checked-tag"></div>
         <div class="tf-icon tf-icon-check"></div>
       </template>
@@ -32,17 +32,26 @@ export default {
   },
   data () {
     return {
-      active: undefined,
+      active: {},
       accountList: [
         {
+          id: 1,
           avatar: '/static/app-icon.png',
-          name: '这是一个默认昵称',
-          phone: '15022223333'
+          realname: '这是一个默认昵称',
+          mobile: '15022223333'
         }
       ]
     }
   },
+  created () {
+
+  },
   methods: {
+    /* 切换账号 */
+    switchAccount (item) {
+      this.active = item
+    },
+    /* 账号登录 */
     login () {
 
     }

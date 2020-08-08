@@ -6,7 +6,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-card">
-      <div class="tf-card-header">选择类型</div>
+      <div class="tf-card-header">选择反馈类型</div>
       <div class="tf-card-content" style="padding-bottom: 10px;">
         <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
       </div>

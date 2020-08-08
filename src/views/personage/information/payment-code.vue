@@ -125,7 +125,9 @@ export default {
     jumpForget () {
       this.$router.push({
         path: '/pages/personage/information/forget-payment-code',
-        type: 1
+        query: {
+          type: 1
+        }
       })
     }
   }

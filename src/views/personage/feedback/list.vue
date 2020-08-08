@@ -65,7 +65,9 @@ export default {
   font-weight: 500;
 }
 .tf-card-content {
+  font-size: 24px;
   color: #666;
+  padding: 20px 0;
 }
 .list-item--time {
   font-size: 24px;

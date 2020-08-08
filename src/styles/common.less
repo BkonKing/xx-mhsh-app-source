@@ -557,7 +557,7 @@
 
   .van-tab--active {
     .van-tab__text {
-      font-size: 34px;
+      font-size: 28px;
       font-weight: bold;
     }
   }
@@ -670,4 +670,31 @@
 
 .van-dialog .van-button {
   height: 66px;
+}
+
+.tf-read-tag {
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    border-radius: 7px;
+    background-color: #eb5841;
+  }
+}
+.tf-read-after-tag {
+  position: relative;
+  &::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    margin-left: 8px;
+    border-radius: 7px;
+    background-color: #eb5841;
+  }
 }

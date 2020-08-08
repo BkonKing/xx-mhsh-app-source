@@ -87,7 +87,9 @@ export default {
     }
   },
   methods: {
-    onLoad () {},
+    onLoad () {
+      this.$emit('load')
+    },
     goDetails (category, id) {
       this.$router.push({
         path: '/pages/neighbours/details',

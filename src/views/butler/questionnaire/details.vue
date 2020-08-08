@@ -8,8 +8,13 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <div class="tf-bg-white">
+      <div class="tf-bg-white" style="position:relative;overflow: hidden;">
         <userInfo avatar="@/assets/app-icon.png" name="用户昵称" time="2020.05.30"></userInfo>
+        <div class="finish-tag-box" v-if="wjtp_info.is_finish">
+          <div class="finish-tag">
+            <div class="finish-text">已结束</div>
+          </div>
+        </div>
         <div class="tf-article-title">
           {{wjtp_info.title}}
           <div v-if="wjtp_info.content" class="info-content">{{wjtp_info.content}}</div>
@@ -19,7 +24,7 @@
             class="tf-gradient-tag--warning"
             v-if="wjtp_info.virtual_coin > 0"
           >参与得{{wjtp_info.virtual_coin}}幸福币</div>
-          <div class="people-number" :class="{'tf-text-grey': wjtp_info.is_answer}">2333人参加</div>
+          <div class="people-number" :class="{'tf-text-grey': finishStatus}">2333人参加</div>
         </div>
       </div>
       <div class="vote-padding">
@@ -32,7 +37,7 @@
                 :class="{'required': item.is_required == 1}"
               >Q{{i + 1}}：{{item.question}}？</div>
               <template v-if="item.item_type == 1">
-                <van-radio-group v-model="item.answer">
+                <van-radio-group v-model="item.answer" :disabled="Boolean(finishStatus)">
                   <van-radio v-for="(radio, i) in item.option" :key="i" :name="radio.value">
                     {{radio.label}}
                     <template #icon="props">
@@ -43,7 +48,7 @@
                 </van-radio-group>
               </template>
               <template v-else-if="item.item_type == 2">
-                <van-checkbox-group v-model="item.answer">
+                <van-checkbox-group v-model="item.answer" :disabled="Boolean(finishStatus)">
                   <van-checkbox
                     v-for="(checkbox, i) in item.option"
                     :key="i"
@@ -59,11 +64,18 @@
                   rows="1"
                   autosize
                   type="textarea"
+                  :disabled="Boolean(finishStatus)"
                 />
               </template>
             </div>
           </div>
-          <van-button class="tf-mt-lg" v-if="!wjtp_info.is_answer" size="large" type="danger" @click="confirm">提交</van-button>
+          <van-button
+            class="tf-mt-lg"
+            v-if="!finishStatus"
+            size="large"
+            type="danger"
+            @click="confirm"
+          >提交</van-button>
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
           <div class="tf-text-grey tf-center">投票选项(单选)</div>
@@ -71,13 +83,13 @@
             class="vote-box tf-row-space-between"
             v-for="(item, i) in voteList"
             :key="i"
-            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && item.item_type === 2 && !wjtp_info.is_answer}"
+            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && item.item_type === 2 && !finishStatus}"
           >
             <!--  投票统计进度条-->
-            <div v-if="wjtp_info.is_answer" class="vote-progress"></div>
+            <div v-if="finishStatus" class="vote-progress"></div>
             <div class="vote-title">{{ item.question }}</div>
             <!-- 已答-->
-            <div class="vote-result" v-if="wjtp_info.is_answer">{{ item.number }}票</div>
+            <div class="vote-result" v-if="finishStatus">{{ item.number }}票</div>
             <!-- 未答-->
             <template v-else>
               <!-- 单选 -->
@@ -93,9 +105,8 @@
               </button>
             </template>
           </div>
-          <!-- <text class="tf-auxiliary-content" v-if="wjtp_info.is_answer">投票已结束</text> -->
           <van-button
-            v-if="!wjtp_info.is_answer && voteList[0].item_type === 2"
+            v-if="!finishStatus && voteList[0].item_type === 2"
             size="large"
             type="danger"
             @click="confirm"
@@ -160,6 +171,11 @@ export default {
     this.wjtpId = id
     this.getWjtpInfo()
   },
+  computed: {
+    finishStatus () {
+      return this.wjtp_info.is_answer || this.wjtp_info.is_finish
+    }
+  },
   methods: {
     getWjtpInfo () {
       getWjtpInfo({
@@ -187,12 +203,30 @@ export default {
     },
     /* 投票提交 */
     confirm () {
-      if (this.answer.length > 0) {
-        this.addWjtp(this.answer)
-      } else {
-        Toast({
-          message: '请选择要投票的选项'
+      const isEmpty = (val) =>
+        typeof val === 'undefined' ||
+        val === null ||
+        val === '' ||
+        val.length === 0
+      if (this.wjtp_info.wjtp_type == 1) {
+        const params = []
+        const status = this.voteList.every((obj) => {
+          if (obj.is_required && isEmpty(obj.answer)) {
+            Toast(`${obj.question}不能为空`)
+            return false
+          }
+          params.push(obj.answer)
+          return true
         })
+        status && this.addWjtp(params)
+      } else {
+        if (this.answer.length > 0) {
+          this.addWjtp(this.answer)
+        } else {
+          Toast({
+            message: '请选择要投票的选项'
+          })
+        }
       }
     },
     /* 上传问卷投票 */
@@ -367,10 +401,10 @@ export default {
     /deep/ .van-checkbox {
       height: 46px;
       .van-checkbox__icon {
-        height: 22px;
+        height: 26px;
         .van-icon {
-          width: 22px;
-          height: 22px;
+          width: 26px;
+          height: 26px;
         }
       }
       .van-checkbox__icon--checked .van-icon {
@@ -391,5 +425,32 @@ export default {
   padding-left: 0;
   padding-right: 0;
   border-bottom: 1px solid #aaa;
+}
+.finish-tag-box {
+  position: absolute;
+  top: -44px;
+  right: -44px;
+  padding: 15px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 5px solid rgba(170, 170, 170, 1);
+  text-align: center;
+  .finish-tag {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgba(170, 170, 170, 1);
+    border-radius: 50%;
+    color: #8f8f94;
+    font-size: 38px;
+    line-height: 170px;
+    font-weight: 500;
+    transform: rotate(-12deg);
+  }
+  .finish-text {
+    position: absolute;
+    top: 56px;
+    right: 30px;
+  }
 }
 </style>

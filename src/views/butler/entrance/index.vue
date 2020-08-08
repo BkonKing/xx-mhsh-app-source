@@ -13,10 +13,10 @@
         <span class="tf-icon" @click="goList">&#xe791;</span>
       </template>
     </van-nav-bar>
-    <div class="select-house">
+    <div class="select-house" @click="goAttestation">
       <div class="tf-row-vertical-center">
         <span class="tf-icon tf-icon-location"></span>
-        <span>焦作征云美好生活家园 5栋2单元1001</span>
+        <span>{{currentProject.house_name || '请选择'}}</span>
       </div>
       <span class="tf-icon tf-icon-caret-down"></span>
     </div>
@@ -67,6 +67,7 @@
 <script>
 import { NavBar } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
+import { mapGetters } from 'vuex'
 import { getQrCode, ycOpenDoor } from '@/api/butler.js'
 export default {
   components: {
@@ -98,6 +99,9 @@ export default {
       instructionContent:
         '说明书，是以应用文体的方式对某事或物来进行相对的详细描述，方便人们认识和了解某事或物。说明书要实事求是，有一说一、有二说二，不可为达到某种目的而夸大产品作用和性能。说明书要全面的说明事物，不仅介绍其优点，同时还要清楚地说明应注意的事项和可能产生的问题。产品说明书、使用说明书、安装说明书一般采用说明性文字，而戏剧演出类说明书则可以以记叙、抒情为主。说明书可根据情况需要，使用图片、图表等多样的形式，以期达到最好的说明效果。'
     }
+  },
+  computed: {
+    ...mapGetters(['currentProject'])
   },
   created () {
     // 首次进入页面需弹窗一次使用说明
@@ -176,7 +180,9 @@ export default {
     ycOpenDoor () {
       ycOpenDoor().then((res) => {
         if (res.success) {
-          this.openDoorTime = res
+          this.openDoorTime = new Date(parseInt(res.timestamp) * 1000)
+            .toLocaleString()
+            .replace(/:\d{1,2}$/, ' ')
         }
       })
     },
@@ -190,6 +196,9 @@ export default {
     },
     goList () {
       this.$router.push('/pages/butler/entrance/list')
+    },
+    goAttestation () {
+      this.$router.push('/pages/personage/house/select-house')
     }
   }
 }

@@ -16,23 +16,15 @@
           <div class="tf-card-header">
             <div class="tf-card-header__title">内容描述</div>
             <div
-              class="tf-card-header__status"
-              :class="{ 'tf-card-header__status--complete': status > 5 }"
-            >{{ statusText[status] }}</div>
+              class="tf-text-lg"
+              :class="{'tf-text-primary': [1,3,5].indexOf(status) > -1}"
+            >{{statusText[status]}}</div>
           </div>
-          <div class="tf-card-content">{{ content }}</div>
-          <div class="tf-image-box">
-            <img
-              class="tf-image"
-              v-for="(item, i) in images"
-              :src="item.src"
-              :key="i"
-              mode="widthFix"
-            />
-          </div>
+          <div class="tf-card-content">{{content}}</div>
+          <tf-image-list v-if="images.length" :data="images" :column="5" mode="show"></tf-image-list>
         </div>
         <div class="time-line-box">
-          <div v-if="status === 4" class="plan-btn-box">
+          <div v-if="status > 4" class="plan-btn-box">
             <van-button class="plan-btn" @click="planShow = true">
               <span class="tf-icon tf-icon-plus"></span>
               添加任务进度
@@ -40,61 +32,87 @@
           </div>
           <tfTimeline class="tf-bg-white tf-mt-base tf-padding-base" :options="timelineList"></tfTimeline>
           <div class="transaction-btn-box">
-            <div class="tf-icon tf-icon-image transaction-btn" @click="showImage">
+            <div
+              v-if="status == 6"
+              class="tf-icon tf-icon-star transaction-btn"
+              @click="evaluateDialog = true"
+            ></div>
+            <div
+              v-if="status == 6"
+              class="tf-icon tf-icon-image transaction-btn"
+              @click="showImage"
+            >
               <span class="van-info">2</span>
             </div>
-            <div class="tf-icon tf-icon-filedone transaction-btn" @click="negotiateShow = true"></div>
+            <div
+              v-if="status == 6"
+              class="tf-icon tf-icon-filedone transaction-btn"
+              @click="negotiateShow = true"
+            ></div>
           </div>
         </div>
       </div>
       <div v-if="status < 6" class="operation-box">
         <div class="operation-content">
           等待
-          <span class="tf-text-blue">鲁班</span>
-          分派
+          <span class="tf-text-orange">鲁班</span>
+          {{statusText[status]}}
           <span class="tf-text-primary">(剩余时间00:12:12)</span>
         </div>
-        <template v-if="0">
-          <div v-if="status === 0 || status === 1" class="tf-row-space-between">
+        <template v-if="role">
+          <div v-if="status === 1 || status === 3" class="tf-row-space-between">
             <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-            <div v-if="status === 0" class="tf-btn tf-btn-primary" @click="showAssign">确认受理</div>
-            <div v-else class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
+            <div v-if="status === 1" class="tf-btn tf-btn-primary" @click="showAssign">确认受理</div>
+            <div v-if="status === 3" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
           </div>
-          <div v-if="status === 4" class="tf-btn" @click="cancelAssign">取消分派</div>
+          <div v-if="status === 4 || status === 5" class="tf-btn" @click="cancelAssign">取消分派</div>
         </template>
         <template v-else>
-          <div v-if="status === 4" class="tf-row-space-between">
-            <div class="tf-btn tf-mr-lg" @click="cancelAssignShow = true">取消任务</div>
-            <div v-if="1" class="tf-btn tf-btn-primary" @click="acceptPlanShow = true">接受任务</div>
-            <div v-else class="tf-btn tf-btn-primary" @click="showAssign">确认结案</div>
+          <div v-if="[4,5,6].indexOf(status) > -1" class="tf-row-space-between">
+            <div class="tf-btn tf-mr-lg" @click="cancelShow = true">取消任务</div>
+            <div
+              v-if="status === 4"
+              class="tf-btn tf-btn-primary"
+              @click="acceptPlanShow = true"
+            >接受任务</div>
+            <div v-if="status === 6" class="tf-btn tf-btn-primary" @click="settleShow = true">上传照片</div>
+            <div v-if="status === 5" class="tf-btn tf-btn-primary" @click="showAssign">确认结案</div>
           </div>
-          <div v-if="status === 5" class="tf-btn tf-btn-primary" @click="settleShow = true">上传照片</div>
         </template>
       </div>
     </div>
     <!-- 撤销 -->
-    <tf-dialog v-model="revocationShow" :showFotter="true" :hiddenOff="true">
+    <tf-dialog
+      v-model="revocationShow"
+      title="撤销提报"
+      :showFotter="true"
+      :hiddenOff="true"
+      @confirm="revocationSubmit"
+    >
       <template>
-        <div class="alert-text">撤销后将不再进行处理解决 确定撤销提报？</div>
+        <div class="plan-alert tf-mt-base">撤销后将不再进行处理解决</div>
         <div class="tf-form-box">
-          <div class="tf-form-label">取消原因：</div>
+          <div class="tf-form-label required">撤销原因：</div>
           <div class="tf-form-item">
-            <van-picker
+            <tf-picker
               class="tf-form-item__input"
-              @change="bindPickerChange"
-              :value="index"
-              :range="array"
+              v-model="revocationReason"
+              title="撤销原因"
+              value-key="label"
+              selected-key="value"
+              :columns="revocationArray"
             >
-              <div v-if="array[index]" class="tf-form-item__input">{{ array[index] }}</div>
-              <div v-else class="tf-form-item__input--placeholder">请选择</div>
-            </van-picker>
-            <div class="tf-icon tf-form-item__icon">&#xe7ce;</div>
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
           </div>
         </div>
         <div class="tf-form-box">
-          <div class="tf-form-label">取消说明：</div>
+          <div class="tf-form-label">补充说明：</div>
           <van-field
-            v-model="reason"
+            v-model="revocationExplain"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -112,63 +130,78 @@
         <div class="tf-form-box">
           <div class="tf-form-label">处理部门：</div>
           <div class="tf-form-item">
-            <van-picker
+            <tf-picker
               class="tf-form-item__input"
-              @change="bindPickerChange"
-              :value="index"
-              :range="array"
+              v-model="revocationReason"
+              title="撤销原因"
+              value-key="label"
+              selected-key="value"
+              :columns="revocationArray"
             >
-              <div v-if="array[index]" class="tf-form-item__input">{{ array[index] }}</div>
-              <div v-else class="tf-form-item__input--placeholder">请选择</div>
-            </van-picker>
-            <div class="tf-icon tf-form-item__icon">&#xe7ce;</div>
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
           </div>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">{{ status === 0 ? '处理人员' : '工作人员'}}：</div>
           <div class="tf-form-item">
-            <van-picker
+            <tf-picker
               class="tf-form-item__input"
-              @change="bindPickerChange"
-              :value="index"
-              :range="array"
+              v-model="revocationReason"
+              title="撤销原因"
+              value-key="label"
+              selected-key="value"
+              :columns="revocationArray"
             >
-              <div v-if="array[index]" class="tf-form-item__input">{{ array[index] }}</div>
-              <div v-else class="tf-form-item__input--placeholder">请选择</div>
-            </van-picker>
-            <div class="tf-icon tf-form-item__icon">&#xe7ce;</div>
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
           </div>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">任务完成时限：</div>
           <div class="tf-form-item">
-            <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
-            <div class="tf-icon tf-icon-time-circle tf-form-item__icon"></div>
+            <!-- <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
+            <div class="tf-icon tf-icon-time-circle tf-form-item__icon"></div>-->
           </div>
         </div>
       </template>
     </tf-dialog>
-    <!-- 取消任务 -->
-    <tf-dialog v-model="cancelAssignShow" :showFotter="true" :hiddenOff="true" title="取消任务">
+    <!-- 取消分派 -->
+    <tf-dialog
+      v-model="cancelShow"
+      :showFotter="true"
+      :hiddenOff="true"
+      title="取消分派"
+      @confirm="cancelSubmit"
+    >
       <div class="tf-form-box">
         <div class="tf-form-label">取消原因：</div>
         <div class="tf-form-item">
-          <van-picker
+          <tf-picker
             class="tf-form-item__input"
-            @change="bindPickerChange"
-            :value="index"
-            :range="array"
+            v-model="cancelReason"
+            title="取消原因"
+            value-key="label"
+            selected-key="value"
+            :columns="cancelArray"
           >
-            <div v-if="array[index]" class="tf-form-item__input">{{ array[index] }}</div>
-            <div v-else class="tf-form-item__input--placeholder">请选择</div>
-          </van-picker>
-          <div class="tf-icon tf-form-item__icon">&#xe7ce;</div>
+            <template v-slot="{valueText}">
+              <div class="reason-text">{{valueText}}</div>
+            </template>
+          </tf-picker>
+          <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
         </div>
       </div>
       <div class="tf-form-box">
         <div class="tf-form-label">取消说明：</div>
         <van-field
-          v-model="reason"
+          v-model="cancelExplain"
           class="tf-form-item__textarea"
           rows="2"
           autosize
@@ -217,7 +250,7 @@
       <div class="tf-form-box">
         <div class="tf-form-label">进度内容：</div>
         <van-field
-          v-model="reason"
+          v-model="revocationReason"
           class="tf-form-item__textarea"
           rows="2"
           autosize
@@ -258,7 +291,7 @@
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
           <van-field
-            v-model="reason"
+            v-model="revocationReason"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -283,12 +316,16 @@ import {
   RadioGroup,
   Radio,
   Uploader,
-  ImagePreview
+  ImagePreview,
+  Toast
 } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import tfTimeline from '@/components/tf-timeline/index.vue'
+import tfPicker from '@/components/tf-picker/index'
 import tfDialog from '@/components/tf-dialog/index.vue'
+import tfImageList from '@/components/tf-image-list'
 import { statusText } from '@/const/butler.js'
+import { validForm } from '@/utils/util'
 import { getRepairInfo, cancelRepair } from '@/api/butler.js'
 export default {
   components: {
@@ -302,7 +339,9 @@ export default {
     [Uploader.name]: Uploader,
     [ImagePreview.Component.name]: ImagePreview.Component,
     tfTimeline,
+    tfImageList,
     tfDialog,
+    tfPicker,
     userInfo
   },
   data () {
@@ -310,53 +349,68 @@ export default {
       statusText,
       revocationShow: false,
       assignShow: false,
-      cancelAssignShow: false,
+      cancelShow: false,
       planShow: false,
       acceptPlanShow: false,
       negotiateShow: false,
       settleShow: false,
-      title: '报事报修',
-      content: '厨房下水道堵了',
-      images: ['https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'],
-      status: 5,
-      ctime: '2020-06-03 16:35:26',
-      timelineList: [
-        {
-          id: '1',
-          remark: '已提交，等待物业人员受理。',
-          designee: '',
-          mobile: '',
-          ctime: '2020-06-03 16:35:26'
-        },
-        {
-          id: '1',
-          remark: '已提交，等待物业人员受理。',
-          designee: '',
-          mobile: '',
-          ctime: '2020-06-03 16:35:26'
-        }
-      ],
+      title: '',
+      content: '',
+      images: [],
+      status: 0,
+      ctime: '',
+      timelineList: [],
       array: ['中国', '美国', '巴西', '日本'],
       index: undefined,
-      reason: '',
+      revocationExplain: '', // 撤销补充说明
+      revocationReason: undefined, // 撤销原因值
+      // 撤销原因数组
+      revocationArray: [
+        {
+          label: '没时间',
+          value: 1
+        },
+        {
+          label: '价格不合适',
+          value: 2
+        }
+      ],
+      cancelExplain: '', // 取消补充说明
+      cancelReason: undefined, // 取消原因值
+      // 取消原因数组
+      cancelArray: [
+        {
+          label: '没时间',
+          value: 1
+        },
+        {
+          label: '价格不合适',
+          value: 2
+        }
+      ],
       radio: '1',
       fileList: [],
-      money: ''
+      money: '',
+      role: 0 // 1：管理员 0：处理员
     }
   },
   created () {
-    const { id, title } = this.$route.query
+    const { id, title, type } = this.$route.query
+    this.getRepairInfo(id)
     this.title = title
-    // this.getRepairInfo(id)
+    if (type) {
+      this[type] = true
+    }
   },
   methods: {
+    /* 获取报事报修详情 */
     getRepairInfo (repairId) {
       getRepairInfo({
         projectId: '',
         repairId
       }).then((res) => {
         if (res.success) {
-          const { category, content, images, status, records } = res.data
+          const { content, images, status, records } = res.data
           this.status = status
           this.imgList = images
           this.timelineList = records
@@ -368,6 +422,42 @@ export default {
     cancelRepair () {
       this.revocationShow = true
     },
+    /* 撤销提报提交 */
+    revocationSubmit () {
+      const validator = [
+        {
+          value: this.revocationReason,
+          message: '请选择撤销原因'
+        }
+      ]
+      validForm(validator).then(() => {
+        const params = {
+          revocationExplain: this.revocationExplain,
+          revocationReason: this.revocationReason
+        }
+        // 请求成功后
+        Toast('已拒绝该协商信息')
+        this.revocationShow = false
+      })
+    },
+    /* 取消分派提交 */
+    cancelSubmit () {
+      const validator = [
+        {
+          value: this.cancelReason,
+          message: '请选择取消原因'
+        }
+      ]
+      validForm(validator).then(() => {
+        const params = {
+          cancelExplain: this.cancelExplain,
+          cancelReason: this.cancelReason
+        }
+        // 请求成功后
+        Toast('已取消分派')
+        this.cancelShow = false
+      })
+    },
     // 分派人员
     showAssign () {
       this.assignShow = true
@@ -376,7 +466,7 @@ export default {
       this.index = e.target.value
     },
     cancelAssign () {
-      this.cancelAssignShow = true
+      this.cancelShow = true
     },
     showImage () {
       ImagePreview({
@@ -389,6 +479,17 @@ export default {
           // do something
         }
       })
+    }
+  },
+  filters: {
+    statusText (value) {
+      const text = {
+        1: '处理',
+        3: '分派',
+        4: '接受任务',
+        5: '结案'
+      }
+      return text[value]
     }
   }
 }
@@ -416,7 +517,7 @@ export default {
   text-align: center;
   font-size: 30px;
   margin-bottom: 30px;
-  color: @orange-dark;
+  color: #222;
 }
 .alert-text {
   font-size: 28px;
@@ -523,5 +624,10 @@ export default {
 }
 .padding40 {
   padding: 40px 0;
+}
+.reason-text {
+  font-size: 28px;
+  line-height: 66px;
+  color: #8f8f94;
 }
 </style>

@@ -11,7 +11,7 @@
             <div class="right-text tf-text-primary">发现更新版本</div>
           </template>
         </tf-list-item>
-        <tf-list-item title="清除缓存">
+        <tf-list-item title="清除缓存" @click="clearCache">
           <template v-slot:right>
             <div class="right-text">{{sizeText}}</div>
           </template>
@@ -85,7 +85,7 @@ export default {
         }
       })
     },
-    /* 获取缓存数据 */
+    /* 获取缓存数据大小 */
     getCacheSize () {
       this.$api.getCacheSize((ret) => {
         this.cacheSize = ret.size
@@ -94,7 +94,7 @@ export default {
     /* 清除缓存 */
     clearCache () {
       this.$api.clearCache(() => {
-        Toast('缓存清除完成')
+        Toast('清除成功')
       })
     },
     /* 切换账号 */
@@ -113,6 +113,7 @@ export default {
         Toast('当前已是最新版本')
       }
     },
+    /* 退出登录 */
     outLogin () {
       this.$store.dispatch('outLogin')
     }

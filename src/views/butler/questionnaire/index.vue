@@ -12,7 +12,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
-      <questionList :data.sync="list"></questionList>
+      <questionList :data.sync="list" @load="onLoad"></questionList>
     </div>
   </div>
 </template>
@@ -44,7 +44,8 @@ export default {
     },
     goMyList () {
       this.$router.push('/pages/butler/questionnaire/my')
-    }
+    },
+    onLoad () {}
   }
 }
 </script>
