@@ -107,6 +107,7 @@ export default {
     searchHouse (item) {
       searchHouse({
         projectId: this.activeProject.id,
+        buildingId: item.building_id,
         unitId: item.id
       }).then((res) => {
         this.houseList = res.data
@@ -116,7 +117,7 @@ export default {
       const obj = {
         project_id: this.activeProject.id,
         // project_name: this.activeProject.project_name,
-        building_id: this.activeBuild.id,
+        building_id: this.activeBuild.building_id,
         // building_name: this.activeBuild.building_name,
         unit_id: this.activeBuild.id,
         // unit_name: this.activeBuild.unit_name,

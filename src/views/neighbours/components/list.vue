@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%;">
     <refreshList :list.sync="list" :load="load">
       <template v-slot="{item}">
         <div v-if="category === 1 || item.category === 1" class="activity-cell">

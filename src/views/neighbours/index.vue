@@ -8,7 +8,7 @@
         </span>
       </template>
     </van-nav-bar>
-    <van-tabs class="pt88" v-model="current" @click="onClickItem">
+    <van-tabs class="tf-main-container tf-column" v-model="current">
       <van-tab title="最新">
         <list key="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
@@ -87,12 +87,12 @@ export default {
       })
     },
     /* tab切换 */
-    onClickItem (currentIndex) {
-      if (this.current !== currentIndex) {
-        this.current = currentIndex
-      }
-      this.getList()
-    },
+    // onClickItem (currentIndex) {
+    //   if (this.current !== currentIndex) {
+    //     this.current = currentIndex
+    //   }
+    //   this.getList()
+    // },
     /* 获取相应列表 */
     getList () {
       switch (this.current) {
@@ -160,6 +160,12 @@ export default {
 /deep/ .van-nav-bar__text {
   font-size: 34px;
   font-weight: bold;
+}
+/deep/ .van-tabs__content {
+  flex: 1;
+  .van-tab__pane {
+    height: 100%;
+  }
 }
 /* 小组 */
 .group-box {

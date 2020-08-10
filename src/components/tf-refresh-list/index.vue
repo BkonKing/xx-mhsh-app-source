@@ -9,6 +9,7 @@
       class="tf-van-list"
       v-model="loading"
       :finished="finished"
+      :error.sync="error"
       loading-text="加载中"
       finished-text="没有更多了"
       error-text="请重新加载"
@@ -45,6 +46,7 @@ export default {
       finished: false,
       refreshing: false,
       isAllRead: false,
+      error: false,
       listChild: this.list,
       pageNum: 0
     }
@@ -71,6 +73,8 @@ export default {
           } else {
             this.finished = true
           }
+        }).catch(() => {
+          this.error = true
         })
       }
       this.$emit('load')
