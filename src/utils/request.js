@@ -44,7 +44,15 @@ service.interceptors.request.use(
     })
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
     if (!config.headers.Authorization && token) {
-      config.headers.Authorization = 'Bearer ' + token
+      config.headers.Authorization = token
+    }
+    // 获取当前项目
+    const project = api.getPrefs({
+      sync: true,
+      key: 'currentProject'
+    })
+    if (project) {
+      config.headers.ProjectId = project.project_id
     }
     config.data = qs.stringify(config.data)
     return config
@@ -71,9 +79,9 @@ service.interceptors.response.use(
     if (status == 401 || code == 401) {
       const isGetToken = config.url.indexOf('getToken') !== -1
       if (!isGetToken) {
-        store.dispatch('refresh').then(res => {})
+        await store.dispatch('refresh')
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(code)
     } else if (code != '200') {
       Toast(res.message || codeMessage[code])
       return Promise.reject(res.message || 'Error')

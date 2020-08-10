@@ -91,6 +91,7 @@ import {
 } from '@/api/personage'
 import { validForm } from '@/utils/util'
 import { userText } from '@/const/user'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'houseAttestation',
@@ -142,6 +143,9 @@ export default {
       userText
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   created () {
     this.type = parseInt(this.$route.query.type)
     this.mode = parseInt(this.$route.query.mode)
@@ -155,9 +159,13 @@ export default {
       this.mobile = mobile
       this.house_role = house_role
       this.house_name = houseName
-    } else if (this.type === 1 && this.mode === 1) {
-      this.house_id = this.$route.query.id
-      this.bindingRoomInfo()
+    } else if (this.type === 1) {
+      if (this.mode === 1) {
+        this.house_id = this.$route.query.id
+        this.bindingRoomInfo()
+      } else {
+        this.mobile = this.userInfo.mobile
+      }
     }
     this.title = this.type ? '房屋认证' : this.mode ? '成员' : '添加成员'
   },
@@ -275,12 +283,21 @@ export default {
       roomAttest(params).then((res) => {
         if (res.success) {
           Toast.success('审核成功')
-          if (this.select == '1') {
-            setTimeout(() => {
-              this.$store.commit('setCurrentProject', params)
-              this.$router.go(-1)
-            }, 1000)
+          if (this.userInfo.user_type == 0) {
+            const user = this.userInfo
+            user.user_type = this.house_role
+            api.setPrefs({
+              key: 'user_info',
+              value: user
+            })
+            this.$store.commit('setUser_info', user)
           }
+          if (this.select == '1') {
+            this.$store.commit('setCurrentProject', params)
+          }
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 1000)
         } else {
           Toast.fail('提交失败')
         }
@@ -291,7 +308,15 @@ export default {
       bindingRoomInfo({
         binding_id: this.house_id
       }).then((res) => {
-        const { realname, mobile, house_role, house_name, project_name, building_name, unit_name } = res.data
+        const {
+          realname,
+          mobile,
+          house_role,
+          house_name,
+          project_name,
+          building_name,
+          unit_name
+        } = res.data
         this.realname = realname
         this.mobile = mobile
         this.house_role = house_role

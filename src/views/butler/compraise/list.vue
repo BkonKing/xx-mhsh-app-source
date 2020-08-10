@@ -2,7 +2,7 @@
   <div class="tf-bg">
     <van-nav-bar title="我的投诉表扬" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="onLoad">
+      <refreshList :list.sync="data" :load="getComPraiseList">
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header">
@@ -46,17 +46,9 @@ export default {
       data: []
     }
   },
-  created () {
-    this.getComPraiseList()
-  },
   methods: {
-    onLoad () {},
     getComPraiseList () {
-      getComPraiseList().then((res) => {
-        if (res.success) {
-          this.data = res.data
-        }
-      })
+      return getComPraiseList()
     },
     jump (item) {
       const url = `/pages/butler/compraise/details?id=${item.id}&type=${item.info_type}`

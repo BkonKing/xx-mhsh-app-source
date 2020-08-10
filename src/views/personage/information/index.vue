@@ -138,7 +138,7 @@ export default {
       mobile: '',
       nickname: '',
       payCodeStatus: 1, // 0为未设置过，1我设置过
-      passwordStatus: 1, // 0为未设置过，1我设置过
+      passwordStatus: 0, // 0为未设置过，1我设置过
       memberList: [], // 成员列表
       houseRoleColor: {
         1: 'danger',

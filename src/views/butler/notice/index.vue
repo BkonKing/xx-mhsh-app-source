@@ -9,7 +9,7 @@
       @click-right="setNoticeReaded(0)"
     />
     <div class="tf-flex-item">
-      <refreshList :list.sync="noticeList" @load="onLoad">
+      <refreshList :list.sync="noticeList" :load="getNoticeList">
         <template v-slot="{item}">
           <div class="list-item--time">{{item.ctime}}</div>
           <div class="tf-card" @click="jump(item)">
@@ -39,27 +39,17 @@ export default {
   data () {
     return {
       loading: false,
-      finished: false,
       refreshing: false,
       isAllRead: false,
       noticeList: []
     }
   },
   created () {
-    this.getNoticeList()
   },
   methods: {
-    onLoad () {},
     // 获取公告通知列表
-    getNoticeList () {
-      return getNoticeList({
-        project_id: '1'
-        // notice_id: '1'
-      }).then((res) => {
-        if (res.success) {
-          this.noticeList = res.data.records
-        }
-      })
+    getNoticeList (params) {
+      return getNoticeList(params)
     },
     // 设置消息已读
     setNoticeReaded (noticeId) {

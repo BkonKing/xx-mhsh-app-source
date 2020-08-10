@@ -109,9 +109,7 @@ export default {
       addComPraise({
         content: this.content,
         images: this.uImgList,
-        info_type: this.info_type,
-        project_id: '2',
-        house_id: '1'
+        info_type: this.info_type
       }).then(res => {
         if (res.success) {
           Dialog.alert({

@@ -10,7 +10,7 @@
     </van-nav-bar>
     <van-tabs class="pt88" v-model="current" @click="onClickItem">
       <van-tab title="最新">
-        <list key="list" :data="newestList"></list>
+        <list key="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
       <van-tab title="小组">
         <div class="group-box">
@@ -21,10 +21,10 @@
         </div>
       </van-tab>
       <van-tab title="活动">
-        <list key="activityList" :data="activityList" :category="1"></list>
+        <list key="activityList" :data.sync="activityList" :load="getActivityList" :category="1"></list>
       </van-tab>
       <van-tab title="资讯">
-        <list key="articleList" :data="articleList" :category="3"></list>
+        <list key="articleList" :data.sync="articleList" :load="getArticleList" :category="3"></list>
       </van-tab>
     </van-tabs>
   </div>
@@ -112,9 +112,7 @@ export default {
     },
     /* 获取最新列表 */
     getNewestList () {
-      getNewestList().then((res) => {
-        this.newestList = res.data
-      })
+      return getNewestList()
     },
     /* 获取话题小组 */
     getPostBarCategoryList () {
@@ -124,15 +122,11 @@ export default {
     },
     /* 获取活动列表 */
     getActivityList () {
-      getActivityList().then((res) => {
-        this.activityList = res.data
-      })
+      return getActivityList()
     },
     /* 获取资讯列表 */
     getArticleList () {
-      getArticleList().then((res) => {
-        this.articleList = res.data
-      })
+      return getArticleList()
     }
   },
   watch: {

@@ -19,8 +19,8 @@
           <tf-list-item
             v-for="(item, i) in buildList"
             :key="i"
-            v-show="item.building_name.indexOf(value[1]) !== -1"
-            :title="`${activeProject.project_name}${item.building_name}`"
+            v-show="item.unit_name.indexOf(value[1]) !== -1"
+            :title="`${activeProject.project_name}${item.unit_name}`"
             @click="select(item)"
           ></tf-list-item>
         </tf-list>
@@ -31,7 +31,7 @@
             v-for="(item, i) in houseList"
             :key="i"
             v-show="item.house_name.indexOf(value[2]) !== -1"
-            :title="`${activeProject.project_name}${activeBuild.building_name}${item.house_name}`"
+            :title="`${activeProject.project_name}${activeBuild.unit_name}${item.house_name}`"
             @click="select(item)"
           ></tf-list-item>
         </tf-list>
@@ -79,7 +79,7 @@ export default {
       switch (this.step) {
         case 0:
           this.activeProject = item
-          this.searchBuilding(item)
+          this.searchUnit(item)
           this.nextStep()
           break
         case 1:
@@ -97,8 +97,8 @@ export default {
         this.projectList = res.data
       })
     },
-    searchBuilding (item) {
-      searchBuilding({
+    searchUnit (item) {
+      searchUnit({
         projectId: item.id
       }).then((res) => {
         this.buildList = res.data
@@ -107,7 +107,7 @@ export default {
     searchHouse (item) {
       searchHouse({
         projectId: this.activeProject.id,
-        buildingId: item.id
+        unitId: item.id
       }).then((res) => {
         this.houseList = res.data
       })
@@ -121,7 +121,10 @@ export default {
         unit_id: this.activeBuild.id,
         // unit_name: this.activeBuild.unit_name,
         house_id: item.id,
-        house_name: this.activeProject.project_name + this.activeBuild.building_name + item.house_name
+        house_name:
+          this.activeProject.project_name +
+          this.activeBuild.unit_name +
+          item.house_name
       }
       this.$store.commit('setHouseSelected', obj)
       this.$router.go(-1)
@@ -142,7 +145,7 @@ export default {
   watch: {
     step (value) {
       const text = ['选择小区', '选择楼栋单元', '选择房屋']
-      return text[value]
+      this.title = text[value]
     }
   }
 }
@@ -154,6 +157,9 @@ export default {
 }
 /deep/ .tf-clist {
   border-radius: 0;
+}
+/deep/ .tf-clist-cell-right {
+  flex: 0;
 }
 .slide-to-right-enter-active,
 .slide-to-right-leave-active,

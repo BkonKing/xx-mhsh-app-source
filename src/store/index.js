@@ -136,7 +136,6 @@ const store = {
             const {
               data
             } = res
-            console.log('set:' + data.access_token)
             api.setPrefs({
               key: 'access_token',
               value: data.access_token
@@ -149,6 +148,7 @@ const store = {
               key: 'user_info',
               value: data
             })
+            commit('setUser_info', data)
             resolve()
           } else {
             reject(res.message)
@@ -166,17 +166,14 @@ const store = {
         outLogin().then((res) => {
           Toast.clear()
           if (res.success) {
-            api.setPrefs({
-              key: 'user_info',
-              value: null
+            api.removePrefs({
+              key: 'user_info'
             })
-            api.setPrefs({
-              key: 'access_token',
-              value: undefined
+            api.removePrefs({
+              key: 'access_token'
             })
-            api.setPrefs({
-              key: 'refresh_token',
-              value: undefined
+            api.removePrefs({
+              key: 'refresh_token'
             })
             router.push('/login')
             resolve()
@@ -186,13 +183,13 @@ const store = {
         })
       })
     },
-    refresh ({
+    async refresh ({
       commit
     }) {
       Toast.loading({
         duration: 0
       })
-      refreshToken().then((res) => {
+      await refreshToken().then((res) => {
         Toast.clear()
         if (res.success) {
           const {
@@ -207,16 +204,26 @@ const store = {
             value: info.refresh_token
           })
           Toast('请重新操作')
-        } else {
+        }
+      }).catch(err => {
+        if (err == 401) {
           Dialog.alert({
             title: '提示',
             message: '登录信息已经过期了，请重新登录'
           }).then(() => {
-            router.replace({
-              path: '/login'
+            api.removePrefs({
+              key: 'user_info'
             })
+            api.removePrefs({
+              key: 'access_token'
+            })
+            api.removePrefs({
+              key: 'refresh_token'
+            })
+            router.push('/login')
           })
         }
+        return err
       })
     }
   }

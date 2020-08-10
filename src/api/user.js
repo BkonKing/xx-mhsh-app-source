@@ -26,7 +26,7 @@ export function refreshToken () {
     url: '/authorization/token/getToken',
     method: 'post',
     headers: {
-      Authorization: 'Bearer ' + api.getPrefs({
+      Authorization: api.getPrefs({
         sync: true,
         key: 'refresh_token'
       })

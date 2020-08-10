@@ -2,7 +2,7 @@
   <div class="tf-bg tf-padding-base">
     <van-nav-bar title="我的免费预约" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="onLoad">
+      <refreshList :list.sync="data" :load="getMyFreeServerList">
         <template v-slot="{item}">
           <div class="tf-card tf-mb-base">
             <div class="tf-card-header">
@@ -62,27 +62,11 @@ export default {
     }
   },
   created () {
-    this.getMyFreeServerList()
+    // this.getMyFreeServerList()
   },
   methods: {
-    onLoad () {
-      setTimeout(() => {
-        this.data.push({
-          id: '2',
-          category: '借用充电宝',
-          category_type: 2,
-          status: 1,
-          stime: '2020-06-20 16:12:30',
-          etime: '2020-06-20 20:12:36'
-        })
-      }, 100000)
-    },
     getMyFreeServerList () {
-      getMyFreeServerList().then((res) => {
-        if (res.success) {
-          this.data = res.data
-        }
-      })
+      return getMyFreeServerList()
     },
     /* 二维码显示 */
     showQrcode (item) {

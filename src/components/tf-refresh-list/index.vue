@@ -12,6 +12,7 @@
       loading-text="加载中"
       finished-text="没有更多了"
       error-text="请重新加载"
+      v-bind="$attrs"
       @load="onLoad"
     >
       <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="i">
@@ -44,7 +45,8 @@ export default {
       finished: false,
       refreshing: false,
       isAllRead: false,
-      listChild: this.list
+      listChild: this.list,
+      pageNum: 0
     }
   },
   created () {
@@ -52,12 +54,24 @@ export default {
   },
   methods: {
     // 上拉刷新
-    onLoad () {
-      // this.getList();
+    async onLoad () {
       if (this.refreshing) {
         this.listChild = []
-        this.$emit('update:list', [])
         this.refreshing = false
+      }
+      if (this.load) {
+        await this.load({
+          pageNum: this.pageNum
+        }).then(({ data }) => {
+          this.loading = false
+          if (data.length > 0) {
+            this.listChild.push(...data)
+            this.$emit('update:list', this.listChild)
+            this.pageNum++
+          } else {
+            this.finished = true
+          }
+        })
       }
       this.$emit('load')
     },
@@ -67,13 +81,13 @@ export default {
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true
+      this.pageNum = 0
       this.onLoad()
     }
   },
   watch: {
     list (value) {
       this.listChild = value
-      // console.log(this.listChild)
       this.loading = false
       this.refreshing = false
     }

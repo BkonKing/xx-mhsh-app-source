@@ -1,6 +1,6 @@
 <template>
   <div>
-    <refreshList :list.sync="list" @load="onLoad">
+    <refreshList :list.sync="list" :load="load">
       <template v-slot="{item}">
         <div v-if="category === 1 || item.category === 1" class="activity-cell">
           <div @click="goDetails(1, item.id)">
@@ -77,7 +77,8 @@ export default {
     category: {
       type: Number,
       defautl: undefined
-    }
+    },
+    load: [Function]
   },
   data () {
     return {
@@ -87,9 +88,6 @@ export default {
     }
   },
   methods: {
-    onLoad () {
-      this.$emit('load')
-    },
     goDetails (category, id) {
       this.$router.push({
         path: '/pages/neighbours/details',
@@ -103,6 +101,9 @@ export default {
   watch: {
     data (value) {
       this.list = value
+    },
+    list (value) {
+      this.$emit('update:data', value)
     }
   }
 }
