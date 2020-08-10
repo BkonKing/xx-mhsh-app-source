@@ -23,7 +23,7 @@
       <tf-list>
         <tf-list-item v-if="mode === 1 && !editMode" title="认证类型" :showArrow="false">
           <template v-slot:right>
-            <div class="tf-text">{{house_role}}</div>
+            <div class="tf-text">{{userText[house_role]}}</div>
           </template>
         </tf-list-item>
         <tf-list-item title="真实姓名" :showArrow="false">
@@ -90,6 +90,7 @@ import {
   unBinding
 } from '@/api/personage'
 import { validForm } from '@/utils/util'
+import { userText } from '@/const/user'
 
 export default {
   name: 'houseAttestation',
@@ -137,7 +138,8 @@ export default {
           value: '4',
           name: '租户成员'
         }
-      ]
+      ],
+      userText
     }
   },
   created () {
@@ -289,11 +291,11 @@ export default {
       bindingRoomInfo({
         binding_id: this.house_id
       }).then((res) => {
-        const { realname, mobile, house_role, houseName } = res.data
+        const { realname, mobile, house_role, house_name, project_name, building_name, unit_name } = res.data
         this.realname = realname
         this.mobile = mobile
         this.house_role = house_role
-        this.house_name = houseName
+        this.house_name = project_name + building_name + unit_name + house_name
       })
     },
     /* 设置当前房间 */

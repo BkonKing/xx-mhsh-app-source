@@ -19,8 +19,9 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, swipe, SwipeItem } from 'vant'
+import { NoticeBar, swipe, SwipeItem, Toast, Dialog } from 'vant'
 import { queryAllApp } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'butler',
   components: {
@@ -98,6 +99,9 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters(['userType'])
+  },
   methods: {
     goNotice (item) {
       const url = `/pages/butler/notice/details?id=${item.id}`
@@ -105,6 +109,32 @@ export default {
     },
     goEntrance () {
       this.$router.push('/pages/butler/entrance/index')
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const butlerList = [
+      'entranceIndex',
+      'noticeIndex',
+      'repairsIndex',
+      'freeserverIndex',
+      'visitorIndex',
+      'compraiseIndex',
+      'questionnaireIndex',
+      'propertyIndex',
+      'convenienceIndex',
+      'noticeDetails'
+    ]
+    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      Dialog.confirm({
+        title: '提示',
+        message: '您尚未认证房间，是否去认证？',
+        confirmButtonText: '去认证'
+      }).then(res => {
+        this.$router.push('/pages/personage/house/attestation?type=1&mode=0&select=1')
+      })
+      next(false)
+    } else {
+      next()
     }
   }
 }

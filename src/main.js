@@ -1,9 +1,9 @@
 import '../public/js/api.js' // 引入apiCloud-api
 import Vue from 'vue'
-import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import * as filters from './filters'
 import './styles/base.css'
 // import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
@@ -18,11 +18,13 @@ Vue.config.errorHandler = function (err, vm, info) {
 }
 Vue.config.productionTip = false
 const isApp = false // 手动切换
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
 if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
   window.apiready = () => {
-    Vue.use(Vuex)
     require('./permission')
     process.env.NODE_ENV === 'development' && new VConsole()
     const mam = api.require('mam')
@@ -37,17 +39,17 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
     Vue.prototype.$api = window.api
     new Vue({
       router,
-      store: new Vuex.Store(store),
+      store,
       render: h => h(App)
     }).$mount('#app')
   }
 } else {
-  Vue.use(Vuex)
+  // Vue.use(Vuex)
   require('./permission')
   process.env.NODE_ENV === 'development' && new VConsole()
   new Vue({
     router,
-    store: new Vuex.Store(store),
+    store: store,
     render: h => h(App)
   }).$mount('#app')
 }

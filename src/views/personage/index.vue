@@ -15,9 +15,14 @@
           <div class="personage-info--base">
             <div class="user-info-box">
               <div class="user-name">这是一个默认昵</div>
-              <van-tag class="user-role" plain type="danger" :inverted="true" size="small">业主</van-tag>
-              <van-tag class="user-role" plain type="success" :inverted="true" size="small">管理员</van-tag>
-              <van-tag class="user-role" plain type="primary" :inverted="true" size="small">维修员</van-tag>
+              <van-tag
+                class="user-role"
+                plain
+                :color="userType | houseRoleColor"
+                :text-color="userType | houseRoleColor"
+                :inverted="true"
+                size="small"
+              >{{userType | houseRoleText}}</van-tag>
             </div>
             <div class="user-address">5座7B单元-1001</div>
           </div>
@@ -150,7 +155,6 @@ export default {
   data () {
     return {
       signStatus: false,
-      userType: undefined,
       showCalendar: false, // 签到日历是否隐藏
       cur_year: 0, // 签到日历展示年份
       cur_month: 0, // 签到日历展示月份
@@ -158,11 +162,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo', 'userType'])
   },
-  created () {
-    this.userType = 6 || this.userInfo.user_type
-  },
+  created () {},
   methods: {
     /* 签到 */
     sign () {

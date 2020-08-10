@@ -105,12 +105,13 @@ export default {
   },
   created () {
     // 首次进入页面需弹窗一次使用说明
-    const firstStatus = api.getGlobalData({
+    const firstStatus = api.getPrefs({
+      sync: true,
       key: 'first-entrance'
     })
     if (!firstStatus) {
       this.showInstructions()
-      api.setGlobalData({
+      api.setPrefs({
         key: 'first-entrance',
         value: 1
       })

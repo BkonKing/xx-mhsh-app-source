@@ -11,12 +11,15 @@ router.beforeEach(async (to, from, next) => {
     forbidClick: true
   })
 
-  const hasToken = api.getGlobalData({
+  const hasToken = api.getPrefs({
+    sync: true,
     key: 'access_token'
   })
 
+  // console.log(hasToken)
+  console.log(hasToken)
   // eslint-disable-next-line eqeqeq
-  if (hasToken != 'undefined' && hasToken != '') {
+  if (hasToken && hasToken != 'undefined' && hasToken != '') {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })

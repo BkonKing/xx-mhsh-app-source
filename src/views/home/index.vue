@@ -96,7 +96,7 @@
           </template>
         </tf-image-list>
       </div>
-      <div class="community-box">
+      <div class="community-box" v-if="userType != 0">
         <div class="community-box__title" @click="goCommunity">
           社区活动
           <span class="tf-icon tf-icon-right"></span>
@@ -146,6 +146,7 @@
 import { Swipe, SwipeItem, Grid, GridItem, Image, NoticeBar } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
+import { mapGetters } from 'vuex'
 export default {
   name: 'home',
   components: {
@@ -318,6 +319,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userType']),
     twoFrontList () {
       const arr = []
       this.frontList.forEach((obj, index) => {
@@ -618,10 +620,10 @@ export default {
   height: 60px;
   font-size: 24px;
   padding: 0 20px;
-  border: 1px dashed #CA864E;
+  border: 1px dashed #ca864e;
   border-radius: 4px;
   margin-top: 30px;
-  color: #CA864E;
+  color: #ca864e;
   background: none !important;
   .notice-swipe {
     height: 60px;
@@ -630,7 +632,7 @@ export default {
       display: flex;
       justify-content: space-between;
       line-height: 60px;
-      color: #CA864E;
+      color: #ca864e;
     }
   }
   &-name {
@@ -642,7 +644,7 @@ export default {
       display: block;
       width: 8px;
       height: 8px;
-      background: #CA864E;
+      background: #ca864e;
       border-radius: 50%;
       margin-right: 10px;
     }

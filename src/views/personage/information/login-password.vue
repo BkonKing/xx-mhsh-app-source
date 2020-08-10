@@ -11,6 +11,7 @@
         <div class="tf-phone-input-box">
           <div class="tf-phone-input-label">新密码</div>
           <input
+            v-model="password"
             class="tf-phone-input width400"
             type="password"
             placeholder="填写新密码"

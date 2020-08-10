@@ -138,10 +138,10 @@ export default {
   watch: {
     $route (route) {
       const { active } = route.query
-      if (active) {
+      if (active !== this.current) {
         this.current = parseInt(active)
+        this.getList()
       }
-      this.getList()
     }
   }
 }

@@ -125,7 +125,10 @@ export default {
     },
     /* 发送验证码 */
     verifCode () {
-      verifCode().then((res) => {
+      verifCode({
+        mobile: this.mobile
+      }).then((res) => {
+        Toast.success('验证码发送成功，请注意查收')
         this.codeStatus = true
         this.count()
       })

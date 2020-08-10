@@ -3,73 +3,84 @@
     <van-nav-bar title="我的资料" :fixed="true" :border="false" left-arrow @click-left="goback"></van-nav-bar>
     <div class="tf-main-container">
       <van-tabs v-model="current">
-        <van-tab v-for="(item, i) in items" :key="i" @click="onClickItem" :title="item"></van-tab>
-      </van-tabs>
-      <div class="tf-padding-base tab-content" :style="{'bottom': current !== 2 ? '0' : ''}">
-        <template v-if="current === 0">
-          <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-            <tf-list-item border title="头像">
-              <template v-slot:right>
-                <img class="tf-avatar-m tf-mr-base" :src="avatar" />
-              </template>
-            </tf-list-item>
-            <tf-list-item border title="昵称" :rightText="nicknameText" :showArrow="false"></tf-list-item>
-            <tf-list-item border title="性别" :rightText="gender === '1' ? '男' : '女'"></tf-list-item>
-            <tf-list-item title="生日" rightText="1990-01-01"></tf-list-item>
-          </tf-list>
-          <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-            <tf-list-item border title="姓名" :rightText="realname" :showArrow="false"></tf-list-item>
-            <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
-            <tf-list-item
-              title="收货地址"
-              rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
-              rightWidth="460px"
-              @click="goAddress"
-            ></tf-list-item>
-          </tf-list>
-          <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-            <tf-list-item title="人脸采集"></tf-list-item>
-          </tf-list>
-          <tf-list style="background-color: #fff;border-radius: 8px;">
-            <tf-list-item
-              border
-              :title="`${payCodeStatus ? '修改' : '设置'}支付密码`"
-              @click="editPaymentCode"
-            ></tf-list-item>
-            <tf-list-item :title="`${passwordStatus ? '修改' : '设置'}登录密码`" @click="editLoginPassword"></tf-list-item>
-          </tf-list>
-        </template>
-        <template v-if="current === 1">
-          <house @manClick="current = 2" @change="(id) => goAttestation(1,1,id)"></house>
-        </template>
-        <template v-if="current === 2">
-          <van-dropdown-menu @change="getMemberList">
-            <van-dropdown-item v-model="value" :options="list" />
-          </van-dropdown-menu>
-          <div class="tf-card tf-mt-base" v-for="(item, i) in memberList" :key="i" @click="goAttestation(0, 1, item.id, item)">
-            <div class="tf-card-header">XXXX美好生活家园 5栋1单元1002</div>
-            <div class="tf-card-content">
-              <van-tag
-                class="user-role tf-mr-lg"
-                plain
-                :type="houseRoleColor[item.house_role]"
-                :inverted="true"
-                size="small"
-              >{{houseRoleText[item.house_role]}}</van-tag>
-              <div class="tf-mr-lg">
-                {{item.realname}}
-                <span
-                  v-if="item.house_role === '1'"
-                  class="tf-text-grey tf-text-sm"
-                >(本人)</span>
-              </div>
-              <div class="tf-mr-lg">女</div>
-              <div>{{mobile}}</div>
-            </div>
+        <van-tab title="基础信息">
+          <div class="tf-padding-base tab-content" style="bottom: 0">
+            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
+              <tf-list-item border title="头像">
+                <template v-slot:right>
+                  <img class="tf-avatar-m tf-mr-base" :src="avatar" />
+                </template>
+              </tf-list-item>
+              <tf-list-item border title="昵称" :rightText="nicknameText" :showArrow="false"></tf-list-item>
+              <tf-list-item border title="性别" :rightText="gender | sexText"></tf-list-item>
+              <tf-list-item title="生日" rightText="1990-01-01"></tf-list-item>
+            </tf-list>
+            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
+              <tf-list-item border title="姓名" :rightText="realname" :showArrow="false"></tf-list-item>
+              <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
+              <tf-list-item
+                title="收货地址"
+                rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
+                rightWidth="460px"
+                @click="goAddress"
+              ></tf-list-item>
+            </tf-list>
+            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
+              <tf-list-item title="人脸采集"></tf-list-item>
+            </tf-list>
+            <tf-list style="background-color: #fff;border-radius: 8px;">
+              <tf-list-item
+                border
+                :title="`${payCodeStatus ? '修改' : '设置'}支付密码`"
+                @click="editPaymentCode"
+              ></tf-list-item>
+              <tf-list-item
+                :title="`${passwordStatus ? '修改' : '设置'}登录密码`"
+                @click="editLoginPassword"
+              ></tf-list-item>
+            </tf-list>
           </div>
-          <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
-        </template>
-      </div>
+        </van-tab>
+        <van-tab v-if="userType != 0" title="房产信息">
+          <div class="tf-padding-base tab-content" style="bottom: 0">
+            <house @manClick="current = 2" @change="(id) => goAttestation(1,1,id)"></house>
+          </div>
+        </van-tab>
+        <van-tab v-if="userType != 0" title="成员信息">
+          <div class="tf-padding-base tab-content" style="bottom: ''">
+            <van-dropdown-menu @change="getMemberList">
+              <van-dropdown-item v-model="value" :options="list" />
+            </van-dropdown-menu>
+            <div
+              class="tf-card tf-mt-base"
+              v-for="(item, i) in memberList"
+              :key="i"
+              @click="goAttestation(0, 1, item.id, item)"
+            >
+              <div class="tf-card-header">XXXX美好生活家园 5栋1单元1002</div>
+              <div class="tf-card-content">
+                <van-tag
+                  class="user-role tf-mr-lg"
+                  plain
+                  :type="houseRoleColor[item.house_role]"
+                  :inverted="true"
+                  size="small"
+                >{{item.house_role | houseRoleText}}</van-tag>
+                <div class="tf-mr-lg">
+                  {{item.realname}}
+                  <span
+                    v-if="item.house_role === '1'"
+                    class="tf-text-grey tf-text-sm"
+                  >(本人)</span>
+                </div>
+                <div class="tf-mr-lg">女</div>
+                <div>{{mobile}}</div>
+              </div>
+            </div>
+            <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
+          </div>
+        </van-tab>
+      </van-tabs>
     </div>
   </div>
 </template>
@@ -105,7 +116,6 @@ export default {
   },
   data () {
     return {
-      items: ['基础信息', '房产信息', '成员信息'],
       current: 0,
       value: 0,
       list: [
@@ -130,12 +140,6 @@ export default {
       payCodeStatus: 1, // 0为未设置过，1我设置过
       passwordStatus: 1, // 0为未设置过，1我设置过
       memberList: [], // 成员列表
-      houseRoleText: {
-        1: '业主',
-        2: '业主成员',
-        3: '租户',
-        4: '租户成员'
-      },
       houseRoleColor: {
         1: 'danger',
         2: 'warning',
@@ -145,7 +149,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo', 'userType']),
     nicknameText () {
       return this.nickname
         ? this.nickname
@@ -161,11 +165,6 @@ export default {
     this.getMemberList()
   },
   methods: {
-    onClickItem (e) {
-      if (this.current !== e.currentIndex) {
-        this.current = e.currentIndex
-      }
-    },
     /* 获取成员列表 */
     getMemberList () {
       getMemberList({

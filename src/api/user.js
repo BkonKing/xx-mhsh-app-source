@@ -19,3 +19,17 @@ export function pwdLogin (data) {
 export function outLogin () {
   return request.post('/ulogin/login/outLogin')
 }
+
+/* 刷新登录 */
+export function refreshToken () {
+  return request({
+    url: '/authorization/token/getToken',
+    method: 'post',
+    headers: {
+      Authorization: 'Bearer ' + api.getPrefs({
+        sync: true,
+        key: 'refresh_token'
+      })
+    }
+  })
+}

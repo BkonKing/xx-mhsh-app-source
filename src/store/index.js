@@ -1,36 +1,52 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
 import {
   yzmLogin,
   pwdLogin,
-  outLogin
+  outLogin,
+  refreshToken
 } from '@/api/user.js'
 import {
-  Toast
+  Toast,
+  Dialog
 } from 'vant'
 import router from '@/router'
 
+Vue.use(Vuex)
+
 if (!window.api) {
   window.api = {
-    getGlobalData (obj) {
+    getPrefs (obj) {
       const {
         key: name
       } = obj
-      const strcookie = document.cookie // 获取cookie字符串
-      const arrcookie = strcookie.split('; ') // 分割
-      // 遍历匹配
-      for (let i = 0; i < arrcookie.length; i++) {
-        var arr = arrcookie[i].split('=')
-        if (arr[0] === name) {
-          return arr[1]
+      const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
+      const arr = document.cookie.match(reg)
+      if (arr) {
+        let value
+        try {
+          value = JSON.parse(arr[2])
+        } catch (error) {
+          value = arr[2]
         }
+        return value
+      } else {
+        return null
       }
-      return ''
     },
-    setGlobalData (obj) {
+    setPrefs (obj) {
       const {
         key: name,
         value
       } = obj
-      document.cookie = name + '=' + JSON.stringify(value) + ';path=/;'
+      const val = typeof value === 'object' ? JSON.stringify(value) : value
+      document.cookie = name + '=' + val + ';path=/;'
+    },
+    removePrefs (obj) {
+      const {
+        key: name
+      } = obj
+      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     }
   }
 }
@@ -80,7 +96,7 @@ const store = {
     },
     setCurrentProject (state, obj) {
       state.current_project = obj
-      api.setGlobalData({
+      api.setPrefs({
         key: 'currentProject',
         value: obj
       })
@@ -95,6 +111,9 @@ const store = {
     },
     currentProject (state) {
       return state.current_project
+    },
+    userType (state) {
+      return state.user_info.user_type || 0
     }
   },
   actions: {
@@ -117,15 +136,16 @@ const store = {
             const {
               data
             } = res
-            api.setGlobalData({
+            console.log('set:' + data.access_token)
+            api.setPrefs({
               key: 'access_token',
               value: data.access_token
             })
-            api.setGlobalData({
+            api.setPrefs({
               key: 'refresh_token',
               value: data.refresh_token
             })
-            api.setGlobalData({
+            api.setPrefs({
               key: 'user_info',
               value: data
             })
@@ -146,15 +166,15 @@ const store = {
         outLogin().then((res) => {
           Toast.clear()
           if (res.success) {
-            api.setGlobalData({
+            api.setPrefs({
               key: 'user_info',
               value: null
             })
-            api.setGlobalData({
+            api.setPrefs({
               key: 'access_token',
               value: undefined
             })
-            api.setGlobalData({
+            api.setPrefs({
               key: 'refresh_token',
               value: undefined
             })
@@ -165,9 +185,41 @@ const store = {
           }
         })
       })
+    },
+    refresh ({
+      commit
+    }) {
+      Toast.loading({
+        duration: 0
+      })
+      refreshToken().then((res) => {
+        Toast.clear()
+        if (res.success) {
+          const {
+            data: info
+          } = res
+          api.setPrefs({
+            key: 'access_token',
+            value: info.access_token
+          })
+          api.setPrefs({
+            key: 'refresh_token',
+            value: info.refresh_token
+          })
+          Toast('请重新操作')
+        } else {
+          Dialog.alert({
+            title: '提示',
+            message: '登录信息已经过期了，请重新登录'
+          }).then(() => {
+            router.replace({
+              path: '/login'
+            })
+          })
+        }
+      })
     }
   }
 }
-// module.exports = store
 
-export default store
+export default new Vuex.Store(store)
