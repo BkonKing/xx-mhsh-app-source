@@ -1,33 +1,33 @@
 <template>
-  <view class="tf-screen">
-    <view class="tf-bg main">
-      <text class="tf-icon" @click="goBack">&#xe89d;</text>
-      <view class="tab-content">
-        <view v-if="current === 2">
-          <text class="tab-title">付款码</text>
-          <view class="tab-content__box">
-            <view class="qrcode-box"><canvas id="qrcode2" canvas-id="qrcode2" class="qrcode-image" /></view>
-          </view>
-        </view>
-        <view v-if="current === 3">
-          <text class="tab-title">收款码</text>
-          <view class="tab-content__box">
-            <view class="qrcode-box"><canvas id="qrcode3" canvas-id="qrcode3" class="qrcode-image" /></view>
-          </view>
-        </view>
-      </view>
-    </view>
-    <view class="tabs">
-      <view class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
-        <text class="tab-text">{{ item.name }}</text>
-        <text v-if="item.value === current" class="tab-active"></text>
-      </view>
-    </view>
-  </view>
+  <div class="tf-screen">
+    <div class="tf-bg main">
+      <div class="tf-icon" @click="goBack">&#xe89d;</div>
+      <div class="tab-content">
+        <div v-if="current === 2">
+          <div class="tab-title">付款码</div>
+          <div class="tab-content__box">
+            <div class="qrcode-box"><canvas id="qrcode2" canvas-id="qrcode2" class="qrcode-image" /></div>
+          </div>
+        </div>
+        <div v-if="current === 3">
+          <div class="tab-title">收款码</div>
+          <div class="tab-content__box">
+            <div class="qrcode-box"><canvas id="qrcode3" canvas-id="qrcode3" class="qrcode-image" /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
+        <div class="tab-text">{{ item.name }}</div>
+        <div v-if="item.value === current" class="tab-active"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import uQRCode from '@/js_sdk/Sansnn-uQRCode/uqrcode.js'
+// import uQRCode from '@/js_sdk/Sansnn-uQRCode/uqrcode.js'
 export default {
   data () {
     return {
@@ -65,8 +65,8 @@ export default {
     switchTab (value) {
       if (value === 1) {
         // uni.navigateTo()
-        uni.redirectTo({
-          url: '/pages/personage/scanCode/index'
+        this.$router.replace({
+          path: '/pages/personage/scanCode/index'
         })
       } else {
         this.current = value
@@ -92,13 +92,13 @@ export default {
       })
     },
     goBack () {
-      uni.navigateBack()
+      this.$router.go(-1)
     }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .main {
   position: fixed;
   top: 0;
@@ -150,9 +150,11 @@ export default {
   width: 750px;
   height: 98px;
   background-color: #383838;
-  flex-direction: row;
+  display: flex;
 }
 .tab {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   align-items: center;
 }

@@ -122,7 +122,8 @@ const store = {
   actions: {
     login ({
       commit,
-      state
+      state,
+      dispatch
     }, {
       type,
       params
@@ -152,6 +153,7 @@ const store = {
               value: data
             })
             commit('setUser_info', data)
+            dispatch('getHouse')
             resolve()
           } else {
             reject(res.message)

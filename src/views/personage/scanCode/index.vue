@@ -1,8 +1,8 @@
 <template>
-  <view class="tf-screen">
-    <view class="tf-bg main">
-      <text class="tf-icon" @click="goBack">&#xe89d;</text>
-      <barcode
+  <div class="tf-bg">
+    <div class="tf-bg main">
+      <div class="tf-icon" @click="goBack">&#xe89d;</div>
+      <!-- <barcode
         v-if="current === 1"
         class="barcode"
         autostart="true"
@@ -13,20 +13,20 @@
         :filters="[0]"
         @marked="success1"
         @error="fail1"
-      ></barcode>
-    </view>
-    <view class="tabs">
-      <view class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
-        <text class="tab-text">{{ item.name }}</text>
-        <text v-if="item.value === current" class="tab-active"></text>
-      </view>
-    </view>
-  </view>
+      ></barcode> -->
+    </div>
+    <div class="tabs">
+      <div class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
+        <div class="tab-text">{{ item.name }}</div>
+        <div v-if="item.value === current" class="tab-active"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       current: 1,
       tabs: [
@@ -43,57 +43,57 @@ export default {
           name: '收款码'
         }
       ]
-    };
+    }
   },
-  mounted() {
-    this.toStart()
+  mounted () {
+    // this.toStart()
   },
-  onHide() {
-    this.tocancel();
+  onHide () {
+    this.tocancel()
   },
   methods: {
-    switchTab(value) {
+    switchTab (value) {
       if (value !== 1) {
-        this.tocancel();
-        this.current = value;
-        uni.redirectTo({
-          url: '/pages/personage/scanCode/qrcode?current=' + this.current
-        });
+        // this.tocancel()
+        this.current = value
+        this.$router.replace({
+          path: '/pages/personage/scanCode/qrcode?current=' + this.current
+        })
       }
     },
-    goBack() {
-      uni.navigateBack();
+    goBack () {
+      this.$router.go(-1)
     },
-    success1(e) {
-      console.log('success1:' + JSON.stringify(e));
+    success1 (e) {
+      console.log('success1:' + JSON.stringify(e))
     },
-    fail1(e) {
-      console.log('fail1:' + JSON.stringify(e));
+    fail1 (e) {
+      console.log('fail1:' + JSON.stringify(e))
     },
-    toStart: function() {
+    toStart () {
       this.$refs.barcode.start({
         conserve: true,
         filename: '_doc/barcode/'
-      });
+      })
     },
-    tocancel: function() {
-      this.$refs.barcode.cancel();
+    tocancel () {
+      this.$refs.barcode.cancel()
     },
-    toFlash: function() {
-      this.$refs.barcode.setFlash(true);
+    toFlash () {
+      this.$refs.barcode.setFlash(true)
     },
-    toscan: function() {
-      console.log('scan:');
-      const barcodeModule = uni.requireNativePlugin('barcodeScan');
+    toscan () {
+      console.log('scan:')
+      const barcodeModule = uni.requireNativePlugin('barcodeScan')
       barcodeModule.scan('/static/barcode1.png', e => {
-        console.log('scan_error:' + JSON.stringify(e));
-      });
+        console.log('scan_error:' + JSON.stringify(e))
+      })
     }
   }
-};
+}
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .main {
   position: fixed;
   top: 0;
@@ -118,10 +118,12 @@ export default {
   width: 750px;
   height: 98px;
   background-color: #383838;
-  flex-direction: row;
+  display: flex;
 }
 .tab {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   align-items: center;
 }
 .tab-text {

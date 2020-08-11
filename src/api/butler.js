@@ -70,6 +70,14 @@ export function getFreeServerList (params) {
 export function getMyFreeServerList (params) {
   return request.get('/butler/freeserver/getMyFreeServerList', { params })
 }
+// 我的免费预约列表接口
+export function serverYuyue (data) {
+  return request.post('/butler/freeserver/server_yuyue', data)
+}
+// 我的免费预约列表接口
+export function serverClose (data) {
+  return request.post('/butler/freeserver/server_close', data)
+}
 
 /* 免费服务 end */
 

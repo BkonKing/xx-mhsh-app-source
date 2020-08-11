@@ -29,7 +29,7 @@
     </div>
     <tfDialog v-model="show" :title="activeServe.category">
       <div class="qr-box" v-if="!success">
-        <img class="qr-img" src="@/assets/app-icon.png" />
+        <img class="qr-img" :src="qrImg" />
         <div class="qr-status-box">
           <div class="qr-triangle"></div>
           <div class="qr-status">{{statusText}}</div>
@@ -61,6 +61,7 @@
 
 <script>
 import tfDialog from '@/components/tf-dialog/index.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     tfDialog
@@ -84,8 +85,16 @@ export default {
       statusText: '',
       show: false,
       success: false,
+      FNScanner: null,
+      qrImg: '',
       activeServe: {} // 当前选中服务
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo', 'currentProject'])
+  },
+  created () {
+    this.FNScanner = api.require('FNScanner')
   },
   methods: {
     /* 点击服务显示二维码 */
@@ -118,15 +127,35 @@ export default {
     },
     // 人工服务二维码
     getServeQrcode (status) {
-      setTimeout(() => {
-        this.success = true
-      }, 500)
+      const { id } = this.activeServe
+      const text = `router=freeserverConfirm&type=serve&server_id=${id}&uid=${this.userInfo.id}&project_id=${this.currentProject.project_id}`
+      this.makeQRCode(text)
     },
     // 借用服务二维码
-    getBorrowQrcode () {
-      setTimeout(() => {
-        this.success = true
-      }, 2000)
+    getBorrowQrcode (status) {
+      const { id } = this.activeServe
+      const text = `router=freeserverConfirm&type=borrow&server_id=${id}&uid=${this.userInfo.id}&project_id=${this.currentProject.project_id}`
+      this.makeQRCode(text)
+    },
+    /**
+     * 生成二维码
+     * @param {string} text 二维码内容
+     */
+    makeQRCode (text) {
+      this.FNScanner.encodeImg({
+        content: text,
+        saveImg: {
+          path: 'fs://mhshfreeServer.png',
+          w: 160,
+          h: 160
+        }
+      }, (ret, err) => {
+        if (ret.status) {
+          this.qrImg = ret.imgPath
+        } else {
+          console.error(JSON.stringify(err))
+        }
+      })
     }
   }
 }

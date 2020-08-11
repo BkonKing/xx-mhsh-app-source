@@ -22,9 +22,9 @@
                 <div class="mb10">借用时间：{{item.stime}}</div>
                 <div v-if="item.status == 1">
                   归还时间：
-                  <span class="tf-text-primary">请于 {{item.etime}} 前归还</span>
+                  <span class="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
                 </div>
-                <div v-if="item.status == 2">归还时间：{{item.gh_time}}</div>
+                <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
               </template>
             </div>
           </div>
@@ -65,8 +65,8 @@ export default {
     // this.getMyFreeServerList()
   },
   methods: {
-    getMyFreeServerList () {
-      return getMyFreeServerList()
+    getMyFreeServerList (params) {
+      return getMyFreeServerList(params)
     },
     /* 二维码显示 */
     showQrcode (item) {

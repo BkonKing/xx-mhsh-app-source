@@ -211,6 +211,25 @@ const personageRouter = [
         /* webpackChunkName: "questionIndex" */
         '@/views/personage/question/index.vue'
       )
+  },
+  /* 扫码 */
+  {
+    path: '/pages/personage/scanCode/index',
+    name: 'scanCodeIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "scanCodeIndex" */
+        '@/views/personage/scanCode/index.vue'
+      )
+  },
+  {
+    path: '/pages/personage/scanCode/qrcode',
+    name: 'scanCodeQr',
+    component: () =>
+      import(
+        /* webpackChunkName: "scanCodeQr" */
+        '@/views/personage/scanCode/qrcode.vue'
+      )
   }
 ]
 

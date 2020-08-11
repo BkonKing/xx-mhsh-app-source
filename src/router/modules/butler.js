@@ -94,6 +94,15 @@ const butlerRouter = [
         '@/views/butler/freeserver/list.vue'
       )
   },
+  {
+    path: '/pages/butler/freeserver/confirm',
+    name: 'freeserverConfirm',
+    component: () =>
+      import(
+        /* webpackChunkName: "freeserverConfirm" */
+        '@/views/butler/freeserver/confirm.vue'
+      )
+  },
   /* 访客邀约 */
   {
     path: '/pages/butler/visitor/index',
