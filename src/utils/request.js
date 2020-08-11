@@ -42,7 +42,9 @@ service.interceptors.request.use(
       sync: true,
       key: 'access_token'
     })
-    config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
+    if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
+      config.data = qs.stringify(config.data)
+    }
     if (!config.headers.Authorization && token) {
       config.headers.Authorization = token
     }
@@ -54,7 +56,6 @@ service.interceptors.request.use(
     if (project) {
       config.headers.ProjectId = project.project_id
     }
-    config.data = qs.stringify(config.data)
     return config
   },
   error => {

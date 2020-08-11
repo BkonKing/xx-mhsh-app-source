@@ -8,23 +8,23 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <van-tabs v-model="isVisit" @change="onChange">
+      <van-tabs v-model="isVisit">
         <van-tab title="待来访">
-          <refreshList :list.sync="data0" @load="onLoad">
+          <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 0)">
             <template v-slot="{item}">
               <list-card :data="item" :key="item.id"></list-card>
             </template>
           </refreshList>
         </van-tab>
         <van-tab title="已过期">
-          <refreshList :list.sync="data1" @load="onLoad">
+          <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 1)">
             <template v-slot="{item}">
               <list-card :data="item" :key="item.id"></list-card>
             </template>
           </refreshList>
         </van-tab>
         <van-tab title="已到访">
-          <refreshList :list.sync="data2" @load="onLoad">
+          <refreshList :list.sync="visitedList" :load="(params) => getVisitorLogList(params, 2)">
             <template v-slot="{item}">
               <list-card :data="item" :key="item.id"></list-card>
             </template>
@@ -52,30 +52,16 @@ export default {
   data () {
     return {
       isVisit: 0,
-      data0: [],
-      data1: [],
-      data2: []
+      unvisitList: [],
+      expiredList: [],
+      visitedList: []
     }
   },
-  created () {
-    this.getVisitorLogList(0)
-    this.getVisitorLogList(1)
-    this.getVisitorLogList(2)
-  },
   methods: {
-    onLoad () {},
-    getVisitorLogList (isVisit) {
+    getVisitorLogList (params, isVisit) {
       const active = isVisit || this.isVisit
-      getVisitorLogList({
-        isVisit: active
-      }).then((res) => {
-        if (res.success) {
-          this[`data${active}`] = res.data
-        }
-      })
-    },
-    onChange (index) {
-      // this.getVisitorLogList()
+      params.isVisit = active
+      return getVisitorLogList(params)
     }
   }
 }

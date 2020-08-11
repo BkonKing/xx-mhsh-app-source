@@ -1,5 +1,5 @@
 <template>
-  <refreshList :list.sync="list" @load="onLoad">
+  <refreshList :list.sync="list" :load="load">
     <template v-slot="{item}">
       <div class="question-box" :class="{'question-finish-box': !item.status}" @click="jump(item)">
         <div
@@ -36,7 +36,8 @@ export default {
     data: {
       type: Array,
       default: () => []
-    }
+    },
+    load: Function
   },
   data () {
     return {
@@ -47,9 +48,6 @@ export default {
     jump (item) {
       const url = `/pages/butler/questionnaire/details?id=${item.id}`
       this.$router.push(url)
-    },
-    onLoad () {
-      this.$emit('load')
     }
   },
   watch: {

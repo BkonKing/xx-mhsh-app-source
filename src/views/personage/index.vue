@@ -14,7 +14,7 @@
           <img class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit" />
           <div class="personage-info--base">
             <div class="user-info-box">
-              <div class="user-name">这是一个默认昵</div>
+              <div class="user-name">{{userInfo.realname}}</div>
               <van-tag
                 class="user-role"
                 plain

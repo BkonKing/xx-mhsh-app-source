@@ -90,17 +90,15 @@ export default {
         }
       ]
       validForm(validator).then((res) => {
-        this.addFeedback({
-          content: this.content,
-          images: this.uImgList,
-          info_type: this.info_type,
-          project_id: '2',
-          house_id: '1'
-        })
+        this.addFeedback()
       })
     },
-    addFeedback (params) {
-      addFeedback(params).then((res) => {
+    addFeedback () {
+      addFeedback({
+        content: this.content,
+        images: this.uImgList,
+        info_type: this.info_type
+      }).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '感谢您的反馈'

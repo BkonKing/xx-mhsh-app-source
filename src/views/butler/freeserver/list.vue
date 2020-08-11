@@ -24,7 +24,7 @@
                   归还时间：
                   <span class="tf-text-primary">请于 {{item.etime}} 前归还</span>
                 </div>
-                <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
+                <div v-if="item.status == 2">归还时间：{{item.gh_time}}</div>
               </template>
             </div>
           </div>

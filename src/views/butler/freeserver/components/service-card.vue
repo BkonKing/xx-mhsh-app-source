@@ -5,7 +5,7 @@
       :key="i"
       v-show="(!active || active == item.category_type) && (item.category.indexOf(search) !== -1)"
       class="service-card"
-      :class="{'service-card--disabled': item.disable == 1 || (item.sy_num == 0 && item.category_type == 2)}"
+      :class="{'service-card--disabled': item.is_stop == 1 || (item.sy_num == 0 && item.category_type == 2)}"
       @click="showService(item)"
     >
       <div
@@ -14,7 +14,7 @@
       ></div>
       <div class="service-card-content">
         <div class="service-card-name">{{item.category}}</div>
-        <div v-if="item.disable == 1" class="service-card-info service-card-info--gray">暂停服务</div>
+        <div v-if="item.is_stop == 1" class="service-card-info service-card-info--gray">暂停服务</div>
         <div
           v-else-if="item.category_type == 1"
           class="service-card-info"
@@ -94,12 +94,12 @@ export default {
         category_type: categoryType,
         category,
         status,
-        disable,
+        is_stop,
+        is_lineup,
         sy_num: syNum
       } = item
       // 暂停使用或者没有可借的借用服务直接返回
-      // eslint-disable-next-line eqeqeq
-      if (disable == 1 || (syNum == 0 && categoryType == 2)) {
+      if (is_stop == 1 || (syNum == 0 && categoryType == 2)) {
         return
       }
       this.activeServe = item
@@ -107,7 +107,7 @@ export default {
       // categoryType: 1-人工 2-借用
       // eslint-disable-next-line eqeqeq
       if (categoryType == 1) {
-        this.statusText = status === 0 ? '开始排队' : '开始享受服务'
+        this.statusText = status === 0 && is_lineup == 1 ? '开始排队' : '开始享受服务'
         this.getServeQrcode(status)
         // eslint-disable-next-line eqeqeq
       } else if (categoryType == 2) {

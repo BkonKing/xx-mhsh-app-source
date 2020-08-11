@@ -11,11 +11,24 @@
         <div class="list-title">邀约设置</div>
         <tf-list-item border title="来访日期" :required="true">
           <template v-slot:right>
-            <tf-date-time-picker v-model="form.stime" title="选择时间">
+            <tf-date-time-picker v-model="form.stime" type="date" title="选择日期" :min-date="startDate">
               <template>
-                <div class="tf-text text-right">{{form.stime || 选择时间}}</div>
+                <div class="tf-text text-right">{{form.stime || '选择日期'}}</div>
               </template>
             </tf-date-time-picker>
+          </template>
+        </tf-list-item>
+        <tf-list-item border title="来访时间">
+          <template v-slot:right>
+            <tf-picker
+              v-model="form.date"
+              title="选择时间"
+              :columns="timeArray"
+            >
+              <template v-slot="{valueText}">
+                <div class="tf-text text-right">{{valueText || '选择时间'}}</div>
+              </template>
+            </tf-picker>
           </template>
         </tf-list-item>
         <tf-list-item border title="进出次数">
@@ -121,6 +134,20 @@ export default {
           value: 3
         }
       ],
+      timeArray: [
+        '0:00 ~ 2:00',
+        '2:00 ~ 4:00',
+        '4:00 ~ 6:00',
+        '6:00 ~ 8:00',
+        '8:00 ~ 10:00',
+        '10:00 ~ 12:00',
+        '12:00 ~ 14:00',
+        '14:00 ~ 16:00',
+        '16:00 ~ 18:00',
+        '18:00 ~ 20:00',
+        '20:00 ~ 22:00',
+        '22:00 ~ 24:00'
+      ],
       form: {
         stime: getTime(),
         time: '12:01',
@@ -128,18 +155,12 @@ export default {
         num: '',
         remark: ''
       },
+      startDate: new Date(),
+      endDate: getTime('end'),
       showDatePicker: false,
       showPicker: false,
       agreeValue: false,
       visitorList: []
-    }
-  },
-  computed: {
-    startDate () {
-      return getTime('start')
-    },
-    endDate () {
-      return getTime('end')
     }
   },
   activated () {
@@ -161,7 +182,8 @@ export default {
         })
         return
       }
-      const visitorData = this.visitorList.length === 0 && this.$refs.form.getData()
+      const visitorData =
+        this.visitorList.length === 0 && this.$refs.form.getData()
       const params = Object.assign({}, visitorData, this.form)
       if (!this.form.stime) {
         Toast({

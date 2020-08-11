@@ -13,12 +13,13 @@
         <list key="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
       <van-tab title="小组">
-        <div class="group-box">
+        <div v-if="group.length" class="group-box">
           <div class="group-item" v-for="item in group" :key="item.id" @click="goGroupList(item)">
             <img class="group-img" :src="item.icon_images" />
             <div class="group-name">{{item.category}}</div>
           </div>
         </div>
+        <div v-else class="van-list__finished-text">没有更多了</div>
       </van-tab>
       <van-tab title="活动">
         <list key="activityList" :data.sync="activityList" :load="getActivityList" :category="1"></list>
@@ -64,7 +65,8 @@ export default {
     if (active) {
       this.current = parseInt(active)
     }
-    this.getList()
+    this.getPostBarCategoryList()
+    // this.getList()
   },
   activated () {},
   methods: {
@@ -111,8 +113,8 @@ export default {
       }
     },
     /* 获取最新列表 */
-    getNewestList () {
-      return getNewestList()
+    getNewestList (params) {
+      return getNewestList(params)
     },
     /* 获取话题小组 */
     getPostBarCategoryList () {
@@ -121,12 +123,12 @@ export default {
       })
     },
     /* 获取活动列表 */
-    getActivityList () {
-      return getActivityList()
+    getActivityList (params) {
+      return getActivityList(params)
     },
     /* 获取资讯列表 */
-    getArticleList () {
-      return getArticleList()
+    getArticleList (params) {
+      return getArticleList(params)
     }
   },
   watch: {
@@ -134,7 +136,7 @@ export default {
       const { active } = route.query
       if (active !== this.current) {
         this.current = parseInt(active)
-        this.getList()
+        // this.getList()
       }
     }
   }
@@ -166,6 +168,9 @@ export default {
   .van-tab__pane {
     height: 100%;
   }
+}
+.van-list__finished-text {
+  padding-top: 20px;
 }
 /* 小组 */
 .group-box {

@@ -2,7 +2,12 @@
   <div class="tf-padding-base tf-bg">
     <van-nav-bar title="访客" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <div v-for="(item, i) in data" :key="i" class="list-item tf-row-space-between" @click="onClick(item)">
+      <div
+        v-for="(item, i) in data"
+        :key="i"
+        class="list-item tf-row-space-between"
+        @click="onClick(item)"
+      >
         <div class="tf-row">
           <div class="tf-text">{{ item.realname }}</div>
           <div class="tf-text">{{ item.gender | sex}}</div>
@@ -30,26 +35,12 @@ export default {
   data () {
     return {
       type: undefined,
-      data: [
-        {
-          id: '1',
-          realname: '陈小东',
-          mobile: '13699466258',
-          gender: 1,
-          car_number: '闽A88888'
-        },
-        {
-          id: '2',
-          realname: '许岩',
-          mobile: '13793636398',
-          gender: 2,
-          car_number: '闽A88866'
-        }
-      ]
+      data: []
     }
   },
   created () {
     this.type = this.$route.query.type
+    this.getMyVisitorList()
   },
   methods: {
     onClick (item) {
@@ -66,7 +57,7 @@ export default {
         }
       })
     },
-    deleteMyVisitor ({ id }) {
+    deleteMyVisitor (id) {
       Dialog.alert({
         title: '是否删除该访客信息'
       }).then(() => {
@@ -76,6 +67,7 @@ export default {
           Toast({
             message: '删除成功'
           })
+          this.getMyVisitorList()
         })
       })
     },

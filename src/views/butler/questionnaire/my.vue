@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <questionList :data.sync="list" @load="onLoad"></questionList>
+      <questionList :data.sync="list" :load="getMyWjtpList"></questionList>
     </div>
   </div>
 </template>
@@ -27,18 +27,10 @@ export default {
       list: []
     }
   },
-  created () {
-    this.getMyWjtpList()
-  },
   methods: {
-    getMyWjtpList () {
-      getMyWjtpList().then(res => {
-        if (res.success) {
-          this.list = res.data
-        }
-      })
-    },
-    onLoad () {}
+    getMyWjtpList (params) {
+      return getMyWjtpList(params)
+    }
   }
 }
 </script>

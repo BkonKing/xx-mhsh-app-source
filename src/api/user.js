@@ -33,3 +33,12 @@ export function refreshToken () {
     }
   })
 }
+
+/* 图片上传 */
+export function uImages (data) {
+  return request.post('/upload/uploads/uImages', data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

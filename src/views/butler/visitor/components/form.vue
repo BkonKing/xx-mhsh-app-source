@@ -41,6 +41,12 @@ export default {
     tfPicker,
     tfListItem
   },
+  props: {
+    formData: {
+      type: [Object, Boolean],
+      default: false
+    }
+  },
   data () {
     return {
       showPicker: false,
@@ -54,26 +60,23 @@ export default {
           value: 2
         }
       ],
-      gender: 1,
+      gender: 0,
       realname: '',
       mobile: '',
       car_number: ''
     }
   },
-  computed: {
-    sexText () {
-      return this.sexArray[this.gender].label
+  created () {
+    if (!this.formData) {
+      return
     }
+    const { gender, realname, mobile, car_number } = this.formData
+    this.gender = gender
+    this.realname = realname
+    this.mobile = mobile
+    this.car_number = car_number
   },
   methods: {
-    /* 回填 */
-    setData (formData) {
-      const { gender, realname, mobile, car_number } = formData
-      this.gender = gender - 1
-      this.realname = realname
-      this.mobile = mobile
-      this.car_number = car_number
-    },
     /* 获取值 */
     getData () {
       return {

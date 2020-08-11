@@ -3,7 +3,7 @@
     <van-nav-bar :title="title" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <tf-list>
-        <visitor-form ref="form"></visitor-form>
+        <visitor-form ref="form" :formData="formData"></visitor-form>
       </tf-list>
       <van-button class="tf-mt-lg" size="large" type="danger" @click="save">保存</van-button>
     </div>
@@ -16,6 +16,7 @@ import tfList from '@/components/tf-list/index.vue'
 import visitorForm from './components/form.vue'
 import { addMyVisitor, updateMyVisitor } from '@/api/butler.js'
 import { validForm } from '@/utils/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -29,20 +30,23 @@ export default {
       formData: {}
     }
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   created () {
     const { type, info } = this.$route.query
     this.title = type === '1' ? '添加访客' : '修改访客信息'
     this.type = type
     if (type === '0') {
-      this.formData = JSON.parse(info)
+      const data = JSON.parse(info)
+      data.gender = parseInt(data.gender)
+      this.formData = data
     }
-  },
-  mounted () {
-    this.type === '0' && this.$refs.form.setData(this.formData)
   },
   methods: {
     save () {
       const params = this.$refs.form.getData()
+      params.id = this.currentProject.house_id
       const validator = [
         {
           value: params.realname,

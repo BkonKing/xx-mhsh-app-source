@@ -1,15 +1,21 @@
 <template>
   <div class="house-container">
-    <div v-for="(item, i) in houseList" :key="i" class="house-box" :class="{'house-owner': item.current}" @click="change(item.id, i)">
-      <div v-if="item.current" class="tf-row-center">
+    <div
+      v-for="(item, i) in houseList"
+      :key="i"
+      class="house-box"
+      :class="{'house-owner': i === 0}"
+      @click="change(item.id, i)"
+    >
+      <div v-if="i === 0" class="tf-row-center">
         <div class="house-owner-current">当前房产</div>
       </div>
       <div class="tf-row-space-between">
         <div class="tf-row">
           <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
           <div class="tf-space-around">
-            <div class="house-name">{{item.house_name}}</div>
-            <div class="house-address">{{item.house_address}}</div>
+            <div class="house-name">{{item.project_name}}</div>
+            <div class="house-address">{{item.fc_info}}</div>
           </div>
         </div>
         <div
@@ -27,7 +33,7 @@
 </template>
 
 <script>
-import { bindingDefault } from '@/api/personage'
+import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
   props: {
@@ -38,23 +44,7 @@ export default {
   },
   data () {
     return {
-      houseList: [
-        {
-          id: 1,
-          house_name: 'XXXX美好生活家园',
-          house_address: '5栋1单元1001',
-          house_role: 1,
-          house_people: 4,
-          current: true
-        },
-        {
-          id: 2,
-          house_name: 'XXXX美好生活家园',
-          house_address: '5栋1单元1001',
-          house_role: 1,
-          current: false
-        }
-      ],
+      houseList: [],
       houseRoleText: {
         1: '业主',
         2: '业主成员',
@@ -63,7 +53,16 @@ export default {
       }
     }
   },
+  created () {
+    this.bindingHouse()
+  },
   methods: {
+    /* 获取房产信息 */
+    bindingHouse () {
+      bindingHouse().then((res) => {
+        this.houseList = res.data || []
+      })
+    },
     goAttestation () {
       this.$router.push({
         path: '/pages/personage/house/attestation',
@@ -83,8 +82,8 @@ export default {
     bindingDefault (id, index) {
       bindingDefault({
         binding_id: id
-      }).then(res => {
-        this.houseList.forEach(obj => {
+      }).then((res) => {
+        this.houseList.forEach((obj) => {
           obj.current = false
         })
         this.houseList[index].current = true

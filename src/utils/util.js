@@ -78,6 +78,11 @@ export function getTime () {
   return `${currentDate} ${hour}:${minute}:00`
 }
 
+export function formatDate (date) {
+  const nowdate = new Date(date).toLocaleDateString().replace(/\//g, '-')
+  return nowdate
+}
+
 export function formatDateTime (time) {
   const date = new Date(time + 8 * 3600 * 1000) // 增加8小时
   return date.toJSON().substr(0, 19).replace('T', ' ')

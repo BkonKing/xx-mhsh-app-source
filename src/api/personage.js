@@ -47,7 +47,7 @@ export function updatePassword (data) {
 
 /* 成员列表 */
 export function getMemberList (params) {
-  return request.get('/my/member/getMemberList', { params })
+  return request.get('/room/binding/memberList', { params })
 }
 
 /* 新增报备成员 */
@@ -58,6 +58,16 @@ export function addMember (data) {
 /* 修改报备成员 */
 export function updateMember (data) {
   return request.post('/my/member/updateMember', data)
+}
+
+/* 房产信息 */
+export function bindingHouse (params) {
+  return request.get('/room/binding/bindingHouse', { params })
+}
+
+/* 业主房产信息接口 */
+export function yzHouse (params) {
+  return request.get('/room/binding/yzHouse', { params })
 }
 
 /* 房间认证 */

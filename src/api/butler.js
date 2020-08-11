@@ -88,8 +88,12 @@ export function getYellowPagesList (params) {
 /* 投诉表扬 start */
 
 // 新增投诉表扬接口
-export function addComPraise (data) {
-  return request.post('/butler/compraise/addComPraise', data)
+export function addComPraise (data, HouseId) {
+  return request.post('/butler/compraise/addComPraise', data, {
+    headers: {
+      HouseId
+    }
+  })
 }
 // 投诉表扬列表接口
 export function getComPraiseList (params) {

@@ -56,6 +56,7 @@ import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 import { addComPraise } from '@/api/butler.js'
 import { validForm } from '@/utils/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     tfRadioBtn,
@@ -89,6 +90,9 @@ export default {
       uImgList: []
     }
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   methods: {
     formSubmit () {
       const validator = [
@@ -110,7 +114,7 @@ export default {
         content: this.content,
         images: this.uImgList,
         info_type: this.info_type
-      }).then(res => {
+      }, this.currentProject.house_id).then(res => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'

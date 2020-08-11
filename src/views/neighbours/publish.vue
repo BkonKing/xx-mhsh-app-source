@@ -24,7 +24,7 @@
         show-word-limit
       />
       <van-divider />
-      <van-uploader max-count="9" />
+      <tf-uploader max-count="9"></tf-uploader>
     </div>
   </div>
 </template>
@@ -37,9 +37,11 @@ import {
   Field,
   Divider,
   Uploader,
-  Dialog
+  Dialog,
+  Toast
 } from 'vant'
-import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
+import tfRadioBtn from '@/components/tf-radio-btn/index'
+import tfUploader from '@/components/tf-uploader/index'
 import { addPostBar } from '@/api/neighbours'
 import { validForm } from '@/utils/util'
 
@@ -52,7 +54,8 @@ export default {
     [Divider.name]: Divider,
     [Uploader.name]: Uploader,
     [Dialog.name]: Dialog,
-    tfRadioBtn
+    tfRadioBtn,
+    tfUploader
   },
   data () {
     return {
@@ -135,7 +138,13 @@ export default {
           category_id: this.category_id,
           content: this.content,
           images: this.images
-        }).then((res) => {})
+        }).then((res) => {
+          Dialog.alert({
+            title: '发布成功'
+          }).then(res => {
+            this.$router.go(-1)
+          })
+        })
       })
     }
   }
@@ -195,7 +204,8 @@ export default {
     line-height: 54px;
   }
 }
-/deep/ .van-uploader__upload {
+/deep/ .van-uploader__upload,
+/deep/ .van-uploader__preview {
   width: 216px;
   height: 216px;
 }

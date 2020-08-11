@@ -7,6 +7,9 @@ import {
   refreshToken
 } from '@/api/user.js'
 import {
+  bindingHouse
+} from '@/api/personage.js'
+import {
   Toast,
   Dialog
 } from 'vant'
@@ -224,6 +227,13 @@ const store = {
           })
         }
         return err
+      })
+    },
+    getHouse ({
+      commit
+    }) {
+      bindingHouse().then(({ data }) => {
+        data && data.length && commit('setCurrentProject', data[0])
       })
     }
   }

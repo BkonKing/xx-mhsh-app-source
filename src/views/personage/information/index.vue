@@ -100,7 +100,7 @@ import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import house from '../house/components/house'
 import { mapGetters } from 'vuex'
-import { getMemberList } from '@/api/personage'
+import { getMemberList, yzHouse } from '@/api/personage'
 export default {
   name: 'informationIndex',
   components: {
@@ -118,20 +118,7 @@ export default {
     return {
       current: 0,
       value: 0,
-      list: [
-        {
-          text: 'item1',
-          value: 0
-        },
-        {
-          text: 'item2',
-          value: 1
-        },
-        {
-          text: 'item3',
-          value: 2
-        }
-      ],
+      list: [],
       realname: '',
       gender: '',
       avatar: '',
@@ -162,13 +149,29 @@ export default {
     this.gender = gender
     this.avatar = avatar
     this.mobile = mobile
-    this.getMemberList()
+    this.yzHouse()
+    // this.getMemberList()
   },
   methods: {
+    /* 获取业主房产信息 */
+    yzHouse () {
+      yzHouse().then((res) => {
+        this.list = res.data.map((obj) => {
+          const { project_name, fc_info, members, house_id } = obj
+          return {
+            text: `${project_name}${fc_info}(${members})`,
+            value: house_id
+          }
+        })
+        console.log(1)
+        this.value = res.data[0].house_id
+      })
+    },
     /* 获取成员列表 */
     getMemberList () {
+      console.log(3)
       getMemberList({
-        HouseId: this.value
+        house_id: this.value
       }).then((res) => {
         this.memberList = res.data
       })
@@ -218,6 +221,12 @@ export default {
     },
     goback () {
       this.$router.replace('/personage')
+    }
+  },
+  watch: {
+    value (value) {
+      console.log(2)
+      this.getMemberList()
     }
   }
 }

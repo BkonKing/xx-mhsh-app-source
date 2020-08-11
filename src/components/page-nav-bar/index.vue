@@ -3,7 +3,7 @@
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-location"></span>
-        <span v-if="currentProject" class="tf-text">{{ currentProject.house_name }}</span>
+        <span v-if="currentProject" class="tf-text">{{ currentProject.project_name + currentProject.fc_info }}</span>
         <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>

@@ -42,7 +42,7 @@ export default {
   created () {
     const { id, type } = this.$route.query
     this.id = id
-    this.title = type === 2 ? '表扬' : '投诉'
+    this.title = type == 2 ? '表扬' : '投诉'
     this.getComPraiseInfo()
   },
   methods: {

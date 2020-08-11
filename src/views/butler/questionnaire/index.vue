@@ -12,7 +12,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
-      <questionList :data.sync="list" @load="onLoad"></questionList>
+      <questionList :data.sync="list" :load="getWjtpList"></questionList>
     </div>
   </div>
 </template>
@@ -31,21 +31,13 @@ export default {
       list: []
     }
   },
-  created () {
-    this.getWjtpList()
-  },
   methods: {
-    getWjtpList () {
-      getWjtpList().then(res => {
-        if (res.success) {
-          this.list = res.data
-        }
-      })
+    getWjtpList (params) {
+      return getWjtpList(params)
     },
     goMyList () {
       this.$router.push('/pages/butler/questionnaire/my')
-    },
-    onLoad () {}
+    }
   }
 }
 </script>

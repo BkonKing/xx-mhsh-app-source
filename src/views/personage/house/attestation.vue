@@ -182,7 +182,7 @@ export default {
       this.house_name = house_name
       this.house_id = house_id
       this.project_id = project_id
-      this.building_id = house_name
+      this.building_id = building_id
       this.unit_id = unit_id
       this.$store.commit('setHouseSelected', null)
     }

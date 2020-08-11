@@ -20,7 +20,7 @@
             v-for="(item, i) in buildList"
             :key="i"
             v-show="item.unit_name.indexOf(value[1]) !== -1"
-            :title="`${activeProject.project_name}${item.unit_name}`"
+            :title="`${item.unit_name}`"
             @click="select(item)"
           ></tf-list-item>
         </tf-list>
@@ -31,7 +31,7 @@
             v-for="(item, i) in houseList"
             :key="i"
             v-show="item.house_name.indexOf(value[2]) !== -1"
-            :title="`${activeProject.project_name}${activeBuild.unit_name}${item.house_name}`"
+            :title="`${activeBuild.unit_name}${item.house_name}`"
             @click="select(item)"
           ></tf-list-item>
         </tf-list>
@@ -122,10 +122,7 @@ export default {
         unit_id: this.activeBuild.id,
         // unit_name: this.activeBuild.unit_name,
         house_id: item.id,
-        house_name:
-          this.activeProject.project_name +
-          this.activeBuild.unit_name +
-          item.house_name
+        house_name: this.activeBuild.unit_name + item.house_name
       }
       this.$store.commit('setHouseSelected', obj)
       this.$router.go(-1)

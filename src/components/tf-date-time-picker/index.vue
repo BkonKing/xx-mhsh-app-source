@@ -16,7 +16,7 @@
 
 <script>
 import { DatetimePicker, Popup } from 'vant'
-import { formatDateTime } from '@/utils/util'
+import { formatDateTime, formatDate } from '@/utils/util'
 export default {
   name: 'tf-date-time-picker',
   components: {
@@ -41,7 +41,12 @@ export default {
   },
   methods: {
     confirm (time) {
-      const value = formatDateTime(time.getTime())
+      let value
+      if (this.$attrs.type === 'date') {
+        value = formatDate(time.getTime())
+      } else {
+        value = formatDateTime(time.getTime())
+      }
       this.$emit('input', value)
       this.showDatePicker = false
     }

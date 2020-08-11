@@ -31,10 +31,7 @@ export default {
     })
     userInfo && this.$store.commit('setUser_info', userInfo)
     // 看是否有当前项目
-    const currentProject = api.getPrefs({
-      key: 'currentProject'
-    })
-    currentProject && this.$store.commit('setCurrentProject', currentProject)
+    this.$store.dispatch('getHouse')
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     this.setRouteKeepAlive(router.options.routes)
   },
