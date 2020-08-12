@@ -12,7 +12,7 @@
     </template>
   </van-nav-bar>
   <div class='tf-main-container'>
-    <list :data="postBarList"></list>
+    <list :data.sync="postBarList" :load="getPostBarList" article_type="3"></list>
   </div>
 </div>
 </template>
@@ -37,7 +37,7 @@ export default {
   created () {
     this.categoryId = this.$route.query.categoryId
     this.title = this.$route.query.category
-    this.getPostBarList()
+    // this.getPostBarList()
   },
   methods: {
     /* 发布 */
@@ -50,12 +50,10 @@ export default {
       })
     },
     /* 获取最新列表 */
-    getPostBarList () {
-      getPostBarList({
+    getPostBarList (params) {
+      return getPostBarList(Object.assign({
         categoryId: this.categoryId
-      }).then(res => {
-        this.postBarList = res.data
-      })
+      }, params))
     }
   }
 }

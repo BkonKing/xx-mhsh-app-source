@@ -22,10 +22,10 @@
         <div v-else class="van-list__finished-text">没有更多了</div>
       </van-tab>
       <van-tab title="活动">
-        <list key="activityList" :data.sync="activityList" :load="getActivityList" :category="1"></list>
+        <list key="activityList" :data.sync="activityList" :load="getActivityList" article_type="2"></list>
       </van-tab>
       <van-tab title="资讯">
-        <list key="articleList" :data.sync="articleList" :load="getArticleList" :category="3"></list>
+        <list key="articleList" :data.sync="articleList" :load="getArticleList" article_type="1"></list>
       </van-tab>
     </van-tabs>
   </div>
@@ -134,7 +134,7 @@ export default {
   watch: {
     $route (route) {
       const { active } = route.query
-      if (active !== this.current) {
+      if (active && active !== this.current) {
         this.current = parseInt(active)
         // this.getList()
       }
@@ -165,6 +165,7 @@ export default {
 }
 /deep/ .van-tabs__content {
   flex: 1;
+  max-height: calc(100% - 98px);
   .van-tab__pane {
     height: 100%;
   }

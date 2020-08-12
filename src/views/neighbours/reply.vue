@@ -7,7 +7,12 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-main-container">
+    <van-pull-refresh
+      class="tf-main-container"
+      success-text="刷新成功"
+      v-model="isLoading"
+      @refresh="onRefresh"
+    >
       <div class="reply-cell-content">
         <userInfo
           :avatar="replyInfo.avatar || ''"
@@ -32,8 +37,14 @@
           <img class="reply-cell-content__img" :src="replyInfo.images[0]" />
         </div>
       </div>
-      <refreshList class="reply-list" :list.sync="replyList" @load="onLoad">
-        <template v-slot="{item}">
+      <van-list
+        class="reply-list"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <van-cell class="reply-cell" v-for="(item, i) in replyList" :key="i">
           <userInfo
             class="user-info"
             :avatar="item.avatar || ''"
@@ -50,61 +61,87 @@
               ></span>
             </template>
           </userInfo>
-          <div class="reply-cell-content__text" @click="operate">
+          <div class="reply-cell-content__text" @click="operate(item, i)">
             <span class="tf-text" v-if="item.reply">
-              回复<span class="tf-text-blue">@{{item.reply}}</span>：
+              回复
+              <span class="tf-text-blue">@{{item.reply}}</span>：
             </span>
             {{item.content}}
           </div>
-        </template>
-      </refreshList>
-    </div>
+        </van-cell>
+      </van-list>
+    </van-pull-refresh>
     <more-popup
       :moreShow.sync="moreShow"
-      :comment="!oneself"
+      :comment="true"
       :complain="!oneself && category == 2"
       :deleteProp="oneself"
       @comment="comment"
     ></more-popup>
-    <comment ref="comment" v-model="show" :thumbsupshow="false" @thumbsup="$emit('thumbsup')"></comment>
+    <comment
+      ref="comment"
+      v-model="commentShow"
+      :articleId="articleId"
+      :parentId="parentId || id"
+      :placeholder="placeholder"
+      :thumbsupshow="false"
+      @commentSuccess="commentSuccess"
+    ></comment>
   </div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
-import refreshList from '@/components/tf-refresh-list'
+import { NavBar, List, Cell, PullRefresh } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
-import { thumbsUp, getCommentList } from '@/api/neighbours'
+import { thumbsUp, getCommentList, getCommentInfo } from '@/api/neighbours'
 import morePopup from './components/morePopup'
 import comment from './components/comment'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    refreshList,
+    [List.name]: List,
+    [Cell.name]: Cell,
+    [PullRefresh.name]: PullRefresh,
     UserInfo,
     morePopup,
     comment
   },
   data () {
     return {
-      title: '3条回复',
+      title: '',
+      id: '',
+      parentId: '',
+      uid: '',
       category: '',
       articleId: '',
       replyInfo: '',
+      placeholder: '',
       replyList: [],
+      isLoading: false,
+      loading: false,
+      finished: false,
+      isEndNum: false,
       moreShow: false,
-      show: false,
-      oneself: false
+      commentShow: false
     }
   },
   created () {
-    this.category = this.$route.query.category
-    this.articleId = this.$route.query.articleId
-    this.replyInfo = JSON.parse(this.$route.query.data)
-    this.getCommentList()
+    const { category, articleId, id } = this.$route.query
+    this.category = category
+    this.articleId = articleId
+    this.id = id
+    this.getCommentInfo()
+    // this.getCommentList()
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+    oneself () {
+      return this.uid == this.userInfo.id
+    }
   },
   methods: {
-    onLoad () {},
+    /* 点赞 */
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
       if (item.thumbsupStatus) {
@@ -112,33 +149,106 @@ export default {
       }
       thumbsUp({
         id: item.id,
-        t_type: 1
+        t_type: 2
       }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
         item.thumbsupStatus = 1
       })
     },
+    /* 获取评论详情 */
+    getCommentInfo () {
+      getCommentInfo({
+        id: this.id
+      }).then((res) => {
+        this.replyInfo = res.data
+      })
+    },
+    /* 长列表加载 */
+    onLoad () {
+      if (!this.isEndNum) {
+        this.getCommentList()
+      } else {
+        this.finished = true
+      }
+    },
+    /* 获取回复列表 */
     getCommentList () {
       getCommentList({
         articleId: this.articleId,
-        parentId: this.replyInfo.id
-      }).then((res) => {
-        this.replyList = res.data
+        parentId: this.id
+      }).then(({ data }) => {
+        this.isLoading = false
+        this.loading = false
+        if (data.length > 0) {
+          this.replyList.push(...data)
+          this.title = data.length + '条回复'
+          if (data.length >= 10) {
+            this.isEndNum = 0
+          } else {
+            this.isEndNum = 1
+          }
+        } else {
+          this.finished = true
+        }
       })
     },
-    operate () {
+    /* 下拉刷新 */
+    onRefresh () {
+      this.replyList = []
+      this.getCommentInfo()
+      this.getCommentList()
+    },
+    /* 打开操作框 */
+    operate ({ id, uid, account }, i) {
+      this.parentId = id
+      this.placeholder = account ? `回复${account}` : ''
+      this.uid = uid
+      this.index = i
       this.moreShow = true
     },
+    /* 操作框回复回调打开评论框 */
     comment () {
-      this.moreShow = false
-      this.show = true
+      // this.moreShow = false
+      this.commentShow = true
+    },
+    /* 评论成功回调 */
+    commentSuccess (data) {
+      this.commentShow = false
+      const info = {
+        account: this.userInfo.account,
+        avatar: this.userInfo.avatar,
+        child: [],
+        content: data.content,
+        ctime: '2020-08-12 14:43:26',
+        id: '123',
+        images: data.images,
+        thumbsups: data.thumbsups,
+        uid: this.userInfo.uid
+      }
+      if (this.moreShow) {
+        this.replyList[this.index].child.unshift(info)
+        this.moreShow = false
+      } else {
+        this.replyList.unshift(info)
+      }
+    }
+  },
+  watch: {
+    moreShow (value) {
+      if (!value) {
+        this.parentId = ''
+        this.placeholder = ''
+      }
     }
   }
 }
 </script>
 
 <style lang='less' scoped>
+.tf-main-container {
+  overflow: auto;
+}
 .reply-cell-content {
   padding: 30px;
   margin-bottom: 30px;

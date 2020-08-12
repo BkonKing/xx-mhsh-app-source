@@ -2,8 +2,8 @@
   <div style="height: 100%;">
     <refreshList :list.sync="list" :load="load">
       <template v-slot="{item}">
-        <div v-if="category === 1 || item.category === 1" class="activity-cell">
-          <div @click="goDetails(1, item.id)">
+        <div v-if="item.article_type == 2 || article_type == 2" class="activity-cell">
+          <div @click="goDetails('2', item.id)">
             <div class="activity-image-box">
               <img class="activity-image" :src="item.thumbnail" />
               <div class="activity-join">{{item.joins || 0}}人已报名</div>
@@ -12,41 +12,39 @@
             <div class="activity-title">{{item.title}}</div>
             <div class="activity-time">{{item.ctime}}</div>
           </div>
-          <operation :item="item" :key="item.id"></operation>
+          <operation :item="item" :article-type="item.article_type || article_type" :key="item.id"></operation>
         </div>
-        <div v-else-if="item.category === 2">
-          <div class="tf-card">
+        <div v-else-if="item.article_type == 3 || article_type == 3">
+          <div class="tf-card" @click="goDetails('3', item.id)">
             <div class="tf-card-header">
               <userInfo :avatar="item.avatar" :name="item.account" :time="item.ctime">
                 <template v-slot:right>
-                  <div class="group-tag">公告小组</div>
+                  <div class="group-tag">{{item.category}}</div>
                 </template>
               </userInfo>
             </div>
-            <div class="tf-card-content" @click="goDetails(2, item.id)">{{ item.content }}</div>
+            <div class="tf-card-content">{{ item.content }}</div>
             <img
               width="33%"
               :src="item.images[0]"
               v-if="item.images.length === 1"
-              @click="goDetails(2, item.id)"
             />
             <tf-image-list
               v-else-if="item.images.length > 1"
               :data="item.images"
-              @click="goDetails(2, item.id)"
             ></tf-image-list>
-            <operation :item="item" :key="item.id">
-              <div class="tf-icon tf-icon-ellipsis" @click="moreShow = true;status = item.oneself"></div>
+            <operation :item="item" :article-type="item.article_type || article_type" :key="item.id">
+              <div class="tf-icon tf-icon-ellipsis" @click.stop="moreShow = true;status = userInfo.id == item.uid"></div>
             </operation>
           </div>
         </div>
-        <div class="activity-cell" v-else-if="category === 3 || item.category === 3">
-          <div @click="goDetails(3, item.id)">
+        <div class="activity-cell" v-else-if="item.article_type == 1 || article_type == 1">
+          <div @click="goDetails('1', item.id)">
             <img class="activity-image" :src="item.thumbnail" />
             <div class="tf-status-tag">资讯</div>
-            <div class="activity-title">{{item.content}}</div>
+            <div class="activity-title">{{item.title}}</div>
           </div>
-          <operation :item="item" :key="item.id"></operation>
+          <operation :item="item" :article-type="item.article_type || article_type" :key="item.id"></operation>
         </div>
       </template>
     </refreshList>
@@ -60,6 +58,7 @@ import refreshList from '@/components/tf-refresh-list'
 import UserInfo from '@/components/user-info/index.vue'
 import morePopup from './morePopup'
 import operation from './operation'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -74,8 +73,8 @@ export default {
       type: Array,
       defautl: () => []
     },
-    category: {
-      type: Number,
+    article_type: {
+      type: [Number, String],
       defautl: undefined
     },
     load: [Function]
@@ -87,12 +86,15 @@ export default {
       status: true // 是否是本人发的帖
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
-    goDetails (category, id) {
+    goDetails (articleType, id) {
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {
-          category,
+          articleType,
           id
         }
       })

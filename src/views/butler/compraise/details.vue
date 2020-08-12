@@ -9,7 +9,7 @@
     ></van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-bg-white">
-        <userInfo name="园博园他" avatar="/static/app-icon.png" :time="info.ctime"></userInfo>
+        <userInfo :avatar="userInfo.avatar" :name="userInfo.account" :time="info.ctime"></userInfo>
         <div class="tf-auxiliary-content tf-mt-lg">{{info.content}}</div>
         <tf-image-list :data="info.images" mode="show" class="tf-mt-base"></tf-image-list>
       </div>
@@ -26,6 +26,7 @@ import { NavBar } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import { getComPraiseInfo } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -44,6 +45,9 @@ export default {
     this.id = id
     this.title = type == 2 ? '表扬' : '投诉'
     this.getComPraiseInfo()
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     getComPraiseInfo () {

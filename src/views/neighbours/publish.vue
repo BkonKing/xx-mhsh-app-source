@@ -42,7 +42,7 @@ import {
 } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index'
 import tfUploader from '@/components/tf-uploader/index'
-import { addPostBar } from '@/api/neighbours'
+import { addPostBar, getPostBarCategoryList } from '@/api/neighbours'
 import { validForm } from '@/utils/util'
 
 export default {
@@ -61,46 +61,29 @@ export default {
     return {
       category_id: '',
       content: '',
-      types: [
-        {
-          value: 1,
-          name: '社区服务'
-        },
-        {
-          value: 2,
-          name: '老年活动中心'
-        },
-        {
-          value: 3,
-          name: '政务咨询'
-        },
-        {
-          value: 4,
-          name: '活动'
-        },
-        {
-          value: 5,
-          name: '咨询'
-        },
-        {
-          value: 6,
-          name: '书法兴趣小组'
-        },
-        {
-          value: 7,
-          name: '社区工作组'
-        }
-      ],
+      types: [],
       images: []
     }
   },
   created () {
     this.category_id = this.$route.query.category_id || ''
+    this.getPostBarCategoryList()
   },
   mounted () {
     this.$refs.item.toggle()
   },
   methods: {
+    /* 获取话题小组 */
+    getPostBarCategoryList () {
+      getPostBarCategoryList().then((res) => {
+        this.types = res.data.length && res.data.map(obj => {
+          return {
+            value: obj.id,
+            name: obj.category
+          }
+        })
+      })
+    },
     /* 选择完类型自动折叠起类型选择区域 */
     handRadioChange (value) {
       this.$refs.item.toggle()

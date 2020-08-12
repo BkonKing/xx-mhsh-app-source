@@ -3,11 +3,11 @@
     <div
       class="tf-icon tf-icon-like"
       :class="{'like-active': item.thumbsupStatus}"
-      @click="thumbsUp(item)"
+      @click.stop="thumbsUp(item)"
     >
       <span class="tf-text-sm">{{item.thumbsups | numberText}}</span>
     </div>
-    <div class="tf-icon tf-icon-message" @click="goDetails">
+    <div class="tf-icon tf-icon-message" @click.stop="goDetails">
       <span class="tf-text-sm">{{item.comments | numberText}}</span>
     </div>
     <slot></slot>
@@ -21,6 +21,9 @@ export default {
     item: {
       type: Object,
       default: () => {}
+    },
+    articleType: {
+      default: ''
     }
   },
   data () {
@@ -43,12 +46,12 @@ export default {
         item.thumbsupStatus = 1
       })
     },
-    goDetails (category, id) {
+    goDetails () {
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {
-          category,
-          id
+          articleType: this.articleType,
+          id: this.item.id
         }
       })
     }

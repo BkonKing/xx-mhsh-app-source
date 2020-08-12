@@ -5,25 +5,30 @@
         <span class="tf-icon tf-icon-ellipsis" @click="moreShow = true"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <van-pull-refresh
+      class="tf-main-container"
+      success-text="刷新成功"
+      v-model="isLoading"
+      @refresh="onRefresh"
+    >
       <div class="tf-card">
         <div
           class="tf-card-header"
           style="border-bottom:none"
-          :class="{'border-none': category === 1 || category === 3}"
+          :class="{'border-none': articleType == 2 || articleType == 3}"
         >
           <userInfo :avatar="info.avatar" :name="info.account" :time="info.ctime">
-            <template v-slot:right>
-              <div class="group-tag">公告小组</div>
+            <template v-if="articleType == 3" v-slot:right>
+              <div class="group-tag">{{info.category}}</div>
             </template>
           </userInfo>
         </div>
-        <template v-if="category == 3">
+        <template v-if="articleType == 1">
           <div class="article-title">{{info.title}}</div>
           <div class="article-content">{{info.content}}</div>
           <img class="activity-image" :src="info.thumbnail" />
         </template>
-        <template v-else-if="category == 2">
+        <template v-else-if="articleType == 3">
           <tf-alert
             type="warning"
             content="该内容含有违规信息。"
@@ -32,9 +37,9 @@
             size="sm"
           ></tf-alert>
           <div class="tf-card-content">{{ info.content }}</div>
-          <tf-image-list :data="info.images" mode="show"></tf-image-list>
+          <tf-image-list v-if="info.images && info.images.length" :data="info.images" mode="show"></tf-image-list>
         </template>
-        <template v-else-if="category == 1">
+        <template v-else-if="articleType == 2">
           <div class="article-title">{{info.title}}</div>
           <div class="activity-content">
             <div class="tf-text tf-mb-base">{{info.content}}</div>
@@ -67,19 +72,19 @@
       </div>
       <reply
         ref="reply"
-        class="tf-mt-lg"
-        :articleId="info.id"
-        :category="category"
+        class="tf-mt-lg activity-reply"
+        :articleId="id"
+        :articleType="articleType"
         :thumbsupStatus="info.thumbsupStatus"
         @thumbsup="thumbsUp(info)"
       ></reply>
-    </div>
+    </van-pull-refresh>
     <more-popup :moreShow.sync="moreShow" :share="true"></more-popup>
   </div>
 </template>
 
 <script>
-import { NavBar, Popup, Toast } from 'vant'
+import { NavBar, Popup, Toast, PullRefresh } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
@@ -97,6 +102,7 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [Popup.name]: Popup,
+    [PullRefresh.name]: PullRefresh,
     UserInfo,
     TfAlert,
     reply,
@@ -105,50 +111,56 @@ export default {
   },
   data () {
     return {
-      category: 3,
+      articleType: 3,
       id: '',
       moreShow: false,
       info: {
-        id: '2',
-        content:
-          '在宏观调控不断深入与加强的背景下，房地产行业已经从过去的资源竞争，进入到产品竞争的阶段。对于房企而言，形成产品标准化管理体系，是快速提升房地产企业管理水平的有效捷径。',
-        images: [
-          'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-        ],
-        category: 2,
-        account: '小雪',
-        avatar: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-        thumbsups: '5',
-        comments: '3',
-        ctime: '2020-06-03 16:35:26'
+        id: '',
+        content: '',
+        images: [],
+        category: '',
+        account: '',
+        avatar: '',
+        thumbsups: '',
+        comments: '',
+        ctime: ''
       },
-      joinStatus: false
+      joinStatus: false,
+      isLoading: false
     }
   },
   created () {
-    const { category, id } = this.$route.query
-    this.category = parseInt(category)
+    const { articleType, id } = this.$route.query
+    this.articleType = articleType
     this.id = id
-    switch (category) {
-      case 1:
-        this.getActivityInfo()
-        break
-      case 2:
-        this.getPostBarInfo()
-        break
-      case 3:
-        this.getArticleInfo()
-        break
-    }
+    this.getInfo()
   },
   methods: {
+    /* 下拉刷新 */
+    onRefresh () {
+      this.getInfo()
+      this.$refs.reply.reload()
+    },
+    getInfo () {
+      switch (this.articleType) {
+        case '1':
+          this.getArticleInfo()
+          break
+        case '2':
+          this.getActivityInfo()
+          break
+        case '3':
+          this.getPostBarInfo()
+          break
+      }
+    },
     /* 获取小组帖子详情 */
     getPostBarInfo () {
       getPostBarInfo({
         id: this.id
       }).then((res) => {
         this.info = res.data
+        this.isLoading = false
       })
     },
     /* 获取活动详情 */
@@ -157,6 +169,7 @@ export default {
         id: this.id
       }).then((res) => {
         this.info = res.data
+        this.isLoading = false
       })
     },
     /* 加入活动 */
@@ -174,6 +187,7 @@ export default {
         id: this.id
       }).then((res) => {
         this.info = res.data
+        this.isLoading = false
       })
     },
     thumbsUp (item) {
@@ -182,7 +196,7 @@ export default {
         return
       }
       thumbsUp({
-        id: item.id,
+        id: this.id,
         t_type: 1
       }).then((res) => {
         // 点赞图标点亮
@@ -207,7 +221,9 @@ export default {
 
 <style lang='less' scoped>
 .tf-main-container {
+  overflow: auto !important;
   padding-bottom: 98px;
+  @flex-column();
   .tf-icon {
     color: #8f8f94;
   }
@@ -249,6 +265,8 @@ export default {
 .activity-content {
   @flex-column();
   align-items: center;
+  border-top: 1px solid @divider-color;
+  padding-top: 30px;
   .apply-box {
     width: 100%;
     background: #ffffff;
@@ -312,5 +330,8 @@ export default {
 }
 .like-active::before {
   color: @orange-dark;
+}
+.activity-reply {
+  flex: 1;
 }
 </style>

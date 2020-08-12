@@ -44,6 +44,42 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
     }).$mount('#app')
   }
 } else {
+  if (!window.api) {
+    window.api = {
+      getPrefs (obj) {
+        const {
+          key: name
+        } = obj
+        const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
+        const arr = document.cookie.match(reg)
+        if (arr) {
+          let value
+          try {
+            value = JSON.parse(arr[2])
+          } catch (error) {
+            value = arr[2]
+          }
+          return value
+        } else {
+          return null
+        }
+      },
+      setPrefs (obj) {
+        const {
+          key: name,
+          value
+        } = obj
+        const val = typeof value === 'object' ? JSON.stringify(value) : value
+        document.cookie = name + '=' + val + ';path=/;'
+      },
+      removePrefs (obj) {
+        const {
+          key: name
+        } = obj
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+      }
+    }
+  }
   // Vue.use(Vuex)
   require('./permission')
   process.env.NODE_ENV === 'development' && new VConsole()

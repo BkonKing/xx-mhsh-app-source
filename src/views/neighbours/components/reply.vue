@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg-white reply-container" :class="{'gray': grayTheme}">
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell class="reply-cell" v-for="cell in list" :key="cell.id">
+      <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id">
         <userInfo :avatar="cell.avatar || ''" :name="cell.account" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
             <span class="thumbsups-number">{{cell.thumbsups}}</span>
@@ -13,7 +13,7 @@
           </template>
         </userInfo>
         <div class="reply-cell-content">
-          <div class="reply-cell-content__text" @click="operate">{{cell.content}}</div>
+          <div class="reply-cell-content__text" @click="operate(cell.id, cell.uid, i)">{{cell.content}}</div>
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
@@ -50,8 +50,8 @@
     </van-list>
     <more-popup
       :moreShow.sync="moreShow"
-      :comment="!oneself"
-      :complain="!oneself && category == 2"
+      :comment="true"
+      :complain="!oneself && articleType == 3"
       :deleteProp="oneself"
       @comment="comment"
     ></more-popup>
@@ -61,9 +61,13 @@
     </div>
     <comment
       ref="comment"
-      v-model="show"
+      v-model="commentShow"
+      :parentId="parentId"
+      :articleId="articleId"
       :thumbsupStatus="thumbsupStatus"
+      :thumbsupshow="true"
       @thumbsup="$emit('thumbsup')"
+      @commentSuccess="commentSuccess"
     ></comment>
   </div>
 </template>
@@ -74,6 +78,7 @@ import UserInfo from '@/components/user-info/index.vue'
 import comment from './comment'
 import morePopup from './morePopup'
 import { thumbsUp, getCommentList } from '@/api/neighbours'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -81,7 +86,7 @@ export default {
       type: Boolean,
       default: false
     },
-    category: {
+    articleType: {
       type: [String, Number],
       default: ''
     },
@@ -90,10 +95,6 @@ export default {
       default: false
     },
     articleId: {
-      type: String,
-      default: ''
-    },
-    parentId: {
       type: String,
       default: ''
     }
@@ -113,62 +114,71 @@ export default {
       loading: false,
       finished: false,
       moreShow: false,
-      oneself: false,
-      show: false,
-      path: ''
+      isEndNum: false,
+      commentShow: false,
+      path: '',
+      parentId: '',
+      uid: '',
+      index: undefined // 点击操作框的评论数据
     }
   },
   created () {
     this.path = this.$route.path
-    this.getCommentList()
+    // this.getCommentList()
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+    oneself () {
+      return this.uid == this.userInfo.id
+    }
   },
   methods: {
+    /* 长列表加载 */
     onLoad () {
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-
-        // 加载状态结束
-        this.loading = false
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
-      }, 20000)
+      if (!this.isEndNum) {
+        this.getCommentList()
+      } else {
+        this.finished = true
+      }
     },
+    /* 跳转到评论详情页 */
     goReply (data) {
       if (this.path.indexOf('reply') === -1) {
-        const params = JSON.parse(JSON.stringify(data))
-        delete params.child
         this.$router.push({
           path: '/pages/neighbours/reply',
           query: {
-            category: this.category,
+            category: this.articleType,
             articleId: this.articleId,
-            data: JSON.stringify(params)
+            id: data.id
           }
         })
       }
     },
+    /* 查看图片 */
     lookImg (images) {
       ImagePreview({
         images,
         closeable: true
       })
     },
-    operate () {
+    /* 打开操作框 */
+    operate (id, uid, i) {
+      // 打开操作框保存parentId，用以接下来的操作
+      this.parentId = id
+      this.uid = uid
+      this.index = i
       this.moreShow = true
     },
+    /* 操作框回复回调打开评论框 */
     comment () {
-      this.show = true
+      this.commentShow = true
     },
+    /* 打开评论框 */
     showPopup () {
-      this.show = true
+      this.parentId = ''
+      this.commentShow = true
     },
+    /* 点赞 */
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
       if (item.thumbsupStatus) {
@@ -176,20 +186,57 @@ export default {
       }
       thumbsUp({
         id: item.id,
-        t_type: 1
+        t_type: 2
       }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
         item.thumbsupStatus = 1
       })
     },
+    /* 获取回复列表 */
     getCommentList () {
       getCommentList({
         articleId: this.articleId,
         parentId: this.parentId
-      }).then((res) => {
-        this.list = res.data
+      }).then(({ data }) => {
+        this.loading = false
+        if (data.length > 0) {
+          this.list.push(...data)
+          if (data.length >= 10) {
+            this.isEndNum = 0
+          } else {
+            this.isEndNum = 1
+          }
+        } else {
+          this.finished = true
+        }
       })
+    },
+    /* 评论成功回调 */
+    commentSuccess (data) {
+      this.commentShow = false
+      const info = {
+        account: this.userInfo.account,
+        avatar: this.userInfo.avatar,
+        child: [],
+        content: data.content,
+        ctime: '2020-08-12 14:43:26',
+        id: '123',
+        images: data.images,
+        thumbsups: data.thumbsups,
+        uid: this.userInfo.uid
+      }
+      if (this.moreShow) {
+        this.list[this.index].child.unshift(info)
+        this.moreShow = false
+      } else {
+        this.list.unshift(info)
+      }
+    },
+    /* 刷新回复列表 */
+    reload () {
+      this.list = []
+      this.getCommentList()
     }
   }
 }
@@ -269,7 +316,7 @@ export default {
   height: 98px;
   padding: 15px 30px;
   background: #fff;
-  box-shadow: 0px 1px 0px 0px @gray-2;
+  border-top: 2px solid @gray-2;
   .tf-icon-like {
     font-size: 44px;
     margin-right: 30px;

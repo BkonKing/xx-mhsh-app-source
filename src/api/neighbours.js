@@ -64,3 +64,8 @@ export function addComment (data) {
 export function getCommentList (params) {
   return request.get('/neighbours/comment/getCommentList', { params })
 }
+
+// 评论详情
+export function getCommentInfo (params) {
+  return request.get('/neighbours/comment/getCommentInfo', { params })
+}

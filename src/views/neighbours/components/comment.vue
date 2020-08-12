@@ -8,12 +8,13 @@
       <div class="comment-popup">
         <div class="comment-popup-left">
           <van-field
+            ref="input"
             type="textarea"
             rows="3"
             maxlength="100"
             show-word-limit
             v-model="content"
-            placeholder="写评论"
+            :placeholder="placeholder || '写评论'"
           />
           <div v-if="images" class="comment-image-box">
             <img class="comment-image" :src="images" />
@@ -44,6 +45,14 @@ export default {
       type: [Boolean, Number],
       default: false
     },
+    articleId: {
+      type: String,
+      default: ''
+    },
+    parentId: {
+      type: String,
+      default: ''
+    },
     thumbsupStatus: {
       type: [Boolean, Number],
       default: false
@@ -51,6 +60,10 @@ export default {
     thumbsupshow: {
       type: Boolean,
       default: false
+    },
+    placeholder: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -67,18 +80,32 @@ export default {
     thumbsup () {
       this.$emit('thumbsup')
     },
+    /* 新增评论 */
     addComment () {
       if (!this.content) {
         return
       }
-      addComment().then(res => {
-
+      const params = {
+        article_id: this.articleId,
+        content: this.content,
+        images: this.images,
+        parent_id: this.parentId
+      }
+      addComment(params).then(res => {
+        this.content = ''
+        this.images = ''
+        this.$emit('commentSuccess', params)
       })
     }
   },
   watch: {
     show (value) {
       this.$emit('input', value)
+      if (value) {
+        this.$nextTick(() => {
+          this.$refs.input && this.$refs.input.focus()
+        })
+      }
     },
     value (value) {
       this.show = value
@@ -97,7 +124,7 @@ export default {
   height: 98px;
   padding: 15px 30px;
   background: #fff;
-  box-shadow: 0px 1px 0px 0px @gray-2;
+  border-top: 2px solid @gray-2;
   .tf-icon-like {
     font-size: 44px;
     margin-right: 30px;

@@ -163,13 +163,11 @@ export default {
             value: house_id
           }
         })
-        console.log(1)
         this.value = res.data[0].house_id
       })
     },
     /* 获取成员列表 */
     getMemberList () {
-      console.log(3)
       getMemberList({
         house_id: this.value
       }).then((res) => {
@@ -225,7 +223,6 @@ export default {
   },
   watch: {
     value (value) {
-      console.log(2)
       this.getMemberList()
     }
   }

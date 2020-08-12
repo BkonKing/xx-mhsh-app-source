@@ -54,7 +54,6 @@ export default {
     // 设置消息已读
     setNoticeReaded (noticeId) {
       setNoticeReaded({
-        project_id: '1',
         noticeId
       }).then((res) => {
         if (res.success) {

@@ -32,11 +32,11 @@ export default {
     [SwipeItem.name]: SwipeItem
   },
   created () {
-    // queryAllApp().then(res => {
-    //   if (res.success) {
-    //     this.appList = res.data.records
-    //   }
-    // })
+    queryAllApp().then(res => {
+      if (res.success) {
+        // this.appList = res.data
+      }
+    })
   },
   data () {
     return {

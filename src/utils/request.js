@@ -56,6 +56,7 @@ service.interceptors.request.use(
     if (project) {
       config.headers.ProjectId = project.project_id
     }
+
     return config
   },
   error => {

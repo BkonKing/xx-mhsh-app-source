@@ -6,7 +6,7 @@
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header">
-              <userInfo avatar="/static/app-icon.png" :name="item.name" :time="item.ctime">
+              <userInfo :avatar="userInfo.avatar" :name="userInfo.account" :time="item.ctime">
                 <template v-slot:right>
                   <div
                     class="tf-icon"
@@ -34,6 +34,7 @@ import refreshList from '@/components/tf-refresh-list'
 import userInfo from '@/components/user-info/index.vue'
 import { getComPraiseList } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -45,6 +46,9 @@ export default {
     return {
       data: []
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     getComPraiseList () {
