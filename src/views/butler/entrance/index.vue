@@ -16,7 +16,7 @@
     <div class="select-house" @click="goAttestation">
       <div class="tf-row-vertical-center">
         <span class="tf-icon tf-icon-location"></span>
-        <span>{{currentProject.house_name || '请选择'}}</span>
+        <span>{{houseName || '请选择'}}</span>
       </div>
       <span class="tf-icon tf-icon-caret-down"></span>
     </div>
@@ -104,7 +104,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProject'])
+    ...mapGetters(['currentProject']),
+    houseName () {
+      return this.currentProject.project_name + this.currentProject.fc_info
+    }
   },
   created () {
     // 首次进入页面需弹窗一次使用说明
@@ -112,7 +115,7 @@ export default {
       sync: true,
       key: 'first-entrance'
     })
-    this.FNScanner = api.require('FNScanner')
+    // this.FNScanner = api.require('FNScanner')
     if (!firstStatus) {
       this.showInstructions()
       api.setPrefs({
@@ -120,18 +123,6 @@ export default {
         value: 1
       })
     }
-  },
-  mounted () {
-    // const query = uni.createSelectorQuery().in(this)
-    // query
-    //   .select('.entrance-operation__box')
-    //   .boundingClientRect(data => {
-    //     this.qrHeight = data.height - 60
-    //   })
-    //   .exec()
-    // setTimeout(() => {
-    //   this.getQrCode()
-    // }, 100)
   },
   methods: {
     // 二维码开门
@@ -180,7 +171,9 @@ export default {
     },
     // 立即开门，开门成功后显示开门时间
     ycOpenDoor () {
-      ycOpenDoor().then((res) => {
+      ycOpenDoor({
+        houseId: this.currentProject.house_id
+      }).then((res) => {
         if (res.success) {
           this.openDoorTime = new Date(parseInt(res.timestamp) * 1000)
             .toLocaleString()

@@ -11,10 +11,10 @@
     <div class="tf-main-container">
       <div class="tf-bg-white">
         <div class="tf-row tf-padding-lg" @click="goInformation">
-          <img class="personage-info__avatar" src="/static/app-icon.png" mode="aspectFit" />
+          <img class="personage-info__avatar" :src="userInfo.avatar" mode="aspectFit" />
           <div class="personage-info--base">
             <div class="user-info-box">
-              <div class="user-name">{{userInfo.realname}}</div>
+              <div class="user-name">{{userInfo.account}}</div>
               <van-tag
                 class="user-role"
                 plain
@@ -24,12 +24,12 @@
                 size="small"
               >{{userType | houseRoleText}}</van-tag>
             </div>
-            <div class="user-address">5座7B单元-1001</div>
+            <div class="user-address">{{currentProject.fc_info}}</div>
           </div>
         </div>
         <div class="tf-row coin-box">
           <div class="tf-flex-item tf-column" @click="goHappiness">
-            <div class="user-text--lg">90000</div>
+            <div class="user-text--lg">{{userInfo.virtual_coin}}</div>
             <div class="user-text--grey">幸福币</div>
           </div>
           <div class="tf-flex-item tf-column">
@@ -162,9 +162,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType'])
+    ...mapGetters(['userInfo', 'userType', 'currentProject'])
   },
-  created () {},
+  created () {
+  },
   methods: {
     /* 签到 */
     sign () {

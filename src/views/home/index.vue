@@ -15,7 +15,7 @@
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
-        <van-grid-item v-for="(item, index) in appList" :key="index" :to="item.url">
+        <van-grid-item v-for="(item, index) in myAppList" :key="index" :to="item.url">
           <van-image class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{item.application}}</span>
         </van-grid-item>
@@ -102,8 +102,8 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
         <div class="activity-list">
-          <div v-for="(item, i) in 3" :key="i" class="activity-item" @click="goActivity(item)">
-            <van-image class="activity-item__image">
+          <div v-for="(item, i) in activityList" :key="i" class="activity-item" @click="goActivity(item)">
+            <van-image class="activity-item__image" :src="item.thumbnail">
               <template v-slot>
                 <div class="activity-item__description">233人已报名</div>
               </template>
@@ -114,8 +114,8 @@
                 <span class="font20">五月</span>
               </div>
               <div class="activity-info__right">
-                <div class="activity-info__title">高考100天抢跑冲刺计划 助力助力助力</div>
-                <div class="activity-info__time">报名截止：2020-07-07 12:00</div>
+                <div class="activity-info__title">{{item.title}}</div>
+                <div class="activity-info__time">报名截止：{{item.etime}}</div>
               </div>
             </div>
           </div>
@@ -146,6 +146,8 @@
 import { Swipe, SwipeItem, Grid, GridItem, Image, NoticeBar } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
+import { getMyApp } from '@/api/home'
+import { getActivityList } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
 export default {
   name: 'home',
@@ -175,7 +177,7 @@ export default {
           color: '#a2dae2'
         }
       ],
-      appList: [
+      myAppList: [
         {
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
           application: '云门禁'
@@ -246,18 +248,27 @@ export default {
           content:
             '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
         }
-      ]
+      ],
+      activityList: []
     }
   },
   created () {
-    this.appList.push({
-      icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
-      application: '全部',
-      url: '/applist'
-    })
     this.headerColor = this.swipeImages[0].color
+    this.getMyApp()
+    this.getActivityList()
   },
   methods: {
+    /* 获取我的app列表，并手动打入一个全部 */
+    getMyApp () {
+      getMyApp().then(res => {
+        this.myAppList = res.data
+        this.myAppList.push({
+          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
+          application: '全部',
+          url: '/applist'
+        })
+      })
+    },
     /* 轮播图change事件 */
     swipeChange (index) {
       this.headerColor = this.swipeImages[index].color
@@ -297,6 +308,12 @@ export default {
     clickTimeLimit (id) {
       console.log(id)
       // this.$router.push("")
+    },
+    /* 获取活动列表 */
+    getActivityList () {
+      getActivityList().then(res => {
+        this.activityList = res.data
+      })
     },
     /* 跳转活动详情 */
     goActivity (item) {
