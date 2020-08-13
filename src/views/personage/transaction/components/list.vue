@@ -1,5 +1,5 @@
 <template>
-  <refreshList :list.sync="list" @load="onLoad">
+  <refreshList :list.sync="list" :load="load">
     <template v-slot="{item}">
       <div class="transaction-box" @click="jump(item)">
         <div class="transaction-item">
@@ -19,9 +19,9 @@
         <div class="transaction-footer">
           <div class="transaction-footer__text">
             等待
-            <span class="tf-text-blue">李师傅</span>
+            <span class="tf-text-blue">{{item.designee}}</span>
             {{item.status | statusText}}
-            <span class="tf-text-primary">(剩余3天 00:10:24)</span>
+            <span class="tf-text-primary">({{item.sy_time}})</span>
           </div>
           <van-button v-if="item.status == 1" type="warning">去处理</van-button>
           <van-button v-else-if="item.status == 3" type="danger">去分派</van-button>
@@ -49,7 +49,8 @@ export default {
     data: {
       type: Array,
       default: () => []
-    }
+    },
+    load: Function
   },
   data () {
     return {
@@ -57,11 +58,8 @@ export default {
     }
   },
   methods: {
-    onLoad () {
-      this.$emit('load')
-    },
     jump (item) {
-      const url = `/pages/personage/transaction/details?id=${item.id}&title=${item.category}`
+      const url = `/pages/personage/transaction/details?id=${item.repairs_id}&title=${item.category}`
       this.$router.push(url)
     }
   },
@@ -77,9 +75,9 @@ export default {
     statusText (value) {
       const text = {
         1: '处理',
-        3: '分派',
-        4: '接受任务',
-        5: '结案'
+        2: '分派',
+        3: '接受任务',
+        4: '结案'
       }
       return text[value]
     }

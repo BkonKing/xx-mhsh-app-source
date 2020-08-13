@@ -73,7 +73,7 @@
         </div>
         <div class="tf-text tf-mb-lg">预约处理时间：2020-07-08 12:00</div>
         <div class="dialog-footer">
-          <van-button size="small" style="width: 48%;" @click="refuseDialog = true">拒绝</van-button>
+          <van-button size="small" style="width: 48%;" @click="toRefuse">拒绝</van-button>
           <van-button size="small" type="danger" style="width: 48%;" @click="confirmNegotiate">确认</van-button>
         </div>
       </template>
@@ -93,7 +93,7 @@
             <span class="lp18">拒绝原</span>
             因：
           </div>
-          <div class="tf-flex-item">{{refuseArray[refuseReason].label}}({{refuseExplain}})</div>
+          <div class="tf-flex-item">{{refuseArray[refuseReason]}}({{other_reason}})</div>
         </div>
         <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
       </div>
@@ -112,10 +112,10 @@
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
-              v-model="refuseReason"
+              v-model="refuse_reason"
               title="拒绝原因"
-              value-key="label"
-              selected-key="value"
+              value-key="content"
+              selected-key="content"
               :columns="refuseArray"
             >
               <template v-slot="{valueText}">
@@ -128,7 +128,7 @@
         <div class="tf-form-box">
           <div class="tf-form-label">拒绝说明：</div>
           <van-field
-            v-model="refuseExplain"
+            v-model="other_reason"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -191,7 +191,8 @@ import {
   cancelRepair,
   negotiationAffirm,
   negotiationRefuse,
-  caseOverAffirm
+  caseOverAffirm,
+  getRefuseReasonList
 } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
 import tfPicker from '@/components/tf-picker/index'
@@ -227,35 +228,26 @@ export default {
       index: undefined,
       array: [],
       value: 3,
-      refuseExplain: '', // 拒绝说明
-      refuseReason: 0, // 拒绝原因值
-      // 拒绝原因数组
-      refuseArray: [
-        {
-          label: '没时间',
-          value: 1
-        },
-        {
-          label: '价格不合适',
-          value: 2
-        }
-      ]
+      refuseReason: '',
+      other_reason: '', // 协商拒绝说明
+      refuse_reason: 0, // 协商拒绝原因值
+      refuseArray: [] // 协商拒绝原因数组
     }
   },
   created () {
     const { id, title, type } = this.$route.query
-    this.getRepairInfo(id)
     this.title = title
     this.repairId = id
+    this.getRepairInfo()
     if (type) {
       this[type] = true
     }
   },
   methods: {
     /* 获取报事报修详情 */
-    getRepairInfo (repairId) {
+    getRepairInfo () {
       getRepairInfo({
-        repairId
+        repairId: this.repairId
       }).then((res) => {
         if (res.success) {
           const { content, images, status, records, sub_status } = res.data
@@ -267,7 +259,7 @@ export default {
         }
       })
     },
-    // 撤销提报
+    /* 撤销提报 */
     cancelRepair () {
       Dialog.confirm({
         title: '确定撤销吗'
@@ -281,20 +273,33 @@ export default {
         })
       })
     },
+    /* 打开拒绝协商弹窗 */
+    toRefuse () {
+      this.getRefuseReasonList()
+      this.refuseDialog = true
+    },
+    /* 获取拒绝协商原因 */
+    getRefuseReasonList () {
+      getRefuseReasonList().then(res => {
+        this.refuseArray = res.data
+      })
+    },
     /* 拒绝协商信息 */
     refuse () {
       const validator = [
         {
-          value: this.refuseReason,
+          value: this.refuse_reason,
           message: '请选择拒绝原因'
         }
       ]
+      console.log(this.repairId)
       validForm(validator).then(() => {
         const params = {
-          refuseExplain: this.refuseExplain,
-          refuseReason: this.refuseReason
+          repair_id: this.repairId,
+          other_reason: this.other_reason,
+          refuse_reason: this.refuse_reason
         }
-        negotiationRefuse().then((res) => {
+        negotiationRefuse(params).then((res) => {
           Toast('已拒绝该协商信息')
           this.getRepairInfo()
           this.refuseDialog = false

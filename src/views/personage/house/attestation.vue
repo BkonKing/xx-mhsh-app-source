@@ -351,6 +351,12 @@ export default {
     goback () {
       this.$router.go(-1)
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'houSelectCommunity') {
+      this.$destroy()
+    }
+    next()
   }
 }
 </script>

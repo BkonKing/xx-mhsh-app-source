@@ -24,7 +24,7 @@
           <tf-image-list v-if="images.length" :data="images" :column="5" mode="show"></tf-image-list>
         </div>
         <div class="time-line-box">
-          <div v-if="status == 3" class="plan-btn-box">
+          <div v-if="sub_status == 8" class="plan-btn-box">
             <van-button class="plan-btn" @click="planShow = true">
               <span class="tf-icon tf-icon-plus"></span>
               添加任务进度
@@ -56,22 +56,22 @@
         <div class="operation-content">
           等待
           <span class="tf-text-orange">鲁班</span>
-          {{statusText[status]}}
+          {{status | statusFilter}}
           <span class="tf-text-primary">(剩余时间00:12:12)</span>
         </div>
-        <template v-if="true">
+        <template v-if="userInfo.role_dep == 1">
           <div v-if="status == 1 || status == 2" class="tf-row-space-between">
             <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-            <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="showAssign">确认受理</div>
-            <div v-if="status == 3" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
+            <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
+            <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
           </div>
-          <div v-if="status == 4 || status == 5" class="tf-btn" @click="cancelAssign">取消分派</div>
+          <div v-if="sub_status == 3" class="tf-btn" @click="cancelAssign">取消分派</div>
         </template>
         <template v-else>
-          <div v-if="[4,5,6].indexOf(status) > -1" class="tf-row-space-between">
-            <div class="tf-btn tf-mr-lg" @click="cancelShow = true">取消任务</div>
+          <div v-if="['3'].indexOf(sub_status) > -1" class="tf-row-space-between">
+            <div class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
             <div
-              v-if="status === 4"
+              v-if="sub_status == 3"
               class="tf-btn tf-btn-primary"
               @click="acceptPlanShow = true"
             >接受任务</div>
@@ -125,18 +125,24 @@
       </template>
     </tf-dialog>
     <!-- 分派人员 -->
-    <tf-dialog v-model="assignShow" :showFotter="true" :hiddenOff="true" title="分派人员">
+    <tf-dialog
+      v-model="assignShow"
+      :showFotter="true"
+      :hiddenOff="true"
+      title="分派人员"
+      @confirm="assignTasks"
+    >
       <template>
         <div class="tf-form-box">
           <div class="tf-form-label">处理部门：</div>
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
-              v-model="revocationReason"
-              title="撤销原因"
+              v-model="departmentValue"
+              title="处理部门"
               value-key="label"
               selected-key="value"
-              :columns="reasonList"
+              :columns="departmentList"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -146,15 +152,15 @@
           </div>
         </div>
         <div class="tf-form-box">
-          <div class="tf-form-label">{{ status === 0 ? '处理人员' : '工作人员'}}：</div>
+          <div class="tf-form-label">处理人员：</div>
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
-              v-model="refuse_reason"
-              title="撤销原因"
+              v-model="designee_uid"
+              title="处理人员"
               value-key="label"
-              selected-key="label"
-              :columns="reasonList"
+              selected-key="uid"
+              :columns="personnelList[departmentValue]"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -165,19 +171,34 @@
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">任务完成时限：</div>
-          <div class="tf-form-item">
-            <!-- <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
-            <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>-->
+          <div class="time-limit-box">
+            <tf-picker class="tf-form-item__input" v-model="dayNum" title="天数" :columns="[0,1,2,3]">
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <span class="tf-text tf-mr-base">天</span>
+            <tf-picker
+              class="tf-form-item__input"
+              v-model="hourNum"
+              title="小时"
+              :columns="[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
+            >
+              <template v-slot="{valueText}">
+                <div class="reason-text">{{valueText}}</div>
+              </template>
+            </tf-picker>
+            <span class="tf-text">小时</span>
           </div>
         </div>
       </template>
     </tf-dialog>
-    <!-- 取消分派 -->
+    <!-- 取消任务 -->
     <tf-dialog
-      v-model="cancelShow"
+      v-model="refuseTaskShow"
       :showFotter="true"
       :hiddenOff="true"
-      title="取消分派"
+      title="取消任务"
       @confirm="cancelSubmit"
     >
       <div class="tf-form-box">
@@ -187,9 +208,9 @@
             class="tf-form-item__input"
             v-model="cancelReason"
             title="取消原因"
-            value-key="label"
-            selected-key="value"
-            :columns="cancelArray"
+            value-key="content"
+            selected-key="content"
+            :columns="cancelReasonList"
           >
             <template v-slot="{valueText}">
               <div class="reason-text">{{valueText}}</div>
@@ -213,7 +234,13 @@
       </div>
     </tf-dialog>
     <!-- 接受任务 -->
-    <tf-dialog v-model="acceptPlanShow" :showFotter="true" :hiddenOff="true" title="接受任务">
+    <tf-dialog
+      v-model="acceptPlanShow"
+      :showFotter="true"
+      :hiddenOff="true"
+      title="接受任务"
+      @confirm="negotiation"
+    >
       <template>
         <div class="plan-alert">任务完成时限：3天</div>
         <div class="tf-form-box">
@@ -222,12 +249,12 @@
             <span class="tf-text-grey">(请提前告知用户相关收费信息)</span>
           </div>
           <div class="tf-row-space-between">
-            <van-radio-group v-model="radio">
+            <van-radio-group v-model="isCharge">
               <van-radio name="1" checked-color="#EB5841">收费</van-radio>
-              <van-radio name="2" checked-color="#EB5841">免费</van-radio>
+              <van-radio name="0" checked-color="#EB5841">免费</van-radio>
             </van-radio-group>
             <div class="money-input">
-              <van-field v-model="money" label="预计" placeholder="钱">
+              <van-field v-model="negotiation_costs" label="预计" placeholder="钱">
                 <template #button>元</template>
               </van-field>
             </div>
@@ -239,7 +266,16 @@
             <span class="tf-text-grey">(请提前与用户协商确定）</span>
           </div>
           <div class="tf-form-item">
-            <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
+            <tf-date-time-picker
+              class="date-time-box"
+              v-model="negotiation_time"
+              title="预约处理时间"
+              :min-date="new Date()"
+            >
+              <template>
+                <div class="tf-text text-right">{{negotiation_time || '选择日期时间'}}</div>
+              </template>
+            </tf-date-time-picker>
             <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>
           </div>
         </div>
@@ -317,16 +353,28 @@ import {
   Radio,
   Uploader,
   ImagePreview,
-  Toast
+  Toast,
+  Dialog
 } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import tfPicker from '@/components/tf-picker/index'
+import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import tfImageList from '@/components/tf-image-list'
 import { statusText } from '@/const/butler.js'
 import { validForm } from '@/utils/util'
-import { getRepairInfo, getUndoReasonList, cancelRepair } from '@/api/butler.js'
+import {
+  getRepairInfo,
+  getUndoReasonList,
+  cancelRepair,
+  acceptCase,
+  assignTasks,
+  getCancelReasonList,
+  refuseTasks,
+  negotiation
+} from '@/api/butler.js'
+import { getDesigneeList } from '@/api/personage'
 import { mapGetters } from 'vuex'
 export default {
   components: {
@@ -343,6 +391,7 @@ export default {
     tfImageList,
     tfDialog,
     tfPicker,
+    tfDateTimePicker,
     userInfo
   },
   data () {
@@ -354,7 +403,7 @@ export default {
       sub_status: 0,
       revocationShow: false,
       assignShow: false,
-      cancelShow: false,
+      refuseTaskShow: false,
       planShow: false,
       acceptPlanShow: false,
       negotiateShow: false,
@@ -369,11 +418,29 @@ export default {
       reasonList: [], // 撤销原因数组
       refuse_reason: undefined, // 撤销原因值
       other_reason: '', // 撤销补充说明
-      cancelExplain: '', // 取消补充说明
-      cancelReason: undefined, // 取消原因值
-      revocationReason: '',
-      // 取消原因数组
-      cancelArray: [
+      // 部门列表
+      departmentList: [
+        {
+          label: '工程部',
+          value: 'gcb'
+        },
+        {
+          label: '安保部',
+          value: 'abb'
+        },
+        {
+          label: '保洁部',
+          value: 'bjb'
+        }
+      ],
+      departmentValue: '', // 部门选中的值
+      personnelList: {}, // 三个处理人员的列表
+      designee_uid: '', // 处理人员id
+      dayNum: '', // 分派人员完成时限天数
+      hourNum: '', // 分派人员完成时限小时数
+      cancelReason: undefined, // 取消任务原因值
+      // 取消任务原因数组
+      cancelReasonList: [
         {
           label: '没时间',
           value: 1
@@ -383,9 +450,11 @@ export default {
           value: 2
         }
       ],
-      radio: '1',
-      fileList: [],
-      money: ''
+      cancelExplain: '', // 取消任务补充说明
+      isCharge: '1', // 协商-是否收取费用
+      negotiation_costs: '', // 协商-费用
+      negotiation_time: '', // 协商 - 预约时间
+      fileList: []
     }
   },
   computed: {
@@ -397,7 +466,6 @@ export default {
     this.repairId = id
     this.projectId = this.userInfo.xm_project_id
     this.getRepairInfo()
-    this.getUndoReasonList()
     if (type) {
       this[type] = true
     }
@@ -405,9 +473,12 @@ export default {
   methods: {
     /* 获取报事报修详情 */
     getRepairInfo () {
-      getRepairInfo({
-        repairId: this.repairId
-      }, this.projectId).then((res) => {
+      getRepairInfo(
+        {
+          repairId: this.repairId
+        },
+        this.projectId
+      ).then(res => {
         if (res.success) {
           const { content, images, status, records, sub_status } = res.data
           this.status = status
@@ -426,6 +497,7 @@ export default {
     },
     // 撤销提报
     cancelRepair () {
+      this.getUndoReasonList()
       this.revocationShow = true
     },
     /* 撤销提报提交 */
@@ -449,7 +521,71 @@ export default {
         })
       })
     },
-    /* 取消分派提交 */
+    /* 客服受理 */
+    acceptCase () {
+      acceptCase(
+        {
+          repair_id: this.repairId
+        },
+        this.projectId
+      ).then(res => {
+        this.showAssign()
+      })
+    },
+    // 分派人员
+    showAssign () {
+      this.getDesigneeList()
+      this.assignShow = true
+    },
+    /* 获取事务处理人员列表 */
+    getDesigneeList () {
+      getDesigneeList(this.projectId).then(({ data }) => {
+        const newData = {}
+        // 格式转换 姓名-电话号码-工作日期-擅长
+        Object.keys(data).forEach(key => {
+          if (data[key].length) {
+            newData[key] = data[key].map(obj => {
+              const { realname, mobile, weeks, skill, uid } = obj
+              return {
+                label: `${realname} ${mobile} ${weeks} ${skill}`,
+                uid
+              }
+            })
+          }
+        })
+        this.personnelList = newData
+      })
+    },
+    /* 分派人员 */
+    assignTasks () {
+      assignTasks(
+        {
+          repair_id: this.repairId,
+          designee_uid: this.designee_uid
+        },
+        this.projectId
+      ).then(res => {
+        this.getRepairInfo()
+        Toast.success('分派人员成功')
+        this.assignShow = false
+      })
+    },
+    /* 取消分派 */
+    cancelAssign () {
+      this.refuseTaskShow = true
+    },
+    /* 打开取消任务 */
+    toRefuseTask () {
+      this.getCancelReasonList()
+      this.refuseTaskShow = true
+    },
+    /* 获取取消任务原因 */
+    getCancelReasonList () {
+      getCancelReasonList(this.projectId).then(res => {
+        this.cancelReasonList = res.data
+      })
+    },
+    /* 取消任务提交 */
     cancelSubmit () {
       const validator = [
         {
@@ -459,23 +595,39 @@ export default {
       ]
       validForm(validator).then(() => {
         const params = {
-          cancelExplain: this.cancelExplain,
-          cancelReason: this.cancelReason
+          repair_id: this.repairId,
+          other_reason: this.cancelExplain,
+          refuse_reason: this.cancelReason
         }
-        // 请求成功后
-        Toast('已取消分派')
-        this.cancelShow = false
+        refuseTasks(params, this.projectId).then(res => {
+          Dialog.alert({
+            title: '已取消任务'
+          }).then(res => {
+            this.$router.go(-1)
+          })
+        })
       })
     },
-    // 分派人员
-    showAssign () {
-      this.assignShow = true
-    },
-    bindPickerChange: function (e) {
-      this.index = e.target.value
-    },
-    cancelAssign () {
-      this.cancelShow = true
+    /* 接受任务发起协商 */
+    negotiation () {
+      const validator = [
+        {
+          value: this.negotiation_time,
+          message: '请选择预约处理时间'
+        }
+      ]
+      validForm(validator).then(() => {
+        const params = {
+          repair_id: this.repairId,
+          negotiation_costs: this.isCharge == 1 ? this.negotiation_costs : '',
+          negotiation_time: this.negotiation_time
+        }
+        negotiation(params, this.projectId).then(res => {
+          Toast.success('您已接受该任务')
+          this.getRepairInfo()
+          this.acceptPlanShow = false
+        })
+      })
     },
     showImage () {
       ImagePreview({
@@ -491,12 +643,12 @@ export default {
     }
   },
   filters: {
-    statusText (value) {
+    statusFilter (value) {
       const text = {
         1: '处理',
-        3: '分派',
-        4: '接受任务',
-        5: '结案'
+        2: '分派',
+        3: '接受任务',
+        4: '结案'
       }
       return text[value]
     }
@@ -638,5 +790,22 @@ export default {
   font-size: 28px;
   line-height: 66px;
   color: #8f8f94;
+}
+.time-limit-box {
+  display: flex;
+  align-items: center;
+  height: 66px;
+  .tf-form-item__input {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 0 20px;
+    margin-right: 20px;
+  }
+}
+.date-time-box {
+  flex: 1;
+  /deep/ .tf-text.text-right {
+    line-height: 66px;
+  }
 }
 </style>

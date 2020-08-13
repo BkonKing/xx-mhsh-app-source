@@ -14,7 +14,7 @@
           <img class="personage-info__avatar" :src="userInfo.avatar" mode="aspectFit" />
           <div class="personage-info--base">
             <div class="user-info-box">
-              <div class="user-name">{{userInfo.account}}</div>
+              <div class="user-name">{{userInfo.nickname}}</div>
               <van-tag
                 class="user-role"
                 plain
@@ -53,17 +53,19 @@
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待处理</div>
-                <span class="personage-badge">3</span>
+                <span class="personage-badge">{{userInfo.dcl_num}}</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待分派</div>
+                <span v-if="userInfo.dfp_num" class="personage-badge">{{userInfo.dfp_num}}</span>
               </div>
             </div>
             <div class="tf-row">
               <div class="manage-box manage-border-right" @click="goTransaction(3)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待结案</div>
+                <span v-if="userInfo.dja_num" class="personage-badge">{{userInfo.dja_num}}</span>
               </div>
               <div class="manage-box" @click="goTransaction(4)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />

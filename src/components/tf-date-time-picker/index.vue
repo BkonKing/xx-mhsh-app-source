@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <div @click="showDatePicker = true">
+  <div style="height: 100%;">
+    <div style="height: 100%;" @click="showDatePicker = true">
       <slot :valueText="valueText"></slot>
     </div>
-    <van-popup v-model="showDatePicker" round position="bottom">
+    <van-popup v-model="showDatePicker" round position="bottom" get-container="body">
       <van-datetime-picker
         v-bind="$attrs"
         v-model="dateValue"

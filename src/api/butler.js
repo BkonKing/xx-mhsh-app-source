@@ -86,6 +86,11 @@ export function cancelRepair (data, id) {
   })
 }
 
+//
+export function getRefuseReasonList (params) {
+  return request.post('/butler/repair/getRefuseReasonList', { params })
+}
+
 // 协商确认
 export function negotiationAffirm (data) {
   return request.post('/butler/repair/negotiation_affirm', data)
@@ -117,34 +122,67 @@ export function getUndoReasonList (id) {
   })
 }
 
+// 获取取消任务原因
+export function getCancelReasonList (ProjectId) {
+  return request.get('/butler/repair/getCancelReasonList', {
+    headers: {
+      ProjectId
+    }
+  })
+}
+
 // 客服受理
-export function acceptCase (data) {
-  return request.post('/butler/repair/acceptCase', data)
+export function acceptCase (data, ProjectId) {
+  return request.post('/butler/repair/acceptCase', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 // 客服分派
-export function assignTasks (data) {
-  return request.post('/butler/repair/assignTasks', data)
+export function assignTasks (data, ProjectId) {
+  return request.post('/butler/repair/assignTasks', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 // 拒绝任务
-export function refuseTasks (data) {
-  return request.post('/butler/repair/refuseTasks', data)
+export function refuseTasks (data, ProjectId) {
+  return request.post('/butler/repair/refuseTasks', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 // 发起协商
-export function negotiation (data) {
-  return request.post('/butler/repair/negotiation', data)
+export function negotiation (data, ProjectId) {
+  return request.post('/butler/repair/negotiation', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 // 工作人员处理预结案
-export function caseOver (data) {
-  return request.post('/butler/repair/caseOver', data)
+export function caseOver (data, ProjectId) {
+  return request.post('/butler/repair/caseOver', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 // 上传结案图片
-export function closingPicture (data) {
-  return request.post('/butler/repair/closingPicture', data)
+export function closingPicture (data, ProjectId) {
+  return request.post('/butler/repair/closingPicture', data, {
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 /* 报事报修 end */

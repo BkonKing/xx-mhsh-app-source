@@ -109,3 +109,22 @@ export function searchUnit (params) {
 export function searchHouse (params) {
   return request.get('/room/binding/searchHouse', { params })
 }
+
+/* 报事报修待办列表 */
+export function getDbRepairList (params, ProjectId) {
+  return request.get('/my/account/getDbRepairList', {
+    params,
+    headers: {
+      ProjectId
+    }
+  })
+}
+
+/* 事务处理人员列表 */
+export function getDesigneeList (ProjectId) {
+  return request.get('/my/account/getDesigneeList', {
+    headers: {
+      ProjectId
+    }
+  })
+}

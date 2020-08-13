@@ -13,18 +13,61 @@
     </div>
     <div class="tf-main-container">
       <van-sticky offset-top="2.42666rem" @scroll="scrollSticky">
-        <div class="transaction-tab-box" :class="{'tf-bg-white': isFixed}">
+        <div
+          class="transaction-tab-box"
+          :class="[{'tf-bg-white': isFixed}, {'flex-start': userInfo.role_dep != 1}]"
+        >
+          <template v-if="userInfo.role_dep == 1">
+            <div
+              class="transaction-tab"
+              :class="{'transaction-tab--active': type === 1 }"
+              @click="type = 1"
+            >待处理({{list1.length}})</div>
+            <div
+              class="transaction-tab"
+              :class="{'transaction-tab--active': type === 2 }"
+              @click="type = 2"
+            >待分派({{list2.length}})</div>
+          </template>
           <div
-            v-for="(item, i) in typeList"
-            :key="i"
             class="transaction-tab"
-            :class="{ 'transaction-tab--active': type === item.value }"
-            @click="type = item.value"
-          >{{ item.name }}()</div>
+            :class="{'transaction-tab--active': type === 3 }"
+            @click="type = 3"
+          >待结案({{list3.length}})</div>
+          <div
+            class="transaction-tab"
+            :class="{'transaction-tab--active': type === 4 }"
+            @click="type = 4"
+          >已结案({{list4.length}})</div>
         </div>
       </van-sticky>
       <div class="transaction-list">
-        <list v-show="type === 1" :data.sync="transactionList"></list>
+        <template v-if="userInfo.role_dep == 1">
+          <list
+            v-show="type === 1"
+            key="1"
+            :data.sync="list1"
+            :load="(params) => getDbRepairList(params, 1)"
+          ></list>
+          <list
+            v-show="type === 2"
+            key="2"
+            :data.sync="list2"
+            :load="(params) => getDbRepairList(params, 2)"
+          ></list>
+        </template>
+        <list
+          v-show="type === 3"
+          key="3"
+          :data.sync="list3"
+          :load="(params) => getDbRepairList(params, 3)"
+        ></list>
+        <list
+          v-show="type === 4"
+          key="4"
+          :data.sync="list4"
+          :load="(params) => getDbRepairList(params, 4)"
+        ></list>
       </div>
     </div>
   </div>
@@ -33,6 +76,7 @@
 <script>
 import { NavBar, Sticky } from 'vant'
 import list from './components/list'
+import { getDbRepairList } from '@/api/personage'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -43,71 +87,11 @@ export default {
   },
   data () {
     return {
-      typeList: [
-        {
-          name: '待处理',
-          value: 1
-        },
-        {
-          name: '待分派',
-          value: 2
-        },
-        {
-          name: '待结案',
-          value: 3
-        },
-        {
-          name: '已结案',
-          value: 4
-        }
-      ],
       type: undefined,
-      transactionList: [
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 1,
-          ctime: '2020-06-03 16:35:26'
-        },
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 1,
-          ctime: '2020-06-03 16:35:26'
-        },
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 1,
-          ctime: '2020-06-03 16:35:26'
-        },
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 1,
-          ctime: '2020-06-03 16:35:26'
-        }
-      ],
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
       isFixed: false
     }
   },
@@ -120,6 +104,10 @@ export default {
   methods: {
     scrollSticky ({ isFixed }) {
       this.isFixed = isFixed
+    },
+    getDbRepairList (params, status) {
+      params.status = status
+      return getDbRepairList(params, this.userInfo.xm_project_id)
     }
   }
 }
@@ -197,5 +185,11 @@ export default {
   align-items: center;
   color: #666;
   min-height: 144px;
+}
+.flex-start {
+  justify-content: flex-start !important;
+  .transaction-tab {
+    margin-right: 20px;
+  }
 }
 </style>

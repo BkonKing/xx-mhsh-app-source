@@ -48,10 +48,10 @@ const personageRouter = [
   /* 选择小区 */
   {
     path: '/pages/personage/house/select-community',
-    name: 'houSeselectCommunity',
+    name: 'houSelectCommunity',
     component: () =>
       import(
-        /* webpackChunkName: "houSeselectCommunity" */
+        /* webpackChunkName: "houSelectCommunity" */
         '@/views/personage/house/select-community.vue'
       )
   },
