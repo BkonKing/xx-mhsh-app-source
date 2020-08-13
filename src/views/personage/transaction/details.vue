@@ -24,7 +24,7 @@
           <tf-image-list v-if="images.length" :data="images" :column="5" mode="show"></tf-image-list>
         </div>
         <div class="time-line-box">
-          <div v-if="status > 4" class="plan-btn-box">
+          <div v-if="status == 3" class="plan-btn-box">
             <van-button class="plan-btn" @click="planShow = true">
               <span class="tf-icon tf-icon-plus"></span>
               添加任务进度
@@ -33,39 +33,39 @@
           <tfTimeline class="tf-bg-white tf-mt-base tf-padding-base" :options="timelineList"></tfTimeline>
           <div class="transaction-btn-box">
             <div
-              v-if="status == 6"
-              class="tf-icon tf-icon-star transaction-btn"
+              v-if="sub_status == 10"
+              class="tf-icon tf-icon-pingfenwancheng transaction-btn"
               @click="evaluateDialog = true"
             ></div>
             <div
-              v-if="status == 6"
-              class="tf-icon tf-icon-image transaction-btn"
+              v-if="sub_status == 11"
+              class="tf-icon tf-icon-tupian transaction-btn"
               @click="showImage"
             >
               <span class="van-info">2</span>
             </div>
             <div
-              v-if="status == 6"
-              class="tf-icon tf-icon-filedone transaction-btn"
+              v-if="sub_status == 6"
+              class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
               @click="negotiateShow = true"
             ></div>
           </div>
         </div>
       </div>
-      <div v-if="status < 6" class="operation-box">
+      <div v-if="parseInt(status) < 4" class="operation-box">
         <div class="operation-content">
           等待
           <span class="tf-text-orange">鲁班</span>
           {{statusText[status]}}
           <span class="tf-text-primary">(剩余时间00:12:12)</span>
         </div>
-        <template v-if="role">
-          <div v-if="status === 1 || status === 3" class="tf-row-space-between">
+        <template v-if="true">
+          <div v-if="status == 1 || status == 2" class="tf-row-space-between">
             <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-            <div v-if="status === 1" class="tf-btn tf-btn-primary" @click="showAssign">确认受理</div>
-            <div v-if="status === 3" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
+            <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="showAssign">确认受理</div>
+            <div v-if="status == 3" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
           </div>
-          <div v-if="status === 4 || status === 5" class="tf-btn" @click="cancelAssign">取消分派</div>
+          <div v-if="status == 4 || status == 5" class="tf-btn" @click="cancelAssign">取消分派</div>
         </template>
         <template v-else>
           <div v-if="[4,5,6].indexOf(status) > -1" class="tf-row-space-between">
@@ -96,11 +96,11 @@
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
-              v-model="revocationReason"
+              v-model="refuse_reason"
               title="撤销原因"
-              value-key="label"
-              selected-key="value"
-              :columns="revocationArray"
+              value-key="content"
+              selected-key="content"
+              :columns="reasonList"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -112,7 +112,7 @@
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
           <van-field
-            v-model="revocationExplain"
+            v-model="other_reason"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -136,7 +136,7 @@
               title="撤销原因"
               value-key="label"
               selected-key="value"
-              :columns="revocationArray"
+              :columns="reasonList"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -150,11 +150,11 @@
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
-              v-model="revocationReason"
+              v-model="refuse_reason"
               title="撤销原因"
               value-key="label"
-              selected-key="value"
-              :columns="revocationArray"
+              selected-key="label"
+              :columns="reasonList"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -167,7 +167,7 @@
           <div class="tf-form-label">任务完成时限：</div>
           <div class="tf-form-item">
             <!-- <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
-            <div class="tf-icon tf-icon-time-circle tf-form-item__icon"></div>-->
+            <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>-->
           </div>
         </div>
       </template>
@@ -240,7 +240,7 @@
           </div>
           <div class="tf-form-item">
             <date-time-picker class="tf-form-item__input" placeholder="请选择时间" fields="minute"></date-time-picker>
-            <div class="tf-icon tf-icon-time-circle tf-form-item__icon"></div>
+            <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>
           </div>
         </div>
       </template>
@@ -250,7 +250,7 @@
       <div class="tf-form-box">
         <div class="tf-form-label">进度内容：</div>
         <van-field
-          v-model="revocationReason"
+          v-model="refuse_reason"
           class="tf-form-item__textarea"
           rows="2"
           autosize
@@ -291,7 +291,7 @@
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
           <van-field
-            v-model="revocationReason"
+            v-model="refuse_reason"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -326,7 +326,8 @@ import tfDialog from '@/components/tf-dialog/index.vue'
 import tfImageList from '@/components/tf-image-list'
 import { statusText } from '@/const/butler.js'
 import { validForm } from '@/utils/util'
-import { getRepairInfo, cancelRepair } from '@/api/butler.js'
+import { getRepairInfo, getUndoReasonList, cancelRepair } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -347,6 +348,10 @@ export default {
   data () {
     return {
       statusText,
+      repairId: '', // 当前报事报修id
+      projectId: '', // 管理人员单独id
+      status: 0,
+      sub_status: 0,
       revocationShow: false,
       assignShow: false,
       cancelShow: false,
@@ -357,26 +362,16 @@ export default {
       title: '',
       content: '',
       images: [],
-      status: 0,
       ctime: '',
       timelineList: [],
       array: ['中国', '美国', '巴西', '日本'],
       index: undefined,
-      revocationExplain: '', // 撤销补充说明
-      revocationReason: undefined, // 撤销原因值
-      // 撤销原因数组
-      revocationArray: [
-        {
-          label: '没时间',
-          value: 1
-        },
-        {
-          label: '价格不合适',
-          value: 2
-        }
-      ],
+      reasonList: [], // 撤销原因数组
+      refuse_reason: undefined, // 撤销原因值
+      other_reason: '', // 撤销补充说明
       cancelExplain: '', // 取消补充说明
       cancelReason: undefined, // 取消原因值
+      revocationReason: '',
       // 取消原因数组
       cancelArray: [
         {
@@ -390,32 +385,43 @@ export default {
       ],
       radio: '1',
       fileList: [],
-      money: '',
-      role: 0 // 1：管理员 0：处理员
+      money: ''
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   created () {
     const { id, title, type } = this.$route.query
-    this.getRepairInfo(id)
     this.title = title
+    this.repairId = id
+    this.projectId = this.userInfo.xm_project_id
+    this.getRepairInfo()
+    this.getUndoReasonList()
     if (type) {
       this[type] = true
     }
   },
   methods: {
     /* 获取报事报修详情 */
-    getRepairInfo (repairId) {
+    getRepairInfo () {
       getRepairInfo({
-        projectId: '',
-        repairId
-      }).then((res) => {
+        repairId: this.repairId
+      }, this.projectId).then((res) => {
         if (res.success) {
-          const { content, images, status, records } = res.data
+          const { content, images, status, records, sub_status } = res.data
           this.status = status
+          this.sub_status = sub_status
           this.imgList = images
           this.timelineList = records
           this.content = content
         }
+      })
+    },
+    /* 获取撤消提报原因 */
+    getUndoReasonList () {
+      getUndoReasonList(this.projectId).then(res => {
+        this.reasonList = res.data
       })
     },
     // 撤销提报
@@ -426,18 +432,21 @@ export default {
     revocationSubmit () {
       const validator = [
         {
-          value: this.revocationReason,
+          value: this.refuse_reason,
           message: '请选择撤销原因'
         }
       ]
       validForm(validator).then(() => {
         const params = {
-          revocationExplain: this.revocationExplain,
-          revocationReason: this.revocationReason
+          repair_id: this.repairId,
+          other_reason: this.other_reason,
+          refuse_reason: this.refuse_reason
         }
-        // 请求成功后
-        Toast('已拒绝该协商信息')
-        this.revocationShow = false
+        cancelRepair(params, this.projectId).then(res => {
+          this.getRepairInfo()
+          Toast('已经撤销提报')
+          this.revocationShow = false
+        })
       })
     },
     /* 取消分派提交 */

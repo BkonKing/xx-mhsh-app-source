@@ -5,7 +5,7 @@
     <template v-if="editMode">
       <span
         v-if="mode == 'remove' && status !== 0"
-        class="tf-icon tf-icon-close-circle-fill"
+        class="tf-icon tf-icon-guanbi-circle-fill"
         @click="remove"
       ></span>
       <span v-else-if="status == 1" class="tf-icon tf-icon-plus-circle-fill" @click="add"></span>
@@ -90,7 +90,7 @@ export default {
     line-height: 1;
     color: #ffa110;
   }
-  .tf-icon-close-circle-fill {
+  .tf-icon-guanbi-circle-fill {
     color: #aaa;
   }
 }

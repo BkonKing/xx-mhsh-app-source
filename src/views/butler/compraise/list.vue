@@ -10,8 +10,8 @@
                 <template v-slot:right>
                   <div
                     class="tf-icon"
-                    :class="{'tf-text-primary': item.info_type==2}"
-                  >{{item.info_type}}</div>
+                    :class="[{'tf-text-primary': item.info_type==2}, item.info_type == '1' ? 'tf-icon-tousu' : 'tf-icon-biaoyang']"
+                  ></div>
                 </template>
               </userInfo>
             </div>

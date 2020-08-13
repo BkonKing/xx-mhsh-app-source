@@ -8,13 +8,13 @@
           <span class="tf-text-grey">（李师傅）</span>还满意吗？
         </div>
         <div class="rate-box">
-          <van-rate v-model="value" :size="33" color="#FFA110" void-icon="star" void-color="#aaa" />
-          <div class="rate-text" v-if="value">{{rateText[value]}}</div>
+          <van-rate v-model="evaluate_stars" :size="33" color="#FFA110" void-icon="star" void-color="#aaa" />
+          <div class="rate-text" v-if="evaluate_stars">{{rateText[evaluate_stars]}}</div>
         </div>
-        <tf-radio-btn v-model="category_id" :radius="2" :data="items"></tf-radio-btn>
+        <tf-radio-btn v-model="evaluate_reason" :radius="2" :data="items"></tf-radio-btn>
         <div class="tf-form-label">其他补充：</div>
         <van-field
-          v-model="reason"
+          v-model="evaluate_content"
           class="tf-form-item__textarea"
           rows="2"
           autosize
@@ -33,6 +33,7 @@
 import { NavBar, Rate, Field, Button } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn'
 import { validForm } from '@/utils/util'
+import { evaluate } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -43,9 +44,10 @@ export default {
   },
   data () {
     return {
-      value: undefined, // 评分
-      category_id: '',
-      reason: '',
+      repairId: '',
+      evaluate_stars: undefined, // 评分
+      evaluate_reason: '',
+      evaluate_content: '',
       items: [
         {
           value: 'USA',
@@ -75,33 +77,43 @@ export default {
       ],
       // 评分对应内容
       rateText: {
-        1: '非常失望',
-        2: '有点失望',
-        3: '一般',
-        4: '比较满意',
-        5: '非常满意'
+        1: '非常不满意，各方面都很差',
+        2: '不满意，比较差',
+        3: '一般，还需改善',
+        4: '比较满意，仍可改善',
+        5: '非常满意，无可挑剔'
       }
     }
   },
+  created () {
+    this.repairId = this.$router.query.repairId
+  },
   methods: {
+    /* 提交 */
     submit () {
       const validator = [
         {
-          value: this.value,
+          value: this.evaluate_stars,
           message: '请评分'
         }
       ]
       validForm(validator).then(() => {
-        const params = {
-          value: this.value,
-          category_id: this.category_id,
-          reason: this.reason
-        }
-        // 请求成功后
+        this.evaluate()
+      })
+    },
+    /* 提交评价请求 */
+    evaluate () {
+      evaluate({
+        repair_id: this.repairId,
+        evaluate_stars: this.evaluate_stars,
+        evaluate_content: this.evaluate_content,
+        evaluate_reason: this.evaluate_reason
+      }).then(res => {
         this.$router.go(-1)
       })
     }
   }
+
 }
 </script>
 
@@ -160,7 +172,7 @@ export default {
 .rate-text {
   text-align: center;
   font-size: 28px;
-  color: #EB5841;
+  color: #eb5841;
   margin-top: 20px;
   margin-bottom: 40px;
 }

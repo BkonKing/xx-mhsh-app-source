@@ -2,7 +2,9 @@ import request from '@/utils/request.js'
 
 // 智慧管家应用列表接口
 export function queryAllApp (params) {
-  return request.get('/butler/index/allApp', { params })
+  return request.get('/butler/index/allApp', {
+    params
+  })
 }
 /* 云门禁 start */
 // 二维码开门接口
@@ -21,7 +23,9 @@ export function ycOpenDoor (data) {
 
 // 公告通知列表接口
 export function getNoticeList (params) {
-  return request.get('/butler/notice/getNoticeList', { params })
+  return request.get('/butler/notice/getNoticeList', {
+    params
+  })
 }
 
 // 标记为已读接口
@@ -31,7 +35,9 @@ export function setNoticeReaded (data) {
 
 // 公告通知详情接口
 export function getNoticInfo (params) {
-  return request.get('/butler/notice/getNoticInfo', { params })
+  return request.get('/butler/notice/getNoticInfo', {
+    params
+  })
 }
 
 /* 公告通知 end */
@@ -40,22 +46,105 @@ export function getNoticInfo (params) {
 
 // 报事报修列表接口
 export function getRepairList (params) {
-  return request.get('/butler/repairs/getRepairList', { params })
+  return request.get('/butler/repair/getRepairList', {
+    params
+  })
 }
 
 // 报事报修详情接口
-export function getRepairInfo (params) {
-  return request.get('/butler/repairs/getRepairInfo', { params })
+export function getRepairInfo (params, id) {
+  return request.get('/butler/repair/getRepairInfo', {
+    params,
+    headers: {
+      ProjectId: id
+    }
+  })
 }
 
 // 新增报事报修接口
-export function addRepair (data) {
-  return request.post('/butler/repairs/addRepair', data)
+export function addRepair (data, HouseId) {
+  return request.post('/butler/repair/addRepair', data, {
+    headers: {
+      HouseId
+    }
+  })
+}
+
+// 报事报修类型
+export function getRepairCategoryList (params) {
+  return request.get('/butler/repair/getRepairCategoryList', {
+    params
+  })
 }
 
 // 撤消提报接口
-export function cancelRepair (data) {
-  return request.post('/butler/repairs/cancelRepair', data)
+export function cancelRepair (data, id) {
+  return request.post('/butler/repair/cancelRepair', data, {
+    headers: {
+      ProjectId: id
+    }
+  })
+}
+
+// 协商确认
+export function negotiationAffirm (data) {
+  return request.post('/butler/repair/negotiation_affirm', data)
+}
+
+// 协商拒绝
+export function negotiationRefuse (data) {
+  return request.post('/butler/repair/negotiation_refuse', data)
+}
+
+// 用户确认结案
+export function caseOverAffirm (data) {
+  return request.post('/butler/repair/caseOverAffirm', data)
+}
+
+// 用户评价
+export function evaluate (data) {
+  return request.post('/butler/repair/evaluate', data)
+}
+
+/* 我的，事务处理 */
+
+// 获取撤消提报原因
+export function getUndoReasonList (id) {
+  return request.get('/butler/repair/getUndoReasonList', {
+    headers: {
+      ProjectId: id
+    }
+  })
+}
+
+// 客服受理
+export function acceptCase (data) {
+  return request.post('/butler/repair/acceptCase', data)
+}
+
+// 客服分派
+export function assignTasks (data) {
+  return request.post('/butler/repair/assignTasks', data)
+}
+
+// 拒绝任务
+export function refuseTasks (data) {
+  return request.post('/butler/repair/refuseTasks', data)
+}
+
+// 发起协商
+export function negotiation (data) {
+  return request.post('/butler/repair/negotiation', data)
+}
+
+// 工作人员处理预结案
+export function caseOver (data) {
+  return request.post('/butler/repair/caseOver', data)
+}
+
+// 上传结案图片
+export function closingPicture (data) {
+  return request.post('/butler/repair/closingPicture', data)
 }
 
 /* 报事报修 end */
@@ -64,11 +153,15 @@ export function cancelRepair (data) {
 
 // 免费服务列表接口
 export function getFreeServerList (params) {
-  return request.get('/butler/freeserver/getFreeServerList', { params })
+  return request.get('/butler/freeserver/getFreeServerList', {
+    params
+  })
 }
 // 我的免费预约列表接口
 export function getMyFreeServerList (params) {
-  return request.get('/butler/freeserver/getMyFreeServerList', { params })
+  return request.get('/butler/freeserver/getMyFreeServerList', {
+    params
+  })
 }
 // 我的免费预约列表接口
 export function serverYuyue (data) {
@@ -83,13 +176,17 @@ export function serverClose (data) {
 
 /* 呼叫物业列表 start */
 export function getCallWYList (params) {
-  return request.get('/butler/phone/getCallWYList', { params })
+  return request.get('/butler/phone/getCallWYList', {
+    params
+  })
 }
 /* 呼叫物业 end */
 
 /* 便民黄页列表 start */
 export function getYellowPagesList (params) {
-  return request.get('/butler/phone/getYellowPagesList', { params })
+  return request.get('/butler/phone/getYellowPagesList', {
+    params
+  })
 }
 /* 呼叫物业 end */
 
@@ -105,11 +202,15 @@ export function addComPraise (data, HouseId) {
 }
 // 投诉表扬列表接口
 export function getComPraiseList (params) {
-  return request.get('/butler/compraise/getComPraiseList', { params })
+  return request.get('/butler/compraise/getComPraiseList', {
+    params
+  })
 }
 // 投诉表扬详情接口
 export function getComPraiseInfo (params) {
-  return request.get('/butler/compraise/getComPraiseInfo', { params })
+  return request.get('/butler/compraise/getComPraiseInfo', {
+    params
+  })
 }
 
 /* 投诉表扬 end */
@@ -118,11 +219,15 @@ export function getComPraiseInfo (params) {
 
 // 问卷投票列表接口
 export function getWjtpList (params) {
-  return request.get('/butler/wjtp/getWjtpList', { params })
+  return request.get('/butler/wjtp/getWjtpList', {
+    params
+  })
 }
 // 我的问卷投票列表接口
 export function getMyWjtpList (params) {
-  return request.get('/butler/wjtp/getMyWjtpList', { params })
+  return request.get('/butler/wjtp/getMyWjtpList', {
+    params
+  })
 }
 // 提交问卷调查接口
 export function addWjtp (data) {
@@ -130,7 +235,9 @@ export function addWjtp (data) {
 }
 // 问卷调查详情接口
 export function getWjtpInfo (params) {
-  return request.get('/butler/wjtp/getWjtpInfo', { params })
+  return request.get('/butler/wjtp/getWjtpInfo', {
+    params
+  })
 }
 
 /* 问卷投票 end */
@@ -143,11 +250,15 @@ export function addVisitorLog (data) {
 }
 // 访客邀约记录接口
 export function getVisitorLogList (params) {
-  return request.get('/butler/visitor/getVisitorLogList', { params })
+  return request.get('/butler/visitor/getVisitorLogList', {
+    params
+  })
 }
 // 我的访客列表接口
 export function getMyVisitorList (params) {
-  return request.get('/butler/visitor/getMyVisitorList', { params })
+  return request.get('/butler/visitor/getMyVisitorList', {
+    params
+  })
 }
 // 删除我的访客接口
 export function deleteMyVisitor (data) {

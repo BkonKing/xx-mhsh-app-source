@@ -48,15 +48,16 @@ service.interceptors.request.use(
     if (!config.headers.Authorization && token) {
       config.headers.Authorization = token
     }
-    // 获取当前项目
-    const project = api.getPrefs({
-      sync: true,
-      key: 'currentProject'
-    })
-    if (project) {
-      config.headers.ProjectId = project.project_id
+    if (!config.headers.ProjectId) {
+      // 获取当前项目
+      const project = api.getPrefs({
+        sync: true,
+        key: 'currentProject'
+      })
+      if (project) {
+        config.headers.ProjectId = project.project_id
+      }
     }
-
     return config
   },
   error => {

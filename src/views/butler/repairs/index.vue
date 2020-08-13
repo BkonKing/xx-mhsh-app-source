@@ -2,29 +2,24 @@
   <div class="tf-bg tf-main-container">
     <van-nav-bar title="报事报修" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
-        <span class="tf-icon tf-icon-time-circle" @click="goList"></span>
+        <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
     <van-notice-bar
-      v-if="progressList.length"
+      v-if="progressNum"
       class="swiper-nav"
       left-icon="warning-o"
       mode="link"
       background="rgba(249,134,107,0.2)"
       :scrollable="false"
+      @click="goProgress(item)"
     >
-      <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
-        <van-swipe-item
-          v-for="item in progressList"
-          :key="item.id"
-          @click="goProgress(item)"
-        >{{item.content}}</van-swipe-item>
-      </van-swipe>
+      您有正在进行的报事报修，点击查看进度
     </van-notice-bar>
     <div class="tf-card">
       <div class="tf-card-header">选择类型</div>
       <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn v-model="category_id" :data="items"></tf-radio-btn>
+        <tf-radio-btn v-model="category_id" :data="categoryList" label-key="category" value-key="id"></tf-radio-btn>
       </div>
     </div>
     <div class="tf-card">
@@ -66,8 +61,9 @@ import {
 import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 // import uImg from '@/components/uploadImg/uploadImg.vue'
-import { addRepair } from '@/api/butler.js'
+import { addRepair, getRepairCategoryList } from '@/api/butler.js'
 import { validForm } from '@/utils/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     tfAlert,
@@ -84,42 +80,11 @@ export default {
   },
   data () {
     return {
-      progressList: [
-        {
-          id: 1,
-          content: '您有正在进行的报事报修，点击查看进度',
-          category: '报事报修'
-        }
-      ], // 进行中的报事报修数量
+      progressNum: 0, // 进行中的报事报修数量
+      repairId: '', // 如果进行中报事报修为一个，则repairId等于该报事报修id
       category_id: '',
       content: '',
-      items: [
-        {
-          value: 'USA',
-          name: '美国'
-        },
-        {
-          value: 'CHN',
-          name: '中国',
-          checked: 'true'
-        },
-        {
-          value: 'BRA',
-          name: '巴西'
-        },
-        {
-          value: 'JPN',
-          name: '日本'
-        },
-        {
-          value: 'ENG',
-          name: '英国'
-        },
-        {
-          value: 'FRA',
-          name: '法国'
-        }
-      ],
+      categoryList: [],
       images: [],
       msg: '',
       length: 140,
@@ -132,14 +97,23 @@ export default {
       }
     }
   },
-  // 点击导航栏 buttons 时触发
-  onNavigationBarButtonTap (e) {
-    const index = e.index
-    if (index === 0) {
-      this.goList()
-    }
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
+  created () {
+    this.getRepairCategoryList()
   },
   methods: {
+    /* 获取报事报修类型 */
+    getRepairCategoryList () {
+      getRepairCategoryList().then(({ data }) => {
+        const { category, num, id } = data
+        this.categoryList = category
+        this.progressNum = num
+        this.repairId = id
+      })
+    },
+    /* 表单提交 */
     formSubmit: function () {
       const validator = [
         {
@@ -155,15 +129,13 @@ export default {
         this.addRepair()
       })
     },
-    // 新增报事报修
+    /* 新增报事报修 */
     addRepair () {
       addRepair({
         content: this.content,
         images: this.images,
-        category_id: this.category_id,
-        project_id: '2',
-        house_id: '1'
-      }).then((res) => {
+        category_id: this.category_id
+      }, this.currentProject.house_id).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
@@ -219,6 +191,9 @@ export default {
 .swiper-nav {
   height: 88px;
   border-radius: 10px;
+  /deep/ .van-notice-bar__content {
+    color: #eb5841;
+  }
   .notice-swipe {
     height: 88px;
     /deep/ .van-swipe-item {

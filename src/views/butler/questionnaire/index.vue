@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-time-circle" @click="goMyList"></span>
+        <span class="tf-icon tf-icon-shijian" @click="goMyList"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">

@@ -2,7 +2,7 @@
   <div class="tf-bg">
     <van-nav-bar title="我的反馈" :fixed="true" left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="onLoad">
+      <refreshList :list.sync="data" :load="getFeedbackList">
         <template v-slot="{item}">
           <div class="list-item--time">{{item.ctime}}</div>
           <div class="tf-card" @click="jump(item)">
@@ -36,16 +36,11 @@ export default {
     }
   },
   created () {
-    this.getFeedbackList()
+    // this.getFeedbackList()
   },
   methods: {
-    onLoad () {},
     getFeedbackList () {
-      getFeedbackList().then(res => {
-        if (res.success) {
-          this.data = res.data
-        }
-      })
+      return getFeedbackList()
     },
     jump (item) {
       const url = `/pages/personage/feedback/details?id=${item.id}`

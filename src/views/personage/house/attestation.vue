@@ -2,7 +2,7 @@
   <div class="tf-bg tf-padding-base">
     <van-nav-bar :title="title" :fixed="true" :border="false" left-arrow @click-left="goback">
       <template #right>
-        <span v-if="mode && !editMode" class="tf-icon tf-icon-edit-square" @click="goEdit"></span>
+        <span v-if="mode && !editMode" class="tf-icon tf-icon-bianxie-square" @click="goEdit"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -119,6 +119,7 @@ export default {
       building_id: '',
       unit_id: '',
       house_name: '',
+      project_name: '',
       house_role: '',
       realname: '',
       mobile: '',
@@ -177,9 +178,11 @@ export default {
         house_id,
         project_id,
         building_id,
-        unit_id
+        unit_id,
+        project_name
       } = houseSelected
       this.house_name = house_name
+      this.project_name = project_name
       this.house_id = house_id
       this.project_id = project_id
       this.building_id = building_id
@@ -293,7 +296,7 @@ export default {
             this.$store.commit('setUser_info', user)
           }
           if (this.select == '1') {
-            this.$store.commit('setCurrentProject', params)
+            this.$store.dispatch('getHouse')
           }
           setTimeout(() => {
             this.$router.go(-1)
@@ -347,7 +350,6 @@ export default {
     /* 返回并销毁当前实例 */
     goback () {
       this.$router.go(-1)
-      this.$destroy()
     }
   }
 }

@@ -116,7 +116,7 @@ export default {
     selectHouse (item) {
       const obj = {
         project_id: this.activeProject.id,
-        // project_name: this.activeProject.project_name,
+        project_name: this.activeProject.project_name,
         building_id: this.activeBuild.building_id,
         // building_name: this.activeBuild.building_name,
         unit_id: this.activeBuild.id,

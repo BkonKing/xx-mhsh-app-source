@@ -6,7 +6,7 @@
           <template v-if="!grayTheme" v-slot:right>
             <span class="thumbsups-number">{{cell.thumbsups}}</span>
             <span
-              class="tf-icon tf-icon-like"
+              class="tf-icon tf-icon-zan"
               :class="{'like-active': cell.thumbsupStatus}"
               @click="thumbsUp(cell)"
             ></span>
@@ -36,7 +36,7 @@
                   v-if="item.images"
                   @click="lookImg(item.images)"
                 >
-                  <span class="tf-icon tf-icon-image"></span>查看图片
+                  <span class="tf-icon tf-icon-tupian"></span>查看图片
                 </span>
               </span>
             </div>
@@ -56,7 +56,7 @@
       @comment="comment"
     ></more-popup>
     <div class="comment-box">
-      <span class="tf-icon tf-icon-like"></span>
+      <span class="tf-icon tf-icon-zan"></span>
       <van-field placeholder="写评论" @click="showPopup" />
     </div>
     <comment
@@ -249,7 +249,7 @@ export default {
     font-size: 24px;
     color: @gray-7;
   }
-  .tf-icon-like {
+  .tf-icon-zan {
     font-size: 36px;
     margin-left: 10px;
     color: #8f8f94;
@@ -317,7 +317,7 @@ export default {
   padding: 15px 30px;
   background: #fff;
   border-top: 2px solid @gray-2;
-  .tf-icon-like {
+  .tf-icon-zan {
     font-size: 44px;
     margin-right: 30px;
   }

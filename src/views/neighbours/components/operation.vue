@@ -1,13 +1,13 @@
 <template>
   <div class="activity-footer">
     <div
-      class="tf-icon tf-icon-like"
+      class="tf-icon tf-icon-zan"
       :class="{'like-active': item.thumbsupStatus}"
       @click.stop="thumbsUp(item)"
     >
       <span class="tf-text-sm">{{item.thumbsups | numberText}}</span>
     </div>
-    <div class="tf-icon tf-icon-message" @click.stop="goDetails">
+    <div class="tf-icon tf-icon-pinglun" @click.stop="goDetails">
       <span class="tf-text-sm">{{item.comments | numberText}}</span>
     </div>
     <slot></slot>

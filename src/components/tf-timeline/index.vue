@@ -3,7 +3,7 @@
     <div class="tf-timeline__column">
       <div class="tf-timeline__column-text-container">
         <div
-          v-for="(item,index) in optionsReverse"
+          v-for="(item,index) in options"
           :key="index"
           class="tf-timeline__column-text-box"
           :class="{'tf-timeline__column-text-grey': index>active}"
@@ -19,7 +19,7 @@
       <div class="tf-timeline__column-container">
         <div
           class="tf-timeline__column-line-item"
-          v-for="(item,index) in optionsReverse"
+          v-for="(item,index) in options"
           :key="index"
         >
           <div
@@ -76,13 +76,13 @@ export default {
   },
   data () {
     return {
-      optionsReverse: []
+      // optionsReverse: []
     }
   },
   watch: {
     options (value) {
-      const data = JSON.parse(JSON.stringify(value))
-      this.optionsReverse = data.reverse()
+      // const data = JSON.parse(JSON.stringify(value))
+      // this.optionsReverse = data.reverse()
     }
   },
   methods: {

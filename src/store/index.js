@@ -4,7 +4,8 @@ import {
   yzmLogin,
   pwdLogin,
   outLogin,
-  refreshToken
+  refreshToken,
+  getMyAccount
 } from '@/api/user.js'
 import {
   bindingHouse
@@ -33,6 +34,10 @@ const store = {
   mutations: {
     setUser_info (state, value) {
       state.user_info = value
+      api.setPrefs({
+        key: 'user_info',
+        value
+      })
     },
     login (state, provider) {
       state.hasLogin = true
@@ -111,12 +116,13 @@ const store = {
               key: 'refresh_token',
               value: data.refresh_token
             })
-            api.setPrefs({
-              key: 'user_info',
-              value: data
-            })
+            // api.setPrefs({
+            //   key: 'user_info',
+            //   value: data
+            // })
             commit('setUser_info', data)
             dispatch('getHouse')
+            dispatch('getMyAccount')
             resolve()
           } else {
             reject(res.message)
@@ -197,8 +203,19 @@ const store = {
     getHouse ({
       commit
     }) {
-      bindingHouse().then(({ data }) => {
+      bindingHouse().then(({
+        data
+      }) => {
         data && data.length && commit('setCurrentProject', data[0])
+      })
+    },
+    getMyAccount ({
+      commit
+    }) {
+      getMyAccount().then(({
+        data
+      }) => {
+        commit('setUser_info', data && data.user_info)
       })
     }
   }

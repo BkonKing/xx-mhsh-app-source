@@ -34,6 +34,11 @@ export function refreshToken () {
   })
 }
 
+/* 账户信息 */
+export function getMyAccount () {
+  return request.get('/my/account/myAccount')
+}
+
 /* 图片上传 */
 export function uImages (data) {
   return request.post('/upload/uploads/uImages', data, {

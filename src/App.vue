@@ -93,6 +93,10 @@ export default {
   overflow: hidden;
   background-color: #f5f5f5;
 }
+body::-webkit-scrollbar {
+  //隐藏滚动条
+  display: none;
+}
 .w100 {
   width: 100%;
   background: #fff;

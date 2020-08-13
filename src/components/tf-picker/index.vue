@@ -62,6 +62,7 @@ export default {
     confirm (value, index) {
       this.index = index
       this.$emit('input', this.selectedKey ? value[this.selectedKey] : value)
+      this.$emit('confirm', this.selectedKey ? value[this.selectedKey] : value)
       this.showPicker = false
     }
   }

@@ -8,15 +8,53 @@
             <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
               <tf-list-item border title="头像">
                 <template v-slot:right>
-                  <img class="tf-avatar-m tf-mr-base" :src="avatar" />
+                  <van-uploader>
+                    <img class="tf-avatar-m tf-mr-base" :src="avatar" />
+                  </van-uploader>
                 </template>
               </tf-list-item>
-              <tf-list-item border title="昵称" :rightText="nicknameText" :showArrow="false"></tf-list-item>
-              <tf-list-item border title="性别" :rightText="gender | sexText"></tf-list-item>
-              <tf-list-item title="生日" rightText="1990-01-01"></tf-list-item>
+              <tf-list-item border title="昵称" :showArrow="false">
+                <template v-slot:right>
+                  <input v-model="nickname" class="tf-input" @change="setNickname" />
+                </template>
+              </tf-list-item>
+              <tf-list-item border title="性别">
+                <template v-slot:right>
+                  <tf-picker
+                    v-model="gender"
+                    title="性别"
+                    value-key="label"
+                    selected-key="value"
+                    :columns="sexArray"
+                    @confirm="setSex"
+                  >
+                    <template v-slot="{valueText}">
+                      <div class="tf-text">{{valueText}}</div>
+                    </template>
+                  </tf-picker>
+                </template>
+              </tf-list-item>
+              <tf-list-item title="生日">
+                <template v-slot:right>
+                  <tf-date-time-picker
+                    v-model="birthday"
+                    type="date"
+                    title="生日"
+                    @confirm="setBirthday"
+                  >
+                    <template>
+                      <div class="tf-text text-right">{{birthday || '选择日期'}}</div>
+                    </template>
+                  </tf-date-time-picker>
+                </template>
+              </tf-list-item>
             </tf-list>
             <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-              <tf-list-item border title="姓名" :rightText="realname" :showArrow="false"></tf-list-item>
+              <tf-list-item border title="姓名" :showArrow="false">
+                <template v-slot:right>
+                  <input v-model="realname" class="tf-input" @change="setRealname" />
+                </template>
+              </tf-list-item>
               <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
               <tf-list-item
                 title="收货地址"
@@ -94,10 +132,14 @@ import {
   DropdownItem,
   Tag,
   Dialog,
-  Toast
+  Toast,
+  uploader,
+  Field
 } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import tfPicker from '@/components/tf-picker/index'
+import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import house from '../house/components/house'
 import { mapGetters } from 'vuex'
 import { getMemberList, yzHouse } from '@/api/personage'
@@ -109,9 +151,13 @@ export default {
     [Tabs.name]: Tabs,
     [DropdownMenu.name]: DropdownMenu,
     [DropdownItem.name]: DropdownItem,
+    [uploader.name]: uploader,
     [Tag.name]: Tag,
+    [Field.name]: Field,
+    tfDateTimePicker,
     tfList,
     tfListItem,
+    tfPicker,
     house
   },
   data () {
@@ -124,15 +170,26 @@ export default {
       avatar: '',
       mobile: '',
       nickname: '',
+      birthday: '',
       payCodeStatus: 1, // 0为未设置过，1我设置过
-      passwordStatus: 0, // 0为未设置过，1我设置过
+      passwordStatus: 1, // 0为未设置过，1我设置过
       memberList: [], // 成员列表
       houseRoleColor: {
         1: 'danger',
         2: 'warning',
         3: 'primary',
         4: 'primary'
-      }
+      },
+      sexArray: [
+        {
+          label: '男',
+          value: 1
+        },
+        {
+          label: '女',
+          value: 2
+        }
+      ]
     }
   },
   computed: {
@@ -153,6 +210,23 @@ export default {
     // this.getMemberList()
   },
   methods: {
+    /* 设置昵称 */
+    setNickname () {
+      console.log(this.nickname)
+      Toast.success('修改成功')
+    },
+    /* 设置性别 */
+    setSex () {
+      console.log(this.gender)
+    },
+    /* 设置生日 */
+    setBirthday () {
+      console.log(this.birthday)
+    },
+    /* 设置姓名 */
+    setRealname () {
+      console.log(this.realname)
+    },
     /* 获取业主房产信息 */
     yzHouse () {
       yzHouse().then((res) => {
@@ -174,6 +248,7 @@ export default {
         this.memberList = res.data
       })
     },
+    /* 添加成员 */
     addMember () {
       if (this.memberList.length >= 10) {
         Toast('一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加')
@@ -184,6 +259,13 @@ export default {
         this.goAttestation(0, 0)
       }
     },
+    /**
+     * 房屋认证（成员添加修改）
+     * @param {number} type 页面类型  0：成员 1：房屋
+     * @param {number} mode 模式类型  0：新增 1：修改
+     * @param {string} id 当前选中房屋或成员id
+     * @param {object} info 当前选中房屋或成员所有信息
+     */
     goAttestation (type, mode, id, info) {
       this.$router.push({
         path: '/pages/personage/house/attestation',
@@ -195,12 +277,15 @@ export default {
         }
       })
     },
+    /* 跳转收货地址 */
     goAddress () {
       this.$router.push('/pages/personage/information/address')
     },
+    /* 跳转手机验证 */
     jumpPhone () {
       this.$router.push('/pages/personage/information/phone')
     },
+    /* 跳转支付密码设置修改  */
     editPaymentCode () {
       this.$router.push({
         path: '/pages/personage/information/payment-code',
@@ -209,6 +294,7 @@ export default {
         }
       })
     },
+    /* 跳转登录密码设置修改 */
     editLoginPassword () {
       this.$router.push({
         path: '/pages/personage/information/login-password',
@@ -265,5 +351,10 @@ export default {
 }
 /deep/ .van-cell--clickable:active {
   background: @gray-3;
+}
+.tf-input {
+  flex: 1;
+  font-size: 30px;
+  text-align: right;
 }
 </style>

@@ -15,7 +15,7 @@
     </van-nav-bar>
     <div class="select-house" @click="goAttestation">
       <div class="tf-row-vertical-center">
-        <span class="tf-icon tf-icon-location"></span>
+        <span class="tf-icon tf-icon-dingwei"></span>
         <span>{{houseName || '请选择'}}</span>
       </div>
       <span class="tf-icon tf-icon-caret-down"></span>

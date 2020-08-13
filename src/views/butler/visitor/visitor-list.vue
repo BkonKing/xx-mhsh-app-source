@@ -15,7 +15,7 @@
           <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
         </div>
         <div class="tf-row">
-          <span class="tf-icon tf-icon-edit-square" @click.stop="jump(0, item)"></span>
+          <span class="tf-icon tf-icon-bianxie-square" @click.stop="jump(0, item)"></span>
           <span class="tf-icon tf-icon-delete icon--remove" @click.stop="deleteMyVisitor(item.id)"></span>
         </div>
       </div>

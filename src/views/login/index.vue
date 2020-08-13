@@ -36,7 +36,7 @@
           <template #button>
             <span
               class="tf-icon tf-text-white"
-              :class="[showPassword ? 'tf-icon-eye' : 'tf-icon-eye-close']"
+              :class="[showPassword ? 'tf-icon-kejian' : 'tf-icon-bukejian']"
               @click="changePassword"
             ></span>
           </template>
@@ -52,7 +52,7 @@
           <span
             class="tf-icon uni-checkbox-icon"
             :class="{ 'uni-checkbox-input-checked': agree }"
-          >{{ agree ? '&#xe886;' : '' }}</span>
+          >{{ agree ? '&#xe634;' : '' }}</span>
         </div>
       </div>
       <span class="agreement-text" style="color: #fff;">登录即表示您同意《美好生活家园用户协议》</span>

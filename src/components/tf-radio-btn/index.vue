@@ -4,14 +4,14 @@
       class="radio-btn__item"
       v-for="(item, i) in data"
       :key="i"
-      :class="{'radio-btn--active': value === item.value}"
-      @click="change(item.value)"
+      :class="{'radio-btn--active': value === item[valueKey]}"
+      @click="change(item[valueKey])"
       :style="{'border-radius': `${radius}px`}"
     >
       <div
         class="radio-btn__text"
-        :class="{'radio-btn__text--active': value === item.value}"
-      >{{item.name}}</div>
+        :class="{'radio-btn__text--active': value === item[valueKey]}"
+      >{{item[labelKey]}}</div>
     </div>
   </div>
 </template>
@@ -30,6 +30,14 @@ export default {
     radius: {
       type: Number,
       default: 6
+    },
+    labelKey: {
+      type: String,
+      default: 'name'
+    },
+    valueKey: {
+      type: String,
+      default: 'value'
     }
   },
   data () {

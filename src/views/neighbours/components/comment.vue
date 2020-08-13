@@ -1,7 +1,7 @@
 <template>
   <div class="comment-container">
     <div class="comment-box">
-      <span v-if="thumbsupshow" class="tf-icon tf-icon-like" :class="{'like-active': thumbsupStatus}" @click="thumbsup"></span>
+      <span v-if="thumbsupshow" class="tf-icon tf-icon-zan" :class="{'like-active': thumbsupStatus}" @click="thumbsup"></span>
       <van-field placeholder="写评论" @click="showPopup" />
     </div>
     <van-popup v-model="show" position="bottom">
@@ -22,7 +22,7 @@
         </div>
         <div class="comment-popup-right">
           <van-uploader :max-count="1">
-            <span class="tf-icon tf-icon-image"></span>
+            <span class="tf-icon tf-icon-tupian"></span>
           </van-uploader>
           <div class="send-btn" :class="{'tf-text-primary': content}" @click="addComment">发送</div>
         </div>
@@ -125,7 +125,7 @@ export default {
   padding: 15px 30px;
   background: #fff;
   border-top: 2px solid @gray-2;
-  .tf-icon-like {
+  .tf-icon-zan {
     font-size: 44px;
     margin-right: 30px;
   }
@@ -164,7 +164,7 @@ export default {
     width: 48px;
     text-align: center;
     margin-left: 20px;
-    .tf-icon-image {
+    .tf-icon-tupian {
       font-size: 44px;
       color: #383838;
     }

@@ -3,7 +3,7 @@
     <van-nav-bar title="免费服务" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
       <template #right>
         <span
-          class="tf-icon tf-icon-time-circle"
+          class="tf-icon tf-icon-shijian"
           @click="$router.push('/pages/butler/freeserver/list')"
         ></span>
       </template>

@@ -5,11 +5,11 @@
       <div class="tf-list" @click="jump(item)">
         <template v-if="item.type === 0">
           <div class="tf-row-vertical-center tf-mb-lg">
-            <div class="tf-icon tf-icon-like-fill like-icon"></div>
+            <div class="tf-icon tf-icon-dianzan like-icon"></div>
             <div class="tf-text-sm">我收到了点赞</div>
           </div>
           <div class="tf-row-vertical-center message-box">
-            <div class="tf-icon tf-icon-like-fill tf-text-orange"></div>
+            <div class="tf-icon tf-icon-dianzan tf-text-orange"></div>
             <div class="tf-text-sm tf-text-grey like-number">233</div>
             <div class="tf-text-sm tf-text-grey">关于美好生活家园2020年中秋佳节社区活动</div>
           </div>
@@ -118,7 +118,7 @@ export default {
   color: @orange-dark;
   margin-right: 9px;
 }
-.tf-icon-like-fill.tf-text-orange,
+.tf-icon-dianzan.tf-text-orange,
 .tf-icon-comment {
   font-size: 34px;
 }

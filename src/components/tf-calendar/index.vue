@@ -42,7 +42,7 @@
         </div>
       </div>
       <div class="mask-close-block">
-        <span class="tf-icon tf-icon-close-circle" @click="toggleFunc"></span>
+        <span class="tf-icon tf-icon-guanbi-circle" @click="toggleFunc"></span>
       </div>
     </div>
   </div>
@@ -193,7 +193,7 @@ export default {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
-.tf-icon-close-circle {
+.tf-icon-guanbi-circle {
   font-size: 50px;
   color: #fff;
 }

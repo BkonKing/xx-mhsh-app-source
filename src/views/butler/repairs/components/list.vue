@@ -1,31 +1,31 @@
 <template>
-  <refreshList :list.sync="repairList" @load="onLoad">
+  <refreshList :list.sync="repairList" :load="getRepairList">
     <template v-slot="{item}">
       <div class="list-item--time">{{item.ctime}}</div>
       <div class="tf-card">
         <div class="repair-list__title" @click="goDetails(item)">
           <div class="font-bold">{{item.category}}</div>
           <div
-            :class="{'tf-text-primary': item.status == 1 || item.status == 5}"
+            :class="{'tf-text-primary': item.status == 1 || item.status == 3}"
           >{{statusText[item.status]}}</div>
         </div>
         <div class="repair-list__content" @click="goDetails(item)">{{item.content}}</div>
         <div class="repair-list__footer">
           <van-button
-            v-if="item.status == 6"
+            v-if="item.status == 4"
             class="repair-list__btn"
             size="small"
             @click="goEvaluate"
           >评价</van-button>
           <van-button
-            v-else-if="item.status == 5"
+            v-else-if="item.status == 3 && item.sub_status == 9"
             class="repair-list__btn"
             size="small"
             type="danger"
             @click="goDetails(item, 'finishShow')"
           >确认完成</van-button>
           <van-button
-            v-else-if="item.status == 4"
+            v-else-if="item.status == 3 && item.sub_status == 5"
             class="repair-list__btn"
             size="small"
             type="danger"
@@ -54,20 +54,12 @@ export default {
     }
   },
   created () {
-    this.getRepairList()
+    // this.getRepairList()
   },
   methods: {
-    onLoad () {},
     // 获取我的报事报修
     getRepairList () {
-      getRepairList(/* {
-        projectId: '',
-        repairId: ''
-      } */).then((res) => {
-        if (res.success) {
-          this.repairList = res.data
-        }
-      })
+      return getRepairList()
     },
     /* 跳转详情页（带参数，报事报修类型名称和id） */
     goDetails (item, type) {

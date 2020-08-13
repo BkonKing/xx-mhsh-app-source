@@ -10,7 +10,7 @@
     <appList :list="appList"></appList>
     <div class="tf-flex-center tf-flex-item">
       <div class="key-box" @click="goEntrance">
-        <span class="tf-icon tf-icon-key"></span>
+        <span class="tf-icon tf-icon-kaisuo"></span>
       </div>
     </div>
   </div>

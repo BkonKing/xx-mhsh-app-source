@@ -21,7 +21,7 @@
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
         <div class="function-box">
-          <div class="tf-icon tf-icon-scan function-box__icon"></div>
+          <div class="tf-icon tf-icon-saoyisao function-box__icon"></div>
           <div class="function-box__text">扫一扫</div>
         </div>
         <div class="function-box">

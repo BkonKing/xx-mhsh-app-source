@@ -2,8 +2,8 @@
   <div class="tf-bg">
     <van-nav-bar :fixed="true" :border="false">
       <template #right>
-        <span class="tf-icon tf-icon-setting" @click="goSetting"></span>
-        <span class="tf-icon tf-icon-message" @click="goMessage">
+        <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
+        <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
           <span class="van-info">2</span>
         </span>
       </template>
@@ -24,7 +24,7 @@
                 size="small"
               >{{userType | houseRoleText}}</van-tag>
             </div>
-            <div class="user-address">{{currentProject.fc_info}}</div>
+            <div class="user-address">{{currentProject && currentProject.fc_info}}</div>
           </div>
         </div>
         <div class="tf-row coin-box">
@@ -46,10 +46,10 @@
         </div>
       </div>
       <div class="functional-box">
-        <div v-if="userType == 6 || userType == 7" class="module-box">
+        <div v-if="userInfo.swrole == 1" class="module-box">
           <div class="module-title">事务处理</div>
           <div class="tf-padding-base">
-            <div v-if="userType == 6" class="tf-row manage-border-bottom">
+            <div v-if="userInfo.role_dep == 1" class="tf-row manage-border-bottom">
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待处理</div>
@@ -165,6 +165,7 @@ export default {
     ...mapGetters(['userInfo', 'userType', 'currentProject'])
   },
   created () {
+    this.$store.dispatch('getMyAccount')
   },
   methods: {
     /* 签到 */
@@ -397,7 +398,7 @@ export default {
   padding: 30px 20px;
   overflow: auto;
 }
-.tf-icon-message {
+.tf-icon-pinglun {
   @relative();
   margin-right: 27px;
 }

@@ -2,10 +2,10 @@
   <div class="tf-bg-white">
     <van-nav-bar :fixed="true" border>
       <template #left>
-        <span class="tf-icon tf-icon-close" @click="closePublish"></span>
+        <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
       </template>
       <template #right>
-        <span class="tf-icon tf-icon-send" @click="addPostBar"></span>
+        <span class="tf-icon tf-icon-fabu" @click="addPostBar"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -192,10 +192,10 @@ export default {
   width: 216px;
   height: 216px;
 }
-.tf-icon-close {
+.tf-icon-guanbi {
   font-size: 44px;
 }
-.tf-icon-send {
+.tf-icon-fabu {
   color: #aaa;
 }
 </style>

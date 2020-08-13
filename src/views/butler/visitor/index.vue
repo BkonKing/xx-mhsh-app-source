@@ -3,7 +3,7 @@
     <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="goback">
       <template #right>
         <span class="tf-icon tf-icon-solution" @click="goVisitorList(1)"></span>
-        <span class="tf-icon tf-icon-time-circle" @click="goInviteList"></span>
+        <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">

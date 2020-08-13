@@ -23,7 +23,7 @@
           <template v-slot:right>
             <span class="thumbsups-number">{{replyInfo.thumbsups}}</span>
             <span
-              class="tf-icon tf-icon-like"
+              class="tf-icon tf-icon-zan"
               :class="{'like-active': replyInfo.thumbsupStatus}"
               @click="thumbsUp(replyInfo)"
             ></span>
@@ -55,7 +55,7 @@
             <template v-slot:right>
               <span class="thumbsups-number">{{item.thumbsups}}</span>
               <span
-                class="tf-icon tf-icon-like"
+                class="tf-icon tf-icon-zan"
                 :class="{'like-active': item.thumbsupStatus}"
                 @click="thumbsUp(item)"
               ></span>
@@ -294,7 +294,7 @@ export default {
   font-size: 24px;
   color: @gray-7;
 }
-.tf-icon-like {
+.tf-icon-zan {
   font-size: 36px;
   margin-left: 10px;
   color: #8f8f94;

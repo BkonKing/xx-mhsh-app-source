@@ -2,8 +2,8 @@
   <div class="tf-bg">
     <van-nav-bar :border="false" :fixed="true" left-text="和谐邻里" :left-arrow="false">
       <template #right>
-        <span class="tf-icon tf-icon-edit" @click="goEdit"></span>
-        <span class="tf-icon tf-icon-mail" @click="goMessage">
+        <span class="tf-icon tf-icon-bianxie" @click="goEdit"></span>
+        <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
           <span v-if="status" class="van-info">2</span>
         </span>
       </template>
@@ -147,7 +147,7 @@ export default {
 .pt88 {
   padding-top: 88px;
 }
-.tf-icon-mail {
+.tf-icon-xiaoxi {
   @relative();
   margin-right: 27px;
 }

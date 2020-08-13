@@ -1,7 +1,7 @@
 <template>
   <van-popup class="tf-van-popup" v-model="value" @click-overlay="close" :close-on-click-overlay="false">
     <div class="tf-dialog__wrapper-box">
-      <span class="tf-icon" @click="close">&#xe781;</span>
+      <span class="tf-icon tf-icon-guanbi" @click="close"></span>
       <div class="tf-dialog">
         <div v-if="title" class="tf-dialog-header">
           <div class="tf-dialog-header__title">{{ title }}</div>
