@@ -11,7 +11,7 @@
         <span class="tf-icon tf-icon-customerservice"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <van-pull-refresh class="tf-main-container" v-model="isLoading" @refresh="onRefresh">
       <div class="tf-card">
         <div class="tf-card-header">
           <div class="tf-card-header__title">内容描述</div>
@@ -24,7 +24,11 @@
         <tf-image-list v-if="images.length" :data="images" :column="5" mode="show"></tf-image-list>
       </div>
       <div class="time-line-box">
-        <tfTimeline class="tf-bg-white tf-mt-base tf-padding-base" :options="timelineList"></tfTimeline>
+        <tfTimeline
+          class="tf-bg-white tf-mt-base tf-padding-base"
+          :options="timelineList"
+          @negotiate="viewNegotiate"
+        ></tfTimeline>
         <div class="transaction-btn-box">
           <!-- 评价信息 -->
           <div
@@ -36,31 +40,31 @@
           <div v-if="sub_status == 11" class="tf-icon tf-icon-tupian transaction-btn">
             <span class="van-info">2</span>
           </div>
-          <!-- 协商信息 -->
-          <div
-            v-if="sub_status == 6"
-            class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
-            @click="negotiateShow = true"
-          ></div>
         </div>
       </div>
-      <div v-if="status < 4" class="operation-box">
+      <div v-if="sub_status < 10" class="operation-box">
         <!-- 不是已结案和已取消 -->
-        <div v-if="status < 4" class="tf-btn" @click="cancelRepair">撤销提报</div>
+        <div v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
         <!-- 待结案和发起协商 -->
         <div
-          v-if="status == 3 && sub_status == 5"
+          v-if="sub_status == 5"
           class="tf-btn tf-btn-primary"
           @click="negotiateConfirm = true"
         >确认协商信息</div>
         <!-- 预结案 -->
         <div
-          v-if="status == 3 && sub_status == 8"
+          v-if="sub_status == 8"
           class="tf-btn tf-btn-primary"
           @click="finishShow = true"
         >确认完成</div>
+        <!-- 评价 -->
+        <div
+          v-if="sub_status == 9"
+          class="tf-btn tf-btn-primary"
+          @click="goEvaluate"
+        >评价</div>
       </div>
-    </div>
+    </van-pull-refresh>
     <!-- 确认协商信息 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
       <template>
@@ -68,10 +72,10 @@
         <div class="tf-text tf-mt-lg tf-mb-lg">
           <span class="lp112">费</span>
           <span>用：预计</span>
-          <span>120</span>
+          <span>{{negotiateInfo.negotiation_costs}}</span>
           元
         </div>
-        <div class="tf-text tf-mb-lg">预约处理时间：2020-07-08 12:00</div>
+        <div class="tf-text tf-mb-lg">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
         <div class="dialog-footer">
           <van-button size="small" style="width: 48%;" @click="toRefuse">拒绝</van-button>
           <van-button size="small" type="danger" style="width: 48%;" @click="confirmNegotiate">确认</van-button>
@@ -84,10 +88,10 @@
         <div class="tf-text">
           <span class="lp112">费</span>
           <span>用：预计</span>
-          <span>120</span>
+          <span>{{negotiateInfo.negotiation_costs}}</span>
           元
         </div>
-        <div class="tf-text">预约处理时间：2020-07-08 12:00</div>
+        <div class="tf-text">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
         <div v-if="sub_status == 7" class="tf-text tf-row">
           <div>
             <span class="lp18">拒绝原</span>
@@ -182,7 +186,16 @@
 </template>
 
 <script>
-import { NavBar, Dialog, Button, Picker, Field, Rate, Toast } from 'vant'
+import {
+  NavBar,
+  Dialog,
+  Button,
+  Picker,
+  Field,
+  Rate,
+  Toast,
+  PullRefresh
+} from 'vant'
 import tfTimeline from '@/components/tf-timeline/index.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { statusText } from '@/const/butler.js'
@@ -192,7 +205,8 @@ import {
   negotiationAffirm,
   negotiationRefuse,
   caseOverAffirm,
-  getRefuseReasonList
+  getRefuseReasonList,
+  getNegotiationInfo
 } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
 import tfPicker from '@/components/tf-picker/index'
@@ -204,6 +218,7 @@ export default {
     tfImageList,
     tfPicker,
     [NavBar.name]: NavBar,
+    [PullRefresh.name]: PullRefresh,
     [Field.name]: Field,
     [Picker.name]: Picker,
     [Rate.name]: Rate,
@@ -219,7 +234,10 @@ export default {
       status: 0,
       sub_status: 0,
       ctime: '',
+      negotiation_id: '',
       timelineList: [],
+      isLoading: false,
+      negotiateInfo: {}, // 协商信息
       negotiateConfirm: false, // 是否确认协商信息弹窗
       negotiateShow: false, // 协商信息弹窗
       refuseDialog: false, // 拒绝协商弹窗
@@ -238,25 +256,39 @@ export default {
     const { id, title, type } = this.$route.query
     this.title = title
     this.repairId = id
-    this.getRepairInfo()
-    if (type) {
-      this[type] = true
-    }
+    this.getRepairInfo().then(() => {
+      if (type) {
+        this[type] = true
+        this.getNegotiationInfo(this.negotiation_id)
+        this.getRefuseReasonList()
+      }
+    })
   },
   methods: {
+    /* 下拉刷新 */
+    onRefresh () {
+      this.getRepairInfo()
+    },
     /* 获取报事报修详情 */
     getRepairInfo () {
-      getRepairInfo({
+      return getRepairInfo({
         repairId: this.repairId
       }).then((res) => {
-        if (res.success) {
-          const { content, images, status, records, sub_status } = res.data
-          this.status = status
-          this.sub_status = sub_status
-          this.images = images
-          this.timelineList = records
-          this.content = content
-        }
+        this.isLoading = false
+        const {
+          content,
+          images,
+          status,
+          records,
+          sub_status,
+          new_negotiation_id
+        } = res.data
+        this.status = status
+        this.sub_status = sub_status
+        this.images = images
+        this.timelineList = records
+        this.content = content
+        this.negotiation_id = new_negotiation_id
       })
     },
     /* 撤销提报 */
@@ -273,14 +305,29 @@ export default {
         })
       })
     },
+    /* 查看协商信息 */
+    viewNegotiate ({ negotiation_id }) {
+      this.getNegotiationInfo(negotiation_id)
+      this.negotiateShow = true
+    },
+    /* 获取协商详情 */
+    getNegotiationInfo (negotiationId) {
+      getNegotiationInfo({
+        repairId: this.repairId,
+        negotiationId
+      }).then((res) => {
+        this.negotiateInfo = res.data || {}
+      })
+    },
     /* 打开拒绝协商弹窗 */
     toRefuse () {
+      this.getNegotiationInfo(this.negotiation_id)
       this.getRefuseReasonList()
       this.refuseDialog = true
     },
     /* 获取拒绝协商原因 */
     getRefuseReasonList () {
-      getRefuseReasonList().then(res => {
+      getRefuseReasonList().then((res) => {
         this.refuseArray = res.data
       })
     },
@@ -292,7 +339,6 @@ export default {
           message: '请选择拒绝原因'
         }
       ]
-      console.log(this.repairId)
       validForm(validator).then(() => {
         const params = {
           repair_id: this.repairId,
@@ -323,12 +369,20 @@ export default {
       caseOverAffirm({
         repair_id: this.repairId
       }).then((res) => {
-        this.$router.push({
-          path: '/pages/butler/repairs/evaluate',
-          query: {
-            repairId: this.repairId
-          }
+        Dialog.alert({
+          title: '您已确认结案成功，请对该此服务进行评价'
+        }).then((res) => {
+          this.goEvaluate()
         })
+      })
+    },
+    /* 跳转评价 */
+    goEvaluate () {
+      this.$router.push({
+        path: '/pages/butler/repairs/evaluate',
+        query: {
+          repairId: this.repairId
+        }
       })
     }
   }
@@ -338,6 +392,10 @@ export default {
 <style lang="less" scoped>
 .tf-main-container {
   padding: 118px 20px 217px;
+  overflow: auto !important;
+  /deep/ .van-pull-refresh__track {
+    height: auto;
+  }
 }
 
 .reason-text {

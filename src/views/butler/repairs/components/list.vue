@@ -6,7 +6,7 @@
         <div class="repair-list__title" @click="goDetails(item)">
           <div class="font-bold">{{item.category}}</div>
           <div
-            :class="{'tf-text-primary': item.status == 1 || item.status == 3}"
+            :class="{'tf-text-primary': item.status < 4}"
           >{{statusText[item.status]}}</div>
         </div>
         <div class="repair-list__content" @click="goDetails(item)">{{item.content}}</div>
@@ -15,7 +15,7 @@
             v-if="item.status == 4"
             class="repair-list__btn"
             size="small"
-            @click="goEvaluate"
+            @click="goEvaluate(item.id)"
           >评价</van-button>
           <van-button
             v-else-if="item.status == 3 && item.sub_status == 9"
@@ -72,8 +72,13 @@ export default {
       })
     },
     /* 跳转评价页面 */
-    goEvaluate () {
-      this.$router.push('/pages/butler/repairs/evaluate')
+    goEvaluate (id) {
+      this.$router.push({
+        path: '/pages/butler/repairs/evaluate',
+        query: {
+          repairId: id
+        }
+      })
     }
   }
 }

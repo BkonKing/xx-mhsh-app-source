@@ -141,7 +141,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "transactionIndex" */
         '@/views/personage/transaction/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/personage/transaction/details',
@@ -152,7 +155,7 @@ const personageRouter = [
         '@/views/personage/transaction/details.vue'
       )
   },
-  /* 事务处理 */
+  /* 消息 */
   {
     path: '/pages/personage/message/index',
     name: 'messageIndex',

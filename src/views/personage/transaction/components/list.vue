@@ -1,5 +1,5 @@
 <template>
-  <refreshList :list.sync="list" :load="load">
+  <refreshList :key="Math.random()" :list.sync="list" :load="load" :immediate-check="false">
     <template v-slot="{item}">
       <div class="transaction-box" @click="jump(item)">
         <div class="transaction-item">
@@ -16,17 +16,20 @@
             :class="{'transaction-item__content--manager': item.status > 5}"
           >{{ item.content }}</div>
         </div>
-        <div class="transaction-footer">
+        <div v-if="item.sub_status < 8" class="transaction-footer">
           <div class="transaction-footer__text">
             等待
             <span class="tf-text-blue">{{item.designee}}</span>
-            {{item.status | statusText}}
-            <span class="tf-text-primary">({{item.sy_time}})</span>
+            {{item.sub_status | statusText}}
+            <span
+              v-if="item.sy_time"
+              class="tf-text-primary"
+            >({{item.sy_time}})</span>
           </div>
           <van-button v-if="item.status == 1" type="warning">去处理</van-button>
-          <van-button v-else-if="item.status == 3" type="danger">去分派</van-button>
-          <van-button v-else-if="item.status == 4">接受任务</van-button>
-          <van-button v-else-if="item.status == 5" type="danger">确认结案</van-button>
+          <van-button v-else-if="item.status == 2" type="danger">去分派</van-button>
+          <van-button v-else-if="item.sub_status == 3">接受任务</van-button>
+          <van-button v-else-if="item.sub_status == 6" type="danger">确认结案</van-button>
         </div>
         <!-- <div
               class="tf-card-header__status"
@@ -77,7 +80,7 @@ export default {
         1: '处理',
         2: '分派',
         3: '接受任务',
-        4: '结案'
+        6: '结案'
       }
       return text[value]
     }
@@ -87,7 +90,7 @@ export default {
 
 <style lang="less" scoped>
 .transaction-box {
-  padding: 30px 30px 0;
+  padding: 30px 30px 25px;
   background: #fff;
   border-radius: 10px;
   & + & {
@@ -120,7 +123,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     margin-top: 30px;
-    padding: 25px 0;
+    padding: 25px 0 0;
     border-top: 1px solid #f0f0f0;
     &__text {
       font-size: 28px;

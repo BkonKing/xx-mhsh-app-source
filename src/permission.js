@@ -19,6 +19,9 @@ router.beforeEach(async (to, from, next) => {
   // eslint-disable-next-line eqeqeq
   if (hasToken && hasToken != 'undefined' && hasToken != '') {
     next()
+    if (to.meta && to.meta.keepAlive) {
+      store.commit('setKeepAliveList', to.name)
+    }
   } else {
     /* has no token */
     if (whiteList.indexOf(to.path) !== -1) {

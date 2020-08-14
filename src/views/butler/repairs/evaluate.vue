@@ -5,13 +5,13 @@
       <div class="tf-form-box">
         <div class="evaluate-title">
           对处理人员
-          <span class="tf-text-grey">（李师傅）</span>还满意吗？
+          <span class="tf-text-grey">（{{designee}}）</span>还满意吗？
         </div>
         <div class="rate-box">
           <van-rate v-model="evaluate_stars" :size="33" color="#FFA110" void-icon="star" void-color="#aaa" />
           <div class="rate-text" v-if="evaluate_stars">{{rateText[evaluate_stars]}}</div>
         </div>
-        <tf-radio-btn v-model="evaluate_reason" :radius="2" :data="items"></tf-radio-btn>
+        <tf-radio-btn v-model="evaluate_reason" :radius="2" :data="items" multiple></tf-radio-btn>
         <div class="tf-form-label">其他补充：</div>
         <van-field
           v-model="evaluate_content"
@@ -33,7 +33,7 @@
 import { NavBar, Rate, Field, Button } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn'
 import { validForm } from '@/utils/util'
-import { evaluate } from '@/api/butler.js'
+import { evaluate, launchEvaluate } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -46,33 +46,57 @@ export default {
     return {
       repairId: '',
       evaluate_stars: undefined, // 评分
-      evaluate_reason: '',
+      evaluate_reason: [],
       evaluate_content: '',
+      designee: '',
       items: [
         {
-          value: 'USA',
-          name: '美国'
+          value: '不够专业',
+          name: '不够专业'
         },
         {
-          value: 'CHN',
-          name: '中国',
-          checked: 'true'
+          value: '专业',
+          name: '专业'
         },
         {
-          value: 'BRA',
-          name: '巴西'
+          value: '速度慢',
+          name: '速度慢'
         },
         {
-          value: 'JPN',
-          name: '日本'
+          value: '速度快',
+          name: '速度快'
         },
         {
-          value: 'ENG',
-          name: '英国'
+          value: '服务态度恶劣',
+          name: '服务态度恶劣'
         },
         {
-          value: 'FRA',
-          name: '法国'
+          value: '态度友好',
+          name: '态度友好'
+        },
+        {
+          value: '脏乱不卫生',
+          name: '脏乱不卫生'
+        },
+        {
+          value: '干净整洁',
+          name: '干净整洁'
+        },
+        {
+          value: '不诚信',
+          name: '不诚信'
+        },
+        {
+          value: '诚信',
+          name: '诚信'
+        },
+        {
+          value: '价格不合理',
+          name: '价格不合理'
+        },
+        {
+          value: '价格合理',
+          name: '价格合理'
         }
       ],
       // 评分对应内容
@@ -86,7 +110,8 @@ export default {
     }
   },
   created () {
-    this.repairId = this.$router.query.repairId
+    this.repairId = this.$route.query.repairId
+    this.launchEvaluate()
   },
   methods: {
     /* 提交 */
@@ -107,13 +132,20 @@ export default {
         repair_id: this.repairId,
         evaluate_stars: this.evaluate_stars,
         evaluate_content: this.evaluate_content,
-        evaluate_reason: this.evaluate_reason
+        evaluate_reason: this.evaluate_reason.join(',')
       }).then(res => {
         this.$router.go(-1)
       })
+    },
+    /* 获取相关信息 */
+    launchEvaluate () {
+      launchEvaluate({
+        repairId: this.repairId
+      }).then(res => {
+        this.designee = res.data.designee
+      })
     }
   }
-
 }
 </script>
 

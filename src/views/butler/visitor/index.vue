@@ -224,13 +224,18 @@ export default {
       this.$router.push('/pages/butler/visitor/invite-list')
     },
     sendInvite () {
-      this.$destroy()
       this.$router.replace('/pages/butler/visitor/invite')
     },
     goback () {
       this.$router.go(-1)
-      this.$destroy()
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name === 'butler' || to.name === 'visitorInvite') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', to.name)
+    }
+    next()
   }
 }
 </script>

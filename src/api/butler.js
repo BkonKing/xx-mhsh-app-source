@@ -88,7 +88,9 @@ export function cancelRepair (data, id) {
 
 //
 export function getRefuseReasonList (params) {
-  return request.post('/butler/repair/getRefuseReasonList', { params })
+  return request.post('/butler/repair/getRefuseReasonList', {
+    params
+  })
 }
 
 // 协商确认
@@ -109,6 +111,30 @@ export function caseOverAffirm (data) {
 // 用户评价
 export function evaluate (data) {
   return request.post('/butler/repair/evaluate', data)
+}
+
+// 协商详情
+export function getNegotiationInfo (params) {
+  return request.get('/butler/repair/getNegotiationInfo', {
+    params
+  })
+}
+
+// 获取发起评星相关数据
+export function launchEvaluate (params) {
+  return request.get('/butler/repair/launchEvaluate', {
+    params
+  })
+}
+
+// 协商详情(事务)
+export function queryNegotiationInfo (params, ProjectId) {
+  return request.get('/butler/repair/getNegotiationInfo', {
+    params,
+    headers: {
+      ProjectId
+    }
+  })
 }
 
 /* 我的，事务处理 */
@@ -179,6 +205,15 @@ export function caseOver (data, ProjectId) {
 // 上传结案图片
 export function closingPicture (data, ProjectId) {
   return request.post('/butler/repair/closingPicture', data, {
+    headers: {
+      ProjectId
+    }
+  })
+}
+
+// 添加事务处理进度
+export function timeaxis (data, ProjectId) {
+  return request.post('/butler/repair/timeaxis', data, {
     headers: {
       ProjectId
     }

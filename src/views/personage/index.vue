@@ -53,7 +53,7 @@
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
                 <div class="text-sm">待处理</div>
-                <span class="personage-badge">{{userInfo.dcl_num}}</span>
+                <span v-if="userInfo.dcl_num" class="personage-badge">{{userInfo.dcl_num}}</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
                 <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />

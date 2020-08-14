@@ -3,7 +3,7 @@
     <div class="w100" :style="{height: `${paddingTop}px`}"></div>
     <!-- 全局组件 -->
     <transition :name="transitionName">
-      <keep-alive :max="10" :include="keepAlive">
+      <keep-alive :max="10" :include="keepAlives">
         <router-view></router-view>
       </keep-alive>
     </transition>
@@ -13,6 +13,7 @@
 
 <script>
 import router from './router'
+import { mapGetters } from 'vuex'
 // import api from './api/index'
 export default {
   name: 'App',
@@ -25,6 +26,9 @@ export default {
       paddingBottom: 0
     }
   },
+  computed: {
+    ...mapGetters(['keepAlives'])
+  },
   created () {
     const userInfo = api.getPrefs({
       key: 'user_info'
@@ -33,7 +37,7 @@ export default {
     // 看是否有当前项目
     this.$store.dispatch('getHouse')
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
-    this.setRouteKeepAlive(router.options.routes)
+    // this.setRouteKeepAlive(router.options.routes)
   },
   mounted () {
     // 接口调用

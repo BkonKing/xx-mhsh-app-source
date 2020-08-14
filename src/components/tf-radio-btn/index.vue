@@ -4,13 +4,13 @@
       class="radio-btn__item"
       v-for="(item, i) in data"
       :key="i"
-      :class="{'radio-btn--active': value === item[valueKey]}"
+      :class="{'radio-btn--active': valueChild.indexOf(item[valueKey]) !== -1}"
       @click="change(item[valueKey])"
       :style="{'border-radius': `${radius}px`}"
     >
       <div
         class="radio-btn__text"
-        :class="{'radio-btn__text--active': value === item[valueKey]}"
+        :class="{'radio-btn__text--active': valueChild.indexOf(item[valueKey]) !== -1}"
       >{{item[labelKey]}}</div>
     </div>
   </div>
@@ -20,7 +20,7 @@
 export default {
   props: {
     value: {
-      type: [String, Number],
+      type: [String, Number, Array],
       default: ''
     },
     data: {
@@ -38,16 +38,38 @@ export default {
     valueKey: {
       type: String,
       default: 'value'
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
+      valueChild: this.value
     }
   },
   methods: {
     change (value) {
+      if (this.multiple) {
+        const index = this.valueChild.indexOf(value)
+        if (index === -1) {
+          this.valueChild.push(value)
+        } else {
+          this.valueChild.splice(index, 1)
+        }
+      } else {
+        this.valueChild = value
+      }
+      this.$emit('change', this.valueChild)
+    }
+  },
+  watch: {
+    valueChild (value) {
       this.$emit('input', value)
-      this.$emit('change', value)
+    },
+    value (value) {
+      this.valueChild = value
     }
   }
 }

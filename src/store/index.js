@@ -29,7 +29,8 @@ const store = {
     colorList: ['#FF0000', '#00FF00', '#0000FF'],
     visitorList: null,
     houseSelected: null,
-    current_project: null
+    current_project: null,
+    keepAliveList: []
   },
   mutations: {
     setUser_info (state, value) {
@@ -71,6 +72,17 @@ const store = {
         key: 'currentProject',
         value: obj
       })
+    },
+    setKeepAliveList (state, name) {
+      if (state.keepAliveList.indexOf(name) === -1) {
+        state.keepAliveList.push(name)
+      }
+    },
+    deleteKeepAlive (state, name) {
+      const index = state.keepAliveList.indexOf(name)
+      if (index !== -1) {
+        state.keepAliveList = state.keepAliveList.splice(index, 1)
+      }
     }
   },
   getters: {
@@ -85,6 +97,9 @@ const store = {
     },
     userType (state) {
       return state.user_info.user_type || 0
+    },
+    keepAlives (state) {
+      return state.keepAliveList
     }
   },
   actions: {

@@ -47,26 +47,26 @@
             v-show="type === 1"
             key="1"
             :data.sync="list1"
-            :load="(params) => getDbRepairList(params, 1)"
+            :load="(params) => listLoad(params, 1)"
           ></list>
           <list
             v-show="type === 2"
             key="2"
             :data.sync="list2"
-            :load="(params) => getDbRepairList(params, 2)"
+            :load="(params) => listLoad(params, 2)"
           ></list>
         </template>
         <list
           v-show="type === 3"
           key="3"
           :data.sync="list3"
-          :load="(params) => getDbRepairList(params, 3)"
+          :load="(params) => listLoad(params, 3)"
         ></list>
         <list
           v-show="type === 4"
           key="4"
           :data.sync="list4"
-          :load="(params) => getDbRepairList(params, 4)"
+          :load="(params) => listLoad(params, 4)"
         ></list>
       </div>
     </div>
@@ -80,6 +80,7 @@ import { getDbRepairList } from '@/api/personage'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'transactionIndex',
   components: {
     [NavBar.name]: NavBar,
     [Sticky.name]: Sticky,
@@ -100,14 +101,27 @@ export default {
   },
   created () {
     this.type = parseInt(this.$route.query.type)
+    if (this.userInfo.role_dep == 1) {
+      this.getDbRepairList(1)
+      this.getDbRepairList(2)
+    }
+    this.getDbRepairList(3)
+    this.getDbRepairList(4)
   },
   methods: {
     scrollSticky ({ isFixed }) {
       this.isFixed = isFixed
     },
-    getDbRepairList (params, status) {
+    listLoad (params, status) {
       params.status = status
       return getDbRepairList(params, this.userInfo.xm_project_id)
+    },
+    getDbRepairList (status) {
+      getDbRepairList({
+        status
+      }, this.userInfo.xm_project_id).then(res => {
+        this[`list${status}`] = res.data
+      })
     }
   }
 }
@@ -117,6 +131,7 @@ export default {
 .tf-main-container {
   padding-top: 0;
   height: calc(100% - 186px);
+  @flex-column();
 }
 .transaction-header {
   @flex-column();
@@ -162,6 +177,7 @@ export default {
   background-color: @red-dark;
 }
 .transaction-list {
+  flex: 1;
   padding-bottom: 30px;
 }
 .transaction-list-item--time {

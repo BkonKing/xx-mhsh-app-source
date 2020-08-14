@@ -9,19 +9,35 @@
           :class="{'tf-timeline__column-text-grey': index>active}"
         >
           <div class="tf-timeline__column-time">{{item.ctime}}</div>
-          <div v-if="item.remark" class="tf-timeline__column-desc">{{item.remark}}</div>
-          <div class="tf-timeline__column-desc" v-else>
-            <span>{{item.designee}}</span>
-            <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
+          <!-- 撤销提报 -->
+          <div class="tf-timeline__column-desc">
+            <template v-if="item.sub_status == 3">
+              {{item.remark}}
+              <span
+                class="tf-text-blue"
+                @click="makePhoneCall(item.mobile)"
+              >{{item.mobile}}</span>
+            </template>
+            <template v-else-if="item.sub_status == 6">
+              <div v-if="item.mobile">
+                <div style="display: inline-block;" v-html="item.remark"></div>
+                <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
+                <div
+                  class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
+                  @click="$emit('negotiate', item)"
+                ></div>
+              </div>
+              <div v-else>{{item.sub_realname}}：{{item.remark}}</div>
+            </template>
+            <template v-else>
+              {{item.remark}}
+              <div v-if="item.refuse_reason">取消说明：{{item.refuse_reason}}</div>
+            </template>
           </div>
         </div>
       </div>
       <div class="tf-timeline__column-container">
-        <div
-          class="tf-timeline__column-line-item"
-          v-for="(item,index) in options"
-          :key="index"
-        >
+        <div class="tf-timeline__column-line-item" v-for="(item,index) in options" :key="index">
           <div
             class="tf-timeline__column-line tf-timeline__column-line--before"
             :style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}"
@@ -158,6 +174,7 @@ export default {
 }
 
 .tf-timeline__column-desc {
+  position: relative;
   font-size: 30px;
   text-align: left;
   color: @text-color;
@@ -270,5 +287,22 @@ export default {
 }
 .phone-number {
   color: @blue-dark !important;
+}
+.transaction-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 88px;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  border: 1px solid #383838;
+  border-radius: 50%;
+  color: #383838;
+  font-size: 55px;
+  background: #fff;
+  .van-info {
+    background: #383838;
+  }
 }
 </style>
