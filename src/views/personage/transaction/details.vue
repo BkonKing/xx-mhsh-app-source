@@ -38,15 +38,11 @@
           </div>
           <tfTimeline
             class="tf-bg-white tf-mt-base tf-padding-base"
+            :evaluateBtn="false"
             :options="detailInfo.records"
             @negotiate="viewNegotiate"
           ></tfTimeline>
           <div class="transaction-btn-box">
-            <div
-              v-if="sub_status == 10"
-              class="tf-icon tf-icon-pingfenwancheng transaction-btn"
-              @click="evaluateDialog = true"
-            ></div>
             <div
               v-if="sub_status == 11"
               class="tf-icon tf-icon-tupian transaction-btn"
@@ -57,7 +53,7 @@
           </div>
         </div>
       </div>
-      <div v-if="parseInt(sub_status) < 4" class="operation-box">
+      <div v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3" class="operation-box">
         <div class="operation-content">
           等待
           <span class="tf-text-orange">{{detailInfo.designee}}</span>
@@ -73,7 +69,7 @@
             <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
             <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
           </div>
-          <div v-if="status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
+          <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
         </template>
         <template v-else>
           <div v-if="['3', '6', '10'].indexOf(sub_status) > -1" class="tf-row-space-between">
@@ -358,7 +354,7 @@
               <span class="tf-text-grey">(24小时内)</span>
             </van-radio>
           </van-radio-group>
-          <van-uploader class="upload-img-box" v-model="imageFiles" multiple :max-count="2" />
+          <tf-uploader class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
@@ -399,6 +395,7 @@ import tfPicker from '@/components/tf-picker/index'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import tfImageList from '@/components/tf-image-list'
+import tfUploader from '@/components/tf-uploader/index'
 import { statusText } from '@/const/butler.js'
 import { validForm } from '@/utils/util'
 import {
@@ -434,6 +431,7 @@ export default {
     tfDialog,
     tfPicker,
     tfDateTimePicker,
+    tfUploader,
     userInfo
   },
   data () {
@@ -722,7 +720,7 @@ export default {
       closingPicture(
         {
           repair_id: this.repairId,
-          images: this.imageFiles
+          images: this.imageFiles.join(',')
         },
         this.projectId
       ).then((res) => {

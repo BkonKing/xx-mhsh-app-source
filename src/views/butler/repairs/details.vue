@@ -28,14 +28,9 @@
           class="tf-bg-white tf-mt-base tf-padding-base"
           :options="timelineList"
           @negotiate="viewNegotiate"
+          @evaluate="viewEvaluate"
         ></tfTimeline>
         <div class="transaction-btn-box">
-          <!-- 评价信息 -->
-          <div
-            v-if="sub_status == 10"
-            class="tf-icon tf-icon-pingfenwancheng transaction-btn"
-            @click="evaluateDialog = true"
-          ></div>
           <!-- 图片信息 -->
           <div v-if="sub_status == 11" class="tf-icon tf-icon-tupian transaction-btn">
             <span class="van-info">2</span>
@@ -49,20 +44,12 @@
         <div
           v-if="sub_status == 5"
           class="tf-btn tf-btn-primary"
-          @click="negotiateConfirm = true"
+          @click="toNegotiateConfirm"
         >确认协商信息</div>
         <!-- 预结案 -->
-        <div
-          v-if="sub_status == 8"
-          class="tf-btn tf-btn-primary"
-          @click="finishShow = true"
-        >确认完成</div>
+        <div v-if="sub_status == 8" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
         <!-- 评价 -->
-        <div
-          v-if="sub_status == 9"
-          class="tf-btn tf-btn-primary"
-          @click="goEvaluate"
-        >评价</div>
+        <div v-if="sub_status == 9" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
       </div>
     </van-pull-refresh>
     <!-- 确认协商信息 -->
@@ -97,7 +84,7 @@
             <span class="lp18">拒绝原</span>
             因：
           </div>
-          <div class="tf-flex-item">{{refuseArray[refuseReason]}}({{other_reason}})</div>
+          <div class="tf-flex-item">{{negotiateInfo.refuse_reason || refuseArray[refuseReason]}}({{other_reason}})</div>
         </div>
         <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
       </div>
@@ -158,11 +145,12 @@
         <div class="tf-form-box">
           <div class="evaluate-title">
             对处理人员
-            <span class="tf-text-grey">(李师傅)</span>比较满意
+            <span class="tf-text-grey">({{evaluateInfo.designee}})</span>
+            {{rateText[evaluateInfo.evaluate_stars]}}
           </div>
           <div class="rate-box">
             <van-rate
-              v-model="value"
+              v-model="evaluateInfo.evaluate_stars"
               :size="26"
               color="#FFA110"
               void-icon="star"
@@ -171,14 +159,10 @@
             />
           </div>
           <div class="rate-tag-box">
-            <div class="rate-tag">专业</div>
-            <div class="rate-tag">速度快</div>
-            <div class="rate-tag">速度快</div>
-            <div class="rate-tag">速度快</div>
-            <div class="rate-tag">速度快</div>
+            <div v-for="(item, i) in evaluateReasonList" :key="i" class="rate-tag">{{item}}</div>
           </div>
           <div class="tf-form-label">其他补充：</div>
-          <div class="textarea-box">师傅态度很好，还很热心地帮忙购买需要 替换的水管</div>
+          <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
         </div>
       </template>
     </tf-dialog>
@@ -206,7 +190,8 @@ import {
   negotiationRefuse,
   caseOverAffirm,
   getRefuseReasonList,
-  getNegotiationInfo
+  getNegotiationInfo,
+  getEvaluateInfo
 } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
 import tfPicker from '@/components/tf-picker/index'
@@ -237,6 +222,7 @@ export default {
       negotiation_id: '',
       timelineList: [],
       isLoading: false,
+      evaluateInfo: {}, // 评价信息
       negotiateInfo: {}, // 协商信息
       negotiateConfirm: false, // 是否确认协商信息弹窗
       negotiateShow: false, // 协商信息弹窗
@@ -249,7 +235,15 @@ export default {
       refuseReason: '',
       other_reason: '', // 协商拒绝说明
       refuse_reason: 0, // 协商拒绝原因值
-      refuseArray: [] // 协商拒绝原因数组
+      refuseArray: [], // 协商拒绝原因数组
+      // 评分对应内容
+      rateText: {
+        1: '非常不满意，各方面都很差',
+        2: '不满意，比较差',
+        3: '一般，还需改善',
+        4: '比较满意，仍可改善',
+        5: '非常满意，无可挑剔'
+      }
     }
   },
   created () {
@@ -264,6 +258,12 @@ export default {
       }
     })
   },
+  computed: {
+    evaluateReasonList () {
+      const { evaluate_reason } = this.evaluateInfo
+      return evaluate_reason ? evaluate_reason.split(',') : []
+    }
+  },
   methods: {
     /* 下拉刷新 */
     onRefresh () {
@@ -273,7 +273,7 @@ export default {
     getRepairInfo () {
       return getRepairInfo({
         repairId: this.repairId
-      }).then((res) => {
+      }).then(res => {
         this.isLoading = false
         const {
           content,
@@ -281,7 +281,8 @@ export default {
           status,
           records,
           sub_status,
-          new_negotiation_id
+          new_negotiation_id,
+          category
         } = res.data
         this.status = status
         this.sub_status = sub_status
@@ -289,6 +290,7 @@ export default {
         this.timelineList = records
         this.content = content
         this.negotiation_id = new_negotiation_id
+        this.title = this.title ? this.title : category
       })
     },
     /* 撤销提报 */
@@ -298,7 +300,7 @@ export default {
       }).then(() => {
         cancelRepair({
           repair_id: this.repairId
-        }).then((res) => {
+        }).then(res => {
           if (res.success) {
             this.$router.go(-1)
           }
@@ -315,9 +317,14 @@ export default {
       getNegotiationInfo({
         repairId: this.repairId,
         negotiationId
-      }).then((res) => {
+      }).then(res => {
         this.negotiateInfo = res.data || {}
       })
+    },
+    /* 确认协商信息 */
+    toNegotiateConfirm () {
+      this.getNegotiationInfo(this.negotiation_id)
+      this.negotiateConfirm = true
     },
     /* 打开拒绝协商弹窗 */
     toRefuse () {
@@ -327,7 +334,7 @@ export default {
     },
     /* 获取拒绝协商原因 */
     getRefuseReasonList () {
-      getRefuseReasonList().then((res) => {
+      getRefuseReasonList().then(res => {
         this.refuseArray = res.data
       })
     },
@@ -341,11 +348,11 @@ export default {
       ]
       validForm(validator).then(() => {
         const params = {
-          repair_id: this.repairId,
+          repairId: this.repairId,
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
-        negotiationRefuse(params).then((res) => {
+        negotiationRefuse(params).then(res => {
           Toast('已拒绝该协商信息')
           this.getRepairInfo()
           this.refuseDialog = false
@@ -358,7 +365,7 @@ export default {
     confirmNegotiate () {
       negotiationAffirm({
         repair_id: this.repairId
-      }).then((res) => {
+      }).then(res => {
         this.getRepairInfo()
         this.negotiateConfirm = false
         this.negotiateShow = true
@@ -368,10 +375,10 @@ export default {
     caseOverAffirm () {
       caseOverAffirm({
         repair_id: this.repairId
-      }).then((res) => {
+      }).then(res => {
         Dialog.alert({
           title: '您已确认结案成功，请对该此服务进行评价'
-        }).then((res) => {
+        }).then(res => {
           this.goEvaluate()
         })
       })
@@ -383,6 +390,20 @@ export default {
         query: {
           repairId: this.repairId
         }
+      })
+    },
+    /* 查看评价 */
+    viewEvaluate (item) {
+      this.getEvaluateInfo(item)
+      this.evaluateDialog = true
+    },
+    /* 获取评价信息 */
+    getEvaluateInfo (item) {
+      getEvaluateInfo({
+        repairId: this.repairId,
+        evaluate_id: item.evaluate_id
+      }).then(res => {
+        this.evaluateInfo = res.data || {}
       })
     }
   }

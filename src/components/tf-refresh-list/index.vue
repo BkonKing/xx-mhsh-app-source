@@ -59,7 +59,6 @@ export default {
     // 上拉刷新
     async onLoad () {
       if (this.refreshing) {
-        this.listChild = []
         this.refreshing = false
       }
       if (this.load && !this.isEndNum) {
@@ -95,6 +94,8 @@ export default {
       this.loading = true
       this.isEndNum = 0
       this.pageNum = 0
+      this.listChild = []
+      this.$emit('update:list', this.listChild)
       this.onLoad()
     }
   },

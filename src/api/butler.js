@@ -127,6 +127,13 @@ export function launchEvaluate (params) {
   })
 }
 
+// 评星详情
+export function getEvaluateInfo (params) {
+  return request.get('/butler/repair/getEvaluateInfo', {
+    params
+  })
+}
+
 // 协商详情(事务)
 export function queryNegotiationInfo (params, ProjectId) {
   return request.get('/butler/repair/getNegotiationInfo', {

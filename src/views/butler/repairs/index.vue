@@ -12,7 +12,7 @@
       mode="link"
       background="rgba(249,134,107,0.2)"
       :scrollable="false"
-      @click="goProgress(item)"
+      @click="goProgress()"
     >
       您有正在进行的报事报修，点击查看进度
     </van-notice-bar>
@@ -39,7 +39,7 @@
     <div class="tf-card">
       <div class="tf-card-header">上传图片</div>
       <div class="tf-card-content">
-        <van-uploader :after-read="uploadSuccess" :max-count="6" />
+        <tf-uploader v-model="images" max-count="6"></tf-uploader>
       </div>
     </div>
     <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
@@ -60,7 +60,7 @@ import {
 } from 'vant'
 import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
-// import uImg from '@/components/uploadImg/uploadImg.vue'
+import tfUploader from '@/components/tf-uploader/index'
 import { addRepair, getRepairCategoryList } from '@/api/butler.js'
 import { validForm } from '@/utils/util'
 import { mapGetters } from 'vuex'
@@ -68,6 +68,7 @@ export default {
   components: {
     tfAlert,
     tfRadioBtn,
+    tfUploader,
     [NavBar.name]: NavBar,
     [Uploader.name]: Uploader,
     [Button.name]: Button,
@@ -133,7 +134,7 @@ export default {
     addRepair () {
       addRepair({
         content: this.content,
-        images: this.images,
+        images: this.images.join(','),
         category_id: this.category_id
       }, this.currentProject.house_id).then((res) => {
         if (res.success) {
@@ -151,9 +152,9 @@ export default {
     },
     /* 判断进行中数量，若是只有一个正在进行中，跳转至详情页；
         若是有多个正在进行中，跳转至记录列表页； */
-    goProgress (item) {
-      if (this.progressList.length === 1) {
-        this.goRepairDetails(item)
+    goProgress () {
+      if (this.progressNum == 1) {
+        this.goRepairDetails(this.repairId)
       } else {
         this.goList()
       }
@@ -221,5 +222,10 @@ export default {
 }
 .alert-box {
   margin-top: 30px;
+}
+/deep/ .van-uploader__upload,
+/deep/ .van-uploader__preview {
+  width: 114px;
+  height: 114px;
 }
 </style>

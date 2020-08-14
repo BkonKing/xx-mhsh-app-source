@@ -12,20 +12,20 @@
         <div class="repair-list__content" @click="goDetails(item)">{{item.content}}</div>
         <div class="repair-list__footer">
           <van-button
-            v-if="item.status == 4"
+            v-if="item.sub_status == 9"
             class="repair-list__btn"
             size="small"
             @click="goEvaluate(item.id)"
           >评价</van-button>
           <van-button
-            v-else-if="item.status == 3 && item.sub_status == 9"
+            v-else-if="item.sub_status == 8"
             class="repair-list__btn"
             size="small"
             type="danger"
             @click="goDetails(item, 'finishShow')"
           >确认完成</van-button>
           <van-button
-            v-else-if="item.status == 3 && item.sub_status == 5"
+            v-else-if="item.sub_status == 5"
             class="repair-list__btn"
             size="small"
             type="danger"
@@ -59,7 +59,11 @@ export default {
   methods: {
     // 获取我的报事报修
     getRepairList () {
-      return getRepairList()
+      const len = this.repairList.length
+      const id = len ? this.repairList[len - 1].id : ''
+      return getRepairList({
+        repairId: id
+      })
     },
     /* 跳转详情页（带参数，报事报修类型名称和id） */
     goDetails (item, type) {
