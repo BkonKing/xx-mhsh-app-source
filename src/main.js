@@ -27,6 +27,7 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
   window.apiready = () => {
     require('./permission')
     process.env.NODE_ENV === 'development' && new VConsole()
+    // 静默更新
     const mam = api.require('mam')
     mam.startSmartUpdate(function (ret, err) {
       if (ret) {
@@ -34,6 +35,18 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
       } else {
         alert(JSON.stringify(err))
       }
+    })
+    // 自定义扫码防止黑屏配置
+    const FNScanner = api.require('FNScanner')
+    api.addEventListener({
+      name: 'resume'
+    }, function (ret, err) {
+      FNScanner.onResume()
+    })
+    api.addEventListener({
+      name: 'pause'
+    }, function (ret, err) {
+      FNScanner.onPause()
     })
     // 将API链接Vue原型，后续通过this.$APICLOUD代替window.api
     Vue.prototype.$api = window.api

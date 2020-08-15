@@ -49,17 +49,8 @@ export default {
       ]
     }
   },
-  onLoad ({ current }) {
+  created ({ current }) {
     this.current = parseInt(current)
-  },
-  onReady () {
-    // const query = uni.createSelectorQuery().in(this);
-    // query.select('.tab-content__box').boundingClientRect(data => {
-    // 	this.qrHeight = data.height - 60
-    // }).exec();
-    setTimeout(() => {
-      this.makeQRCode('sdfsdfdf', `qrcode${this.current}`)
-    }, 1000)
   },
   methods: {
     switchTab (value) {
@@ -113,6 +104,7 @@ export default {
   font-size: 44px;
 }
 .tab-content {
+  @flex-column();
   align-items: center;
 }
 .tab-title {

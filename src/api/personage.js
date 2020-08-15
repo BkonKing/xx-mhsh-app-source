@@ -128,3 +128,40 @@ export function getDesigneeList (ProjectId) {
     }
   })
 }
+
+/* 幸福币 start */
+
+// 获取付款码二维码
+export function getPaymentCode (params) {
+  return request.get('/credits/qrcode/paymentCode', { params })
+}
+// 获取收款码二维码
+export function getCollectCode (params) {
+  return request.get('/credits/qrcode/collectCode', { params })
+}
+// 付款码扫码请求
+export function paymentScan (data) {
+  return request.post('/credits/qrcode/paymentScan', data)
+}
+// 收款码扫码请求
+export function collectScan (data) {
+  return request.post('/credits/qrcode/collectScan', data)
+}
+// 付款方接收付款码状态
+export function paymentStatus (data) {
+  return request.post('/credits/qrcode/paymentStatus', data)
+}
+// 收款方接收收款码状态
+export function collectStatus (data) {
+  return request.post('/credits/qrcode/collectStatus', data)
+}
+// 付款码支付
+export function paymentCredits (data) {
+  return request.post('/credits/qrcode/paymentCredits', data)
+}
+// 收款码支付
+export function collectCredits (data) {
+  return request.post('/credits/qrcode/collectCredits', data)
+}
+
+/* 幸福币 end */

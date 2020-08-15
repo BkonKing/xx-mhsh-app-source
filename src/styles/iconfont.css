@@ -10,6 +10,26 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-close-circle-fill:before {
+  content: "\e89d";
+}
+
+.tf-icon-caret-down:before {
+  content: "\e999";
+}
+
+.tf-icon-caret-up:before {
+  content: "\e99b";
+}
+
+.tf-icon-caret-right:before {
+  content: "\e99c";
+}
+
+.tf-icon-caret-left:before {
+  content: "\e99d";
+}
+
 .tf-icon-right:before {
   content: "\e856";
 }

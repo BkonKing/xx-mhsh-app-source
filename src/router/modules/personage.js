@@ -195,6 +195,26 @@ const personageRouter = [
         '@/views/personage/happiness-coin/buy-record.vue'
       )
   },
+  /* 幸福币明细 */
+  {
+    path: '/pages/personage/happiness-coin/details',
+    name: 'happinessCoinDetails',
+    component: () =>
+      import(
+        /* webpackChunkName: "happinessCoinDetails" */
+        '@/views/personage/happiness-coin/details.vue'
+      )
+  },
+  /* 收付款 */
+  {
+    path: '/pages/personage/happiness-coin/payment',
+    name: 'happinessCoinPayment',
+    component: () =>
+      import(
+        /* webpackChunkName: "happinessCoinPayment" */
+        '@/views/personage/happiness-coin/payment.vue'
+      )
+  },
   /* 我的互动 */
   {
     path: '/pages/personage/interaction/index',

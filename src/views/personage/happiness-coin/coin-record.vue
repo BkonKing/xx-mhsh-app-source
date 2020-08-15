@@ -9,40 +9,36 @@
     />
     <div class="tf-main-container">
       <van-tabs v-model="current">
-        <van-tab v-for="(item, i) in items" :key="i" :title="item" @click="onLoad"></van-tab>
+        <van-tab title="全部">
+          <div class="coin-list">
+            <list :data.sync="list1" :load="onLoad"></list>
+          </div>
+        </van-tab>
+        <van-tab title="获得">
+          <list :data.sync="list2" :load="onLoad"></list>
+        </van-tab>
+        <van-tab title="使用">
+          <list :data.sync="list3" :load="onLoad"></list>
+        </van-tab>
       </van-tabs>
-      <div class="coin-list">
-        <refreshList :list.sync="list" @load="onLoad">
-          <template v-slot="{item}">
-            <div v-show="current === 0 || item.type === current" class="coin-list-item">
-              <div class="coin-list-item-left">
-                <div class="coin-list-item__name">{{item.name}}</div>
-                <div class="coin-list-item__time">{{item.time}}</div>
-              </div>
-              <div class="coin-list-item__number" :class="{'tf-text-primary': item.status}">{{item.status ? '+' : '-'}}{{item.number}}</div>
-            </div>
-          </template>
-        </refreshList>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { NavBar, Tab, Tabs } from 'vant'
-import refreshList from '@/components/tf-refresh-list'
+import list from './components/list'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
-    refreshList
+    list
   },
   data () {
     return {
-      items: ['全部', '获得', '使用'],
       current: 0,
-      list: [
+      list1: [
         {
           id: 1,
           type: 1,
@@ -59,7 +55,9 @@ export default {
           number: '1',
           status: 0
         }
-      ]
+      ],
+      list2: [],
+      list3: []
     }
   },
   methods: {
@@ -75,34 +73,6 @@ export default {
   margin: 30px 20px;
   background-color: #fff;
   border-radius: 10px;
-}
-.coin-list-item {
-  @flex();
-  justify-content: space-between;
-  align-items: center;
-  // height: 144px;
-  padding: 20px 0 30px 0;
-  border-bottom: 1px solid @divider-color;
-}
-.coin-list-item-left {
-  height: 84px;
-  justify-content: space-between;
-}
-.coin-list-item__name {
-  font-size: 30px;
-  margin-bottom: 8px;
-}
-.coin-list-item__time {
-  font-size: 24px;
-  color: @gray-7;
-}
-.coin-list-item__number {
-  font-size: 38px;
-  font-weight: 500;
-  color: @gray-7;
-}
-.coin-list-item__number--add {
-  color: @red-dark;
 }
 .tf-main-container {
   @flex-column();
