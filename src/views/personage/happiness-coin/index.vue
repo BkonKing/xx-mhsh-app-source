@@ -13,9 +13,13 @@
       <div class="sign-box tf-row-space-between">
         <div class="tf-row-center tf-flex-item">
           <div class="tf-icon tf-icon-moneycollect coin-icon"></div>
-          <div class="coin-number">2333</div>
+          <div class="coin-number">{{credits}}</div>
         </div>
-        <div class="sign-tag" :class="{'sign-tag--complete': true}" @click="signIn(true)">{{true ? '已签到' : '签到'}}</div>
+        <div
+          class="sign-tag"
+          :class="{'sign-tag--complete': true}"
+          @click="signIn(true)"
+        >{{signinToday ? '已签到' : '签到'}}</div>
       </div>
     </div>
     <div class="coin-main-box">
@@ -41,14 +45,14 @@
           <div class="tf-row tf-flex-item">
             <div class="task-item__icon"></div>
             <div class="tf-space-between">
-              <div class="task-item__title">{{item.name}}</div>
+              <div class="task-item__title">{{item.task_name}}</div>
               <div class="tf-row">
-                <div class="task-item__remarks">{{item.content}}获得</div>
-                <div class="task-item__remarks--gold">{{item.coin}}幸福币</div>
+                <div class="task-item__remarks">{{item.remarks}}获得</div>
+                <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
               </div>
             </div>
           </div>
-          <div v-if="item.status" class="task-item__number">+{{item.coin}}</div>
+          <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
           <div v-else class="task-item__btn">去完成</div>
         </div>
       </div>
@@ -68,13 +72,14 @@
         </div>
       </div>
     </div>
-    <tf-calendar v-model="showCalendar" :data="signArr" :curYear="cur_year" :curMonth="cur_month"></tf-calendar>
+    <tf-calendar v-model="showCalendar"></tf-calendar>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
+import { signin, getCreditsAccount, Toast } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -83,23 +88,9 @@ export default {
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
-      cur_year: 0, // 签到日历展示年份
-      cur_month: 0, // 签到日历展示月份
-      signArr: [], // 签到日历展示数据
-      taskList: [
-        {
-          name: '完成房间认证',
-          content: '开门认证成功',
-          coin: 20,
-          status: 1
-        },
-        {
-          name: '完成房间认证2',
-          content: '开门认证成功2',
-          coin: 20,
-          status: 0
-        }
-      ],
+      signinToday: 1, // 今日是否签到
+      credits: 0,
+      taskList: [],
       saleList: [
         {
           image: '/static/app-icon.png',
@@ -112,337 +103,34 @@ export default {
     }
   },
   created () {
-    let signArr = []
-    signArr = [
-      {
-        date: 28,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-      {
-        date: 29,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 30,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 1,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 2,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 3,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 4,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 5,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 6,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 7,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 8,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 9,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 10,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 11,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 12,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 13,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 14,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 15,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 16,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 17,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 18,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 19,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 20,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 21,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 22,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 23,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 24,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 25,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 26,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 27,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 28,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 29,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 30,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 31,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 1,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      }
-    ]
-    this.signArr = signArr
+    this.getCreditsAccount()
   },
   methods: {
+    /* 获取幸福币信息 */
+    getCreditsAccount () {
+      getCreditsAccount().then(({ data }) => {
+        this.signinToday = data.signin_today
+        this.taskList = data.task_list
+        this.credits = data.credits
+      })
+    },
     /* 签到事件 */
     signIn (status) {
       // 已签到，则打开签到日历
       if (status) {
         this.showCalendar = true
       } else {
-        this.signReq()
+        this.signin()
       }
     },
     /* 签到请求 */
-    signReq () {
-
+    signin () {
+      signin().then(res => {
+        Toast({
+          message: '签到成功   幸福币+10'
+        })
+        this.signinToday = true
+      })
     },
     goCoinRecord () {
       this.$router.push('/pages/personage/happiness-coin/coin-record')

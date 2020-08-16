@@ -135,7 +135,7 @@
         </tf-list>
       </div>
     </div>
-    <tf-calendar v-model="showCalendar" :data="signArr" :curYear="cur_year" :curMonth="cur_month"></tf-calendar>
+    <tf-calendar v-model="showCalendar"></tf-calendar>
   </div>
 </template>
 
@@ -144,6 +144,7 @@ import { NavBar, Tag, Toast } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
 export default {
   name: 'personage',
@@ -156,11 +157,8 @@ export default {
   },
   data () {
     return {
-      signStatus: false,
-      showCalendar: false, // 签到日历是否隐藏
-      cur_year: 0, // 签到日历展示年份
-      cur_month: 0, // 签到日历展示月份
-      signArr: [] // 签到日历展示数据
+      signStatus: true,
+      showCalendar: false // 签到日历是否隐藏
     }
   },
   computed: {
@@ -173,10 +171,12 @@ export default {
     /* 签到 */
     sign () {
       if (!this.signStatus) {
-        Toast({
-          message: '签到成功   幸福币+10'
+        signin().then(res => {
+          Toast({
+            message: '签到成功   幸福币+10'
+          })
+          this.signStatus = true
         })
-        this.signStatus = true
       } else {
         // 已签到，弹出签到日历
         this.showCalendar = true

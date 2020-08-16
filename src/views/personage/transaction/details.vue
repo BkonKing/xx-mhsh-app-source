@@ -53,7 +53,10 @@
           </div>
         </div>
       </div>
-      <div v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3" class="operation-box">
+      <div
+        v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3"
+        class="operation-box"
+      >
         <div class="operation-content">
           等待
           <span class="tf-text-orange">{{detailInfo.designee}}</span>
@@ -83,7 +86,7 @@
             <div
               v-if="sub_status == 10"
               class="tf-btn tf-btn-primary"
-              @click="settleShow = true"
+              @click="imgUploadShow = true"
             >上传照片</div>
           </div>
         </template>
@@ -347,9 +350,9 @@
       <template>
         <div class="tf-form-box">
           <div class="tf-form-label">上传照片：</div>
-          <van-radio-group v-model="isUploadImage" direction="horizontal">
+          <van-radio-group v-model="upload_type" direction="horizontal">
             <van-radio :name="1" checked-color="#EB5841">立即上传</van-radio>
-            <van-radio :name="0" checked-color="#EB5841">
+            <van-radio :name="2" checked-color="#EB5841">
               延迟上传
               <span class="tf-text-grey">(24小时内)</span>
             </van-radio>
@@ -359,7 +362,7 @@
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
           <van-field
-            v-model="refuse_reason"
+            v-model="remarks"
             class="tf-form-item__textarea"
             rows="2"
             autosize
@@ -370,6 +373,15 @@
           />
         </div>
       </template>
+    </tf-dialog>
+    <tf-dialog
+      v-model="imgUploadShow"
+      title="上传照片"
+      :showFotter="true"
+      :hiddenOff="true"
+      @confirm="closingPicture"
+    >
+      <tf-uploader class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
     </tf-dialog>
   </div>
 </template>
@@ -449,6 +461,7 @@ export default {
       acceptPlanShow: false,
       negotiateShow: false,
       settleShow: false,
+      imgUploadShow: false,
       detailInfo: {},
       title: '',
       reasonList: [], // 撤销原因数组
@@ -482,7 +495,8 @@ export default {
       negotiation_time: '', // 协商 - 预约时间
       planContent: '', // 任务进度
       negotiateInfo: {},
-      isUploadImage: 0,
+      upload_type: 0,
+      remarks: '', // 预处理 - 补充说明
       imageFiles: []
     }
   },
@@ -507,7 +521,7 @@ export default {
           repairId: this.repairId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.isLoading = false
         const { status, sub_status } = res.data
         this.detailInfo = res.data
@@ -517,7 +531,7 @@ export default {
     },
     /* 获取撤消提报原因 */
     getUndoReasonList () {
-      getUndoReasonList(this.projectId).then((res) => {
+      getUndoReasonList(this.projectId).then(res => {
         this.reasonList = res.data
       })
     },
@@ -540,7 +554,7 @@ export default {
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
-        cancelRepair(params, this.projectId).then((res) => {
+        cancelRepair(params, this.projectId).then(res => {
           this.getRepairInfo()
           Toast('已经撤销提报')
           this.revocationShow = false
@@ -554,7 +568,7 @@ export default {
           repair_id: this.repairId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.showAssign()
       })
     },
@@ -568,9 +582,9 @@ export default {
       getDesigneeList(this.projectId).then(({ data }) => {
         const newData = {}
         // 格式转换 姓名-电话号码-工作日期-擅长
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           if (data[key].length) {
-            newData[key] = data[key].map((obj) => {
+            newData[key] = data[key].map(obj => {
               const { realname, mobile, weeks, skill, uid } = obj
               return {
                 label: `${realname} ${mobile} ${weeks} ${skill}`,
@@ -592,7 +606,7 @@ export default {
           limit_hours: this.limit_hours
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.getRepairInfo()
         Toast.success('分派人员成功')
         this.assignShow = false
@@ -605,7 +619,7 @@ export default {
     },
     /* 获取取消任务原因 */
     getCancelReasonList () {
-      getCancelReasonList(this.projectId).then((res) => {
+      getCancelReasonList(this.projectId).then(res => {
         this.cancelReasonList = res.data
       })
     },
@@ -623,10 +637,10 @@ export default {
           other_reason: this.cancelExplain,
           refuse_reason: this.cancelReason
         }
-        refuseTasks(params, this.projectId).then((res) => {
+        refuseTasks(params, this.projectId).then(res => {
           Dialog.alert({
             title: '已取消任务'
-          }).then((res) => {
+          }).then(res => {
             this.$router.go(-1)
           })
         })
@@ -646,7 +660,7 @@ export default {
           negotiation_costs: this.isCharge == 1 ? this.negotiation_costs : '',
           negotiation_time: this.negotiation_time
         }
-        negotiation(params, this.projectId).then((res) => {
+        negotiation(params, this.projectId).then(res => {
           Toast.success('您已接受该任务')
           this.getRepairInfo()
           this.acceptPlanShow = false
@@ -666,7 +680,7 @@ export default {
           negotiationId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.negotiateInfo = res.data || {}
       })
     },
@@ -688,7 +702,7 @@ export default {
           repair_id: this.repairId,
           content: this.planContent
         }
-        timeaxis(params, this.projectId).then((res) => {
+        timeaxis(params, this.projectId).then(res => {
           Toast.success('进度添加成功')
           this.getRepairInfo()
           this.planShow = false
@@ -701,15 +715,19 @@ export default {
     },
     // 工作人员处理预结案
     caseOver () {
-      if (this.isUploadImage) {
-        this.closingPicture()
+      const params = {
+        upload_type: this.upload_type,
+        repair_id: this.repairId,
+        remarks: this.remarks
       }
-      caseOver(
-        {
-          repair_id: this.repairId
-        },
-        this.projectId
-      ).then((res) => {
+      if (this.upload_type === 1) {
+        if (this.imageFiles.length === 0) {
+          Toast('请上传图片')
+          return
+        }
+        params.images = this.imageFiles.join(',')
+      }
+      caseOver(params, this.projectId).then(res => {
         Toast.success('您已结案成功')
         this.getRepairInfo()
         this.settleShow = false
@@ -723,7 +741,7 @@ export default {
           images: this.imageFiles.join(',')
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         Toast.success('结案图片上传成功')
       })
     },

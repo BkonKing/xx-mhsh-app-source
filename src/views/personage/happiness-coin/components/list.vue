@@ -1,15 +1,15 @@
 <template>
-  <refreshList :key="Math.random()" :list.sync="list" :load="load">
+    <refreshList :list.sync="list" :load="load">
     <template v-slot="{item}">
       <div class="coin-list-item" @click="goDetails(item)">
         <div class="coin-list-item-left">
-          <div class="coin-list-item__name">{{item.name}}</div>
-          <div class="coin-list-item__time">{{item.time}}</div>
+          <div class="coin-list-item__name">{{item.title}}</div>
+          <div class="coin-list-item__time">{{item.ctime}}</div>
         </div>
         <div
           class="coin-list-item__number"
           :class="{'tf-text-primary': item.status}"
-        >{{item.status ? '+' : '-'}}{{item.number}}</div>
+        >{{item.status ? '+' : '-'}}{{item.credits}}</div>
       </div>
     </template>
   </refreshList>

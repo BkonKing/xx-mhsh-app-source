@@ -91,7 +91,7 @@ export default {
 }
 
 .tf-dialog {
-  width: 560px;
+  width: 100%;
   padding: 0 50px;
   background-color: #fff;
 }

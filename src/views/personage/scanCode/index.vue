@@ -77,27 +77,61 @@ export default {
     /* 扫码成功 */
     scanSuccess (content) {
       const value = 'fukuan|52|13|2|1597483207|e9aeee2e78ebdcd99b3eaa797ba35d2'
-      console.log(value.split('|'))
+      const values = value.split('|')
+      switch (values[0]) {
+        case 'fukuan':
+          paymentScan({
+            code_info: value
+          }).then(res => {
+            if (res.data.check_status) {
+              this.$router.push({
+                name: 'happinessCoinPayment',
+                query: {
+                  type: '1',
+                  value: value
+                }
+              })
+            }
+          })
+          break
+        case 'shoukuan':
+          collectScan({
+            code_info: value
+          }).then(res => {
+            if (res.data.check_status) {
+              this.$router.push({
+                name: 'happinessCoinPayment',
+                query: {
+                  type: '2',
+                  value: value
+                }
+              })
+            }
+          })
+          break
+        default:
+          break
+      }
     },
     /* 获取付款码二维码 */
     getPaymentCode () {
-      getPaymentCode().then((res) => {
+      getPaymentCode().then(res => {
         this.paymentCodeImg = res.data.url
       })
     },
     /* 获取收款码二维码 */
     getCollectCode () {
-      getCollectCode().then((res) => {
+      getCollectCode().then(res => {
         this.collectCodeImg = res.data
       })
     },
     /* 付款码扫码请求获取码当前状态 */
     paymentScan () {
-      paymentScan().then((res) => {})
+      paymentScan().then(res => {})
     },
     /* 收款码扫码请求获取码当前状态 */
     collectScan () {
-      collectScan().then((res) => {})
+      collectScan().then(res => {})
     },
     /* 打开扫码frame */
     openFrame () {

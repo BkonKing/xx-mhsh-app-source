@@ -2,7 +2,7 @@
   <!-- 签到start -->
   <div v-show="value" class="mask-block sign-mask" catchtouchmove="true">
     <div class="sign-mask-block">
-      <div class="sign-block" data-show="show" @click="toggleFunc">
+      <div class="sign-block" data-show="show">
         <div class="mask-header">
           <div class="mask-tit">签到</div>
           <div class="mask-icon mask-icon-left"></div>
@@ -10,11 +10,11 @@
         </div>
         <div class="sign-cont">
           <div class="mask-bar">
-            <div class="bar-btn bar-prev tf-icon  tf-icon-caret-left" @click="handlePrev" data-handle="prev">
+            <div class="bar-btn bar-prev tf-icon  tf-icon-caret-left" @click.stop="handlePrev" data-handle="prev">
             </div>
             <div class="bar-month">{{curYear}}年{{curMonth}}月</div>
             <template v-if="year!=curYear || month!=curMonth">
-              <div class="bar-btn bar-next tf-icon tf-icon-caret-right" @click="handleNext" data-handle="next">
+              <div class="bar-btn bar-next tf-icon tf-icon-caret-right" @click.stop="handleNext" data-handle="next">
               </div>
             </template>
             <template v-else>
@@ -42,7 +42,7 @@
         </div>
       </div>
       <div class="mask-close-block">
-        <span class="tf-icon tf-icon-guanbi-circle" @click="toggleFunc"></span>
+        <span class="tf-icon tf-icon-guanbi1" @click="toggleFunc"></span>
       </div>
     </div>
   </div>
@@ -50,38 +50,42 @@
 </template>
 
 <script>
+import { signinCalendar } from '@/api/personage'
 export default {
   name: 'tf-calendar',
   props: {
     value: {
       type: Boolean,
       default: false
-    },
-    data: {
-      type: Array,
-      default: () => []
-    },
-    curYear: {
-      type: Number || String,
-      default: ''
-    },
-    curMonth: {
-      type: Number || String,
-      default: ''
     }
   },
   data () {
     return {
       year: 2020, // 当天的年份
-      month: 7 // 当天的月份
+      month: 7, // 当天的月份
+      curYear: 0,
+      curMonth: 0,
+      data: []
     }
   },
   created () {
     const date = new Date()
     this.year = date.getFullYear()
     this.month = date.getMonth() + 1
+    this.curYear = date.getFullYear()
+    this.curMonth = date.getMonth() + 1
+    this.signinCalendar()
   },
   methods: {
+    /* 签到日历数据 */
+    signinCalendar () {
+      signinCalendar({
+        year: this.curYear,
+        month: this.curMonth
+      }).then(res => {
+        this.data = res.data.calendar
+      })
+    },
     toggleFunc () {
       this.$emit('input', !this.value)
     },
@@ -89,10 +93,22 @@ export default {
       this.$emit('input', false)
     },
     handlePrev () {
-      this.$emit('prev')
+      if (this.curMonth > 1) {
+        this.curMonth--
+      } else {
+        this.curYear--
+        this.curMonth = 12
+      }
+      this.signinCalendar()
     },
     handleNext () {
-      this.$emit('next')
+      if (this.curMonth < 12) {
+        this.curMonth++
+      } else {
+        this.curYear++
+        this.curMonth = 1
+      }
+      this.signinCalendar()
     },
     /**
      * 日历
@@ -181,6 +197,10 @@ export default {
   @flex();
   justify-content: center;
   align-items: center;
+  color: #fff;
+  .tf-icon {
+    font-size: 40px;
+  }
 }
 .sign-block {
   width: 624px;

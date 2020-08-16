@@ -8,9 +8,9 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <userInfo :avatar="avatar" :name="`${nickname}(${realname})`" :time="mobile"></userInfo>
+      <userInfo :avatar="info.avatar" :name="info.username"></userInfo>
       <div class="module-box money-box">
-        <div class="money-num">+200</div>
+        <div class="money-num">{{info.credits}}</div>
         <div class="tf-text-lg tf-text-grey">退款成功</div>
       </div>
       <div class="module-box">
@@ -18,33 +18,33 @@
           <div class="clist-item__label">
             <span class="mr60">类</span>型
           </div>
-          <div>获取-购物消费</div>
+          <div>{{info.title}}</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">
             <span class="mr60">时</span>间
           </div>
-          <div>获取-购物消费</div>
+          <div>{{info.ctime}}</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">对方账户</div>
-          <div>获取-购物消费</div>
+          <div>{{info.to_username}}</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">交易单号</div>
-          <div>获取-购物消费</div>
+          <div>{{info.log_no}}</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">
             <span class="mr60">备</span>注
           </div>
-          <div>获取-购物消费</div>
+          <div>{{info.source_var}}</div>
         </div>
       </div>
       <div class="module-box">
         <div class="clist-item">
           <div class="clist-item__label">商品说明</div>
-          <div>获取-购物消费</div>
+          <div>{{info.to_username}}</div>
         </div>
         <div class="tf-row-space-between divider-box">
           <div>订单详情</div>
@@ -64,15 +64,32 @@
 <script>
 import { NavBar } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
+import { getCreditsInfo } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
     userInfo
   },
   data () {
-    return {}
+    return {
+      id: '',
+      info: {}
+    }
   },
-  methods: {}
+  created () {
+    this.id = this.$route.query.id
+    this.getCreditsInfo()
+  },
+  methods: {
+    // 幸福币交易详情
+    getCreditsInfo () {
+      getCreditsInfo({
+        logId: this.id
+      }).then(res => {
+        this.info = res.data
+      })
+    }
+  }
 }
 </script>
 

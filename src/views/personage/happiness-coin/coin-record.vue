@@ -11,14 +11,18 @@
       <van-tabs v-model="current">
         <van-tab title="全部">
           <div class="coin-list">
-            <list :data.sync="list1" :load="onLoad"></list>
+            <list key="list1" :data.sync="list1" :load="({pageNum}) => getCreditsLog(pageNum, 0)"></list>
           </div>
         </van-tab>
         <van-tab title="获得">
-          <list :data.sync="list2" :load="onLoad"></list>
+          <div class="coin-list">
+            <list key="list2" :data.sync="list2" :load="({pageNum}) => getCreditsLog(pageNum, 1)"></list>
+          </div>
         </van-tab>
         <van-tab title="使用">
-          <list :data.sync="list3" :load="onLoad"></list>
+          <div class="coin-list">
+            <list key="list3" :data.sync="list3" :load="({pageNum}) => getCreditsLog(pageNum, 2)"></list>
+          </div>
         </van-tab>
       </van-tabs>
     </div>
@@ -28,6 +32,7 @@
 <script>
 import { NavBar, Tab, Tabs } from 'vant'
 import list from './components/list'
+import { getCreditsLog } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -38,30 +43,18 @@ export default {
   data () {
     return {
       current: 0,
-      list1: [
-        {
-          id: 1,
-          type: 1,
-          name: '签到送积分',
-          time: '2020-07-07 12:00:00',
-          number: '1',
-          status: 1
-        },
-        {
-          id: 2,
-          type: 2,
-          name: '签到送积分',
-          time: '2020-07-07 12:00:00',
-          number: '1',
-          status: 0
-        }
-      ],
+      list1: [],
       list2: [],
       list3: []
     }
   },
   methods: {
-    onLoad () {}
+    getCreditsLog (page, type) {
+      return getCreditsLog({
+        page,
+        trans_type: type
+      })
+    }
   }
 }
 </script>

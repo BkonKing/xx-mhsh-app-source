@@ -163,5 +163,25 @@ export function paymentCredits (data) {
 export function collectCredits (data) {
   return request.post('/credits/qrcode/collectCredits', data)
 }
+// 签到
+export function signin () {
+  return request.post('/credits/account/signin')
+}
+// 签到日历数据
+export function signinCalendar (data) {
+  return request.post('/credits/account/signinCalendar', data)
+}
+// 幸福币账户首页
+export function getCreditsAccount (data) {
+  return request.post('/credits/account/index', data)
+}
+// 幸福币明细
+export function getCreditsLog (params) {
+  return request.get('/credits/account/credits_log', { params })
+}
+// 幸福币交易详情
+export function getCreditsInfo (params) {
+  return request.get('/credits/account/credits_info', { params })
+}
 
 /* 幸福币 end */
