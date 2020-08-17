@@ -69,3 +69,18 @@ export function getCommentList (params) {
 export function getCommentInfo (params) {
   return request.get('/neighbours/comment/getCommentInfo', { params })
 }
+
+// 删除评论
+export function deleteComment (data) {
+  return request.post('/neighbours/comment/deleteComment', data)
+}
+
+// 删除贴子
+export function deleteArticle (data) {
+  return request.post('/neighbours/postbar/deleteArticle', data)
+}
+
+// 我要投诉
+export function addComplaint (data) {
+  return request.post('/neighbours/newest/addComplaint', data)
+}

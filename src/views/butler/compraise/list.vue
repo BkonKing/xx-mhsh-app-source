@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar title="我的投诉表扬" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getComPraiseList">
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">

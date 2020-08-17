@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100%;">
     <refreshList :list.sync="list" :load="load">
-      <template v-slot="{item}">
+      <template v-slot="{item, index}">
         <div v-if="item.article_type == 2 || article_type == 2" class="activity-cell">
           <div @click="goDetails('2', item.id)">
             <div class="activity-image-box">
@@ -17,7 +17,7 @@
         <div v-else-if="item.article_type == 3 || article_type == 3">
           <div class="tf-card" @click="goDetails('3', item.id)">
             <div class="tf-card-header">
-              <userInfo :avatar="item.avatar" :name="item.account" :time="item.ctime">
+              <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
                 <template v-slot:right>
                   <div class="group-tag">{{item.category}}</div>
                 </template>
@@ -33,10 +33,7 @@
               :article-type="item.article_type || article_type"
               :key="item.id"
             >
-              <div
-                class="tf-icon tf-icon-ellipsis"
-                @click.stop="moreShow = true;status = userInfo.id == item.uid"
-              ></div>
+              <div class="tf-icon tf-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
             </operation>
           </div>
         </div>
@@ -50,7 +47,14 @@
         </div>
       </template>
     </refreshList>
-    <more-popup :moreShow.sync="moreShow" :deleteProp="status" :complain="!status"></more-popup>
+    <more-popup
+      :moreShow.sync="moreShow"
+      :deleteProp="status"
+      :complain="!status"
+      :complainInfo="active"
+      :complainType="1"
+      @delete="deleteArticle"
+    ></more-popup>
   </div>
 </template>
 
@@ -60,7 +64,9 @@ import refreshList from '@/components/tf-refresh-list'
 import UserInfo from '@/components/user-info/index.vue'
 import morePopup from './morePopup'
 import operation from './operation'
+import { deleteComment, deleteArticle, addComplaint } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
+import { Toast } from 'vant'
 
 export default {
   components: {
@@ -85,6 +91,8 @@ export default {
     return {
       moreShow: false,
       list: this.data,
+      active: {},
+      activeIndex: undefined,
       status: true // 是否是本人发的帖
     }
   },
@@ -92,6 +100,23 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    /* 操作 */
+    onOperation (item, index) {
+      this.moreShow = true
+      this.status = item.is_mine
+      this.active = item
+      this.activeIndex = index
+    },
+    /* 删除帖子 */
+    deleteArticle () {
+      deleteArticle({
+        id: this.active.id
+      }).then(res => {
+        this.list.splice(this.activeIndex, 1)
+        Toast.success('删除成功')
+        this.moreShow = false
+      })
+    },
     goDetails (articleType, id) {
       this.$router.push({
         path: '/pages/neighbours/details',

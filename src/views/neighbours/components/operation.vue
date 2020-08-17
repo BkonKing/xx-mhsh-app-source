@@ -2,7 +2,7 @@
   <div class="activity-footer">
     <div
       class="tf-icon tf-icon-zan"
-      :class="{'like-active': item.thumbsupStatus}"
+      :class="{'like-active': item.is_thumbsup}"
       @click.stop="thumbsUp(item)"
     >
       <span class="tf-text-sm">{{item.thumbsups | numberText}}</span>
@@ -34,7 +34,7 @@ export default {
   methods: {
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
-      if (item.thumbsupStatus) {
+      if (item.is_thumbsup) {
         return
       }
       thumbsUp({
@@ -43,7 +43,7 @@ export default {
       }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
-        item.thumbsupStatus = 1
+        item.is_thumbsup = 1
       })
     },
     goDetails () {

@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="访客邀约记录"
       :fixed="true"
@@ -8,31 +8,29 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <div class="tf-main-container">
-      <van-tabs v-model="isVisit">
-        <van-tab title="待来访">
-          <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 0)">
-            <template v-slot="{item}">
-              <list-card :data="item" :key="item.id"></list-card>
-            </template>
-          </refreshList>
-        </van-tab>
-        <van-tab title="已过期">
-          <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 1)">
-            <template v-slot="{item}">
-              <list-card :data="item" :key="item.id"></list-card>
-            </template>
-          </refreshList>
-        </van-tab>
-        <van-tab title="已到访">
-          <refreshList :list.sync="visitedList" :load="(params) => getVisitorLogList(params, 2)">
-            <template v-slot="{item}">
-              <list-card :data="item" :key="item.id"></list-card>
-            </template>
-          </refreshList>
-        </van-tab>
-      </van-tabs>
-    </div>
+    <van-tabs class="tf-body-container" v-model="isVisit">
+      <van-tab title="待来访">
+        <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 0)">
+          <template v-slot="{item}">
+            <list-card :data="item" :key="item.id"></list-card>
+          </template>
+        </refreshList>
+      </van-tab>
+      <van-tab title="已过期">
+        <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 1)">
+          <template v-slot="{item}">
+            <list-card :data="item" :key="item.id"></list-card>
+          </template>
+        </refreshList>
+      </van-tab>
+      <van-tab title="已到访">
+        <refreshList :list.sync="visitedList" :load="(params) => getVisitorLogList(params, 2)">
+          <template v-slot="{item}">
+            <list-card :data="item" :key="item.id"></list-card>
+          </template>
+        </refreshList>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
@@ -67,3 +65,16 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+.tf-body-container {
+  @flex-column();
+  /deep/ .van-tabs__content {
+    flex: 1;
+    overflow: auto;
+    .van-tab__pane {
+      height: 100%;
+    }
+  }
+}
+</style>

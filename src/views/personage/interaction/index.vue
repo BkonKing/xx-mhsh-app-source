@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="我的互动"
       :fixed="true"
@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <van-tabs class="pt88" v-model="active">
+    <van-tabs class="tf-body-container" v-model="active">
       <van-tab title="我发布的">
         <neighbour-list key="publish" :data.sync="myList" :load="getMyArticleList"></neighbour-list>
       </van-tab>
@@ -119,12 +119,14 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.pt88 {
-  padding-top: 88px;
-  height: 100%;
-}
-/deep/ .van-tabs__content {
-  overflow: auto;
-  height: calc(100% - 87px);
+.tf-body-container {
+  @flex-column();
+  /deep/ .van-tabs__content {
+    flex: 1;
+    overflow: auto;
+    .van-tab__pane {
+      height: 100%;
+    }
+  }
 }
 </style>

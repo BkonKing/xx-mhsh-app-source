@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -9,15 +9,15 @@
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <van-pull-refresh
-      class="tf-main-container"
+      class="tf-body-container"
       success-text="刷新成功"
       v-model="isLoading"
       @refresh="onRefresh"
     >
       <div class="reply-cell-content">
         <userInfo
-          :avatar="replyInfo.avatar || ''"
-          :name="replyInfo.account"
+          :avatar="replyInfo.avatar"
+          :name="replyInfo.nickname"
           :time="replyInfo.ctime"
           size="m"
         >
@@ -25,7 +25,7 @@
             <span class="thumbsups-number">{{replyInfo.thumbsups}}</span>
             <span
               class="tf-icon tf-icon-zan"
-              :class="{'like-active': replyInfo.thumbsupStatus}"
+              :class="{'like-active': replyInfo.is_thumbsup}"
               @click="thumbsUp(replyInfo)"
             ></span>
           </template>
@@ -48,8 +48,8 @@
         <van-cell class="reply-cell" v-for="(item, i) in replyList" :key="i">
           <userInfo
             class="user-info"
-            :avatar="item.avatar || ''"
-            :name="item.account"
+            :avatar="item.avatar"
+            :name="item.nickname"
             :time="item.ctime"
             size="m"
           >
@@ -57,7 +57,7 @@
               <span class="thumbsups-number">{{item.thumbsups}}</span>
               <span
                 class="tf-icon tf-icon-zan"
-                :class="{'like-active': item.thumbsupStatus}"
+                :class="{'like-active': item.is_thumbsup}"
                 @click="thumbsUp(item)"
               ></span>
             </template>
@@ -75,9 +75,12 @@
     <more-popup
       :moreShow.sync="moreShow"
       :comment="true"
-      :complain="!oneself && category == 2"
+      :complain="!oneself && category == 3"
       :deleteProp="oneself"
+      :complainInfo="active"
+      :complainType="3"
       @comment="comment"
+      @delete="deleteComment"
     ></more-popup>
     <comment
       ref="comment"
@@ -92,9 +95,14 @@
 </template>
 
 <script>
-import { NavBar, List, Cell, PullRefresh } from 'vant'
+import { NavBar, List, Cell, PullRefresh, Toast } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
-import { thumbsUp, getCommentList, getCommentInfo } from '@/api/neighbours'
+import {
+  thumbsUp,
+  getCommentList,
+  getCommentInfo,
+  deleteComment
+} from '@/api/neighbours'
 import morePopup from './components/morePopup'
 import comment from './components/comment'
 import { mapGetters } from 'vuex'
@@ -116,7 +124,7 @@ export default {
       uid: '',
       category: '',
       articleId: '',
-      replyInfo: '',
+      replyInfo: {},
       placeholder: '',
       replyList: [],
       isLoading: false,
@@ -124,7 +132,9 @@ export default {
       finished: false,
       isEndNum: false,
       moreShow: false,
-      commentShow: false
+      commentShow: false,
+      active: {},
+      oneself: 0
     }
   },
   created () {
@@ -136,32 +146,29 @@ export default {
     // this.getCommentList()
   },
   computed: {
-    ...mapGetters(['userInfo']),
-    oneself () {
-      return this.uid == this.userInfo.id
-    }
+    ...mapGetters(['userInfo'])
   },
   methods: {
     /* 点赞 */
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
-      if (item.thumbsupStatus) {
+      if (item.is_thumbsup) {
         return
       }
       thumbsUp({
         id: item.id,
         t_type: 2
-      }).then((res) => {
+      }).then(res => {
         // 点赞图标点亮
         item.thumbsups++
-        item.thumbsupStatus = 1
+        item.is_thumbsup = 1
       })
     },
     /* 获取评论详情 */
     getCommentInfo () {
       getCommentInfo({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         this.replyInfo = res.data
       })
     },
@@ -172,6 +179,16 @@ export default {
       } else {
         this.finished = true
       }
+    },
+    /* 删除评论 */
+    deleteComment () {
+      deleteComment({
+        id: this.parentId
+      }).then(res => {
+        this.replyList.splice(this.index, 1)
+        Toast.success('删除成功')
+        this.moreShow = false
+      })
     },
     /* 获取回复列表 */
     getCommentList () {
@@ -201,11 +218,14 @@ export default {
       this.getCommentList()
     },
     /* 打开操作框 */
-    operate ({ id, uid, account }, i) {
+    operate (item, i) {
+      const { id, uid, nickname, is_mine } = item
+      this.active = item
       this.parentId = id
-      this.placeholder = account ? `回复${account}` : ''
+      this.placeholder = nickname ? `回复${nickname}` : ''
       this.uid = uid
       this.index = i
+      this.oneself = is_mine
       this.moreShow = true
     },
     /* 操作框回复回调打开评论框 */
@@ -216,22 +236,11 @@ export default {
     /* 评论成功回调 */
     commentSuccess (data) {
       this.commentShow = false
-      const info = {
-        account: this.userInfo.account,
-        avatar: this.userInfo.avatar,
-        child: [],
-        content: data.content,
-        ctime: '2020-08-12 14:43:26',
-        id: '123',
-        images: data.images,
-        thumbsups: data.thumbsups,
-        uid: this.userInfo.uid
-      }
       if (this.moreShow) {
-        this.replyList[this.index].child.unshift(info)
+        this.replyList[this.index].child.unshift(data)
         this.moreShow = false
       } else {
-        this.replyList.unshift(info)
+        this.replyList.unshift(data)
       }
     }
   },
@@ -247,8 +256,11 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.tf-main-container {
+.tf-body-container {
   overflow: auto;
+  /deep/ .van-pull-refresh__track {
+    @flex-column();
+  }
 }
 .reply-cell-content {
   padding: 30px;
@@ -281,6 +293,7 @@ export default {
   }
 }
 .reply-list {
+  flex: 1;
   background: #fff;
   height: auto !important;
   .user-info {

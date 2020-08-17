@@ -56,34 +56,7 @@ export default {
   },
   data () {
     return {
-      data: [{
-        id: '1',
-        category: '按摩(60岁以上老人)',
-        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-        category_type: '1',
-        sy_num: '0',
-        pd_num: '3',
-        is_stop: '0',
-        is_lineup: '1'
-      }, {
-        id: '2',
-        category: '发布二手物品置换信息',
-        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-        category_type: '1',
-        sy_num: '0',
-        pd_num: '6',
-        is_stop: '0',
-        is_lineup: '1'
-      }, {
-        id: '3',
-        category: '借用充电宝',
-        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-        category_type: '2',
-        sy_num: '1',
-        pd_num: '0',
-        is_stop: '0',
-        is_lineup: '0'
-      }],
+      data: [],
       dialog: false,
       active: {}
     }

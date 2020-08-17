@@ -4,14 +4,11 @@
       class="radio-btn__item"
       v-for="(item, i) in data"
       :key="i"
-      :class="{'radio-btn--active': valueChild.indexOf(item[valueKey]) !== -1}"
+      :class="{'radio-btn--active': multiple ? valueChild.indexOf(item[valueKey]) !== -1 : valueChild == item[valueKey]}"
       @click="change(item[valueKey])"
       :style="{'border-radius': `${radius}px`}"
     >
-      <div
-        class="radio-btn__text"
-        :class="{'radio-btn__text--active': valueChild.indexOf(item[valueKey]) !== -1}"
-      >{{item[labelKey]}}</div>
+      <div class="radio-btn__text">{{item[labelKey]}}</div>
     </div>
   </div>
 </template>
@@ -101,8 +98,8 @@ export default {
   border-style: solid;
   border-color: @red-dark;
   background-color: #fff;
-}
-.radio-btn__text--active {
-  color: @red-dark;
+  .radio-btn__text {
+    color: @red-dark;
+  }
 }
 </style>

@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <div class="tf-bg-white">
         <userInfo :avatar="userInfo.avatar" :name="userInfo.account" :time="info.ctime"></userInfo>
         <div class="tf-auxiliary-content tf-mt-lg">{{info.content}}</div>

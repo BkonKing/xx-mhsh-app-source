@@ -1,9 +1,10 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="问卷投票"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     >
@@ -11,7 +12,7 @@
         <span class="tf-icon tf-icon-shijian" @click="goMyList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <questionList :data.sync="list" :load="getWjtpList"></questionList>
     </div>
   </div>
@@ -43,7 +44,7 @@ export default {
 </script>
 
 <style scoped>
-.tf-main-container {
-  padding-top: 98px;
+.tf-body-container {
+  padding-top: 10px;
 }
 </style>

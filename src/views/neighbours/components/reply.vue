@@ -2,18 +2,18 @@
   <div class="tf-bg-white reply-container" :class="{'gray': grayTheme}">
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id">
-        <userInfo :avatar="cell.avatar || ''" :name="cell.account" :time="cell.ctime" size="m">
+        <userInfo :avatar="cell.avatar" :name="cell.nickname" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
             <span class="thumbsups-number">{{cell.thumbsups}}</span>
             <span
               class="tf-icon tf-icon-zan"
-              :class="{'like-active': cell.thumbsupStatus}"
+              :class="{'like-active': cell.is_thumbsup}"
               @click="thumbsUp(cell)"
             ></span>
           </template>
         </userInfo>
         <div class="reply-cell-content">
-          <div class="reply-cell-content__text" @click="operate(cell.id, cell.uid, i)">{{cell.content}}</div>
+          <div class="reply-cell-content__text" @click="operate(cell, i)">{{cell.content}}</div>
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
@@ -28,7 +28,7 @@
               :key="item.id"
               v-show="i < 2"
             >
-              <span style="color: #222;">{{item.name}}</span>：
+              <span style="color: #222;">{{item.nickname}}</span>：
               <span>
                 {{item.content}}
                 <span
@@ -53,7 +53,10 @@
       :comment="true"
       :complain="!oneself && articleType == 3"
       :deleteProp="oneself"
+      :complainInfo="active"
+      :complainType="2"
       @comment="comment"
+      @delete="deleteComment"
     ></more-popup>
     <div class="comment-box">
       <span class="tf-icon tf-icon-zan"></span>
@@ -73,11 +76,11 @@
 </template>
 
 <script>
-import { List, Cell, ImagePreview, Field } from 'vant'
+import { List, Cell, ImagePreview, Field, Toast } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import comment from './comment'
 import morePopup from './morePopup'
-import { thumbsUp, getCommentList } from '@/api/neighbours'
+import { thumbsUp, getCommentList, deleteComment } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -119,6 +122,8 @@ export default {
       path: '',
       parentId: '',
       uid: '',
+      oneself: false,
+      active: {},
       index: undefined // 点击操作框的评论数据
     }
   },
@@ -127,10 +132,7 @@ export default {
     // this.getCommentList()
   },
   computed: {
-    ...mapGetters(['userInfo']),
-    oneself () {
-      return this.uid == this.userInfo.id
-    }
+    ...mapGetters(['userInfo'])
   },
   methods: {
     /* 长列表加载 */
@@ -162,11 +164,14 @@ export default {
       })
     },
     /* 打开操作框 */
-    operate (id, uid, i) {
+    operate (item, i) {
+      const { id, uid, is_mine } = item
+      this.active = item
       // 打开操作框保存parentId，用以接下来的操作
       this.parentId = id
       this.uid = uid
       this.index = i
+      this.oneself = is_mine
       this.moreShow = true
     },
     /* 操作框回复回调打开评论框 */
@@ -181,7 +186,7 @@ export default {
     /* 点赞 */
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
-      if (item.thumbsupStatus) {
+      if (item.is_thumbsup) {
         return
       }
       thumbsUp({
@@ -190,7 +195,17 @@ export default {
       }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
-        item.thumbsupStatus = 1
+        item.is_thumbsup = 1
+      })
+    },
+    /* 删除评论 */
+    deleteComment () {
+      deleteComment({
+        id: this.parentId
+      }).then(res => {
+        this.list.splice(this.index, 1)
+        Toast.success('删除成功')
+        this.moreShow = false
       })
     },
     /* 获取回复列表 */
@@ -215,27 +230,17 @@ export default {
     /* 评论成功回调 */
     commentSuccess (data) {
       this.commentShow = false
-      const info = {
-        account: this.userInfo.account,
-        avatar: this.userInfo.avatar,
-        child: [],
-        content: data.content,
-        ctime: '2020-08-12 14:43:26',
-        id: '123',
-        images: data.images,
-        thumbsups: data.thumbsups,
-        uid: this.userInfo.uid
-      }
       if (this.moreShow) {
-        this.list[this.index].child.unshift(info)
+        this.list[this.index].child.unshift(data)
         this.moreShow = false
       } else {
-        this.list.unshift(info)
+        this.list.unshift(data)
       }
     },
     /* 刷新回复列表 */
     reload () {
       this.list = []
+      this.parentId = ''
       this.getCommentList()
     }
   }

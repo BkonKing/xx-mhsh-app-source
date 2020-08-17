@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar :border="false" :fixed="true" placeholder left-text="和谐邻里" :left-arrow="false">
       <template #right>
         <span class="tf-icon tf-icon-bianxie" @click="goEdit"></span>
@@ -8,7 +8,7 @@
         </span>
       </template>
     </van-nav-bar>
-    <van-tabs class="tf-main-container tf-column" v-model="current">
+    <van-tabs class="tf-body-container tf-column" v-model="current">
       <van-tab title="最新">
         <list key="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>

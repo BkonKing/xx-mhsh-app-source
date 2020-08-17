@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-bg tf-padding-base">
+  <div class="tf-bg">
     <van-nav-bar :title="title" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <tf-list>
         <visitor-form ref="form" :formData="formData"></visitor-form>
       </tf-list>

@@ -17,7 +17,7 @@
       @load="onLoad"
     >
       <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="i">
-        <slot v-bind:item="item"></slot>
+        <slot :item="item" :index="i"></slot>
       </van-cell>
     </van-list>
   </van-pull-refresh>

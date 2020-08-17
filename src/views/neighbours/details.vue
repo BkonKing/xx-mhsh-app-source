@@ -1,12 +1,19 @@
 <template>
-  <div class="tf-bg">
-    <van-nav-bar title="正文" :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)">
+  <div class="tf-bg tf-body">
+    <van-nav-bar
+      title="正文"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    >
       <template #right>
         <span class="tf-icon tf-icon-ellipsis" @click="moreShow = true"></span>
       </template>
     </van-nav-bar>
     <van-pull-refresh
-      class="tf-main-container"
+      class="tf-body-container"
       success-text="刷新成功"
       v-model="isLoading"
       @refresh="onRefresh"
@@ -17,7 +24,7 @@
           style="border-bottom:none"
           :class="{'border-none': articleType == 2 || articleType == 3}"
         >
-          <userInfo :avatar="info.avatar" :name="info.account" :time="info.ctime">
+          <userInfo :avatar="info.avatar" :name="info.nickname" :time="info.ctime">
             <template v-if="articleType == 3" v-slot:right>
               <div class="group-tag">{{info.category}}</div>
             </template>
@@ -30,6 +37,7 @@
         </template>
         <template v-else-if="articleType == 3">
           <tf-alert
+            v-if="info.status == 2"
             type="warning"
             content="该内容含有违规信息。"
             :showRight="false"
@@ -47,20 +55,25 @@
             <div class="apply-box">
               <div class="apply-title">
                 报名人员
-                <span class="tf-text-grey">(123人)</span>
-                <span v-if="joinStatus" class="tf-status-tag">我已报名</span>
+                <span class="tf-text-grey">({{info.joins}}人)</span>
+                <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
-                <img class="apply-user__avatar" :src="info.thumbnail" />
+                <img
+                  v-for="(item, i) in info.join_uids"
+                  :key="i"
+                  class="apply-user__avatar"
+                  :src="item.avatar"
+                />
               </div>
             </div>
-            <div v-if="!joinStatus" class="apply-btn" @click="joinActivity">报名</div>
+            <div v-if="!info.is_join" class="apply-btn" @click="joinActivity">报名</div>
           </div>
         </template>
         <div class="activity-footer">
           <div
             class="tf-icon tf-icon-zan"
-            :class="{'like-active': info.thumbsupStatus}"
+            :class="{'like-active': info.is_thumbsup}"
             @click="thumbsUp(info)"
           >
             <span class="tf-text-sm">{{info.thumbsups | numberText}}</span>
@@ -75,7 +88,7 @@
         class="tf-mt-lg activity-reply"
         :articleId="id"
         :articleType="articleType"
-        :thumbsupStatus="info.thumbsupStatus"
+        :thumbsupStatus="info.is_thumbsup"
         @thumbsup="thumbsUp(info)"
       ></reply>
     </van-pull-refresh>
@@ -119,13 +132,12 @@ export default {
         content: '',
         images: [],
         category: '',
-        account: '',
+        nickname: '',
         avatar: '',
         thumbsups: '',
         comments: '',
         ctime: ''
       },
-      joinStatus: false,
       isLoading: false
     }
   },
@@ -158,7 +170,7 @@ export default {
     getPostBarInfo () {
       getPostBarInfo({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         this.info = res.data
         this.isLoading = false
       })
@@ -167,7 +179,7 @@ export default {
     getActivityInfo () {
       getActivityInfo({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         this.info = res.data
         this.isLoading = false
       })
@@ -176,32 +188,32 @@ export default {
     joinActivity () {
       joinActivity({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         Toast.success('活动报名成功')
-        this.joinStatus = true
+        this.info.is_join = 1
       })
     },
     /* 获取资讯详情 */
     getArticleInfo () {
       getArticleInfo({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         this.info = res.data
         this.isLoading = false
       })
     },
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
-      if (item.thumbsupStatus) {
+      if (item.is_thumbsup) {
         return
       }
       thumbsUp({
         id: this.id,
         t_type: 1
-      }).then((res) => {
+      }).then(res => {
         // 点赞图标点亮
         item.thumbsups++
-        item.thumbsupStatus = 1
+        item.is_thumbsup = 1
       })
     }
   },
@@ -220,10 +232,11 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.tf-main-container {
-  overflow: auto !important;
-  padding-bottom: 98px;
-  @flex-column();
+.tf-body-container {
+  overflow: auto;
+  /deep/ .van-pull-refresh__track {
+    @flex-column();
+  }
   .tf-icon {
     color: #8f8f94;
   }

@@ -1,12 +1,12 @@
 <template>
-  <div class="tf-bg tf-padding-base">
+  <div class="tf-bg">
     <van-nav-bar title="访客邀约" :fixed="true" :border="false" placeholder left-arrow @click-left="goback">
       <template #right>
-        <span class="tf-icon tf-icon-solution" @click="goVisitorList(1)"></span>
+        <span class="tf-icon tf-icon-tongxunlu" @click="goVisitorList(1)"></span>
         <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <tf-list>
         <div class="list-title">邀约设置</div>
         <tf-list-item border title="来访日期" :required="true">
@@ -58,7 +58,7 @@
         </tf-list-item>
       </tf-list>
       <div class="visitor-btn" @click="goVisitorList(2)">
-        <span class="tf-icon tf-icon-solution"></span>
+        <span class="tf-icon tf-icon-tongxunlu"></span>
         <div class="visitor-btn__text">选择访客</div>
       </div>
       <tf-list>

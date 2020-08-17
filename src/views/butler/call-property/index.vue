@@ -74,9 +74,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-main-container {
-  padding-top: 88px;
-}
 .introduce-box {
   @relative();
   width: 100%;
@@ -84,7 +81,7 @@ export default {
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   background: url("../../../assets/app-icon.png");
 }
 

@@ -4,7 +4,7 @@
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
       <div v-if="share" class="more-btn" @click="clickShare">分享</div>
       <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
-      <div v-if="deleteProp" class="more-btn tf-text-primary">删除</div>
+      <div v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">删除</div>
     </van-popup>
     <van-popup class="complain-dialog" v-model="complainShow" position="bottom" @closed="category_id = ''">
       <i
@@ -14,20 +14,20 @@
       <div class="complain-title">投诉</div>
       <div class="complain-content van-multi-ellipsis--l2">
         投诉
-        <span class="tf-text-blue">@{{'鲁班'}}</span>
-        ：{{'加入微信群，无需缴费即可获得至尊D站年
-        度VIP，每天免费领取金豆豆...'}}
+        <span class="tf-text-blue">@{{complainInfo.nickname}}</span>
+        ：{{complainInfo.content}}
       </div>
-      <tf-radio-btn v-model="category_id" :data="types"></tf-radio-btn>
-      <div class="complain-footer" :class="{'primary-btn': category_id}" @click="submitComplain">提交</div>
+      <tf-radio-btn v-model="com_type" :data="types"></tf-radio-btn>
+      <div class="complain-footer" :class="{'primary-btn': com_type}" @click="submitComplain">提交</div>
     </van-popup>
     <van-share-sheet v-model="showShare" :options="options" @select="onSelect" />
   </div>
 </template>
 
 <script>
-import { Popup, ShareSheet } from 'vant'
+import { Popup, ShareSheet, Toast } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
+import { addComplaint } from '@/api/neighbours'
 
 export default {
   components: {
@@ -52,9 +52,13 @@ export default {
       type: [Boolean, Number],
       default: true
     },
+    complainType: {
+      type: Number,
+      default: 0
+    },
     complainInfo: {
       type: Object,
-      default: () => {}
+      default: () => ({})
     },
     comment: {
       type: [Boolean, Number],
@@ -68,35 +72,35 @@ export default {
       showShare: false,
       types: [
         {
-          value: 1,
+          value: '1',
           name: '垃圾营销'
         },
         {
-          value: 2,
+          value: '2',
           name: '涉黄信息'
         },
         {
-          value: 3,
+          value: '3',
           name: '不实信息'
         },
         {
-          value: 4,
-          name: '不实信息'
+          value: '4',
+          name: '有害信息'
         },
         {
-          value: 5,
+          value: '5',
           name: '人身攻击'
         },
         {
-          value: 6,
+          value: '6',
           name: '违法信息'
         },
         {
-          value: 7,
+          value: '7',
           name: '诈骗信息'
         },
         {
-          value: 8,
+          value: '8',
           name: '泄露隐私'
         }
       ],
@@ -104,16 +108,12 @@ export default {
         { name: '微信', icon: 'wechat' },
         { name: '朋友圈', icon: 'weibo' }
       ],
-      category_id: ''
+      com_type: ''
     }
   },
   methods: {
     clickShare () {
       this.showShare = true
-    },
-    clickComplain () {
-      // this.moreShowChild = false
-      this.complainShow = true
     },
     onSelect (option) {
       this.showShare = false
@@ -121,9 +121,30 @@ export default {
     clickComment () {
       this.$emit('comment')
     },
+    /* 删除 */
+    onDelete () {
+      this.$emit('delete')
+    },
+    /* 打开投诉 */
+    clickComplain () {
+      // this.moreShowChild = false
+      this.complainShow = true
+    },
+    /* 提交投诉 */
     submitComplain () {
-      if (this.category_id) {
-
+      if (this.com_type) {
+        addComplaint({
+          com_type: this.com_type,
+          info_type: this.complainType,
+          info_id: this.complainInfo.id,
+          content: '1'
+        }).then(resr => {
+          Toast.success('投诉成功')
+          this.complainShow = false
+          this.moreShowChild = false
+        })
+      } else {
+        Toast('请选择类型')
       }
     }
   },
@@ -158,7 +179,6 @@ export default {
 /* 投诉弹窗 */
 .complain-dialog {
   padding: 0 30px;
-  height: 572px;
   .complain-title {
     height: 90px;
     line-height: 90px;

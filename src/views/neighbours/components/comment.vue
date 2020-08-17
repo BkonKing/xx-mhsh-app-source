@@ -94,7 +94,7 @@ export default {
       addComment(params).then(res => {
         this.content = ''
         this.images = ''
-        this.$emit('commentSuccess', params)
+        this.$emit('commentSuccess', res.data)
       })
     }
   },
@@ -115,6 +115,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.comment-container {
+  height: 98px;
+}
 .comment-box {
   position: fixed;
   left: 0;

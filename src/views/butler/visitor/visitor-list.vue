@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-padding-base tf-bg">
+  <div class="tf-bg">
     <van-nav-bar title="访客" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <div
         v-for="(item, i) in data"
         :key="i"

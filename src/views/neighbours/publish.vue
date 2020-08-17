@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg-white">
+  <div class="tf-bg-white tf-c">
     <van-nav-bar :fixed="true" placeholder border>
       <template #left>
         <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
@@ -8,7 +8,7 @@
         <span class="tf-icon tf-icon-fabu" @click="addPostBar"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <van-dropdown-menu class="publish-type" :overlay="false" :close-on-click-outside="false">
         <van-dropdown-item title="发布类型" ref="item">
           <tf-radio-btn v-model="category_id" :data="types" @change="handRadioChange"></tf-radio-btn>
@@ -135,11 +135,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg-white {
-  height: 100%;
-}
-.tf-main-container {
-  padding: 118px 30px 0;
+.tf-body-container {
+  padding: 30px 30px;
 }
 .publish-type {
   /deep/ .van-dropdown-item {
