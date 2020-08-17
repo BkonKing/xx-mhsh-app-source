@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg tf-padding-base">
-    <van-nav-bar title="访客邀约" :fixed="true" :border="false" left-arrow @click-left="goback">
+    <van-nav-bar title="访客邀约" :fixed="true" :border="false" placeholder left-arrow @click-left="goback">
       <template #right>
         <span class="tf-icon tf-icon-solution" @click="goVisitorList(1)"></span>
         <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>

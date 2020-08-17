@@ -75,7 +75,7 @@ export default {
       yzm: undefined,
       pwd: undefined,
       login_type: 1, // 1:验证码登录 2：密码登陆
-      agree: false,
+      agree: true,
       showPassword: false,
       codeStatus: false,
       countDown: 59,

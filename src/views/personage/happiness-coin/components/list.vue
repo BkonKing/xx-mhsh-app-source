@@ -8,8 +8,8 @@
         </div>
         <div
           class="coin-list-item__number"
-          :class="{'tf-text-primary': item.status}"
-        >{{item.status ? '+' : '-'}}{{item.credits}}</div>
+          :class="{'tf-text-primary': parseInt(item.credits) > 0}"
+        >{{item.credits}}</div>
       </div>
     </template>
   </refreshList>

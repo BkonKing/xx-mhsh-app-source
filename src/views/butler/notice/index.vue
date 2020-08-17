@@ -1,14 +1,15 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="公告通知"
+      placeholder
       :right-text="isAllRead ? '' : '全部已读'"
       :fixed="true"
       left-arrow
       @click-left="goBack"
       @click-right="setNoticeReaded(0)"
     />
-    <div class="tf-flex-item">
+    <div class="tf-body-container">
       <refreshList :list.sync="noticeList" :load="getNoticeList">
         <template v-slot="{item}">
           <div class="list-item--time">{{item.ctime}}</div>
@@ -63,7 +64,7 @@ export default {
     // 跳转到详情页
     jump (item) {
       const url = `/pages/butler/notice/details?noticeId=${item.id}`
-      this.setNoticeReaded(item.id)
+      // this.setNoticeReaded(item.id)
       this.$router.push(url)
     },
     goBack () {
@@ -74,22 +75,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg {
-  height: 100%;
-}
-.tf-flex-item {
-  height: 100%;
-  padding-top: 88px;
-}
 .tf-van-list {
-  height: 100%;
-  width: 100%;
   padding: 20px;
-  overflow: auto;
-}
-.tf-van-cell {
-  background: none;
-  margin-bottom: 20px;
 }
 .list-item--time {
   font-size: 24px;
@@ -103,26 +90,7 @@ export default {
   margin-right: 8px;
 }
 
-.notice-title {
-  flex: 1;
-  font-size: 17px;
-  text-align: center;
-  font-weight: 500;
-  // transform: translateX(16px);
-}
-
-.notice-list {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 20px;
-  right: 20px;
-}
-
 .tf-card-header__title {
   flex: 1;
-}
-/deep/ .van-pull-refresh {
-  width: 100%;
 }
 </style>

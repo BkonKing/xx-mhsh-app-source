@@ -36,6 +36,9 @@ export default {
     userInfo && this.$store.commit('setUser_info', userInfo)
     // 看是否有当前项目
     this.$store.dispatch('getHouse')
+    api.setStatusBarStyle({
+      style: 'dark'
+    })
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     // this.setRouteKeepAlive(router.options.routes)
   },

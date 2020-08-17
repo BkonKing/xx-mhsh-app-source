@@ -1,21 +1,28 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="我的互动" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      title="我的互动"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <van-tabs class="pt88" v-model="active">
       <van-tab title="我发布的">
-        <neighbour-list key="publish" :data="myList" @load="myLoad"></neighbour-list>
+        <neighbour-list key="publish" :data.sync="myList" :load="getMyArticleList"></neighbour-list>
       </van-tab>
       <van-tab title="我评论的">
         <comment-list></comment-list>
       </van-tab>
       <van-tab title="我点赞的">
-        <neighbour-list key="like" :data="likeList" @load="likeLoad"></neighbour-list>
+        <neighbour-list key="like" :data.sync="likeList" :load="getMythumbsupList"></neighbour-list>
       </van-tab>
       <van-tab title="参与活动">
-        <neighbour-list key="activity" :data="activityList" @load="activityLoad"></neighbour-list>
+        <neighbour-list key="activity" :data.sync="activityList" :load="activityLoad"></neighbour-list>
       </van-tab>
       <van-tab title="问卷投票">
-        <wjtp-list :data.sync="myWjtpList" @load="wjtpLoad"></wjtp-list>
+        <wjtp-list :data.sync="myWjtpList" :load="wjtpLoad"></wjtp-list>
       </van-tab>
     </van-tabs>
   </div>
@@ -26,7 +33,7 @@ import { NavBar, Tab, Tabs } from 'vant'
 import neighbourList from '@/views/neighbours/components/list'
 import wjtpList from '@/views/butler/questionnaire/components/list'
 import commentList from './components/comment-list'
-import { getMyWjtpList } from '@/api/butler.js'
+import { getMyArticleList, getMythumbsupList } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -97,21 +104,16 @@ export default {
       myWjtpList: []
     }
   },
-  created () {
-    this.getMyWjtpList()
-  },
+  created () {},
   methods: {
-    myLoad () {},
-    likeLoad () {},
+    getMyArticleList (params) {
+      return getMyArticleList(params)
+    },
+    getMythumbsupList (params) {
+      return getMythumbsupList(params)
+    },
     activityLoad () {},
-    wjtpLoad () {},
-    getMyWjtpList () {
-      getMyWjtpList().then((res) => {
-        if (res.success) {
-          this.myWjtpList = res.data
-        }
-      })
-    }
+    wjtpLoad () {}
   }
 }
 </script>

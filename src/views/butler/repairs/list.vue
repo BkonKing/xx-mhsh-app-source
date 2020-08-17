@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-bg">
-    <van-nav-bar title="我的报事报修" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+  <div class="tf-bg tf-body">
+    <van-nav-bar title="我的报事报修" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-body-container">
       <list></list>
     </div>
   </div>

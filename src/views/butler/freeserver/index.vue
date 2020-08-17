@@ -1,6 +1,13 @@
 <template>
-  <div class="tf-main-container">
-    <van-nav-bar title="免费服务" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+  <div class="tf-bg tf-body">
+    <van-nav-bar
+      title="免费服务"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    >
       <template #right>
         <span
           class="tf-icon tf-icon-shijian"
@@ -9,7 +16,7 @@
       </template>
     </van-nav-bar>
     <van-search v-model="search" placeholder="请输入关键字搜索" />
-    <div class="tf-bg tf-padding">
+    <div class="tf-padding tf-body-container">
       <div class="tab-btn-box">
         <div
           class="tab-btn"
@@ -69,14 +76,16 @@ export default {
       getFreeServerList(/* {
         category_type: this.category_type,
         searchName
-      } */).then((res) => {
-        if (res.success) {
-          const { rg_num, jy_num, records } = res.data
-          this.rg_num = rg_num
-          this.jy_num = jy_num
-          this.serviceList = records
+      } */).then(
+        (res) => {
+          if (res.success) {
+            const { rg_num, jy_num, records } = res.data
+            this.rg_num = rg_num
+            this.jy_num = jy_num
+            this.serviceList = records
+          }
         }
-      })
+      )
     },
     /* 搜索服务（暂时弃用） */
     searchList ({ value }) {

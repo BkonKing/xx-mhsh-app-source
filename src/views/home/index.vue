@@ -376,11 +376,11 @@ export default {
 }
 .home-header {
   position: fixed;
-  top: 0;
+  // top: 0;
   left: 0;
   width: 100%;
   height: 184px;
-  z-index: 9999;
+  z-index: 1;
 }
 .tf-main-container {
   padding-top: 184px;

@@ -4,6 +4,7 @@
       title="便民电话"
       :fixed="true"
       :border="false"
+       placeholder
       left-arrow
       @click-left="$router.go(-1)"
     />

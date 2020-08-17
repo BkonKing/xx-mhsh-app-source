@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar :fixed="true" :border="false">
+    <van-nav-bar :fixed="true" :border="false" placeholder>
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
@@ -29,7 +29,7 @@
         </div>
         <div class="tf-row coin-box">
           <div class="tf-flex-item tf-column" @click="goHappiness">
-            <div class="user-text--lg">{{userInfo.virtual_coin}}</div>
+            <div class="user-text--lg">{{userInfo.credits}}</div>
             <div class="user-text--grey">幸福币</div>
           </div>
           <div class="tf-flex-item tf-column">
@@ -402,6 +402,10 @@ export default {
 }
 .tf-icon-pinglun {
   @relative();
+  margin-right: 27px;
+}
+.tf-icon-xiaoxi {
+  position: relative;
   margin-right: 27px;
 }
 </style>

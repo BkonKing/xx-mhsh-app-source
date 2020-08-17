@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%">
-    <refreshList :list.sync="list" @load="onLoad">
+    <refreshList :list.sync="list" :load="load">
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)" v-longtap="{tap: operate, params: item}">
@@ -42,6 +42,13 @@ export default {
     type: {
       type: String,
       required: true
+    },
+    data: {
+      type: Array,
+      default: () => []
+    },
+    load: {
+      type: Function
     }
   },
   directives: {
@@ -49,20 +56,12 @@ export default {
   },
   data () {
     return {
-      list: [
-        {
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        }
-      ],
+      list: this.data,
       moreShowChild: false,
       isRead: false // 是否已读，判断是否需要显示标记已读
     }
   },
   methods: {
-    onLoad () {},
     operate ({ status }) {
       this.isRead = status
       this.moreShowChild = true
@@ -76,6 +75,14 @@ export default {
         default:
           break
       }
+    }
+  },
+  watch: {
+    list (value) {
+      this.$emit('update:data', value)
+    },
+    data (value) {
+      this.list = value
     }
   }
 }

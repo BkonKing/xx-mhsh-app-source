@@ -1,28 +1,28 @@
 <template>
-  <div class="tf-bg tf-padding-base">
-    <van-nav-bar title="我的免费预约" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+  <div class="tf-bg tf-body">
+    <van-nav-bar title="我的免费预约" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getMyFreeServerList">
         <template v-slot="{item}">
-          <div class="tf-card tf-mb-base">
+          <div class="tf-card">
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
               <div v-if="item.status == 1" class="tf-icon tf-icon-qrcode" @click="showQrcode(item)"></div>
             </div>
             <div class="tf-card-content">
               <template v-if="item.category_type == 1">
-                <div class="mb10">排队时间：{{item.stime}}</div>
-                <div v-if="item.status == 1">
+                <div>排队时间：{{item.stime}}</div>
+                <div class="mt10" v-if="item.status == 1">
                   排队中：
-                  <span class="tf-text-primary">第 {{item.pd_num}} 位</span>
+                  <span top="tf-text-primary">第 {{item.pd_num}} 位</span>
                 </div>
                 <div v-else-if="item.status == 2">服务时间：{{item.etime}}</div>
               </template>
               <template v-else>
-                <div class="mb10">借用时间：{{item.stime}}</div>
-                <div v-if="item.status == 1">
+                <div>借用时间：{{item.stime}}</div>
+                <div class="mt10" v-if="item.status == 1">
                   归还时间：
-                  <span class="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
+                  <span top="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
                 </div>
                 <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
               </template>
@@ -56,7 +56,34 @@ export default {
   },
   data () {
     return {
-      data: [],
+      data: [{
+        id: '1',
+        category: '按摩(60岁以上老人)',
+        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
+        category_type: '1',
+        sy_num: '0',
+        pd_num: '3',
+        is_stop: '0',
+        is_lineup: '1'
+      }, {
+        id: '2',
+        category: '发布二手物品置换信息',
+        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
+        category_type: '1',
+        sy_num: '0',
+        pd_num: '6',
+        is_stop: '0',
+        is_lineup: '1'
+      }, {
+        id: '3',
+        category: '借用充电宝',
+        icon_images: 'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
+        category_type: '2',
+        sy_num: '1',
+        pd_num: '0',
+        is_stop: '0',
+        is_lineup: '0'
+      }],
       dialog: false,
       active: {}
     }
@@ -78,18 +105,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg {
-  height: 100%;
-}
-.tf-flex-item {
-  height: 100%;
-  padding-top: 88px;
+.tf-body-container {
+  padding-top: 10px;
 }
 .tf-card-content {
   color: @gray-7;
-}
-.mb10 {
   margin-bottom: 10px;
+}
+.mt10 {
+  margin-top: 10px;
 }
 .tf-icon-qrcode {
   font-size: 42px;

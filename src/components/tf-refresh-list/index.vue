@@ -48,7 +48,7 @@ export default {
       isAllRead: false,
       error: false,
       listChild: this.list,
-      pageNum: 0,
+      pageNum: 1,
       isEndNum: 0 // 列表是否不够每页条数（比如10）
     }
   },
@@ -63,9 +63,8 @@ export default {
       }
       if (this.load && !this.isEndNum) {
         await this.load({
-          pageNum: this.pageNum
+          pages: this.pageNum
         }).then(({ data }) => {
-          this.loading = false
           if (data.length > 0) {
             this.listChild.push(...data)
             this.$emit('update:list', this.listChild)
@@ -78,6 +77,7 @@ export default {
           } else {
             this.finished = true
           }
+          this.loading = false
         }).catch(() => {
           this.error = true
         })
@@ -93,9 +93,9 @@ export default {
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true
       this.isEndNum = 0
-      this.pageNum = 0
+      this.pageNum = 1
       this.listChild = []
-      this.$emit('update:list', this.listChild)
+      // this.$emit('update:list', this.listChild)
       this.onLoad()
     }
   },

@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="开门记录" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar title="开门记录" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <refreshList :list.sync="historyList" @load="onLoad">
         <template v-slot="slotProps">

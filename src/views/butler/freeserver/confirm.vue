@@ -3,6 +3,7 @@
     <van-nav-bar
       class="invite-nav-bar"
       title="请确认服务信息"
+      placeholder
       left-arrow
       :border="false"
       @click-left="$router.go(-1)"

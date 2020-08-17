@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-h3">{{status ? '修改' : '设置'}}登录密码</div>
     <div class="mb140">
       <template v-if="status">

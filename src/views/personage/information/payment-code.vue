@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-h3 tf-center">{{status ? '修改' : '设置'}}支付密码</div>
       <div v-if="status && steps === 1" class="tf-text-lg tf-center">请输入支付密码，以验证身份</div>

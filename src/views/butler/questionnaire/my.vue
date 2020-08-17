@@ -4,6 +4,7 @@
       title="我的问卷投票"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     />

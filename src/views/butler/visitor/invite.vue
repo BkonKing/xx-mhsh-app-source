@@ -3,6 +3,7 @@
     <van-nav-bar
       class="invite-nav-bar"
       title="访客通行证"
+      placeholder
       left-arrow
       :border="false"
       @click-left="goList"

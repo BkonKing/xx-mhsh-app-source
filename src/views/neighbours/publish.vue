@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" border>
+    <van-nav-bar :fixed="true" placeholder border>
       <template #left>
         <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
       </template>

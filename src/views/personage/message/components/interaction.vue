@@ -1,5 +1,5 @@
 <template>
-  <refreshList :list.sync="list" @load="onLoad">
+  <refreshList :list.sync="list" :load="getMessageList">
     <template v-slot="{item}">
       <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
       <div class="tf-list" @click="jump(item)">
@@ -39,6 +39,7 @@
 
 <script>
 import refreshList from '@/components/tf-refresh-list'
+import { getMessageList } from '@/api/personage.js'
 export default {
   components: {
     refreshList
@@ -64,8 +65,9 @@ export default {
     }
   },
   methods: {
-    onLoad () {
-
+    getMessageList (params) {
+      params.remind_type = 3
+      return getMessageList(params)
     }
   }
 }

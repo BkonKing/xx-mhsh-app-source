@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="我的反馈" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar title="我的反馈" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <refreshList :list.sync="data" :load="getFeedbackList">
         <template v-slot="{item}">

@@ -4,15 +4,16 @@
     title='常见问题'
     :fixed='true'
     :border='false'
+    placeholder
     left-arrow
     @click-left='$router.go(-1)'
   >
   </van-nav-bar>
   <div class='tf-main-container'>
     <FAQ :data="questionList"></FAQ>
-    <div class="question-footer">
+    <div class="question-footer" v-if="hotline">
       <div class="tf-text">客服热线</div>
-      <div class="tf-text-sm tf-text-grey">0591-00000000</div>
+      <div class="tf-text-sm tf-text-grey">{{hotline}}</div>
     </div>
   </div>
 </div>
@@ -29,11 +30,8 @@ export default {
   },
   data () {
     return {
-      questionList: [{
-        id: '1',
-        question: '业主与物管企业是否为“主仆”关系？',
-        answer: '物业管理企业为最大程度地方便广大业主和使用人的生活'
-      }]
+      questionList: [],
+      hotline: ''
     }
   },
   created () {
@@ -42,7 +40,8 @@ export default {
   methods: {
     getEqList () {
       getEqList().then(res => {
-        this.questionList = res.data
+        this.questionList = res.data.eq
+        this.hotline = res.data.hotline
       })
     }
   }

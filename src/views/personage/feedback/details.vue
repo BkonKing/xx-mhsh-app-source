@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="我的反馈" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      title="我的反馈"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <div class="tf-bg-white padding">
         <div class="tf-row-space-between tf-divider">

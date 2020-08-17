@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <div data-v-85b8baae class="van-nav-bar van-nav-bar--fixed">
+    <div class="van-nav-bar van-nav-bar--fixed">
       <div class="van-nav-bar__left">
         <i
           v-show="!editMode"

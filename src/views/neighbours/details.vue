@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="正文" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+    <van-nav-bar title="正文" :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)">
       <template #right>
         <span class="tf-icon tf-icon-ellipsis" @click="moreShow = true"></span>
       </template>

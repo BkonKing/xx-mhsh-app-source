@@ -5,6 +5,7 @@
         title="幸福币"
         :fixed="true"
         :border="false"
+        placeholder
         left-arrow
         right-text="明细"
         @click-left="$router.go(-1)"
@@ -17,9 +18,9 @@
         </div>
         <div
           class="sign-tag"
-          :class="{'sign-tag--complete': true}"
-          @click="signIn(true)"
-        >{{signinToday ? '已签到' : '签到'}}</div>
+          :class="{'sign-tag--complete': signinToday == '1'}"
+          @click="signIn()"
+        >{{signinToday == '1' ? '已签到' : '签到'}}</div>
       </div>
     </div>
     <div class="coin-main-box">
@@ -77,9 +78,9 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
-import { signin, getCreditsAccount, Toast } from '@/api/personage'
+import { signin, getCreditsAccount } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -88,7 +89,7 @@ export default {
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
-      signinToday: 1, // 今日是否签到
+      signinToday: '1', // 今日是否签到
       credits: 0,
       taskList: [],
       saleList: [
@@ -115,9 +116,9 @@ export default {
       })
     },
     /* 签到事件 */
-    signIn (status) {
+    signIn () {
       // 已签到，则打开签到日历
-      if (status) {
+      if (this.signinToday == '1') {
         this.showCalendar = true
       } else {
         this.signin()
@@ -129,7 +130,7 @@ export default {
         Toast({
           message: '签到成功   幸福币+10'
         })
-        this.signinToday = true
+        this.signinToday = '1'
       })
     },
     goCoinRecord () {

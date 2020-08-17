@@ -4,6 +4,7 @@
       :title="title"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     >
@@ -11,7 +12,7 @@
         <span class="tf-icon tf-icon-customerservice"></span>
       </template>
     </van-nav-bar>
-    <van-pull-refresh class="tf-main-container" v-model="isLoading" @refresh="onRefresh">
+    <van-pull-refresh class="tf-main-container" :class="{'pb20': sub_status >= 10}" v-model="isLoading" @refresh="onRefresh">
       <div class="tf-card">
         <div class="tf-card-header">
           <div class="tf-card-header__title">内容描述</div>
@@ -30,12 +31,6 @@
           @negotiate="viewNegotiate"
           @evaluate="viewEvaluate"
         ></tfTimeline>
-        <div class="transaction-btn-box">
-          <!-- 图片信息 -->
-          <div v-if="sub_status == 11" class="tf-icon tf-icon-tupian transaction-btn">
-            <span class="van-info">2</span>
-          </div>
-        </div>
       </div>
       <div v-if="sub_status < 10" class="operation-box">
         <!-- 不是已结案和已取消 -->
@@ -412,11 +407,13 @@ export default {
 
 <style lang="less" scoped>
 .tf-main-container {
-  padding: 118px 20px 217px;
-  overflow: auto !important;
+  padding: 30px 20px 150px;
   /deep/ .van-pull-refresh__track {
     height: auto;
   }
+}
+.pb20 {
+  padding-bottom: 30px;
 }
 
 .reason-text {

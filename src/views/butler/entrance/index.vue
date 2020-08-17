@@ -4,6 +4,7 @@
       class="entrance-nav-bar"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
       style="background: none;"
@@ -35,7 +36,7 @@
       <div v-show="active === 1" class="entrance-operation" @click="getQrCode">
         <div class="entrance-operation__box">
           <div class="triangle" :class="{'triangle-left': active === 1}"></div>
-          <img :src="qrImg" class="qrcode-image">
+          <img :src="qrImg" class="qrcode-image" />
           <!-- <canvas id="qrcode" canvas-id="qrcode" class="qrcode-image" /> -->
         </div>
         <div class="entrance-operation__alert tf-row-center">
@@ -143,20 +144,26 @@ export default {
      * @param {string} text 二维码内容
      */
     makeQRCode (text) {
-      this.FNScanner.encodeImg({
-        content: text,
-        saveImg: {
-          path: 'fs://mhsh' + Math.floor(Math.random() * 10000000000 + 1) + '.png',
-          w: 270,
-          h: 270
+      this.FNScanner.encodeImg(
+        {
+          content: text,
+          saveImg: {
+            path:
+              'fs://mhsh' +
+              Math.floor(Math.random() * 10000000000 + 1) +
+              '.png',
+            w: 270,
+            h: 270
+          }
+        },
+        (ret, err) => {
+          if (ret.status) {
+            this.qrImg = ret.imgPath
+          } else {
+            console.error(JSON.stringify(err))
+          }
         }
-      }, (ret, err) => {
-        if (ret.status) {
-          this.qrImg = ret.imgPath
-        } else {
-          console.error(JSON.stringify(err))
-        }
-      })
+      )
     },
     // 自动刷新
     refreshTimer () {

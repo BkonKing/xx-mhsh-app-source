@@ -1,48 +1,60 @@
 <template>
-  <div class="tf-bg tf-main-container">
-    <van-nav-bar title="报事报修" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
+  <div class="tf-bg">
+    <van-nav-bar
+      title="报事报修"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    >
       <template #right>
         <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
-    <van-notice-bar
-      v-if="progressNum"
-      class="swiper-nav"
-      left-icon="warning-o"
-      mode="link"
-      background="rgba(249,134,107,0.2)"
-      :scrollable="false"
-      @click="goProgress()"
-    >
-      您有正在进行的报事报修，点击查看进度
-    </van-notice-bar>
-    <div class="tf-card">
-      <div class="tf-card-header">选择类型</div>
-      <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn v-model="category_id" :data="categoryList" label-key="category" value-key="id"></tf-radio-btn>
+    <div class="page-container">
+      <van-notice-bar
+        v-if="progressNum"
+        class="swiper-nav"
+        left-icon="warning-o"
+        mode="link"
+        background="rgba(249,134,107,0.2)"
+        :scrollable="false"
+        @click="goProgress()"
+      >您有正在进行的报事报修，点击查看进度</van-notice-bar>
+      <div class="tf-card">
+        <div class="tf-card-header">选择类型</div>
+        <div class="tf-card-content" style="padding-bottom: 10px;">
+          <tf-radio-btn
+            v-model="category_id"
+            :data="categoryList"
+            label-key="category"
+            value-key="id"
+          ></tf-radio-btn>
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">内容描述</div>
-      <div class="tf-card-content">
-        <van-field
-          class="uni-input"
-          v-model="content"
-          autosize
-          type="textarea"
-          :maxlength="300"
-          placeholder="请描述具体内容"
-          show-word-limit
-        />
+      <div class="tf-card">
+        <div class="tf-card-header">内容描述</div>
+        <div class="tf-card-content">
+          <van-field
+            class="uni-input"
+            v-model="content"
+            autosize
+            type="textarea"
+            :maxlength="300"
+            placeholder="请描述具体内容"
+            show-word-limit
+          />
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">上传图片</div>
-      <div class="tf-card-content">
-        <tf-uploader v-model="images" max-count="6"></tf-uploader>
+      <div class="tf-card">
+        <div class="tf-card-header">上传图片</div>
+        <div class="tf-card-content">
+          <tf-uploader v-model="images" max-count="6"></tf-uploader>
+        </div>
       </div>
+      <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
     </div>
-    <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 
@@ -132,11 +144,14 @@ export default {
     },
     /* 新增报事报修 */
     addRepair () {
-      addRepair({
-        content: this.content,
-        images: this.images.join(','),
-        category_id: this.category_id
-      }, this.currentProject.house_id).then((res) => {
+      addRepair(
+        {
+          content: this.content,
+          images: this.images.join(','),
+          category_id: this.category_id
+        },
+        this.currentProject.house_id
+      ).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
@@ -186,8 +201,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-main-container {
-  padding: 118px 20px 30px;
+.page-container {
+  padding: 30px 20px;
 }
 .swiper-nav {
   height: 88px;
@@ -205,7 +220,7 @@ export default {
     font-size: 24px !important;
     &::before {
       font-family: tficonfont;
-      content: '\e85d'
+      content: "\e85d";
     }
   }
 }

@@ -3,6 +3,7 @@
     <van-nav-bar
       title="幸福币记录"
       :fixed="true"
+      placeholder
       left-arrow
       :border="false"
       @click-left="$router.go(-1)"

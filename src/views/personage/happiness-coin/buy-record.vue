@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="购买记录" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar title="购买记录" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <refreshList :list.sync="list" @load="onLoad">
         <template v-slot="{item}">
@@ -48,9 +48,7 @@ export default {
     }
   },
   methods: {
-    onLoad () {
-
-    }
+    onLoad () {}
   }
 }
 </script>
@@ -93,7 +91,7 @@ export default {
 }
 .tf-icon-moneycollect {
   font-size: 28px;
-  color: #FFA110;
+  color: #ffa110;
   margin-right: 6px;
 }
 </style>

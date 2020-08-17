@@ -4,28 +4,44 @@
       title="消息"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       right-text="全部已读"
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <div class="tf-main-container">
       <van-tabs v-model="current">
-        <van-tab
-          v-for="(item, i) in items"
-          :key="i"
-          :badge="badge[i]"
-          @click="onClickItem"
-          :title="item"
-        ></van-tab>
+        <van-tab title="交易" :badge="badge[0]">
+          <div class="tf-flex-item">
+            <message-list type="transaction" :load="({pages}) => getMessageList(pages, 2)"></message-list>
+          </div>
+        </van-tab>
+        <van-tab title="互动" :badge="badge[1]">
+          <div class="tf-flex-item">
+            <interaction></interaction>
+          </div>
+        </van-tab>
+        <van-tab title="物业" :badge="badge[2]">
+          <div class="tf-flex-item">
+            <message-list type="butler" :load="({pages}) => getMessageList(pages, 4)"></message-list>
+          </div>
+        </van-tab>
+        <van-tab title="活动" :badge="badge[3]">
+          <div class="tf-flex-item">
+            <message-list type="activity" :load="({pages}) => getMessageList(pages, 5)"></message-list>
+          </div>
+        </van-tab>
+        <van-tab title="系统" :badge="badge[4]">
+          <div class="tf-flex-item">
+            <message-list type="system" :load="({pages}) => getMessageList(pages, 6)"></message-list>
+          </div>
+        </van-tab>
+        <van-tab title="工作" :badge="badge[5]">
+          <div class="tf-flex-item">
+            <message-list type="work" :load="({pages}) => getMessageList(pages, 1)"></message-list>
+          </div>
+        </van-tab>
       </van-tabs>
-      <div class="tf-flex-item">
-        <message-list type="transaction" v-show="current === 0"></message-list>
-        <interaction v-show="current === 1"></interaction>
-        <message-list type="butler" v-show="current === 2"></message-list>
-        <message-list type="activity" v-show="current === 3"></message-list>
-        <message-list type="system" v-show="current === 4"></message-list>
-        <message-list type="work" v-show="current === 5"></message-list>
-      </div>
     </div>
   </div>
 </template>
@@ -34,6 +50,7 @@
 import { NavBar, Tab, Tabs } from 'vant'
 import messageList from './components/message-list.vue'
 import interaction from './components/interaction.vue'
+import { getMessageList } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -50,10 +67,11 @@ export default {
     }
   },
   methods: {
-    onClickItem (e) {
-      if (this.current !== e.currentIndex) {
-        this.current = e.currentIndex
-      }
+    getMessageList (pages, type) {
+      return getMessageList({
+        remind_type: type,
+        pages
+      })
     }
   }
 }

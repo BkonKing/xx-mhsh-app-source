@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-h3">切换账户登录</div>
     <div
       class="account"

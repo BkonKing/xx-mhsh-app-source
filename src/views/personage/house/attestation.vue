@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg tf-padding-base">
-    <van-nav-bar :title="title" :fixed="true" :border="false" left-arrow @click-left="goback">
+    <van-nav-bar
+      :title="title"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    >
       <template #right>
         <span v-if="mode && !editMode" class="tf-icon tf-icon-bianxie-square" @click="goEdit"></span>
       </template>

@@ -23,18 +23,20 @@
                 </template>
               </userInfo>
             </div>
+            <template v-if="item.images">
+              <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
+              <tf-image-list v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+            </template>
             <div class="tf-card-content">{{ item.content }}</div>
-            <img
-              width="33%"
-              :src="item.images[0]"
-              v-if="item.images.length === 1"
-            />
-            <tf-image-list
-              v-else-if="item.images.length > 1"
-              :data="item.images"
-            ></tf-image-list>
-            <operation :item="item" :article-type="item.article_type || article_type" :key="item.id">
-              <div class="tf-icon tf-icon-ellipsis" @click.stop="moreShow = true;status = userInfo.id == item.uid"></div>
+            <operation
+              :item="item"
+              :article-type="item.article_type || article_type"
+              :key="item.id"
+            >
+              <div
+                class="tf-icon tf-icon-ellipsis"
+                @click.stop="moreShow = true;status = userInfo.id == item.uid"
+              ></div>
             </operation>
           </div>
         </div>

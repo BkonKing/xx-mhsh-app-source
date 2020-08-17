@@ -163,6 +163,10 @@ export function paymentCredits (data) {
 export function collectCredits (data) {
   return request.post('/credits/qrcode/collectCredits', data)
 }
+// 收款方提交收款金额
+export function skCredits (data) {
+  return request.post('/credits/qrcode/skCredits', data)
+}
 // 签到
 export function signin () {
   return request.post('/credits/account/signin')
@@ -185,3 +189,28 @@ export function getCreditsInfo (params) {
 }
 
 /* 幸福币 end */
+
+/* 我的互动 start */
+
+// 我发布的接口
+export function getMyArticleList (params) {
+  return request.get('/my/interaction/getMyArticleList', { params })
+}
+
+// 我评论的
+export function getMyCommentList (params) {
+  return request.get('/my/interaction/getMyCommentList', { params })
+}
+
+// 我点赞的
+export function getMythumbsupList (params) {
+  return request.get('/my/interaction/getMythumbsupList', { params })
+}
+
+/* 我的互动 end */
+
+/* 我的消息 start */
+export function getMessageList (params) {
+  return request.get('/my/message/getMessageList', { params })
+}
+/* 我的消息 end */

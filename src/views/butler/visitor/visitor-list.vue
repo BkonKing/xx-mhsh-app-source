@@ -1,6 +1,6 @@
 <template>
   <div class="tf-padding-base tf-bg">
-    <van-nav-bar title="访客" :fixed="true" left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar title="访客" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
       <div
         v-for="(item, i) in data"

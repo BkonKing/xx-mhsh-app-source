@@ -453,9 +453,15 @@
   color: #fff;
 }
 
-.tf-main-container {
+.tf-body {
+  @flex-column();
   height: 100%;
-  padding-top: 88px;
+}
+
+.tf-body-container {
+  // height: 100%;
+  // padding-top: 88px;
+  flex: 1;
   overflow: auto;
 }
 
@@ -509,14 +515,6 @@
 }
 
 #app {
-
-  >.tf-bg {
-    height: 100%;
-  }
-
-  .view-main>.tf-bg {
-    height: 100%;
-  }
 
   /* vant下划线 */
   .van-cell::after {
@@ -602,6 +600,18 @@
 }
 
 .app {
+  >.tf-bg,
+  .view-main>.tf-bg,
+  >.tf-bg-white,
+  .view-main>.tf-bg-white {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .van-nav-bar--fixed {
+    top: auto;
+  }
+
   .van-nav-bar {
     z-index: 999;
   }

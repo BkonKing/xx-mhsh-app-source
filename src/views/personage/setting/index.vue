@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="设置" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar title="设置" :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="tf-main-container">
       <tf-list>
         <tf-list-item title="个人资料" @click="goInformation"></tf-list-item>

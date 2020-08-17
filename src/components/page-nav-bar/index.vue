@@ -1,19 +1,21 @@
 <template>
-  <van-nav-bar class="tf-nav-bar">
+  <van-nav-bar class="tf-nav-bar" placeholder>
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-dingwei"></span>
-        <span v-if="currentProject" class="tf-text">{{ currentProject.project_name + currentProject.fc_info }}</span>
+        <span
+          v-if="currentProject"
+          class="tf-text"
+        >{{ currentProject.project_name + currentProject.fc_info }}</span>
         <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
       <span v-if="search" class="tf-icon tf-icon-search" @click="onSearch"></span>
       <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
-      <div class="notice-box" @click="goMessage">
-        <span class="tf-icon tf-icon-xiaoxi margin-left"></span>
+      <span class="tf-icon tf-icon-xiaoxi margin-left" @click="goMessage">
         <span v-if="status" class="van-info">2</span>
-      </div>
+      </span>
     </template>
   </van-nav-bar>
 </template>
@@ -84,17 +86,12 @@ export default {
   color: #fff;
 }
 
-.notice-box {
+.tf-icon-xiaoxi {
   position: relative;
-  padding-right: 17px;
+  margin-right: 27px;
 }
 
 .van-info {
-  height: 24px;
-  line-height: 24px;
-  font-size: 18px;
-  top: 10px;
-  right: 10px;
   background: #fff;
   color: @red-dark;
 }

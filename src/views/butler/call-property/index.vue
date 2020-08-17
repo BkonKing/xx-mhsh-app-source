@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      title="呼叫物业"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <div class="introduce-box">
         <div class="logo-badge">
@@ -78,7 +85,7 @@ export default {
   padding-top: 30px;
   padding-bottom: 30px;
   margin-bottom: 20px;
-  background: url('../../../assets/app-icon.png')
+  background: url("../../../assets/app-icon.png");
 }
 
 .logo-badge {

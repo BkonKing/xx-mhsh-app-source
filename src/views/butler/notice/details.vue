@@ -1,9 +1,18 @@
 <template>
-  <div class="tf-article-box">
-    <van-nav-bar title="通知详情" :fixed="true" :border="false" left-arrow @click-left="goBack" />
-    <div class="tf-article-title">{{title}}</div>
-    <div class="tf-article-info">{{ctime}}</div>
-    <div class="tf-article-content">{{content}}</div>
+  <div class="tf-bg-white">
+    <van-nav-bar
+      title="通知详情"
+      placeholder
+      :fixed="true"
+      :border="false"
+      left-arrow
+      @click-left="goBack"
+    />
+    <div class="page-container">
+      <div class="tf-article-title">{{title}}</div>
+      <div class="tf-article-info">{{ctime}}</div>
+      <div class="tf-article-content">{{content}}</div>
+    </div>
   </div>
 </template>
 
@@ -46,10 +55,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-article-box {
-  height: 100%;
-  padding-top: 138px;
-  overflow: auto;
+.page-container {
+  padding: 50px;
 }
 .tf-article-info {
   margin-top: 36px;

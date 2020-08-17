@@ -33,14 +33,18 @@
 
 <script>
 import {
+  paymentScan,
+  collectScan,
   getPaymentCode,
   getCollectCode,
-  paymentScan,
-  collectScan
+  paymentStatus,
+  collectStatus
 } from '@/api/personage'
+import { Dialog, Toast } from 'vant'
 export default {
   data () {
     return {
+      codeId: '',
       current: 1,
       tabs: [
         {
@@ -58,80 +62,168 @@ export default {
       ],
       paymentCodeImg: '',
       collectCodeImg: '',
-      FNScanner: null
+      FNScanner: null,
+      timer: null
     }
   },
   mounted () {
-    this.scanSuccess()
+    // this.scanSuccess()
     this.FNScanner = api.require('FNScanner')
   },
   methods: {
     switchTab (value) {
       this.current = value
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
       if (value === 2) {
         this.getPaymentCode()
       } else if (value === 3) {
         this.getCollectCode()
       }
     },
-    /* 扫码成功 */
-    scanSuccess (content) {
-      const value = 'fukuan|52|13|2|1597483207|e9aeee2e78ebdcd99b3eaa797ba35d2'
-      const values = value.split('|')
-      switch (values[0]) {
-        case 'fukuan':
-          paymentScan({
-            code_info: value
-          }).then(res => {
-            if (res.data.check_status) {
-              this.$router.push({
-                name: 'happinessCoinPayment',
-                query: {
-                  type: '1',
-                  value: value
-                }
-              })
-            }
-          })
-          break
-        case 'shoukuan':
-          collectScan({
-            code_info: value
-          }).then(res => {
-            if (res.data.check_status) {
-              this.$router.push({
-                name: 'happinessCoinPayment',
-                query: {
-                  type: '2',
-                  value: value
-                }
-              })
-            }
-          })
-          break
-        default:
-          break
-      }
-    },
     /* 获取付款码二维码 */
     getPaymentCode () {
       getPaymentCode().then(res => {
-        this.paymentCodeImg = res.data.url
+        const { url, code_id } = res.data
+        this.paymentCodeImg = url
+        this.codeId = code_id
+        this.pollingPayment()
       })
     },
     /* 获取收款码二维码 */
     getCollectCode () {
       getCollectCode().then(res => {
-        this.collectCodeImg = res.data
+        const { url, code_id } = res.data
+        this.collectCodeImg = url
+        this.codeId = code_id
+        // this.pollingCollect()
       })
     },
-    /* 付款码扫码请求获取码当前状态 */
-    paymentScan () {
-      paymentScan().then(res => {})
+    /* 轮询付款码当前状态 */
+    pollingPayment () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.paymentStatus()
+      }, 3000)
     },
-    /* 收款码扫码请求获取码当前状态 */
-    collectScan () {
-      collectScan().then(res => {})
+    /* 轮询收款码当前状态 */
+    pollingCollect () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.collectStatus()
+      }, 3000)
+    },
+    /* 出示付款码请求获取码当前状态 */
+    paymentStatus () {
+      paymentStatus({
+        code_id: this.codeId
+      }).then(({ data }) => {
+        const { is_pay, credits, avatar, realname, mobile, remarks } = data
+        if (is_pay != '1') {
+          if (credits && credits != '0') {
+            this.$router.push({
+              name: 'happinessCoinPayment',
+              query: {
+                type: '3',
+                value: this.codeId,
+                avatar,
+                realname,
+                mobile,
+                credits,
+                remarks
+              }
+            })
+          } else {
+            this.pollingPayment()
+          }
+        } else {
+          Dialog.alert({
+            title: '支付成功'
+          })
+        }
+      })
+    },
+    /* 出示收款码请求获取码当前状态 */
+    collectStatus () {
+      collectStatus({
+        code_id: this.codeId
+      }).then(({ data }) => {
+        if (data.is_pay != '1') {
+          this.pollingCollect()
+        } else {
+          Dialog.alert({
+            title: '对方已经支付成功'
+          })
+        }
+      })
+    },
+    /* 扫码成功 */
+    scanSuccess (content) {
+      const value = content
+      const values = value.split('|')
+      switch (values[0]) {
+        case 'shoukuan':
+          this.collectScan(value, values)
+          break
+        case 'fukuan':
+          this.paymentScan(value, values)
+          break
+        default:
+          break
+      }
+    },
+    /* 扫了收款码 */
+    collectScan (value, values) {
+      collectScan({
+        code_info: value
+      }).then(res => {
+        const { check_status, is_pay, avatar, realname, mobile } = res.data
+        if (check_status) {
+          if (is_pay === '0') {
+            this.$router.push({
+              name: 'happinessCoinPayment',
+              query: {
+                type: '1',
+                value: values[1],
+                avatar,
+                realname,
+                mobile
+              }
+            })
+          } else {
+            Toast('您已经支付过')
+          }
+        }
+      })
+    },
+    /* 扫了付款码 */
+    paymentScan (value, values) {
+      paymentScan({
+        code_info: value
+      }).then(res => {
+        const { check_status, is_pay, avatar, realname, mobile } = res.data
+        if (check_status) {
+          if (is_pay == '0') {
+            this.$router.push({
+              name: 'happinessCoinPayment',
+              query: {
+                type: '2',
+                value: values[1],
+                avatar,
+                realname,
+                mobile
+              }
+            })
+          } else {
+            Toast('对方已付款')
+          }
+        }
+      })
     },
     /* 打开扫码frame */
     openFrame () {
@@ -168,7 +260,7 @@ export default {
           fixedOn: 'scan',
           autorotation: true
         },
-        function (ret, err) {
+        (ret, err) => {
           if (ret) {
             const { eventType, content } = ret
             switch (eventType) {
@@ -201,6 +293,9 @@ export default {
   },
   beforeDestroy () {
     this.closeFrame()
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
   }
 }
 </script>

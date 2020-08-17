@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar :title="title" :fixed="true" :border="false" left-arrow @click-left="goback"></van-nav-bar>
+    <van-nav-bar
+      :title="title"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
       <transition tag="div" :name="transitionName">

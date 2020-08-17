@@ -4,6 +4,7 @@
       :title="title"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     >
@@ -23,15 +24,15 @@
             readonly
             clickable
             :value="value"
-            @touchstart.native.stop="showKeyboard = true"
+            @touchstart.native.stop="touchstart"
           />
-          <span v-if="value" class="tf-icon tf-icon-close-circle-fill" @click="value = ''"></span>
+          <span v-if="value && type !== '3'" class="tf-icon tf-icon-close-circle-fill" @click="value = ''"></span>
         </div>
-        <van-field v-model="remarks" placeholder="添加备注(10字以内)" />
+        <van-field v-model="remarks" :disabled="type === '3'" placeholder="添加备注(10字以内)" />
       </div>
-      <van-button v-if="type === '1'" class="tf-mt-lg" type="primary" size="large" @click="pay">确认支付</van-button>
+      <van-button v-if="type !== '2'" class="tf-mt-lg" type="primary" size="large" @click="pay">确认支付</van-button>
     </div>
-    <tf-dialog v-model="payCodeShow" title="请输入密码">
+    <tf-dialog v-model="payCodeShow" title="请输入密码" @closed="paypassword = ''">
       <van-password-input
         :value="paypassword"
         :gutter="7"
@@ -45,7 +46,7 @@
       key="number"
       theme="custom"
       :extra-key="['.']"
-      close-button-text="支付"
+      :close-button-text="type !== '2' ? '支付' : '完成'"
       @close="pay"
       @blur="showKeyboard = false"
     />
@@ -71,15 +72,17 @@ import {
   Field,
   Popup,
   PasswordInput,
-  Toast
+  Toast,
+  Dialog
 } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import tfDialog from '@/components/tf-dialog/index'
 import {
-  paymentStatus,
-  collectStatus,
+  paymentScan,
+  collectScan,
   paymentCredits,
-  collectCredits
+  collectCredits,
+  skCredits
 } from '@/api/personage'
 export default {
   components: {
@@ -96,7 +99,7 @@ export default {
     return {
       type: '1', // 1：付款 2: 收款
       title: '',
-      code: '',
+      codeId: '',
       info: {},
       value: '',
       remarks: '',
@@ -107,40 +110,39 @@ export default {
     }
   },
   created () {
-    this.type = this.$route.query.type
-    this.code = this.$route.query.value
-    this.title = this.type === '1' ? '付款' : '收款'
-    this.type === '1' ? this.paymentStatus() : this.collectStatus()
+    const { type, value, avatar, realname, mobile, credits, remarks } = this.$route.query
+    this.type = type
+    this.codeId = value
+    this.info = { avatar, realname, mobile }
+    this.title = this.type !== '2' ? '付款' : '收款'
+    if (this.type === '3') {
+      this.value = credits
+      this.remarks = remarks
+    }
   },
   methods: {
-    // 付款方接收付款码状态
-    paymentStatus () {
-      paymentStatus({
-        code_id: this.info
-      }).then(res => {})
-    },
-    // 收款方接收收款码状态
-    collectStatus () {
-      collectStatus({
-        code_id: this.info
-      }).then(res => {})
-    },
+    // 完成
     pay () {
       if (!this.value) {
         Toast('请输入金额')
         return
       }
-      if (this.type === '1') {
+      if (this.type !== '2') {
         this.payCodeShow = true
         this.showPasswordboard = true
+      } else {
+        this.skCredits()
       }
     },
+    // 输入完密码
     payEnter () {
       if (this.paypassword.length < 6) {
         Toast('请输入完整密码')
         return
       }
       if (this.type === '1') {
+        this.collectCredits()
+      } else if (this.type === '3') {
         this.paymentCredits()
       }
     },
@@ -148,14 +150,52 @@ export default {
     paymentCredits () {
       const params = {
         credits: this.value,
-        remarks: this.remarks,
-        code_id: this.code,
+        code_id: this.codeId,
         paypassword: this.paypassword
       }
-      paymentCredits(params).then(res => {
-        Toast.success('付款成功')
-        this.paymentStatus()
+      paymentCredits(params).then((res) => {
+        Dialog.alert({
+          title: '付款成功'
+        }).then(() => {
+          this.$router.go(-1)
+        })
       })
+    },
+    // 收款码支付
+    collectCredits () {
+      const params = {
+        credits: this.value,
+        remarks: this.remarks,
+        code_id: this.codeId,
+        paypassword: this.paypassword
+      }
+      collectCredits(params).then((res) => {
+        Dialog.alert({
+          title: '付款成功'
+        }).then(() => {
+          this.$router.go(-1)
+        })
+      })
+    },
+    // 收款方提交收款金额
+    skCredits () {
+      skCredits({
+        credits: this.value,
+        remarks: this.remarks,
+        code_id: this.codeId
+      })
+        .then((res) => {
+          Dialog.alert({
+            title: '请耐心等待对方付款，注意查收消息'
+          }).then(() => {
+            this.$router.go(-1)
+          })
+        })
+    },
+    touchstart () {
+      if (this.type !== '3') {
+        this.showKeyboard = true
+      }
     },
     onInput (key) {
       this.paypassword = (this.paypassword + key).slice(0, 6)

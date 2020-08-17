@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg tf-screen">
-    <van-nav-bar title="我的资料" :fixed="true" :border="false" left-arrow @click-left="goback"></van-nav-bar>
+    <van-nav-bar
+      title="我的资料"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <van-tabs v-model="current">
         <van-tab title="基础信息">
@@ -171,7 +178,7 @@ export default {
       mobile: '',
       nickname: '',
       birthday: '',
-      payCodeStatus: 1, // 0为未设置过，1我设置过
+      payCodeStatus: 0, // 0为未设置过，1我设置过
       passwordStatus: 1, // 0为未设置过，1我设置过
       memberList: [], // 成员列表
       houseRoleColor: {
