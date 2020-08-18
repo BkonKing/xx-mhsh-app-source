@@ -1,24 +1,24 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar"><van-nav-bar title="结算" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar"><van-nav-bar title="结算" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
     <div class="address-session">
       <div class="address-bg"></div>
-      <div v-if="1==1" class="bht-session address-info" bindtap="linkFunc" data-url="/page/my/pages/address/address?page_type=1">
+      <div v-if="addressInfo" class="bht-session address-info" @click="linkFunc(23,{isSelect: 1})">
         <div class="address-text">
           <div class="address-user flex-between">
-            <div class="address-name p-nowrap">旅途</div>
-            <div class="address-tel">15860069682</div>
+            <div class="address-name p-nowrap">{{addressInfo.realname}}</div>
+            <div class="address-tel">{{addressInfo.mobile}}</div>
             <div class="link-icon"><img class="img-100" src="@/assets/img/right.png" /></div>
           </div>
           <div class="address-detail">
-            <div class="address-default" v-if="1==1">默认</div>
-            <div class="p-nowrap">福州三盛滨江国际</div>
+            <div class="address-default" v-if="addressInfo.is_default">默认</div>
+            <div class="p-nowrap">{{addressInfo.address_name}}</div>
           </div>
         </div>
       </div>
-      <div v-else class="bht-session address-info no-address flex-between" bindtap="linkFunc" data-url="">
+      <div v-else class="bht-session address-info no-address flex-between" @click="linkFunc(23,{isSelect: 1})" data-url="">
         <img class="address-icon" src="@/assets/img/address_02.png" alt="">
         <div class="no-address-text">请选择收货地址</div>
         <div class="link-icon"><img class="img-100" src="@/assets/img/right.png" /></div>
@@ -26,7 +26,33 @@
     </div>
 
     <div class="cont-session goods-session">
-      <div class="order-goods-info">
+      <div v-for="(item,index) in carts" class="order-goods-info">
+        <div class="order-pic-block">
+          <img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
+        </div>
+        <div class="order-info">
+          <div class="order-name-price">
+            <div class="order-name p-nowrap">{{item.goods_name}}</div>
+            <div v-if="order_type!=3" class="order-price">￥{{item.s_price/100}}</div>
+            <div v-else class="order-price"><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits/item.count}}</div>
+          </div>
+          <div class="order-sku-num">
+            <div class="order-sku p-nowrap">{{item.specs_name}}</div>
+            <div v-if="order_type!=3 && item.y_price && item.y_price!='0'" class="order-num">￥{{item.y_price/100}}</div>
+          </div>
+          <div class="order-action-session">
+            <div class="order-action-text color-8f8f94">
+              <template v-if="item.tip_text">不支持退货
+                <div class="order-action-btn" @click.stop="openExplainSwal">
+                  <img class="img-100" src="@/assets/img/question_01.png" mode="" />
+                </div>
+              </template>
+            </div>
+            <div class="order-buy-num">x{{item.count}}</div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="order-goods-info">
         <div class="order-pic-block">
           <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
         </div>
@@ -41,7 +67,7 @@
           </div>
           <div class="order-action-session">
             <div class="order-action-text color-8f8f94">不支持退货
-              <div class="order-action-btn">
+              <div class="order-action-btn" @click.stop="openExplainSwal">
                 <img class="img-100" src="@/assets/img/question_01.png" mode="" />
               </div>
             </div>
@@ -51,7 +77,7 @@
       </div>
       <div class="order-goods-info">
         <div class="order-pic-block">
-          <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
+          <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
         </div>
         <div class="order-info">
           <div class="order-name-price">
@@ -64,60 +90,98 @@
           </div>
           <div class="order-action-session">
             <div class="order-action-text color-8f8f94">不支持退货
-              <div class="order-action-btn">
+              <div class="order-action-btn" @click.stop="openExplainSwal">
                 <img class="img-100" src="@/assets/img/question_01.png" mode="" />
               </div>
             </div>
             <div class="order-buy-num">x1</div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
-    <div class="cont-session common-list">
-      <div class="common-item common-item-first">
+    <div v-if="order_type!=3" class="cont-session common-list">
+      <div v-if="order_type<1" class="common-item common-item-first" @click="linkFunc(10)">
         <div class="common-item-left">
           <div class="color-222 font-28 width-146">优惠券</div>
         </div>
         <div class="common-item-right">
-          <!-- <div class="color-8f8f94 font-28">请选择</div> -->
-          <div class="color-eb5841 font-28">满100减20</div>
+          <div v-if="settlementInfo.coupon_money&&settlementInfo.coupon_money!='0.00'" class="color-eb5841 font-28">{{settlementInfo.coupon_text}}</div>
+          <div v-else class="color-8f8f94 font-28">无可用优惠券</div>
           <div class="link-icon">
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
         </div>
       </div>
-      <div class="common-item">
+      <div @click="selectFunc" class="common-item">
         <div class="common-item-left">
-          <div class="checkbox-xfb cur flex-center"></div>
-          <div class="color-222 font-28">可用800幸福币抵扣￥80.00</div>
+          <div :class="[is_credits ? 'cur' : '', 'checkbox-xfb flex-center']"></div>
+          <div v-if="order_type==0" class="color-222 font-28">可用{{settlementInfo.z_total_credits/10}}幸福币抵扣￥{{settlementInfo.z_total_credits/100}}</div>
+          <div v-else-if="order_type==1 || order_type==2" class="color-222 font-28">可用{{settlementInfo.pay_credits/10}}幸福币抵扣￥{{settlementInfo.pay_credits/100}}</div>
         </div>
       </div>
     </div>
 
-    <div class="cont-session goods-session detail-list-block">
+    <div v-if="order_type==0" class="cont-session goods-session detail-list-block">
       <div class="detail-price-list">
         <div class="detail-price-item">
           <div>商品总价</div>
-          <div>￥600.00</div>
+          <div>￥{{priceTotal/100}}</div>
         </div>
         <div class="detail-price-item">
           <div>运费</div>
-          <div>￥600.00</div>
+          <div>￥{{settlementInfo.freight/100}}</div>
         </div>
-        <div class="detail-price-item">
-          <div>优惠券</div>
-          <div>￥600.00</div>
-        </div>
-        <div class="detail-price-item">
+        <div v-if="is_credits" class="detail-price-item">
           <div>幸福币抵扣</div>
-          <div>￥600.00</div>
+          <div>-￥{{settlementInfo.z_total_credits/100}}</div>
         </div>
+      </div>
+      <div class="order-total order-total-detail">
+        <div class="color-8f8f94 font-24">共 {{goodsNum}} 件</div>
+        <div class="order-price-total">
+          合计:<span>￥{{is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100}}</span>
+        </div>
+      </div>
+    </div>
+    <div v-else-if="order_type==1 || order_type==2" class="cont-session goods-session detail-list-block">
+      <div class="detail-price-list">
+        <div class="detail-price-item">
+          <div>商品总价</div>
+          <div>￥{{priceTotal/100}}</div>
+        </div>
+        <div class="detail-price-item">
+          <div>运费</div>
+          <div>￥{{settlementInfo.freight/100}}</div>
+        </div>
+        <div v-if="is_credits" class="detail-price-item">
+          <div>幸福币抵扣</div>
+          <div>-￥{{settlementInfo.pay_credits/100}}</div>
+        </div>
+      </div>
+      <div class="order-total order-total-detail">
+        <div class="color-8f8f94 font-24">共 {{goodsNum}} 件</div>
+        <div class="order-price-total">
+          合计:<span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</span>
+        </div>
+      </div>
+    </div>
+    <div v-else class="cont-session goods-session detail-list-block">
+      <div class="detail-price-list">
+        <div class="detail-price-item">
+          <div>商品总价</div>
+          <div><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</div>
+        </div>
+        <div class="detail-price-item">
+          <div>运费</div>
+          <div>￥{{settlementInfo.freight/100}}</div>
+        </div>
+      
       </div>
       <div class="order-total order-total-detail">
         <div class="color-8f8f94 font-24">共 1 件</div>
         <div class="order-price-total">
-          合计:<span>￥200.00</span>
+          合计:<span><template v-if="settlementInfo.freight">￥{{settlementInfo.freight/100}} + </template><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</span>
         </div>
       </div>
     </div>
@@ -126,7 +190,7 @@
       <div class="order-remarks-item">
         <div class="order-remarks-item-left color-222 font-28">订单备注:</div>
         <div class="shipping-address-item-right">
-          <input class="color-222 font-28 order-remarks-text" type="text" placeholder="备注">
+          <input v-model="remarks" class="color-222 font-28 order-remarks-text" type="text" placeholder="备注">
           <!-- <div class="color-222 font-28 order-remarks-text">电子商品做好防潮防摔措施</div> -->
         </div>
       </div>
@@ -135,39 +199,474 @@
     <div class="cart-empty"></div>
     <div class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
-        <div class="all-price"><span>合计：</span>￥55</div>
-        <div class="all-go flex-center" catchtap="payFunc">结算(2)</div>
+        <div v-if="order_type==0" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100}}</div>
+        <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
+        <template v-else>
+          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><template v-if="settlementInfo.freight">￥{{settlementInfo.freight/100}} + </template><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</div>
+          <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
+        </template>
+        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">结算({{goodsNum}})</div>
+        <template v-else>
+          <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc">兑换</div>
+          <div v-else class="all-go flex-center">兑换</div>
+        </template>
       </div>
     </div>
+    <explain-swal 
+    :show-swal="showExplainSwal"
+    :swal-cont="swalCont"
+    @closeSwal="closeExplainSwal"
+    ></explain-swal>
+    <pay-swal 
+    :show-swal="showPaySwal"
+    :down-time="downTime"
+    @closeSwal="closePaySwal"
+    @sureSwal="surePaySwal"
+    ></pay-swal>
   </div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
+import explainSwal from './../components/explain-swal'
+import paySwal from './../components/pay-swal'
+import eventBus from '@/api/eventbus.js';
+import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    explainSwal,
+    paySwal
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight
+      windowHeight: document.documentElement.clientHeight,
+      showExplainSwal: false,  //弹窗
+      swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
+
+      showPaySwal: false,   //支付方式弹窗
+      downTime: 0,          //支付结束时间
+
+      nocarts: [],         //未选中商品
+      carts: [],           //购物车
+      goodsNum: '',        //购物车商品件数
+      priceTotal: '',      //商品总额
+      userId: '',          //用户uid
+      userData: '',        //用户信息
+      remarks: '',         //备注
+      coupon_id: '',       //优惠券id
+      isSelectCoupon: false,//是否选择优惠券
+      selectCouponId: '',   //选择的优惠券id
+      selectCouponTxt: '',  //选择的优惠券信息
+      couponInfo: '',      //优惠券信息
+      coupon_price: '',    //优惠券金额
+      priceInfo: '',       //优惠信息
+
+      is_credits: false,    //是否使用积分
+
+      isSelectAddress: false,//是否选择地址
+      addressInfo: '',       //收货地址信息
+      userAddId: '',         //选中的地址id
+      uname: '',             //选中地址-收货人姓名
+      utel: '',              //选中地址-收货人电话
+      userAddress: '',       //选中的地址详情
+      is_default: 0,         //默认地址
+      prev_page: 0,          //1商品详情页直接购买
+
+      flashInfo: '',         //闪购结算信息
+      settlementInfo: '',
     }
   },
-  methods: {
-    onSubmit: function () {
+  mounted(){
+    var that = this;
+    //根据key名获取传递回来的参数，data就是map
+    eventBus.$on('chooseAddress', function(data){
+      that.addressInfo = JSON.parse(data);
+      that.getData();
+      console.log(data);
+    }.bind(this));
 
+    eventBus.$on('chooseCoupon', function(data){
+      console.log(data);
+      that.couponInfo.user_coupon_id = that.selectCouponId;
+      that.getData();
+    }.bind(this));
+    
+  },
+  created(){
+    var prev_page = this.$route.query.prev_page;
+    this.order_type = this.$route.query.order_type;  //订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
+    // this.flashParam = {
+    //   ollage_id: this.$route.query.ollage_id,
+    //   specs_num: this.$route.query.specs_num,
+    //   is_credits: 0,
+    //   order_type: this.$route.query.order_type,
+    // }
+    this.flashParam = {
+      ollage_id: this.$route.query.ollage_id,
+      specs_id: this.$route.query.specs_id,
+      specs_num: 1,
+      is_credits: this.is_credits ? 1 : 0,
+      order_type: this.order_type,
     }
+
+    this.prev_page = prev_page ? prev_page : 0;
+    if(!this.prev_page) this.order_type = 0;
+    this.total();
+    // that.getData();
+  },
+  methods: {
+    /**
+     * 
+    */
+    getData: function (e) {
+      if(this.order_type == 0 || this.prev_page == 0){
+        getOrdinaryInfo({
+          giftbag: JSON.stringify(this.carts),
+          // user_coupon_id: this.couponInfo.user_coupon_id,
+          user_coupon_id: 2
+        }).then(res => {
+          if (res.success) {
+            this.settlementInfo = res.data;
+            this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo;
+            if (this.isSelectCoupon){
+              this.couponInfo.user_coupon_id = this.selectCouponId;
+              this.couponInfo.coupon_text = this.selectCouponTxt;
+              this.isSelectCoupon = '';
+            }
+          }
+        })
+      }else if(this.order_type == 3){
+        getExchangeInfo(this.flashParam).then(res => {
+          if (res.success) {
+            this.settlementInfo = res.data.pay;
+            if(!this.isSelectAddress){
+              this.addressInfo = res.data.address_info
+            }
+
+            // this.addressInfo = res.data.address_info;
+          }
+        })
+      }else {
+        getFlashInfo(this.flashParam).then(res => {
+          if (res.success) {
+            this.settlementInfo = res.data.pay;
+            if(!this.isSelectAddress){
+              this.addressInfo = res.data.address_info
+            }
+          }
+        })
+      }
+      
+      return;
+      const that = this;
+      app.util.request({
+        'url': '/xcx/wxjson/get_user_address',
+        'cachetime': '0',
+        'showLoading': false,
+        'data': {
+          uid: this.userId,
+          cj_code: app.util.getScene(),
+        },
+        success(res) {
+          let result = res.data;
+          if (result.code == '0000') {
+            let address_info = result.data.address_info;
+            tmplIds_str = result.data.tmplIds_str;
+            that.setData({
+              addressInfo: address_info
+            })
+            console.log(address_info);
+            if (address_info) {  //判断是否有收货地址
+              let userAddress = '';
+              if (address_info.uaddress_name) {
+                userAddress = app.util.getArea(address_info.uaddress_detail) + address_info.uaddress_name + address_info.uaddress_house
+              } else {
+                userAddress = address_info.uaddress_detail + address_info.uaddress_house;
+              }
+              console.log(userAddress);
+              that.setData({
+                "addressInfo.userAddress": userAddress,
+              })
+            }
+          }
+        }
+      });
+    },
+    /**
+     * 计算商品数量/价格
+     */
+    total: function (e) {
+      const that = this;
+      let carts_arr = [];
+      if (this.prev_page == 1){
+        carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
+        // carts_arr = wx.getStorageSync('cart2') || [];
+      }else {
+        carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
+        // carts_arr = wx.getStorageSync('cart');
+      }
+      let carts_list = [];
+      let carts_list2 = [];
+      let goodsNum = 0;
+      console.log(carts_arr);
+      if (carts_arr && carts_arr.length > 0) {
+        let priceTotal = 0;
+        for (var j in carts_arr) {
+          if (carts_arr[j].is_checked) {
+            carts_list.push(carts_arr[j]);
+            goodsNum += carts_arr[j].count;
+            priceTotal+= carts_arr[j].count * carts_arr[j].s_price;
+          }else {
+            carts_list2.push(carts_arr[j]);
+          }
+        }
+        this.carts = carts_list;
+        this.goodsNum = goodsNum;
+        this.nocarts = carts_list2;
+        this.priceTotal = priceTotal;
+        this.flashParam.specs_num = goodsNum;
+      }else {
+        return;
+      }
+      that.getData();
+      return;
+
+      // that.setData({
+      //   priceTotal: priceTotal == 0 ? '0.00' : priceTotal.toFixed(2)
+      // })
+      app.util.request({
+        'url': '/xcx/wxvipjson/common_pay',
+        'cachetime': '0',
+        'showLoading': false,
+        'data': {
+          uid: this.userId,
+          user_coupon_id: this.couponInfo.user_coupon_id,
+          cj_code: app.util.getScene(),
+          giftbag: JSON.stringify(this.carts),
+        },
+        success(res) {
+          let result = res.data;
+          if (result.code == '0000') {
+            that.setData({
+              priceInfo: result.data,
+              couponInfo: result.data.coupon_arr.length > 0 && !this.couponInfo ? result.data.coupon_arr[0] : this.couponInfo,
+              carts: result.goods_arr
+            })
+            console.log(this.couponInfo);
+            if (this.isSelectCoupon){
+              that.setData({
+                "couponInfo.user_coupon_id": this.selectCouponId,
+                "couponInfo.coupon_text": this.selectCouponTxt
+              })
+              this.isSelectCoupon = '';
+            }
+            let carts_arr2 = result.goods_arr;
+            that.setData({
+              'priceInfo.total_price': result.data.total_price.toFixed(2),        //付款金额
+              'priceInfo.total_vip_money': result.data.total_vip_money.toFixed(2),//vip优惠金额
+              'priceInfo.total_e_money': result.data.total_e_money.toFixed(2),    //优享优惠金额
+              'priceInfo.activity_money': result.data.activity_money.toFixed(2),  //活动优惠金额
+              'priceInfo.coupon_money': result.data.coupon_money.toFixed(2),      //优惠券优惠金额
+              'priceInfo.sell_total': result.data.sell_total.toFixed(2),          //售价
+            })
+            if (this.isSelectAddress) {
+              that.setData({
+                "addressInfo.id": this.userAddId,
+                "addressInfo.uname": this.uname,
+                "addressInfo.utel": this.utel,
+                "addressInfo.userAddress": this.userAddress,
+                "addressInfo.is_default": this.is_default
+              })
+              this.isSelectAddress = false;
+              this.userAddress = '';
+            }
+          }
+        }
+      });
+    },
+    /**
+     * 订单备注
+    */
+    // remarksFunc: function (e) {
+    //   const that = this;
+    //   this.remarks = e.detail.value.trim();
+    // },
+    /**
+     * 结算
+    */
+    payFunc: function (e) {
+      this.openPaySwal();
+      const that = this;
+      // if (!this.addressInfo.id){
+      //   Toast('请先选择收货地址');
+      //   return;
+      // }
+      if(this.order_type == 0 || this.prev_page == 0){
+        var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight));
+        ordinaryCreate({
+          giftbag: JSON.stringify(this.carts),
+          address_id: this.addressInfo.id,
+          user_coupon_id: this.couponInfo.user_coupon_id,
+          pricetotal: pricetotal,
+          is_credits: this.is_credits ? 1 : 0,
+          user_explain: this.remarks
+        }).then(res => {
+          if (res.success) {
+            
+          }
+        })
+      }else if(this.order_type == 3){
+        exchangeCreate(this.flashParam).then(res => {
+          if (res.success) {
+            
+          }
+        })
+      }else {
+        flashCreate(this.flashParam).then(res => {
+          if (res.success) {
+            
+          }
+        })
+      }
+      return;
+      app.util.getMessage(function () {
+        app.util.request({
+          'url': '/xcx/wxvipjson/create_common_order',
+          'cachetime': '0',
+          data: {
+            uid: this.userId,
+            address_id: this.addressInfo.id,
+            remarks: this.remarks,
+            user_coupon_id: this.couponInfo.user_coupon_id,
+            giftbag: JSON.stringify(this.carts),
+            pricetotal: this.priceInfo.total_price
+          },
+          success(res) {
+            let result = res.data;
+            if (result.code == '0000') {
+              //付款
+              wx.requestPayment({
+                'timeStamp': result.data.timeStamp,
+                'nonceStr': result.data.nonceStr,
+                'package': result.data.package,
+                'signType': 'MD5',
+                'paySign': result.data.paySign,
+                'success': function (res2) {
+                  this.is_link = true;
+                  if (this.prev_page) {
+                    wx.removeStorageSync('cart2');
+                  } else {
+                    wx.removeStorageSync('cart');
+                    wx.setStorageSync('cart', this.nocarts);
+                  }
+                  this.carts = [];
+                  wx.navigateTo({
+                    url: '/page/product/pages/ordinary-order-details/ordinary-order-details?ordinary_id=' + result.common_id,
+                  })
+                },
+                'fail': function (res) {
+                  this.is_link = true;
+                  if (this.prev_page) {
+                    wx.removeStorageSync('cart2');
+                  } else {
+                    wx.removeStorageSync('cart');
+                    wx.setStorageSync('cart', this.nocarts);
+                  }
+                  this.carts = [];
+                  wx.navigateTo({
+                    url: '/page/product/pages/ordinary-order-details/ordinary-order-details?ordinary_id=' + result.common_id,
+                  })
+                }
+              })
+            } else {
+              wx.showModal({
+                title: '提示',
+                content: result.msg,
+                showCancel: false,
+                success: function (res) {
+                  if (res.confirm) {
+                    wx.navigateBack({});
+                  }
+                }
+              });
+            }
+          }
+        })
+      }, tmplIds_str);
+    },
+
+    /**
+     * 积分选择
+     */
+    selectFunc: function (e) {
+      this.is_credits = !this.is_credits;
+    },
+
+
+    // 打开弹窗
+    openExplainSwal(){
+      this.showExplainSwal = true;
+    },
+    // 关闭弹窗
+    closeExplainSwal(data){
+      this.showExplainSwal = data == 1 ? true : false;
+    },
+    // 打开支付选择弹窗
+    openPaySwal(){
+      this.downTime = parseInt(new Date().getTime()) + 30*60*1000 - parseInt(new Date().getTime());
+      this.showPaySwal = true;
+    },
+    // 关闭支付选择弹窗
+    closePaySwal(data){
+      this.showPaySwal = data == 1 ? true : false;
+    },
+    surePaySwal(data){
+      console.log(data);
+      if(data == 0){  //微信支付
+
+      }else {   //支付宝支付
+
+      }
+    },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: 1
+          }
+        })
+        break;
+        case 10:
+        this.$router.push({
+          path: '/coupon/coupon-select',
+          query: {
+            isSelect: 1
+          }
+        })
+        break;
+        case 23:
+        this.$router.push({
+          path: '/address/list',
+          query: {
+            isSelect: 1
+          }
+        })
+        break;
+      }
+    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/order.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/order.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 /* 收货地址 start */
 .address-session {
@@ -311,8 +810,15 @@ input.order-remarks-text {
   font-weight: bold;
   color: #eb5841;
   font-size: 34px;
-  text-align: right;
   margin-right: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.all-price img {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
 }
 .all-price span {
   color: #8f8f94;
@@ -328,4 +834,5 @@ input.order-remarks-text {
   border-radius: 10px;
   margin-right: 20px;
 }
+
 </style>

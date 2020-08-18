@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="order-bar bar-white"><van-nav-bar title="填写换货物流" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white"><van-nav-bar title="填写换货物流" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
 			<div class="cont-session goods-session">
@@ -73,7 +73,7 @@
 						<div class="color-222 font-28">SF123456789012</div>
 					</div>
 					<div class="common-item-right">
-						<div class="common-item-code">
+						<div class="common-item-code" @click="scanFunc">
 							<van-icon class="van-icon" name="scan" size="26px" color="#383838" />
 						</div>
 					</div>
@@ -152,14 +152,25 @@ export default {
     }
   },
   methods: {
-
+  	scanFunc(){
+  		var FNScanner = api.require('FNScanner');
+        FNScanner.open({
+            autorotation: true
+        }, function(ret, err) {
+            if (ret) {
+                alert(JSON.stringify(ret));
+            } else {
+                alert(JSON.stringify(err));
+            }
+        });
+  	}
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/order.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/order.css';
 .goods-session {
 	margin-top: 30px;
 	padding: 40px 30px 10px;

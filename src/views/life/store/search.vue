@@ -1,13 +1,13 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div :class="[wordsShow ? 'white-bg' : '','app-body']" :style="{ 'min-height': windowHeight+'px'}">
     <div class="search-input-block flex-between">
       <div class="search-input-left flex-align-center">
         <img class="search-icon" src="@/assets/img/icon_11.png" />
-        <input class="search-input" type="text" placeholder="搜索应用、商品、帖子" />
+        <input class="search-input" v-model="search_val" @focus="focus" type="text" placeholder="搜索应用、商品、帖子" />
       </div>
       <div class="search-cancel flex-center">取消</div>
     </div>
-    <template v-if="1==2">
+    <template v-if="!wordsShow">
       <div class="search-session search-session1">
         <div class="search-tit">热门搜索</div>
         <div class="search-list">
@@ -30,7 +30,7 @@
       </div>
     </template>
     <template v-else>
-      <div v-if="1==2" class="publick-nav">
+      <div v-if="1==2" class="public-nav">
         <van-tabs class="pt88" v-model="current" @click="onClickItem">
           <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
         </van-tabs>
@@ -152,23 +152,219 @@ export default {
       windowHeight: document.documentElement.clientHeight,
       items: ['全部', '商品', '帖子', '应用'],
       res_name: "<span>热门</span>报修",
+      search_val: '',    //搜索输入框值
+      noneHidden: true,  //缺省页是否隐藏（搜索无结果）
+      wordsShow: true,   //显示热搜词和历史搜索
+      searchList: [],    //历史搜索词列表
+      hotWordsList: [],  //热搜词列表
+      resShopList: [],   //搜索结果列表
+
+      page: 1,           //分页页码
+      noMoreHidden: true,//上拉加载更多，没有更多是否隐藏
     }
   },
   methods: {
     onSubmit: function () {
 
-    }
+    },
+    created() {
+      this.$nextTick((x)=>{   //正确写法
+         this.$refs.inputs.focus();
+      })
+    },
+    /**
+     * 获取热门搜索词/request
+    */
+    getHotWords: function (e) {
+      const that = this;
+      app.util.request({
+        'url': '/xcx/wxjson/hot_word',
+        'cachetime': '0',
+        'data': {
+          uid: that.data.userId,
+          cj_code: app.util.getScene()
+        },
+        success(res) {
+          let result = res.data;
+          if (result.code == '0000') {
+            that.setData({
+              hotWordsList: result.data.hot_word_list,
+            })
+          }
+        }
+      });
+    },
+    /**
+     * 删除输入框内容
+    */
+    inputDel: function (e) {
+      const that = this;
+      that.setData({
+        search_val: '',
+        wordsShow: true
+      });
+      key_word = '';
+    },
+    /**
+     * 获取焦点
+    */
+    focus: function (e) {
+      const that = this;
+      that.setData({
+        // search_val: '',
+        wordsShow: true
+      });
+    },
+    /**
+     * 失去焦点
+    */
+    blur: function (e) {
+      const that = this;
+      // that.setData({
+      //   wordsShow: false
+      // });
+    },
+    /**
+     * 获取输入框值
+    */
+    getInputVal: function (e) {
+      const that = this;
+      key_word = e.detail.value;
+      that.setData({
+        search_val: key_word
+      })
+    },
+    /**
+     * 点击关键词搜索
+    */
+    wordsSearch: function (e) {
+      const that = this;
+      that.setData({
+        wordsShow: false
+      });
+      key_word = e.currentTarget.dataset.words;
+
+      that.setData({
+        search_val: key_word,
+        resShopList: [],
+        noneHidden: true,
+        noMoreHidden: true
+      });
+      that.data.page = 1;
+      that.addSearch();
+    },
+    /**
+     * 点击输入框搜索
+    */
+    compSearch: function (e) {
+      const that = this;
+      that.setData({
+        wordsShow: false,
+        search_val: key_word,
+      });
+      that.setData({
+        resShopList: [],
+        noneHidden: true,
+        noMoreHidden: true
+      });
+      that.data.page = 1;
+      that.addSearch();
+    },
+    /**
+     * 加入历史搜索
+    */
+    addSearch: function (e) {
+      const that = this;
+      if (key_word) {
+        that.setData({
+          // searchVal: that.data.searchVal,
+          resShopList: [],
+        });
+        for (var key in that.data.searchList) {
+          if (key_word == that.data.searchList[key]) {
+            that.data.searchList.splice(key, 1);
+          }
+        }
+        let wordText = [];
+        wordText[0] = key_word;
+        that.setData({
+          searchList: wordText.concat(that.data.searchList)
+        });
+        if (that.data.searchList.length > 30) {
+          that.data.searchList.splice(30, 1);
+          that.setData({
+            searchList: that.data.searchList
+          });
+        }
+        wx.setStorageSync('searchWords', that.data.searchList);
+        that.goSearch();
+      }
+    },
+    goSearch: function (e) {
+      const that = this;
+      if (that.data.noMoreHidden) {
+        app.util.request({
+          'url': '/xcx/wxjson/search_goods',
+          'cachetime': '0',
+          'data': {
+            uid: that.data.userId,
+            keyword: key_word,
+            page: that.data.page,
+            cj_code: app.util.getScene()
+          },
+          success(res) {
+            let result = res.data;
+            if (result.code == '0000') {
+              if (result.data.goods_list.length && result.data.goods_list.length > 0) {
+                that.setData({
+                  resShopList: that.data.page == 1 ? result.data.goods_list : that.data.resShopList.concat(result.data.goods_list),
+                  noneHidden: true,
+                });
+              } else {
+                that.setData({
+                  noneHidden: false,
+                });
+              }
+              if (result.data.goods_list.length == 0 && that.data.page > 1) {
+                that.setData({
+                  noneHidden: true,
+                  noMoreHidden: false
+                })
+              }else {
+                that.setData({
+                  noMoreHidden: true
+                })
+              }
+            }
+          }
+        });
+      }
+    },
+    /**
+     * 删除历史搜索
+    */
+    delSearch: function (e) {
+      const that = this;
+      var addrId = e.currentTarget.dataset.id;
+      that.setData({
+        searchList: []
+      });
+      wx.removeStorageSync('searchWords');
+      wx.showToast({
+        title: '删除成功',
+        duration: 2000
+      });
+    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
   color: #222;
-  overflow: hidden;
 }
 .white-bg.app-body {
   background-color: #fff;
@@ -199,7 +395,7 @@ export default {
   line-height: 50px;
   font-size: 24px;
 }
-.publick-nav {
+.public-nav {
   height: 98px;
   background-color: #fff;
 }

@@ -1,11 +1,11 @@
 <template>
 	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="order-bar bar-white"><van-nav-bar title="申请退换" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white"><van-nav-bar title="申请退换" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="apply-tit">请选择退换</div>
 		<div class="block-session">
 			<div class="common-list">
-				<div class="common-item" @click="linkFunc(1)">
+				<div class="common-item" @click="linkFunc(15,{id:2})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要换货</div>
 						<div class="font-24 color-8f8f94">自行寄回退货商品</div>
@@ -14,7 +14,7 @@
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
 				</div>
-				<div class="common-item" @click="linkFunc(2)">
+				<div class="common-item" @click="linkFunc(17,{id:3,type:2})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要退货退款</div>
 						<div class="font-24 color-8f8f94">自行寄回退货商品</div>
@@ -23,7 +23,7 @@
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
 				</div>
-				<div class="common-item" @click="linkFunc(3)">
+				<div class="common-item" @click="linkFunc(17,{id:3,type:1})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要退款</div>
 						<div class="font-24 color-8f8f94">无需退货</div>
@@ -45,29 +45,45 @@ export default {
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight
+      windowHeight: document.documentElement.clientHeight,
+      id: '',
     }
   },
+  created(){
+    this.order_id = this.$route.query.id;
+    this.logistice_id = this.$route.query.logistice_id;
+  },
   methods: {
-    linkFunc: function (num) {
-      switch (num) {
-        case 1:
-
-					  break
-        case 2:
-
-					  break
-        case 3:
-
-					  break
-      }
-    }
+    linkFunc (type,obj={}) {
+    	switch (type){
+    		case 15:
+    		this.$router.push({
+	      	path: '/order/apply-barter',
+	      	query: {
+	      		logistice_id: this.logistice_id,
+	      		order_id: this.order_id,
+	      	}
+	      })
+    		break;
+    		case 17:
+    		this.$router.push({
+	      	path: '/order/apply-refund',
+	      	query: {
+	      		id: obj.id,
+	      		type: obj.type,
+	      		logistice_id: this.logistice_id,
+	      		order_id: this.order_id,
+	      	}
+	      })
+    		break;
+    	}
+    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;

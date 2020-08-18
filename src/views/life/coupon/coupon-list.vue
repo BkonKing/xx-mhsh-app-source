@@ -4,10 +4,20 @@
 	    <div class="bar-empty"></div>
 		<div class="nav-empty"></div>
 		<div class="nav-box">
-		  <div class="nav-item cur" bindtap="navFun" data-typeval="1">未使用</div>
-		  <div class="nav-item" bindtap="navFun" data-typeval="2">已使用</div>
-		  <div class="nav-item" bindtap="navFun" data-typeval="3">已过期</div>
+			<div v-for="(item, index) in navItems" :class="[index == typeVal-1 ? 'cur' : '','nav-item']" @click="navFun(index+1)" data-typeval="1">{{item}}</div>
+		  <!-- <div :class="['cur' : '','nav-item']" @click="navFun(1)" data-typeval="1">未使用</div>
+		  <div class="nav-item" @click="navFun(2)" data-typeval="2">已使用</div>
+		  <div class="nav-item" @click="navFun(3)" data-typeval="3">已过期</div> -->
 		</div>
+
+    <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text=""
+        @load="onLoad"
+      >
+      
+    </van-list>
 
 		<div class="coupon-list">
 	    <div :class="['coupon-item',typeVal==2||typeVal==3 ? 'coupon-invalid' : '']">
@@ -92,33 +102,76 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, List } from 'vant'
+import { getCoupon } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [List.name]: List,
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       typeVal: 1,
       navItems: ['未使用', '已使用', '已过期'],
-      current: 0,
-      msg: '一个订单只能使用一张优惠券；\n可与其他活动优惠同时享受（提示不可用券的除外）；\n订单申请退款，优惠券不退回；'
+      msg: '一个订单只能使用一张优惠券；\n可与其他活动优惠同时享受（提示不可用券的除外）；\n订单申请退款，优惠券不退回；',
+
+      listData: [],   //数据列表
+      page: 1,   //页码
+      pageSize: 10,  //分页条数
+      isEmpty: false, //是否为空
+      loading: false,
+      finished: false
     }
   },
   methods: {
-    onClickItem (e) {
-      if (this.current !== e.currentTarget.dataset.currentindex) {
-        this.current = e.currentTarget.dataset.currentindex
+    navFun (index) {
+      this.typeVal = index;
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+    },
+    onLoad() {
+      // 异步更新数据
+      this.getData();
+      return;
+    },
+    getData () {
+      getCoupon({
+        page: this.page,
+        type: this.typeVal
+      }).then(res => {
+        if (res.success) {
+          this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
+          this.isEmpty = this.page == 1 && res.data.length ==0 ? true : false;
+          if(res.data.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          this.loading = false;
+        }
+      })
+    },
+    linkFunc(type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
       }
-    }
+    },
   }
 }
 </script>
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/nav.css"></style>
+<style scoped  src="../../../styles/coupon.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/nav.css';
-@import '../../../styles/coupon.css';
 .app-body {
 	background-color: #f2f2f4;
 	font-size: 28px;

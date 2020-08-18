@@ -12,16 +12,16 @@
       </div>
       
       <div class="right-header">
-        <div class="right-nav">
+        <div v-if="navList.length > 0" class="right-nav">
           <scrollBar direction="x" :activeIndex="activeIndex">
             <div
               class="scroll-barItem"
-              v-for="(item, index) in options"
+              v-for="(item, index) in navList"
               :key="index"
-              @click="changeNav(item, index)"
+              @click="changeNav(index, item.id)"
               :class="index === activeIndex ? 'active' : null"
             >
-              <div>{{item.name}}</div>
+              <div>{{item.category_name}}</div>
             </div>
           </scrollBar>
         </div>
@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <div v-if="1==2" class="empty-188"></div>
+    <div v-if="navList.length == 0" class="empty-188"></div>
     <div v-else class="empty-276"></div>
 		
     <!-- <div class="">
@@ -43,24 +43,24 @@
     </div> -->
     <div class="classify-cont">
       <div class="classify-nav">
-        <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category}}</div>
+        <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
       </div>
       <div class="classify-right">
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
+          finished-text=""
           @load="onLoad"
         >
           <div class="classify-list">
-            <div v-for="(item,index) in list" class="classify-item flex-between" :data-id="2" @click="linkFunc(5,{id:2})">
-              <img class="res-goods-pic" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
+            <div v-for="(item,index) in listData" class="classify-item flex-between" :data-id="2" @click="linkFunc(5,{id:item.id})">
+              <img class="res-goods-pic" :src="item.thumb" />
               <div class="res-goods-info">
-                <div class="res-goods-name res-name p-nowrap">拍立得相机富士mini90 热门复古相</div>
-                <div class="flex-align-center">
-                  <div class="res-goods-label res-goods-label-tm">特卖</div>
+                <div class="res-goods-name res-name p-nowrap">{{item.goods_name}}</div>
+                <div v-if="item.goods_type>1" class="flex-align-center">
+                  <div :class="[item.goods_type == 2 ? 'res-goods-label-tm' : 'res-goods-label-xssg','res-goods-label']">{{item.goods_type == 2 ? '特卖' : '限时闪购'}}</div>
                 </div>
-                <div class="res-goods-price">￥3800.00 <span>￥4000.00</span></div>
+                <div class="res-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0.00'">￥{{item.y_price}}</span></div>
               </div>
             </div>
           </div>
@@ -74,6 +74,7 @@
 <script>
 import { TreeSelect, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
+import { getClassifyGoods } from '@/api/life.js'
 export default {
   components: {
     [TreeSelect.name]: TreeSelect,
@@ -84,32 +85,85 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       leftActiveIndex: 0,
-      leftNav: [
-        {id: 2, category: '休闲零食' },
-        {id: 3, category: '酒水' },
-        {id: 4, category: '冰饮' },
-        {id: 7, category: '休闲零食' }
-      ],
+      leftNav: [],
       activeIndex: 0,  //右侧菜单选中项
-      options: [
-        {id: 1, name: '首页'},
-        {id: 2, name: '精选'},
-        {id: 3, name: '限时抢购'},
-        {id: 4, name: '热门推荐'},
-        {id: 5, name: '聚划算'},
-        {id: 6, name: '热门推荐'}, 
-      ],
+      category_id: '',  //分类id
+      navList: [],
 
       sort_val: 0,         //排序（0.默认/无筛选 1.销量降序 2.价格升序 3.价格降序）
-
-      list: [1,2,3,4],
+      
+      page: 1,         //页码
+      listData: [],
       loading: false,
       finished: false
     }
   },
   methods: {
-    onSubmit: function () {
+    getGoodsData () {
+      getClassifyGoods({
+        page: this.page,
+        category_id: this.category_id,
+        order_type: this.sort_val
+      }).then(res => {
+        if (res.success) {
+          console.log(this.leftNav.length);
+          if(this.leftNav.length == 0){
+            this.leftNav = res.data.category_list;
+            if(res.data.category_list[this.leftActiveIndex].children){
+              this.navList = res.data.category_list[this.leftActiveIndex].children
+            }
+          }
 
+          this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list);
+          this.isEmpty = this.page == 1 && res.data.goods_list.length ==0 ? true : false;
+          if(res.data.goods_list.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          this.loading = false;
+        }
+      })
+    },
+    onLoad() {
+      this.getGoodsData();
+    },
+    //左侧菜单点击
+    categoryNav(index, id) {
+      this.leftActiveIndex = index;
+      this.category_id = this.leftNav[index].id;
+      if(this.leftNav[index].children){
+        this.navList = this.leftNav[index].children;
+        this.category_id = this.leftNav[index].children[0].id
+      }else {
+        this.navList = [];
+      }
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+    },
+    //右侧菜单点击
+    changeNav(index, id) {
+      this.activeIndex = index;
+      this.category_id = id;
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+    },
+    // 排序
+    sortFunc: function (sort='') {
+      if(sort == 23){
+        if(this.sort_val == 0 || this.sort_val == 1){
+          this.sort_val = 2;
+        }else {
+          this.sort_val = this.sort_val == 2 ? 3 : 0;
+        }
+      }else {
+        this.sort_val = this.sort_val == 1 ? 0 : sort;
+      }
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
     },
     linkFunc (type,obj={}) {
       switch (type){
@@ -126,75 +180,12 @@ export default {
         break;
       }
     },
-    onLoad() {
-      
-      // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      if (this.list.length >= 40) {
-        this.finished = true;
-        console.log(222);
-      }else {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-
-        // 加载状态结束
-        this.loading = false;
-      }
-    
-      // setTimeout(() => {
-        
-      // }, 1000);
-    },
-    //左侧菜单点击
-    categoryNav(index, id) {
-      this.leftActiveIndex = index;
-    },
-    //右侧菜单点击
-    changeNav(item, index) {
-      this.activeIndex = index;
-    },
-    // 排序
-    sortFunc: function (sort='') {
-      
-      if(sort == 23){
-        if(this.sort_val == 0 || this.sort_val == 1 || this.sort_val == 3){
-          this.sort_val = 2;
-        }else {
-          this.sort_val = 3;
-        }
-      }else {
-        this.sort_val = sort;
-      }
-      console.log(this.sort_val);
-      return;
-      
-      if (sort_type =='default'){
-        self.setData({
-          sort_val: 1
-        })
-      }else {
-        if (self.data.sort_val == 2){
-          self.setData({
-            sort_val: 3
-          })
-        }else {
-          self.setData({
-            sort_val: 2
-          })
-        }
-      }
-      wx.pageScrollTo({
-        scrollTop: 0,
-        duration: 0
-      })
-    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -293,6 +284,7 @@ export default {
 }
 .scroll-barItem {
   font-size: 26px;
+  display: inline-block;
 }
 .scroll-barItem div {
   height: 100px;

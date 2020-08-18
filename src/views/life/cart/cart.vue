@@ -1,41 +1,45 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
-		<div class="cart-session">
+		<div v-if="carts.length" class="cart-session">
 			<div class="cart-list">
-	      <div class="cart-item cart-item-sg" v-for="(item,index) in carts" @click="linkFunc(5)">
-	        <div class="cart-checkbox cur" @click.stop="checkboxOne(index)" data-index="">
+	      <div :class="[item.goods_type == 2 ? 'cart-item-tm' : '','cart-item']" v-for="(item,index) in carts" @click="linkFunc(5,{id: item.goods_id})">
+	        <div :class="[item.is_checked ? 'cur' : '', 'cart-checkbox']" @click.stop="checkboxOne(index)">
 	          <div class="checkbox-session"></div>
 	        </div>
 	        <div class="cart-cont" hover-class="none">
 	          <div class="product-pic">
-	            <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
+	            <img class="img-100" mode="aspectFill" :src="item.specs_img" />
 	          </div>
 	          <div class="product-info">
-	            <div class="product-name p-nowrap">日本索尼拍立得相机富士mini90</div>
-	            <div class="product-specs">黑色</div>
-	            <div class="flex-align-center"><div class="product-icon flex-center">限时闪购</div></div>
-	            <div class="product-price">￥<span>3800.00</span> <span>￥4000.00</span></div>
+	            <div class="product-name p-nowrap">{{item.goods_name}}</div>
+	            <div class="product-specs">{{item.specs_name}}</div>
+	            <div v-if="item.goods_type == 2" class="flex-align-center"><div class="product-icon flex-center">特卖</div></div>
+	            <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
 	          </div>
 	        </div>
 	        <div class="cart-operate">
-	          <div class="operate-btn product-sub flex-between" @click.stop="countTab(-1,index)"></div>
+	          <div class="operate-btn product-sub flex-between" @click.stop="countTab(index,-1)"></div>
 	          <div class="shop-btn-block">
-	            <div class="shop-num">11</div>
+	            <div class="shop-num">{{item.count}}</div>
 	          </div>
-	          <div class="operate-btn product-add not-add flex-between" data-types="1" @click.stop="countTab(1,index)"></div>
+	          <div :class="[item.count >= item.max_buy ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
 	        </div>
 	        <div class="product-del" @click.stop="delCarts(index)" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>
 	    </div>
 		</div>
+    <div v-else class="empty-session">
+      <img src="@/assets/img/empty_cart.png" />
+      <div>暂无商品</div>
+    </div>
     <div class="cart-empty"></div>
     <div class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
-        <div class="all-checkbox" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
-        <div class="all-price"><span>合计：</span>￥55</div>
-        <div class="all-go flex-center" @click="payFunc">结算(2)</div>
+        <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
+        <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
+        <div class="all-go flex-center" @click="payFunc">结算({{numTotal}})</div>
       </div>
     </div>
 	</div>
@@ -43,6 +47,7 @@
 
 <script>
 import { NavBar, Toast } from 'vant'
+import { getCart } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -52,24 +57,38 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       checked: false,
-      carts: [1, 2, 3, 4, 5, 6],
 
-      // carts: [],           //购物车
+      carts: [],           //购物车
       priceTotal: '',      //支付总额
       numTotal: '',        //支付商品总件数
       noneHidden: true,    //购物车是否为空
       allSelected: true,   //全选
-      discountInfo: '',    //优惠信息
     }
   },
+  created(){
+    var carts = JSON.parse(localStorage.getItem('cart'));
+    this.carts = carts;
+    this.total();
+    console.log(carts);
+    // this.getData();
+  },
   methods: {
-    linkFunc (type) {
+    getData(){
+      getCart({
+        giftbag: JSON.stringify(this.carts)
+      }).then(res => {
+        if (res.success) {
+          this.navList = res.data
+        }
+      })
+    },
+    linkFunc (type,obj={}) {
       switch (type){
         case 5:
         this.$router.push({
           path: '/store/goods-detail',
           query: {
-            id: 1
+            id: obj.id
           }
         })
         break;
@@ -84,22 +103,20 @@ export default {
       }
     },
     // 商品数量加减
-    countTab(types,index) {
-      let indexTab = index;
-      if (parseInt(this.carts[indexTab].count) + types > 0) {
-        let arrcount_val = "carts[" + indexTab + "].count";
-        this.carts[" + indexTab + "].count = parseInt(this.carts[indexTab].count) + types;
+    countTab(index, types) {
+      if(types === 1 && this.carts[index].count >= this.carts[index].max_buy) return;
+      if (parseInt(this.carts[index].count) + types > 0) {
+        this.carts[index].count = parseInt(this.carts[index].count) + types;
       } else {
-        this.delOne(indexTab);
+        this.delOne(index);
       }
-      localStorage.setItem('cart', this.carts);
+      localStorage.setItem('cart', JSON.stringify(this.carts));
       this.total();
     },
     //点击删除按钮
     delCarts(index) {
-      let indexTab = index;
-      this.delOne(indexTab);
-      localStorage.setItem('cart', this.carts);
+      this.delOne(index);
+      localStorage.setItem('cart', JSON.stringify(this.carts));
       this.total();
     },
     // 删除购物车中的某个商品
@@ -108,18 +125,14 @@ export default {
       let carts_arr = this.carts;
       carts_arr.splice(indexTab, 1);
       this.carts = carts_arr;
-      if (this.carts.length < 1) {
-        this.noneHidden = false;
-      }
     },
     /**
      * 勾选/取消单个商品
     */
     checkboxOne(index) {
       let indexTab = index;
-      let u = "carts[" + indexTab + "].is_checked";
-      this.carts[" + indexTab + "].is_checked = !this.carts[indexTab].is_checked
-      localStorage.setItem('cart', this.carts);
+      this.carts[index].is_checked = !this.carts[indexTab].is_checked;
+      localStorage.setItem('cart', JSON.stringify(this.carts));
       this.total();
     },
     /**
@@ -133,7 +146,7 @@ export default {
       }
       this.carts = carts_arr;
       this.allSelected = !is_checked;
-      wx.setStorageSync('cart', this.carts);
+      localStorage.setItem('cart', JSON.stringify(this.carts));
       this.total();
     },
     /**
@@ -141,40 +154,48 @@ export default {
      */
     total() {
       let carts_arr = this.carts;
-      let carts_list = [];
-      let numTotal = 0;
-      let priceTotal = 0;
-      let checked_num = 0;
-      for (var j in carts_arr) {
-        if (carts_arr[j].is_checked){
-          checked_num++;
-          numTotal += parseInt(carts_arr[j].count);
-          priceTotal += parseFloat(carts_arr[j].count * carts_arr[j].pay_price);
-        }
-      }
-      this.allSelected = checked_num === carts_arr.length ? true : false;
-      this.numTotal = numTotal;
-      this.priceTotal = 0 ? '0.00' : priceTotal.toFixed(2);
-      if (numTotal > 0) {
-        app.util.request({
-          'url': '/xcx/wxvipjson/common_pay',
-          'cachetime': '0',
-          'showLoading': false,
-          'data': {
-            uid: this.userId,
-            giftbag: JSON.stringify(this.carts),
-          },
-          success(res) {
-            let result = res.data;
-            // that.setData({
-            //   discountInfo: result.data,
-            //   carts: result.goods_arr,
-            //   priceTotal: (result.data.total_pay_price).toFixed(2)
-            // })
-            wx.setStorageSync('cart', result.goods_arr);
+      if(carts_arr.length < 1){
+        this.numTotal = 0;
+        this.priceTotal = '0.00';
+        this.allSelected = false;
+      }else{
+        let carts_list = [];
+        let numTotal = 0;
+        let priceTotal = 0;
+        let checked_num = 0;
+        for (var j in carts_arr) {
+          if (carts_arr[j].is_checked){
+            checked_num++;
+            numTotal += parseInt(carts_arr[j].count);
+            priceTotal += parseFloat(carts_arr[j].count * carts_arr[j].pay_price);
           }
-        });
-      }
+        }
+        this.allSelected = checked_num === carts_arr.length ? true : false;
+        this.numTotal = numTotal;
+        this.priceTotal = 0 ? '0.00' : (priceTotal/100).toFixed(2);
+        if (numTotal > 0) {
+          this.getData();
+          return;
+          app.util.request({
+            'url': '/xcx/wxvipjson/common_pay',
+            'cachetime': '0',
+            'showLoading': false,
+            'data': {
+              uid: this.userId,
+              giftbag: JSON.stringify(this.carts),
+            },
+            success(res) {
+              let result = res.data;
+              // that.setData({
+              //   discountInfo: result.data,
+              //   carts: result.goods_arr,
+              //   priceTotal: (result.data.total_pay_price).toFixed(2)
+              // })
+              wx.setStorageSync('cart', result.goods_arr);
+            }
+          });
+        }
+      } 
     },
     /**
      * 结算
@@ -191,8 +212,8 @@ export default {
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -313,11 +334,14 @@ export default {
   z-index: 5;
   position: relative;
 }
-.product-sub {
+.product-sub::after {
   background: url('https://bht.liwushijian.com/library/img/xcx_img/sub.png') no-repeat center center/16px 16px;
 }
-.product-add {
+.product-add::after {
   background: url('https://bht.liwushijian.com/library/img/xcx_img/add.png') no-repeat center center/16px 16px;
+}
+.product-add.not-add::after {
+  background-color: #ccc;
 }
 .operate-btn::after {
   position: absolute;

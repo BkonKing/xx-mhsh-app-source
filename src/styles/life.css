@@ -188,14 +188,14 @@ div.no-top-border {
 }
 
 /*弹窗2*/
-.publick-mask {
+.public-mask {
   background-color: #fff;
   border-radius: 10px 10px 0 0;
   z-index: 102;
   padding: 0 30px 40px;
   color: #222;
 }
-.publick-header {
+.public-header {
   height: 112px;
   line-height: 112px;
   text-align: center;
@@ -203,7 +203,7 @@ div.no-top-border {
   font-weight: bold;
   position: relative;
 }
-.publick-dclose {
+.public-dclose {
   display: flex;
   position: absolute;
   top: -90px;
@@ -211,4 +211,30 @@ div.no-top-border {
   width: 70px;
   height: 70px;
   padding: 10px;
+}
+
+/*弹窗*/
+.mask-block {
+	height: 528px;
+	padding: 0 50px;
+}
+.mask-tit {
+	height: 120px;
+	border-bottom-color: #f0f0f0;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.mask-cont {
+	margin: 58px 0;
+	overflow: visible;
+}
+.mask-cont-text {
+	line-height: 46px;
+}
+.mask-btn div.mask-sure-btn {
+	align-items: center;
+	width: 100%;
 }

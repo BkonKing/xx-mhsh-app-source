@@ -6,15 +6,16 @@
       <scrollBar direction="x" :activeIndex="activeIndex">
         <div
           class="scroll-barItem"
-          v-for="(item, index) in options"
+          v-for="(item, index) in navList"
           :key="index"
           @click="changeNav(item, index)"
           :class="index === activeIndex ? 'active' : null"
         >
-          <div>{{item.name}}</div>
+          <div>{{item.bargain_name}}</div>
         </div>
       </scrollBar>
     </div>
+    <div class="nav-empty"></div>
     <van-list
         v-model="loading"
         :finished="finished"
@@ -22,23 +23,36 @@
         @load="onLoad"
       >
       <div class="special-list flex-between">
-        <div v-for="(item,index) in list" class="special-item" @click="linkFunc(5)">
+        <div v-for="(item,index) in listData" class="special-item" @click="linkFunc(5,{id:item.id})">
           <div class="special-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+            <img class="img-100" :src="item.thumb" />
           </div>
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
+          <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
           <div class="special-goods-price flex-align-center">
             <div class="goods-price-icon flex-align-center">
-              <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
+              <div class="goods-price-bg flex-align-center">特卖￥<span>{{item.te_price}}</span></div>
               <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
             </div>
-            <div class="goods-old-price">￥46</div>
+            <div class="goods-old-price">￥{{item.s_price}}</div>
           </div>
         </div>
       </div>
     </van-list>
     <div v-show="false" class="special-list flex-between">
-      <div class="special-item">
+      <div v-for="(item,index) in listData" class="special-item">
+        <div class="special-goods-pic">
+          <img class="img-100" :src="item.thumb" />
+        </div>
+        <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
+        <div class="special-goods-price flex-align-center">
+          <div class="goods-price-icon flex-align-center">
+            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
+            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
+          </div>
+          <div class="goods-old-price">￥46</div>
+        </div>
+      </div>
+      <!-- <div class="special-item">
         <div class="special-goods-pic">
           <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
         </div>
@@ -89,20 +103,7 @@
           </div>
           <div class="goods-old-price">￥46</div>
         </div>
-      </div>
-      <div class="special-item">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-icon flex-align-center">
-            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
-            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
-          </div>
-          <div class="goods-old-price">￥46</div>
-        </div>
-      </div>
+      </div> -->
     </div>
 	</div>
 </template>
@@ -110,6 +111,7 @@
 <script>
 import { NavBar, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
+import { getSaleNav,getSaleGoods } from '@/api/life.js'
 export default {
   name:'specialSale',
   components: {
@@ -120,41 +122,56 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      activeIndex: 0,
-      options: [
-        {id: 1, name: '全部'},
-        {id: 2, name: '9.9封顶'},
-        {id: 3, name: '19.9封顶'},
-        {id: 4, name: '29.9封顶'},
-      ],
-
-      list: [1,2,3,4],
+      activeIndex: 0,//菜单选中项
+      navList: [],  //菜单
+      listData: [],   //数据列表
+      page: 1,   //页码
+      pageSize: 10,  //分页条数
+      isEmpty: false, //是否为空
       loading: false,
       finished: false
     }
   },
+  created () {
+    this.getData();
+  },
   methods: {
     changeNav(item, index) {
       this.activeIndex = index;
+      this.bargain_id = this.navList[index].id;
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+      // this.getGoodsData();
     },
     onLoad() {
       // 异步更新数据
-      // setTimeout 仅做示例，真实场景中一般为 ajax 请求
-      if (this.list.length >= 40) {
-        this.finished = true;
-        console.log(222);
-      }else {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
+      this.getGoodsData();
+      return;
+    },
+    getData () {
+      getSaleNav().then(res => {
+        if (res.success) {
+          this.navList = res.data
         }
-
-        // 加载状态结束
-        this.loading = false;
-      }
-    
-      // setTimeout(() => {
-        
-      // }, 1000);
+      })
+    },
+    getGoodsData () {
+      getSaleGoods({
+        page: this.page,
+        bargain_id: this.bargain_id
+      }).then(res => {
+        if (res.success) {
+          this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
+          this.isEmpty = this.page == 1 && res.data.length ==0 ? true : false;
+          if(res.data.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          this.loading = false;
+        }
+      })
     },
     linkFunc(type,obj={}) {
       switch (type){
@@ -172,8 +189,8 @@ export default {
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -183,9 +200,17 @@ export default {
   height: 98px;
   background-color: #fff;
   padding: 0 30px;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 88px;
+}
+.nav-empty {
+  height: 98px;
 }
 .scroll-barItem {
   font-size: 30px;
+  display: inline-block;
 }
 .scroll-barItem div {
   height: 98px;

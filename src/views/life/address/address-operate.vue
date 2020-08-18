@@ -1,28 +1,28 @@
 <template>
   <div class="app-body" :style="{ 'min-height': windowHeight+'px' }">
-    <div class="order-bar bar-white"><van-nav-bar title="添加/修改地址" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar title="添加/修改地址" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="form-list">
 			<div class="form-item flex-align-center">
 				<div class="item-name flex-align-center"><div class="color-222 font-28">收货人</div></div>
 				<div class="itemt-text">
-					<input class="itemt-input" type="text" name="name" @input="nameFunc" v-model="uname" placeholder="姓名" />
+					<input class="itemt-input" type="text" name="name" @input="nameFunc" v-model="realname" placeholder="姓名" />
 				</div>
 				<div class="address-line"></div>
 			</div>
 			<div class="form-item flex-align-center">
 				<div class="item-name flex-align-center"><div class="color-222 font-28">手机号码</div></div>
 				<div class="itemt-text">
-					<input class="itemt-input" type="number" name="phone" @input="telFunc" v-model="utel" placeholder="11位手机号" maxlength='11' />
+					<input class="itemt-input" type="number" name="phone" @input="telFunc" v-model="mobile" placeholder="11位手机号" maxlength='11' />
 				</div>
 				<div class="address-line"></div>
 			</div>
-			<div class="form-item flex-align-center address-choose">
+			<div @click="linkFunc(25)" class="form-item flex-align-center address-choose">
 				<div class="item-name flex-align-center"><div class="color-222 font-28">收货地址</div></div>
-				<template v-if="uaddress_detail">
-					<div v-if="uaddress_name" class="itemt-text two-text">
-						<div class="p-nowrap">{{uaddress_name}}</div>
-						<div class="p-nowrap" hidden="true">{{uaddress_detail}}</div>
+				<template v-if="address_detail">
+					<div v-if="address_name" class="itemt-text two-text">
+						<div class="p-nowrap">{{address_name}}</div>
+						<div class="p-nowrap" hidden="true">{{address_detail}}</div>
 					</div>
 					<div v-else class="itemt-text">
 						<div class="p-nowrap">ddgaweg</div>
@@ -40,7 +40,7 @@
 			<div class="form-item flex-align-center">
 				<div class="item-name flex-align-center"></div>
 				<div class="itemt-text">
-					<input class="itemt-input" type="text" name="uaddress_house" v-model="uaddress_house" @input="houseFunc" placeholder="楼号/单元/门牌号" />
+					<input class="itemt-input" type="text" name="address_house" v-model="address_house" @input="houseFunc" placeholder="楼号/单元/门牌号" />
 				</div>
 			</div>
 		</div>
@@ -80,7 +80,7 @@
     <div class="del-btn flex-center" v-if="1==1" @click="delAddress"><div class="color-eb5841 font-30">删除地址</div></div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
-			<div :class="['submit-btn', btnDisabled ? 'submit-btn-unable' : '']">
+			<div @click="onSubmit" :class="['submit-btn', btnDisabled ? 'submit-btn-unable' : '']">
 				<div class="color-fff font-30">保存</div>
 			</div>
 		</div>
@@ -122,11 +122,15 @@
 </template>
 
 <script>
-import { NavBar, Toast } from 'vant'
+import { NavBar, Toast, Dialog } from 'vant'
+import { getAddressInfo, addAddress, updateAddress, deleteAddress } from '@/api/life.js'
+import eventBus from '@/api/eventbus.js';
 export default {
+  name: 'addressEdit',
   components: {
     [NavBar.name]: NavBar,
-    [Toast.name]: Toast
+    [Toast.name]: Toast,
+    [Dialog.name]: Dialog
   },
   data () {
     return {
@@ -147,11 +151,11 @@ export default {
 
       userId: '', // 用户uid
       btnDisabled: true, // 保存按钮是否能点击
-      uname: '', // 用户名
-      utel: '', // 手机号
-      uaddress_name: '', // 收货地址名称
-      uaddress_detail: '', // 收货地址详情
-      uaddress_house: '', // 收货地址门牌号
+      realname: '', // 用户名
+      mobile: '', // 手机号
+      address_name: '', // 收货地址名称
+      address_detail: '', // 收货地址详情
+      address_house: '', // 收货地址门牌号
       lat: '', // 经度
       lng: '', // 纬度
       addrId: '', // 上个页面传的地址id
@@ -171,6 +175,30 @@ export default {
   // 		this.addrId = options.addrId;
   // 	}
   // },
+  created(){
+    console.log(23211);
+    this.addrId = this.$route.query.id;
+    if(this.addrId){
+      this.getData();
+    }
+    eventBus.$off('chooseMap');
+    console.log(this.$route);
+  },
+  mounted(){
+    var that = this;
+    //根据key名获取传递回来的参数，data就是map
+    eventBus.$on('chooseMap', function(data){
+      var addressData = JSON.parse(data);
+      
+      that.address_name = addressData.name;
+      that.address_detail = addressData.address;
+      that.lon = addressData.lon;
+      that.lat = addressData.lat;
+      alert(that.address_name);
+      // this.city = addressData.city;
+      // alert(data);
+    }.bind(this));
+  },
   methods: {
     /**
 			 * 获取姓名
@@ -191,28 +219,59 @@ export default {
       this.isAble()
     },
     /**
-			 * 提交
-			*/
-    formSubmit: function (e) {
+		 * 提交
+		*/
+    onSubmit: function (e) {
       const that = this
       // console.log(adds);return;
-      that.btnDisabled = true
+      that.btnDisabled = true;
+      var obj = {
+        id: that.addrId,
+        realname: that.realname,
+        mobile: that.mobile,
+        address_name: that.address_name,
+        address_detail: that.address_detail,
+        address_house: that.address_house,
+        label_id: that.labelValPost ? that.labelIndex : '',
+        label: that.labelValPost,
+        is_default: that.switchChecked ? 1 : 0,
+        lat: that.lat,
+        lng: that.lng,
+      }
+      if(that.addrId){
+        updateAddress(obj).then(res => {
+          if (res.success) {
+            Toast(res.message);
+            this.$router.go(-1);
+          }
+        })
+      }else {
+        addAddress(obj).then(res => {
+          if (res.success) {
+            Toast(res.message);
+            this.$router.go(-1);
+          }
+        })
+      }
+
+      
+      return;
       app.util.request({
         url: '/xcx/wxjson/edit_address',
         cachetime: '0',
         data: {
-          add_id: that.data.addrId,
-          uname: that.data.uname,
-          utel: that.data.utel,
-          uaddress_name: that.data.uaddress_name,
-          uaddress_detail: that.data.uaddress_detail,
-          uaddress_house: that.data.uaddress_house,
-          ulabel_id: that.data.labelValPost ? that.data.labelIndex : '',
-          ulabel: that.data.labelValPost,
-          is_default: that.data.switchChecked ? 1 : 0,
-          lat: that.data.lat,
-          lng: that.data.lng,
-          uid: that.data.userId
+          add_id: that.addrId,
+          realname: that.realname,
+          mobile: that.mobile,
+          address_name: that.address_name,
+          address_detail: that.address_detail,
+          address_house: that.address_house,
+          label_id: that.labelValPost ? that.labelIndex : '',
+          label: that.labelValPost,
+          is_default: that.switchChecked ? 1 : 0,
+          lat: that.lat,
+          lng: that.lng,
+          uid: that.userId
         },
         success (res) {
           that.btnDisabled = false
@@ -234,72 +293,59 @@ export default {
       })
     },
     /**
-			 * 获取修改地址信息
-			*/
-    getData: function (is_refresh) {
-      const that = this
-      app.util.request({
-        url: '/xcx/wxjson/address_info_json',
-        cachetime: '0',
-        data: {
-          uid: that.data.userId,
-          add_id: that.data.addrId,
-          is_refresh: is_refresh
-        },
-        success (res) {
-          const result = res.data
-          if (result.code = '0000' && is_refresh) {
-            if (result.data.address_info) {
-              const info = result.data.address_info
-              console.log(info)
-              that.setData({
-                btnDisabled: false,
-                uname: info.uname,
-                utel: info.utel,
-                uaddress_name: info.uaddress_name,
-                uaddress_detail: info.uaddress_detail,
-                uaddress_house: info.uaddress_house,
-                labelIndex: info.ulabel_id,
-                swalIndex: info.ulabel_id,
-                switchChecked: info.is_default == 1,
-                labelVal: info.ulabel,
-                labelValPost: info.ulabel,
-                lat: info.lat,
-                lng: info.lng
-              })
-              if (result.data.address_info.ulabel_id === 0) {
-                that.data.customVal = result.data.address_info.ulabel
-              }
-              if (result.data.address_info.ulabel_id !== '' && result.data.address_info.ulabel !== '') {
-                that.setData({
-                  isLabel: 1
-                })
-              }
+		 * 获取修改地址信息
+		*/
+    getData: function () {
+      getAddressInfo({
+        address_id: this.addrId
+      }).then(res => {
+        if (res.success) {
+          if(res.data){
+            let info = res.data;
+            this.btnDisabled = false;
+            this.realname = info.realname;
+            this.mobile = info.mobile;
+            this.address_name = info.address_name;
+            this.address_detail = info.address_detail;
+            this.address_house = info.address_house;
+            this.labelIndex = info.label_id;
+            this.swalIndex = info.label_id;
+            this.switchChecked = info.is_default==1 ? true : false;
+            this.labelVal = info.label;
+            this.labelValPost = info.label;
+            this.lat = info.lat;
+            this.lng = info.lng;
+            if (info.label_id === 0){
+              this.customVal = info.label;
+            }
+            if (info.label_id !== "" && info.label !== ""){
+              this.isLabel = 1;
             }
           }
         }
       })
+      return;
     },
     getadd: function (e) {
       var that = this
       var addid = e.currentTarget.dataset.addkey
-      var resadd = that.data.addressList[addid]
+      var resadd = that.addressList[addid]
       that.setData({
         ucity: resadd.ad_info.province + resadd.ad_info.city + resadd.ad_info.district + resadd.title,
         addHide: true,
         mapHide: false
       })
-      that.data.lat = resadd.location.lat
-      that.data.lng = resadd.location.lng
+      that.lat = resadd.location.lat
+      that.lng = resadd.location.lng
       that.isAble()
     },
     atuoGetLocation (e) {
       const that = this
       qqmapsdk.geocoder({
-        address: that.data.ucity + that.data.uaddress_city, // 用户输入的地址（注：地址中请包含城市名称，否则会影响解析效果），如：'北京市海淀区彩和坊路海淀西大街74号'
+        address: that.ucity + that.uaddress_city, // 用户输入的地址（注：地址中请包含城市名称，否则会影响解析效果），如：'北京市海淀区彩和坊路海淀西大街74号'
         success: res => {
-          that.data.lng = res.result.location.lng
-          that.data.lat = res.result.location.lat
+          that.lng = res.result.location.lng
+          that.lat = res.result.location.lat
         },
         fail: res => {
           console.log(1111)
@@ -311,21 +357,11 @@ export default {
 			*/
     isAble: function (e) {
       const that = this
-      console.log(this.uname.trim(), this.utel.trim(), this.uaddress_house.trim()); return
-      if (that.data.uname.trim() == '' || that.data.utel.trim() == '' || that.data.uaddress_detail == '' || that.data.uaddress_house == '') {
+      console.log(this.realname.trim(), this.mobile.trim(), this.address_house.trim()); return
+      if (that.realname.trim() == '' || that.mobile.trim() == '' || that.address_detail == '' || that.address_house == '') {
         that.btnDisabled = true
       } else {
         that.btnDisabled = false
-      }
-    },
-    /**
-			 * 设置结果
-			*/
-    handler: function (e) {
-      const that = this
-      if (e.detail.authSetting['scope.userLocation']) {
-        that.markHidden = true
-        // that.GetLocation();
       }
     },
     /**
@@ -338,85 +374,21 @@ export default {
 			 * 删除地址
 			*/
     delAddress: function (e) {
-      const that = this
-      wx.showModal({
-        title: '提示',
-        content: '确认删除吗？',
-        success: function (res) {
-          if (res.confirm) {
-            app.util.request({
-              url: '/xcx/wxjson/del_address',
-              cachetime: '0',
-              data: {
-                add_id: that.data.addrId,
-                uid: that.data.userId
-              },
-              success (res) {
-                var result = res.data
-                if (result.code == '0000') {
-                  wx.navigateBack({})
-                } else {
-                  wx.showToast({
-                    title: result.msg,
-                    duration: 2000
-                  })
-                }
-              }
-            })
+      Dialog.confirm({
+        title: '确认删除吗？',
+      }).then(() => {
+        deleteAddress({
+          id: this.addrId
+        }).then(res => {
+          if (res.success) {
+            Toast(res.message);
+            this.$router.go(-1);
           }
-        }
-      })
-    },
-    /**
-			 * 地址选择
-			*/
-    chooseAddress: function (e) {
-      const that = this
-      wx.chooseLocation({
-        success (res) {
-          console.log(res)
-          that.setData({
-            uaddress_name: res.name,
-            uaddress_detail: res.address,
-            uaddress_house: ''
-          })
-          that.data.lat = res.latitude
-          that.data.lng = res.longitude
-          that.isAble()
-        },
-        fail (res) {
-          wx.getSetting({
-            success (res) {
-              if (!res.authSetting['scope.userLocation']) {
-                wx.authorize({
-                  scope: 'scope.userLocation',
-                  success () {
-                  },
-                  fail () {
-                    wx.showModal({
-                      title: '"不荒唐"需要获取您的地理位置',
-                      content: '不荒唐希望获得您的地理位置，以为您提供更好的服务！',
-                      showCancel: false,
-                      success: function (res2) {
-                        if (res2.confirm) {
-                          wx.openSetting({
-                            success: function (data) {
-                              console.log('openSetting success')
-                            },
-                            fail: function (data) {
-                              console.log('openSetting fail')
-                            }
-                          })
-                        }
-                      }
-                    })
-                  }
-                })
-              }
-            }
-          })
-        }
-      })
+        })
+      }).catch(() => {
+        // on cancel
+      });
+      return
     },
     /**
 			 * 自定义标签弹窗
@@ -471,13 +443,6 @@ export default {
       const that = this
       if (that.swalIndex == 0 && that.customVal == '') {
         this.$toast('请填写自定义值')
-        // Toast('');
-        // wx.showToast({
-        // 	title: '请填写自定义值',
-        // 	icon: 'none',
-        // 	duration: 1000,
-        // 	mask: true
-        // })
       } else {
         const labelArr = [that.customVal, '家', '公司', '学校']
         that.labelVal = labelArr[that.swalIndex]
@@ -486,7 +451,24 @@ export default {
         that.labelValPost = labelArr[that.swalIndex]
         that.labelIndex = that.swalIndex
       }
+    },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 25:
+        this.$router.push('/address/map');
+        break;
+      }
+    },
+  },
+  beforeRouteLeave (to, from, next) {
+    // eventBus.$off('chooseMap');
+    // console.log(this.$route);
+    if(to.name == 'addressList'){
+      console.log(to.name)
+      // this.$route.meta.keepAlive = false;
+      // this.$destroy()
     }
+    next();
   }
 }
 </script>

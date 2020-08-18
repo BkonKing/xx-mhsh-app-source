@@ -5,15 +5,15 @@
 
     <div class="flash-header">
       <div class="flash-scroll">
-        <scrollBar direction="x" :activeIndex="activeIndex">
+        <scrollBar direction="x" :tapIndex="tapIndex">
           <div
             class=""
-            v-for="(item, index) in options"
+            v-for="(item, index) in navList"
             :key="index"
             @click="changeNav(item, index)"
-            :class="index === activeIndex ? 'active' : null"
+            :class="[tapIndex == index ? 'cur' : '','flash-nav']"
           >
-            <div :class="[activeIndex == index ? 'cur' : '','flash-nav']">
+            <div>
               <div class="nav-time" v-html="item.start_time_val"></div>
               <div class="nav-line"></div>
               <div class="nav-status">{{item.status_txt}}</div>
@@ -48,7 +48,7 @@
         </div> -->
       </div>
     </div>
-    <!-- <div class="flash-time flash-time-over" wx:if="{{navList[tapIndex].status == 1}}">本场已结束</div> -->
+    <!-- <div class="flash-time flash-time-over" v-if="{{navList[tapIndex].status == 1}}">本场已结束</div> -->
     <div class="flash-time flex-center">
       <div class="count-icon count-icon-left">
         <div class="count-rectangle"></div>
@@ -58,9 +58,10 @@
         <div class="count-rectangle"></div>
         <div class="count-circular"></div>
       </div>
-      <div class="flash-time-text">本场还剩</div>
 
-      <van-count-down class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
+      <div v-show="navList[tapIndex].status == 1" class="flash-time-text">本场已结束</div>
+      <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
+      <van-count-down v-show="navList[tapIndex].status == 2" class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
         <template v-slot="timeData">
           <span class="count-num">{{ timeData.hours }}</span>
           <div class="count-colon"></div>
@@ -69,6 +70,10 @@
           <span class="count-num">{{ timeData.seconds }}</span>
         </template>
       </van-count-down>
+      <div v-show="navList[tapIndex].status == 3">
+        <div class="flash-time-text">即将开始</div>
+      </div>
+        
 
       <!-- <div class="count-time">
         <div class="count-num">23</div>
@@ -78,9 +83,96 @@
         <div class="count-num">23</div>
       </div> -->
     </div>
+    <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text=""
+        @load="onLoad"
+      >
+      <div class="flash-list">
+        <template v-for="(item,index) in listData">
+          <div @click="linkFunc(5,{id:item.goods_id})" :class="[index==0 ? 'item-big' : 'item-small','flash-item']">
+            <div class="flash-goods-pic">
+              <img class="img-100" :src="item.thumb" />
+            </div>
+            <div class="flash-goods-info">
+              <div class="flash-goods-name p-nowrap">{{item.goods_name}}</div>
+              <template v-if="index==0">
+                <div class="flash-price-tip flex-center">
+                  <div v-if="item.price_status==2" class="goods-tip tip-pd flex-center">拼单优惠</div>
+                  <div class="flash-goods-price">
+                    <span class="goods-price-span1">￥</span>{{item.now_price}}
+                    <span class="goods-price-span2">￥{{item.y_price}}</span>
+                  </div>
+                </div>
+              </template>
+              <template v-else>
+                <div class="goods-tip-block">
+                  <div v-if="item.price_status==2" class="goods-tip tip-pd">拼单优惠</div>
+                </div>
+                <div class="flash-goods-price">
+                  <span class="goods-price-span1">￥</span>{{item.now_price}}
+                  <span class="goods-price-span2">￥{{item.y_price}}</span>
+                </div>
+              </template>
+            </div>
+            <div class="item-btn">
+              <template v-if="tapStatus > 1">
+                <template v-if="tapStatus == 2">
+                  <template v-if="item.goods_num > 0 && item.is_over == 0">
+                    <div class="btn-collage" v-if="item.price_status == 1 && item.is_partake">邀请拼单</div>
+                    <div class="btn-flash" v-else>马上抢</div>
+                  </template>
+                  <div v-else class="btn-over">已抢光</div>
+                </template>
+                <template v-else>
+                  <div v-if="!item.is_set" class="btn-remind flex-center" @click="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+                </template>
+              </template>
+              <!-- <div class="btn-flash">马上抢</div> -->
+              <!-- <div class="btn-collage">邀请拼单</div> -->
+              <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
+              <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
+              <!-- <div class="btn-over">已抢光</div> -->
+            </div>
+          </div>
+          <div v-show="false" class="flash-item item-small">
+            <div class="flash-goods-pic">
+              <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+            </div>
+            <div class="flash-goods-info">
+              <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
+              <div class="goods-tip-block">
+                <div class="goods-tip tip-pd">拼单优惠</div>
+              </div>
+              <div class="flash-goods-price">
+                <span class="goods-price-span1">￥</span>180
+                <span class="goods-price-span2">￥150</span>
+              </div>
+            </div>
+            <template v-if="tapStatus > 1">
+              <template v-if="tapStatus == 2">
+                <div v-if="item.goods_num > 0 && item.is_over == 0" class="item-btn">
+                  <div class="btn-collage" v-if="item.price_status == 1 && item.is_partake">邀请拼单</div>
+                  <div class="btn-flash" v-else>马上抢</div>
+                </div>
+                <div v-else class="item-status">已抢光</div>
+              </template>
+              <template v-else>
+                <div v-if="!item.is_set" class="item-btn">
+                  <div class="btn-remind" @click="remindFunc(index,item.goods_id)"><image src="@/assets/img/icon_01.png"></image>提醒</div>
+                </div>
+                <div v-else class="item-status">已设提醒</div>
+              </template>
+            </template>
+          </div>
+        </template>
+      </div>
+    </van-list>
 
     <div class="flash-list">
-      <template v-if="1==1">
+      <template v-if="1==2">
         <div class="flash-item item-big">
           <div class="flash-goods-pic">
             <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -96,11 +188,11 @@
             </div>
           </div>
           <div class="item-btn">
-            <!-- <div class="btn-flash">马上抢</div> -->
+            <div class="btn-flash">马上抢</div>
             <!-- <div class="btn-collage">邀请拼单</div> -->
             <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
             <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-            <div class="btn-over">已抢光</div>
+            <!-- <div class="btn-over">已抢光</div> -->
           </div>
 
         </div>
@@ -162,7 +254,7 @@
           <div class="item-btn">
             <!-- <div class="btn-flash">马上抢</div> -->
             <!-- <div class="btn-collage">邀请拼单</div> -->
-            <div class="btn-remind flex-center" @click.stop="remindFunc(index,item.id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+            <div class="btn-remind flex-center" @click.stop="remindFunc(index,10)"><img src="@/assets/img/icon_01.png" />提醒</div>
             <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
             <!-- <div class="btn-over">已抢光</div> -->
           </div>
@@ -213,26 +305,28 @@
 </template>
 
 <script>
-import { NavBar, CountDown } from 'vant'
+import { NavBar, CountDown,List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './../components/remind-swal'
+import { mapGetters } from 'vuex'
+import { getFlashNav,getFlashGoods } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
+    [List.name]: List,
     scrollBar,
     remindSwal
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      time: 11 * 60 * 60 * 1000,
+      time: '',
       navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶'],
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
-
-      activeIndex: 2,
-      options: [
+      model_txt: '',//通知消息提示词
+      navList: [
         {
           start_time_val: '4月30日\n21:00',
           status_txt: "已结束"
@@ -263,12 +357,61 @@ export default {
       listData: [],          //页面数据列表
       noMoreHidden: true,    //上拉加载更多，没有更多是否隐藏
       userId: '',            //用户uid   
-      page: 1,               //分页页码
+      pageSize: 10,  //分页条数
+      isEmpty: false, //是否为空
+      loading: false,
+      finished: true
     }
   },
+  computed: {
+    ...mapGetters(['userInfo']),
+  },
+  created () {
+    this.getData();
+  },
   methods: {
-    onSubmit: function () {
-
+    onLoad() {
+      // 异步更新数据
+      console.log(2);
+      this.getGoodsData();
+      return;
+    },
+    getData () {
+      getFlashNav().then(res => {
+        if (res.success) {
+          this.navList = res.data.nav_list;
+          this.tapIndex = res.data.tap_index;
+          this.tapStatus = res.data.nav_list[res.data.tap_index].status;
+          this.model_txt = res.data.model_txt;
+          this.ollage_id = res.data.nav_list[res.data.tap_index].id;
+          this.finished = false;
+          if(this.tapStatus == 2){
+            let newTime = parseInt(new Date().getTime());
+            console.log(newTime)
+            this.time = res.data.nav_list[res.data.tap_index].over_time*1000-newTime;
+            this.$nextTick(() => {
+              this.start();
+            });
+          }
+        }
+      })
+    },
+    getGoodsData () {
+      getFlashGoods({
+        page: this.page,
+        ollage_id: this.ollage_id
+      }).then(res => {
+        if (res.success) {
+          this.listData = this.page == 1 ? res.data.list_data : this.listData.concat(res.data.list_data);
+          this.isEmpty = this.page == 1 && res.data.list_data.length ==0 ? true : false;
+          if(res.data.list_data.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          this.loading = false;
+        }
+      })
     },
     //倒计时开始
     start() {
@@ -284,24 +427,19 @@ export default {
     },
     //菜单点击
     changeNav(item, index) {
-      this.activeIndex = index;return;
-
-      const self = this;
-      let tapIndex = e.currentTarget.dataset.index;
-      self.setData({
-        tapIndex: tapIndex,
-        tapStatus: self.data.navList[tapIndex].status,
-      })
-      self.data.page = 1;
-      self.data.noMoreHidden = true;
-      self.data.ollage_id = self.data.navList[tapIndex].id;
-      //如果当前点击的是即将开始，判断当前时间是否大于开始时间
+      this.tapIndex = index;
+      this.tapStatus = this.navList[index].status;
+      this.ollage_id = this.navList[index].id;
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
       let newTime = parseInt(new Date().getTime()/1000);
-      let startTime = self.data.navList[tapIndex].start_time;
-      if(newTime >=startTime && self.data.tapStatus == 3){   //当前时间大于等于活动开始时间
-        self.getData();
-      }else {
-        self.getGoods();
+      let startTime = this.navList[index].start_time;
+      console.log(newTime,startTime);
+      if(newTime >=startTime && this.tapStatus == 3){
+        if(newTime >=startTime){   //当前时间大于等于活动开始时间
+          this.getData();
+        }
       }
     },
     closeSwal(data){
@@ -312,7 +450,8 @@ export default {
     /**
      * 提醒
     */
-    remindFunc: function (e) {
+    remindFunc(index, id) {
+      this.showSwal = true;
       const self = this;
       let set_id =  e.currentTarget.dataset.id;
       let tap_index = e.currentTarget.dataset.index;
@@ -333,7 +472,7 @@ export default {
       }else {
         self.data.set_status =  newTime+600<overTime ? 0 : 1;
         self.setData({
-          'swalObj.swalTxt': newTime+600<overTime ? self.data.model_list[0] : self.data.model_list[1],
+          'swalObj.swalTxt': newTime+600<overTime ? self.data.model_txt[0] : self.data.model_txt[1],
           'swalObj.swalShow': true
         })
       }
@@ -369,12 +508,24 @@ export default {
         })
       }, [self.data.tmplIds_str[self.data.set_status]]);
     },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+      }
+    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -383,7 +534,8 @@ export default {
 /*菜单*/
 .flash-scroll {
   height: 218px;
-  background-image: linear-gradient(to right, #ffa912, #ffa812);
+  background-image: linear-gradient(to bottom, #38b3ef, #68e0cf);
+  /*background-image: linear-gradient(to right, #ffa912, #ffa812);*/
   position: relative;
   display: flex;
   overflow-x: auto;
@@ -404,6 +556,7 @@ export default {
   text-align: center;
   overflow: hidden;
   opacity: 0.6;
+  display: inline-block;
 }
 .nav-time {
   line-height: 42px;
@@ -437,7 +590,7 @@ export default {
 .flash-nav.cur .nav-status {
   background-color: #ffffff;
   border-radius: 24px;
-  color: #ffa110;
+  color: #67dfd0;
 }
 .flash-nav.cur .nav-time {
   line-height: 52px;
@@ -607,14 +760,14 @@ export default {
   font-size: 26px;
 }
 .btn-flash {
-  background: linear-gradient(to right, #ffa110 , #ffbf17);
+  background: #2da0fb;
 }
 .btn-collage {
   background: linear-gradient(to right, #eb5842 , #f9856a);
 }
 .item-btn .btn-remind {
-  border: 2px solid #ffa110;
-  color: #ffa110;
+  border: 2px solid #2da0fb;
+  color: #2da0fb;
 }
 .item-btn .btn-remind-isset {
   border: 2px solid #aaa;

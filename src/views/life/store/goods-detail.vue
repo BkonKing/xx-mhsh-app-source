@@ -1,58 +1,66 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="商品详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white":style="{ 'padding-top': paddingTop+'px'}"><van-nav-bar title="商品详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
     <div class="banner">
       <van-swipe @change="onChange">
-        <van-swipe-item @click="predivPic(0)">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
-        </van-swipe-item>
-        <van-swipe-item @click="predivPic(1)">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+        <van-swipe-item v-for="(item, index) in swiperArr" @click="predivPic(index,1)">
+          <img class="img-100" :src="item" />
         </van-swipe-item>
         <div class="custom-indicator flex-center" slot="indicator">
-          {{ current + 1 }}/2
+          {{ current + 1 }}/{{infoData.pic_url_arr.length}}
         </div>
       </van-swipe>
     </div>
-
-    <div class="flash-session flash-session-bg">
-      <div class="flash-limit">
-        <div class="flash-limit-l"></div>
-        <div class="flash-limit-m">限量500件</div>
-        <div class="flash-limit-r"></div>
+    
+    <template v-if="infoData.goods_type == 3">
+      <div class="flash-session flash-session-bg">
+        <div class="flash-limit">
+          <div class="flash-limit-l"></div>
+          <div class="flash-limit-m">限量{{infoData.z_stock}}件</div>
+          <div class="flash-limit-r"></div>
+        </div>
+        <div v-if="infoData.ollage_info.is_start" class="flash-time">距离结束还剩<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+              <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+              </template>
+            </van-count-down></div>
+        <div v-else class="flash-time">{{infoData.ollage_info.start_time_txt}}</div>
       </div>
-      <div v-if="1==2" class="flash-time">距离结束还剩12:12:12</div>
-      <div v-else class="flash-time">今天23:00:00开始</div>
-    </div>
-    <!-- <div class="flash-session flash-over">
-      <div>已结束</div>
-    </div> -->
+      <!-- <div class="flash-session flash-over">
+        <div>已结束</div>
+      </div> -->
+    </template>
 
     <div class="goods-info goods-session">
-      <div class="goods-name">日本拍立得相机富士mini90 复古造型皮质手感轻巧便携微单</div>
+      <div class="goods-name">{{infoData.goods_name}}</div>
 
-      <!-- <div class="goods-price"><span class="font-24">￥</span>3800.00 <span class="font-24 color-8f8f94 font-normal">￥4000.00</span></div> -->
+      <template v-if="infoData.pay_type == 1">
+        <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
+        <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits}} 幸福币可兑换</div></div>
+      </template>
+      <template v-else>
+        <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
 
-      <!-- 闪购 -->
-      <!-- <div class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>3800.00 <span class="font-24 color-8f8f94 font-normal">￥4000.00</span></div> -->
-      
-      <!-- 拼单 -->
-      <div class="price-block">
-        <div class="price-left">
-          <div class="activity-limit-price activity-flash-price">预售价</div>
-          <div class="activity-now-price activity-pay-price">到手价</div>
+        <!-- 闪购 -->
+        <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
+        
+        <!-- 拼单 -->
+        <div v-else class="price-block">
+          <div class="price-left">
+            <div class="activity-limit-price activity-flash-price">限时闪购</div>
+            <div class="activity-now-price activity-pay-price">拼单价</div>
+          </div>
+          <div class="price-right">
+            <div class="activity-flash-price"><span class="font-24">￥</span>{{infoData.flash_price/100}}<div class="activity-old-price">￥{{infoData.original_price/100}}</div></div>
+            <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}</div>
+          </div>
         </div>
-        <div class="price-right">
-          <div class="activity-flash-price"><span class="font-24">￥</span>120.01<div class="activity-old-price">￥130.02</div></div>
-          <div class="activity-pay-price"><span class="font-24">￥</span>144</div>
-        </div>
-      </div>
-      <div class="happy-block"><div class="happy-coin">幸福币可抵￥100</div></div>
+        <div v-if="infoData.credits" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits}}</div></div>
+      </template>
     </div>
 
-    <div class="goods-session collage-session">
+    <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
       <div class="flex-between collage-header"><span>拼单</span>(新老用户均可参加)</div>
       <div class=" p-30">
         <div class="flex-between collage-step">
@@ -121,7 +129,7 @@
       </div>
     </div>
 
-    <div class="common-list goods-session">
+    <div class="common-list goods-session" @click="ensureFunc">
       <div class="common-item">
         <div class="font-26 color-222">基础保障</div>
         <div class="link-icon">
@@ -130,30 +138,39 @@
       </div>
     </div>
 
-    <div class="goods-tip goods-session flex-align-center">
+    <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
       <div class="tip-left flex-center">
         <img src="@/assets/img/icon_02.png" />
       </div>
       <div class="tip-right">
-        <div>不享受优惠券</div>
-        <div>不支持退换</div>
-        <div>不可与满减红包叠加使用</div>
+        <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
       </div>
     </div>
 
     <div class="goods-tip goods-session flex-align-center">
-      <div class="tip-left logistics-left">
-        <div>配送</div>
-        <div>运费</div>
-      </div>
-      <div class="tip-right color-222">
-        <div>上门自提（台江万达苏宁门店）</div>
-        <div>免邮</div>
-      </div>
+      <template v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2">
+        <div class="tip-left logistics-left">
+          <div>配送</div>
+          <div>运费</div>
+        </div>
+        <div class="tip-right color-222">
+          <div>{{infoData.distribution_type_name}}</div>
+          <div>{{infoData.freight ? (infoData.freight) : '免邮'}}</div>
+        </div>
+      </template>
+      <template v-else-if="infoData.distribution_type == 1">
+        <div class="tip-left logistics-left">
+          <div>配送</div>
+        </div>
+        <div class="tip-right color-222">
+          <div>{{infoData.distribution_type_name}}({{infoData.take_address}})</div>
+        </div>
+      </template>
     </div>
 
     <div class="goods-cont goods-session">
       <div class="goods-cont-tit">商品详情</div>
+      <div v-html="infoData.content"></div>
     </div>
 
     <div class="fixed-empty"></div>
@@ -161,33 +178,108 @@
       <div class="kf-btn flex-center">
         <img src="@/assets/img/icon_07.png" />
       </div>
-      <div class="cart-btn flex-center">
+      <div class="cart-btn flex-center" @click="linkFunc(7)">
         <img src="@/assets/img/icon_06.png" />
         <div class="cart-num">22</div>
       </div>
-      <!-- <div class="add-btn" catchtap="showFunc" data-type="cart">加入购物车</div>
-      <div class="buy-btn" catchtap="showFunc" data-type="buy">立即购买</div> -->
-      <!-- <div class="add-btn btn-disabled">售罄</div> -->
-      <!-- <div class="add-btn" catchtap="showFunc" data-type="cart">加入购物车</div>
-      <div class="buy-btn" catchtap="showFunc" data-type="buy">开抢提醒</div> -->
-      <!-- <div class="buy-btn btn-linear" catchtap="showFunc" data-type="buy">立即购买</div> -->
-      <div class="count-time">剩余12:59:59结束</div>
-      <div class="buy-btn btn-linear" catchtap="showFunc" data-type="buy">立即购买</div>
+      <template v-if="infoData.is_sell_out > 0">
+        <div class="add-btn btn-disabled">{{infoData.sell_out_text}}</div>
+      </template>
+      <template v-else>
+        <template v-if="infoData.pay_type == 0">
+          <template v-if="infoData.goods_type < 3">
+            <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
+            <div class="buy-btn" @click="showFunc('buy')">立即购买</div>
+          </template>
+          <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+          <div class="buy-btn" @click="showFunc()" data-type="buy">立即购买</div> -->
+          <!-- <div class="add-btn btn-disabled">售罄</div> -->
+          <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+          <div class="buy-btn" @click="showFunc()" data-type="buy">开抢提醒</div> -->
+          <!-- <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即购买</div> -->
+          <template v-else>
+            <template v-if="infoData.ollage_info.is_start">
+              <template v-if="infoData.dq_collage_type == 1">
+                <div class="buy-btn btn-linear" @click="showFunc('buy')">立即购买</div>
+              </template>
+              <template v-else>
+                <template v-if="f_orderid && infoData.f_order_ollage_info && (!infoData.order_ollage_info || infoData.order_ollage_info.status!=0)">
+                  <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                      <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                      </template>
+                    </van-count-down>结束</div>
+                  <div class="buy-btn btn-linear">一起拼单</div>
+                </template>
+                <template v-else>
+                  <template v-if="ollage_ing_info">
+                    <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                      <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                      </template>
+                    </van-count-down>结束</div>
+                    <div class="buy-btn btn-linear">邀请好友</div>
+                  </template>
+                  <template v-else>
+                    <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price}}</div>
+                    <div class="buy-btn" @click="showFunc('collage')">发起拼单￥{{infoData.sell_price}}</div>
+                  </template>
+                </template>
+              </template>
+            </template>
+            <template v-else>
+              <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+              <div class="buy-btn" data-type="buy">开抢提醒</div>
+              <!-- <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                  <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                  </template>
+                </van-count-down>结束</div> -->
+            </template>
+            
+          </template>
+        </template>
+        <template v-else>
+          <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即兑换</div>
+        </template>
+      </template>
     </div>
 
-    <div v-show="false" class="publick-mask  bottom-fixed">
-      <div class="publick-dclose" catchtap="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
+    <div v-show="isShow" class="public-mask  bottom-fixed">
+      <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="shops-params">
         <div class="params-goods-info">
           <div class="params-goods-left">
-            <img class="img-100" bindtap="bigPic2" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" data-src="" />
+            <img class="img-100" @click="predivPic(typeVal,2)" :src="skuList[typeVal].specs_img" data-src="" />
           </div>
           <div class="params-goods-right">
             <div>
-              <div class="goods-name p-nowrapm">日本拍立得相机富士mini90 复古造型皮质手感轻巧便携微单</div>
-              <div class="goods-price"><span class="font-24">￥</span>3800.00 <span class="font-24 color-8f8f94 font-normal">￥4000.00</span></div>
+              <div class="goods-name p-nowrapm">{{infoData.goods_name}}</div>
+              <template v-if="infoData.goods_type<3">
+                <div class="goods-price">
+                  <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                </div>
+              </template>
+              <template v-else>
+                <div v-if="is_collage" class="goods-price">
+                  <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                </div>
+                <div v-else class="goods-price">
+                  <span class="font-24">￥</span>{{skuList[typeVal].o_price/100}} 
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                </div>
+              </template>
             </div>
-            <div class="happy-block"><div class="happy-coin">幸福币可抵￥100</div></div>
+            <template v-if="infoData.pay_type == 1">
+              <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/100}}</div></div>
+            </template>
+            <template v-else>
+              <template v-if="infoData.goods_type<3">
+                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
+              </template>
+              <template v-else>
+                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : skuList[typeVal].o_credits/100}}</div></div>
+              </template>
+            </template>
           </div>
         </div>
       
@@ -195,29 +287,29 @@
           <div class="shops-ditem">
             <div class="shops-dtit">规格</div>
             <div class="doption-list">
-              <div class="shops-doption active" bindtap="typeFunc" data-typeval="index" data-typetext="33">蓝色</div>
-              <div class="shops-doption" bindtap="typeFunc" data-typeval="index" data-typetext="33">绿色</div>
-              <div class="shops-doption" bindtap="typeFunc" data-typeval="index" data-typetext="33">淡蓝色</div>
+              <div v-for="(item, index) in skuList" :class="[typeVal == index ? 'active' : '','shops-doption']" @click="typeFunc(index)">{{item.specs_name}}</div>
+              <!-- <div :class="[typeVal == 1 ? 'active' : '','shops-doption']" @click="typeFunc(1)">绿色</div>
+              <div :class="[typeVal == 2 ? 'active' : '','shops-doption']" @click="typeFunc(2)">淡蓝色</div> -->
             </div>
           </div>
           <div class="shops-ditem">
             <div class="shops-dtit">数量</div>
             <div class="goods-num-count">
               <div class="goods-btn-block">
-                <div class="goods-btn goods-sub" bindtap="countTab" data-types="-1">-</div>
-                <div class="goods-num">2</div>
-                <div class="goods-btn goods-add not-add" catchtap="goods.count>=skuList[typeVal].stock ? '' : 'countTab'" data-types="1">+</div>
+                <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
+                <div class="goods-num">{{goods.count}}</div>
+                <div :class="[notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="submit-btn" catchtap="ensureFunc">确认</div>
+      <div class="submit-btn" @click="addCar()">确认</div>
     </div>
-    <div v-show="false" class="mask-bg" catchtouchmove="true" catchtap="ensureFunc"></div>
+    <div v-show="isShow" class="mask-bg" catchtouchmove="true" @click="showFunc()"></div>
 
-    <div v-show="false" class="publick-mask bottom-fixed">
-      <div class="goods-dclose" catchtap="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
+    <div v-show="ensureShow" class="public-mask ensure-mask bottom-fixed">
+      <div class="public-dclose" @click="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="public-header">基础保障</div>
       <div class="ensure-list">
         <div class="ensure-item">
@@ -233,58 +325,372 @@
           <div class="ensure-cont">活动结束后15天内若发生降价，可举证申请差价双倍赔付。</div>
         </div>
       </div>
-      <div class="submit-btn" catchtap="ensureFunc">确认</div>
+      <div class="submit-btn" @click="ensureFunc">确认</div>
     </div>
-    <div v-show="false" class="mask-bg" catchtouchmove="true" catchtap="ensureFunc"></div>
+    <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, ImagePreview, NavBar } from 'vant'
+import { Swipe, SwipeItem, Icon, ImagePreview, NavBar, CountDown } from 'vant'
+import { getGoodsDetail } from '@/api/life.js'
 export default {
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [Icon.name]: Icon,
     [ImagePreview.name]: ImagePreview,
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    [CountDown.name]: CountDown,
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      id: '',   //商品id
+      time: 11 * 60 * 60 * 1000,
+      newTime: '',
+
+
+      shop_id: '',          //商品id
+      skuList: [],          //商品规格
+      isShow: false,        //商品规格弹窗是否显示
+      btnIsShow: true,      //商品加入礼包按钮是否显示
+      is_sell_out: false,   //商品是否售罄
+      notAdd: false,       //不能增加商品数量，默认否
+      typeVal: 0,           //当前选中的商品规格index
+      ensureShow: false,    //基础保障弹窗
+      is_collage: true,     //是否拼单(拼单专用 true拼单 false 单独购买)
+      f_orderid: '',        //拼单分享 分享人订单id
+      specs_id: '',         //拼单分享 分享商品规格id
+      ollage_ing_info: '',  //当前的拼单信息
+      goods: {              //购物车
+        goods_id: '',
+        goods_name: '',
+        sign_url: '',
+        count: 1,             //数量
+        goods_type: 1,        //类型 1正常  2特价  3闪购
+        special_bargain_type: '', //1专区 2特价
+        y_specs_img: '',      //规格图
+        specs_img: '',        //规格图
+        specs_name: '',       //规格名称
+        specs_id: '',         //规格id
+        s_price: '',          //售价
+        pay_price: '',        //售价
+        y_price: '',          //规格原价
+        credits: '',          //规格幸福币
+        stock: 0,             //库存
+        max_buy: 0,           //限制最大购买数
+        is_checked: true,     //是否选中（购物车中）
+        tip_text: '',
+      },
+      cart_counts: 0,      //购物车中这个商品的总数量
+
+
+      goodsId: '',   //商品id
+      infoData: '',  //商品数据
+      btn_type: 'cart',            //cart点击了加入购物 buy点击了立即购买
       current: 0,
+      paddingTop: '',
 
       // show: false,
-      images: [
-        'https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png',
-        'https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png'
-      ]
+      swiperArr: [], //轮播图
+      skuPicArr: []  //规格图
     }
   },
   created(){
-    this.id = this.$route.query.id;
-    console.log(this.id);
+    this.goodsId = this.$route.query.id;
+    this.getData();
   },
   methods: {
+    getData () {
+      getGoodsDetail({
+        goods_id: this.goodsId
+      }).then(res => {
+        if (res.success) {
+          this.infoData = res.data;
+          this.swiperArr = res.data.pic_url_arr;
+          this.skuList = res.data.formats;
+          this.skuList.forEach((res2)=>{
+            this.skuPicArr.push(res2.specs_img)
+          })
+          this.newTime = parseInt(new Date().getTime());
+
+          this.goods.goods_id = res.data.id;
+          this.goods.goods_name = res.data.goods_name;
+          this.goods.goods_type = res.data.goods_type;
+          this.tip_text = res.data.tip_text;
+          if(res.data.goods_type == 3){
+            this.goods.sign_url = res.data.sign_url;
+          }
+          if(res.data.goods_type == 2){
+            this.goods.special_bargain_type = res.data.special_bargain_type;
+          }
+          if(this.infoData.goods_type == 3 && !this.is_collage){
+            this.goods.s_price = this.skuList[index].o_price;
+            this.goods.pay_price = this.skuList[index].o_price;
+          }
+          this.typeFunc(0);
+        }
+      })
+    },
     onChange (index) {
       this.current = index
     },
-    predivPic(index) {
+    predivPic(index,type) {
+      var imagesArr = [];
+      imagesArr = type ==1 ? this.swiperArr : this.skuPicArr
       ImagePreview({
-      images: this.images,
-      startPosition: index,
-      onClose() {
-        // do something
+        images: imagesArr,
+        startPosition: index,
+        onClose() {
+          // do something
+        }
+      })
+    },
+
+    /*
+    *显示/隐藏弹窗(规格)
+    */
+    showFunc(type='') {
+      this.is_collage = type && type == 'collage' ? true : false;
+      this.btn_type = type && type == 'buy' ? 'buy' : 'cart';
+      if(this.infoData.goods_type == 3){
+        if(this.is_collage){
+          this.goods.s_price = this.skuList[this.typeVal].p_price;
+          this.goods.pay_price = this.skuList[this.typeVal].p_price;
+        }else {
+          this.goods.s_price = this.skuList[this.typeVal].o_price;
+          this.goods.pay_price = this.skuList[this.typeVal].o_price;
+        }
       }
-    })
-    }
+      this.isShow = !this.isShow;
+    },
+    /*
+    *显示/隐藏弹窗（基础保障）
+    */
+    ensureFunc: function (e) {
+      this.ensureShow = !this.ensureShow;
+    },
+    /*
+    *选中规格
+    */
+    typeFunc(index) {
+      this.typeVal = index;
+      this.goods.y_specs_img = this.skuList[index].y_specs_img;
+      this.goods.specs_img = this.skuList[index].specs_img;
+      this.goods.specs_name = this.skuList[index].specs_name;
+      this.goods.specs_id = this.skuList[index].specs_id;
+      this.goods.s_price = this.skuList[index].s_price;
+      this.goods.pay_price = this.skuList[index].s_price;
+      this.goods.y_price = this.skuList[index].y_price ? this.skuList[index].y_price : 0;
+      this.goods.credits = this.skuList[index].credits;
+      this.goods.stock = this.skuList[index].stock;
+      this.goods.count = 1;
+      this.limitNum()
+    },
+    /*
+    *商品数量加减
+    */
+    countTab(types) {
+      if(this.goods.count >= this.skuList[this.typeVal].stock) return;
+      if (this.goods.count + types > 0) {
+        this.goods.count = parseInt(this.goods.count) + types;
+      }
+    },
+    /**
+     * 加入购物车
+     */
+    addCar: function (e) {
+      var goods = this.goods;
+      //goods.isSelect = false;
+      var count = this.goods.count;
+      var title = this.goods.goods_name;
+      // 获取购物车的缓存数组（没有数据，则赋予一个空数组）  
+      
+      var arr = [];
+      if (this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart'){
+        var arr = JSON.parse(localStorage.getItem('cart')) || [];
+        if (arr.length > 0) {
+          // 遍历购物车数组  
+          for (var j in arr) {
+            // 判断购物车内的item的id，和事件传递过来的id，是否相等  
+            if (arr[j].goods_id == goods.goods_id && arr[j].specs_id == goods.specs_id) {
+              // 相等的话，给count+1（即再次添加入购物车，数量+1）  
+              // console.log(this.cart_counts >= this.infoData.quota_num);return;
+              if (arr[j].count >= goods.max_buy){   //判断是否已经达到限购
+                arr[j].count = parseInt(arr[j].count) + goods.count - 1;
+              }else {
+                arr[j].count = parseInt(arr[j].count) + goods.count;
+              }
+              
+              // 最后，把购物车数据，存放入缓存（此处不用再给购物车数组push元素进去，因为这个是购物车有的，直接更新当前数组即可）  
+              try {
+                localStorage.setItem('cart', JSON.stringify(arr))
+              } catch (e) {
+                console.log(e)
+              }
+              this.goLink();
+              // 返回（在if内使用return，跳出循环节约运算，节约性能） 
+              return;
+            }
+          }
+          // 遍历完购物车后，没有对应的item项，把goodslist的当前项放入购物车数组  
+          arr.push(goods);
+        } else {
+          arr.push(goods);
+        }
+        // 最后，把购物车数据，存放入缓存  
+        try {
+          localStorage.setItem('cart', JSON.stringify(arr));
+          // 返回（在if内使用return，跳出循环节约运算，节约性能） 
+          //关闭窗口
+          this.goLink();
+          return;
+        } catch (e) {
+          console.log(e)
+        }
+      }else {
+        arr.push(goods);
+        localStorage.setItem('cart2', JSON.stringify(arr));
+        this.goLink();
+        return;
+      }
+    },
+    /**
+     * 判断限购数量是否大于购物车数量
+    */
+    limitNum() {
+      // let carts_arr = wx.getStorageSync('cart') || [];
+      let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
+      let cart_counts = 0;
+      var num_count = this.goods.count;
+      let that = this;
+
+      if (carts_arr.length > 0){
+        carts_arr.forEach(function (val, index) {
+          if (val.specs_id == that.skuList[that.typeVal].specs_id){
+            num_count += parseInt(val.count);
+            cart_counts += parseInt(val.count);
+          }
+        })
+        // this.cart_counts = cart_counts;
+      }
+
+      this.goods.max_buy = this.skuList[this.typeVal].stock
+      if(this.infoData.goods_type == 3){
+        if(this.goods.max_buy > this.infoData.ollage_quota_num){
+          this.goods.max_buy = this.infoData.ollage_quota_num;
+        }
+      }
+      if(this.infoData.is_quota == 1){
+        if(this.goods.max_buy > this.infoData.quota_num){
+          this.goods.max_buy = this.infoData.quota_num;
+        }
+      }
+      if(num_count  >= this.goods.max_buy){
+        this.notAdd = true
+      }else {
+        this.notAdd = false
+      }
+      
+    },
+    /**
+     * 拼单倒计时结束
+    */
+    overFunc: function () {
+      const self = this;
+      app.util.request({
+        'url': '/xcx/wxactivityjson/flash_over_json',
+        'cachetime': '0',
+        data: {
+          uid: this.userId,
+          order_id: this.infoData.order_ollage_info.f_id
+        },
+        success(res) {
+          self.listData();
+        }
+      });
+    },
+
+    goLink(){
+      //order_type订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
+      if(this.infoData.pay_type == 1){  //幸福币兑换
+        this.$router.push({
+          path: '/life/settlement',
+          query: {
+            prev_page: 1,
+            order_type: 3,
+            specs_id: this.skuList[this.typeVal].specs_id,
+          }
+        })
+      }else {
+        if(this.infoData.goods_type <3 ){
+          if(this.btn_type == 'buy'){
+            this.$router.push({
+              path: '/life/settlement',
+              query: {
+                prev_page: 1,
+                order_type: 0,
+                specs_id: this.skuList[this.typeVal].specs_id,
+              }
+            })
+          }else {
+            this.$router.push('/life/cart');
+          }
+        }else {
+          this.$router.push({
+            path: '/life/settlement',
+            query: {
+              prev_page: 1,
+              order_type: this.is_collage ? 2 : 1,
+              specs_id: this.skuList[this.typeVal].specs_id,
+              ollage_id: this.infoData.ollage_info.id
+            }
+          })
+        }
+      }
+    },
+
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 7:
+        this.$router.push('/life/cart');
+        break;
+        case 8:
+        this.$router.push({
+          path: '/life/settlement',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+        case 6:
+        this.$router.push('/store/search');
+        break;
+      }
+    },
+
+
+    //倒计时开始
+    start() {
+      this.$refs.countDown.start();
+    },
+    //倒计时暂停
+    pause() {
+      this.$refs.countDown.pause();
+    },
+    //倒计时结束
+    finish() {
+      Toast('倒计时结束');
+    },
+
+
+
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -345,7 +751,8 @@ export default {
   display: flex;
 }
 .happy-coin {
-  line-height: 60px;
+  display: flex;
+  align-items: center;
   height: 60px;
   color: #ffa110;
   font-size: 24px;
@@ -353,6 +760,11 @@ export default {
   background-color: #fff5e7;
   margin: 0 auto;
   border-radius: 30px;
+}
+.happy-coin img {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
 }
 
 .link-icon {
@@ -403,7 +815,7 @@ export default {
   color: #8f8f94;
   font-size: 26px;
 }
-.ensure-mask .submit-btn {
+.submit-btn {
   color: #fff;
   font-size: 30px;
 }
@@ -629,6 +1041,11 @@ div.btn-disabled {
   line-height: 98px;
   margin-right: 32px;
 }
+.flash-time div {
+  display: inline;
+  color: #209cff;
+  font-size: 32px;
+}
 .activity-flash-price {
   color: #209cff;
 }
@@ -795,5 +1212,10 @@ div.btn-disabled {
   font-size: 24px;
   padding-left: 26px;
   text-align: center;
+}
+.count-time div {
+  display: inline;
+  color: #eb5841;
+  font-size: 24px;
 }
 </style>

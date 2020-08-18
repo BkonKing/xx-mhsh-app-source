@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+  <div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
     <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="block-session logistics-goods">
@@ -9,7 +9,7 @@
       </div>
       <div class="logistics-tip">
         <div>配送方式：{{infoData.name}}</div>
-        <div>提货地点：{{infoData.take_address}}</div>
+        <div>联系电话：{{infoData.tel}}</div>
       </div>
     </div>
     <div v-if="infoData.l_status == 1" class="block-session logistics-code logistics-success">
@@ -19,13 +19,8 @@
         <div class="color-999 font-24">{{infoData.s_time}}</div>
       </div>
     </div>
-    <div v-else class="block-session logistics-code">
-      <div class="code-tip">提货时请出示二维码给商家</div>
-      <div class="code-pic">
-        <img class="img-100" :src="infoData.qrCode" />
-      </div>
-    </div>
-	</div>
+    <div v-else class="no-logistics color-8f8f94">暂未配送</div>
+  </div>
 </template>
 
 <script>
@@ -142,4 +137,8 @@ export default {
   line-height: 46px;
 }
 
+.no-logistics {
+  line-height: 126px;
+  text-align: center;
+}
 </style>

@@ -1,42 +1,44 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="block-session logistics-goods">
       <div class="logistics-goods-pic">
-        <div class="goods-num">共2件</div>
-        <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
+        <div class="goods-num">共{{infoData.img_arr.length}}件</div>
+        <img class="img-100" :src="infoData.img_arr[0]" />
       </div>
       <div class="logistics-tip">
-        <div>物流配送：顺丰快递</div>
-        <div>运单编号：46461654640154</div>
+        <div>物流配送：{{infoData.name}}</div>
+        <div>运单编号：{{infoData.name2}}</div>
       </div>
-      <div class="copy-btn">
+      <div class="copy-btn" @click="copy_cont(infoData.name2)">
         <div class="copy-text">复制</div>
       </div>
     </div>
-
-    <div v-show="false" class="no-logistics color-8f8f94">暂无物流进度</div>
-    <div class="block-session logistics-body">
+    
+    <div v-if="infoData.kd_text_arr.data.length" class="block-session logistics-body">
       <div class="logistics-list">
-        <div class="logistics-item">
+        <div v-for="(item, index) in infoData.kd_text_arr.data" class="logistics-item">
+          <div class="item-icon-box"><div class="item-icon"></div></div>
+          <div class="item-msg">{{item.context}}</div>
+          <div class="item-time">{{item.time}}</div>
+        </div>
+        <!-- <div class="logistics-item">
           <div class="item-icon-box"><div class="item-icon"></div></div>
           <div class="item-msg">哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王</div>
           <div class="item-time">2020.1.2 10:11:11</div>
-        </div>
-        <div class="logistics-item">
-          <div class="item-icon-box"><div class="item-icon"></div></div>
-          <div class="item-msg">哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王</div>
-          <div class="item-time">2020.1.2 10:11:11</div>
-        </div>
+        </div> -->
       </div>
       <div class="logistics-line"></div>
     </div>
+    <div v-else class="no-logistics color-8f8f94">暂无物流进度</div>
+    
 	</div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
+import { getLogisticsInfo } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -44,19 +46,42 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶']
+      infoData: '',
     }
   },
+  created(){
+    this.order_id = this.$route.query.id;
+    this.index = this.$route.query.index ? this.$route.query.index : 0;
+    this.getData();
+  },
   methods: {
-    onSubmit: function () {
-
-    }
-  }
+    getData () {
+      getLogisticsInfo({
+        order_project_id: this.order_id
+      }).then(res => {
+        if (res.success) {
+          this.infoData = res.data[this.index];
+        }
+      })
+    },
+    copy_cont(text_c){
+      var clipBoard = api.require('clipBoard');
+      clipBoard.set({
+        value: text_c
+      }, function(ret, err) {
+        if (ret) {
+            Toast('复制成功');
+        } else {
+            alert(JSON.stringify(err));
+        }
+      });
+    },
+  },
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;

@@ -162,7 +162,5 @@ export default {
 }
 </script>
 
-<style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/order.css';
-</style>
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/order.css"></style>

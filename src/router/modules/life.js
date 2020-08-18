@@ -210,6 +210,15 @@ const lifeRouter = [
       )
   },
   {
+    path: '/logistics/logistics-business',
+    name: 'logisticsBusiness',
+    component: () =>
+      import(
+        /* webpackChunkName: "logisticsExpress" */
+        '@/views/life/logistics/logistics-business'
+      )
+  },
+  {
     path: '/address/list',
     name: 'addressList',
     component: () =>
@@ -225,8 +234,21 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "addressEdit" */
         '@/views/life/address/address-operate'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/address/map',
+    name: 'addressMap',
+    component: () =>
+      import(
+        /* webpackChunkName: "addressEdit" */
+        '@/views/life/address/address-map'
       )
   }
+
 ]
 
 export default lifeRouter

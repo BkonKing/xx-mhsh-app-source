@@ -1,6 +1,7 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="fixed-top">
+	<div class="app-body" :style="{ 'min-height': windowHeight-40+'px'}">
+		<div class="status-box" :style="{'height': statusHeight+'px'}"></div>
+		<div class="fixed-top" :style="{'padding-top': statusHeight+'px'}">
 			<div class="life-header">
 				<div class="header-tit flex-between">
 					<div class="font-34 font-weight">美好生活</div>
@@ -14,36 +15,252 @@
 	      <scrollBar direction="x" :activeIndex="activeIndex">
 	        <div
 	          class="scroll-barItem"
-	          v-for="(item, index) in options"
+	          v-for="(item, index) in navList"
 	          :key="index"
 	          @click="changeNav(item, index)"
 	          :class="index === activeIndex ? 'active' : null"
 	        >
-	          <div>{{item.name}}</div>
+	          <div>{{item.category_name}}</div>
+	        </div>
+	      </scrollBar>
+	    </div>
+	    <div v-if="activeIndex > 0 && navList2.length" class="seconds-nav">
+	    	<scrollBar direction="x" :activeIndex="activeIndex2">
+	        <div
+	          class="seconds-scroll-barItem"
+	          v-for="(item, index) in navList2"
+	          :key="index"
+	          @click="changeNav2(index, item.id)"
+	          :class="index === activeIndex2 ? 'active' : null"
+	        >
+	          <div>{{item.category_name}}</div>
 	        </div>
 	      </scrollBar>
 	    </div>
 		</div>
-		<div class="fixed-empty"></div>
+		<div :class="[activeIndex > 0 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
 		
-		<div class="life-swipe">
-			<van-swipe :autoplay="3000" indicator-color="white">
-			  <van-swipe-item>
-			  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
-			  </van-swipe-item>
-			  <van-swipe-item>
-			  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-			  </van-swipe-item>
-			</van-swipe>
-		</div>
-		<div class="life-session">
-			<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
-				<div class="font-34 font-weight flex-align-center">
-					<span>9.9特卖</span>
-				</div>
-				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+		<template v-if="activeIndex==0">
+			<div class="life-swipe">
+				<van-swipe :autoplay="3000" indicator-color="white">
+				  <van-swipe-item>
+				  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
+				  </van-swipe-item>
+				  <van-swipe-item>
+				  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+				  </van-swipe-item>
+				</van-swipe>
 			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
+			<template v-for="(item, index) in lifeData">
+				<div v-if="item.type == 2" class="life-session">
+					<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
+						<div class="font-34 color-fff font-weight flex-align-center">
+							<span>{{item.bargain_name}}</span>
+						</div>
+						<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+					</div>
+					<div class="special-goods-list">
+						<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.id})" class="life-goods-item">
+							<div class="life-goods-pic">
+								<img class="img-100" :src="val.thumb" />
+							</div>
+							<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+							<div class="life-goods-price">￥{{val.te_price}} <span>￥{{val.s_price}}</span></div>
+						</div>
+						<!-- <div class="life-goods-item">
+							<div class="life-goods-pic">
+								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+							</div>
+							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+						</div>
+						<div class="life-goods-item">
+							<div class="life-goods-pic">
+								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+							</div>
+							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+						</div>
+						<div class="life-goods-item">
+							<div class="life-goods-pic">
+								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+							</div>
+							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+						</div> -->
+					</div>
+				</div>
+				<div v-else-if="item.type == 1" class="life-session">
+					<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
+						<div class="font-34 color-fff font-weight flex-align-center">
+							<span>限时闪购</span>
+							<van-count-down v-if="item.ollage_info" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
+				        <template v-slot="timeData">
+				          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
+				          <div class="countdown-point">:</div>
+				          <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
+				          <div class="countdown-point">:</div>
+				          <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
+				        </template>
+				      </van-count-down>
+						</div>
+						<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+					</div>
+					<div class="flash-goods-list">
+						<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item flex-between">
+							<div class="life-goods-pic">
+								<img class="img-100" :src="val.thumb" />
+							</div>
+							<div class="flash-goods-info">
+								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+								<div class="life-goods-price">￥{{val.o_price}} <span>￥{{val.s_price}}</span></div>
+							</div>
+							<div class="item-btn">
+								<template v-if="tapStatus == 2">
+                  <template v-if="val.goods_num > 0 && val.is_over == 0">
+                    <div class="btn-collage" v-if="val.price_status == 1 && val.is_partake">邀请拼单</div>
+                    <div class="btn-flash" v-else>马上抢</div>
+                  </template>
+                  <div v-else class="btn-over">已抢光</div>
+                </template>
+                <template v-else>
+                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+                </template>
+								<!-- <div class="btn-flash">马上抢</div> -->
+		            <!-- <div class="btn-collage">邀请拼单</div> -->
+		            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
+		            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
+		            <!-- <div class="btn-over">已抢光</div> -->
+	            </div>
+						</div>
+						<!-- <div class="life-goods-item flex-between">
+							<div class="life-goods-pic">
+								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+							</div>
+							<div class="flash-goods-info">
+								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+							</div>
+						</div>
+						<div class="life-goods-item flex-between">
+							<div class="life-goods-pic">
+								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+							</div>
+							<div class="flash-goods-info">
+								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+							</div>
+						</div> -->
+					</div>
+				</div>
+				<template v-else>
+					<div v-if="item.special_type == 2" class="special-session flex-between">
+						<div class="special-list">
+							<template v-if="item.child.length < 4" v-for="(val, key) in item.child">
+								<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
+									<img class="img-100" :src="val.special_thumb" />
+									<div class="special-tip">
+										<div>{{val.special_name}}</div>
+										<div>{{val.special_text}}</div>
+									</div>
+								</div>
+							</template>
+							<template v-else>
+								<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+									<img class="img-100" :src="val.special_thumb" />
+									<div class="special-tip">
+										<div>{{val.special_name}}</div>
+										<div>{{val.special_text}}</div>
+									</div>
+								</div>
+								<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+									<img class="img-100" :src="val.special_thumb" />
+									<div class="special-tip">
+										<div>{{val.special_name}}</div>
+										<div>{{val.special_text}}</div>
+									</div>
+								</div>
+								<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+									<img class="img-100" :src="val.special_thumb" />
+									<div class="special-tip">
+										<div>{{val.special_name}}</div>
+										<div>{{val.special_text}}</div>
+									</div>
+								</div>
+								<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+									<img class="img-100" :src="val.special_thumb" />
+									<div class="special-tip">
+										<div>{{val.special_name}}</div>
+										<div>{{val.special_text}}</div>
+									</div>
+								</div>
+							</template>
+						</div>
+					</div>
+					<div v-else-if="item.special_type == 1" class="life-session">
+						<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
+							<div class="font-34 font-weight flex-column-center">
+								<div class="area-text-tit">{{item.special_name}}</div>
+								<div class="area-text-detail">{{item.special_text}}</div>
+							</div>
+							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+						</div>
+						<div class="life-goods-list flex-align-center">
+							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+								<div class="life-goods-pic">
+									<img class="img-100" :src="val.thumb" />
+								</div>
+								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+								<div class="life-goods-price">￥{{val.s_price}} <span v-if="val.original_price && val.original_price!='0.00'">￥{{val.original_price}}</span></div>
+							</div>
+							<!-- <div class="life-goods-item">
+								<div class="life-goods-pic">
+									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+								</div>
+								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+							</div>
+							<div class="life-goods-item">
+								<div class="life-goods-pic">
+									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+								</div>
+								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+							</div>
+							<div class="life-goods-item">
+								<div class="life-goods-pic">
+									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+								</div>
+								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+							</div> -->
+						</div>
+					</div>
+					<div v-else @click="linkFunc(4,{id:item.special_id})" class="banner-session">
+						<img class="img-100" :src="item.special_thumb" />
+					</div>
+				</template>
+			</template>
+		</template>
+		<template v-else>
+			<van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text=""
+          @load="onLoad"
+        >
+        <div class="life-seconds-list">
+          <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
+          	<div class="life-goods-pic">
+							<img class="img-100" :src="item.thumb" />
+						</div>
+						<div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
+						<div class="life-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0.00'">￥{{item.y_price}}</span></div>
+          </div>
+        </div>
+      </van-list>
+			<div v-show="false" class="life-seconds-list" @click="linkFunc(5)">
 				<div class="life-goods-item">
 					<div class="life-goods-pic">
 						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -73,158 +290,104 @@
 					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
 				</div>
 			</div>
-		</div>
-		<div class="life-session">
-			<div class="life-tit flex-between" @click="linkFunc(2)">
-				<div class="font-34 font-weight flex-align-center">
-					<span>限时闪购</span>
-					<van-count-down class="life-countdown flex-align-center" ref="countDown" :auto-start="false" :time="time" @finish="finish">
-		        <template v-slot="timeData">
-		          <span class="countdown-time">{{ timeData.hours }}</span>
-		          <div class="countdown-point"></div>
-		          <span class="countdown-time">{{ timeData.minutes }}</span>
-		          <div class="countdown-point"></div>
-		          <span class="countdown-time">{{ timeData.seconds }}</span>
-		        </template>
-		      </van-count-down>
-				</div>
-				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
-			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-			</div>
-		</div>
-		<div class="special-session flex-between">
-			<div class="flex-between special-list">
-				<div class="height-440">
-					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					<div class="special-tip">
-						<div>湿热的梅雨季</div>
-						<div>如何在家干爽舒适如晴天？</div>
-					</div>
-				</div>
-				<div class="height-345">
-					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					<div class="special-tip">
-						<div>百变酷炫蓝牙音箱</div>
-						<div>要的就是这个范</div>
-					</div>
-				</div>
-			</div>
-			<div class="flex-between special-list">
-				<div class="height-345">
-					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					<div class="special-tip">
-						<div>百变酷炫蓝牙音箱</div>
-						<div>要的就是这个范</div>
-					</div>
-				</div>
-				<div class="height-440">
-					<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					<div class="special-tip">
-						<div>湿热的梅雨季</div>
-						<div>如何在家干爽舒适如晴天？</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="life-session">
-			<div class="life-tit life-area-tit flex-between" @click="linkFunc(4)">
-				<div class="font-34 font-weight flex-column-center">
-					<div class="area-text-tit">夏天的幸福感</div>
-					<div class="area-text-detail">来自于这些清凉神器</div>
-				</div>
-				<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
-			</div>
-			<div class="life-goods-list flex-align-center" @click="linkFunc(5)">
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-			</div>
-		</div>
-		<div class="banner-session">
-			<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-		</div>
+		</template>
 		<div class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num">19</div></div>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, CountDown } from 'vant'
+import { Swipe, SwipeItem, Icon, CountDown, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
+import { getLifeInfo, getClassifyGoods} from '@/api/life.js'
 export default {
   components: {
     [Icon.name]: Icon,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [CountDown.name]: CountDown,
+    [List.name]: List,
     scrollBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      time: 11 * 60 * 60 * 1000,
-      activeIndex: 0,
-      options: [
-        {id: 1, name: '首页'},
-        {id: 2, name: '精选'},
-        {id: 3, name: '限时抢购'},
-        {id: 4, name: '热门推荐'},
-        {id: 5, name: '聚划算'},
-        {id: 6, name: '热门推荐'}, 
-      ],
+      statusHeight: '',
+      lifeData: [],      //生活
+      activeIndex: 0,    //一级菜单选中项
+      activeIndex2: 0,   //二级菜单选中项
+      navList: [],       //一级菜单
+      navList2: [],      //二级菜单
+      newTime: '',       //当前时间
+
+      category_id: '',  //分类id
+      listData: [],     //分类商品
+      loading: false,
+      finished: true
     }
   },
+	// beforeRouteEnter(to, form, next) {
+	// 	var txAnalysis = api.require('txAnalysis');
+	// 	txAnalysis.trackPageBegin({
+	// 	    page : 'life'
+	// 	});
+ //    next()
+ //  },
+  deactivated(){
+  	// console.log('leave')
+  // 	var txAnalysis = api.require('txAnalysis');
+		// txAnalysis.trackPageEnd({
+		//     page : 'life'
+		// });
+  },
+  created () {
+    this.getData();
+  },
   methods:{
-    linkFunc (type) {
+  	onLoad() {
+      this.getGoodsData();
+    },
+  	getData () {
+  		// this.statusHeight = api.safeArea.top;
+  		// alert(api.safeArea.top);
+  		getLifeInfo().then(res => {
+        if (res.success) {
+          this.lifeData = res.data;
+          this.newTime = parseInt(new Date().getTime());
+        }
+      });
+      this.getGoodsData();
+    },
+    getGoodsData () {
+      getClassifyGoods({
+        page: this.page,
+        category_id: this.category_id,
+      }).then(res => {
+        if (res.success) {
+          if(this.navList.length == 0){
+          	this.navList = [{'category_name': '首页'}];
+          	this.navList = this.navList.concat(res.data.category_list);
+            console.log(this.navList);
+            if(res.data.category_list[this.activeIndex].children){
+              this.navList2 = res.data.category_list[this.activeIndex].children
+            }
+          }else {
+          	this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list);
+	          this.isEmpty = this.page == 1 && res.data.goods_list.length ==0 ? true : false;
+	          if(res.data.goods_list.length < res.pageSize){
+	            this.finished = true;
+	          }else {
+	            this.page = this.page+1;
+	          }
+	          this.loading = false;
+          }
+        }
+      })
+    },
+    linkFunc (type,obj={}) {
     	switch (type){
     		case 1:
-    		this.$router.push('/store/goods-classify');
+    		this.$router.push('/address/list');
+    		// this.$router.push('/store/goods-classify');
     		break;
     		case 2:
     		this.$router.push('/store/flash-purchase');
@@ -233,13 +396,18 @@ export default {
     		this.$router.push('/store/special-sale');
     		break;
     		case 4:
-    		this.$router.push('/store/special-area');
+    		this.$router.push({
+	      	path: '/store/special-area',
+	      	query: {
+	      		id: obj.id
+	      	}
+	      });
     		break;
     		case 5:
     		this.$router.push({
 	      	path: '/store/goods-detail',
 	      	query: {
-	      		id: 1
+	      		id: obj.id
 	      	}
 	      })
     		break;
@@ -250,6 +418,28 @@ export default {
     },
     changeNav(item, index) {
       this.activeIndex = index;
+      if(index > 0){
+      	this.category_id = this.navList[index].id;
+	      if(this.navList[index].children){
+	        this.navList2 = this.navList[index].children;
+	        this.category_id = this.navList[index].children[0].id
+	      }else {
+	        this.navList2 = [];
+	      }
+	      this.page = 1;
+	      this.loading = false;
+	      this.finished = false;
+      }else {
+      	this.page = 1;
+      	this.finished = true;
+      }
+    },
+    changeNav2(index, id) {
+      this.activeIndex2 = index;
+      this.category_id = id;
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
     },
     //倒计时开始
     start() {
@@ -266,8 +456,9 @@ export default {
   }
 }
 </script>
+
+<style scoped  src="../../styles/life.css"></style>
 <style  scoped>
-@import '../../styles/life.css';
 .app-body {
   background-color: #fff;
   font-size: 0.28rem;
@@ -281,7 +472,10 @@ export default {
 	z-index: 20;
 }
 .fixed-empty {
-	height: 196px;
+	height: 176px;
+}
+.seconds-nav-show.fixed-empty {
+	height: 260px;
 }
 .life-header {
 	background-color: #fff;
@@ -311,6 +505,7 @@ export default {
 }
 .scroll-barItem {
   font-size: 30px;
+  display: inline-block;
 }
 .scroll-barItem div {
   height: 88px;
@@ -335,6 +530,33 @@ export default {
   border-radius: 2px;
   background-color: #eb5841;
 }
+.seconds-nav {
+	height: 114px;
+  background-color: #fff;
+  padding: 30px 0;
+}
+.seconds-scroll-barItem {
+	display: inline-block;
+}
+.seconds-scroll-barItem:first-child {
+	margin-left: 30px;
+}
+.seconds-scroll-barItem div {
+  height: 54px;
+  line-height: 54px;
+  padding: 0 30px;
+  color: #222;
+  border-radius: 4px;
+  border: 1.2px solid #f0f0f0;
+  position: relative;
+  margin-right: 20px;
+}
+.seconds-scroll-barItem.active div {
+  color: #eb5841;
+  background-color: #fdeeec;
+  border: 1.2px solid #fdeeec;
+}
+
 
 /*轮播*/
 .life-swipe {
@@ -342,7 +564,7 @@ export default {
 	width: 710px;
 	border-radius: 10px;
 	overflow: hidden;
-	margin: 30px auto 40px;
+	margin: 30px auto 80px;
 }
 .life-swipe .van-swipe {
 	height: 100%;
@@ -353,18 +575,23 @@ export default {
 }
 /*特卖、闪购、专区*/
 .life-session {
-	/*margin-top: 0.3rem;*/
+	margin-bottom: 80px;
 }
 .life-tit {
-	padding: 0 30px;
-	height: 104px;
+	width: 710px;
+	padding: 10px 30px 60px;
+	height: 162px;
+	margin: 0 auto;
 }
 .life-arrow-right {
 	width: 15px;
 	height: 26px;
 }
 .life-special-tit {
-	padding-top: 12px;
+	background: url('../../assets/img/bg_01.png') center top /100% 100%;
+}
+.life-flash-tit {
+	background: url('../../assets/img/bg_02.png') center top /100% 100%;
 }
 .life-goods-list {
 	/*width: 720px;
@@ -374,6 +601,19 @@ export default {
 	overflow-x: auto;
 	white-space: nowrap;
 }
+.special-goods-list,.flash-goods-list {
+	width: 690px;
+	margin: -60px auto 0;
+	background-color: #fff;
+	padding: 20px 0 0 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 13px rgba(99,99,99,0.2);
+	display: flex;
+	flex-wrap: wrap;
+}
+.flash-goods-list {
+	padding-right: 20px;
+}
 .life-goods-list::-webkit-scrollbar {
   display: none;
 }
@@ -382,16 +622,49 @@ export default {
 	height: 100%;
 	margin-right: 20px;
 	flex-shrink: 0;
+	position: relative;
+}
+.special-goods-list .life-goods-item {
+	width: 203px;
+	height: 348px;
+}
+.flash-goods-list .life-goods-item {
+	width: 100%;
+	height: 203px;
+	margin: 0 0 20px 0;
+}
+.special-goods-list .life-goods-item:nth-child(3n) {
+	margin-right: 0;
 }
 .life-goods-pic {
 	display: flex;
 	width: 100%;
 	height: 230px;
+	border-radius: 10px;
+	overflow: hidden;
+}
+.special-goods-list .life-goods-pic,
+.flash-goods-list .life-goods-pic {
+	height: 203px;
+	border-radius: 4px;
+}
+.flash-goods-list .life-goods-pic {
+	width: 203px;
+}
+.flash-goods-info {
+	flex-grow: 1;
+	margin-left: 20px;
+	height: 100%;
 }
 .life-goods-name {
 	line-height: 42px;
 	margin-top: 10px;
 	font-size: 24px;
+}
+.flash-goods-info .life-goods-name {
+	font-size: 28px;
+	line-height: 46px;
+	margin-top: 8px;
 }
 .life-goods-price {
 	font-size: 30px;
@@ -399,10 +672,15 @@ export default {
 	font-weight: bold;
 	line-height: 44px;
 }
+.flash-goods-info .life-goods-price {
+	font-size: 42px;
+	line-height: 52px;
+}
 .life-goods-price span {
 	font-weight: normal;
 	font-size: 24px;
 	color: #8f8f94;
+	text-decoration: line-through;
 }
 .life-countdown {
 	height: 44px;
@@ -416,8 +694,8 @@ export default {
 .countdown-time {
 	width: 66px;
 	text-align: center;
-	background-color: #ffa110;
-	color: #fff;
+	background-color: #fff;
+	color: #448fe4;
 	font-size: 26px;
 }
 .countdown-time:nth-of-type(1) {
@@ -428,30 +706,58 @@ export default {
 }
 .countdown-point {
 	width: 20px;
-	font-size: 26px;
-	color: #ffa110;
-	font-weight: bold;
+	position: relative;
+}
+.countdown-point::before,.countdown-point::after {
+	content: '';
+	position: absolute;
+	width: 4px;
+	height: 4px;
+	background-color: #fff;
+	border-radius: 50%;
+	left: 8px;
+}
+.countdown-point::before {
+	top: 16px;
+}
+.countdown-point::after {
+	bottom: 16px;
 }
 
 .special-session {
-	margin: 34px auto 48px;
+	margin: 34px auto 28px;
 	width: 710px;
-	height: 805px;
+	/*height: 805px;*/
 }
 .special-list {
-	height: 100%;
-	width: 345px;
-	flex-direction: column;
+	/*height: 100%;*/
+	width: 100%;
+	-moz-column-count: 2;
+	/* Firefox */
+  -webkit-column-count: 2;
+	/* Safari 和 Chrome */
+  column-count: 2;
+	-moz-column-gap: 20px;
+	-webkit-column-gap: 20px;
+	column-gap: 20px;
 }
 .special-list > div {
-	width: 100%;
+	width: 345px;
 	position: relative;
+	/*padding-bottom: 20px;*/
+	break-inside: avoid;
+	margin-bottom: 20px;
+}
+.special-list > div img {
+	border-radius: 10px;
 }
 .height-440 {
 	height: 440px;
+	overflow: hidden;
 }
 .height-345 {
 	height: 345px;
+	overflow: hidden;
 }
 .special-tip {
 	position: absolute;
@@ -470,6 +776,7 @@ export default {
 }
 .life-area-tit {
 	height: 138px;
+	padding: 0 30px 0 10px;
 }
 .life-area-tit .life-arrow-right {
 	margin-top: 52px;
@@ -491,6 +798,47 @@ export default {
 	height: 326px;
 	border-radius: 10px;
 	overflow: hidden;
+}
+  /*闪购*/
+.item-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 140px;
+  height: 66px;
+}
+.item-btn div {
+  height: 100%;
+  line-height: 66px;
+  color: #ffffff;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 26px;
+}
+.btn-flash {
+  background: #2da0fb;
+}
+.btn-collage {
+  background: linear-gradient(to right, #eb5842 , #f9856a);
+}
+.item-btn .btn-remind {
+  border: 2px solid #2da0fb;
+  color: #2da0fb;
+}
+.item-btn .btn-remind-isset {
+  border: 2px solid #aaa;
+  color: #8f8f94;
+}
+.item-btn .btn-over {
+  color: #8f8f94;
+}
+.item-small .btn-over {
+  text-align: right;
+}
+.btn-remind img {
+  width: 36px;
+  height: 38px;
+  margin-right: 10px;
 }
 
 /*购物车*/
@@ -523,5 +871,30 @@ export default {
 	text-align: center;
 	font-size: 24px;
 	color: #fff;
+}
+
+/*二级菜单商品*/
+.life-seconds-list {
+	padding-left: 30px;
+	display: flex;
+	flex-wrap: wrap;
+}
+.life-seconds-list .life-goods-item {
+	width: 330px;
+	height: 492px;
+	margin-right: 30px;
+	flex-shrink: 0;
+}
+.life-seconds-list .life-goods-pic {
+	height: 330px;
+}
+.life-seconds-list .life-goods-name {
+	line-height: 46px;
+	margin-top: 20px;
+	font-size: 28px;
+}
+.life-goods-price {
+	font-size: 34px;
+	line-height: 46px;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 	  <div class="bar-empty"></div>
     <div class="coupon-num">可用优惠券<span>（5张）</span></div>
 		<div class="coupon-list">
@@ -173,9 +173,10 @@ export default {
   }
 }
 </script>
+
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/coupon.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/coupon.css';
 .app-body {
 	background-color: #f2f2f4;
 	font-size: 28px;

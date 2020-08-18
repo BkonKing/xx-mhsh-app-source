@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="order-bar bar-white"><van-nav-bar title="申请换货" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white"><van-nav-bar title="申请换货" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="apply-tip">如有多件商品需要换货，请一并提交申请</div>
 		<div class="order-session">
@@ -187,54 +187,71 @@
 				<div class="color-fff font-30">提交</div>
 			</div>
 		</div>
-
-		<div v-show="false" class="publick-mask reason-mask bottom-fixed">
-      <div class="publick-dclose" catchtap="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
-      <div class="publick-header">选择换货原因</div>
-      <div class="action-block">请选择实际原因，以便我们更好地为您提供服务</div>
-      <div class="common-list">
-				<div class="common-item common-item-first">
-					<div class="common-item-left">拍错/不喜欢</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">发错规格</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">少件/破损/变形等</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">拍错尺码/规格/型号</div>
-				</div>
-			</div>
-    </div>
-    <div v-show="false" class="mask-bg" catchtouchmove="true" catchtap="ensureFunc"></div>
+		<explain-swal 
+    :show-swal="showExplainSwal"
+    :swal-cont="swalCont"
+    @closeSwal="closeExplainSwal"
+    ></explain-swal>
+    <reason-swal 
+    :show-swal="showSwal"
+    :swal-list="swalList"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal"
+    ></reason-swal>
 	</div>
 </template>
 
 <script>
 import { Swipe, SwipeItem, Icon, NavBar } from 'vant'
+import reasonSwal from './../components/reason-swal'
+import explainSwal from './../components/explain-swal'
 export default {
   components: {
     [Icon.name]: Icon,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [NavBar.name]: NavBar,
+    reasonSwal,
+    explainSwal
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight
+      windowHeight: document.documentElement.clientHeight,
+      showExplainSwal: false, //说明弹窗
+      swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
+      showSwal: false,  //原因弹窗
+      swalList: [
+	      {id: 1,txt: '拍错/不喜欢'},
+	      {id: 2,txt: '少件/破损/变形等'},
+	      {id: 3,txt: '拍错尺码/规格/型号'}
+      ]
     }
   },
   methods: {
-
+  	// 打开弹窗
+  	openExplainSwal(){
+      this.showExplainSwal = true;
+    },
+    // 弹窗选择(回调)
+    sureSwal(data){
+    	console.log(data)
+    	this.closeSwal(0);
+    },
+  	// 关闭弹窗(回调)
+  	closeSwal(data){
+      this.showSwal = data == 1 ? true : false;
+    },
+    // 关闭弹窗(回调)
+  	closeExplainSwal(data){
+      this.showExplainSwal = data == 1 ? true : false;
+    },
   }
 }
 </script>
-
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/order.css"></style>
+<style scoped  src="../../../styles/apply.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/order.css';
-@import '../../../styles/apply.css';
 .goods-session {
 	padding: 40px 0 0 0;
 	flex-wrap: wrap;

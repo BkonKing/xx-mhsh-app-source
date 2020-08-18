@@ -5,11 +5,32 @@
         <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
       </div>
       <div class="header-session">
-        <div class="area-tit">3C爱好者专区</div>
-        <div class="area-subtit">玩转最新电子产品，体验前沿科技</div>
+        <div class="area-tit">{{infoData.special_name}}</div>
+        <div class="area-subtit">{{infoData.special_text}}</div>
       </div>
     </div>
-    <div class="special-list">
+    <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text=""
+        @load="onLoad"
+      >
+      <div class="special-list">
+        <div v-for="(item,index) in listData" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
+          <div class="special-goods-pic">
+            <img class="img-100" :src="item.thumb" />
+          </div>
+          <div class="special-goods-info">
+            <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
+            <div class="special-goods-price">
+              <span class="special-price-span1">￥</span>{{item.s_price}}
+              <span v-if="item.y_price && item.y_price!='0.00'" class="special-price-span2">￥{{item.y_price}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </van-list>
+    <div v-show="false" class="special-list">
       <div class="special-item flex-between">
         <div class="special-goods-pic">
           <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
@@ -51,31 +72,77 @@
 </template>
 
 <script>
-import { Image, NavBar } from 'vant'
+import { Image, NavBar, List } from 'vant'
+import { getAreaGoods } from '@/api/life.js'
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    [List.name]: List
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶']
+      special_id: '', //专区id
+      listData: [],   //数据列表
+      infoData: '',   //其他信息
+      page: 1,   //页码
+      pageSize: 10,  //分页条数
+      isEmpty: false, //是否为空
+      loading: false,
+      finished: true
     }
   },
+  created () {
+    this.special_id = this.$route.query.id;
+    this.finished = false;
+  },
   methods: {
-    onSubmit: function () {
-
-    }
+    onLoad() {
+      // 异步更新数据
+      this.getGoodsData();
+      return;
+    },
+    getGoodsData () {
+      getAreaGoods({
+        page: this.page,
+        special_id: this.special_id
+      }).then(res => {
+        if (res.success) {
+          this.listData = this.page == 1 ? res.data.special_goods_list : this.listData.concat(res.data.special_goods_list);
+          this.isEmpty = this.page == 1 && res.data.special_goods_list.length ==0 ? true : false;
+          if(res.data.special_goods_list.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          if(!this.infoData){
+            this.infoData = res.data.special_info;
+          }
+          this.loading = false;
+        }
+      })
+    },
+    linkFunc(type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+      }
+    },
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 
 .area-header {

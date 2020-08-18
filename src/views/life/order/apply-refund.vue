@@ -1,36 +1,45 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
-		<div class="order-bar bar-white"><van-nav-bar title="申请退款" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+	<div class="order-bar bar-white"><van-nav-bar :title="titName" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="apply-tip">如有多件商品需要退款，请一并提交申请</div>
 		<div class="order-session refund-session">
 			<div class="cont-session goods-session">
 				<div class="can-apply">
-					<div class="apply-goods">
-						<div class="cart-checkbox flex-center cur" bindtap="checkboxOne" data-index="">
+					<div v-for="(item,index) in ableList" class="apply-goods">
+						<div :class="[item.is_checked ? 'cur' : '','cart-checkbox flex-center']" @click="checkboxOne(index)" data-index="">
 		          <div class="checkbox-session"></div>
 		        </div>
 						<div class="order-goods-info">
 							<div class="order-pic-block">
-								<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg">
+								<img class="img-100" mode="aspectFill" :src="item.specs_img">
 							</div>
 							<div class="order-info">
 								<div class="order-name-price">
-									<div class="order-name order-name-text p-nowrap">yeah jewelry U形项链</div>
-									<div class="order-price">￥20000.00</div>
+									<div class="order-name order-name-text p-nowrap">{{item.goods_name}}</div>
+									<div class="order-price">￥{{item.pay_price/100}}</div>
 								</div>
 								<div class="order-sku-num">
-									<div class="order-sku order-sku-text p-nowrap">规格：银色</div>
-									<div class="order-buy-num">x1</div>
+									<div class="order-sku order-sku-text p-nowrap">{{item.specs_name}}</div>
+									
 								</div>
 								<div class="order-action-session">
-									<div class="order-action-text">换货中</div>
+									<div class="order-action-text"></div>
+									<div class="order-buy-num">x1</div>
+								</div>
+							</div>
+							<div v-if="item.is_checked" @click.stop="closeReasonSwal(1)" class="apply-select flex-between">
+								<div class="select-left">
+									<div>{{item.reason}}</div>
+								</div>
+								<div class="select-right">
+									<img class="img-100" src="@/assets/img/right.png" />
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="apply-goods">
-						<div class="cart-checkbox flex-center cur" bindtap="checkboxOne" data-index="">
+					<!-- <div class="apply-goods">
+						<div class="cart-checkbox flex-center cur" @click="checkboxOne" data-index="">
 		          <div class="checkbox-session"></div>
 		        </div>
 						<div class="order-goods-info">
@@ -59,35 +68,32 @@
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
-				<div class="not-apply">
-					<div class="apply-toggle">部分商品不支持换货(2)</div>
-					<div class="order-goods-info">
+				<div v-if="unableList.length > 0" class="not-apply">
+					<div class="apply-toggle">部分商品不支持换货({{unableList.length}})</div>
+					<div v-for="(item,index) in unableList" class="order-goods-info">
 						<div class="order-pic-block">
-							<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
+							<img class="img-100" mode="aspectFill" :src="item.specs_img" />
 						</div>
 						<div class="order-info">
 							<div class="order-name-price">
-								<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-								<div class="order-price">￥20000.00</div>
+								<div class="order-name p-nowrap">{{item.goods_name}}</div>
+								<div class="order-price">￥{{item.pay_price/100}}</div>
 							</div>
 							<div class="order-sku-num">
-								<div class="order-sku p-nowrap">规格：银色</div>
-								<div class="order-buy-num">x1</div>
+								<div class="order-sku p-nowrap">{{item.specs_name}}</div>
+								
 							</div>
 							<div class="order-action-session">
-								<div class="order-action-text">不支持退货
-									<div class="order-action-btn">
-										<img class="img-100" src="@/assets/img/question_01.png" />
-									</div>
-								</div>
+								<div class="order-action-text"></div>
+								<div class="order-buy-num">x1</div>
 							</div>
 						</div>
 					</div>
-					<div class="order-goods-info">
+					<!-- <div class="order-goods-info">
 						<div class="order-pic-block">
-							<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
+							<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
 						</div>
 						<div class="order-info">
 							<div class="order-name-price">
@@ -102,21 +108,21 @@
 								<div class="order-action-text">退货中</div>
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<div class="cont-session common-list common-list-pic">
 				<div class="common-item no-top-border refund-item-number">
 					<div class="common-item-left color-222 font-28">
-						<div class="item-left-name">退款说明</div>
-						<input class="item-first-text" type="text" placeholder="￥200.00" />
+						<div class="item-left-name">退款金额</div>
+						<input class="item-first-text" type="text" :placeholder="'￥'+refundPrice" v-model="refundNum" />
 					</div>
-					<div class="item-left-tip">可修改金额，最多￥200.00</div>
+					<div class="item-left-tip">可修改金额，最多￥{{refundPrice}}</div>
 				</div>
 				<div class="common-item">
 					<div class="common-item-left color-222 font-28">
 						<div class="item-left-name">退款说明</div>
-						<input class="item-first-text" type="text" placeholder="填写退款理由" />
+						<input class="item-first-text" type="text" placeholder="填写退款说明" v-model="explainTxt" />
 					</div>
 				</div>
 				<div class="common-item common-item-second">
@@ -161,14 +167,14 @@
 					<div class="pic-item">
 						<div class="upload-pic">
 							<!-- <van-icon class="van-icon" name="plus" size="0.52px" color="#aaa" /> -->
-							<van-uploader :after-read="onRead">
+							<van-uploader :max-count="2" :after-read="afterRead">
 							  <van-icon class="van-icon" name="plus" size="26px" color="#aaa" />
 							</van-uploader>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="cont-session address-logistics">
+			<!-- <div class="cont-session address-logistics">
 				<div class="shipping-address">
 					<div class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">收货地址:</div>
@@ -184,63 +190,170 @@
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
 		</div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
-			<div class="submit-btn">
+			<div class="submit-btn" @click="submitAjax">
 				<div class="color-fff font-30">提交</div>
 			</div>
 		</div>
 
-		<div v-show="false" class="publick-mask reason-mask bottom-fixed">
-      <div class="publick-dclose" catchtap="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
-      <div class="publick-header">选择换货原因</div>
-      <div class="action-block">请选择实际原因，以便我们更好地为您提供服务</div>
-      <div class="common-list">
-				<div class="common-item common-item-first">
-					<div class="common-item-left">拍错/不喜欢</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">发错规格</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">少件/破损/变形等</div>
-				</div>
-				<div class="common-item">
-					<div class="common-item-left">拍错尺码/规格/型号</div>
-				</div>
-			</div>
-    </div>
-    <div v-show="false" class="mask-bg" catchtouchmove="true" catchtap="ensureFunc"></div>
+		<explain-swal 
+    :show-swal="showExplainSwal"
+    :swal-cont="swalCont"
+    @closeSwal="closeExplainSwal"
+    ></explain-swal>
+    <reason-swal 
+    :show-swal="showReasonSwal"
+    :swal-list="swalList"
+    :swal-info="swalInfo"
+    @closeSwal="closeReasonSwal"
+    @sureSwal="sureSwal"
+    ></reason-swal>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, NavBar } from 'vant'
+import { Swipe, SwipeItem, Icon, NavBar, Uploader,Toast } from 'vant'
+import { getApplyRefund,RefundSubmit } from '@/api/life.js'
+import reasonSwal from './../components/reason-swal'
+import explainSwal from './../components/explain-swal'
 export default {
   components: {
     [Icon.name]: Icon,
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
     [NavBar.name]: NavBar,
+    [Uploader.name]: Uploader,
+    [Toast.name]: Toast,
+    reasonSwal,
+    explainSwal
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight
+      windowHeight: document.documentElement.clientHeight,
+      id: '', //物流id
+      type: 1, // 1退货退款 2退款
+      titName: '申请退换退款', //标题
+      refundPrice: 0,//退款金额(展示)
+      refundNum: null, //退款金额(提交)
+      explainTxt: '', //退款说明
+      showExplainSwal: false, //说明弹窗
+      swalInfo: new Object(),  //标题描述
+      swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
+      showReasonSwal: false,  //原因弹窗
+      swalList: [],
+      ableList: [],   //可以申请的商品
+      unableList: [], //不能申请的商品
     }
   },
+  created(){
+    this.order_project_id = this.$route.query.order_id;
+    this.logistice_id = this.$route.query.logistice_id;
+    this.sale_type = this.$route.query.type;
+    this.titName = this.$route.query.type == 2 ? '申请退换退款' : '申请退款';
+    console.log(this.type);
+    this.getData();
+  },
   methods: {
-
+  	getData () {
+      getApplyRefund({
+        order_project_id: this.order_project_id,
+        logistice_id: this.logistice_id,
+        sale_type: this.sale_type,
+      }).then(res => {
+        if (res.success) {
+        	this.ableList = res.data.data_ok;
+        	this.unableList = res.data.data_no;
+        	if(this.sale_type == 1){  //申请退款
+        		this.swalInfo.tit = "选择退款原因";
+        		this.swalInfo.tip = "请选择实际原因，以便我们更好地为您提供服务";
+        		this.swalList = res.refund_arr;
+        	}else {    //申请退款退货
+        		this.swalList = res.returnfund_arr;
+        		this.swalInfo.tit = "选择退货原因";
+        		this.swalInfo.tip = "请选择实际原因，以便我们更好地为您提供服务";
+        	}
+        }
+      })
+    },
+    checkboxOne(index){
+    	this.tabIndex =  index;
+    	console.log(this.ableList[index].is_checked);
+    	if(this.ableList[index].is_checked){
+    		this.ableList[index].is_checked = false;
+    		this.ableList[index].reason = '';
+    		this.total();
+    	}else {
+    		this.showReasonSwal = true;
+    	}
+    	
+    },
+  	// 打开弹窗
+  	openExplainSwal(){
+      this.showExplainSwal = true;
+    },
+    // 弹窗选择(回调)
+    sureSwal(data){
+    	console.log(data)
+    	this.ableList[this.tabIndex].is_checked = true;
+    	this.ableList[this.tabIndex].reason = this.swalList[data].text;
+    	console.log('a',this.ableList[this.tabIndex].reason);
+    	this.total();
+    	this.closeReasonSwal(0);
+    },
+  	// 关闭弹窗(回调)
+  	closeReasonSwal(data){
+      this.showReasonSwal = data == 1 ? true : false;
+    },
+    // 关闭弹窗(回调)
+  	closeExplainSwal(data){
+      this.showExplainSwal = data == 1 ? true : false;
+    },
+    //图片上传完成
+    afterRead(file) {
+      // 此时可以自行将文件上传至服务器
+      console.log(file);
+    },
+    total(){
+    	var list = this.ableList;
+    	var id_arr = [];
+    	var reason_arr = [];
+    	var refundPrice = 0;
+    	for(var i=0;i<list.length;i++){
+    		if(list[i].is_checked){
+    			id_arr.push(list[i].id);
+    			reason_arr.push(list[i].reason);
+    			refundPrice+=parseInt(list[i].pay_price);
+    		}
+    	}
+    	this.id_arr = id_arr;
+    	this.reason_arr = reason_arr;
+    	this.refundPrice = refundPrice/100;
+    	console.log(this.refundPrice);
+    },
+    submitAjax(){
+    	Toast('请上传 jpg 格式图片');
+    	RefundSubmit({
+        order_project_id: this.order_project_id,
+        logistice_id: this.logistice_id,
+        sale_type: this.sale_type,
+      }).then(res => {
+        if (res.success) {
+        	
+        }
+      })
+    }
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
+<style scoped  src="../../../styles/order.css"></style>
+<style scoped  src="../../../styles/apply.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
-@import '../../../styles/order.css';
-@import '../../../styles/apply.css';
 .goods-session {
 	padding: 40px 0 0 0;
 	flex-wrap: wrap;
