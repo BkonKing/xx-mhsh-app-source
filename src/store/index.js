@@ -83,7 +83,7 @@ const store = {
     deleteKeepAlive (state, name) {
       const index = state.keepAliveList.indexOf(name)
       if (index !== -1) {
-        state.keepAliveList = state.keepAliveList.splice(index, 1)
+        state.keepAliveList.splice(index, 1)
       }
     },
     setPaddingTop (state, value) {
@@ -223,19 +223,16 @@ const store = {
         return err
       })
     },
-    getHouse ({
+    async getHouse ({
       commit
     }) {
-      bindingHouse().then(({
-        data
-      }) => {
-        data && data.length && commit('setCurrentProject', data[0])
-      })
+      const { data } = await bindingHouse()
+      data && data.length && commit('setCurrentProject', data[0])
     },
-    getMyAccount ({
+    async getMyAccount ({
       commit
     }) {
-      getMyAccount().then(({
+      await getMyAccount().then(({
         data
       }) => {
         commit('setUser_info', data && data.user_info)
