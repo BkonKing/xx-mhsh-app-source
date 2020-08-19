@@ -142,6 +142,7 @@
 
 <script>
 import { Tab, Tabs, Image } from 'vant'
+import { getSearch } from '@/api/life.js'
 export default {
   components: {
     [Tab.name]: Tab,
@@ -163,15 +164,24 @@ export default {
       noMoreHidden: true,//上拉加载更多，没有更多是否隐藏
     }
   },
+  created(){
+    this.isSelect = this.$route.query.isSelect;
+    this.getData();
+  },
   methods: {
+    getData () {
+      getSearch({
+        
+      }).then(res => {
+        if (res.success) {
+          
+        }
+      })
+    },
     onSubmit: function () {
 
     },
-    created() {
-      this.$nextTick((x)=>{   //正确写法
-         this.$refs.inputs.focus();
-      })
-    },
+    
     /**
      * 获取热门搜索词/request
     */

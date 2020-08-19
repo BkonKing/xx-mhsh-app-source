@@ -30,7 +30,7 @@
 							</div>
 							<div v-if="item.is_checked" @click.stop="closeReasonSwal(1)" class="apply-select flex-between">
 								<div class="select-left">
-									<div>{{item.reason}}</div>
+									<div>退款原因：{{item.reason}}</div>
 								</div>
 								<div class="select-right">
 									<img class="img-100" src="@/assets/img/right.png" />
@@ -71,8 +71,8 @@
 					</div> -->
 				</div>
 				<div v-if="unableList.length > 0" class="not-apply">
-					<div class="apply-toggle">部分商品不支持换货({{unableList.length}})</div>
-					<div v-for="(item,index) in unableList" class="order-goods-info">
+					<div @click="toggle" :class="[toggleDown ? 'cur' : '', 'apply-toggle']">部分商品不支持换货({{unableList.length}})</div>
+					<div v-show="!toggleDown" v-for="(item,index) in unableList" class="order-goods-info">
 						<div class="order-pic-block">
 							<img class="img-100" mode="aspectFill" :src="item.specs_img" />
 						</div>
@@ -86,7 +86,15 @@
 								
 							</div>
 							<div class="order-action-session">
-								<div class="order-action-text"></div>
+								<div class="order-action-text">
+									<template v-if="item.is_returnfund==0 || item.is_return==0">
+										{{item.is_returnfund==0 ? '不支持退换' : '不支持退货'}}
+										<div class="order-action-btn">
+											<img class="img-100" src="@/assets/img/question_01.png" mode="" />
+										</div>
+									</template>
+									<template v-else>{{item.order_status_name}}</template>
+								</div>
 								<div class="order-buy-num">x1</div>
 							</div>
 						</div>
@@ -132,7 +140,15 @@
 					</div>
 				</div>
 				<div class="common-item pic-list no-top-border">
-					<div class="pic-item">
+					<!-- <div class="pic-item">
+						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
+						<div class="pic-del">
+							<div class="del-bg">
+								<div class="del-line"></div>
+							</div>
+						</div>
+					</div> -->
+					<!-- <div class="pic-item">
 						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
 						<div class="pic-del">
 							<div class="del-bg">
@@ -155,23 +171,16 @@
 								<div class="del-line"></div>
 							</div>
 						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
+					</div> -->
+					<tf-uploader v-model="images" max-count="5"></tf-uploader>
+					<!-- <div class="pic-item">
 						<div class="upload-pic">
-							<!-- <van-icon class="van-icon" name="plus" size="0.52px" color="#aaa" /> -->
+							<tf-uploader v-model="images" max-count="9"></tf-uploader>
 							<van-uploader :max-count="2" :after-read="afterRead">
 							  <van-icon class="van-icon" name="plus" size="26px" color="#aaa" />
 							</van-uploader>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<!-- <div class="cont-session address-logistics">
@@ -216,20 +225,20 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, NavBar, Uploader,Toast } from 'vant'
-import { getApplyRefund,RefundSubmit } from '@/api/life.js'
+import {  Icon, NavBar, Uploader,Toast } from 'vant'
+import { getApplyRefund, refundSubmit, returnRefundSubmit } from '@/api/life.js'
+import tfUploader from '@/components/tf-uploader/index'
 import reasonSwal from './../components/reason-swal'
 import explainSwal from './../components/explain-swal'
 export default {
   components: {
     [Icon.name]: Icon,
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem,
     [NavBar.name]: NavBar,
     [Uploader.name]: Uploader,
     [Toast.name]: Toast,
     reasonSwal,
-    explainSwal
+    explainSwal,
+    tfUploader
   },
   data () {
     return {
@@ -247,6 +256,8 @@ export default {
       swalList: [],
       ableList: [],   //可以申请的商品
       unableList: [], //不能申请的商品
+      images: [],
+      toggleDown: true
     }
   },
   created(){
@@ -289,7 +300,9 @@ export default {
     	}else {
     		this.showReasonSwal = true;
     	}
-    	
+    },
+    toggle(){
+    	this.toggleDown = !this.toggleDown;
     },
   	// 打开弹窗
   	openExplainSwal(){
@@ -335,16 +348,47 @@ export default {
     	console.log(this.refundPrice);
     },
     submitAjax(){
-    	Toast('请上传 jpg 格式图片');
-    	RefundSubmit({
-        order_project_id: this.order_project_id,
-        logistice_id: this.logistice_id,
-        sale_type: this.sale_type,
-      }).then(res => {
-        if (res.success) {
-        	
-        }
-      })
+    	console.log(this.images);
+    	if(typeof this.id_arr =='undefined' || this.id_arr.length == 0){
+    		Toast('请选择商品');
+    	}else {
+    		if(this.refundNum > this.refundPrice){
+    			Toast('退款金额不能大于'+this.refundPrice);
+    			return;
+    		}
+    		if(this.sale_type == 1){
+    			refundSubmit({
+		        order_project_id: this.order_project_id,
+		        logistice_id: this.logistice_id,
+		        order_goods_ids: this.id_arr,
+		        refund_price: this.refundNum ? this.refundNum : this.refundPrice,
+		        reason_type: this.reason_arr,
+		        reason_text: this.explainTxt,
+		        pic: this.images,
+		      }).then(res => {
+		        if (res.success) {
+		        	Toast(res.message);
+		        	//跳转订单详情
+		        }
+		      })
+    		}else {
+    			returnRefundSubmit({
+		        order_project_id: this.order_project_id,
+		        logistice_id: this.logistice_id,
+		        order_goods_ids: this.id_arr,
+		        refund_price: this.refundNum ? this.refundNum : this.refundPrice,
+		        reason_type: this.reason_arr,
+		        reason_text: this.explainTxt,
+		        pic: this.images,
+		      }).then(res => {
+		        if (res.success) {
+		        	Toast(res.message);
+		        	//跳转订单详情
+		        }
+		      })
+    		}
+    		
+    	}
     }
   }
 }
@@ -358,5 +402,8 @@ export default {
 	padding: 40px 0 0 0;
 	flex-wrap: wrap;
 }
-
+.van-uploader__wrapper {
+	display: flex;
+}
 </style>
+

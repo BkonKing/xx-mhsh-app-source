@@ -33,9 +33,9 @@
 							</div>
 							<div class="order-action-session">
 								<div class="order-action-text">
-									<template v-if="goods.is_returnfund==1 || goods.is_return==1">
+									<!-- <template v-if="goods.is_returnfund==1 || goods.is_return==1">
 										{{goods.is_returnfund==1 ? '不支持退换' : '不支持退货'}}
-									</template>
+									</template> -->
 								</div>
 								<div class="order-buy-num">x1</div>
 							</div>

@@ -36,6 +36,11 @@ export function getGoodsDetail (params) {
   return request.post('/life/goods/goods_info', params)
 }
 
+//搜索
+export function getSearch (params) {
+  return request.post('/life/goods/search_goods', params)
+}
+
 //购物车
 export function getCart (params) {
   return request.post('/life/order/shopping_pay', params)
@@ -61,7 +66,11 @@ export function deleteAddress (params) {
 
 //优惠券
 export function getCoupon (params) {
-  return request.post('/life/goods/goods_list', params)
+  return request.post('/life/my_order/coupon_list', params)
+}
+//优惠券
+export function getSelectCoupon (params) {
+  return request.post('/life/order/common_coupon_choice', params)
 }
 
 //结算
@@ -97,6 +106,43 @@ export function getOrderDetail (params) {
 export function getApplyRefund (params) {
   return request.post('/life/my_order/logistice_refund_sale', params)
 }
+//申请退款/退货退款(提交)
+export function refundSubmit (params) {
+  return request.post('/life/my_order/refund_askfor', params)
+}
+export function returnRefundSubmit (params) {
+  return request.post('/life/my_order/returnrefund_askfor', params)
+}
+//退款/退货退款详情
+export function getRefundInfo (params) {
+  return request.post('/life/my_order/refund_info', params)
+}
+export function getReturnRefundInfo (params) {
+  return request.post('/life/my_order/returnfund_info', params)
+}
+
+//申请换货
+export function getApplyBarter (params) {
+  return request.post('/life/my_order/logistice_barter_sale', params)
+}
+//申请换货(提交)
+export function barterSubmit (params) {
+  return request.post('/life/my_order/barter_askfor', params)
+}
+//换货详情
+export function getBarterInfo (params) {
+  return request.post('/life/my_order/barter_info', params)
+}
+
+//填写物流
+export function getWriteInfo (params) {
+  return request.post('/life/my_order/logistice_info', params)
+}
+export function logisticsSubmit (params) {
+  return request.post('/life/my_order/logistice_operation', params)
+}
+
+
 
 //物流信息
 export function getLogisticsInfo (params) {

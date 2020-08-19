@@ -106,7 +106,7 @@
           <div class="color-222 font-28 width-146">优惠券</div>
         </div>
         <div class="common-item-right">
-          <div v-if="settlementInfo.coupon_money&&settlementInfo.coupon_money!='0.00'" class="color-eb5841 font-28">{{settlementInfo.coupon_text}}</div>
+          <div v-if="settlementInfo.coupon_money&&settlementInfo.coupon_money!='0.00'" class="color-eb5841 font-28">{{couponInfo.coupon_text}}</div>
           <div v-else class="color-8f8f94 font-28">无可用优惠券</div>
           <div class="link-icon">
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
@@ -131,6 +131,10 @@
         <div class="detail-price-item">
           <div>运费</div>
           <div>￥{{settlementInfo.freight/100}}</div>
+        </div>
+        <div v-if="settlementInfo.coupon_money&&settlementInfo.coupon_money!='0'" class="detail-price-item">
+          <div>优惠券</div>
+          <div>-￥{{settlementInfo.coupon_money/100}}</div>
         </div>
         <div v-if="is_credits" class="detail-price-item">
           <div>幸福币抵扣</div>
@@ -174,14 +178,17 @@
         </div>
         <div class="detail-price-item">
           <div>运费</div>
-          <div>￥{{settlementInfo.freight/100}}</div>
+          <div><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight/10}}</div>
         </div>
       
       </div>
       <div class="order-total order-total-detail">
         <div class="color-8f8f94 font-24">共 1 件</div>
-        <div class="order-price-total">
+        <!-- <div class="order-price-total">
           合计:<span><template v-if="settlementInfo.freight">￥{{settlementInfo.freight/100}} + </template><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</span>
+        </div> -->
+        <div class="order-price-total">
+          合计:<span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</span>
         </div>
       </div>
     </div>
@@ -202,7 +209,7 @@
         <div v-if="order_type==0" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100}}</div>
         <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
         <template v-else>
-          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><template v-if="settlementInfo.freight">￥{{settlementInfo.freight/100}} + </template><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</div>
+          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
         </template>
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">结算({{goodsNum}})</div>
@@ -233,6 +240,7 @@ import paySwal from './../components/pay-swal'
 import eventBus from '@/api/eventbus.js';
 import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate } from '@/api/life.js'
 export default {
+  name: 'settlement',
   components: {
     [NavBar.name]: NavBar,
     explainSwal,
@@ -254,10 +262,10 @@ export default {
       userId: '',          //用户uid
       userData: '',        //用户信息
       remarks: '',         //备注
-      coupon_id: '',       //优惠券id
+      // coupon_id: '',       //优惠券id
       isSelectCoupon: false,//是否选择优惠券
-      selectCouponId: '',   //选择的优惠券id
-      selectCouponTxt: '',  //选择的优惠券信息
+      // selectCouponId: '',   //选择的优惠券id
+      // selectCouponTxt: '',  //选择的优惠券信息
       couponInfo: '',      //优惠券信息
       coupon_price: '',    //优惠券金额
       priceInfo: '',       //优惠信息
@@ -288,12 +296,16 @@ export default {
 
     eventBus.$on('chooseCoupon', function(data){
       console.log(data);
-      that.couponInfo.user_coupon_id = that.selectCouponId;
+      this.isSelectCoupon = true;
+      that.couponInfo = JSON.parse(data);
+      console.log(11,that.couponInfo.coupon_text)
       that.getData();
     }.bind(this));
     
   },
   created(){
+    eventBus.$off('chooseAddress');
+    eventBus.$off('chooseCoupon');
     var prev_page = this.$route.query.prev_page;
     this.order_type = this.$route.query.order_type;  //订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
     // this.flashParam = {
@@ -323,18 +335,21 @@ export default {
       if(this.order_type == 0 || this.prev_page == 0){
         getOrdinaryInfo({
           giftbag: JSON.stringify(this.carts),
-          // user_coupon_id: this.couponInfo.user_coupon_id,
-          user_coupon_id: 2
+          user_coupon_id: this.couponInfo.user_coupon_id,
+          // user_coupon_id: 2
         }).then(res => {
           if (res.success) {
             this.settlementInfo = res.data;
-            this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo;
             if (this.isSelectCoupon){
-              this.couponInfo.user_coupon_id = this.selectCouponId;
-              this.couponInfo.coupon_text = this.selectCouponTxt;
+              // this.couponInfo.user_coupon_id = this.selectCouponId;
+              // this.couponInfo.coupon_text = this.selectCouponTxt;
               this.isSelectCoupon = '';
+            }else {
+              this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo;
             }
+            this.addressInfo = res.address_info
           }
+          console.log(this.couponInfo)
         })
       }else if(this.order_type == 3){
         getExchangeInfo(this.flashParam).then(res => {
@@ -643,7 +658,8 @@ export default {
         this.$router.push({
           path: '/coupon/coupon-select',
           query: {
-            isSelect: 1
+            prev_page: this.prev_page,
+            user_coupon_id: this.couponInfo.user_coupon_id
           }
         })
         break;
@@ -657,6 +673,15 @@ export default {
         break;
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'goodsDetail' || to.name == 'cart'){
+      console.log(to.name)
+      
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    next();
   }
 }
 </script>

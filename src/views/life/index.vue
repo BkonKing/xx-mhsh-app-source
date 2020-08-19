@@ -11,7 +11,7 @@
 					</div>
 				</div>
 			</div>
-			<div v-if="1==1" class="public-nav">
+			<div class="public-nav">
 	      <scrollBar direction="x" :activeIndex="activeIndex">
 	        <div
 	          class="scroll-barItem"
@@ -52,167 +52,21 @@
 				</van-swipe>
 			</div>
 			<template v-for="(item, index) in lifeData">
-				<div v-if="item.type == 2" class="life-session">
-					<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
-						<div class="font-34 color-fff font-weight flex-align-center">
-							<span>{{item.bargain_name}}</span>
+				<template v-if="item.type == 2">
+					<div v-if="item.child && item.child.length > 0" class="life-session">
+						<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
+							<div class="font-34 color-fff font-weight flex-align-center">
+								<span>{{item.bargain_name}}</span>
+							</div>
+							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
 						</div>
-						<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
-					</div>
-					<div class="special-goods-list">
-						<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.id})" class="life-goods-item">
-							<div class="life-goods-pic">
-								<img class="img-100" :src="val.thumb" />
-							</div>
-							<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-							<div class="life-goods-price">￥{{val.te_price}} <span>￥{{val.s_price}}</span></div>
-						</div>
-						<!-- <div class="life-goods-item">
-							<div class="life-goods-pic">
-								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-							</div>
-							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-						</div>
-						<div class="life-goods-item">
-							<div class="life-goods-pic">
-								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-							</div>
-							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-						</div>
-						<div class="life-goods-item">
-							<div class="life-goods-pic">
-								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-							</div>
-							<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-							<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-						</div> -->
-					</div>
-				</div>
-				<div v-else-if="item.type == 1" class="life-session">
-					<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
-						<div class="font-34 color-fff font-weight flex-align-center">
-							<span>限时闪购</span>
-							<van-count-down v-if="item.ollage_info" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
-				        <template v-slot="timeData">
-				          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
-				          <div class="countdown-point">:</div>
-				          <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
-				          <div class="countdown-point">:</div>
-				          <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
-				        </template>
-				      </van-count-down>
-						</div>
-						<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
-					</div>
-					<div class="flash-goods-list">
-						<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item flex-between">
-							<div class="life-goods-pic">
-								<img class="img-100" :src="val.thumb" />
-							</div>
-							<div class="flash-goods-info">
-								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-								<div class="life-goods-price">￥{{val.o_price}} <span>￥{{val.s_price}}</span></div>
-							</div>
-							<div class="item-btn">
-								<template v-if="tapStatus == 2">
-                  <template v-if="val.goods_num > 0 && val.is_over == 0">
-                    <div class="btn-collage" v-if="val.price_status == 1 && val.is_partake">邀请拼单</div>
-                    <div class="btn-flash" v-else>马上抢</div>
-                  </template>
-                  <div v-else class="btn-over">已抢光</div>
-                </template>
-                <template v-else>
-                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
-                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
-                </template>
-								<!-- <div class="btn-flash">马上抢</div> -->
-		            <!-- <div class="btn-collage">邀请拼单</div> -->
-		            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-		            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-		            <!-- <div class="btn-over">已抢光</div> -->
-	            </div>
-						</div>
-						<!-- <div class="life-goods-item flex-between">
-							<div class="life-goods-pic">
-								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-							</div>
-							<div class="flash-goods-info">
-								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-							</div>
-						</div>
-						<div class="life-goods-item flex-between">
-							<div class="life-goods-pic">
-								<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-							</div>
-							<div class="flash-goods-info">
-								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-							</div>
-						</div> -->
-					</div>
-				</div>
-				<template v-else>
-					<div v-if="item.special_type == 2" class="special-session flex-between">
-						<div class="special-list">
-							<template v-if="item.child.length < 4" v-for="(val, key) in item.child">
-								<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
-									<img class="img-100" :src="val.special_thumb" />
-									<div class="special-tip">
-										<div>{{val.special_name}}</div>
-										<div>{{val.special_text}}</div>
-									</div>
-								</div>
-							</template>
-							<template v-else>
-								<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
-									<img class="img-100" :src="val.special_thumb" />
-									<div class="special-tip">
-										<div>{{val.special_name}}</div>
-										<div>{{val.special_text}}</div>
-									</div>
-								</div>
-								<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
-									<img class="img-100" :src="val.special_thumb" />
-									<div class="special-tip">
-										<div>{{val.special_name}}</div>
-										<div>{{val.special_text}}</div>
-									</div>
-								</div>
-								<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
-									<img class="img-100" :src="val.special_thumb" />
-									<div class="special-tip">
-										<div>{{val.special_name}}</div>
-										<div>{{val.special_text}}</div>
-									</div>
-								</div>
-								<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
-									<img class="img-100" :src="val.special_thumb" />
-									<div class="special-tip">
-										<div>{{val.special_name}}</div>
-										<div>{{val.special_text}}</div>
-									</div>
-								</div>
-							</template>
-						</div>
-					</div>
-					<div v-else-if="item.special_type == 1" class="life-session">
-						<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
-							<div class="font-34 font-weight flex-column-center">
-								<div class="area-text-tit">{{item.special_name}}</div>
-								<div class="area-text-detail">{{item.special_text}}</div>
-							</div>
-							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
-						</div>
-						<div class="life-goods-list flex-align-center">
-							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+						<div class="special-goods-list">
+							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.id})" class="life-goods-item">
 								<div class="life-goods-pic">
 									<img class="img-100" :src="val.thumb" />
 								</div>
 								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-								<div class="life-goods-price">￥{{val.s_price}} <span v-if="val.original_price && val.original_price!='0.00'">￥{{val.original_price}}</span></div>
+								<div class="life-goods-price">￥{{val.te_price/100}} <span>￥{{val.s_price/100}}</span></div>
 							</div>
 							<!-- <div class="life-goods-item">
 								<div class="life-goods-pic">
@@ -237,9 +91,165 @@
 							</div> -->
 						</div>
 					</div>
-					<div v-else @click="linkFunc(4,{id:item.special_id})" class="banner-session">
-						<img class="img-100" :src="item.special_thumb" />
+				</template>
+				<template v-else-if="item.type == 1">
+					<div v-if="item.child && item.child.length > 0" class="life-session">
+						<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
+							<div class="font-34 color-fff font-weight flex-align-center">
+								<span>限时闪购</span>
+								<van-count-down v-if="item.ollage_info" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
+					        <template v-slot="timeData">
+					          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
+					          <div class="countdown-point">:</div>
+					          <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
+					          <div class="countdown-point">:</div>
+					          <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
+					        </template>
+					      </van-count-down>
+							</div>
+							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+						</div>
+						<div class="flash-goods-list">
+							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item flex-between">
+								<div class="life-goods-pic">
+									<img class="img-100" :src="val.thumb" />
+								</div>
+								<div class="flash-goods-info">
+									<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+									<div class="life-goods-price">￥{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
+								</div>
+								<div class="item-btn">
+									<template v-if="tapStatus == 2">
+	                  <template v-if="val.goods_num > 0 && val.is_over == 0">
+	                    <div class="btn-collage" v-if="val.price_status == 1 && val.is_partake">邀请拼单</div>
+	                    <div class="btn-flash" v-else>马上抢</div>
+	                  </template>
+	                  <div v-else class="btn-over">已抢光</div>
+	                </template>
+	                <template v-else>
+	                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+	                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+	                </template>
+									<!-- <div class="btn-flash">马上抢</div> -->
+			            <!-- <div class="btn-collage">邀请拼单</div> -->
+			            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
+			            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
+			            <!-- <div class="btn-over">已抢光</div> -->
+		            </div>
+							</div>
+							<!-- <div class="life-goods-item flex-between">
+								<div class="life-goods-pic">
+									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+								</div>
+								<div class="flash-goods-info">
+									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+								</div>
+							</div>
+							<div class="life-goods-item flex-between">
+								<div class="life-goods-pic">
+									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+								</div>
+								<div class="flash-goods-info">
+									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+								</div>
+							</div> -->
+						</div>
 					</div>
+				</template>
+				<template v-else>
+					<template  v-if="item.special_type == 2">
+						<div v-if="item.child && item.child.length > 0" class="special-session flex-between">
+							<div class="special-list">
+								<template v-if="item.child.length < 4" v-for="(val, key) in item.child">
+									<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
+										<img class="img-100" :src="val.special_thumb" />
+										<div class="special-tip">
+											<div>{{val.special_name}}</div>
+											<div>{{val.special_text}}</div>
+										</div>
+									</div>
+								</template>
+								<template v-else>
+									<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+										<img class="img-100" :src="val.special_thumb" />
+										<div class="special-tip">
+											<div>{{val.special_name}}</div>
+											<div>{{val.special_text}}</div>
+										</div>
+									</div>
+									<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+										<img class="img-100" :src="val.special_thumb" />
+										<div class="special-tip">
+											<div>{{val.special_name}}</div>
+											<div>{{val.special_text}}</div>
+										</div>
+									</div>
+									<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+										<img class="img-100" :src="val.special_thumb" />
+										<div class="special-tip">
+											<div>{{val.special_name}}</div>
+											<div>{{val.special_text}}</div>
+										</div>
+									</div>
+									<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+										<img class="img-100" :src="val.special_thumb" />
+										<div class="special-tip">
+											<div>{{val.special_name}}</div>
+											<div>{{val.special_text}}</div>
+										</div>
+									</div>
+								</template>
+							</div>
+						</div>
+					</template>
+					<template v-else-if="item.special_type == 1">
+						<div v-if="item.child && item.child.length > 0" class="life-session">
+							<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
+								<div class="font-34 font-weight flex-column-center">
+									<div class="area-text-tit">{{item.special_name}}</div>
+									<div class="area-text-detail">{{item.special_text}}</div>
+								</div>
+								<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+							</div>
+							<div class="life-goods-list flex-align-center">
+								<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+									<div class="life-goods-pic">
+										<img class="img-100" :src="val.thumb" />
+									</div>
+									<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+									<div class="life-goods-price">￥{{val.s_price/100}} <span v-if="val.original_price && val.original_price!='0'">￥{{val.original_price/100}}</span></div>
+								</div>
+								<!-- <div class="life-goods-item">
+									<div class="life-goods-pic">
+										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+									</div>
+									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+								</div>
+								<div class="life-goods-item">
+									<div class="life-goods-pic">
+										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+									</div>
+									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+								</div>
+								<div class="life-goods-item">
+									<div class="life-goods-pic">
+										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
+									</div>
+									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
+									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
+								</div> -->
+							</div>
+						</div>
+					</template>
+					<template v-else>
+						<div v-if="item.special_thumb" @click="linkFunc(4,{id:item.special_id})" class="banner-session">
+							<img class="img-100" :src="item.special_thumb" />
+						</div>
+					</template>
 				</template>
 			</template>
 		</template>
@@ -256,7 +266,7 @@
 							<img class="img-100" :src="item.thumb" />
 						</div>
 						<div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
-						<div class="life-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0.00'">￥{{item.y_price}}</span></div>
+						<div class="life-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
           </div>
         </div>
       </van-list>

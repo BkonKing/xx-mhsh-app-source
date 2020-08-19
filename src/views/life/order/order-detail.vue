@@ -20,7 +20,7 @@
 					<div class="order-info">
 						<div class="order-name-price">
 							<div class="order-name p-nowrap">{{item.goods_name}}</div>
-							<div class="order-price">￥{{item.pay_price/100}}</div>
+							<div class="order-price">￥{{item.pay_type == 1 ? item.happiness_price/100 : item.pay_price/100}}</div>
 						</div>
 						<div class="order-sku-num">
 							<div class="order-sku p-nowrap">{{item.specs_name}}</div>
@@ -34,6 +34,7 @@
 										<img class="img-100" src="@/assets/img/question_01.png" mode="" />
 									</div>
 								</template>
+								<template v-else>{{item.order_status_name}}</template>
 							</div>
 							<div class="order-buy-num">x1</div>
 						</div>
@@ -41,10 +42,10 @@
 					<div v-if="item.is_shouhou_btn == 1" class="order-goods-btn">
 						<div @click.stop="linkFunc(14,{logistice_id: item.logistice_id})" class="order-border-btn" hover-class="none">申请退换</div>
 					</div>
-					<div class="order-goods-btn">
-						<div v-if="item.is_barter_btn == 1" class="order-border-btn" hover-class="none">换货详情</div>
-						<div v-if="item.is_refund_btn == 1" class="order-border-btn" hover-class="none">申请退换</div>
-						<div v-if="item.is_returnfund_btn == 1" class="order-border-btn" hover-class="none">申请退换</div>
+					<div v-if="item.is_barter_btn == 1 || item.is_refund_btn == 1 || item.is_returnfund_btn == 1" class="order-goods-btn">
+						<div v-if="item.is_barter_btn == 1" @click.stop="linkFunc(16,{id: item.sale_order_id})" class="order-border-btn" hover-class="none">换货详情</div>
+						<div v-if="item.is_refund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 1})" class="order-border-btn" hover-class="none">退款详情</div>
+						<div v-if="item.is_returnfund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 2})" class="order-border-btn" hover-class="none">退款详情</div>
 					</div>
 				</div>
 				<!-- <div class="order-goods-info">
@@ -90,7 +91,7 @@
 				<div class="order-total order-total-detail">
 					<div class="color-8f8f94 font-24">共 {{orderInfo.goods_num}} 件</div>
 					<div class="order-price-total">
-						合计:<span>￥{{orderInfo.pay_price/100}}</span>
+						合计:<span>￥{{orderInfo.pay_type==1 ? orderInfo.happiness_price/100 : orderInfo.pay_price/100}}</span>
 					</div>
 				</div>
 			</div>
@@ -281,6 +282,23 @@ export default {
           query: {
             id: this.order_id,
             logistice_id: obj.logistice_id
+          }
+        })
+        break;
+        case 16:
+        this.$router.push({
+          path: '/order/barter-detail',
+          query: {
+            id: obj.id,
+          }
+        })
+        break;
+        case 18:
+        this.$router.push({
+          path: '/order/refund-detail',
+          query: {
+            id: obj.id,
+            type: obj.type
           }
         })
         break;

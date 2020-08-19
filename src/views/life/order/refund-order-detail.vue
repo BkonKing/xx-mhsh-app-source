@@ -1,17 +1,41 @@
 <template>
-	<div class="app-body">
-		<div class="order-bar"><van-nav-bar title="换货详情" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+		<div class="order-bar"><van-nav-bar title="退款详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
 			<div class="order-status-session">
-				<div class="order-status-name">申请退款中</div>
-				<div class="order-status-tip">订单等待处理中</div>
+				<div class="order-status-name">{{infoData.order_status_name}}</div>
+				<div class="order-status-tip">{{infoData.order_status_name2}}</div>
 			</div>
 			<div class="cont-session goods-session">
-				<div class="order-goods-info">
+				<div v-for="(item,index) in goodsList" class="order-goods-info">
 					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
+						<img class="img-100" mode="aspectFill" :src="item.specs_img" />
+					</div>
+					<div class="order-info">
+						<div class="order-name-price">
+							<div class="order-name p-nowrap">{{item.goods_name}}</div>
+							<div class="order-price">￥{{item.pay_price/100}}</div>
+						</div>
+						<div class="order-sku-num">
+							<div class="order-sku p-nowrap">{{item.specs_name}}</div>
+							<div class="order-num">幸福币{{item.happiness_price/10}}</div>
+						</div>
+						<div class="order-action-session">
+							<div class="order-action-text">{{item.order_status_name}}</div>
+							<div class="order-buy-num">x1</div>
+						</div>
+					</div>
+					<div class="apply-select flex-between">
+						<div class="select-left">
+							<div>退款原因：{{item.reason_type}}</div>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="order-goods-info">
+					<div class="order-pic-block">
+						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
 					</div>
 					<div class="order-info">
 						<div class="order-name-price">
@@ -23,31 +47,31 @@
 							<div class="order-num">￥21000.00</div>
 						</div>
 						<div class="order-action-session">
-							<div class="order-action-text">换货中</div>
+							<div class="order-action-text">退款中</div>
 							<div class="order-buy-num">x1</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class="detail-price-list">
 					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">退款原因：</div>
-						<div class="color-222 font-28">尺码拍错/不喜欢/效果不好</div>
+						<div class="color-222 font-28 flex-sart-item-left">退款编号：</div>
+						<div class="color-222 font-28">{{infoData.refund_numb}}</div>
 					</div>
 					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">换货编号：</div>
-						<div class="color-222 font-28">20200702101045</div>
+						<div class="color-222 font-28 flex-sart-item-left">申请时间：</div>
+						<div class="color-222 font-28">{{infoData.ctime}}</div>
 					</div>
-					<div class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">下单时间：</div>
-						<div class="color-222 font-28">2020-07-02  12:00:00</div>
-					</div>
-					<!-- <div class="flex-sart-item">
+					<div v-if="infoData.refund_time" class="flex-sart-item">
 						<div class="color-222 font-28 flex-sart-item-left">完成时间：</div>
-						<div class="color-222 font-28">2020-07-02  12:00:00</div>
-					</div> -->
+						<div class="color-222 font-28">{{infoData.refund_time}}</div>
+					</div>
+					<div v-if="infoData.cancel_time" class="flex-sart-item">
+						<div class="color-222 font-28 flex-sart-item-left">取消时间：</div>
+						<div class="color-222 font-28">{{infoData.cancel_time}}</div>
+					</div>
 				</div>
 				<div class="order-total order-total-detail">
-					<div class="color-8f8f94 font-24">共 1 件</div>
+					<div class="color-8f8f94 font-24">共 {{infoData.refund_num}} 件</div>
 				</div>
 			</div>
 			<!-- <div class="cont-session address-logistics">
@@ -85,21 +109,68 @@
 					</div>
 				</div>
 			</div> -->
-			<div class="cont-session order-message">
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">退款总额:</div>
-					<div class="color-222 font-28 order-tip-text">￥100、幸福币500</div>
+			<template v-if="(typeVal ==1&&infoData.order_status<2)||(typeVal ==2&&infoData.order_status<5)">
+				<div class="cont-session order-message">
+					<div class="order-tip-item">
+						<div class="order-tip-item-left order-tip-text color-222 font-28">退款总额:</div>
+						<div class="color-222 font-28 order-tip-text">{{infoData.pay_text}}</div>
+					</div>
+					<div v-if="infoData.reason_text" class="order-tip-item">
+						<div class="order-tip-item-left order-tip-text color-222 font-28">退款说明:</div>
+						<div class="order-tip-item-right color-222 font-28 order-tip-text">{{infoData.reason_text}}</div>
+					</div>
+					<template v-if="typeVal==2">
+						<template v-if="infoData.order_status == 1">
+							<div class="shipping-address">
+								<div class="shipping-address-item">
+									<div class="shipping-address-item-left color-222 font-28">退换地址:</div>
+									<div class="shipping-address-item-right">
+										<div class="shipping-address-username p-nowrap">{{infoData.tuihuo1}}</div>
+										<div class="color-222 font-28">{{infoData.tuihuo1}}</div>
+									</div>
+								</div>
+								<div class="shipping-address-item">
+									<div class="shipping-address-item-left"></div>
+									<div class="shipping-address-item-right">
+										<div class="shipping-address-text p-nowrap">{{infoData.tuihuo2}}</div>
+									</div>
+								</div>
+							</div>
+							<div class="order-tip-item">
+								<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
+								<div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
+								<van-icon class="van-icon tip-icon" name="arrow" size="0.32rem" color="#aaa" />
+							</div>
+						</template>
+						<template v-else>
+							<div v-if="infoData.order_status == 2 || infoData.order_status == 3" class="shipping-logistics">
+								<div class="shipping-address-item">
+									<div class="shipping-address-item-left color-222 font-28">退货物流:</div>
+									<div class="shipping-address-item-right">
+										<div class="color-222 font-28">顺丰速运</div>
+										<div class="color-8f8f94 font-28">(SF123456789002)</div>
+										<img class="shipping-address-icon" src="" mode="" />
+									</div>
+								</div>
+								<div class="shipping-logistics-item">
+									<div class="shipping-address-item-left"></div>
+									<div class="shipping-address-item-right shipping-logistics-item-right">
+										<div class="shipping-logistics-point"></div>
+										<div class="shipping-logistics-line"></div>
+										<div class="shipping-logistics-text">快递已到达仓山区菜鸟驿站\n2020-07-02 10:00:00</div>
+									</div>
+								</div>
+							</div>
+							<div v-else class="order-tip-item">
+								<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
+								<div class="color-222 font-28 order-tip-text">顺丰速运</div>
+								<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
+							</div>
+						</template>
+					</template>
+						
 				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">退款说明:</div>
-					<div class="order-tip-item-right color-222 font-28 order-tip-text">颜色不喜欢买错色号，希望能换一个颜色和样式</div>
-				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">寄出物流: </div>
-					<div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
-					<van-icon class="van-icon tip-icon" name="arrow" size="0.32rem" color="#aaa" />
-				</div>
-			</div>
+			</template>
 			<!-- <div class="cont-session order-message">
 				<div class="order-tip-item">
 					<div class="order-tip-item-left order-tip-text color-222 font-28">退款总额:</div>
@@ -116,29 +187,66 @@
 				</div>
 			</div> -->
 		</div>
-		<div class="fixed-empty"></div>
-		<div class="btn-fixed-buttom">
-			<navigator class="order-border-btn" hover-class="none"><div class="color-8f8f94 font-28">取消退款</div></navigator>
-			<div class="order-border-btn paid-btn"><div class="color-fff font-26">填写退货物流</div></div>
-		</div>
+		<template v-if="typeVal ==1&&infoData.order_status==0">
+			<div class="fixed-empty"></div>
+			<div class="btn-fixed-buttom">
+				<div class="order-border-btn"><div class="color-8f8f94 font-28">取消退款</div></div>
+			</div>
+		</template>
+		<template v-if="typeVal ==2&&infoData.order_status<2">
+			<div class="fixed-empty"></div>
+			<div class="btn-fixed-buttom">
+				<div v-if="infoData.order_status==0" class="order-border-btn"><div class="color-8f8f94 font-28">取消退款</div></div>
+				<div v-else class="order-border-btn paid-btn"><div class="color-fff font-26">填写退货物流</div></div>
+			</div>
+		</template>
 	</div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
+import { getRefundInfo, getReturnRefundInfo } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
   },
   data () {
     return {
-
+    	windowHeight: document.documentElement.clientHeight,
+    	typeVal: 1,
+    	goodsList: [],  //商品列表
+    	infoData: '',   //退款信息
+    	logisticsInfo: ''//物流信息
     }
   },
-  onLoad () {
-
+  created(){
+    this.sale_order_id = this.$route.query.id;
+    this.typeVal = this.$route.query.type;
+    this.getData();
   },
   methods: {
+  	getData () {
+  		if(this.typeVal == 1){  //退款
+  			getRefundInfo({
+	        sale_order_id: this.sale_order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.goodsList = res.sale_goods_specs_list;
+	        	this.infoData = res.refund_info;
+	        }
+	      })
+  		}else {
+  			getReturnRefundInfo({
+	        sale_order_id: this.sale_order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.goodsList = res.sale_goods_specs_list;
+	        	this.infoData = res.returnfund_info;
+	        	this.logisticsInfo = res.mail_logistice_info ? res.mail_logistice_info : res.go_logistice_info;
+	        }
+	      })
+  		}
+    },
 
   }
 }
@@ -146,3 +254,25 @@ export default {
 
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped  src="../../../styles/order.css"></style>
+<style scoped>
+.apply-select {
+  width: 100%;
+  height: 90px;
+  background-color: #fce6e3;
+  border-radius: 4px;
+  margin-top: 20px;
+  padding: 0 30px;
+}
+.select-left {
+  font-size: 24px;
+  color: #222;
+}
+.select-left div {
+  line-height: 44px;
+}
+.public-hr {
+	height: 1.3px;
+	background-color: #f0f0f0;
+	margin: 20px 0;
+}
+</style>

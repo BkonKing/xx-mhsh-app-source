@@ -101,8 +101,8 @@
                 <div class="flash-price-tip flex-center">
                   <div v-if="item.price_status==2" class="goods-tip tip-pd flex-center">拼单优惠</div>
                   <div class="flash-goods-price">
-                    <span class="goods-price-span1">￥</span>{{item.now_price}}
-                    <span class="goods-price-span2">￥{{item.y_price}}</span>
+                    <span class="goods-price-span1">￥</span>{{item.now_price/100}}
+                    <span class="goods-price-span2">￥{{item.y_price/100}}</span>
                   </div>
                 </div>
               </template>
@@ -111,8 +111,8 @@
                   <div v-if="item.price_status==2" class="goods-tip tip-pd">拼单优惠</div>
                 </div>
                 <div class="flash-goods-price">
-                  <span class="goods-price-span1">￥</span>{{item.now_price}}
-                  <span class="goods-price-span2">￥{{item.y_price}}</span>
+                  <span class="goods-price-span1">￥</span>{{item.now_price/100}}
+                  <span class="goods-price-span2">￥{{item.y_price/100}}</span>
                 </div>
               </template>
             </div>

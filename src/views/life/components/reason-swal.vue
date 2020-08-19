@@ -3,7 +3,7 @@
     <div v-show="showSwal" class="public-mask reason-mask bottom-fixed">
       <div class="public-dclose" @click="calcel(0)"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="public-header">{{swalInfo.tit}}</div>
-      <div class="action-block">请选择实际原因，以便我们更好地为您提供服务</div>
+      <div v-if="swalInfo.tip" class="action-block">{{swalInfo.tip}}</div>
       <div class="common-list">
         <div v-for="(item,index) in swalList" :class="[index == 0 ? 'common-item-first' : '' , 'common-item']" @click.stop="sureSwal(index)">
           <div class="common-item-left">{{item.text}}</div>

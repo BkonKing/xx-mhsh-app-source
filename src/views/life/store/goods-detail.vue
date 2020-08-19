@@ -56,7 +56,7 @@
             <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}</div>
           </div>
         </div>
-        <div v-if="infoData.credits" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits}}</div></div>
+        <div v-if="infoData.credits" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits/100}}</div></div>
       </template>
     </div>
 
@@ -219,8 +219,8 @@
                     <div class="buy-btn btn-linear">邀请好友</div>
                   </template>
                   <template v-else>
-                    <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price}}</div>
-                    <div class="buy-btn" @click="showFunc('collage')">发起拼单￥{{infoData.sell_price}}</div>
+                    <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price/100}}</div>
+                    <div class="buy-btn" @click="showFunc('collage')">发起拼单￥{{infoData.sell_price/100}}</div>
                   </template>
                 </template>
               </template>
@@ -270,7 +270,7 @@
               </template>
             </div>
             <template v-if="infoData.pay_type == 1">
-              <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/100}}</div></div>
+              <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/10}}</div></div>
             </template>
             <template v-else>
               <template v-if="infoData.goods_type<3">

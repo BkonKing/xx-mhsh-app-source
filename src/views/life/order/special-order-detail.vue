@@ -38,6 +38,14 @@
 							<div class="order-buy-num">x1</div>
 						</div>
 					</div>
+					<div v-if="item.is_shouhou_btn == 1" class="order-goods-btn">
+						<div @click.stop="linkFunc(14,{logistice_id: item.logistice_id})" class="order-border-btn" hover-class="none">申请退换</div>
+					</div>
+					<div v-if="item.is_barter_btn == 1 || item.is_refund_btn == 1 || item.is_returnfund_btn == 1" class="order-goods-btn">
+						<div v-if="item.is_barter_btn == 1" @click.stop="linkFunc(16,{id: item.sale_order_id})" class="order-border-btn" hover-class="none">换货详情</div>
+						<div v-if="item.is_refund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 1})" class="order-border-btn" hover-class="none">退款详情</div>
+						<div v-if="item.is_returnfund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 2})" class="order-border-btn" hover-class="none">退款详情</div>
+					</div>
 				</div>
 				<!-- <div class="order-goods-info">
 					<div class="order-pic-block">

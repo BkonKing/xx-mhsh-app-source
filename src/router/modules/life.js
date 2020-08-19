@@ -81,7 +81,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "settlement" */
         '@/views/life/cart/settlement'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/coupon/list',

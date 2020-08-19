@@ -466,7 +466,7 @@ export default {
     if(to.name == 'addressList'){
       console.log(to.name)
       // this.$route.meta.keepAlive = false;
-      // this.$destroy()
+      this.$destroy()
     }
     next();
   }

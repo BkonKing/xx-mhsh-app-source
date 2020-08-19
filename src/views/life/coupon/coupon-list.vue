@@ -16,10 +16,53 @@
         finished-text=""
         @load="onLoad"
       >
-      
+      <div v-if="listData.length > 0" class="coupon-list">
+        <div v-for="(item,index) in listData" :class="['coupon-item',typeVal==2||typeVal==3 ? 'coupon-invalid' : '']">
+          <div class="coupon-block flex-align-center">
+            <div class="coupon-info flex-align-center">
+              <div v-if="item.type == 1" class="coupon-price coupon-icon">
+                <div class="coupon-price-num"><span>￥</span>{{item.reduce_price}}</div>
+                <div class="coupon-icon-block">新人专享</div>
+              </div>
+              <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div>
+              <div class="coupon-line"></div>
+              <div class="coupon-time">
+                <div>{{item.coupon_name}}</div>
+                <div class="color-ffa110 font-24">{{item.term_of_validity}}</div>
+              </div>
+            </div>
+            <div class="coupon-btn" v-if="typeVal==1" @click="linkFunc()">立即使用</div>
+            <img class="invalid-icon" v-else-if="typeVal==2" src="@/assets/img/icon_10.png" />
+            <img class="invalid-icon" v-else src="@/assets/img/icon_09.png" />
+          </div>
+          <div class="coupon-down">
+            <div :class="['toggle-btn',item.is_down ? 'toggle-btn-down' : '']" @click="contToggle(index)" data-id="index"></div>
+            <div v-if="!item.is_down" class="toggle-box p-nowrap">
+              {{item.coupon_explain}}
+            </div>
+            <div v-else class="coupon-detail">
+              <span>券编号：{{item.coupon_code}}</span>
+              <div>优惠说明：{{item.coupon_explain}}</div>
+              <div>有效期：{{item.g_time2}}</div>
+              <div>使用须知：</div>
+              <div class="point-bg">
+                <span v-html="item.coupon_rule"></span>
+              </div>
+              <div>
+                <span>领取时间：{{item.ctime}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="empty-session">
+        <img src="@/assets/img/empty_coupon.png" />
+        <div>暂无优惠券</div>
+      </div>
     </van-list>
+      
 
-		<div class="coupon-list">
+		<div v-show="false" class="coupon-list">
 	    <div :class="['coupon-item',typeVal==2||typeVal==3 ? 'coupon-invalid' : '']">
 	      <div class="coupon-block flex-align-center">
 	        <div class="coupon-info flex-align-center">
@@ -34,14 +77,14 @@
             	<div class="color-ffa110 font-24">还剩5天到期</div>
             </div>
           </div>
-	        <div class="coupon-btn" v-if="typeVal==1" bindtap="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
+	        <div class="coupon-btn" v-if="typeVal==1" @click="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
 	        <img class="invalid-icon" v-else-if="typeVal==2" src="@/assets/img/icon_10.png" />
 	        <img class="invalid-icon" v-else src="@/assets/img/icon_09.png" />
 	        <!-- <div class="coupon-btn" v-else-if="typeVal == 2"><span>已\n使\n用</span></div>
 	        <div class="coupon-btn" v-else><span>已\n过\n期</span></div> -->
 	      </div>
 	      <div class="coupon-down">
-	        <div :class="['toggle-btn',1==2 ? '' : 'toggle-btn-down']" bindtap="contToggle" data-id="index"></div>
+	        <div :class="['toggle-btn',1==2 ? '' : 'toggle-btn-down']" @click="contToggle" data-id="index"></div>
 	        <div class="toggle-box p-nowrap" v-if="1==2">
 	          券前金额满1000元减200元，全场通用
 	        </div>
@@ -72,14 +115,14 @@
             	<div class="color-ffa110 font-24">还剩5天到期</div>
             </div>
           </div>
-	        <div class="coupon-btn" v-if="typeVal==1" bindtap="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
+	        <div class="coupon-btn" v-if="typeVal==1" @click="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
 	        <img class="invalid-icon" v-else-if="typeVal==2" src="@/assets/img/icon_10.png" />
 	        <img class="invalid-icon" v-else src="@/assets/img/icon_09.png" />
 	        <!-- <div class="coupon-btn" v-else-if="typeVal == 2"><span>已\n使\n用</span></div>
 	        <div class="coupon-btn" v-else><span>已\n过\n期</span></div> -->
 	      </div>
 	      <div class="coupon-down">
-	        <div :class="['toggle-btn',1==2 ? '' : 'toggle-btn-down']" bindtap="contToggle" data-id="index"></div>
+	        <div :class="['toggle-btn',1==2 ? '' : 'toggle-btn-down']" @click="contToggle" data-id="index"></div>
 	        <div class="toggle-box p-nowrap" v-if="1==2">
 	          券前金额满1000元减200元，全场通用
 	        </div>
@@ -139,7 +182,7 @@ export default {
     getData () {
       getCoupon({
         page: this.page,
-        type: this.typeVal
+        c_type: this.typeVal
       }).then(res => {
         if (res.success) {
           this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
@@ -152,6 +195,10 @@ export default {
           this.loading = false;
         }
       })
+    },
+    contToggle(index){
+      console.log(this.listData[index].is_down);
+      this.listData[index].is_down = !this.listData[index].is_down;
     },
     linkFunc(type,obj={}) {
       switch (type){

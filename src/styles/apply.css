@@ -61,9 +61,11 @@
   height: 90px;
 }
 .select-left {
-  line-height: 44px;
   font-size: 24px;
   color: #222;
+}
+.select-left div {
+  line-height: 44px;
 }
 .select-right {
   display: flex;
@@ -98,7 +100,7 @@
   border-width: 14px 11px 0 11px;
   border-color: #383838 transparent transparent transparent;
 }
-.apply-toggle.cur {
+.apply-toggle.cur::after {
   transform: rotate(-180deg);
 }
 
@@ -213,6 +215,8 @@
   color: #666;
   font-size: 30px;
   border-bottom: 1px solid #f0f0f0;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .refund-session .refund-item-number {
