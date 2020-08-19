@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="active" @change="onChange" route>
+  <van-tabbar v-model="active" @change="onChange" route placeholder>
     <van-tabbar-item
       v-for="(item, index) in tabList"
       :key="index"

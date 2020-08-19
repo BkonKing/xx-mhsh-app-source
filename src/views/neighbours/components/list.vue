@@ -24,8 +24,8 @@
               </userInfo>
             </div>
             <template v-if="item.images">
-              <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
-              <tf-image-list v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+              <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
+              <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
             </template>
             <div class="tf-card-content">{{ item.content }}</div>
             <operation

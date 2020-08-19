@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-body">
     <van-nav-bar
-      :title="title"
+      :title="`${replyNum}条回复`"
       :fixed="true"
       :border="false"
       placeholder
@@ -63,9 +63,9 @@
             </template>
           </userInfo>
           <div class="reply-cell-content__text" @click="operate(item, i)">
-            <span class="tf-text" v-if="item.reply">
+            <span class="tf-text" v-if="item.reply_nickname">
               回复
-              <span class="tf-text-blue">@{{item.reply}}</span>：
+              <span class="tf-text-blue">@{{item.reply_nickname}}</span>：
             </span>
             {{item.content}}
           </div>
@@ -86,9 +86,9 @@
       ref="comment"
       v-model="commentShow"
       :articleId="articleId"
-      :parentId="parentId || id"
-      :placeholder="placeholder"
+      :parentId="id"
       :thumbsupshow="false"
+      :reply_nickname="reply_nickname"
       @commentSuccess="commentSuccess"
     ></comment>
   </div>
@@ -118,14 +118,13 @@ export default {
   },
   data () {
     return {
-      title: '',
+      replyNum: 1,
       id: '',
       parentId: '',
       uid: '',
       category: '',
       articleId: '',
       replyInfo: {},
-      placeholder: '',
       replyList: [],
       isLoading: false,
       loading: false,
@@ -134,7 +133,8 @@ export default {
       moreShow: false,
       commentShow: false,
       active: {},
-      oneself: 0
+      oneself: 0,
+      reply_nickname: ''// 回复人昵称
     }
   },
   created () {
@@ -170,6 +170,7 @@ export default {
         id: this.id
       }).then(res => {
         this.replyInfo = res.data
+        this.replyNum = parseInt(res.data.reply_num)
       })
     },
     /* 长列表加载 */
@@ -183,10 +184,11 @@ export default {
     /* 删除评论 */
     deleteComment () {
       deleteComment({
-        id: this.parentId
+        id: this.currentId
       }).then(res => {
         this.replyList.splice(this.index, 1)
         Toast.success('删除成功')
+        this.replyNum--
         this.moreShow = false
       })
     },
@@ -200,7 +202,6 @@ export default {
         this.loading = false
         if (data.length > 0) {
           this.replyList.push(...data)
-          this.title = data.length + '条回复'
           if (data.length >= 10) {
             this.isEndNum = 0
           } else {
@@ -221,9 +222,9 @@ export default {
     operate (item, i) {
       const { id, uid, nickname, is_mine } = item
       this.active = item
-      this.parentId = id
-      this.placeholder = nickname ? `回复${nickname}` : ''
+      this.reply_nickname = nickname || ''
       this.uid = uid
+      this.currentId = id
       this.index = i
       this.oneself = is_mine
       this.moreShow = true
@@ -235,6 +236,7 @@ export default {
     },
     /* 评论成功回调 */
     commentSuccess (data) {
+      this.replyNum++
       this.commentShow = false
       if (this.moreShow) {
         this.replyList[this.index].child.unshift(data)
@@ -247,8 +249,7 @@ export default {
   watch: {
     moreShow (value) {
       if (!value) {
-        this.parentId = ''
-        this.placeholder = ''
+        this.reply_nickname = ''
       }
     }
   }

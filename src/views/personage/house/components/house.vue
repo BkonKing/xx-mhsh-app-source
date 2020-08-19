@@ -28,7 +28,9 @@
         </div>
       </div>
     </div>
-    <button class="tf-btn tf-btn-primary" type="warn" @click="goAttestation">新增房产</button>
+    <div class="btn-placeholder">
+      <button class="tf-btn tf-btn-primary" type="warn" @click="goAttestation">新增房产</button>
+    </div>
   </div>
 </template>
 
@@ -98,6 +100,10 @@ export default {
 .house-container {
   width: 100%;
   height: 100%;
+}
+
+.btn-placeholder {
+  height: 88px;
 }
 
 .house-owner {

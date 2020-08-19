@@ -7,11 +7,10 @@
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
-      style="background: none;"
     >
       <template #right>
-        <span class="tf-icon" @click="showInstructions">&#xe78c;</span>
-        <span class="tf-icon" @click="goList">&#xe791;</span>
+        <span class="tf-icon tf-icon-zhushishuoming" @click="showInstructions"></span>
+        <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
     <div class="select-house" @click="goAttestation">
@@ -23,7 +22,7 @@
     </div>
     <div class="entrance-box">
       <div class="entrance-box__type" :class="{'active': active === 1}" @click="qrOpenDoor">
-        <div class="tf-icon">&#xe82f;</div>
+        <div class="tf-icon tf-icon-erweima"></div>
         <div class="entrance-box__type--name">二维码开门</div>
       </div>
       <div class="entrance-box__divider"></div>
@@ -107,7 +106,10 @@ export default {
   computed: {
     ...mapGetters(['currentProject']),
     houseName () {
-      return this.currentProject.project_name + this.currentProject.fc_info
+      if (this.currentProject) {
+        return this.currentProject.project_name + this.currentProject.fc_info
+      }
+      return ''
     }
   },
   created () {
@@ -116,7 +118,7 @@ export default {
       sync: true,
       key: 'first-entrance'
     })
-    // this.FNScanner = api.require('FNScanner')
+    this.FNScanner = api.require('FNScanner')
     if (!firstStatus) {
       this.showInstructions()
       api.setPrefs({
@@ -135,7 +137,7 @@ export default {
     getQrCode () {
       // getQrCode().then({
       // if (res.success) {
-      this.makeQRCode('qgEkdpVHKbbEXcW3C6SDxfK5bjrJo+Uv6ltvQR0GBYce6Uen')
+      this.makeQRCode('qgEkOXRvv70IxR7hWsf1F0Ij9574WHnsXZI+ylRwp9VO9D85')
       // }
       // })
     },
@@ -215,7 +217,6 @@ export default {
   background: linear-gradient(to bottom, @red, @red-dark);
   background-size: 100% 670px;
   background-repeat: no-repeat;
-  padding-top: 88px;
 }
 
 .tf-select {
@@ -266,7 +267,7 @@ export default {
     border: 1px solid #fff;
     text-align: center;
     line-height: 88px;
-    font-size: 66px;
+    font-size: 44px;
     color: #fff;
   }
 
@@ -294,6 +295,9 @@ export default {
 }
 
 .entrance-nav-bar {
+  /deep/ .van-nav-bar {
+    background: none;
+  }
   .tf-icon {
     color: #fff;
     font-size: 44px;

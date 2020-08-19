@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar :fixed="true" :border="false" placeholder>
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
@@ -8,43 +8,43 @@
         </span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
-      <div class="tf-bg-white">
-        <div class="tf-row tf-padding-lg" @click="goInformation">
-          <img class="personage-info__avatar" :src="userInfo.avatar" mode="aspectFit" />
-          <div class="personage-info--base">
-            <div class="user-info-box">
-              <div class="user-name">{{userInfo.nickname}}</div>
-              <van-tag
-                class="user-role"
-                plain
-                :color="userType | houseRoleColor"
-                :text-color="userType | houseRoleColor"
-                :inverted="true"
-                size="small"
-              >{{userType | houseRoleText}}</van-tag>
-            </div>
-            <div class="user-address">{{currentProject && currentProject.fc_info}}</div>
+    <div class="tf-bg-white">
+      <div class="tf-row tf-padding-lg" @click="goInformation">
+        <img class="personage-info__avatar" :src="userInfo.avatar" mode="aspectFit" />
+        <div class="personage-info--base">
+          <div class="user-info-box">
+            <div class="user-name">{{userInfo.nickname}}</div>
+            <van-tag
+              class="user-role"
+              plain
+              :color="userType | houseRoleColor"
+              :text-color="userType | houseRoleColor"
+              :inverted="true"
+              size="small"
+            >{{userType | houseRoleText}}</van-tag>
           </div>
-        </div>
-        <div class="tf-row coin-box">
-          <div class="tf-flex-item tf-column" @click="goHappiness">
-            <div class="user-text--lg">{{userInfo.credits}}</div>
-            <div class="user-text--grey">幸福币</div>
-          </div>
-          <div class="tf-flex-item tf-column">
-            <div class="user-text--lg">26</div>
-            <div class="user-text--grey">优惠券</div>
-          </div>
-          <div class="tf-flex-item tf-column tf-flex-center">
-            <button
-              class="user-btn__text"
-              :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
-              @click="sign"
-            >{{signStatus | signText}}</button>
-          </div>
+          <div class="user-address">{{currentProject && currentProject.fc_info}}</div>
         </div>
       </div>
+      <div class="tf-row coin-box">
+        <div class="tf-flex-item tf-column" @click="goHappiness">
+          <div class="user-text--lg">{{userInfo.credits}}</div>
+          <div class="user-text--grey">幸福币</div>
+        </div>
+        <div class="tf-flex-item tf-column">
+          <div class="user-text--lg">26</div>
+          <div class="user-text--grey">优惠券</div>
+        </div>
+        <div class="tf-flex-item tf-column tf-flex-center">
+          <button
+            class="user-btn__text"
+            :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
+            @click="sign"
+          >{{signStatus | signText}}</button>
+        </div>
+      </div>
+    </div>
+    <div class="tf-body-container tf-overflow-auto">
       <div class="functional-box">
         <div v-if="userInfo.swrole == 1" class="module-box">
           <div class="module-title">事务处理</div>
@@ -171,7 +171,7 @@ export default {
     /* 签到 */
     sign () {
       if (!this.signStatus) {
-        signin().then(res => {
+        signin().then((res) => {
           Toast({
             message: '签到成功   幸福币+10'
           })

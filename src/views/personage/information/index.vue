@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-screen">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="我的资料"
       :fixed="true"
@@ -8,125 +8,111 @@
       left-arrow
       @click-left="goback"
     ></van-nav-bar>
-    <div class="tf-main-container">
-      <van-tabs v-model="current">
-        <van-tab title="基础信息">
-          <div class="tf-padding-base tab-content" style="bottom: 0">
-            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-              <tf-list-item border title="头像">
-                <template v-slot:right>
-                  <van-uploader>
-                    <img class="tf-avatar-m tf-mr-base" :src="avatar" />
-                  </van-uploader>
+    <van-tabs class="tf-body-container" v-model="current">
+      <van-tab title="基础信息">
+        <tf-list class="basics-list">
+          <tf-list-item border title="头像">
+            <template v-slot:right>
+              <van-uploader>
+                <img class="tf-avatar-m tf-mr-base" :src="avatar" />
+              </van-uploader>
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="昵称" :showArrow="false">
+            <template v-slot:right>
+              <input v-model="nickname" class="tf-input" @change="setNickname" />
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="性别">
+            <template v-slot:right>
+              <tf-picker
+                v-model="gender"
+                title="性别"
+                value-key="label"
+                selected-key="value"
+                :columns="sexArray"
+                @confirm="setSex"
+              >
+                <template v-slot="{valueText}">
+                  <div class="tf-text">{{valueText}}</div>
                 </template>
-              </tf-list-item>
-              <tf-list-item border title="昵称" :showArrow="false">
-                <template v-slot:right>
-                  <input v-model="nickname" class="tf-input" @change="setNickname" />
+              </tf-picker>
+            </template>
+          </tf-list-item>
+          <tf-list-item title="生日">
+            <template v-slot:right>
+              <tf-date-time-picker v-model="birthday" type="date" title="生日" @confirm="setBirthday">
+                <template>
+                  <div class="tf-text text-right">{{birthday || '选择日期'}}</div>
                 </template>
-              </tf-list-item>
-              <tf-list-item border title="性别">
-                <template v-slot:right>
-                  <tf-picker
-                    v-model="gender"
-                    title="性别"
-                    value-key="label"
-                    selected-key="value"
-                    :columns="sexArray"
-                    @confirm="setSex"
-                  >
-                    <template v-slot="{valueText}">
-                      <div class="tf-text">{{valueText}}</div>
-                    </template>
-                  </tf-picker>
-                </template>
-              </tf-list-item>
-              <tf-list-item title="生日">
-                <template v-slot:right>
-                  <tf-date-time-picker
-                    v-model="birthday"
-                    type="date"
-                    title="生日"
-                    @confirm="setBirthday"
-                  >
-                    <template>
-                      <div class="tf-text text-right">{{birthday || '选择日期'}}</div>
-                    </template>
-                  </tf-date-time-picker>
-                </template>
-              </tf-list-item>
-            </tf-list>
-            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-              <tf-list-item border title="姓名" :showArrow="false">
-                <template v-slot:right>
-                  <input v-model="realname" class="tf-input" @change="setRealname" />
-                </template>
-              </tf-list-item>
-              <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
-              <tf-list-item
-                title="收货地址"
-                rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
-                rightWidth="460px"
-                @click="goAddress"
-              ></tf-list-item>
-            </tf-list>
-            <tf-list style="background-color: #fff;border-radius: 8px;margin-bottom: 30px;">
-              <tf-list-item title="人脸采集"></tf-list-item>
-            </tf-list>
-            <tf-list style="background-color: #fff;border-radius: 8px;">
-              <tf-list-item
-                border
-                :title="`${payCodeStatus ? '修改' : '设置'}支付密码`"
-                @click="editPaymentCode"
-              ></tf-list-item>
-              <tf-list-item
-                :title="`${passwordStatus ? '修改' : '设置'}登录密码`"
-                @click="editLoginPassword"
-              ></tf-list-item>
-            </tf-list>
-          </div>
-        </van-tab>
-        <van-tab v-if="userType != 0" title="房产信息">
-          <div class="tf-padding-base tab-content" style="bottom: 0">
-            <house @manClick="current = 2" @change="(id) => goAttestation(1,1,id)"></house>
-          </div>
-        </van-tab>
-        <van-tab v-if="userType != 0" title="成员信息">
-          <div class="tf-padding-base tab-content" style="bottom: ''">
-            <van-dropdown-menu @change="getMemberList">
-              <van-dropdown-item v-model="value" :options="list" />
-            </van-dropdown-menu>
-            <div
-              class="tf-card tf-mt-base"
-              v-for="(item, i) in memberList"
-              :key="i"
-              @click="goAttestation(0, 1, item.id, item)"
-            >
-              <div class="tf-card-header">XXXX美好生活家园 5栋1单元1002</div>
-              <div class="tf-card-content">
-                <van-tag
-                  class="user-role tf-mr-lg"
-                  plain
-                  :type="houseRoleColor[item.house_role]"
-                  :inverted="true"
-                  size="small"
-                >{{item.house_role | houseRoleText}}</van-tag>
-                <div class="tf-mr-lg">
-                  {{item.realname}}
-                  <span
-                    v-if="item.house_role === '1'"
-                    class="tf-text-grey tf-text-sm"
-                  >(本人)</span>
-                </div>
-                <div class="tf-mr-lg">女</div>
-                <div>{{mobile}}</div>
-              </div>
+              </tf-date-time-picker>
+            </template>
+          </tf-list-item>
+        </tf-list>
+        <tf-list class="basics-list">
+          <tf-list-item border title="姓名" :showArrow="false">
+            <template v-slot:right>
+              <input v-model="realname" class="tf-input" @change="setRealname" />
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
+          <tf-list-item
+            title="收货地址"
+            rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
+            rightWidth="460px"
+            @click="goAddress"
+          ></tf-list-item>
+        </tf-list>
+        <tf-list class="basics-list">
+          <tf-list-item title="人脸采集"></tf-list-item>
+        </tf-list>
+        <tf-list class="basics-list">
+          <tf-list-item
+            border
+            :title="`${payCodeStatus ? '修改' : '设置'}支付密码`"
+            @click="editPaymentCode"
+          ></tf-list-item>
+          <tf-list-item :title="`${passwordStatus ? '修改' : '设置'}登录密码`" @click="editLoginPassword"></tf-list-item>
+        </tf-list>
+      </van-tab>
+      <van-tab v-if="userType != 0" title="房产信息">
+        <house @manClick="current = 2" @change="(id) => goAttestation(1,1,id)"></house>
+      </van-tab>
+      <van-tab v-if="userType != 0" title="成员信息">
+        <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
+          <van-dropdown-item v-model="value" :options="list" />
+        </van-dropdown-menu>
+        <div
+          class="tf-card tf-mb-lg"
+          v-for="(item, i) in memberList"
+          :key="i"
+          @click="goAttestation(0, 1, item.id, item)"
+        >
+          <div class="tf-card-header">{{item.project_name}} {{item.fc_info}}</div>
+          <div class="tf-card-content">
+            <van-tag
+              class="user-role tf-mr-lg"
+              plain
+              :type="houseRoleColor[item.house_role]"
+              :inverted="true"
+              size="small"
+            >{{item.house_role | houseRoleText}}</van-tag>
+            <div class="tf-mr-lg">
+              {{item.realname}}
+              <span
+                v-if="item.house_role === '1'"
+                class="tf-text-grey tf-text-sm"
+              >(本人)</span>
             </div>
-            <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
+            <div class="tf-mr-lg">{{gender | sexText}}</div>
+            <div>{{item.mobile}}</div>
           </div>
-        </van-tab>
-      </van-tabs>
-    </div>
+        </div>
+        <div class="btn-placeholder">
+          <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
+        </div>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
@@ -178,7 +164,7 @@ export default {
       mobile: '',
       nickname: '',
       birthday: '',
-      payCodeStatus: 0, // 0为未设置过，1我设置过
+      payCodeStatus: 1, // 0为未设置过，1我设置过
       passwordStatus: 1, // 0为未设置过，1我设置过
       memberList: [], // 成员列表
       houseRoleColor: {
@@ -323,6 +309,32 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-body-container {
+  @flex-column();
+  /deep/ .van-tabs__content {
+    flex: 1;
+    overflow: auto;
+    .van-tab__pane {
+      height: 100%;
+      padding: 20px;
+      overflow: auto;
+    }
+  }
+}
+
+.basics-list {
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.btn-placeholder {
+  height: 88px;
+}
+
+.basics-list + .basics-list {
+  margin-top: 30px;
+}
+
 .tab-content {
   width: 750px;
   position: fixed;
@@ -354,7 +366,7 @@ export default {
   border-color: transparent transparent #aaa #aaa;
 }
 /deep/ .van-dropdown-item__option {
-  height: 66px;
+  height: 88px;
 }
 /deep/ .van-cell--clickable:active {
   background: @gray-3;

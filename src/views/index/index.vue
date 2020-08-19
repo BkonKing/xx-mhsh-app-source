@@ -1,15 +1,11 @@
 <template>
-  <div class="view-container">
+  <div class="view-container tf-immersion">
     <div class="view-main-container">
-      <div class="view-main">
-        <keep-alive>
-          <router-view></router-view>
-        </keep-alive>
-      </div>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
-    <footer>
-      <Tabbar :tabList="tabList"></Tabbar>
-    </footer>
+    <Tabbar :tabList="tabList"></Tabbar>
   </div>
 </template>
 
@@ -30,27 +26,32 @@ export default {
         {
           title: '首页',
           path: '/',
-          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
+          icon:
+            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '生活',
           path: '/life',
-          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
+          icon:
+            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '管家',
           path: '/butler',
-          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
+          icon:
+            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '邻里',
           path: '/neighbours',
-          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
+          icon:
+            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         },
         {
           title: '我的',
           path: '/personage',
-          icon: 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
+          icon:
+            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
         }
       ]
     }

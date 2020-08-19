@@ -40,6 +40,7 @@ import {
   paymentStatus,
   collectStatus
 } from '@/api/personage'
+import { serverCodeScan } from '@/api/butler'
 import { Dialog, Toast } from 'vant'
 export default {
   data () {
@@ -84,7 +85,7 @@ export default {
     },
     /* 获取付款码二维码 */
     getPaymentCode () {
-      getPaymentCode().then(res => {
+      getPaymentCode().then((res) => {
         const { url, code_id } = res.data
         this.paymentCodeImg = url
         this.codeId = code_id
@@ -93,7 +94,7 @@ export default {
     },
     /* 获取收款码二维码 */
     getCollectCode () {
-      getCollectCode().then(res => {
+      getCollectCode().then((res) => {
         const { url, code_id } = res.data
         this.collectCodeImg = url
         this.codeId = code_id
@@ -173,6 +174,9 @@ export default {
         case 'fukuan':
           this.paymentScan(value, values)
           break
+        case 'yuyuefuwu':
+          this.serverCodeScan(value, values)
+          break
         default:
           break
       }
@@ -181,7 +185,7 @@ export default {
     collectScan (value, values) {
       collectScan({
         code_info: value
-      }).then(res => {
+      }).then((res) => {
         const { check_status, is_pay, avatar, realname, mobile } = res.data
         if (check_status) {
           if (is_pay === '0') {
@@ -205,7 +209,7 @@ export default {
     paymentScan (value, values) {
       paymentScan({
         code_info: value
-      }).then(res => {
+      }).then((res) => {
         const { check_status, is_pay, avatar, realname, mobile } = res.data
         if (check_status) {
           if (is_pay == '0') {
@@ -222,6 +226,22 @@ export default {
           } else {
             Toast('对方已付款')
           }
+        }
+      })
+    },
+    /* 扫了免费服务码 */
+    serverCodeScan (value, values) {
+      serverCodeScan({
+        code_info: value
+      }).then(({ data }) => {
+        if (data.check_status == 1) {
+          this.$router.push({
+            name: 'freeserverConfirm',
+            query: {
+              info: JSON.stringify(data),
+              code_id: values[1]
+            }
+          })
         }
       })
     },

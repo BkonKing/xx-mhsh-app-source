@@ -465,6 +465,10 @@
   overflow: auto;
 }
 
+.tf-overflow-auto {
+  overflow: auto;
+}
+
 .tf-readed-tag {
   width: 14px;
   height: 14px;
@@ -688,6 +692,16 @@
 
   .van-uploader__upload:active {
     background-color: #aaa;
+  }
+  
+  .van-dropdown-item__option {
+    .van-cell__value {
+      flex: none;
+    }
+    > div {
+      display: flex;
+      align-items: center;
+    }
   }
 }
 

@@ -10,8 +10,8 @@
     />
     <div class="tf-main-container">
       <div class="tf-bg-white" style="position:relative;overflow: hidden;">
-        <userInfo avatar="@/assets/app-icon.png" name="用户昵称" time="2020.05.30"></userInfo>
-        <div class="finish-tag-box" v-if="wjtp_info.is_finish">
+        <userInfo :avatar="wjtp_info.avatar" :name="wjtp_info.nickname" :time="wjtp_info.ctime"></userInfo>
+        <div class="finish-tag-box" v-if="wjtp_info.status == 3">
           <div class="finish-tag">
             <div class="finish-text">已结束</div>
           </div>
@@ -25,22 +25,24 @@
             class="tf-gradient-tag--warning"
             v-if="wjtp_info.virtual_coin > 0"
           >参与得{{wjtp_info.virtual_coin}}幸福币</div>
-          <div class="people-number" :class="{'tf-text-grey': finishStatus}">2333人参加</div>
+          <div class="people-number" :class="{'tf-text-grey': finishStatus}">{{wjtp_info.joins}}人参加</div>
         </div>
       </div>
       <div class="vote-padding">
+        <!-- 问卷 -->
         <template v-if="wjtp_info.wjtp_type == 1">
-          <div class="tf-text-grey tf-center">(共{{wjtp_info.item_num}}题)</div>
+          <div class="tf-text-grey tf-center tf-mb-lg">(共{{wjtp_info.item_num}}题)</div>
           <div class="question-container">
             <div class="question-box" v-for="(item,i) in voteList" :key="i">
               <div
                 class="question__text"
                 :class="{'required': item.is_required == 1}"
               >Q{{i + 1}}：{{item.question}}？</div>
+              <!-- 问卷-单选 -->
               <template v-if="item.item_type == 1">
                 <van-radio-group v-model="item.answer" :disabled="Boolean(finishStatus)">
-                  <van-radio v-for="(radio, i) in item.option" :key="i" :name="radio.value">
-                    {{radio.label}}
+                  <van-radio v-for="(radio, i) in item.option" :key="i" :name="radio.id">
+                    {{radio.content}}
                     <template #icon="props">
                       <!-- <div class="van-radio__icon van-radio__icon--round"></div> -->
                       <div class="van-icon" :class="{'radio-checked-box' : props.checked}" />
@@ -48,16 +50,18 @@
                   </van-radio>
                 </van-radio-group>
               </template>
+              <!-- 问卷-多选 -->
               <template v-else-if="item.item_type == 2">
                 <van-checkbox-group v-model="item.answer" :disabled="Boolean(finishStatus)">
                   <van-checkbox
                     v-for="(checkbox, i) in item.option"
                     :key="i"
-                    :name="checkbox.value"
+                    :name="checkbox.id"
                     shape="square"
-                  >{{checkbox.label}}</van-checkbox>
+                  >{{checkbox.content}}</van-checkbox>
                 </van-checkbox-group>
               </template>
+              <!-- 问卷-填写 -->
               <template v-else-if="item.item_type == 3">
                 <van-field
                   class="question__textarea"
@@ -79,22 +83,33 @@
           >提交</van-button>
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
-          <div class="tf-text-grey tf-center">投票选项(单选)</div>
+          <div
+            class="tf-text-grey tf-center tf-mb-lg"
+          >投票选项({{wjtp_info.tp_type == 1 ? '单选' : '多选'}})</div>
           <div
             class="vote-box tf-row-space-between"
-            v-for="(item, i) in voteList"
+            v-for="(item, i) in voteList.option"
             :key="i"
-            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && item.item_type === 2 && !finishStatus}"
+            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && wjtp_info.tp_type === 2 && !finishStatus}"
           >
             <!--  投票统计进度条-->
-            <div v-if="finishStatus" class="vote-progress"></div>
-            <div class="vote-title">{{ item.question }}</div>
+            <div class="vote-progress-placeholder">
+              <div
+                v-if="finishStatus && voteList.answer_count[i] && voteList.answer_count[i].num"
+                class="vote-progress"
+                :style="{width: `${(parseInt(voteList.answer_count[i].num) / parseInt(wjtp_info.joins)) * 100}%`}"
+              ></div>
+            </div>
+            <div class="vote-title">{{ item.content }}</div>
             <!-- 已答-->
-            <div class="vote-result" v-if="finishStatus">{{ item.number }}票</div>
+            <div
+              class="vote-result"
+              v-if="finishStatus"
+            >{{ (voteList.answer_count[i] && voteList.answer_count[i].num) || 0 }}票</div>
             <!-- 未答-->
             <template v-else>
               <!-- 单选 -->
-              <button v-if="item.item_type === 1" class="vote-btn" @click="changeValue(item)">
+              <button v-if="wjtp_info.tp_type == 1" class="vote-btn" @click="changeValue(item)">
                 <span class="tf-text-white">投票</span>
               </button>
               <!-- 多选 -->
@@ -107,7 +122,7 @@
             </template>
           </div>
           <van-button
-            v-if="!finishStatus && voteList[0].item_type === 2"
+            v-if="!finishStatus && wjtp_info.tp_type == 2"
             size="large"
             type="danger"
             @click="confirm"
@@ -146,24 +161,8 @@ export default {
     return {
       title: '投票',
       wjtpId: '',
-      wjtp_info: {
-        // wjtp_type: undefined, // 类型：1问卷，2投票
-        // virtual_coin: 10, // 幸福币
-        // item_num: 4, // 总题数
-        // is_answer: 0 // 是否已答：1是、0否
-      },
-      voteList: [
-        /* {
-          id: '3',
-          wjtp_id: '2',
-          question: '请留下您宝贵的建议',
-          option: '',
-          item_type: 2,
-          answer: '非常好',
-          answer_count: '',
-          is_required: '0'
-        } */
-      ],
+      wjtp_info: {},
+      voteList: [],
       answer: []
     }
   },
@@ -174,25 +173,32 @@ export default {
   },
   computed: {
     finishStatus () {
-      return this.wjtp_info.is_answer || this.wjtp_info.is_finish
+      return this.wjtp_info.is_answer || this.wjtp_info.status == 3
     }
   },
   methods: {
+    /* 获取投票详情 */
     getWjtpInfo () {
       getWjtpInfo({
         wjtpId: this.wjtpId
       }).then((res) => {
-        if (res.success) {
-          const { wjtp_info, item } = res.data
-          this.wjtp_info = wjtp_info
-          this.voteList = item
+        const { wjtp_info, item } = res.data
+        this.wjtp_info = wjtp_info
+        // 遍历将答案为''转为[]
+        this.voteList = item.map((obj) => {
+          obj.answer = obj.answer ? obj.answer : []
+          return obj
+        })
+        // 如果是投票只需取第一个
+        if (this.wjtp_info.wjtp_type == 2) {
+          this.voteList = this.voteList[0]
         }
       })
     },
     /* 投票选中 */
-    changeValue ({ id: value, item_type: type }) {
-      if (type === 1) {
-        this.addWjtp([value])
+    changeValue ({ id: value }) {
+      if (this.wjtp_info.tp_type == 1) {
+        this.addWjtp(value)
       } else {
         const index = this.answer.indexOf(value)
         if (index === -1) {
@@ -209,20 +215,25 @@ export default {
         val === null ||
         val === '' ||
         val.length === 0
+      // 问卷调查，判断必填项是否已经填写，填写完则提交
       if (this.wjtp_info.wjtp_type == 1) {
-        const params = []
+        const params = {}
         const status = this.voteList.every((obj) => {
           if (obj.is_required && isEmpty(obj.answer)) {
             Toast(`${obj.question}不能为空`)
             return false
           }
-          params.push(obj.answer)
+          params[obj.item_id] = obj.answer.join(',')
           return true
         })
         status && this.addWjtp(params)
       } else {
+        // 投票多选
         if (this.answer.length > 0) {
-          this.addWjtp(this.answer)
+          const params = {
+            [this.voteList.item_id]: this.answer.join(',')
+          }
+          this.addWjtp(params)
         } else {
           Toast({
             message: '请选择要投票的选项'
@@ -240,8 +251,7 @@ export default {
           Toast.success({
             message: '投票成功'
           })
-
-          this.wjtp_info.is_answer = 1
+          this.getWjtpInfo()
         } else {
           Toast.fail({
             message: '提交失败'
@@ -280,7 +290,6 @@ export default {
 
 .tf-text-grey {
   font-size: 24px;
-  margin-bottom: 30px;
 }
 
 .vote-box {
@@ -292,12 +301,19 @@ export default {
   border-radius: @border-radius-md;
 }
 
+.vote-progress-placeholder {
+  width: calc(100% - 20px);
+  position: absolute;
+  top: 0.13333rem;
+  bottom: 0.13333rem;
+  z-index: 0;
+}
+
 .vote-progress {
   position: absolute;
   top: 10px;
   bottom: 10px;
   z-index: 0;
-  width: 40px;
   // height: 120px;
   background-color: @red;
   opacity: 0.2;
@@ -316,7 +332,6 @@ export default {
 
 .vote-result {
   @flex-column();
-  width: 200px;
   font-size: 30px;
   padding-right: 30px;
   color: @gray-7;

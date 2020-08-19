@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -8,8 +8,8 @@
       left-arrow
       @click-left="goback"
     ></van-nav-bar>
-    <div class="tf-main-container">
-      <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
+    <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
+    <div class="tf-body-container tf-overflow-auto">
       <transition tag="div" :name="transitionName">
         <tf-list v-show="step === 0" class="tf-bg-white" key="0">
           <tf-list-item

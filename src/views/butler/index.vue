@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-bg tf-screen tf-column">
+  <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
-    <page-nav-bar :status="1" name="123"></page-nav-bar>
+    <page-nav-bar></page-nav-bar>
     <van-notice-bar class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
         <van-swipe-item v-for="item in noticeList" :key="item.id" @click="goNotice">{{item.content}}</van-swipe-item>
@@ -142,7 +142,7 @@ export default {
 
 <style lang="less" scoped>
 .header-bg {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 750px;

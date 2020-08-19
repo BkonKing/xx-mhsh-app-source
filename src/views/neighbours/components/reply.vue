@@ -18,7 +18,7 @@
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
           <div
-            v-if="cell.child && cell.child.length"
+            v-if="parseInt(cell.reply_num) > 0"
             class="reply-cell-content__reply"
             @click="goReply(cell)"
           >
@@ -40,8 +40,8 @@
                 </span>
               </span>
             </div>
-            <div v-if="cell.child.length > 2" class="more-btn">
-              共{{cell.child.length}}条回复
+            <div v-if="parseInt(cell.reply_num) > 2" class="more-btn">
+              共{{cell.reply_num}}条回复
               <span class="tf-icon tf-icon-right"></span>
             </div>
           </div>

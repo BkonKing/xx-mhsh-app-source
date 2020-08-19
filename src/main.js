@@ -30,11 +30,11 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
     // 静默更新
     const mam = api.require('mam')
     mam.startSmartUpdate(function (ret, err) {
-      if (ret) {
-        alert(JSON.stringify(ret))
-      } else {
-        alert(JSON.stringify(err))
-      }
+      // if (ret) {
+      //   alert(JSON.stringify(ret))
+      // } else {
+      //   alert(JSON.stringify(err))
+      // }
     })
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')

@@ -1,13 +1,20 @@
 <template>
-  <div class="app" id="app">
-    <div class="w100" :style="{height: `${paddingTop}px`}"></div>
-    <!-- 全局组件 -->
-    <transition :name="transitionName">
+  <div
+    class="app"
+    id="app"
+    :style="[{'padding-top': `${paddingTop}px`},{'padding-bottom': `${paddingBottom}px`}]"
+  >
+    <transition
+      :name="transitionName"
+      v-on:before-enter="beforeEnter"
+      v-on:after-enter="afterEnter"
+      v-on:before-leave="beforeLeave"
+      v-on:after-leave="afterLeave"
+    >
       <keep-alive :max="10" :include="keepAlives">
         <router-view></router-view>
       </keep-alive>
     </transition>
-    <div class="w100" :style="{height: `${paddingBottom}px`}"></div>
   </div>
 </template>
 
@@ -22,7 +29,7 @@ export default {
       transitionName: '',
       keepAlive: [],
       historyList: [],
-      paddingTop: 0,
+      paddingTop: 20,
       paddingBottom: 0
     }
   },
@@ -34,21 +41,15 @@ export default {
       key: 'user_info'
     })
     userInfo && this.$store.commit('setUser_info', userInfo)
-    // 看是否有当前项目
-    this.$store.dispatch('getHouse')
     api.setStatusBarStyle({
       style: 'dark'
     })
+    this.paddingTop = api.safeArea.top
+    this.$store.commit('setPaddingTop', this.paddingTop)
+    this.paddingBottom = api.safeArea.bottom
+    this.$store.commit('setPaddingBottom', this.paddingBottom)
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     // this.setRouteKeepAlive(router.options.routes)
-  },
-  mounted () {
-    // 接口调用
-    // api.getTodayFortune({ typeid: 1 }).then(res => {
-    //   console.log(res)
-    // })
-    this.paddingTop = api.safeArea.top
-    this.paddingBottom = api.safeArea.bottom
   },
   methods: {
     setRouteKeepAlive (routes) {
@@ -60,6 +61,42 @@ export default {
           this.keepAlive.push(item.name)
         }
       })
+    },
+    // --------
+    // 进入中
+    // --------
+    beforeEnter (el) {
+      if (el.className.indexOf('tf-immersion') === -1) {
+        el.style.top = `${this.paddingTop}px`
+      } else {
+        el.children[0].style.paddingTop = `${this.paddingTop}px`
+      }
+      el.style.bottom = `${this.paddingBottom}px`
+      el.style.height = 'auto'
+    },
+    afterEnter (el) {
+      if (el.className.indexOf('tf-immersion') > -1) {
+        el.children[0].style.paddingTop = ''
+      }
+      el.style.height = ''
+    },
+    // --------
+    // 离开时
+    // --------
+    beforeLeave (el) {
+      if (el.className.indexOf('tf-immersion') === -1) {
+        el.style.top = `${this.paddingTop}px`
+      } else {
+        el.children[0].style.paddingTop = `${this.paddingTop}px`
+      }
+      el.style.bottom = `${this.paddingBottom}px`
+      el.style.height = 'auto'
+    },
+    afterLeave (el) {
+      if (el.className.indexOf('tf-immersion') > -1) {
+        el.children[0].style.paddingTop = ''
+      }
+      el.style.height = ''
     }
   },
   watch: {

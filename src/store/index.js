@@ -30,7 +30,9 @@ const store = {
     visitorList: null,
     houseSelected: null,
     current_project: null,
-    keepAliveList: []
+    keepAliveList: [],
+    paddingTop: 0,
+    paddingBottom: 0
   },
   mutations: {
     setUser_info (state, value) {
@@ -83,6 +85,12 @@ const store = {
       if (index !== -1) {
         state.keepAliveList = state.keepAliveList.splice(index, 1)
       }
+    },
+    setPaddingTop (state, value) {
+      state.paddingTop = value
+    },
+    setPaddingBottom (state, value) {
+      state.paddingBottom = value
     }
   },
   getters: {

@@ -18,8 +18,8 @@
         <div
           v-else-if="item.category_type == 1"
           class="service-card-info"
-          :class="{'service-card-info--gray': item.pd_num == 0 || item.status == 0}"
-        >{{item.pd_num ? (item.status == 0 ? `正在排队${item.pd_num}人` : `排队中：第${item.pd_num + 1}位`) : '当前无人排队'}}</div>
+          :class="{'service-card-info--gray': item.pd_num == 0 || item.server_status == 0}"
+        >{{item.pd_num ? (item.server_status == 0 ? `正在排队${item.pd_num}人` : `排队中：第${item.pd_num + 1}位`) : '当前无人排队'}}</div>
         <div
           v-else
           class="service-card-info"
@@ -35,7 +35,7 @@
           <div class="qr-status">{{statusText}}</div>
         </div>
       </div>
-      <div class="qr-box qr-status-box" v-else-if="activeServe.status == 0">
+      <div class="qr-box qr-status-box" v-else-if="activeServe.server_status == 0">
         <div class="success-tag">
           <span class="tf-icon tf-icon-check"></span>
         </div>
@@ -62,6 +62,8 @@
 <script>
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
+import { getServerCode, serverCodeStatus } from '@/api/butler.js'
+import { Toast } from 'vant'
 export default {
   components: {
     tfDialog
@@ -87,6 +89,9 @@ export default {
       success: false,
       FNScanner: null,
       qrImg: '',
+      timer: null,
+      codeId: '',
+      codeType: '',
       activeServe: {} // 当前选中服务
     }
   },
@@ -102,10 +107,12 @@ export default {
       const {
         category_type: categoryType,
         category,
-        status,
+        server_status: status,
         is_stop,
         is_lineup,
-        sy_num: syNum
+        id,
+        sy_num: syNum,
+        server_id
       } = item
       // 暂停使用或者没有可借的借用服务直接返回
       if (is_stop == 1 || (syNum == 0 && categoryType == 2)) {
@@ -114,48 +121,74 @@ export default {
       this.activeServe = item
       this.statusText = ''
       // categoryType: 1-人工 2-借用
-      // eslint-disable-next-line eqeqeq
+      let codeType
       if (categoryType == 1) {
-        this.statusText = status === 0 && is_lineup == 1 ? '开始排队' : '开始享受服务'
-        this.getServeQrcode(status)
-        // eslint-disable-next-line eqeqeq
+        if ((status == 0 || !status) && is_lineup == 1) {
+          this.statusText = '开始排队'
+          codeType = 3
+        } else {
+          this.statusText = '开始享受服务'
+          codeType = 4
+        }
       } else if (categoryType == 2) {
-        this.statusText = status === 0 ? '借用' : '归还'
-        this.getBorrowQrcode(status)
+        if ((status == 0 || !status)) {
+          codeType = 1
+          this.statusText = '借用'
+        } else {
+          codeType = 2
+          this.statusText = '归还'
+        }
       }
+      this.codeType = codeType
+      this.getServerCode(id, codeType, server_id)
       this.show = true
     },
-    // 人工服务二维码
-    getServeQrcode (status) {
-      const { id } = this.activeServe
-      const text = `router=freeserverConfirm&type=serve&server_id=${id}&uid=${this.userInfo.id}&project_id=${this.currentProject.project_id}`
-      this.makeQRCode(text)
+    /* 获取服务二维码 */
+    getServerCode (id, code_type, server_id) {
+      getServerCode({
+        id,
+        server_id,
+        code_type
+      }).then((res) => {
+        this.qrImg = res.data.url
+        this.codeId = res.data.code_id
+        this.serverCodeStatus()
+      })
     },
-    // 借用服务二维码
-    getBorrowQrcode (status) {
-      const { id } = this.activeServe
-      const text = `router=freeserverConfirm&type=borrow&server_id=${id}&uid=${this.userInfo.id}&project_id=${this.currentProject.project_id}`
-      this.makeQRCode(text)
+    /* 轮询收款码当前状态 */
+    pollingServer () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.serverCodeStatus()
+      }, 3000)
     },
-    /**
-     * 生成二维码
-     * @param {string} text 二维码内容
-     */
-    makeQRCode (text) {
-      this.FNScanner.encodeImg({
-        content: text,
-        saveImg: {
-          path: 'fs://mhshfreeServer.png',
-          w: 160,
-          h: 160
-        }
-      }, (ret, err) => {
-        if (ret.status) {
-          this.qrImg = ret.imgPath
+    /* 出示二维码用户监听状态 */
+    serverCodeStatus () {
+      serverCodeStatus({
+        code_id: this.codeId
+      }).then((res) => {
+        if (res.status == '1') {
+          this.success = true
+          this.timer = null
         } else {
-          console.error(JSON.stringify(err))
+          this.pollingServer()
         }
       })
+    }
+  },
+  watch: {
+    show (value) {
+      if (!value) {
+        this.success = false
+        this.timer && clearTimeout(this.timer)
+      }
+    }
+  },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
     }
   }
 }

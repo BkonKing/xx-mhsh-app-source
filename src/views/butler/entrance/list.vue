@@ -1,7 +1,7 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar title="开门记录" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <refreshList :list.sync="historyList" @load="onLoad">
         <template v-slot="slotProps">
           <div class="history-box">
@@ -66,9 +66,6 @@ export default {
   font-size: 30px;
   line-height: 60px;
   color: @gray-7;
-}
-.tf-main-container {
-  padding-top: 88px !important;
 }
 
 /deep/ .tf-van-list {

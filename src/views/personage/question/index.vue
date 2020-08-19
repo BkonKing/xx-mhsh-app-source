@@ -1,22 +1,23 @@
 <template>
-<div class='tf-bg'>
-  <van-nav-bar
-    title='常见问题'
-    :fixed='true'
-    :border='false'
-    placeholder
-    left-arrow
-    @click-left='$router.go(-1)'
-  >
-  </van-nav-bar>
-  <div class='tf-main-container'>
-    <FAQ :data="questionList"></FAQ>
-    <div class="question-footer" v-if="hotline">
-      <div class="tf-text">客服热线</div>
-      <div class="tf-text-sm tf-text-grey">{{hotline}}</div>
+  <div class="tf-bg tf-body">
+    <van-nav-bar
+      title="常见问题"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
+    <div class="tf-body-container">
+      <FAQ :data="questionList"></FAQ>
+    </div>
+    <div class="question-footer-placeholder" v-if="hotline">
+      <div class="question-footer">
+        <div class="tf-text">客服热线</div>
+        <div class="tf-text-sm tf-text-grey">{{hotline}}</div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -39,7 +40,7 @@ export default {
   },
   methods: {
     getEqList () {
-      getEqList().then(res => {
+      getEqList().then((res) => {
         this.questionList = res.data.eq
         this.hotline = res.data.hotline
       })
@@ -49,9 +50,12 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.tf-main-container {
+.tf-body-container {
   position: relative;
   padding-bottom: 100px;
+}
+.question-footer-placeholder {
+  height: 100px;
 }
 .question-footer {
   position: absolute;

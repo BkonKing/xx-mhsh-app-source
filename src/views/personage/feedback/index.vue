@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-padding-base tf-main-container">
+  <div class="tf-bg">
     <van-nav-bar
       title="意见反馈"
       :fixed="true"
@@ -12,44 +12,48 @@
         <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-card">
-      <div class="tf-card-header">选择反馈类型</div>
-      <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
+    <div class="tf-padding">
+      <div class="tf-card">
+        <div class="tf-card-header">选择反馈类型</div>
+        <div class="tf-card-content" style="padding-bottom: 10px;">
+          <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">内容描述</div>
-      <div class="tf-card-content">
-        <van-field
-          class="uni-input"
-          v-model="content"
-          autosize
-          type="textarea"
-          :maxlength="300"
-          placeholder="请描述具体内容"
-          show-word-limit
-        />
+      <div class="tf-card">
+        <div class="tf-card-header">内容描述</div>
+        <div class="tf-card-content">
+          <van-field
+            class="uni-input"
+            v-model="content"
+            autosize
+            type="textarea"
+            :maxlength="300"
+            placeholder="请描述具体内容"
+            show-word-limit
+          />
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">图片上传</div>
-      <div class="tf-card-content">
-        <van-uploader :after-read="uploadSuccess" :max-count="6" />
+      <div class="tf-card">
+        <div class="tf-card-header">图片上传</div>
+        <div class="tf-card-content">
+          <tf-uploader v-model="images" max-count="6"></tf-uploader>
+        </div>
       </div>
+      <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
     </div>
-    <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 
 <script>
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
+import tfUploader from '@/components/tf-uploader/index'
 import { addFeedback } from '@/api/personage.js'
 import { validForm } from '@/utils/util'
 export default {
   components: {
     tfRadioBtn,
+    tfUploader,
     [NavBar.name]: NavBar,
     [Uploader.name]: Uploader,
     [Button.name]: Button,
@@ -81,7 +85,7 @@ export default {
       header: {
         // 如果需要header，请上传
       },
-      uImgList: []
+      images: []
     }
   },
   methods: {
@@ -103,7 +107,7 @@ export default {
     addFeedback () {
       addFeedback({
         content: this.content,
-        images: this.uImgList,
+        images: this.images.join(','),
         info_type: this.info_type
       }).then((res) => {
         if (res.success) {
@@ -117,14 +121,6 @@ export default {
         }
       })
     },
-    uploadSuccess (result) {
-      if (result.statusCode === 200) {
-        // 上传成功的回调处理
-        Toast('上传成功')
-      } else {
-        Toast('上传失败')
-      }
-    },
     goList () {
       this.$router.push('/pages/personage/feedback/list')
     }
@@ -134,7 +130,7 @@ export default {
 
 <style lang="less" scoped>
 .tf-card {
-  margin-top: @padding-lg;
+  margin-bottom: @padding-lg;
 }
 .tf-card-header {
   font-size: @font-size-md !important;
@@ -144,5 +140,10 @@ export default {
   flex: 1;
   font-size: @font-size-md !important;
   padding: 0;
+}
+/deep/ .van-uploader__upload,
+/deep/ .van-uploader__preview {
+  width: 114px;
+  height: 114px;
 }
 </style>

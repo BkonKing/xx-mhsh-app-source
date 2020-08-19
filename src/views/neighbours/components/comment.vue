@@ -14,7 +14,7 @@
             maxlength="100"
             show-word-limit
             v-model="content"
-            :placeholder="placeholder || '写评论'"
+            :placeholder="reply_nickname ? `回复${reply_nickname}：` : '写评论'"
           />
           <div v-if="images" class="comment-image-box">
             <img class="comment-image" :src="images" />
@@ -61,7 +61,7 @@ export default {
       type: Boolean,
       default: false
     },
-    placeholder: {
+    reply_nickname: {
       type: String,
       default: ''
     }
@@ -90,6 +90,9 @@ export default {
         content: this.content,
         images: this.images,
         parent_id: this.parentId
+      }
+      if (this.reply_nickname) {
+        params.reply_nickname = this.reply_nickname
       }
       addComment(params).then(res => {
         this.content = ''

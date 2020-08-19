@@ -152,7 +152,6 @@ export default {
 .page-bg {
   width: 750px;
   height: 378px;
-  padding-top: 88px;
   background-color: #fbe1ca;
 }
 .nav-bar {

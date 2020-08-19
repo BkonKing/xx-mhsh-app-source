@@ -11,24 +11,24 @@
     <div class="invite-box">
       <div class="share-box">
         <div class="tf-bg">
-          <div class="tf-text-grey">服务项目：</div>
-          <div class="tf-text-grey">申请：</div>
+          <div class="tf-text-grey">服务项目：{{info.server_category}}</div>
+          <div class="tf-text-grey">申请：{{info.server_type}}({{info | serverInfo}})</div>
         </div>
         <div class="pd20">
-          <div class="tf-text-grey">申请人：</div>
-        <div class="tf-text-grey">手机号：</div>
-        <div class="tf-text-grey">房屋：</div>
+          <div class="tf-text-grey">申请人：{{info.realname}}</div>
+          <div class="tf-text-grey">手机号：{{info.mobile}}</div>
+          <div class="tf-text-grey">房屋：{{info.fc_info}}</div>
         </div>
       </div>
-      <button class="share-btn" @click="serverYuyue">确认</button>
+      <button class="share-btn" @click="confirm">确认</button>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Toast } from 'vant'
+import { NavBar, Toast, Dialog } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
-import { serverYuyue } from '@/api/butler'
+import { serverYuyue, serverClose } from '@/api/butler'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -36,28 +36,75 @@ export default {
   },
   data () {
     return {
-      type: '',
-      server_id: '',
-      project_id: '',
-      uid: ''
+      info: {},
+      code_id: ''
     }
   },
   created () {
-    const { type, server_id, project_id, uid } = this.$route.query
-    this.type = type
-    this.server_id = server_id
-    this.project_id = project_id
-    this.uid = uid
+    const { info, code_id } = this.$route.query
+    this.info = JSON.parse(this.$route.query.info)
+    this.codeId = code_id
   },
   methods: {
+    confirm () {
+      if (this.info.code_type == 1 || this.info.code_type == 3) {
+        this.serverYuyue()
+      } else {
+        this.serverClose()
+      }
+    },
+    /* 确认用户预约 */
     serverYuyue () {
       serverYuyue({
-        uid: this.uid,
-        project_id: this.project_id,
-        server_id: this.server_id
-      }).then(res => {
-        Toast.success('确认成功')
+        code_id: this.info.code_id,
+        uid: this.info.uid,
+        project_id: this.info.project_id,
+        category_id: this.info.category_id
+      }).then((res) => {
+        Dialog.alert({
+          title: res.message
+        }).then(() => {
+          this.$router.go(-1)
+        })
       })
+    },
+    /* 服务预约结束 */
+    serverClose () {
+      serverClose({
+        code_id: this.info.code_id,
+        uid: this.info.uid,
+        project_id: this.info.project_id,
+        server_id: this.info.server_id
+      }).then((res) => {
+        Dialog.alert({
+          title: res.message
+        }).then(() => {
+          this.$router.go(-1)
+        })
+      })
+    }
+  },
+  filters: {
+    serverText (value) {
+      const text = {
+        1: '借用',
+        2: '归还',
+        3: '排队',
+        4: '享受服务'
+      }
+      return text[value]
+    },
+    serverInfo (value) {
+      switch (value.code_type) {
+        case '1':
+          return `可借${value.duration}`
+        case '2':
+          return value.yj_time
+        case '3':
+          return `预计第${parseInt(value.pd_num) + 1}位`
+        case '4':
+          return value.pd_time
+      }
     }
   }
 }
@@ -90,7 +137,7 @@ export default {
   color: #fff;
   width: 620px;
   height: 88px;
-  font-size:30px;
+  font-size: 30px;
   background-image: linear-gradient(to right, @red, @red-dark);
   border-radius: 10px;
 }

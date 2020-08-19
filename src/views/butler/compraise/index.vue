@@ -108,7 +108,7 @@ export default {
       addComPraise(
         {
           content: this.content,
-          images: this.images,
+          images: this.images.join(','),
           info_type: this.info_type
         },
         this.currentProject.house_id

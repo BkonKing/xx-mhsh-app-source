@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-padding-base">
+  <div class="tf-bg">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -12,7 +12,7 @@
         <span v-if="mode && !editMode" class="tf-icon tf-icon-bianxie-square" @click="goEdit"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <tf-list class="tf-mb-lg">
         <tf-list-item title="房屋">
           <template v-slot:right>

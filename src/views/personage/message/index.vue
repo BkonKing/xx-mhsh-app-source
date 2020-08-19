@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-screen">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="消息"
       :fixed="true"
@@ -9,40 +9,26 @@
       right-text="全部已读"
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-main-container">
-      <van-tabs v-model="current">
-        <van-tab title="交易" :badge="badge[0]">
-          <div class="tf-flex-item">
-            <message-list type="transaction" :load="({pages}) => getMessageList(pages, 2)"></message-list>
-          </div>
-        </van-tab>
-        <van-tab title="互动" :badge="badge[1]">
-          <div class="tf-flex-item">
-            <interaction></interaction>
-          </div>
-        </van-tab>
-        <van-tab title="物业" :badge="badge[2]">
-          <div class="tf-flex-item">
-            <message-list type="butler" :load="({pages}) => getMessageList(pages, 4)"></message-list>
-          </div>
-        </van-tab>
-        <van-tab title="活动" :badge="badge[3]">
-          <div class="tf-flex-item">
-            <message-list type="activity" :load="({pages}) => getMessageList(pages, 5)"></message-list>
-          </div>
-        </van-tab>
-        <van-tab title="系统" :badge="badge[4]">
-          <div class="tf-flex-item">
-            <message-list type="system" :load="({pages}) => getMessageList(pages, 6)"></message-list>
-          </div>
-        </van-tab>
-        <van-tab title="工作" :badge="badge[5]">
-          <div class="tf-flex-item">
-            <message-list type="work" :load="({pages}) => getMessageList(pages, 1)"></message-list>
-          </div>
-        </van-tab>
-      </van-tabs>
-    </div>
+    <van-tabs class="tf-body-container" v-model="current">
+      <van-tab title="交易" :badge="badge[0]">
+        <message-list type="transaction" :load="({pages}) => getMessageList(pages, 2)"></message-list>
+      </van-tab>
+      <van-tab title="互动" :badge="badge[1]">
+        <interaction></interaction>
+      </van-tab>
+      <van-tab title="物业" :badge="badge[2]">
+        <message-list type="butler" :load="({pages}) => getMessageList(pages, 4)"></message-list>
+      </van-tab>
+      <van-tab title="活动" :badge="badge[3]">
+        <message-list type="activity" :load="({pages}) => getMessageList(pages, 5)"></message-list>
+      </van-tab>
+      <van-tab title="系统" :badge="badge[4]">
+        <message-list type="system" :load="({pages}) => getMessageList(pages, 6)"></message-list>
+      </van-tab>
+      <van-tab title="工作" :badge="badge[5]">
+        <message-list type="work" :load="({pages}) => getMessageList(pages, 1)"></message-list>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
@@ -78,8 +64,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-main-container {
+.tf-body-container {
   @flex-column();
+  /deep/ .van-tabs__content {
+    flex: 1;
+    overflow: auto;
+    .van-tab__pane {
+      height: 100%;
+    }
+  }
 }
 .tf-flex-item {
   overflow: auto;

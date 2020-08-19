@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <userInfo :avatar="info.avatar" :name="info.username"></userInfo>
       <div class="module-box money-box">
         <div class="money-num">{{info.credits}}</div>
@@ -95,9 +95,6 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.tf-main-container {
-  padding: 118px 20px 0;
-}
 .module-box {
   border-radius: 10px;
   background: #fff;

@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-padding">
       <house :mode="0" @change="bindingDefault"></house>
     </div>
   </div>
@@ -37,7 +37,4 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.tf-main-container {
-  padding: 118px 20px 0 20px;
-}
 </style>

@@ -1,7 +1,14 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="设置" :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
-    <div class="tf-main-container">
+    <van-nav-bar
+      title="设置"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
+    <div class="tf-padding">
       <tf-list>
         <tf-list-item title="个人资料" @click="goInformation"></tf-list-item>
       </tf-list>
@@ -122,9 +129,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg {
-  padding: 30px 20px;
-}
 .right-text {
   font-size: 24px;
   text-align: right;

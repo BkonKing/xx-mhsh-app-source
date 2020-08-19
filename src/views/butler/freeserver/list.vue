@@ -7,7 +7,7 @@
           <div class="tf-card">
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
-              <div v-if="item.status == 1" class="tf-icon tf-icon-qrcode" @click="showQrcode(item)"></div>
+              <div v-if="item.status == 1" class="tf-icon tf-icon-erweima" @click="showService(item)"></div>
             </div>
             <div class="tf-card-content">
               <template v-if="item.category_type == 1">
@@ -33,7 +33,7 @@
     </div>
     <tfDialog v-model="dialog" :title="active.category">
       <div class="qr-box">
-        <img class="qr-img" src="@/assets/app-icon.png" />
+        <img class="qr-img" :src="qrImg" />
         <div class="qr-status-box">
           <div class="qr-triangle"></div>
           <div class="qr-status">{{active.categoryType == 1 ? '开始享受服务' : '归还'}}</div>
@@ -47,7 +47,7 @@
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import tfDialog from '@/components/tf-dialog/index.vue'
-import { getMyFreeServerList } from '@/api/butler.js'
+import { getMyFreeServerList, getServerCode, serverCodeStatus } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -58,7 +58,8 @@ export default {
     return {
       data: [],
       dialog: false,
-      active: {}
+      active: {},
+      qrImg: ''
     }
   },
   created () {
@@ -68,10 +69,50 @@ export default {
     getMyFreeServerList (params) {
       return getMyFreeServerList(params)
     },
-    /* 二维码显示 */
-    showQrcode (item) {
-      this.active = item
+    /* 点击服务显示二维码 */
+    showService (item) {
+      const {
+        category_type: categoryType,
+        id,
+        category_id
+      } = item
+      const codeType = categoryType === '1' ? 4 : 2
       this.dialog = true
+      this.getServerCode(category_id, codeType, id)
+    },
+    /* 获取服务二维码 */
+    getServerCode (id, code_type, server_id) {
+      getServerCode({
+        id,
+        server_id,
+        code_type
+      }).then((res) => {
+        this.qrImg = res.data.url
+        this.codeId = res.data.code_id
+        this.serverCodeStatus()
+      })
+    },
+    /* 轮询收款码当前状态 */
+    pollingServer () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.serverCodeStatus()
+      }, 3000)
+    },
+    /* 出示二维码用户监听状态 */
+    serverCodeStatus () {
+      serverCodeStatus({
+        code_id: this.codeId
+      }).then((res) => {
+        if (res.status == '1') {
+          this.success = true
+          this.timer = null
+        } else {
+          this.pollingServer()
+        }
+      })
     }
   }
 }
@@ -88,7 +129,7 @@ export default {
 .mt10 {
   margin-top: 10px;
 }
-.tf-icon-qrcode {
+.tf-icon-erweima {
   font-size: 42px;
   line-height: 1;
 }

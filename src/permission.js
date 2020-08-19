@@ -1,6 +1,8 @@
 import router from './router'
 import store from './store'
-import { Toast } from 'vant'
+import {
+  Toast
+} from 'vant'
 
 const whiteList = ['/login']
 
@@ -19,6 +21,10 @@ router.beforeEach(async (to, from, next) => {
   // eslint-disable-next-line eqeqeq
   if (hasToken && hasToken != 'undefined' && hasToken != '') {
     next()
+    if (!store.state.current_project) {
+      // 看是否有当前项目
+      store.dispatch('getHouse')
+    }
     if (to.meta && to.meta.keepAlive) {
       store.commit('setKeepAliveList', to.name)
     }

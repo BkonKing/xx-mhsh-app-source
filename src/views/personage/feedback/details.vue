@@ -8,19 +8,17 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-main-container">
-      <div class="tf-bg-white padding">
-        <div class="tf-row-space-between tf-divider">
-          <div class="tf-text-lg">{{info_type}}</div>
-          <div class="tf-text tf-text-grey">{{ctime}}</div>
-        </div>
-        <div class="tf-auxiliary-content tf-mt-lg">{{content}}</div>
-        <tf-image-list :data="images" mode="show" class="tf-mt-base"></tf-image-list>
+    <div class="tf-bg-white padding">
+      <div class="tf-row-space-between tf-divider">
+        <div class="tf-text-lg">{{info_type}}</div>
+        <div class="tf-text tf-text-grey">{{ctime}}</div>
       </div>
-      <div v-if="reply" class="tf-card tf-mt-lg">
-        <div class="tf-card-header">回复</div>
-        <div class="tf-card-content">{{reply}}</div>
-      </div>
+      <div class="tf-auxiliary-content tf-mt-lg">{{content}}</div>
+      <tf-image-list :data="images" mode="show" class="tf-mt-base"></tf-image-list>
+    </div>
+    <div v-if="reply" class="tf-card tf-mt-lg">
+      <div class="tf-card-header">回复</div>
+      <div class="tf-card-content">{{reply}}</div>
     </div>
   </div>
 </template>

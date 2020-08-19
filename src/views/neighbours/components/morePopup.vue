@@ -136,8 +136,7 @@ export default {
         addComplaint({
           com_type: this.com_type,
           info_type: this.complainType,
-          info_id: this.complainInfo.id,
-          content: '1'
+          info_id: this.complainInfo.id
         }).then(resr => {
           Toast.success('投诉成功')
           this.complainShow = false

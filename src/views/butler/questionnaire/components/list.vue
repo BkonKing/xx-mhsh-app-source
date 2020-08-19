@@ -1,7 +1,7 @@
 <template>
   <refreshList :list.sync="list" :load="load">
     <template v-slot="{item}">
-      <div class="question-box" :class="{'question-finish-box': !item.status}" @click="jump(item)">
+      <div class="question-box" :class="{'question-finish-box': item.status == 3}" @click="jump(item)">
         <div
           class="question-status-box"
           :style="{'background': item.wjtp_type == 1 ? '#448FE4' : '#55B862'}"

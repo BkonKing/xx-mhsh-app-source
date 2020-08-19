@@ -243,13 +243,25 @@ export function getMyFreeServerList (params) {
     params
   })
 }
-// 我的免费预约列表接口
+// 确认服务预约
 export function serverYuyue (data) {
   return request.post('/butler/freeserver/server_yuyue', data)
 }
-// 我的免费预约列表接口
+// 服务预约结束
 export function serverClose (data) {
   return request.post('/butler/freeserver/server_close', data)
+}
+// 预约服务二维码链接
+export function getServerCode (data) {
+  return request.post('/butler/freeserver/serverCode', data)
+}
+// 出示二维码用户监听状态
+export function serverCodeStatus (data) {
+  return request.post('/butler/freeserver/serverCodeStatus', data)
+}
+// 预约服务扫码确认
+export function serverCodeScan (data) {
+  return request.post('/butler/freeserver/serverCodeScan', data)
 }
 
 /* 免费服务 end */

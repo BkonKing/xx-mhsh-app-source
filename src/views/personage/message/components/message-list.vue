@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%">
+  <div style="width:100%;height:100%;">
     <refreshList :list.sync="list" :load="load">
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>

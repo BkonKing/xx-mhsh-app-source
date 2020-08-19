@@ -1,25 +1,27 @@
 <template>
   <div class="tf-bg-white">
     <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
-    <div class="tf-h3">切换账户登录</div>
-    <div
-      class="account"
-      v-for="(item, i) in accountList"
-      :key="i"
-      :class="{'account-active': active.id === item.id}"
-      @click="switchAccount(item)"
-    >
-      <img class="user-avatar" :src="item.avatar" mode="aspectFill" />
-      <div class="tf-space-around">
-        <div class="user-name">{{item.realname}}</div>
-        <div class="tf-text-grey">{{item.mobile}}</div>
+    <div class="page-container">
+      <div class="tf-h3">切换账户登录</div>
+      <div
+        class="account"
+        v-for="(item, i) in accountList"
+        :key="i"
+        :class="{'account-active': active.id === item.id}"
+        @click="switchAccount(item)"
+      >
+        <img class="user-avatar" :src="item.avatar" mode="aspectFill" />
+        <div class="tf-space-around">
+          <div class="user-name">{{item.realname}}</div>
+          <div class="tf-text-grey">{{item.mobile}}</div>
+        </div>
+        <template v-if="active.id === item.id">
+          <div class="checked-tag"></div>
+          <div class="tf-icon tf-icon-check"></div>
+        </template>
       </div>
-      <template v-if="active.id === item.id">
-        <div class="checked-tag"></div>
-        <div class="tf-icon tf-icon-check"></div>
-      </template>
+      <van-button class="account-btn" type="danger" @click="login">换个账户登录</van-button>
     </div>
-    <van-button class="account-btn" type="danger" @click="login">换个账户登录</van-button>
   </div>
 </template>
 
@@ -43,30 +45,25 @@ export default {
       ]
     }
   },
-  created () {
-
-  },
+  created () {},
   methods: {
     /* 切换账号 */
     switchAccount (item) {
       this.active = item
     },
     /* 账号登录 */
-    login () {
-
-    }
+    login () {}
   }
 }
 </script>
 
 <style lang="less" scoped>
-.tf-bg-white {
-  padding: 30px 50px;
-  height: 100%;
+.page-container {
+  padding: 0 50px;
 }
 
 .tf-h3 {
-  margin: 168px 0 80px;
+  margin: 80px 0;
 }
 
 .account {
