@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar :border="false" :fixed="true" placeholder left-text="和谐邻里" :left-arrow="false">
+    <van-nav-bar :border="false" :fixed="true" placeholder :left-arrow="false">
+      <template #left>
+        <span v-if="userInfo.user_type === '0'" class="van-nav-bar__text">和谐邻里</span>
+        <span v-else class="van-nav-bar__text" @click.stop="showIsAll = true">
+          和谐邻里
+          <span class="tf-icon" :class="[showIsAll ? 'tf-icon-caret-up' : 'tf-icon-caret-down']"></span>
+        </span>
+      </template>
       <template #right>
         <span class="tf-icon tf-icon-bianxie" @click="goEdit"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
@@ -8,9 +15,14 @@
         </span>
       </template>
     </van-nav-bar>
+    <div v-show="showIsAll" class="mask-box" @click.stop="showIsAll =false"></div>
+    <div v-show="showIsAll" class="isAll-select">
+      <div class="isAll-select__item" :class="{'active': isAll === 1}" @click.stop="isAll = 1;showIsAll =false">全部</div>
+      <div class="isAll-select__item" :class="{'active': isAll === 0}" @click.stop="isAll = 0;showIsAll =false">小区</div>
+    </div>
     <van-tabs class="tf-body-container tf-column" v-model="current">
       <van-tab title="最新">
-        <list key="list" :data.sync="newestList" :load="getNewestList"></list>
+        <list key="list" ref="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
       <van-tab title="小组">
         <div v-if="group.length" class="group-box">
@@ -22,10 +34,10 @@
         <div v-else class="van-list__finished-text">没有更多了</div>
       </van-tab>
       <van-tab title="活动">
-        <list key="activityList" :data.sync="activityList" :load="getActivityList" article_type="2"></list>
+        <list key="activityList" ref="activityList" :data.sync="activityList" :load="getActivityList" article_type="2"></list>
       </van-tab>
       <van-tab title="资讯">
-        <list key="articleList" :data.sync="articleList" :load="getArticleList" article_type="1"></list>
+        <list key="articleList" ref="articleList" :data.sync="articleList" :load="getArticleList" article_type="1"></list>
       </van-tab>
     </van-tabs>
   </div>
@@ -40,6 +52,7 @@ import {
   getActivityList,
   getArticleList
 } from '@/api/neighbours'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'neighbours',
@@ -54,11 +67,16 @@ export default {
     return {
       status: 1,
       current: 0,
+      isAll: 1,
+      showIsAll: false,
       group: [],
       newestList: [],
       activityList: [],
       articleList: []
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   created () {
     const { active } = this.$route.query
@@ -66,7 +84,6 @@ export default {
       this.current = parseInt(active)
     }
     this.getPostBarCategoryList()
-    // this.getList()
   },
   activated () {},
   methods: {
@@ -88,32 +105,9 @@ export default {
         }
       })
     },
-    /* tab切换 */
-    // onClickItem (currentIndex) {
-    //   if (this.current !== currentIndex) {
-    //     this.current = currentIndex
-    //   }
-    //   this.getList()
-    // },
-    /* 获取相应列表 */
-    getList () {
-      switch (this.current) {
-        case 0:
-          this.getNewestList()
-          break
-        case 1:
-          this.getPostBarCategoryList()
-          break
-        case 2:
-          this.getActivityList()
-          break
-        case 3:
-          this.getArticleList()
-          break
-      }
-    },
     /* 获取最新列表 */
     getNewestList (params) {
+      params.is_all = this.isAll
       return getNewestList(params)
     },
     /* 获取话题小组 */
@@ -124,10 +118,12 @@ export default {
     },
     /* 获取活动列表 */
     getActivityList (params) {
+      params.is_all = this.isAll
       return getActivityList(params)
     },
     /* 获取资讯列表 */
     getArticleList (params) {
+      params.is_all = this.isAll
       return getArticleList(params)
     }
   },
@@ -136,14 +132,56 @@ export default {
       const { active } = route.query
       if (active && active !== this.current) {
         this.current = parseInt(active)
-        // this.getList()
       }
+    },
+    isAll (value) {
+      this.$refs.list && this.$refs.list.reload()
+      this.$refs.activityList && this.$refs.activityList.reload()
+      this.$refs.articleList && this.$refs.articleList.reload()
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.isAll-select {
+  position: absolute;
+  top: 84px;
+  left: 84px;
+  z-index: 1000;
+  padding: 0 20px;
+  width: 200px;
+  background: #ffffff;
+  box-shadow: 1px 4px 12px 0px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  .isAll-select__item {
+    height: 89px;
+    line-height: 89px;
+    text-align: center;
+    font-size: 30px;
+    color: #8f8f94;
+  }
+  .isAll-select__item + .isAll-select__item {
+    border-top: 1px solid #f0f0f0;
+  }
+  .active {
+    font-weight: 600;
+    color: #222222;
+  }
+}
+.mask-box {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+  opacity: 0.3;
+  z-index: 999;
+}
+/deep/ .van-nav-bar__left:active {
+  opacity: 1;
+}
 .pt88 {
   padding-top: 88px;
 }

@@ -8,7 +8,7 @@
       />
       <slot name="left">
         <div class="tf-space-around">
-          <div class="user-info--name">{{name}}</div>
+          <div class="user-info--name">{{name || '暂无昵称'}}</div>
           <div class="user-info-time">{{time}}</div>
         </div>
       </slot>

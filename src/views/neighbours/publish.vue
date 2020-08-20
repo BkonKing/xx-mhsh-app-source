@@ -24,7 +24,7 @@
         show-word-limit
       />
       <van-divider />
-      <tf-uploader max-count="9"></tf-uploader>
+      <tf-uploader v-model="images" max-count="9"></tf-uploader>
     </div>
   </div>
 </template>
@@ -76,12 +76,12 @@ export default {
     /* 获取话题小组 */
     getPostBarCategoryList () {
       getPostBarCategoryList().then((res) => {
-        this.types = res.data.length && res.data.map(obj => {
+        this.types = res.data.length ? res.data.map(obj => {
           return {
             value: obj.id,
             name: obj.category
           }
-        })
+        }) : []
       })
     },
     /* 选择完类型自动折叠起类型选择区域 */
@@ -120,7 +120,7 @@ export default {
         addPostBar({
           category_id: this.category_id,
           content: this.content,
-          images: this.images
+          images: this.images.join(',')
         }).then((res) => {
           Dialog.alert({
             title: '发布成功'

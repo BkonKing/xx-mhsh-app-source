@@ -131,6 +131,14 @@ const store = {
             const {
               data
             } = res
+            const ajParams = {
+              alias: data.id
+            }
+            Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
+              if (ret && ret.status) {
+                alert(ret)
+              }
+            })
             api.setPrefs({
               key: 'access_token',
               value: data.access_token
@@ -163,6 +171,14 @@ const store = {
         outLogin().then((res) => {
           Toast.clear()
           if (res.success) {
+            const ajParams = {
+              alias: 0
+            }
+            Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
+              if (ret && ret.status) {
+                alert(ret)
+              }
+            })
             api.removePrefs({
               key: 'user_info'
             })

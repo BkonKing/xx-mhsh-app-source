@@ -27,10 +27,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "informationIndex" */
         '@/views/personage/information/index.vue'
-      ),
-    meta: {
-      keepAlive: true
-    }
+      )
+    // meta: {
+    //   keepAlive: true
+    // }
   },
   /* 新增房产 */
   {

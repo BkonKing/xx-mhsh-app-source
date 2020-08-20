@@ -190,7 +190,7 @@ export default {
         id: this.id
       }).then(res => {
         Toast.success('活动报名成功')
-        this.info.is_join = 1
+        this.getInfo()
       })
     },
     /* 获取资讯详情 */

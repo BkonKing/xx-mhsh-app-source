@@ -11,7 +11,7 @@
         >{{item.title}}</van-swipe-item>
       </van-swipe>
     </van-notice-bar>
-    <appList :list="appList"></appList>
+    <appList :list="mainAppList"></appList>
     <div class="tf-flex-center tf-flex-item">
       <div class="key-box" @click="goEntrance">
         <span class="tf-icon tf-icon-kaisuo"></span>
@@ -34,14 +34,6 @@ export default {
     [NoticeBar.name]: NoticeBar,
     [swipe.name]: swipe,
     [SwipeItem.name]: SwipeItem
-  },
-  created () {
-    queryAllApp().then((res) => {
-      if (res.success) {
-        // this.appList = res.data
-      }
-    })
-    this.getNoticeLbList()
   },
   data () {
     return {
@@ -103,9 +95,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userType'])
+    ...mapGetters(['userType']),
+    mainAppList () {
+      return this.appList.filter(obj => obj.id !== '1')
+    }
+  },
+  created () {
+    // this.queryAllApp()
+    this.getNoticeLbList()
   },
   methods: {
+    /* 获取管家全部应用 */
+    queryAllApp () {
+      queryAllApp().then((res) => {
+        this.appList = res.data
+      })
+    },
     /* 获取通知轮播列表 */
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {

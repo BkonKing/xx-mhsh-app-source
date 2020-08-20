@@ -26,6 +26,12 @@
 		<param name="universalLink" value="https://bjtest.apicloud.com"/>
 	</feature>
 
+	<!-- 极光推送 -->
+	<feature name="ajpush">
+		<param name="app_key" value="2e6a363169ec93aa011e9799" />
+		<param name="channel" value="qihu360" />
+	</feature>
+
 	<!-- window.navigation.userAgent追加标识,识别环境。 -->
 	<preference name="userAgent" value="APICloud" />
 	<preference name="pageBounce" value="false"/>

@@ -13,15 +13,19 @@
       </van-notice-bar>
     </div>
     <div class="tf-body-container">
-      <van-swipe class="my-swipe" :autoplay="6000" indicator-color="#fff" @change="swipeChange">
+      <van-swipe class="home-swipe" :autoplay="6000" :lazy-render="true" indicator-color="#fff" @change="swipeChange">
         <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
           <van-image class="swipe-item__image" :src="item.icon_image" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
         <van-grid-item v-for="(item, index) in myAppList" :key="index" :to="item.url">
-          <van-image class="app-box__image" :src="item.icon_image" />
+          <img class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{item.application}}</span>
+        </van-grid-item>
+        <van-grid-item key="all" to="/applist">
+          <img class="app-box__image" src="@/assets/imgs/home_all.png" />
+          <span class="app-box__text">全部</span>
         </van-grid-item>
       </van-grid>
       <div class="coin-box">
@@ -30,7 +34,7 @@
             幸福币专区
             <span v-if="userInfo.signin_today == '0'" class="sign-btn" @click.stop="sign">签到</span>
             <span class="coin-number" v-else>
-              <span class="tf-icon tf-icon-moneycollect"></span>
+              <span class="tf-icon tf-icon-xingfubi"></span>
               <span>{{userInfo.credits}}</span>
             </span>
           </div>
@@ -54,55 +58,42 @@
           <div class="coin-image-box">
             <van-image
               class="coin-image"
-              v-for="(item, i) in coinList"
+              v-for="(item, i) in creditsGoods"
               :key="i"
-              :src="item.icon_image"
-              @click="goCoinCommodity"
+              :src="item.thumb"
+              @click="goCoinCommodity(item)"
             >
               <div class="coin-tag">
-                <span class="tf-icon tf-icon-moneycollect"></span>
-                <span>1000</span>
+                <span class="tf-icon tf-icon-xingfubi"></span>
+                <span>{{item.credits}}</span>
               </div>
             </van-image>
           </div>
         </div>
       </div>
-      <div class="life-box">
+      <div class="life-box" v-if="bargainList && bargainList.length">
         <div class="life-box__title" @click="goSpecialSale">9.9特卖</div>
         <div class="life-box__description" @click="goSpecialSale">
           省钱好机会
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <!-- <div class="coin-image-box">
-          <van-image
-            class="coin-image"
-            v-for="(item, i) in saleImages"
-            :key="i"
-            @click="goCoinCommodity"
-          >
-            <div class="coin-tag">
-              <span class="tf-icon tf-icon-moneycollect"></span>
-              <span>1000</span>
-            </div>
-          </van-image>
-        </div>-->
         <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
-          <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
-            <tf-image-list :data="saleImages" :column="3" srcKey="src" @click="clickSpecialSale"></tf-image-list>
+          <van-swipe-item v-for="(item, i) in bargainList" :lazy-render="true" :key="i">
+            <tf-image-list :data="item" :column="3" srcKey="thumb" @click="clickSpecialSale"></tf-image-list>
           </van-swipe-item>
         </van-swipe>
       </div>
-      <div class="life-box tf-mt-base">
+      <div class="life-box tf-mt-base" v-if="ollageGoods && ollageGoods.length">
         <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
         <div class="life-box__description" @click="goTimeLimit">
           惊喜折扣限时抢
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
-          <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
-            <tf-image-list :data="timeLimitImages" :column="2" srcKey="src" @click="clickTimeLimit">
+        <van-swipe class="my-swipe" :autoplay="3000" :lazy-render="true" :show-indicators="false">
+          <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
+            <tf-image-list :data="item" :column="2" srcKey="thumb" @click="clickTimeLimit">
               <template v-slot:tag="{img}">
-                <div class="price-tag">{{img.price}}</div>
+                <div class="price-tag">{{img.s_price}}</div>
               </template>
             </tf-image-list>
           </van-swipe-item>
@@ -171,7 +162,7 @@ import {
 } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
-import { getMyApp, getBannerIndex } from '@/api/home'
+import { getMyApp, getBannerIndex, getBargainGoods, getOllageGoods, getCreditsGoodsList } from '@/api/home'
 import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
@@ -194,6 +185,9 @@ export default {
       swipeImages: [], // 轮播图
       myAppList: [], // 我的应用
       noticeList: [], // 通知列表
+      bargainList: [], // 特价商品
+      ollageGoods: [], // 闪购商品
+      creditsGoods: [], // 幸福币商品
       coinList: [
         {
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
@@ -281,7 +275,9 @@ export default {
     this.getBannerIndex()
     this.getNoticeLbList()
     this.getMyApp()
+    this.getCreditsGoodsList()
     this.getActivityList()
+    this.getOllageGoods()
   },
   methods: {
     /* 获取通知轮播列表 */
@@ -301,16 +297,11 @@ export default {
     getMyApp () {
       getMyApp().then((res) => {
         this.myAppList = res.data
-        this.myAppList.push({
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          application: '全部',
-          url: '/applist'
-        })
       })
     },
     /* 轮播图change事件 */
     swipeChange (index) {
-      this.headerColor = this.swipeImages[index].color || '#eb5841'
+      this.headerColor = this.swipeImages[index].color_value || '#eb5841'
     },
     /* 签到 */
     sign () {
@@ -321,6 +312,12 @@ export default {
         this.$store.dispatch('getMyAccount')
       })
     },
+    /* 获取幸福币专区 */
+    getCreditsGoodsList () {
+      getCreditsGoodsList().then(res => {
+        this.creditsGoods = res.data
+      })
+    },
     /* 跳转幸福币 */
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
@@ -328,6 +325,12 @@ export default {
     /* 幸福币专区商品详情 */
     goCoinCommodity () {
       console.log('幸福币专区')
+    },
+    /* 获取9.9特卖区 */
+    getBargainGoods () {
+      getBargainGoods().then(res => {
+        this.bargainList = res.data
+      })
     },
     /* 跳转9.9特卖专区 */
     goSpecialSale () {
@@ -337,6 +340,12 @@ export default {
     /* 9.9特卖专区图片点击 */
     clickSpecialSale ({ id }) {
       console.log(id)
+    },
+    /* 获取闪购专区 */
+    getOllageGoods () {
+      getOllageGoods().then(res => {
+        this.ollageGoods = res.data
+      })
     },
     /* 跳转限时闪购 */
     goTimeLimit () {
@@ -413,11 +422,14 @@ export default {
   // top: 0;
   left: 0;
   width: 100%;
-  height: 184px;
+  padding-bottom: 30px;
   z-index: 1;
 }
 .tf-body-container {
   padding-top: 184px;
+}
+.home-swipe {
+  height: 344.4px;
 }
 .swipe-item__image {
   width: 100%;
@@ -442,7 +454,7 @@ export default {
 }
 /* 幸福币专区 */
 .coin-box {
-  margin: 0 20px;
+  margin: 0 20px 40px;
   padding-bottom: 30px;
   box-shadow: 0px 0px 12px 1px rgba(99, 99, 99, 0.2);
   border-radius: 10px;
@@ -494,7 +506,6 @@ export default {
 /* 专区 */
 .life-box {
   padding: 30px 20px;
-  margin-top: 40px;
   &__title {
     font-size: 34px;
     font-weight: 500;
@@ -518,6 +529,7 @@ export default {
 }
 .community-box {
   padding-left: 20px;
+  margin-bottom: 60px;
   &__title {
     font-size: 34px;
     font-weight: 500;
@@ -589,7 +601,7 @@ export default {
   }
 }
 .front-page {
-  margin: 80px 20px;
+  margin: 20px 20px 80px;
   padding: 24px 30px 30px;
   height: 142px;
   background: @background-color;

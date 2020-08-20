@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%;">
-    <refreshList :list.sync="list" :load="load">
+    <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{item, index}">
         <div v-if="item.article_type == 2 || article_type == 2" class="activity-cell">
           <div @click="goDetails('2', item.id)">
@@ -125,6 +125,9 @@ export default {
           id
         }
       })
+    },
+    reload () {
+      this.$refs.list.reload()
     }
   },
   watch: {

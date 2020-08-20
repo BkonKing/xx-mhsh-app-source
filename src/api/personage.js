@@ -222,6 +222,11 @@ export function getMythumbsupList (params) {
   return request.get('/my/interaction/getMythumbsupList', { params })
 }
 
+// 我参与的活动列表
+export function getMyJoinActivityList (params) {
+  return request.get('/my/interaction/getMyJoinActivityList', { params })
+}
+
 /* 我的互动 end */
 
 /* 我的消息 start */

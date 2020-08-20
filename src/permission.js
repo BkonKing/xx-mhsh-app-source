@@ -7,41 +7,39 @@ import {
 const whiteList = ['/login']
 
 router.beforeEach(async (to, from, next) => {
-  Toast.loading({
-    duration: 0, // 持续展示 toast
-    message: '',
-    forbidClick: true
-  })
+  // Toast.loading({
+  //   duration: 0, // 持续展示 toast
+  //   message: '',
+  //   forbidClick: true
+  // })
 
+  // 获取token
   const hasToken = api.getPrefs({
     sync: true,
     key: 'access_token'
   })
 
-  // eslint-disable-next-line eqeqeq
-  if (hasToken && hasToken != 'undefined' && hasToken != '') {
+  // 有token
+  if (hasToken && hasToken != 'undefined') {
     if (!store.state.current_project) {
-      // 看是否有当前项目
+      // 获取当前项目
       await store.dispatch('getHouse')
     }
+    // 动态添加keepalive到列表，离开时再手动从列表中删除keepalive
     if (to.meta && to.meta.keepAlive) {
       store.commit('setKeepAliveList', to.name)
     }
     next()
   } else {
-    /* has no token */
     if (whiteList.indexOf(to.path) !== -1) {
-      // in the free login whitelist, go directly
       next()
     } else {
-      // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`)
+      next('/login')
     }
   }
-  Toast.clear()
+  // Toast.clear()
 })
 
 router.afterEach(() => {
-  // finish progress bar
-  Toast.clear()
+  // Toast.clear()
 })

@@ -76,11 +76,11 @@
         <tf-list class="basics-list">
           <tf-list-item
             border
-            :title="`${userInfo.is_setpassword ? '修改' : '设置'}支付密码`"
+            :title="`${userInfo.is_setpaypassword ? '修改' : '设置'}支付密码`"
             @click="editPaymentCode"
           ></tf-list-item>
           <tf-list-item
-            :title="`${userInfo.is_setpaypassword ? '修改' : '设置'}登录密码`"
+            :title="`${userInfo.is_setpassword ? '修改' : '设置'}登录密码`"
             @click="editLoginPassword"
           ></tf-list-item>
         </tf-list>

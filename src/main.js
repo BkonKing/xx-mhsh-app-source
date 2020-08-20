@@ -36,6 +36,16 @@ if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
       //   alert(JSON.stringify(err))
       // }
     })
+    // 极光推送
+    Vue.prototype.ajpush = api.require('ajpush')
+
+    if (api.systemType === 'android') {
+      Vue.prototype.ajpush.init((ret) => {
+        if (ret && ret.status) {
+          // success
+        }
+      })
+    }
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
     api.addEventListener({

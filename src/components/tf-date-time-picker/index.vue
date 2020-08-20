@@ -33,7 +33,7 @@ export default {
     return {
       showDatePicker: false,
       valueText: '',
-      dateValue: new Date(this.value.replace(/-/g, '/'))
+      dateValue: new Date()
     }
   },
   created () {
@@ -50,6 +50,11 @@ export default {
       this.$emit('input', value)
       this.$emit('confirm', value)
       this.showDatePicker = false
+    }
+  },
+  watch: {
+    value (val) {
+      this.dateValue = new Date(val.replace(/-/g, '/'))
     }
   }
 }

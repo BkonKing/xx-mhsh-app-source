@@ -3,13 +3,7 @@
     <img class="logo" src="@/assets/imgs/login_logo.png" />
     <div class="form">
       <div class="form-body">
-        <Field
-          v-model="mobile"
-          class="form-input"
-          maxlength="11"
-          type="tel"
-          placeholder="请输入您的手机号"
-        ></Field>
+        <Field v-model="mobile" class="form-input" maxlength="11" type="tel" placeholder="请输入您的手机号"></Field>
         <Field
           v-if="login_type === 1"
           v-model="yzm"
@@ -48,13 +42,12 @@
     <div class="agreement" @click="changeRememberPasswrod">
       <div class="uni-checkbox-wrapper">
         <div class="uni-checkbox-input">
-          <span
-            class="tf-icon uni-checkbox-icon"
-            :class="{ 'uni-checkbox-input-checked': agree }"
-          >{{ agree ? '&#xe634;' : '' }}</span>
+          <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
         </div>
       </div>
-      <span class="agreement-text" style="color: #fff;">登录即表示您同意《美好生活家园用户协议》</span>
+      <span class="agreement-text" style="color: #fff;">
+        登录即表示您同意<router-link style="color: #fff;" to="/home">《美好生活家园用户协议》</router-link>
+      </span>
     </div>
   </div>
 </template>
@@ -74,7 +67,7 @@ export default {
       yzm: undefined,
       pwd: undefined,
       login_type: 1, // 1:验证码登录 2：密码登陆
-      agree: true,
+      agree: true, // 同意协议
       showPassword: false,
       codeStatus: false,
       countDown: 59,
@@ -97,15 +90,22 @@ export default {
       let params = {}
       /* 验证码登录 */
       if (this.login_type === 1) {
-        if (validEmpty(this.mobile, '请输入手机号码') || validEmpty(this.yzm, '请输入验证码')) {
+        if (
+          validEmpty(this.mobile, '请输入手机号码') ||
+          validEmpty(this.yzm, '请输入验证码')
+        ) {
           return
         }
         params = {
           mobile: this.mobile,
           yzm: this.yzm
         }
-      } else if (this.login_type === 2) { /* 密码登录 */
-        if (validEmpty(this.mobile, '请输入手机号码') || validEmpty(this.pwd, '请输入密码')) {
+      } else if (this.login_type === 2) {
+        /* 密码登录 */
+        if (
+          validEmpty(this.mobile, '请输入手机号码') ||
+          validEmpty(this.pwd, '请输入密码')
+        ) {
           return
         }
         params = {
@@ -113,14 +113,16 @@ export default {
           pwd: this.pwd
         }
       }
-      this.$store.dispatch('login', {
-        type: this.login_type,
-        params
-      }).then(() => {
-        this.$router.push({
-          name: 'home'
+      this.$store
+        .dispatch('login', {
+          type: this.login_type,
+          params
         })
-      })
+        .then(() => {
+          this.$router.push({
+            name: 'home'
+          })
+        })
     },
     /* 发送验证码 */
     verifCode () {
@@ -163,7 +165,7 @@ export default {
   flex-direction: column;
   align-items: center;
   background-color: #333;
-  background-image: url('../../assets/imgs/login_bg.png');
+  background-image: url("../../assets/imgs/login_bg.png");
 }
 .logo {
   width: 224px;
@@ -250,19 +252,19 @@ export default {
 }
 .uni-checkbox-input {
   display: flex;
+  text-align: center;
   margin-right: 5px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: #fff;
+  border: 2px solid #fff;
   border-radius: 3px;
   width: 28px;
   height: 28px;
 }
-.uni-checkbox-icon {
+.checkbox-icon {
   font-size: 20px;
-  line-height: 28px;
+  line-height: 24px;
+  margin-left: -1px;
 }
-.uni-checkbox-input-checked {
+.tf-icon-gou {
   color: #fff;
 }
 .login-method__text {

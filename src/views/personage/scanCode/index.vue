@@ -72,19 +72,12 @@ export default {
   },
   mounted () {
     // this.scanSuccess()
-    this.FNScanner = api.require('FNScanner')
+    // this.FNScanner = api.require('FNScanner')
   },
   methods: {
+    /* 切换tab */
     switchTab (value) {
       this.current = value
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      if (value === 2) {
-        this.getPaymentCode()
-      } else if (value === 3) {
-        this.getCollectCode()
-      }
     },
     /* 获取付款码二维码 */
     getPaymentCode () {
@@ -316,20 +309,23 @@ export default {
   },
   watch: {
     current (value) {
+      const len = api.frames().length
       if (value === 1) {
-        if (!api.frames().length) {
-          this.openFrame()
-        }
+        !len && this.openFrame()
       } else {
-        this.closeFrame()
+        len && this.closeFrame()
+        this.timer && clearTimeout(this.timer)
+        if (value === 2) {
+          this.getPaymentCode()
+        } else if (value === 3) {
+          this.getCollectCode()
+        }
       }
     }
   },
   beforeDestroy () {
     this.closeFrame()
-    if (this.timer) {
-      clearTimeout(this.timer)
-    }
+    this.timer && clearTimeout(this.timer)
   }
 }
 </script>

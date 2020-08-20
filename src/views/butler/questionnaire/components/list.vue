@@ -18,7 +18,7 @@
           <div class="question-info">
             <div class="tf-row-vertical-center">
               <div class="tf-gradient-tag--warning" v-if="item.virtual_coin > 0">
-                <span class="tf-icon tf-icon-moneycollect"></span>
+                <span class="tf-icon tf-icon-xingfubi"></span>
                 +{{ item.virtual_coin }}
               </div>
               <div class="participate-status participate-status--proceed">{{ item.joins }}人参加</div>

@@ -13,7 +13,7 @@
       ></van-nav-bar>
       <div class="sign-box tf-row-space-between">
         <div class="tf-row-center tf-flex-item">
-          <div class="tf-icon tf-icon-moneycollect coin-icon"></div>
+          <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
           <div class="coin-number">{{credits}}</div>
         </div>
         <div
@@ -60,14 +60,14 @@
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
       </div>
       <div class="sale-area">
-        <div class="commodity-box" v-for="(item, i) in saleList" :key="i">
-          <img class="commodity-image" :src="item.image" />
-          <div class="commodity-name">{{item.name}}</div>
+        <div class="commodity-box" v-for="(item, i) in creditsGoods" :key="i">
+          <img class="commodity-image" :src="item.thumb" />
+          <div class="commodity-name">{{item.goods_name}}</div>
           <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥{{item.specialPrice}}</div>
-            <div class="commodity-original-price">￥{{item.originalPrice}}</div>
+            <div class="commodity-current-price">￥{{item.s_price}}</div>
+            <div class="commodity-original-price">￥{{item.y_price}}</div>
           </div>
-          <div class="commodity-coin">{{item.coin}}幸福币</div>
+          <div class="commodity-coin">{{item.credits}}幸福币</div>
         </div>
       </div>
     </div>
@@ -79,6 +79,7 @@
 import { NavBar, Toast } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
+import { getCreditsGoodsList } from '@/api/home'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -90,6 +91,7 @@ export default {
       signinToday: '1', // 今日是否签到
       credits: 0,
       taskList: [],
+      creditsGoods: [],
       saleList: [
         {
           image: '/static/app-icon.png',
@@ -103,6 +105,7 @@ export default {
   },
   created () {
     this.getCreditsAccount()
+    this.getCreditsGoodsList()
   },
   methods: {
     /* 获取幸福币信息 */
@@ -146,6 +149,12 @@ export default {
         query: {
           current
         }
+      })
+    },
+    /* 获取幸福币专区 */
+    getCreditsGoodsList () {
+      getCreditsGoodsList().then(res => {
+        this.creditsGoods = res.data
       })
     }
   }

@@ -116,11 +116,11 @@
               <img class="tf-clist-cell__image" src="@/assets/imgs/personage_ziliao.png" />
             </template>
           </tf-list-item>
-          <tf-list-item title="幸福基金">
+          <!-- <tf-list-item title="幸福基金">
             <template v-slot:image>
               <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
             </template>
-          </tf-list-item>
+          </tf-list-item> -->
         </tf-list>
         <tf-list class="personage-list">
           <tf-list-item border title="常见问题" @click="goQuestion">

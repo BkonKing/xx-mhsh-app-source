@@ -102,6 +102,7 @@ export default {
     this.getMyApp()
   },
   methods: {
+    // 进入编辑模式
     edit () {
       this.editMode = true
       this.myAppList_copy = this.cloneObject(this.myAppList)
@@ -126,9 +127,7 @@ export default {
       const { id } = item
       const changeStatus = (obj) => {
         if (obj.id === id) {
-          if (obj.status !== 0) {
-            obj.status = 1
-          }
+          obj.status = 0
           return true
         }
       }
@@ -146,7 +145,9 @@ export default {
     /* 取消编辑 */
     cancelEdit () {
       this.myAppList = this.myAppList_copy
-      this.toTypeList(this.allAppList_copy)
+      const { butlerList, neighbourList } = this.allAppList_copy
+      this.butlerList = butlerList
+      this.neighbourList = neighbourList
       this.editMode = false
     },
     /* 获取全部应用 */
@@ -160,14 +161,14 @@ export default {
       })
     },
     getMyApp () {
-      Toast.loading({
-        overlay: true,
-        duration: 0,
-        message: '加载中'
-      })
+      // Toast.loading({
+      //   overlay: true,
+      //   duration: 0,
+      //   message: '加载中'
+      // })
       getMyApp().then((res) => {
         this.myAppList = res.data
-        Toast.clear()
+        // Toast.clear()
       })
     },
     saveMyApp () {

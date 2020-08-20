@@ -65,7 +65,7 @@ export default {
         await this.load({
           pages: this.pageNum
         }).then(({ data }) => {
-          if (data.length > 0) {
+          if (data && data.length > 0) {
             this.listChild.push(...data)
             this.$emit('update:list', this.listChild)
             this.pageNum++
@@ -92,6 +92,9 @@ export default {
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true
+      this.reload()
+    },
+    reload () {
       this.isEndNum = 0
       this.pageNum = 1
       this.listChild = []

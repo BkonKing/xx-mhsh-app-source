@@ -235,6 +235,7 @@ export default {
         this.moreShow = false
       } else {
         this.list.unshift(data)
+        // console.table(this.list)
       }
     },
     /* 刷新回复列表 */
@@ -242,6 +243,13 @@ export default {
       this.list = []
       this.parentId = ''
       this.getCommentList()
+    }
+  },
+  watch: {
+    moreShow (value) {
+      if (!value) {
+        this.parentId = ''
+      }
     }
   }
 }
