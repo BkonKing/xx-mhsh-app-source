@@ -25,6 +25,11 @@ export function setPayPassword (data) {
   return request.post('/my/password/setPayPassword', data)
 }
 
+/* 设置支付密码 */
+export function yzPayPassword (data) {
+  return request.post('/my/password/yzPayPassword', data)
+}
+
 /* 修改支付密码 */
 export function updatePayPassword (data) {
   return request.post('/my/password/updatePayPassword', data)
@@ -33,6 +38,11 @@ export function updatePayPassword (data) {
 /* 通过验证码重置支付密码 */
 export function resetPayPassword (data) {
   return request.post('/my/password/resetPayPassword', data)
+}
+
+/* 通过验证码重置登录密码 */
+export function resetPassword (data) {
+  return request.post('/my/password/resetPassword', data)
 }
 
 /* 设置登录密码 */
@@ -58,6 +68,11 @@ export function addMember (data) {
 /* 修改报备成员 */
 export function updateMember (data) {
   return request.post('/my/member/updateMember', data)
+}
+
+/* 删除报备成员 */
+export function deleteMember (data) {
+  return request.post('/my/member/deleteMember', data)
 }
 
 /* 房产信息 */
@@ -214,3 +229,28 @@ export function getMessageList (params) {
   return request.get('/my/message/getMessageList', { params })
 }
 /* 我的消息 end */
+
+/* 基础信息 start */
+
+// 编辑头像
+export function editAvatar (data) {
+  return request.post('/my/account/editAvatar', data)
+}
+// 编辑昵称
+export function editNickname (data) {
+  return request.post('/my/account/editNickname', data)
+}
+// 编辑性别
+export function editGender (data) {
+  return request.post('/my/account/editGender', data)
+}
+// 编辑生日
+export function editBirthday (data) {
+  return request.post('/my/account/editBirthday', data)
+}
+// 编辑真实姓名
+export function editRealname (data) {
+  return request.post('/my/account/editRealname', data)
+}
+
+/* 基础信息 end */

@@ -11,9 +11,9 @@
         <div class="list-title">邀约设置</div>
         <tf-list-item border title="来访日期" :required="true">
           <template v-slot:right>
-            <tf-date-time-picker v-model="form.stime" type="date" title="选择日期" :min-date="startDate">
+            <tf-date-time-picker v-model="form.lfday" type="date" title="选择日期" :min-date="startDate">
               <template>
-                <div class="tf-text text-right">{{form.stime || '选择日期'}}</div>
+                <div class="tf-text text-right">{{form.lfday || '选择日期'}}</div>
               </template>
             </tf-date-time-picker>
           </template>
@@ -21,7 +21,7 @@
         <tf-list-item border title="来访时间">
           <template v-slot:right>
             <tf-picker
-              v-model="form.date"
+              v-model="form.time"
               title="选择时间"
               :columns="timeArray"
             >
@@ -68,7 +68,7 @@
             <div class="tf-row">
               <div
                 class="visitor-info__text tf-mr-base"
-              >{{item.realname}} {{item.gender ? '男' : '女'}}</div>
+              >{{item.realname}} {{item.gender == '1' ? '男' : '女'}}</div>
               <div class="visitor-info__text tf-text-grey">{{item.mobile}} {{item.car_number}}</div>
             </div>
             <div class="tf-icon tf-icon-delete" @click="deleteVisitor(i)"></div>
@@ -135,28 +135,27 @@ export default {
         }
       ],
       timeArray: [
-        '0:00 ~ 2:00',
-        '2:00 ~ 4:00',
-        '4:00 ~ 6:00',
-        '6:00 ~ 8:00',
-        '8:00 ~ 10:00',
-        '10:00 ~ 12:00',
-        '12:00 ~ 14:00',
-        '14:00 ~ 16:00',
-        '16:00 ~ 18:00',
-        '18:00 ~ 20:00',
-        '20:00 ~ 22:00',
-        '22:00 ~ 24:00'
+        '0:00~2:00',
+        '2:00~4:00',
+        '4:00~6:00',
+        '6:00~8:00',
+        '8:00~10:00',
+        '10:00~12:00',
+        '12:00~14:00',
+        '14:00~16:00',
+        '16:00~18:00',
+        '18:00~20:00',
+        '20:00~22:00',
+        '22:00~24:00'
       ],
       form: {
-        stime: getTime(),
-        time: '12:01',
+        lfday: '',
+        time: '',
         vtimes: 1,
         num: '',
         remark: ''
       },
       startDate: new Date(),
-      endDate: getTime('end'),
       showDatePicker: false,
       showPicker: false,
       agreeValue: false,
@@ -166,15 +165,12 @@ export default {
   activated () {
     const visitorInfo = this.$store.state.visitorList
     if (visitorInfo) {
-      if (
-        this.visitorList.findIndex((obj) => obj.id === visitorInfo.id) === -1
-      ) {
-        this.visitorList.push(visitorInfo)
-        this.$store.commit('setVisitorList', null)
-      }
+      this.visitorList = [visitorInfo]
+      this.$store.commit('setVisitorList', null)
     }
   },
   methods: {
+    /* 发起邀约 */
     addVisitorLog () {
       if (!this.agreeValue) {
         Toast({
@@ -182,10 +178,14 @@ export default {
         })
         return
       }
-      const visitorData =
-        this.visitorList.length === 0 && this.$refs.form.getData()
-      const params = Object.assign({}, visitorData, this.form)
-      if (!this.form.stime) {
+      let visitorData
+      if (this.visitorList.length === 0) {
+        visitorData = this.$refs.form.getData()
+      } else {
+        visitorData = this.visitorList[0]
+      }
+      const params = JSON.parse(JSON.stringify(Object.assign({}, visitorData, this.form)))
+      if (!this.form.lfday) {
         Toast({
           message: '请选择来访日期'
         })
@@ -203,15 +203,31 @@ export default {
           return
         }
       }
-      addVisitorLog().then((res) => {
+      if (params.time) {
+        const time = params.time.split('~')
+        params.stime = time[0]
+        params.etime = time[1]
+      }
+      addVisitorLog(params).then((res) => {
         if (res.success) {
-          this.sendInvite()
+          this.sendInvite(res.data.id)
         }
       })
     },
+    /* 发起邀约成功跳转邀约页面 */
+    sendInvite (id) {
+      this.$router.replace({
+        path: '/pages/butler/visitor/invite',
+        query: {
+          id
+        }
+      })
+    },
+    /* 删除访客 */
     deleteVisitor (index) {
       this.visitorList.splice(index, 1)
     },
+    /* 跳转访客列表 1：访客列表 2：选择访客 */
     goVisitorList (type) {
       this.$router.push({
         path: '/pages/butler/visitor/visitor-list',
@@ -220,11 +236,9 @@ export default {
         }
       })
     },
+    /* 跳转我的邀约 */
     goInviteList () {
       this.$router.push('/pages/butler/visitor/invite-list')
-    },
-    sendInvite () {
-      this.$router.replace('/pages/butler/visitor/invite')
     },
     goback () {
       this.$router.go(-1)
@@ -232,8 +246,8 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     if (to.name === 'butler' || to.name === 'visitorInvite') {
+      this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
-      this.$store.commit('deleteKeepAlive', to.name)
     }
     next()
   }

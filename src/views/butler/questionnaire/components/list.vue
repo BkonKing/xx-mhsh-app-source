@@ -1,21 +1,26 @@
 <template>
   <refreshList :list.sync="list" :load="load">
     <template v-slot="{item}">
-      <div class="question-box" :class="{'question-finish-box': item.status == 3}" @click="jump(item)">
+      <div
+        class="question-box"
+        :class="{'question-finish-box': item.status == 3}"
+        @click="jump(item)"
+      >
         <div
           class="question-status-box"
           :style="{'background': item.wjtp_type == 1 ? '#448FE4' : '#55B862'}"
         >
-          <span class="question-type">{{ item.wjtp_type }}</span>
+          <img v-if="item.wjtp_type == 1" src="@/assets/imgs/butler_wenjuan.png" />
+          <img v-else src="@/assets/imgs/butler_toupiao.png" />
         </div>
         <div class="question-box__right">
           <div class="question-title">{{ item.title }}</div>
           <div class="question-info">
             <div class="tf-row-vertical-center">
-              <div
-                class="tf-gradient-tag--warning"
-                v-if="item.virtual_coin > 0"
-              ><span class="tf-icon tf-icon-moneycollect"></span>+{{ item.virtual_coin }}</div>
+              <div class="tf-gradient-tag--warning" v-if="item.virtual_coin > 0">
+                <span class="tf-icon tf-icon-moneycollect"></span>
+                +{{ item.virtual_coin }}
+              </div>
               <div class="participate-status participate-status--proceed">{{ item.joins }}人参加</div>
             </div>
             <div class="question-info__time">{{ item.stime }}</div>
@@ -82,17 +87,15 @@ export default {
 }
 
 .question-status-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 170px;
   // height: 170px;
   background-color: @gray-1;
   border-top-left-radius: @border-radius-md;
   border-bottom-left-radius: @border-radius-md;
   text-align: center;
-}
-.question-type {
-  line-height: 170px;
-  font-size: 100px;
-  color: #fff;
 }
 .question-box__right {
   @flex-column();

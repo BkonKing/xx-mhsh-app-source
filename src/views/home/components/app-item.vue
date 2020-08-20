@@ -4,12 +4,12 @@
     <div class="app-name">{{name}}</div>
     <template v-if="editMode">
       <span
-        v-if="mode == 'remove' && status !== 0"
-        class="tf-icon tf-icon-guanbi-circle-fill"
+        v-if="mode == 'remove' && status == 2"
+        class="tf-icon tf-icon-close-circle-fill"
         @click="remove"
       ></span>
-      <span v-else-if="status == 1" class="tf-icon tf-icon-plus-circle-fill" @click="add"></span>
-      <span v-else-if="status == 2" class="tf-icon tf-icon-check-circle-fill"></span>
+      <span v-else-if="status == 0" class="tf-icon tf-icon-plus-circle-fill" @click="add"></span>
+      <span v-else-if="status == 1" class="tf-icon tf-icon-gouxuan"></span>
     </template>
   </div>
 </template>

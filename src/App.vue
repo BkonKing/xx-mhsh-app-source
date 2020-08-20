@@ -29,7 +29,7 @@ export default {
       transitionName: '',
       keepAlive: [],
       historyList: [],
-      paddingTop: 20,
+      paddingTop: 0,
       paddingBottom: 0
     }
   },

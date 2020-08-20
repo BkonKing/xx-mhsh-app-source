@@ -13,8 +13,8 @@
         <tf-list class="basics-list">
           <tf-list-item border title="头像">
             <template v-slot:right>
-              <van-uploader>
-                <img class="tf-avatar-m tf-mr-base" :src="avatar" />
+              <van-uploader :after-read="afterRead">
+                <img class="tf-avatar-m" :src="avatar" />
               </van-uploader>
             </template>
           </tf-list-item>
@@ -41,7 +41,14 @@
           </tf-list-item>
           <tf-list-item title="生日">
             <template v-slot:right>
-              <tf-date-time-picker v-model="birthday" type="date" title="生日" @confirm="setBirthday">
+              <tf-date-time-picker
+                v-model="birthday"
+                type="date"
+                title="生日"
+                :min-date="minDate"
+                :max-date="maxDate"
+                @confirm="setBirthday"
+              >
                 <template>
                   <div class="tf-text text-right">{{birthday || '选择日期'}}</div>
                 </template>
@@ -69,10 +76,13 @@
         <tf-list class="basics-list">
           <tf-list-item
             border
-            :title="`${payCodeStatus ? '修改' : '设置'}支付密码`"
+            :title="`${userInfo.is_setpassword ? '修改' : '设置'}支付密码`"
             @click="editPaymentCode"
           ></tf-list-item>
-          <tf-list-item :title="`${passwordStatus ? '修改' : '设置'}登录密码`" @click="editLoginPassword"></tf-list-item>
+          <tf-list-item
+            :title="`${userInfo.is_setpaypassword ? '修改' : '设置'}登录密码`"
+            @click="editLoginPassword"
+          ></tf-list-item>
         </tf-list>
       </van-tab>
       <van-tab v-if="userType != 0" title="房产信息">
@@ -134,8 +144,18 @@ import tfListItem from '@/components/tf-list/item.vue'
 import tfPicker from '@/components/tf-picker/index'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import house from '../house/components/house'
+import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
-import { getMemberList, yzHouse } from '@/api/personage'
+import { getDate } from '@/utils/util'
+import {
+  getMemberList,
+  yzHouse,
+  editAvatar,
+  editNickname,
+  editGender,
+  editBirthday,
+  editRealname
+} from '@/api/personage'
 export default {
   name: 'informationIndex',
   components: {
@@ -164,8 +184,8 @@ export default {
       mobile: '',
       nickname: '',
       birthday: '',
-      payCodeStatus: 1, // 0为未设置过，1我设置过
-      passwordStatus: 1, // 0为未设置过，1我设置过
+      maxDate: new Date(getDate()),
+      minDate: new Date('1900-1-1'),
       memberList: [], // 成员列表
       houseRoleColor: {
         1: 'danger',
@@ -176,11 +196,11 @@ export default {
       sexArray: [
         {
           label: '男',
-          value: 1
+          value: '1'
         },
         {
           label: '女',
-          value: 2
+          value: '2'
         }
       ]
     }
@@ -193,32 +213,87 @@ export default {
         : this.mobile.substr(0, 3) + '****' + this.mobile.substr(7)
     }
   },
-  created () {
-    const { realname, gender, avatar, mobile } = this.userInfo
+  async created () {
+    await this.$store.dispatch('getMyAccount')
+    const {
+      realname,
+      gender,
+      avatar,
+      mobile,
+      nickname,
+      birthday
+    } = this.userInfo
     this.realname = realname
+    this.nickname = nickname
     this.gender = gender
     this.avatar = avatar
     this.mobile = mobile
+    this.birthday = birthday
     this.yzHouse()
     // this.getMemberList()
   },
   methods: {
+    /* 图片上传 */
+    afterRead (file) {
+      Toast.loading({
+        message: '头像上传中'
+      })
+      const formData = new FormData()
+      formData.append('imgFile', file.file)
+      uImages(formData)
+        .then((res) => {
+          this.avatar = res.data
+          this.editAvatar()
+        })
+        .catch((message) => {
+          Toast.clear()
+          Toast.fail(message)
+        })
+    },
+    /* 头像上传 */
+    editAvatar () {
+      editAvatar({
+        avatar: this.avatar
+      })
+        .then((res) => {
+          Toast.clear()
+          Toast.success('头像上传成功')
+        })
+        .catch(() => {
+          Toast.clear()
+        })
+    },
     /* 设置昵称 */
     setNickname () {
-      console.log(this.nickname)
-      Toast.success('修改成功')
+      editNickname({
+        nickname: this.nickname
+      }).then((res) => {
+        Toast.success('昵称设置成功')
+      })
     },
     /* 设置性别 */
     setSex () {
-      console.log(this.gender)
+      editGender({
+        gender: this.gender
+      }).then((res) => {
+        Toast.success('性别设置成功')
+      })
     },
     /* 设置生日 */
     setBirthday () {
-      console.log(this.birthday)
+      editBirthday({
+        birthday: this.birthday
+      }).then((res) => {
+        Toast.success('生日设置成功')
+      })
     },
     /* 设置姓名 */
     setRealname () {
-      console.log(this.realname)
+      editRealname({
+        realname: this.realname
+      }).then((res) => {
+        Toast.success('姓名设置成功')
+      })
     },
     /* 获取业主房产信息 */
     yzHouse () {
@@ -283,7 +358,7 @@ export default {
       this.$router.push({
         path: '/pages/personage/information/payment-code',
         query: {
-          status: this.payCodeStatus
+          status: this.userInfo.is_setpaypassword
         }
       })
     },
@@ -292,7 +367,7 @@ export default {
       this.$router.push({
         path: '/pages/personage/information/login-password',
         query: {
-          status: this.passwordStatus
+          status: this.userInfo.is_setpassword
         }
       })
     },
@@ -319,6 +394,10 @@ export default {
       padding: 20px;
       overflow: auto;
     }
+  }
+  /deep/ .van-uploader__input-wrapper {
+    display: flex;
+    align-items: center;
   }
 }
 

@@ -5,7 +5,7 @@
         <router-view></router-view>
       </keep-alive>
     </div>
-    <Tabbar :tabList="tabList"></Tabbar>
+    <Tabbar></Tabbar>
   </div>
 </template>
 
@@ -21,39 +21,7 @@ export default {
   data () {
     return {
       codeScan: null,
-      statusBarHeight: 0,
-      tabList: [
-        {
-          title: '首页',
-          path: '/',
-          icon:
-            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
-        },
-        {
-          title: '生活',
-          path: '/life',
-          icon:
-            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
-        },
-        {
-          title: '管家',
-          path: '/butler',
-          icon:
-            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
-        },
-        {
-          title: '邻里',
-          path: '/neighbours',
-          icon:
-            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
-        },
-        {
-          title: '我的',
-          path: '/personage',
-          icon:
-            'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1048926945,1586672807&fm=26&gp=0.jpg'
-        }
-      ]
+      statusBarHeight: 0
     }
   },
   created () {},

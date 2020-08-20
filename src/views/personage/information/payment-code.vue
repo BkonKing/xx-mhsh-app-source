@@ -33,7 +33,7 @@
 </template>
 <script>
 import { NavBar, PasswordInput, NumberKeyboard, Toast, Dialog } from 'vant'
-import { setPayPassword, updatePayPassword } from '@/api/personage'
+import { setPayPassword, updatePayPassword, yzPayPassword } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -45,12 +45,14 @@ export default {
       showKeyboard: true,
       status: undefined,
       steps: 0,
+      forget: 0,
       paypassword: '', // 输入的内容
       old_paypassword: ''
     }
   },
   created () {
     this.status = parseInt(this.$route.query.status)
+    this.forget = parseInt(this.$route.query.forget)
     this.steps = parseInt(this.$route.query.steps) || 1
   },
   methods: {
@@ -66,15 +68,18 @@ export default {
     validPassword (key) {
       this.old_paypassword = (this.old_paypassword + key).slice(0, 6)
       if (this.old_paypassword.length === 6) {
-        // todo: 验证密码看是否需要请求后台验证一次，而不是一次性提交
-        this.steps = 2
+        yzPayPassword({
+          old_paypassword: this.old_paypassword
+        }).then(res => {
+          this.steps = 2
+        })
       }
     },
     /* 判断修改还是设置密码 */
     setPassword (key) {
       this.paypassword = (this.paypassword + key).slice(0, 6)
       if (this.paypassword.length === 6) {
-        if (this.status) {
+        if (this.status || this.forget) {
           this.updatePayPassword()
         } else {
           this.setPayPassword()
@@ -84,8 +89,7 @@ export default {
     /* 修改支付密码 */
     updatePayPassword () {
       updatePayPassword({
-        paypassword: this.paypassword,
-        old_paypassword: this.old_paypassword
+        paypassword: this.paypassword
       }).then((res) => {
         this.setSuccess('支付密码修改成功')
       })

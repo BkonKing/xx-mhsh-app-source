@@ -54,6 +54,7 @@ export default {
     return {
       status: undefined,
       steps: 0,
+      forget: 0,
       password: '',
       repassword: '',
       old_password: ''
@@ -61,11 +62,12 @@ export default {
   },
   created () {
     this.status = parseInt(this.$route.query.status)
+    this.forget = parseInt(this.$route.query.forget)
     this.steps = parseInt(this.$route.query.steps)
   },
   methods: {
     submit () {
-      if (this.status) {
+      if (this.status || this.forget) {
         this.updatePassword()
       } else {
         this.setPassword()

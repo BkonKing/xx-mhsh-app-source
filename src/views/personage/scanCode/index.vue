@@ -40,7 +40,7 @@ import {
   paymentStatus,
   collectStatus
 } from '@/api/personage'
-import { serverCodeScan } from '@/api/butler'
+import { serverCodeScan, visitorCodeScan } from '@/api/butler'
 import { Dialog, Toast } from 'vant'
 export default {
   data () {
@@ -66,6 +66,9 @@ export default {
       FNScanner: null,
       timer: null
     }
+  },
+  created () {
+    this.current = parseInt(this.$route.query.current) || 1
   },
   mounted () {
     // this.scanSuccess()
@@ -177,6 +180,9 @@ export default {
         case 'yuyuefuwu':
           this.serverCodeScan(value, values)
           break
+        case 'yuyuefangke':
+          this.visitorCodeScan(value, values)
+          break
         default:
           break
       }
@@ -243,6 +249,14 @@ export default {
             }
           })
         }
+      })
+    },
+    /* 扫了邀约码 */
+    visitorCodeScan (value) {
+      visitorCodeScan({
+        code_info: value
+      }).then((res) => {
+        Toast.success('登记成功')
       })
     },
     /* 打开扫码frame */

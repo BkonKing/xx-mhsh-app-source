@@ -6,6 +6,12 @@ export function queryAllApp (params) {
     params
   })
 }
+// 通知轮播列表
+export function getNoticeLbList (params) {
+  return request.get('/butler/notice/getNoticeLbList', {
+    params
+  })
+}
 /* 云门禁 start */
 // 二维码开门接口
 export function getQrCode (data) {
@@ -15,6 +21,13 @@ export function getQrCode (data) {
 // 远程开门接口
 export function ycOpenDoor (data) {
   return request.post('/butler/entrance/ycOpenDoor', data)
+}
+
+// 开门记录
+export function getMenjinLog (params) {
+  return request.get('/butler/entrance/getMenjinLog', {
+    params
+  })
 }
 
 /* 云门禁 end */
@@ -363,6 +376,14 @@ export function addMyVisitor (data) {
 // 修改我的访客接口
 export function updateMyVisitor (data) {
   return request.post('/butler/visitor/updateMyVisitor', data)
+}
+// 访客二维码链接
+export function visitorCode (data) {
+  return request.post('/butler/visitor/visitorCode', data)
+}
+// 预约访客扫码
+export function visitorCodeScan (data) {
+  return request.post('/butler/visitor/visitorCodeScan', data)
 }
 
 /* 访客邀约 end */

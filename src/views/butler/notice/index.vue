@@ -39,8 +39,6 @@ export default {
   },
   data () {
     return {
-      loading: false,
-      refreshing: false,
       isAllRead: false,
       noticeList: []
     }

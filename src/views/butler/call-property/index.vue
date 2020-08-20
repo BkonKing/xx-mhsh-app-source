@@ -11,7 +11,7 @@
     <div class="tf-main-container">
       <div class="introduce-box">
         <div class="logo-badge">
-          <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
+          <img src="@/assets/imgs/property_logo.png" mode="aspectFit" class="logo-image" />
         </div>
         <div class="property-title">{{ projectName }}</div>
         <div class="property-content">{{ remarks }}</div>
@@ -77,12 +77,25 @@ export default {
 .introduce-box {
   @relative();
   width: 100%;
-  // height: 350px;
+  min-height: 350px;
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
   margin-bottom: 10px;
-  background: url("../../../assets/app-icon.png");
+  z-index: 1;
+}
+
+.introduce-box::before {
+  background: url("../../../assets/imgs/property_pic.png") no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 350px;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /*-1 可以当背景*/
+  filter: blur(2px);
 }
 
 .logo-badge {
@@ -90,17 +103,11 @@ export default {
   justify-content: center;
   align-items: center;
   margin: 0 auto 30px;
-  width: 120px;
-  height: 120px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: @red-dark;
-  border-radius: 50%;
 }
 
 .logo-image {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
 }
 

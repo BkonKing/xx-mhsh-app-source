@@ -10,14 +10,14 @@
     />
     <van-tabs class="tf-body-container" v-model="isVisit">
       <van-tab title="待来访">
-        <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 0)">
+        <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 1)">
           <template v-slot="{item}">
             <list-card :data="item" :key="item.id"></list-card>
           </template>
         </refreshList>
       </van-tab>
       <van-tab title="已过期">
-        <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 1)">
+        <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 3)">
           <template v-slot="{item}">
             <list-card :data="item" :key="item.id"></list-card>
           </template>

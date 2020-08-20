@@ -20,14 +20,14 @@ router.beforeEach(async (to, from, next) => {
 
   // eslint-disable-next-line eqeqeq
   if (hasToken && hasToken != 'undefined' && hasToken != '') {
-    next()
     if (!store.state.current_project) {
       // 看是否有当前项目
-      store.dispatch('getHouse')
+      await store.dispatch('getHouse')
     }
     if (to.meta && to.meta.keepAlive) {
       store.commit('setKeepAliveList', to.name)
     }
+    next()
   } else {
     /* has no token */
     if (whiteList.indexOf(to.path) !== -1) {

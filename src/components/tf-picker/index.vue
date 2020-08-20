@@ -49,21 +49,31 @@ export default {
       if (this.index === -1) {
         return '请选择'
       }
-      return valueKey ? this.columns[this.index][valueKey] : this.columns[this.index]
+      return valueKey
+        ? this.columns[this.index][valueKey]
+        : this.columns[this.index]
     }
   },
   created () {
-    this.index = this.columns.findIndex((obj, index) => {
-      const value = this.selectedKey ? obj[this.selectedKey] : obj
-      return this.value === value
-    })
+    this.getIndex()
   },
   methods: {
+    getIndex () {
+      this.index = this.columns.findIndex((obj, index) => {
+        const value = this.selectedKey ? obj[this.selectedKey] : obj
+        return this.value === value
+      })
+    },
     confirm (value, index) {
       this.index = index
       this.$emit('input', this.selectedKey ? value[this.selectedKey] : value)
       this.$emit('confirm', this.selectedKey ? value[this.selectedKey] : value)
       this.showPicker = false
+    }
+  },
+  watch: {
+    value () {
+      this.getIndex()
     }
   }
 }

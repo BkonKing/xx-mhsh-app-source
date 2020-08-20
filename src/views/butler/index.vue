@@ -4,7 +4,11 @@
     <page-nav-bar></page-nav-bar>
     <van-notice-bar class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
-        <van-swipe-item v-for="item in noticeList" :key="item.id" @click="goNotice">{{item.content}}</van-swipe-item>
+        <van-swipe-item
+          v-for="item in noticeList"
+          :key="item.id"
+          @click="goNotice(item)"
+        >{{item.title}}</van-swipe-item>
       </van-swipe>
     </van-notice-bar>
     <appList :list="appList"></appList>
@@ -20,7 +24,7 @@
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
 import { NoticeBar, swipe, SwipeItem, Toast, Dialog } from 'vant'
-import { queryAllApp } from '@/api/butler.js'
+import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
 import { mapGetters } from 'vuex'
 export default {
   name: 'butler',
@@ -32,25 +36,24 @@ export default {
     [SwipeItem.name]: SwipeItem
   },
   created () {
-    queryAllApp().then(res => {
+    queryAllApp().then((res) => {
       if (res.success) {
         // this.appList = res.data
       }
     })
+    this.getNoticeLbList()
   },
   data () {
     return {
-      noticeList: [
-        {
-          id: 1,
-          content: 123123123
-        },
-        {
-          id: 2,
-          content: 'ffffffffffffffffff'
-        }
-      ],
+      noticeList: [],
       appList: [
+        {
+          id: '1',
+          icon_image:
+            'https://test.mhshjy.com/upload/images/202006/26/1593160591_931157.jpg',
+          application: '云门禁',
+          url: '/gj/mj'
+        },
         {
           icon_image: '/static/logo.png',
           application: '公告通知',
@@ -103,11 +106,30 @@ export default {
     ...mapGetters(['userType'])
   },
   methods: {
-    goNotice (item) {
-      const url = `/pages/butler/notice/details?id=${item.id}`
-      this.$router.push(url)
+    /* 获取通知轮播列表 */
+    getNoticeLbList () {
+      getNoticeLbList().then(({ data }) => {
+        this.noticeList = data
+      })
     },
+    /* 跳转公告详情页 */
+    goNotice ({ id }) {
+      this.$router.push({
+        name: 'noticeDetails',
+        query: {
+          noticeId: id
+        }
+      })
+    },
+    /* 跳转云门禁 */
     goEntrance () {
+      const status = this.appList.some((obj) => {
+        return obj.id === '1'
+      })
+      if (!status) {
+        Toast('小区暂未开放此功能')
+        return
+      }
       this.$router.push('/pages/butler/entrance/index')
     }
   },
@@ -129,8 +151,10 @@ export default {
         title: '提示',
         message: '您尚未认证房间，是否去认证？',
         confirmButtonText: '去认证'
-      }).then(res => {
-        this.$router.push('/pages/personage/house/attestation?type=1&mode=0&select=1')
+      }).then((res) => {
+        this.$router.push(
+          '/pages/personage/house/attestation?type=1&mode=0&select=1'
+        )
       })
       next(false)
     } else {

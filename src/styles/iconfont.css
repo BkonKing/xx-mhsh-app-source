@@ -10,6 +10,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-plus-circle-fill:before {
+  content: "\e8a1";
+}
+
 .tf-icon-close-circle-fill:before {
   content: "\e89d";
 }

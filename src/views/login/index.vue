@@ -1,7 +1,6 @@
 <template>
-  <div class="page tf-screen">
-    <img class="logo" src="@/assets/app-icon.png" />
-    <img class="logo-text" src="@/assets/app-icon.png" />
+  <div class="page">
+    <img class="logo" src="@/assets/imgs/login_logo.png" />
     <div class="form">
       <div class="form-body">
         <Field
@@ -151,25 +150,25 @@ export default {
 </script>
 
 <style lang="less" scoped>
-div,
-span,
-image {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
 .page {
-  width: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding-top: 84px;
   flex: 1;
+  display: flex;
+  z-index: 1;
+  flex-direction: column;
   align-items: center;
   background-color: #333;
-  // background-image: url(../../static/LoginHeader.png);
+  background-image: url('../../assets/imgs/login_bg.png');
 }
 .logo {
-  width: 212px;
-  height: 214px;
-  margin-bottom: 30px;
+  width: 224px;
+  height: 300px;
+  margin-bottom: 80px;
 }
 .logo-text {
   width: 224px;
@@ -243,12 +242,14 @@ image {
   left: 0;
   right: 0;
   bottom: 82px;
+  display: flex;
   padding: 20px 0;
   flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 .uni-checkbox-input {
+  display: flex;
   margin-right: 5px;
   border-width: 2px;
   border-style: solid;

@@ -19,12 +19,12 @@
           </div>
         </div>
         <div
-          v-if="mode && item.house_people && item.house_role == 1"
+          v-if="mode && item.members && item.house_role == 1"
           class="tf-row-vertical-center house-people-box"
           @click.stop="$emit('manClick')"
         >
-          <div class="tf-icon tf-icon-team"></div>
-          <div class="house-people-number">{{item.house_people}}</div>
+          <div class="tf-icon tf-icon-renshu"></div>
+          <div class="house-people-number">{{item.members}}</div>
         </div>
       </div>
     </div>
@@ -39,6 +39,7 @@ import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
   props: {
+    // 1:选择房屋 0：房屋信息
     mode: {
       type: Number,
       default: 1
@@ -181,7 +182,7 @@ export default {
   position: fixed;
   bottom: 20px;
 }
-.tf-icon-team {
+.tf-icon-renshu {
   font-size: 36px;
 }
 </style>

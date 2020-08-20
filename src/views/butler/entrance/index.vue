@@ -21,25 +21,39 @@
       <span class="tf-icon tf-icon-caret-down"></span>
     </div>
     <div class="entrance-box">
-      <div class="entrance-box__type" :class="{'active': active === 1}" @click="qrOpenDoor">
-        <div class="tf-icon tf-icon-erweima"></div>
+      <div class="entrance-box__type" @click="qrOpenDoor">
+        <div class="tf-icon-box" :class="{'active': active === 1}">
+          <img
+            v-if="active === 1"
+            class="tf-icon"
+            src="@/assets/imgs/entrance_erweima_active.png"
+          />
+          <img v-else class="tf-icon" src="@/assets/imgs/entrance_erweima.png" />
+        </div>
         <div class="entrance-box__type--name">二维码开门</div>
       </div>
       <div class="entrance-box__divider"></div>
-      <div class="entrance-box__type" :class="{'active': active === 2}" @click="active = 2">
-        <div class="tf-icon">&#xe912;</div>
+      <div class="entrance-box__type" @click="active = 2">
+        <div class="tf-icon-box" :class="{'active': active === 2}">
+          <img
+            v-if="active === 2"
+            class="tf-icon"
+            src="@/assets/imgs/entrance_yijian_active.png"
+          />
+          <img v-else class="tf-icon" src="@/assets/imgs/entrance_yijian.png" />
+        </div>
         <div class="entrance-box__type--name">一键开门</div>
       </div>
     </div>
     <div class="tf-row-center tf-mt-lg">
-      <div v-show="active === 1" class="entrance-operation" @click="getQrCode">
+      <div v-show="active === 1" class="entrance-operation">
         <div class="entrance-operation__box">
           <div class="triangle" :class="{'triangle-left': active === 1}"></div>
-          <img :src="qrImg" class="qrcode-image" />
+          <img :src="qrImg" class="qrcode-image" @click="getQrCode" />
           <!-- <canvas id="qrcode" canvas-id="qrcode" class="qrcode-image" /> -->
         </div>
         <div class="entrance-operation__alert tf-row-center">
-          <div class="tf-icon">&#xe79a;</div>
+          <img class="img" src="@/assets/imgs/shuaxin.png" />
           <div>自动刷新（{{countDownNum}}s）</div>
         </div>
       </div>
@@ -58,8 +72,12 @@
       :hiddenOff="true"
       @confirm="confirmDialog"
     >
-      <div scroll-y="true">
-        <div class="dialog-content">{{instructionContent}}</div>
+      <div class="dialog-content">
+        <div class="tf-text-lg">二维码开门</div>
+        <div class="tf-text-grey">智能门禁摄像头需要读到二维码信息后才能发送开幕指令给单元门门禁，正确的使用方法是将二维码对准摄像头。</div>
+        <div class="tf-text-lg tf-mt-lg">一键开门</div>
+        <div class="tf-text-grey">点击立即开门按钮即可远程开启单元门。</div>
+        <div class="tf-text-lg tf-mt-lg">提示：请勿随意点击或给陌生人开门，否则追究法律责任。具体查看协议<router-link class="tf-text-blue" to="">《XX协议》</router-link>。</div>
       </div>
     </tf-dialog>
   </div>
@@ -126,6 +144,7 @@ export default {
         value: 1
       })
     }
+    this.getQrCode()
   },
   methods: {
     // 二维码开门
@@ -135,11 +154,12 @@ export default {
     },
     // 获取二维码开门数据
     getQrCode () {
-      // getQrCode().then({
-      // if (res.success) {
-      this.makeQRCode('qgEkOXRvv70IxR7hWsf1F0Ij9574WHnsXZI+ylRwp9VO9D85')
-      // }
-      // })
+      this.timer && clearTimeout(this.timer)
+      getQrCode({
+        houseId: this.currentProject.house_id
+      }).then((res) => {
+        this.makeQRCode(res.data)
+      })
     },
     /**
      * 生成二维码
@@ -160,7 +180,9 @@ export default {
         },
         (ret, err) => {
           if (ret.status) {
+            this.countDownNum = 120
             this.qrImg = ret.imgPath
+            this.refreshTimer()
           } else {
             console.error(JSON.stringify(err))
           }
@@ -204,6 +226,9 @@ export default {
     goAttestation () {
       this.$router.push('/pages/personage/house/select-house')
     }
+  },
+  beforeDestroy () {
+    this.timer && clearTimeout(this.timer)
   }
 }
 </script>
@@ -260,28 +285,27 @@ export default {
   flex-direction: column;
   align-items: center;
 
-  .tf-icon {
+  .tf-icon-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 88px;
     height: 88px;
     border-radius: 50%;
     border: 1px solid #fff;
-    text-align: center;
-    line-height: 88px;
-    font-size: 44px;
-    color: #fff;
+    &.active {
+      background: #fff;
+    }
+    .tf-icon {
+      width: 44px;
+      height: 44px;
+    }
   }
 
   &--name {
     font-size: 30px;
     color: #fff;
     margin-top: 20px;
-  }
-
-  &.active {
-    .tf-icon {
-      background: #fff;
-      color: @red-dark;
-    }
   }
 }
 
@@ -344,8 +368,9 @@ export default {
     text-align: center;
     margin-top: 88px;
 
-    .tf-icon {
-      font-size: 36px;
+    .img {
+      width: 36px;
+      height: 36px;
       margin-right: @padding-md;
     }
   }

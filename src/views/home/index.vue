@@ -1,14 +1,18 @@
 <template>
-  <div class="tf-bg-white">
+  <div class="tf-bg-white tf-body">
     <div class="home-header" :style="{'background': headerColor}">
       <page-nav-bar search></page-nav-bar>
       <van-notice-bar class="home-notice" left-icon="volume-o" :scrollable="false">
         <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
-          <van-swipe-item v-for="(item, i) in 6" :key="i">关于未来一周暴雨天气温馨提示。</van-swipe-item>
+          <van-swipe-item
+            v-for="item in noticeList"
+            :key="item.id"
+            @click="goNotice(item)"
+          >{{item.title}}</van-swipe-item>
         </van-swipe>
       </van-notice-bar>
     </div>
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <van-swipe class="my-swipe" :autoplay="6000" indicator-color="#fff" @change="swipeChange">
         <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
           <van-image class="swipe-item__image" :src="item.icon_image" />
@@ -24,10 +28,10 @@
         <div class="coin-box__header">
           <div class="coin-box__title" @click="goHappiness">
             幸福币专区
-            <span v-if="1" class="sign-btn" @click.stop="sign">签到</span>
+            <span v-if="userInfo.signin_today == '0'" class="sign-btn" @click.stop="sign">签到</span>
             <span class="coin-number" v-else>
               <span class="tf-icon tf-icon-moneycollect"></span>
-              <span>1000</span>
+              <span>{{userInfo.credits}}</span>
             </span>
           </div>
           <van-notice-bar
@@ -82,7 +86,11 @@
             </div>
           </van-image>
         </div>-->
-        <tf-image-list :data="saleImages" :column="3" srcKey="src" @click="clickSpecialSale"></tf-image-list>
+        <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
+          <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
+            <tf-image-list :data="saleImages" :column="3" srcKey="src" @click="clickSpecialSale"></tf-image-list>
+          </van-swipe-item>
+        </van-swipe>
       </div>
       <div class="life-box tf-mt-base">
         <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
@@ -90,11 +98,15 @@
           惊喜折扣限时抢
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <tf-image-list :data="timeLimitImages" :column="2" srcKey="src" @click="clickTimeLimit">
-          <template v-slot:tag="{img}">
-            <div class="price-tag">{{img.price}}</div>
-          </template>
-        </tf-image-list>
+        <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
+          <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
+            <tf-image-list :data="timeLimitImages" :column="2" srcKey="src" @click="clickTimeLimit">
+              <template v-slot:tag="{img}">
+                <div class="price-tag">{{img.price}}</div>
+              </template>
+            </tf-image-list>
+          </van-swipe-item>
+        </van-swipe>
       </div>
       <div class="community-box" v-if="userType != 0">
         <div class="community-box__title" @click="goCommunity">
@@ -102,7 +114,12 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
         <div class="activity-list">
-          <div v-for="(item, i) in activityList" :key="i" class="activity-item" @click="goActivity(item)">
+          <div
+            v-for="(item, i) in activityList"
+            :key="i"
+            class="activity-item"
+            @click="goActivity(item)"
+          >
             <van-image class="activity-item__image" :src="item.thumbnail">
               <template v-slot>
                 <div class="activity-item__description">233人已报名</div>
@@ -123,7 +140,7 @@
       </div>
       <van-notice-bar class="front-page" :scrollable="false">
         <template v-slot:left-icon>
-          <div class="front-page__tag">美好头条</div>
+          <img class="front-page__tag" src="@/assets/imgs/home_toutiao.png" />
         </template>
         <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
           <van-swipe-item v-for="(item, i) in twoFrontList" :key="i">
@@ -143,11 +160,21 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem, Grid, GridItem, Image, NoticeBar } from 'vant'
+import {
+  Swipe,
+  SwipeItem,
+  Grid,
+  GridItem,
+  Image,
+  NoticeBar,
+  Toast
+} from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
-import { getMyApp } from '@/api/home'
+import { getMyApp, getBannerIndex } from '@/api/home'
+import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
+import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
 export default {
   name: 'home',
@@ -164,25 +191,9 @@ export default {
   data () {
     return {
       headerColor: '#fff', // 头部颜色
-      projectStatus: undefined,
-      projectName: '',
-      swipeImages: [
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          color: '#4d896f'
-        },
-        {
-          icon_image:
-            'https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/93bb85056504405b8e2b15ada810c82c.jpg!sswm',
-          color: '#a2dae2'
-        }
-      ],
-      myAppList: [
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          application: '云门禁'
-        }
-      ],
+      swipeImages: [], // 轮播图
+      myAppList: [], // 我的应用
+      noticeList: [], // 通知列表
       coinList: [
         {
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
@@ -252,15 +263,43 @@ export default {
       activityList: []
     }
   },
+  computed: {
+    ...mapGetters(['userType', 'userInfo']),
+    twoFrontList () {
+      const arr = []
+      this.frontList.forEach((obj, index) => {
+        const i = Math.floor(index / 2)
+        if (!arr[i]) {
+          arr[i] = []
+        }
+        arr[i].push(obj)
+      })
+      return arr
+    }
+  },
   created () {
-    this.headerColor = this.swipeImages[0].color
+    this.getBannerIndex()
+    this.getNoticeLbList()
     this.getMyApp()
     this.getActivityList()
   },
   methods: {
+    /* 获取通知轮播列表 */
+    getNoticeLbList () {
+      getNoticeLbList().then(({ data }) => {
+        this.noticeList = data
+      })
+    },
+    /* 获取轮播图 */
+    getBannerIndex () {
+      getBannerIndex().then((res) => {
+        this.swipeImages = res.data
+        this.swipeChange(0)
+      })
+    },
     /* 获取我的app列表，并手动打入一个全部 */
     getMyApp () {
-      getMyApp().then(res => {
+      getMyApp().then((res) => {
         this.myAppList = res.data
         this.myAppList.push({
           icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg',
@@ -271,18 +310,18 @@ export default {
     },
     /* 轮播图change事件 */
     swipeChange (index) {
-      this.headerColor = this.swipeImages[index].color
-    },
-    /* 设置当前房屋 */
-    setCurProject ({ house_name }) {
-      this.projectStatus = 1
-      this.projectName = house_name
+      this.headerColor = this.swipeImages[index].color || '#eb5841'
     },
     /* 签到 */
     sign () {
-      console.log('签到')
+      signin().then((res) => {
+        Toast({
+          message: '签到成功   幸福币+10'
+        })
+        this.$store.dispatch('getMyAccount')
+      })
     },
-    /* 幸福币 */
+    /* 跳转幸福币 */
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
@@ -311,7 +350,7 @@ export default {
     },
     /* 获取活动列表 */
     getActivityList () {
-      getActivityList().then(res => {
+      getActivityList().then((res) => {
         this.activityList = res.data
       })
     },
@@ -329,24 +368,19 @@ export default {
         }
       })
     },
+    /* 跳转公告详情页 */
+    goNotice ({ id }) {
+      this.$router.push({
+        name: 'noticeDetails',
+        query: {
+          noticeId: id
+        }
+      })
+    },
     /* 点击头条跳转相应内容 */
     clickFront (item) {
       console.log(item)
       // this.$router.push("")
-    }
-  },
-  computed: {
-    ...mapGetters(['userType']),
-    twoFrontList () {
-      const arr = []
-      this.frontList.forEach((obj, index) => {
-        const i = Math.floor(index / 2)
-        if (!arr[i]) {
-          arr[i] = []
-        }
-        arr[i].push(obj)
-      })
-      return arr
     }
   }
 }
@@ -382,7 +416,7 @@ export default {
   height: 184px;
   z-index: 1;
 }
-.tf-main-container {
+.tf-body-container {
   padding-top: 184px;
 }
 .swipe-item__image {
@@ -495,10 +529,12 @@ export default {
   }
   .activity-list {
     display: flex;
+    padding-right: 20px;
     overflow-x: auto;
     overflow-y: hidden;
     .activity-item {
       width: 480px;
+      flex-shrink: 0;
     }
     .activity-item + .activity-item {
       margin-left: 20px;
@@ -605,6 +641,9 @@ export default {
   color: #fff;
   text-align: center;
   font-size: 24px;
+}
+/deep/ .van-notice-bar__content {
+  width: 100%;
 }
 /deep/ .coin-tag {
   position: absolute;

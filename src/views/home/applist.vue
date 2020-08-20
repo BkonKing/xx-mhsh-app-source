@@ -52,10 +52,10 @@
         </draggable>
       </div>
       <div class="tf-bg-white tf-mt-lg">
-        <div class="tf-mb-lg">
+        <!-- <div class="tf-mb-lg">
           <div class="module-title">最近使用</div>
           <app-container :data="latelyList" :editMode="editMode" @add="add"></app-container>
-        </div>
+        </div> -->
         <div class="tf-mb-lg">
           <div class="module-title">智慧管家</div>
           <app-container :data="butlerList" :editMode="editMode" @add="add"></app-container>
@@ -90,7 +90,7 @@ export default {
       editMode: false,
       isDragging: false,
       myAppList: [],
-      latelyList: [],
+      // latelyList: [],
       butlerList: [],
       neighbourList: [],
       myAppList_copy: [],
@@ -106,7 +106,7 @@ export default {
       this.editMode = true
       this.myAppList_copy = this.cloneObject(this.myAppList)
       this.allAppList_copy = this.cloneObject({
-        latelyList: this.latelyList,
+        // latelyList: this.latelyList,
         butlerList: this.butlerList,
         neighbourList: this.neighbourList
       })
@@ -132,7 +132,7 @@ export default {
           return true
         }
       }
-      this.latelyList.some(changeStatus)
+      // this.latelyList.some(changeStatus)
       this.butlerList.some(changeStatus)
       this.neighbourList.some(changeStatus)
     },
@@ -149,17 +149,15 @@ export default {
       this.toTypeList(this.allAppList_copy)
       this.editMode = false
     },
+    /* 获取全部应用 */
     getAllApp () {
       getAllApp().then((res) => {
-        this.toTypeList(res.data)
+        /* 给所有应用分类赋值 */
+        const { zhgj, hxll } = res.data
+        // this.latelyList = latelyList
+        this.butlerList = zhgj
+        this.neighbourList = hxll
       })
-    },
-    /* 给所有应用分类赋值 */
-    toTypeList (obj) {
-      const { latelyList, butlerList, neighbourList } = obj
-      this.latelyList = latelyList
-      this.butlerList = butlerList
-      this.neighbourList = neighbourList
     },
     getMyApp () {
       Toast.loading({

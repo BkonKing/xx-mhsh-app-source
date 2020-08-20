@@ -11,16 +11,19 @@
     <div class="invite-box">
       <div class="share-box">
         <div class="share-name">
-          <div class="share-name__text">河南美好生活家园</div>
+          <div class="share-name__text">{{info.project_name}}</div>
         </div>
-        <div class="tf-text-lg">5栋-1单元-1001</div>
+        <div class="tf-text-lg">{{info.fc_info}}</div>
         <div class="qr-box">
-          <img class="qr-box__image" src="@/assets/app-icon.png" />
+          <img class="qr-box__image" :src="info.url" />
         </div>
-        <div class="tf-text-grey">有效次数 1</div>
-        <div class="tf-text-grey">有效日期：2020-06-15 12:00 ~ 14:00</div>
+        <div class="tf-text-grey">有效次数 {{info.yx_num}}</div>
+        <div class="tf-text-grey">有效日期：{{info.yxtime}}</div>
         <div class="tf-divider-dashed" style="width: 100%;"></div>
-        <div class="tf-text-lg">彭生生(10人) 女 15050505050</div>
+        <div class="tf-text-lg">
+          {{info.realname}}
+          <template v-if="info.visitor_num">({{info.visitor_num}}人)</template> {{info.gender | sexText}} {{info.mobile}}
+        </div>
       </div>
       <button class="share-btn" type="warn">分享给访客</button>
     </div>
@@ -29,6 +32,7 @@
 
 <script>
 import { NavBar } from 'vant'
+import { visitorCode } from '@/api/butler'
 
 export default {
   components: {
@@ -36,10 +40,23 @@ export default {
   },
   data () {
     return {
-      height: 'auto'
+      id: '',
+      info: {}
     }
   },
+  created () {
+    this.id = this.$route.query.id
+    this.visitorCode()
+  },
   methods: {
+    // 获取邀约信息
+    visitorCode () {
+      visitorCode({
+        yy_id: this.id
+      }).then((res) => {
+        this.info = res.data
+      })
+    },
     goList () {
       this.$router.replace({
         name: 'visitorInviteList'
@@ -109,7 +126,7 @@ export default {
   color: #fff;
   width: 620px;
   height: 88px;
-  font-size:30px;
+  font-size: 30px;
   background-image: linear-gradient(to right, @red, @red-dark);
   border-radius: 10px;
 }

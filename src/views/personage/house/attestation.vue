@@ -76,7 +76,7 @@
           class="tf-mt-lg tf-text-primary"
           type="default"
           size="large"
-          @click="deleteMember"
+          @click="onDelete"
         >删除</van-button>
       </div>
     </div>
@@ -94,7 +94,8 @@ import {
   roomAttest,
   bindingRoomInfo,
   bindingDefault,
-  unBinding
+  unBinding,
+  deleteMember
 } from '@/api/personage'
 import { validForm } from '@/utils/util'
 import { userText } from '@/const/user'
@@ -159,14 +160,14 @@ export default {
     this.mode = parseInt(this.$route.query.mode)
     this.select = parseInt(this.$route.query.select)
     if (this.type === 0 && this.mode === 1) {
-      const { realname, mobile, house_role, houseName, id } = JSON.parse(
+      const { realname, mobile, house_role, fc_info, project_name, id } = JSON.parse(
         this.$route.query.info
       )
       this.id = id
       this.realname = realname
       this.mobile = mobile
       this.house_role = house_role
-      this.house_name = houseName
+      this.house_name = this.house_name = project_name + fc_info
     } else if (this.type === 1) {
       if (this.mode === 1) {
         this.house_id = this.$route.query.id
@@ -237,6 +238,7 @@ export default {
     /* 新增成员 */
     addMember () {
       addMember({
+        project_id: this.project_id,
         house_id: this.house_id,
         realname: this.realname,
         mobile: this.mobile,
@@ -244,6 +246,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           Toast.success('保存成功')
+          this.$router.go(-1)
         } else {
           Toast.fail('保存失败')
         }
@@ -266,13 +269,13 @@ export default {
       })
     },
     /* 删除 */
-    deleteMember () {
+    onDelete () {
       Dialog.confirm({
         title: '是否确定删除',
         confirmButtonText: '删除'
       })
         .then(() => {
-          this.type ? this.unBinding() : console.log('删除成员')
+          this.type ? this.unBinding() : this.deleteMember()
         })
         .catch(() => {
           // on cancel
@@ -344,6 +347,19 @@ export default {
       unBinding({
         binding_id: this.binding_id
       }).then((res) => {})
+    },
+    /* 删除报备成员 */
+    deleteMember () {
+      console.log(this.id)
+      deleteMember({
+        id: this.id
+      }).then((res) => {
+        Dialog.alert({
+          title: '成员删除成功'
+        }).then(() => {
+          this.$router.go(-1)
+        })
+      })
     },
     /* 选择房屋跳转 */
     goCheckHouse () {

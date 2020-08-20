@@ -10,7 +10,7 @@
     </van-nav-bar>
     <div class="tf-bg-white">
       <div class="tf-row tf-padding-lg" @click="goInformation">
-        <img class="personage-info__avatar" :src="userInfo.avatar" mode="aspectFit" />
+        <img class="personage-info__avatar" :src="userInfo.avatar" />
         <div class="personage-info--base">
           <div class="user-info-box">
             <div class="user-name">{{userInfo.nickname}}</div>
@@ -38,9 +38,9 @@
         <div class="tf-flex-item tf-column tf-flex-center">
           <button
             class="user-btn__text"
-            :class="['user-btn', signStatus ? 'user-btn--unsign' : 'user-btn--signin']"
+            :class="['user-btn', userInfo.signin_today === '1' ? 'user-btn--unsign' : 'user-btn--signin']"
             @click="sign"
-          >{{signStatus | signText}}</button>
+          >{{userInfo.signin_today | signText}}</button>
         </div>
       </div>
     </div>
@@ -51,24 +51,24 @@
           <div class="tf-padding-base">
             <div v-if="userInfo.role_dep == 1" class="tf-row manage-border-bottom">
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
-                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <img class="manage-image" src="@/assets/imgs/personage_daichuli.png" />
                 <div class="text-sm">待处理</div>
                 <span v-if="userInfo.dcl_num" class="personage-badge">{{userInfo.dcl_num}}</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
-                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <img class="manage-image" src="@/assets/imgs/personage_daifenpai.png" />
                 <div class="text-sm">待分派</div>
                 <span v-if="userInfo.dfp_num" class="personage-badge">{{userInfo.dfp_num}}</span>
               </div>
             </div>
             <div class="tf-row">
               <div class="manage-box manage-border-right" @click="goTransaction(3)">
-                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <img class="manage-image" src="@/assets/imgs/personage_daijiean.png" />
                 <div class="text-sm">待结案</div>
                 <span v-if="userInfo.dja_num" class="personage-badge">{{userInfo.dja_num}}</span>
               </div>
               <div class="manage-box" @click="goTransaction(4)">
-                <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+                <img class="manage-image" src="@/assets/imgs/personage_yijiean.png" />
                 <div class="text-sm">已结案</div>
               </div>
             </div>
@@ -78,60 +78,61 @@
           <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box">
-              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <img class="manage-image" src="@/assets/imgs/personage_daifukuan.png" />
               <div class="text-sm">待付款</div>
               <span class="personage-badge">3</span>
             </div>
             <div class="order-box">
-              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <img class="manage-image" src="@/assets/imgs/personage_daifahuo.png" />
               <div class="text-sm">待发货</div>
             </div>
             <div class="order-box">
-              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <img class="manage-image" src="@/assets/imgs/personage_shouhuo.png" />
               <div class="text-sm">待收货</div>
             </div>
             <div class="order-box">
-              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <img class="manage-image" src="@/assets/imgs/personage_tuihuan.png" />
               <div class="text-sm">退换</div>
             </div>
             <div class="order-box">
-              <img class="manage-image" src="/static/tabbar/me.png" mode="aspectFit" />
+              <img class="manage-image" src="@/assets/imgs/personage_quanbu.png" />
               <div class="text-sm">全部</div>
             </div>
           </div>
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item
-            border
-            title="我的订单"
-            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
-          ></tf-list-item>
-          <tf-list-item
-            border
-            title="我的互动"
-            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
-            @click="goInteraction"
-          ></tf-list-item>
-          <tf-list-item
-            border
-            title="我的资料"
-            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
-            @click="goInformation"
-          ></tf-list-item>
-          <tf-list-item title="幸福基金" image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"></tf-list-item>
+          <tf-list-item border title="我的订单">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_dingdan.png" />
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="我的互动" @click="goInteraction">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_hudong.png" />
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="我的资料" @click="goInformation">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_ziliao.png" />
+            </template>
+          </tf-list-item>
+          <tf-list-item title="幸福基金">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
+            </template>
+          </tf-list-item>
         </tf-list>
         <tf-list class="personage-list">
-          <tf-list-item
-            border
-            title="常见问题"
-            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
-            @click="goQuestion"
-          ></tf-list-item>
-          <tf-list-item
-            title="意见反馈"
-            image="https://img-cdn-qiniu.dcloud.net.cn/new-page/hx.png"
-            @click="goFeedback"
-          ></tf-list-item>
+          <tf-list-item border title="常见问题" @click="goQuestion">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_wenti.png" />
+            </template>
+          </tf-list-item>
+          <tf-list-item title="意见反馈" @click="goFeedback">
+            <template v-slot:image>
+              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_fankui.png" />
+            </template>
+          </tf-list-item>
         </tf-list>
       </div>
     </div>
@@ -170,12 +171,12 @@ export default {
   methods: {
     /* 签到 */
     sign () {
-      if (!this.signStatus) {
+      if (this.userInfo.signin_today === '0') {
         signin().then((res) => {
           Toast({
             message: '签到成功   幸福币+10'
           })
-          this.signStatus = true
+          this.$store.dispatch('getMyAccount')
         })
       } else {
         // 已签到，弹出签到日历
@@ -225,7 +226,7 @@ export default {
   },
   filters: {
     signText (value) {
-      return value ? '已签到' : '签到'
+      return value === '1' ? '已签到' : '签到'
     }
   }
 }
@@ -364,7 +365,7 @@ export default {
 }
 .manage-image {
   width: 60px;
-  height: 35px;
+  height: 60px;
   margin-bottom: 20px;
 }
 .manage-border-right {

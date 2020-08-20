@@ -1,5 +1,10 @@
 import request from '@/utils/request.js'
 
+// 首页banner
+export function getBannerIndex () {
+  return request.get('/index/banner/banner_index')
+}
+
 // 所有应用列表
 export function getAllApp () {
   return request.get('/index/apps/allApp')

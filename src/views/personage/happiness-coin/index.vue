@@ -25,18 +25,16 @@
     </div>
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
-        <div class="function-box">
-          <div class="tf-icon tf-icon-saoyisao function-box__icon"></div>
+        <div class="function-box" @click="goScanCode(1)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_saoyisao.png">
           <div class="function-box__text">扫一扫</div>
         </div>
-        <div class="function-box">
-          <div class="tf-icon tf-icon-barcode function-box__icon function-box__icon--pay"></div>
+        <div class="function-box" @click="goScanCode(2)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_shoukuan.png">
           <div class="function-box__text">付款码</div>
         </div>
-        <div class="function-box">
-          <div
-            class="tf-icon tf-icon-moneycollect function-box__icon function-box__icon--payreceipt"
-          ></div>
+        <div class="function-box" @click="goScanCode(3)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_fukuan.png">
           <div class="function-box__text">收款码</div>
         </div>
       </div>
@@ -133,11 +131,22 @@ export default {
         this.signinToday = '1'
       })
     },
+    /* 幸福币明细 */
     goCoinRecord () {
       this.$router.push('/pages/personage/happiness-coin/coin-record')
     },
+    /* 购买详情 */
     goBuyRecord () {
       this.$router.push('/pages/personage/happiness-coin/buy-record')
+    },
+    /* 扫一扫 */
+    goScanCode (current) {
+      this.$router.push({
+        name: 'scanCodeIndex',
+        query: {
+          current
+        }
+      })
     }
   }
 }
@@ -218,21 +227,9 @@ export default {
   text-align: center;
 }
 .function-box__icon {
-  width: 98px;
-  height: 98px;
-  line-height: 98px;
-  background-image: linear-gradient(to bottom right, @orange, @orange-dark);
-  border-radius: 49px;
-  margin-bottom: 15px;
-  color: #fff;
-  text-align: center;
-  font-size: 50px;
-}
-.function-box__icon--pay {
-  background-image: linear-gradient(to bottom right, @green, @green-dark);
-}
-.function-box__icon--payreceipt {
-  background-image: linear-gradient(to bottom right, @blue, @blue-dark);
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
 }
 .happiness-coin-title {
   font-size: 34px;
