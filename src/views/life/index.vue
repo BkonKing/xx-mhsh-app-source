@@ -61,7 +61,7 @@
 							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
 						</div>
 						<div class="special-goods-list">
-							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.id})" class="life-goods-item">
+							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
 								<div class="life-goods-pic">
 									<img class="img-100" :src="val.thumb" />
 								</div>
@@ -301,7 +301,7 @@
 				</div>
 			</div>
 		</template>
-		<div class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num">19</div></div>
+		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
 	</div>
 </template>
 
@@ -328,6 +328,7 @@ export default {
       navList2: [],      //二级菜单
       newTime: '',       //当前时间
       bannerList: [],    //轮播图
+      cart_num: 0,
 
       category_id: '',  //分类id
       listData: [],     //分类商品
@@ -351,6 +352,8 @@ export default {
   },
   created () {
   	console.log(this.$store.state.userInfo);
+  	var cartList = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+  	this.cart_num = cartList.length;
     this.getData();
   },
   methods:{
@@ -430,6 +433,9 @@ export default {
     		break;
     		case 6:
     		this.$router.push('/store/search');
+    		break;
+    		case 7:
+    		this.$router.push('/life/cart');
     		break;
     	}
     },
