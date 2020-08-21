@@ -1,5 +1,5 @@
 <template>
-  <div class="app-body" :style="{ 'min-height': windowHeight+'px' }">
+  <div class="app-body">
     <div class="order-bar bar-white"><van-nav-bar title="添加/修改地址" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="form-list">
@@ -464,9 +464,8 @@ export default {
     // eventBus.$off('chooseMap');
     // console.log(this.$route);
     if(to.name == 'addressList'){
-      console.log(to.name)
-      // this.$route.meta.keepAlive = false;
-      this.$destroy()
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
     }
     next();
   }

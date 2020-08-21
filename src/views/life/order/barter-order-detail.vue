@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar"><van-nav-bar title="换货详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -177,7 +177,7 @@
 		<template v-if="infoData.order_status == 0 || infoData.order_status == 1">
 			<div class="fixed-empty"></div>
 			<div class="btn-fixed-buttom">
-				<div v-if="infoData.order_status == 0" class="order-border-btn" hover-class="none"><div class="color-8f8f94 font-28">取消换货</div></div>
+				<div v-if="infoData.order_status == 0" class="order-border-btn" hover-class="none"><div @click="cancelApply" class="color-8f8f94 font-28">取消换货</div></div>
 				<div v-else-if="infoData.order_status == 1" class="order-border-btn paid-btn"><div @click="linkFunc(19)" class="color-fff font-26">填写寄出物流</div></div>
 			</div>
 		</template>
@@ -187,7 +187,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getBarterInfo } from '@/api/life.js'
+import { getBarterInfo, cancelBarterApply } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -228,6 +228,16 @@ export default {
 	      })
     		break;
     	}
+    },
+    // 取消申请
+    cancelApply(){
+    	cancelBarterApply({
+        sale_order_id: this.sale_order_id,
+      }).then(res => {
+        if (res.success) {
+        	this.getData();
+        }
+      })
     },
   }
 }

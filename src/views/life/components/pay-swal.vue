@@ -4,7 +4,7 @@
       <div class="public-dclose" @click="calcel(0)"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="public-header">付款</div>
       <div class="settlement-price">
-        <div>￥200.00</div>
+        <div>￥{{payMoney}}</div>
         <div>(<van-count-down ref="countDown" :auto-start="false" :time="downTime" @finish="finish">
               <template v-slot="timeData">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
               </template>
@@ -44,6 +44,10 @@ export default {
     showSwal: {
       type: Boolean,
       default: false
+    },
+    payMoney: {
+      type: Number,
+      default: 0
     },
     downTime: {
       type: Number,

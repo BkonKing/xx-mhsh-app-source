@@ -147,7 +147,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "applyBarter" */
         '@/views/life/order/apply-barter'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/order/barter-detail',

@@ -1,7 +1,7 @@
 <template>
 	<div class="app-body" :style="{ 'min-height': windowHeight-40+'px'}">
-		<div class="status-box" :style="{'height': statusHeight+'px'}"></div>
-		<div class="fixed-top" :style="{'padding-top': statusHeight+'px'}">
+		<!-- <div class="status-box"></div> -->
+		<div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
 			<div class="life-header">
 				<div class="header-tit flex-between">
 					<div class="font-34 font-weight">美好生活</div>
@@ -41,14 +41,14 @@
 		<div :class="[activeIndex > 0 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
 		
 		<template v-if="activeIndex==0">
-			<div class="life-swipe">
+			<div v-if="bannerList.length > 0" class="life-swipe">
 				<van-swipe :autoplay="3000" indicator-color="white">
-				  <van-swipe-item>
-				  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622112505_52991.png" />
+				  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
+				  	<img class="img-100" :src="item.img" />
 				  </van-swipe-item>
-				  <van-swipe-item>
+				  <!-- <van-swipe-item>
 				  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-				  </van-swipe-item>
+				  </van-swipe-item> -->
 				</van-swipe>
 			</div>
 			<template v-for="(item, index) in lifeData">
@@ -97,7 +97,7 @@
 						<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
 							<div class="font-34 color-fff font-weight flex-align-center">
 								<span>限时闪购</span>
-								<van-count-down v-if="item.ollage_info" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
+								<van-count-down v-if="item.ollage_info && item.ollage_info.is_start==1" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
 					        <template v-slot="timeData">
 					          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
 					          <div class="countdown-point">:</div>
@@ -119,15 +119,15 @@
 									<div class="life-goods-price">￥{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
 								</div>
 								<div class="item-btn">
-									<template v-if="tapStatus == 2">
-	                  <template v-if="val.goods_num > 0 && val.is_over == 0">
-	                    <div class="btn-collage" v-if="val.price_status == 1 && val.is_partake">邀请拼单</div>
+									<template v-if="item.ollage_info.is_start==1">
+	                  <template v-if="val.is_over == 0">
+	                    <div class="btn-collage" v-if="val.is_collage && val.order_project_id!=0">邀请拼单</div>
 	                    <div class="btn-flash" v-else>马上抢</div>
 	                  </template>
 	                  <div v-else class="btn-over">已抢光</div>
 	                </template>
 	                <template v-else>
-	                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+	                  <div v-if="!val.is_push" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
 	                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
 	                </template>
 									<!-- <div class="btn-flash">马上抢</div> -->
@@ -308,7 +308,7 @@
 <script>
 import { Swipe, SwipeItem, Icon, CountDown, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
-import { getLifeInfo, getClassifyGoods} from '@/api/life.js'
+import { getLifeInfo, getBanner, getClassifyGoods} from '@/api/life.js'
 export default {
   components: {
     [Icon.name]: Icon,
@@ -321,13 +321,13 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      statusHeight: '',
       lifeData: [],      //生活
       activeIndex: 0,    //一级菜单选中项
       activeIndex2: 0,   //二级菜单选中项
       navList: [],       //一级菜单
       navList2: [],      //二级菜单
       newTime: '',       //当前时间
+      bannerList: [],    //轮播图
 
       category_id: '',  //分类id
       listData: [],     //分类商品
@@ -350,6 +350,7 @@ export default {
 		// });
   },
   created () {
+  	console.log(this.$store.state.userInfo);
     this.getData();
   },
   methods:{
@@ -357,12 +358,15 @@ export default {
       this.getGoodsData();
     },
   	getData () {
-  		// this.statusHeight = api.safeArea.top;
-  		// alert(api.safeArea.top);
   		getLifeInfo().then(res => {
         if (res.success) {
           this.lifeData = res.data;
           this.newTime = parseInt(new Date().getTime());
+        }
+      });
+      getBanner().then(res => {
+        if (res.success) {
+          this.bannerList = res.data;
         }
       });
       this.getGoodsData();
@@ -393,11 +397,14 @@ export default {
         }
       })
     },
+    goLink(url){
+    	this.$router.push(url);
+    },
     linkFunc (type,obj={}) {
     	switch (type){
     		case 1:
-    		this.$router.push('/address/list');
-    		// this.$router.push('/store/goods-classify');
+    		// this.$router.push('/address/list');
+    		this.$router.push('/store/goods-classify');
     		break;
     		case 2:
     		this.$router.push('/store/flash-purchase');

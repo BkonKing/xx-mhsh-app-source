@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -193,7 +193,7 @@
 <script>
 import { NavBar, CountDown } from 'vant'
 import explainSwal from './../components/explain-swal'
-import { getOrderDetail } from '@/api/life.js'
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -240,7 +240,23 @@ export default {
     },
     // 取消订单
     cancelOrder(){
-
+    	if(this.orderInfo.is_pay == 0){ //未付款
+    		cancelNoPayOrder({
+	        order_project_id: this.orderInfo.order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.getData();
+	        }
+	      })
+    	}else {
+    		cancelPayOrder({
+	        order_project_id: this.orderInfo.order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.getData();
+	        }
+	      })
+    	}
     },
   	//倒计时开始
     start() {
@@ -252,7 +268,8 @@ export default {
     },
     //倒计时结束
     finish() {
-      Toast('倒计时结束');
+    	this.cancelOrder();
+      // Toast('倒计时结束');
     },
     copy_cont(text_c){
       var clipBoard = api.require('clipBoard');

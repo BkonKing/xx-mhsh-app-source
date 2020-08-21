@@ -185,7 +185,7 @@ body::-webkit-scrollbar {
   z-index: 99;
 }
 .bar-flash.order-bar .van-nav-bar {
-  background-image: linear-gradient(to right, #ffa912, #ffa812);
+  background-image: linear-gradient(to top, #38b3ef, #26a2fb);
 }
 .bar-nobg.order-bar .van-nav-bar {
   background-color: rgba(0, 0, 0, 0);

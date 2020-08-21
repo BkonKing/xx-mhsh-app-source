@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
     <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="special-nav">

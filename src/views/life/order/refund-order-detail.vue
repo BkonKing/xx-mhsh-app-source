@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar"><van-nav-bar title="退款详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -55,7 +55,7 @@
 				<div class="detail-price-list">
 					<div class="flex-sart-item">
 						<div class="color-222 font-28 flex-sart-item-left">退款编号：</div>
-						<div class="color-222 font-28">{{infoData.refund_numb}}</div>
+						<div class="color-222 font-28">{{typeVal == 1 ? infoData.refund_numb : infoData.returnfund_numb}}</div>
 					</div>
 					<div class="flex-sart-item">
 						<div class="color-222 font-28 flex-sart-item-left">申请时间：</div>
@@ -71,7 +71,7 @@
 					</div>
 				</div>
 				<div class="order-total order-total-detail">
-					<div class="color-8f8f94 font-24">共 {{infoData.refund_num}} 件</div>
+					<div class="color-8f8f94 font-24">共 {{typeVal == 1 ? infoData.refund_num : infoData.return_num}} 件</div>
 				</div>
 			</div>
 			<!-- <div class="cont-session address-logistics">
@@ -187,17 +187,17 @@
 				</div>
 			</div> -->
 		</div>
-		<template v-if="typeVal ==1&&infoData.order_status==0">
+		<template v-if="typeVal ==1&&infoData.order_status==0&&infoData.is_cancel_btn==1">
 			<div class="fixed-empty"></div>
 			<div class="btn-fixed-buttom">
-				<div class="order-border-btn"><div class="color-8f8f94 font-28">取消退款</div></div>
+				<div class="order-border-btn"><div @click="cancelApply" class="color-8f8f94 font-28">取消退款</div></div>
 			</div>
 		</template>
 		<template v-if="typeVal ==2&&infoData.order_status<2">
 			<div class="fixed-empty"></div>
 			<div class="btn-fixed-buttom">
-				<div v-if="infoData.order_status==0" class="order-border-btn"><div class="color-8f8f94 font-28">取消退款</div></div>
-				<div v-else class="order-border-btn paid-btn"><div class="color-fff font-26">填写退货物流</div></div>
+				<div v-if="infoData.order_status==0&&infoData.is_cancel_btn==1" class="order-border-btn"><div @click="cancelApply" class="color-8f8f94 font-28">取消退款</div></div>
+				<div @click="linkFunc(19)" v-else class="order-border-btn paid-btn"><div class="color-fff font-26">填写退货物流</div></div>
 			</div>
 		</template>
 	</div>
@@ -205,7 +205,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getRefundInfo, getReturnRefundInfo } from '@/api/life.js'
+import { getRefundInfo, getReturnRefundInfo, cancelRefundApply, cancelRefundReturnApply } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -246,6 +246,39 @@ export default {
 	        }
 	      })
   		}
+    },
+    // 取消申请
+    cancelApply(){
+    	if(this.typeVal == 1){  //退款
+    		cancelRefundApply({
+	        sale_order_id: this.sale_order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.getData();
+	        }
+	      })
+    	}else {   //退货退款
+    		cancelRefundReturnApply({  
+	        sale_order_id: this.sale_order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.getData();
+	        }
+	      })
+    	}
+    },
+    linkFunc (type,obj={}) {
+    	switch (type){
+    		case 19:
+    		this.$router.push({
+	      	path: '/order/write-logistics',
+	      	query: {
+	      		id: this.sale_order_id,
+	      		type: 2
+	      	}
+	      })
+    		break;
+    	}
     },
 
   }

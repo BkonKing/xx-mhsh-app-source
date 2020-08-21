@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar bar-white"><van-nav-bar title="填写换货物流" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -59,7 +59,7 @@
 				<div @click="closeReasonSwal(1)" class="common-item common-item-first">
 					<div class="common-item-left">
 						<div class="color-222 font-28 width-146">物流公司</div>
-						<div v-if="selectedVal.express_name" class="color-222 font-28">顺丰速运</div>
+						<div v-if="selectedVal.express_name" class="color-222 font-28">{{selectedVal.express_name}}</div>
 					</div>
 					<div class="common-item-right">
 						<div v-if="!selectedVal.express_name" class="color-8f8f94 font-28">请选择</div>

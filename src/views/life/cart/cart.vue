@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
     <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div v-if="carts.length" class="cart-session">
@@ -66,7 +66,8 @@ export default {
     }
   },
   created(){
-    var carts = JSON.parse(localStorage.getItem('cart'));
+    // var carts = JSON.parse(localStorage.getItem('cart'));
+    var carts = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
     this.carts = carts;
     this.total();
     console.log(carts);
@@ -74,11 +75,12 @@ export default {
   },
   methods: {
     getData(){
+      console.log('cart',this.carts);
       getCart({
         giftbag: JSON.stringify(this.carts)
       }).then(res => {
         if (res.success) {
-          this.navList = res.data
+          this.carts = res.goods_arr;
         }
       })
     },
@@ -110,13 +112,15 @@ export default {
       } else {
         this.delOne(index);
       }
-      localStorage.setItem('cart', JSON.stringify(this.carts));
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
       this.total();
     },
     //点击删除按钮
     delCarts(index) {
       this.delOne(index);
-      localStorage.setItem('cart', JSON.stringify(this.carts));
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
       this.total();
     },
     // 删除购物车中的某个商品
@@ -132,7 +136,8 @@ export default {
     checkboxOne(index) {
       let indexTab = index;
       this.carts[index].is_checked = !this.carts[indexTab].is_checked;
-      localStorage.setItem('cart', JSON.stringify(this.carts));
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
       this.total();
     },
     /**
@@ -146,7 +151,8 @@ export default {
       }
       this.carts = carts_arr;
       this.allSelected = !is_checked;
-      localStorage.setItem('cart', JSON.stringify(this.carts));
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
       this.total();
     },
     /**

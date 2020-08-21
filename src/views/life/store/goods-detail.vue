@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
     <div class="order-bar bar-white":style="{ 'padding-top': paddingTop+'px'}"><van-nav-bar title="商品详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
@@ -244,7 +244,7 @@
 
     <div v-show="isShow" class="public-mask  bottom-fixed">
       <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
-      <div class="shops-params">
+      <div class="shops-params" v-if="skuList.length > 0">
         <div class="params-goods-info">
           <div class="params-goods-left">
             <img class="img-100" @click="predivPic(typeVal,2)" :src="skuList[typeVal].specs_img" data-src="" />
@@ -508,7 +508,8 @@ export default {
       
       var arr = [];
       if (this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart'){
-        var arr = JSON.parse(localStorage.getItem('cart')) || [];
+        // var arr = JSON.parse(localStorage.getItem('cart')) || [];
+        var arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
         if (arr.length > 0) {
           // 遍历购物车数组  
           for (var j in arr) {
@@ -524,7 +525,8 @@ export default {
               
               // 最后，把购物车数据，存放入缓存（此处不用再给购物车数组push元素进去，因为这个是购物车有的，直接更新当前数组即可）  
               try {
-                localStorage.setItem('cart', JSON.stringify(arr))
+                // localStorage.setItem('cart', JSON.stringify(arr))
+                api.setPrefs({ key: 'cart', value: JSON.stringify(arr) });
               } catch (e) {
                 console.log(e)
               }
@@ -540,7 +542,8 @@ export default {
         }
         // 最后，把购物车数据，存放入缓存  
         try {
-          localStorage.setItem('cart', JSON.stringify(arr));
+          // localStorage.setItem('cart', JSON.stringify(arr));
+          api.setPrefs({ key: 'cart', value: JSON.stringify(arr) });
           // 返回（在if内使用return，跳出循环节约运算，节约性能） 
           //关闭窗口
           this.goLink();
@@ -550,7 +553,8 @@ export default {
         }
       }else {
         arr.push(goods);
-        localStorage.setItem('cart2', JSON.stringify(arr));
+        // localStorage.setItem('cart2', JSON.stringify(arr));
+        api.setPrefs({ key: 'cart2', value: JSON.stringify(arr) });
         this.goLink();
         return;
       }
@@ -559,8 +563,8 @@ export default {
      * 判断限购数量是否大于购物车数量
     */
     limitNum() {
-      // let carts_arr = wx.getStorageSync('cart') || [];
-      let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
+      // let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
+      var carts_arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
       let cart_counts = 0;
       var num_count = this.goods.count;
       let that = this;

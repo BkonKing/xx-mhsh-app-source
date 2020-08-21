@@ -1,5 +1,5 @@
 <template>
-  <div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
+  <div class="app-body tf-bg">
     <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="block-session logistics-goods">

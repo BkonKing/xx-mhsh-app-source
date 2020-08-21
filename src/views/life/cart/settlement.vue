@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
     <div class="order-bar"><van-nav-bar title="结算" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
@@ -226,6 +226,7 @@
     ></explain-swal>
     <pay-swal 
     :show-swal="showPaySwal"
+    :pay-money="payMoney"
     :down-time="downTime"
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
@@ -248,11 +249,11 @@ export default {
   },
   data () {
     return {
-      windowHeight: document.documentElement.clientHeight,
       showExplainSwal: false,  //弹窗
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
 
       showPaySwal: false,   //支付方式弹窗
+      payMoney: 0,          //支付金额
       downTime: 0,          //支付结束时间
 
       nocarts: [],         //未选中商品
@@ -290,8 +291,8 @@ export default {
     //根据key名获取传递回来的参数，data就是map
     eventBus.$on('chooseAddress', function(data){
       that.addressInfo = JSON.parse(data);
-      that.getData();
-      console.log(data);
+      this.isSelectAddress = true;
+      // that.getData();
     }.bind(this));
 
     eventBus.$on('chooseCoupon', function(data){
@@ -340,14 +341,12 @@ export default {
         }).then(res => {
           if (res.success) {
             this.settlementInfo = res.data;
-            if (this.isSelectCoupon){
-              // this.couponInfo.user_coupon_id = this.selectCouponId;
-              // this.couponInfo.coupon_text = this.selectCouponTxt;
-              this.isSelectCoupon = '';
-            }else {
+            if (!this.isSelectCoupon){
               this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo;
             }
-            this.addressInfo = res.address_info
+            if(!this.isSelectAddress){
+              this.addressInfo = res.address_info;
+            }
           }
           console.log(this.couponInfo)
         })
@@ -356,7 +355,7 @@ export default {
           if (res.success) {
             this.settlementInfo = res.data.pay;
             if(!this.isSelectAddress){
-              this.addressInfo = res.data.address_info
+              this.addressInfo = res.address_info;
             }
 
             // this.addressInfo = res.data.address_info;
@@ -366,8 +365,10 @@ export default {
         getFlashInfo(this.flashParam).then(res => {
           if (res.success) {
             this.settlementInfo = res.data.pay;
-            if(!this.isSelectAddress){
-              this.addressInfo = res.data.address_info
+            if(this.isSelectAddress){
+              this.isSelectAddress = false;
+            }else {
+              this.addressInfo = res.address_info;
             }
           }
         })
@@ -415,11 +416,11 @@ export default {
       const that = this;
       let carts_arr = [];
       if (this.prev_page == 1){
-        carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
-        // carts_arr = wx.getStorageSync('cart2') || [];
+        // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
+        carts_arr = JSON.parse(api.getPrefs({ key: 'cart2' })) || [];
       }else {
-        carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
-        // carts_arr = wx.getStorageSync('cart');
+        // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
+        carts_arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
       }
       let carts_list = [];
       let carts_list2 = [];
@@ -630,6 +631,13 @@ export default {
     // 打开支付选择弹窗
     openPaySwal(){
       this.downTime = parseInt(new Date().getTime()) + 30*60*1000 - parseInt(new Date().getTime());
+      let settlementInfo = this.settlementInfo;
+      if(this.order_type==0){
+        this.payMoney = this.is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100;
+      }else if(this.order_type==1 || this.order_type==2){
+        this.payMoney = this.is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100;
+      }
+      
       this.showPaySwal = true;
     },
     // 关闭支付选择弹窗

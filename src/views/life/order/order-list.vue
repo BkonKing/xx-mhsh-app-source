@@ -2,8 +2,8 @@
 	<div class="app-body">
 		<div class="order-bar bar-white"><van-nav-bar title="我的订单" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
-		<div class="nav-empty"></div>
-		<div class="nav-box">
+		<div v-if="!navHide" class="nav-empty"></div>
+		<div v-if="!navHide" :style="{'margin-top':$store.state.paddingTop+'px'}" class="nav-box">
 			<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
 		</div>
     <van-list
@@ -12,7 +12,7 @@
         finished-text=""
         @load="onLoad"
       >
-      <div class="order-list">
+      <div v-if="listData.length > 0" class="order-list">
 				<div v-for="(item, index) in listData" class="order-item" @click="linkFunc(item.order_type==1 ? 12 : 13,{id: item.id})">
 					<div class="order-header">
 						<div class="order-no">订单号：{{item.order_numb}}</div>
@@ -54,7 +54,7 @@
 						<div class="order-btn-box">
 							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="cancelOrder(index,item.order_id)">取消订单</div>
 							<div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-							<div v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish">
+							<div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.order_id)">
 	            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
 	            </template>
 	          </van-count-down>)</div>
@@ -62,6 +62,10 @@
 					</div>
 				</div>
 			</div>
+			<div v-else class="empty-session">
+        <img src="@/assets/img/empty_order.png" />
+        <div>暂无订单</div>
+      </div>
     </van-list>
 		<!-- <div class="order-list">
 			<div class="order-item" @click.stop="linkFunc(12)">
@@ -179,19 +183,28 @@
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
     ></explain-swal>
+    <pay-swal 
+    :show-swal="showPaySwal"
+    :pay-money="payMoney"
+    :down-time="downTime"
+    @closeSwal="closePaySwal"
+    @sureSwal="surePaySwal"
+    ></pay-swal>
 	</div>
 </template>
 
 <script>
 import { NavBar, CountDown, List } from 'vant'
+import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
-import { getOrderList } from '@/api/life.js'
+import { getOrderList, cancelNoPayOrder, cancelPayOrder } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [List.name]: List,
-    explainSwal
+    explainSwal,
+    paySwal
   },
   data () {
     return {
@@ -200,6 +213,7 @@ export default {
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
 
 	    typeVal: 0,          //tab切换index
+	    navHide: false,
 	 
 	    time: 11 * 60 * 60 * 1000,
 	    newTime: '',       //当前时间
@@ -209,16 +223,26 @@ export default {
       pageSize: 10,  //分页条数
       isEmpty: false, //是否为空
       loading: false,
-      finished: false
+      finished: false,
+
+      showPaySwal: false,   //支付方式弹窗
+      payMoney: 0,          //支付金额
+      downTime: 0,          //支付结束时间
     }
+  },
+  created(){
+  	var type = this.$route.query.type;
+  	if(type){
+  		this.typeVal = type;
+  		this.navHide = true;
+  		console.log(this.typeVal)
+  	}
+  	// console.log(this.$store.state.paddingTop)
   },
   methods: {
     navFun (index) {
-    	this.listData = [];
       this.typeVal = index;
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
+      this.initFunc();
     },
     onLoad() {
       // 异步更新数据
@@ -252,12 +276,55 @@ export default {
       this.$refs.countDown.pause();
     },
     //倒计时结束
-    finish() {
-      Toast('倒计时结束');
+    finish(index,id) {
+      // Toast('倒计时结束');
+      this.cancelOrder(index,id);
+    },
+    //再次付款
+    payFunc(index,id){
+    	this.downTime = this.listData[index].is_again_pay_time*1000-this.newTime;
+    	this.payMoney = this.listData[index].pay_price/100;
+    	this.showPaySwal = true;
+    	this.payOderdId = id;
+    },
+    // 关闭支付选择弹窗
+    closePaySwal(data){
+      this.showPaySwal = data == 1 ? true : false;
+    },
+    surePaySwal(data){
+      if(data == 0){  //微信支付
+
+      }else {   //支付宝支付
+
+      }
     },
     // 取消订单
     cancelOrder(index,id){
-
+    	if(this.listData[index].is_pay == 0){ //未付款
+    		cancelNoPayOrder({
+	        order_project_id: this.listData[index].order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.initFunc();
+	        }
+	      })
+    	}else {
+    		cancelPayOrder({
+	        order_project_id: this.listData[index].order_id,
+	      }).then(res => {
+	        if (res.success) {
+	        	this.initFunc();
+	        }
+	      })
+    	}
+    },
+    //初始化列表
+    initFunc(){
+    	// this.listData = [];
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+      this.getData();
     },
     // 打开弹窗
     openExplainSwal(){

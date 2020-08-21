@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 	  <div class="bar-empty"></div>
 	  <template v-if="ableNum">
@@ -149,9 +149,11 @@ export default {
       const that = this;
       let carts_arr = [];
       if (this.prev_page == 1){
-        carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
+        // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
+        carts_arr = JSON.parse(api.getPrefs({ key: 'cart2' })) || [];
       }else {
-        carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
+        // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
+        carts_arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
       }
       let carts_list = [];
       if (carts_arr && carts_arr.length > 0) {

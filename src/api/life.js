@@ -4,6 +4,9 @@ import request from '@/utils/request.js'
 export function getLifeInfo (params) {
   return request.post('/life/goods/life_home', params)
 }
+export function getBanner (params) {
+  return request.post('/index/banner/banner_life', params)
+}
 
 // 限时闪购
 export function getFlashNav (params) {
@@ -37,9 +40,19 @@ export function getGoodsDetail (params) {
 }
 
 //搜索
-export function getSearch (params) {
+export function getHotWords (params) {
+  return request.post('/index/hot/hot_search', params)
+}
+export function getSearchGoods (params) {
   return request.post('/life/goods/search_goods', params)
 }
+export function getSearchApp (params) {
+  return request.post('/index/search/search_app', params)
+}
+export function getSearchPostbar (params) {
+  return request.post('/index/search/search_postbar', params)
+}
+
 
 //购物车
 export function getCart (params) {
@@ -119,6 +132,26 @@ export function getRefundInfo (params) {
 }
 export function getReturnRefundInfo (params) {
   return request.post('/life/my_order/returnfund_info', params)
+}
+//取消订单（未支付）
+export function cancelNoPayOrder (params) {
+  return request.post('/life/my_order/cancelOrderProject', params)
+}
+//取消订单（已支付）
+export function cancelPayOrder (params) {
+  return request.post('/life/my_order/refundOrderProject', params)
+}
+//取消退款申请
+export function cancelRefundApply (params) {
+  return request.post('/life/my_order/cancelRefundOrderProject', params)
+}
+//取消退款退货申请
+export function cancelRefundReturnApply (params) {
+  return request.post('/life/my_order/declineReturnfund', params)
+}
+//取消换货申请
+export function cancelBarterApply (params) {
+  return request.post('/life/my_order/cancelbarterBarter', params)
 }
 
 //申请换货

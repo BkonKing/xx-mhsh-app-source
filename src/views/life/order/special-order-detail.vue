@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 		<div class="bar-empty"></div>
 		<div class="order-session">
@@ -215,14 +215,20 @@
 				</div>
 			</div>
 		</div>
-		<div class="fixed-empty"></div>
-		<div class="btn-fixed-buttom">
-			<div class="color-eb5841">剩余<van-count-down ref="countDown" :auto-start="true" :time="time" @finish="finish">
-            <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
-            </template>
-          </van-count-down>结束</div>
-			<div class="order-border-btn paid-btn">邀请好友</div>
-		</div>
+		<template v-if="orderInfo.ollage_pay_type == 2 && orderInfo.order_status == 0">
+			<div class="fixed-empty"></div>
+			<div class="btn-fixed-buttom">
+				<div class="color-eb5841">剩余<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.ollage_etime*1000-newTime" @finish="finish">
+		          <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
+		          </template>
+		        </van-count-down>结束</div>
+				<div class="order-border-btn paid-btn">邀请好友</div>
+			</div>
+		</template>
+		<template v-if="orderInfo.is_logistice_btn">
+			<div class="fixed-empty"></div>
+			<div @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
+		</template>
 		<explain-swal 
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
@@ -292,6 +298,39 @@ export default {
     //倒计时结束
     finish() {
       Toast('倒计时结束');
+    },
+    logisticsLink() {
+      if(this.orderInfo.project_logistice_count > 1){
+      	this.$router.push({
+          path: '/logistics/list',
+          query: {
+            id: this.orderInfo.order_id
+          }
+        })
+      }else {
+      	if(this.orderInfo.project_logistice_buy_type == 0){ //0快递 1自提 2商家配送
+      		this.$router.push({
+	          path: '/logistics/logistics-express',
+	          query: {
+	            id: this.orderInfo.order_id
+	          }
+	        })
+      	}else if(this.orderInfo.project_logistice_buy_type == 1){
+      		this.$router.push({
+	          path: '/logistics/logistics-self',
+	          query: {
+	            id: this.orderInfo.order_id
+	          }
+	        })
+      	}else {
+      		this.$router.push({
+	          path: '/logistics/logistics-business',
+	          query: {
+	            id: this.orderInfo.order_id
+	          }
+	        })
+      	}
+      }
     },
     linkFunc (type,obj={}) {
     	switch (type){

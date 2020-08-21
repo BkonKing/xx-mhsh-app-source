@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 	<div class="order-bar bar-white"><van-nav-bar :title="titName" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="apply-tip">如有多件商品需要退款，请一并提交申请</div>
@@ -183,23 +183,6 @@
 					</div> -->
 				</div>
 			</div>
-			<!-- <div class="cont-session address-logistics">
-				<div class="shipping-address">
-					<div class="shipping-address-item">
-						<div class="shipping-address-item-left color-222 font-28">收货地址:</div>
-						<div class="shipping-address-item-right">
-							<div class="shipping-address-username p-nowrap">安琪拉安琪拉安琪拉安琪拉</div>
-							<div class="color-222 font-28">15000112233</div>
-						</div>
-					</div>
-					<div class="shipping-address-item">
-						<div class="shipping-address-item-left"></div>
-						<div class="shipping-address-item-right">
-							<div class="shipping-address-text p-nowrap">福建省福州市仓山区下渡街道三盛滨江国际三盛滨江国</div>
-						</div>
-					</div>
-				</div>
-			</div> -->
 
 		</div>
 		<div class="fixed-submit-empty"></div>
@@ -367,7 +350,8 @@ export default {
 		        pic: this.images,
 		      }).then(res => {
 		        if (res.success) {
-		        	Toast(res.message);
+		        	this.$router.go(-2);
+		        	// Toast(res.message);
 		        	//跳转订单详情
 		        }
 		      })
@@ -382,7 +366,8 @@ export default {
 		        pic: this.images,
 		      }).then(res => {
 		        if (res.success) {
-		        	Toast(res.message);
+		        	this.$router.go(-2);
+		        	// Toast(res.message);
 		        	//跳转订单详情
 		        }
 		      })

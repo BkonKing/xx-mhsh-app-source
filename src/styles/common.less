@@ -37,6 +37,21 @@
   -webkit-line-clamp: 2;
 }
 
+.empty-session {
+  display: flex;
+  flex-direction: column;
+  padding-top: 200px;
+}
+.empty-session img {
+  width: 100%;
+  height: 500px;
+}
+.empty-session div {
+  text-align: center;
+  line-height: 92px;
+  color: #222;
+}
+
 .app-body {
   height: 100%;
   overflow-y: auto;
@@ -734,4 +749,59 @@
     border-radius: 7px;
     background-color: #eb5841;
   }
+}
+
+
+/*图片上传*/
+.pic-list .van-uploader,.pic-list .van-uploader__wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.pic-list .van-uploader__preview {
+  width: 114px;
+  height: 114px;
+  margin: 20px 20px 0 0;
+  position: relative;
+}
+.pic-list .van-uploader__preview-image {
+  width: 114px;
+  height: 114px;
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  object-fit: cover;
+}
+.pic-list .van-uploader__preview-delete {
+  position: absolute;
+  width: 37px;
+  height: 37px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5 !important;
+}
+.pic-list .van-uploader__upload {
+  width: 114px;
+  height: 114px;
+  margin-top: 20px;
+}
+.search-input-block .search-input.van-search {
+  width: 540px;
+  height: 100%;
+  padding: 0;
+}
+.search-input-block .search-input.van-search .van-search__content {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding-left: 0;
+}
+.search-input.van-search .van-field__control,
+.search-input.van-search .van-field__left-icon {
+  line-height: 60px !important;
 }

@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+	<div class="app-body">
 		<div class="order-bar bar-white"><van-nav-bar title="申请换货" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <div class="apply-tip">如有多件商品需要换货，请一并提交申请</div>
@@ -138,7 +138,7 @@
 					<tf-uploader v-model="images" max-count="5"></tf-uploader>
 				</div>
 			</div>
-			<div class="cont-session address-logistics">
+			<div @click="linkFunc(23,{isSelect: 1})" class="cont-session address-logistics">
 				<div class="shipping-address">
 					<div class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">收货地址:</div>
@@ -171,7 +171,7 @@
 		<div v-show="skuShow" class="public-mask  bottom-fixed">
       <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="shops-params">
-        <div class="params-goods-info">
+        <div v-if="skuList.length > 0" class="params-goods-info">
           <div class="params-goods-left">
             <img class="img-100" @click="predivPic(typeVal,2)" :src="skuList[typeVal].specs_img" data-src="" />
           </div>
@@ -221,10 +221,12 @@
 <script>
 import { Icon, NavBar, ImagePreview } from 'vant'
 import { getApplyBarter, barterSubmit } from '@/api/life.js'
+import eventBus from '@/api/eventbus.js';
 import tfUploader from '@/components/tf-uploader/index'
 import reasonSwal from './../components/reason-swal'
 import explainSwal from './../components/explain-swal'
 export default {
+  name: 'applyBarter',
   components: {
     [Icon.name]: Icon,
     [NavBar.name]: NavBar,
@@ -254,10 +256,19 @@ export default {
 
       isSelectAddress: false,//是否选择地址
       addressInfo: '',       //收货地址信息
-      userAddId: '',         //选中的地址id
     }
   },
+  mounted(){
+    var that = this;
+    //根据key名获取传递回来的参数，data就是map
+    eventBus.$on('chooseAddress', function(data){
+      that.addressInfo = JSON.parse(data);
+      that.isSelectAddress = true;
+      // that.getData();
+    }.bind(this));
+  },
   created(){
+    eventBus.$off('chooseAddress');
     this.order_project_id = this.$route.query.order_id;
     this.logistice_id = this.$route.query.logistice_id;
     this.getData();
@@ -276,8 +287,10 @@ export default {
       		this.swalInfo.tip = "请选择实际原因，以便我们更好地为您提供服务";
       		this.swalList = res.refund_arr;
       		if(!this.isSelectAddress){
-            this.addressInfo = res.data.address_info;
             this.userAddId = res.data.address_info.id;
+            if(!this.isSelectAddress){
+              this.addressInfo = res.data.address_info;
+            }
           }
         }
       })
@@ -376,7 +389,7 @@ export default {
     		Toast('请选择商品');
     	}else {
     		barterSubmit({
-    			address_id: this.address_id,
+    			address_id: this.addressInfo.id,
 	        order_project_id: this.order_project_id,
 	        logistice_id: this.logistice_id,
 	        order_goods_ids: this.id_arr,
@@ -386,13 +399,32 @@ export default {
 	        pic: this.images,
 	      }).then(res => {
 	        if (res.success) {
-	        	Toast(res.message);
+            this.$router.go(-2);
+	        	// Toast(res.message);
 	        	//跳转订单详情
 	        }
 	      })
-    		
     	}
+    },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 23:
+        this.$router.push({
+          path: '/address/list',
+          query: {
+            isSelect: 1
+          }
+        })
+        break;
+      }
+    },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'goodsDetail' || to.name == 'orderApply'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
     }
+    next();
   }
 }
 </script>

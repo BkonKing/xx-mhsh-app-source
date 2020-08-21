@@ -1,5 +1,5 @@
 <template>
-  <div class="app-body" :style="{ 'min-height': windowHeight+'px'}">
+  <div class="app-body">
     <div class="order-bar bar-white"><van-nav-bar title="收货地址" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
     <van-list
@@ -9,7 +9,7 @@
         @load="onLoad"
       >
       <div v-if="listData.length" class="address-list">
-        <div v-for="(item,index) in listData" @click="linkFunc(5,{id:item.goods_id})" class="address-item">
+        <div v-for="(item,index) in listData" @click="selectFunc(index)" class="address-item">
           <div class="address-label flex-center">
             <div v-if="item.label" class="font-24 color-fff">{{item.label}}</div>
             <img v-else class="label-icon" src="@/assets/img/address_04.png" />
@@ -24,7 +24,7 @@
               <div class="default-detail-text color-8f8f94 font-24 p-nowrap">{{item.address_name+item.address_house}}</div>
             </div>
           </div>
-          <div class="address-link flex-align-center" @click="linkFunc(24,{id:item.id})">
+          <div class="address-link flex-align-center" @click.stop="linkFunc(24,{id:item.id})">
             <img class="address-edit-icon" src="@/assets/img/edit_01.png" />
           </div>
           <div class="address-line"></div>
@@ -112,10 +112,10 @@ export default {
     console.log(this.isSelect);
   },
   methods: {
-    selectFunc(id){
+    selectFunc(index){
       if(!this.isSelect) return;
       //传递一个map，chooseAddress是key，id是value
-      eventBus.$emit('chooseAddress',id);
+      eventBus.$emit('chooseAddress',JSON.stringify(this.listData[index]));
       //调用router回退页面
       this.$router.go(-1);
     },
@@ -170,7 +170,6 @@ export default {
   .app-body {
     background-color: #f2f2f4;
     font-size: 28px;
-    overflow: hidden;
   }
   .address-list {
     background-color: #fff;

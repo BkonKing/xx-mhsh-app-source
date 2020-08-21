@@ -1,6 +1,6 @@
 <template>
-	<div class="app-body white-bg" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="fixed-top">
+	<div class="app-body white-bg">
+    <div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
       <div class="search-input-block flex-between">
         <div class="search-back flex-center" @click="$router.go(-1)">
           <img class="img-100" src="@/assets/img/icon_19.png" />
@@ -42,7 +42,7 @@
 />
     </div> -->
     <div class="classify-cont">
-      <div class="classify-nav">
+      <div class="classify-nav" :style="{'margin-top':$store.state.paddingTop+'px'}">
         <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
       </div>
       <div class="classify-right">
