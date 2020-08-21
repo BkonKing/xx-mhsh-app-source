@@ -170,7 +170,7 @@
 
     <div class="goods-cont goods-session">
       <div class="goods-cont-tit">商品详情</div>
-      <div v-html="infoData.content"></div>
+      <div class="goods-detail-cont" v-html="infoData.content"></div>
     </div>
 
     <div class="fixed-empty"></div>
@@ -796,6 +796,10 @@ export default {
   padding-left: 30px;
 }
 
+.goods-detail-cont {
+  display: flex;
+  flex-direction: column;
+}
 .goods-cont-tit {
   line-height: 110px;
   text-align: center;
