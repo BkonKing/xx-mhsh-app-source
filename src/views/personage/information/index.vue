@@ -147,6 +147,7 @@ import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
 import { getDate } from '@/utils/util'
+import eventBus from '@/api/eventbus.js';
 import {
   getMemberList,
   yzHouse,
@@ -213,7 +214,15 @@ export default {
         : this.mobile.substr(0, 3) + '****' + this.mobile.substr(7)
     }
   },
+  mounted(){
+    eventBus.$on('chooseAddress', function(data){
+      this.addressInfo = JSON.parse(data);
+      this.address_id = this.addressInfo.id;
+      console.log(this.addressInfo)
+    }.bind(this));
+  },
   async created () {
+    eventBus.$off('chooseAddress');
     await this.$store.dispatch('getMyAccount')
     const {
       realname,
@@ -347,7 +356,13 @@ export default {
     },
     /* 跳转收货地址 */
     goAddress () {
-      this.$router.push('/pages/personage/information/address')
+      this.$router.push({
+        path: '/address/list',
+        query: {
+          isSelect: 1
+        }
+      })
+      //this.$router.push('/pages/personage/information/address')
     },
     /* 跳转手机验证 */
     jumpPhone () {
