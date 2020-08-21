@@ -13,9 +13,15 @@
       </van-notice-bar>
     </div>
     <div class="tf-body-container">
-      <van-swipe class="home-swipe" :autoplay="6000" :lazy-render="true" indicator-color="#fff" @change="swipeChange">
+      <van-swipe
+        class="home-swipe"
+        :autoplay="6000"
+        :lazy-render="true"
+        indicator-color="#fff"
+        @change="swipeChange"
+      >
         <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
-          <van-image class="swipe-item__image" :src="item.icon_image" />
+          <van-image class="swipe-item__image" :src="item.img" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
@@ -38,7 +44,7 @@
               <span>{{userInfo.credits}}</span>
             </span>
           </div>
-          <van-notice-bar
+          <!-- <van-notice-bar
             v-if="1"
             class="coin-message"
             :scrollable="false"
@@ -52,7 +58,7 @@
                 <div class="coin-message-number">+10</div>
               </van-swipe-item>
             </van-swipe>
-          </van-notice-bar>
+          </van-notice-bar>-->
         </div>
         <div class="coin-box__content">
           <div class="coin-image-box">
@@ -113,7 +119,7 @@
           >
             <van-image class="activity-item__image" :src="item.thumbnail">
               <template v-slot>
-                <div class="activity-item__description">233人已报名</div>
+                <div class="activity-item__description">{{item.joins}}人已报名</div>
               </template>
             </van-image>
             <div class="activity-info">
@@ -162,7 +168,13 @@ import {
 } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
-import { getMyApp, getBannerIndex, getBargainGoods, getOllageGoods, getCreditsGoodsList } from '@/api/home'
+import {
+  getMyApp,
+  getBannerIndex,
+  getBargainGoods,
+  getOllageGoods,
+  getCreditsGoodsList
+} from '@/api/home'
 import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
@@ -314,7 +326,7 @@ export default {
     },
     /* 获取幸福币专区 */
     getCreditsGoodsList () {
-      getCreditsGoodsList().then(res => {
+      getCreditsGoodsList().then((res) => {
         this.creditsGoods = res.data
       })
     },
@@ -328,7 +340,7 @@ export default {
     },
     /* 获取9.9特卖区 */
     getBargainGoods () {
-      getBargainGoods().then(res => {
+      getBargainGoods().then((res) => {
         this.bargainList = res.data
       })
     },
@@ -343,7 +355,7 @@ export default {
     },
     /* 获取闪购专区 */
     getOllageGoods () {
-      getOllageGoods().then(res => {
+      getOllageGoods().then((res) => {
         this.ollageGoods = res.data
       })
     },
@@ -472,12 +484,12 @@ export default {
     .sign-btn {
       padding: 0 30px;
       height: 44px;
-      line-height: 44px;
       background: linear-gradient(90deg, @red, @red-dark);
       border-radius: 22px;
       font-size: 24px;
-      text-align: center;
       color: #fff;
+      display: flex;
+      align-items: center;
     }
   }
   &__content {
@@ -557,7 +569,7 @@ export default {
       background: #f0f0f0;
       border-radius: 10px 10px 0px 0px;
     }
-    .activity-item__description {
+    /deep/ .activity-item__description {
       position: absolute;
       left: 0;
       bottom: 0;
@@ -576,6 +588,9 @@ export default {
       width: 100%;
       .activity-info__right {
         width: calc(100% - 94px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
       &__day {
         width: 74px;
@@ -585,8 +600,10 @@ export default {
         margin-right: 20px;
         color: #8f8f94;
         font-size: 20px;
-        padding: 0 10px;
-        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
       }
       &__title {
         width: 100%;
@@ -609,10 +626,9 @@ export default {
   .notice-swipe {
     height: 88px;
     /deep/ .van-swipe-item {
-      line-height: 88px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-around;
     }
   }
   &__tag {
@@ -627,9 +643,8 @@ export default {
     text-align: center;
   }
   &__text {
-    flex: 1;
     font-size: 26px;
-    line-height: 44px;
+    line-height: 1;
     color: #222;
   }
 }

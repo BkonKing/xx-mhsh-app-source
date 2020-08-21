@@ -1,16 +1,16 @@
 <widget id="A6040761742685" version="0.0.1">
 
-	<name>mhsh</name>
+	<name>美好生活家园</name>
 
 	<description>
 
-        Example For APICloud.
+        美好生活家园
 
 	</description>
 
 	<author email="developer@apicloud.com" href="http://www.apicloud.com">
 
-        Developer
+        福建线下信息科技有限公司
 
 	</author>
 
@@ -28,7 +28,7 @@
 
 	<!-- 极光推送 -->
 	<feature name="ajpush">
-		<param name="app_key" value="2e6a363169ec93aa011e9799" />
+		<param name="app_key" value="717f513d82146e4e6a8c0525" />
 		<param name="channel" value="qihu360" />
 	</feature>
 

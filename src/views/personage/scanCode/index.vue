@@ -46,7 +46,7 @@ export default {
   data () {
     return {
       codeId: '',
-      current: 1,
+      current: 0,
       tabs: [
         {
           value: 1,
@@ -72,7 +72,7 @@ export default {
   },
   mounted () {
     // this.scanSuccess()
-    // this.FNScanner = api.require('FNScanner')
+    this.FNScanner = api.require('FNScanner')
   },
   methods: {
     /* 切换tab */

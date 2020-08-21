@@ -1,26 +1,28 @@
 <template>
-  <van-pull-refresh
-    style="text-align: center;width: 100%;height: 100%;"
-    v-model="refreshing"
-    success-text="刷新成功"
-    @refresh="onRefresh"
-  >
-    <van-list
-      class="tf-van-list"
-      v-model="loading"
-      :finished="finished"
-      :error.sync="error"
-      loading-text="加载中"
-      finished-text="没有更多了"
-      error-text="请重新加载"
-      v-bind="$attrs"
-      @load="onLoad"
+  <div style="height: 100%;overflow: auto;">
+    <van-pull-refresh
+      style="text-align: center;width: 100%;"
+      v-model="refreshing"
+      success-text="刷新成功"
+      @refresh="onRefresh"
     >
-      <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="i">
-        <slot :item="item" :index="i"></slot>
-      </van-cell>
-    </van-list>
-  </van-pull-refresh>
+      <van-list
+        class="tf-van-list"
+        v-model="loading"
+        :finished="finished"
+        :error.sync="error"
+        loading-text="加载中"
+        finished-text="没有更多了"
+        error-text="请重新加载"
+        v-bind="$attrs"
+        @load="onLoad"
+      >
+        <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="i">
+          <slot :item="item" :index="i"></slot>
+        </van-cell>
+      </van-list>
+    </van-pull-refresh>
+  </div>
 </template>
 
 <script>
@@ -64,23 +66,25 @@ export default {
       if (this.load && !this.isEndNum) {
         await this.load({
           pages: this.pageNum
-        }).then(({ data }) => {
-          if (data && data.length > 0) {
-            this.listChild.push(...data)
-            this.$emit('update:list', this.listChild)
-            this.pageNum++
-            if (data.length >= 10) {
-              this.isEndNum = 0
-            } else {
-              this.isEndNum = 1
-            }
-          } else {
-            this.finished = true
-          }
-          this.loading = false
-        }).catch(() => {
-          this.error = true
         })
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              this.listChild.push(...data)
+              this.$emit('update:list', this.listChild)
+              this.pageNum++
+              if (data.length >= 10) {
+                this.isEndNum = 0
+              } else {
+                this.isEndNum = 1
+              }
+            } else {
+              this.finished = true
+            }
+            this.loading = false
+          })
+          .catch(() => {
+            this.error = true
+          })
       } else {
         this.finished = true
       }
