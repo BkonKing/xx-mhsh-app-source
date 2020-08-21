@@ -644,7 +644,7 @@ export default {
   }
   &__text {
     font-size: 26px;
-    line-height: 1;
+    line-height: 1.2;
     color: #222;
   }
 }

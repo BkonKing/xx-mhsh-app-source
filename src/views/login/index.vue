@@ -40,10 +40,8 @@
     <span v-if="login_type === 1" class="login-method__text" @click="login_type = 2">密码登录</span>
     <span v-else-if="login_type === 2" class="login-method__text" @click="login_type = 1">验证码登录</span>
     <div class="agreement" @click="changeRememberPasswrod">
-      <div class="uni-checkbox-wrapper">
-        <div class="uni-checkbox-input">
-          <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
-        </div>
+      <div class="uni-checkbox-input">
+        <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
       </div>
       <span class="agreement-text" style="color: #fff;">
         登录即表示您同意
@@ -129,7 +127,7 @@ export default {
     verifCode () {
       verifCode({
         mobile: this.mobile
-      }).then((res) => {
+      }).then(res => {
         Toast.success('验证码发送成功，请注意查收')
         this.codeStatus = true
         this.count()
@@ -242,7 +240,7 @@ export default {
   font-size: 24px;
 }
 .agreement {
-  margin-top: 200px;
+  margin-top: 160px;
   display: flex;
   padding: 20px 0;
   flex-direction: row;
@@ -251,7 +249,8 @@ export default {
 }
 .uni-checkbox-input {
   display: flex;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   margin-right: 5px;
   border: 2px solid #fff;
   border-radius: 3px;
@@ -260,8 +259,6 @@ export default {
 }
 .checkbox-icon {
   font-size: 20px;
-  line-height: 24px;
-  margin-left: -1px;
 }
 .tf-icon-gou {
   color: #fff;
@@ -283,9 +280,6 @@ export default {
   text-align: center;
   margin-top: 50px;
   margin-bottom: 40px;
-}
-.uni-checkbox-wrapper {
-  align-items: center;
 }
 .agreement-text {
   font-size: 24px;

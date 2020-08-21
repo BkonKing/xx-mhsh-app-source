@@ -3,6 +3,7 @@
     <app-item
       v-for="(item,i) in data"
       :key="i"
+      v-show="!search || item.application.indexOf(search) > -1"
       :class="{'noborder': data.length - data.length % 5 <= i}"
       :src="item.icon_image"
       :name="item.application"
@@ -32,6 +33,10 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    search: {
+      type: String,
+      default: ''
     }
   },
   methods: {

@@ -28,7 +28,7 @@
           id="app-container"
           v-model="myAppList"
           handle="#app-container"
-          :options="{
+          v-bind="{
             animation: 0,
             group: 'description',
             disabled: !editMode,
@@ -58,11 +58,11 @@
         </div> -->
         <div class="tf-mb-lg">
           <div class="module-title">智慧管家</div>
-          <app-container :data="butlerList" :editMode="editMode" @add="add"></app-container>
+          <app-container :data="butlerList" :search="value" :editMode="editMode" @add="add"></app-container>
         </div>
         <div>
           <div class="module-title">和谐邻里</div>
-          <app-container :data="neighbourList" :editMode="editMode" @add="add"></app-container>
+          <app-container :data="neighbourList" :search="value" :editMode="editMode" @add="add"></app-container>
         </div>
       </div>
     </div>
@@ -211,7 +211,7 @@ export default {
       }
 
       .van-field__control {
-        font-size: @font-size-md;
+        font-size: 24px;
       }
 
       .van-icon {

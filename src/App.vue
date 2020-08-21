@@ -38,7 +38,8 @@ export default {
   },
   created () {
     const userInfo = api.getPrefs({
-      key: 'user_info'
+      key: 'user_info',
+      sync: true
     })
     userInfo && this.$store.commit('setUser_info', userInfo)
     api.setStatusBarStyle({
