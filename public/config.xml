@@ -1,4 +1,4 @@
-<widget id="A6040761742685" version="0.0.1">
+<widget id="A6040369256280" version="0.0.1">
 
 	<name>美好生活家园</name>
 
@@ -25,6 +25,11 @@
 		<param name="apiSecret" value="a354f72aa1b4c2b8eaad137ac81434cd"/>
 		<param name="universalLink" value="https://bjtest.apicloud.com"/>
 	</feature>
+
+	<!-- 支付宝支付 -->
+	<feature name="aliPayPlus">
+      <param name="urlScheme" value="AliPayPlusA6040369256280" />
+  </feature>
 
 	<!-- 极光推送 -->
 	<feature name="ajpush">
@@ -73,6 +78,8 @@
 	<permission name="bootCompleted" />
 
 	<permission name="hardware" />
+
+	<preference name="softInputMode" value="resize"/>  
 
 </widget>
 

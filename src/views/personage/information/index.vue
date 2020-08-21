@@ -147,7 +147,7 @@ import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
 import { getDate } from '@/utils/util'
-import eventBus from '@/api/eventbus.js';
+import eventBus from '@/api/eventbus.js'
 import {
   getMemberList,
   yzHouse,
@@ -207,22 +207,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType']),
-    nicknameText () {
-      return this.nickname
-        ? this.nickname
-        : this.mobile.substr(0, 3) + '****' + this.mobile.substr(7)
-    }
+    ...mapGetters(['userInfo', 'userType'])
   },
-  mounted(){
-    eventBus.$on('chooseAddress', function(data){
-      this.addressInfo = JSON.parse(data);
-      this.address_id = this.addressInfo.id;
+  mounted () {
+    eventBus.$on('chooseAddress', function (data) {
+      this.addressInfo = JSON.parse(data)
+      this.address_id = this.addressInfo.id
       console.log(this.addressInfo)
-    }.bind(this));
+    }.bind(this))
   },
   async created () {
-    eventBus.$off('chooseAddress');
+    eventBus.$off('chooseAddress')
     await this.$store.dispatch('getMyAccount')
     const {
       realname,
@@ -238,7 +233,6 @@ export default {
     this.avatar = avatar
     this.mobile = mobile
     this.birthday = birthday
-    this.yzHouse()
     // this.getMemberList()
   },
   methods: {
@@ -307,7 +301,8 @@ export default {
     /* 获取业主房产信息 */
     yzHouse () {
       yzHouse().then((res) => {
-        this.list = res.data.map((obj) => {
+        const data = res.data || []
+        this.list = data.map((obj) => {
           const { project_name, fc_info, members, house_id } = obj
           return {
             text: `${project_name}${fc_info}(${members})`,
@@ -362,7 +357,7 @@ export default {
           isSelect: 1
         }
       })
-      //this.$router.push('/pages/personage/information/address')
+      // this.$router.push('/pages/personage/information/address')
     },
     /* 跳转手机验证 */
     jumpPhone () {
@@ -393,6 +388,11 @@ export default {
   watch: {
     value (value) {
       this.getMemberList()
+    },
+    current (val) {
+      if (val === 2) {
+        !this.list.length && this.yzHouse()
+      }
     }
   }
 }

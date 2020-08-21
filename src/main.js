@@ -23,7 +23,7 @@ Object.keys(filters).forEach(key => {
 })
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
-if (isApp /* window.navigator.userAgent.match(/APICloud/i) */) {
+if (process.env.VUE_APP_IS_APP === '1') {
   window.apiready = () => {
     require('./permission')
     process.env.NODE_ENV === 'development' && new VConsole()

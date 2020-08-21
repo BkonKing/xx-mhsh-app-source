@@ -54,7 +54,9 @@ export default {
   },
   watch: {
     value (val) {
-      this.dateValue = new Date(val.replace(/-/g, '/'))
+      if (val) {
+        this.dateValue = new Date(val.replace(/-/g, '/'))
+      }
     }
   }
 }

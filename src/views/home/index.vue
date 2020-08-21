@@ -21,7 +21,7 @@
         @change="swipeChange"
       >
         <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
-          <van-image class="swipe-item__image" :src="item.img" />
+          <van-image class="swipe-item__image" :src="item.img" @click="$router.push(item.url)" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">

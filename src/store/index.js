@@ -131,14 +131,16 @@ const store = {
             const {
               data
             } = res
-            const ajParams = {
-              alias: data.id
-            }
-            Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-              if (ret && ret.status) {
-                alert(ret)
+            if (process.env.VUE_APP_IS_APP === '1') {
+              const ajParams = {
+                alias: data.id
               }
-            })
+              Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
+                if (ret && ret.status) {
+                  alert(ret)
+                }
+              })
+            }
             api.setPrefs({
               key: 'access_token',
               value: data.access_token

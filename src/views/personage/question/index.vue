@@ -52,10 +52,9 @@ export default {
 <style lang='less' scoped>
 .tf-body-container {
   position: relative;
-  padding-bottom: 100px;
 }
 .question-footer-placeholder {
-  height: 100px;
+  height: 130px;
 }
 .question-footer {
   position: absolute;

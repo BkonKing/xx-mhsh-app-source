@@ -46,7 +46,8 @@
         </div>
       </div>
       <span class="agreement-text" style="color: #fff;">
-        登录即表示您同意<router-link style="color: #fff;" to="/home">《美好生活家园用户协议》</router-link>
+        登录即表示您同意
+        <router-link style="color: #fff;" to="/home">《美好生活家园用户协议》</router-link>
       </span>
     </div>
   </div>
@@ -161,6 +162,7 @@ export default {
   padding-top: 84px;
   flex: 1;
   display: flex;
+  overflow: auto;
   z-index: 1;
   flex-direction: column;
   align-items: center;
@@ -169,7 +171,7 @@ export default {
 }
 .logo {
   width: 224px;
-  height: 300px;
+  height: 330px;
   margin-bottom: 80px;
 }
 .logo-text {
@@ -240,10 +242,7 @@ export default {
   font-size: 24px;
 }
 .agreement {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 82px;
+  margin-top: 200px;
   display: flex;
   padding: 20px 0;
   flex-direction: row;

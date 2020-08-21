@@ -74,34 +74,34 @@
             </div>
           </div>
         </div>
-        <div class="module-box" @click="goOrder">
+        <div class="module-box">
           <div class="module-title">我的订单</div>
           <div class="tf-row">
-            <div class="order-box">
+            <div class="order-box" @click="goOrderList(1)">
               <img class="manage-image" src="@/assets/imgs/personage_daifukuan.png" />
               <div class="text-sm">待付款</div>
-              <span class="personage-badge">3</span>
+              <!-- <span class="personage-badge"></span> -->
             </div>
-            <div class="order-box">
+            <div class="order-box" @click="goOrderList(2)">
               <img class="manage-image" src="@/assets/imgs/personage_daifahuo.png" />
               <div class="text-sm">待发货</div>
             </div>
-            <div class="order-box">
+            <div class="order-box" @click="goOrderList(3)">
               <img class="manage-image" src="@/assets/imgs/personage_shouhuo.png" />
               <div class="text-sm">待收货</div>
             </div>
-            <div class="order-box">
+            <div class="order-box" @click="goOrderList(4)">
               <img class="manage-image" src="@/assets/imgs/personage_tuihuan.png" />
               <div class="text-sm">退换</div>
             </div>
-            <div class="order-box">
+            <div class="order-box" @click="goOrderList">
               <img class="manage-image" src="@/assets/imgs/personage_quanbu.png" />
               <div class="text-sm">全部</div>
             </div>
           </div>
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item border title="我的订单">
+          <tf-list-item border title="我的订单" @click="goOrderList">
             <template v-slot:image>
               <img class="tf-clist-cell__image" src="@/assets/imgs/personage_dingdan.png" />
             </template>
@@ -120,7 +120,7 @@
             <template v-slot:image>
               <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
             </template>
-          </tf-list-item> -->
+          </tf-list-item>-->
         </tf-list>
         <tf-list class="personage-list">
           <tf-list-item border title="常见问题" @click="goQuestion">
@@ -195,10 +195,6 @@ export default {
     goInformation () {
       this.$router.push('/pages/personage/information/index')
     },
-    /* 我的订单 */
-    goOrder () {
-      this.$router.push('/pages/personage/order-form/index')
-    },
     /**
      * 事务处理
      * @param type {number} 1: 待处理 2:：待分派 3：待结案 4：已结案
@@ -206,6 +202,13 @@ export default {
     goTransaction (type) {
       const url = `/pages/personage/transaction/index?type=${type}`
       this.$router.push(url)
+    },
+    /**
+     * 我的订单
+     * @param type {number} 无全部 1待付款 2待发货 3待收货 4退换
+     */
+    goOrderList (type) {
+      this.$router.push(`/order/list?type=${type}`)
     },
     /* 意见反馈 */
     goFeedback () {
@@ -219,7 +222,7 @@ export default {
     goInteraction () {
       this.$router.push('/pages/personage/interaction/index')
     },
-    /* 我的互动 */
+    /* 常见问题 */
     goQuestion () {
       this.$router.push('/pages/personage/question/index')
     }
