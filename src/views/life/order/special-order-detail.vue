@@ -238,13 +238,14 @@
 </template>
 
 <script>
-import { NavBar, CountDown } from 'vant'
+import { NavBar, CountDown, Toast } from 'vant'
 import explainSwal from './../components/explain-swal'
 import { getOrderDetail } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
+    [Toast.name]: Toast,
     explainSwal
   },
   data () {

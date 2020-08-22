@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { NavBar, Icon } from 'vant'
+import { NavBar, Icon, Toast } from 'vant'
 import { getWriteInfo, logisticsSubmit } from '@/api/life.js'
 import tfUploader from '@/components/tf-uploader/index'
 import reasonSwal from './../components/reason-swal'
@@ -154,6 +154,7 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [Icon.name]: Icon,
+    [Toast.name]: Toast,
     tfUploader,
     reasonSwal
   },

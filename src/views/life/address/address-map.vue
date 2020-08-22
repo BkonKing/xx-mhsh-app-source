@@ -37,8 +37,8 @@ export default {
       windowHeight: document.documentElement.clientHeight,
       isSelect: 0,  //0不是选择地址 1选择地址
       searchVal: '',
-      // searchList: [],
-      searchList: [{name: 'gewagaw',address:'eee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
+      searchList: [],
+      // searchList: [{name: 'gewagaw',address:'eee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
       bMap: ''
     }
   },
@@ -47,7 +47,7 @@ export default {
   },
   deactivated(){
     // var bMap = api.require('bMap');
-    this.bMap.close();
+    // this.bMap.close();
   },
   methods: {
     getData(){
@@ -119,7 +119,7 @@ export default {
                   }
               });
           } else {
-              alert(err.code);
+              // alert(err.code);
           }
       });
 
@@ -154,10 +154,10 @@ export default {
           rtLat: 53.69
       }, function(ret, err) {
           if (ret.status) {
-              alert(JSON.stringify(ret.results));
+              // alert(JSON.stringify(ret.results));
               that.searchList = ret.results;
           } else {
-              alert(JSON.stringify(err));
+              // alert(JSON.stringify(err));
           }
       });return;
 
@@ -187,7 +187,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    // this.bMap.close();
+    this.bMap.close();
     next();
   }
 }

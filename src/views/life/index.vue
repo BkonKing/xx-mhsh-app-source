@@ -37,6 +37,7 @@
 	        </div>
 	      </scrollBar>
 	    </div>
+	    <div v-else class="seconds-nav-empty"></div>
 		</div>
 		<div :class="[activeIndex > 0 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
 		
@@ -381,7 +382,7 @@ export default {
       }).then(res => {
         if (res.success) {
           if(this.navList.length == 0){
-          	this.navList = [{'category_name': '首页'}];
+          	this.navList = [{'category_name': '推荐'}];
           	this.navList = this.navList.concat(res.data.category_list);
             console.log(this.navList);
             if(res.data.category_list[this.activeIndex].children){
@@ -392,6 +393,7 @@ export default {
 	          this.isEmpty = this.page == 1 && res.data.goods_list.length ==0 ? true : false;
 	          if(res.data.goods_list.length < res.pageSize){
 	            this.finished = true;
+	            this.flag = true;
 	          }else {
 	            this.page = this.page+1;
 	          }
@@ -451,7 +453,13 @@ export default {
 	      }
 	      this.page = 1;
 	      this.loading = false;
+	      // let prev_finished = this.finished;
 	      this.finished = false;
+	      console.log(this.flag);
+	      if(!this.flag){
+	      	this.getGoodsData();
+	      	this.flag = false;
+	      }
       }else {
       	this.page = 1;
       	this.finished = true;
@@ -495,7 +503,8 @@ export default {
 	z-index: 20;
 }
 .fixed-empty {
-	height: 176px;
+	/*height: 176px;*/
+	height: 206px;
 }
 .seconds-nav-show.fixed-empty {
 	height: 260px;
@@ -665,6 +674,7 @@ export default {
 	height: 230px;
 	border-radius: 10px;
 	overflow: hidden;
+	background-color: #f4f4f4;
 }
 .special-goods-list .life-goods-pic,
 .flash-goods-list .life-goods-pic {
@@ -901,6 +911,7 @@ export default {
 	padding-left: 30px;
 	display: flex;
 	flex-wrap: wrap;
+	padding-bottom: 100px;
 }
 .life-seconds-list .life-goods-item {
 	width: 330px;

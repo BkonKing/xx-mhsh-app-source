@@ -60,7 +60,7 @@
                 <div v-if="item.goods_type>1" class="flex-align-center">
                   <div :class="[item.goods_type == 2 ? 'res-goods-label-tm' : 'res-goods-label-xssg','res-goods-label']">{{item.goods_type == 2 ? '特卖' : '限时闪购'}}</div>
                 </div>
-                <div class="res-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0.00'">￥{{item.y_price}}</span></div>
+                <div class="res-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price}}</span></div>
               </div>
             </div>
           </div>
@@ -358,6 +358,7 @@ export default {
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
+  background-color: #f4f4f4;
 }
 .res-goods-info {
   width: 350px;

@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="我的订单" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-		<div class="bar-empty"></div>
+		<div class="order-bar bar-white">
+			<van-nav-bar
+	      title="我的订单"
+	      :fixed="true"
+	      :border="false"
+	      placeholder
+	      left-arrow
+	      @click-left="$router.go(-1)"
+	    ></van-nav-bar>
+		</div>
 		<div v-if="!navHide" class="nav-empty"></div>
 		<div v-if="!navHide" :style="{'margin-top':$store.state.paddingTop+'px'}" class="nav-box">
 			<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
@@ -232,7 +240,7 @@ export default {
   },
   created(){
   	var type = this.$route.query.type;
-  	if(type){
+  	if(type&&type!='undefined'){
   		this.typeVal = type;
   		this.navHide = true;
   		console.log(this.typeVal)

@@ -3,7 +3,7 @@
     <div class="order-bar bar-flash"><van-nav-bar title="限时闪购" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 
-    <div class="flash-header">
+    <div :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
         <scrollBar direction="x" :tapIndex="tapIndex">
           <div
@@ -58,21 +58,23 @@
         <div class="count-rectangle"></div>
         <div class="count-circular"></div>
       </div>
-
-      <div v-show="navList[tapIndex].status == 1" class="flash-time-text">本场已结束</div>
-      <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
-      <van-count-down v-show="navList[tapIndex].status == 2" class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
-        <template v-slot="timeData">
-          <span class="count-num">{{ timeData.hours }}</span>
-          <div class="count-colon"></div>
-          <span class="count-num">{{ timeData.minutes }}</span>
-          <div class="count-colon"></div>
-          <span class="count-num">{{ timeData.seconds }}</span>
-        </template>
-      </van-count-down>
-      <div v-show="navList[tapIndex].status == 3">
-        <div class="flash-time-text">即将开始</div>
-      </div>
+      
+      <template v-if="navList.length > 0">
+        <div v-show="navList[tapIndex].status == 1" class="flash-time-text">本场已结束</div>
+        <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
+        <van-count-down v-show="navList[tapIndex].status == 2" class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
+          <template v-slot="timeData">
+            <span class="count-num">{{ timeData.hours }}</span>
+            <div class="count-colon"></div>
+            <span class="count-num">{{ timeData.minutes }}</span>
+            <div class="count-colon"></div>
+            <span class="count-num">{{ timeData.seconds }}</span>
+          </template>
+        </van-count-down>
+        <div v-show="navList[tapIndex].status == 3">
+          <div class="flash-time-text">即将开始</div>
+        </div>
+      </template>
         
 
       <!-- <div class="count-time">
@@ -322,33 +324,9 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       time: '',
-      navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶'],
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
       model_txt: '',//通知消息提示词
-      navList: [
-        {
-          start_time_val: '4月30日\n21:00',
-          status_txt: "已结束"
-        },
-        {
-          start_time_val: "07月15日<br />08:00",
-          status_txt: "已结束"
-        }, 
-        {
-          start_time_val: '08月01日\n08:00',
-          status_txt: "正在进行"
-        },
-        {
-          start_time_val: "09月13日\n08:00",
-          status_txt: "即将开始"
-        },
-        {
-          start_time_val: "09月13日\n08:00",
-          status_txt: "即将开始"
-        },
-      ],
-
       showSwal: false,       //提醒弹窗
       set_id: '',            //提醒的商品id
       set_index: '',         //点击提醒的商品index
@@ -532,10 +510,12 @@ export default {
 }
 
 /*菜单*/
-.flash-scroll {
-  height: 218px;
+.flash-header {
   background-image: linear-gradient(to bottom, #38b3ef, #68e0cf);
   /*background-image: linear-gradient(to right, #ffa912, #ffa812);*/
+}
+.flash-scroll {
+  height: 218px;
   position: relative;
   display: flex;
   overflow-x: auto;
@@ -547,6 +527,9 @@ export default {
 .nav-block {
   display: flex;
   justify-content: center;
+}
+.flash-header.flex-center .flash-nav {
+  width: 187px;
 }
 .flash-nav {
   flex-shrink: 0;

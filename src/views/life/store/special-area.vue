@@ -23,8 +23,8 @@
           <div class="special-goods-info">
             <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
             <div class="special-goods-price">
-              <span class="special-price-span1">￥</span>{{item.s_price}}
-              <span v-if="item.y_price && item.y_price!='0.00'" class="special-price-span2">￥{{item.y_price}}</span>
+              <span class="special-price-span1">￥</span>{{item.s_price/100}}
+              <span v-if="item.y_price && item.y_price!='0'" class="special-price-span2">￥{{item.y_price/100}}</span>
             </div>
           </div>
         </div>

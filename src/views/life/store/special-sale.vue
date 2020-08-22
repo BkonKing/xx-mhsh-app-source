@@ -1,21 +1,30 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-white"><van-nav-bar title="特卖" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
-		<div class="special-nav">
-      <scrollBar direction="x" :activeIndex="activeIndex">
-        <div
-          class="scroll-barItem"
-          v-for="(item, index) in navList"
-          :key="index"
-          @click="changeNav(item, index)"
-          :class="index === activeIndex ? 'active' : null"
-        >
-          <div>{{item.bargain_name}}</div>
-        </div>
-      </scrollBar>
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="特卖"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
     </div>
-    <div class="nav-empty"></div>
+    <div class="special-nav-box">
+      <div class="special-nav">
+        <scrollBar direction="x" :activeIndex="activeIndex">
+          <div
+            class="scroll-barItem"
+            v-for="(item, index) in navList"
+            :key="index"
+            @click="changeNav(item, index)"
+            :class="index === activeIndex ? 'active' : null"
+          >
+            <div>{{item.bargain_name}}</div>
+          </div>
+        </scrollBar>
+      </div>
+    </div>
     <van-list
         v-model="loading"
         :finished="finished"
@@ -23,17 +32,17 @@
         @load="onLoad"
       >
       <div class="special-list flex-between">
-        <div v-for="(item,index) in listData" class="special-item" @click="linkFunc(5,{id:item.id})">
+        <div v-for="(item,index) in listData" class="special-item" @click="linkFunc(5,{id:item.goods_id})">
           <div class="special-goods-pic">
             <img class="img-100" :src="item.thumb" />
           </div>
           <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
           <div class="special-goods-price flex-align-center">
             <div class="goods-price-icon flex-align-center">
-              <div class="goods-price-bg flex-align-center">特卖￥<span>{{item.te_price}}</span></div>
+              <div class="goods-price-bg flex-align-center">特卖￥<span>{{item.te_price/100}}</span></div>
               <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
             </div>
-            <div class="goods-old-price">￥{{item.s_price}}</div>
+            <div class="goods-old-price">￥{{item.s_price/100}}</div>
           </div>
         </div>
       </div>
@@ -196,6 +205,9 @@ export default {
   font-size: 28px;
 }
 
+.special-nav-box {
+  height: 98px;
+}
 .special-nav {
   height: 98px;
   background-color: #fff;
@@ -203,10 +215,7 @@ export default {
   position: fixed;
   left: 0;
   right: 0;
-  top: 88px;
-}
-.nav-empty {
-  height: 98px;
+  top: auto;
 }
 .scroll-barItem {
   font-size: 30px;

@@ -1,21 +1,23 @@
 <template>
 	<div :class="[isFocus ? 'white-bg' : '','app-body']">
-    <div :style="{'top':$store.state.paddingTop+'px'}" class="search-input-block flex-between">
-      <div v-if="typeVal == 0" class="search-input-left flex-align-center">
-        <img class="search-icon" src="@/assets/img/icon_11.png" />
-        <van-search class="search-input" ref="input" v-model="search_val" @focus="focus" @search="onSearch" left-icon="" placeholder="搜索应用、商品、帖子" />
+    <div class="search-header">
+      <div :style="{'top':$store.state.paddingTop+'px'}" class="search-input-block flex-between">
+        <div v-if="typeVal == 0" class="search-input-left flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <van-search class="search-input" ref="input" v-model="search_val" @focus="focus" @search="onSearch" left-icon="" placeholder="搜索应用、商品、帖子" />
+        </div>
+        <div v-else-if="typeVal == 1" class="search-input-left flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <van-search class="search-input" ref="input" v-model="goods_val" @search="initFunc" left-icon="" placeholder="搜索商品" />
+        </div>
+        <div v-else-if="typeVal == 2" class="search-input-left flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <van-search class="search-input" ref="input" v-model="postbar_val" @search="initFunc" left-icon="" placeholder="搜索帖子" />
+        </div>
+        <div @click="cancelFunc" class="search-cancel flex-center">取消</div>
       </div>
-      <div v-else-if="typeVal == 1" class="search-input-left flex-align-center">
-        <img class="search-icon" src="@/assets/img/icon_11.png" />
-        <van-search class="search-input" ref="input" v-model="goods_val" @search="initFunc" left-icon="" placeholder="搜索商品" />
-      </div>
-      <div v-else-if="typeVal == 2" class="search-input-left flex-align-center">
-        <img class="search-icon" src="@/assets/img/icon_11.png" />
-        <van-search class="search-input" ref="input" v-model="postbar_val" @search="initFunc" left-icon="" placeholder="搜索帖子" />
-      </div>
-      <div @click="cancelFunc" class="search-cancel flex-center">取消</div>
     </div>
-    <div class="input-empty"></div>
+    <!-- <div class="input-empty"></div> -->
     <template v-if="isFocus">
       <div v-if="hotWordsList.length > 0" class="search-session search-session1">
         <div class="search-tit">热门搜索</div>
@@ -225,7 +227,7 @@ export default {
   created(){
     this.isSelect = this.$route.query.isSelect;
     // this.searchList = JSON.parse(localStorage.getItem('searchWords')) || [];
-    this.searchList = JSON.parse(api.getPrefs({ key: 'searchWords' })) || [];
+    this.searchList = JSON.parse(api.getPrefs({ sync: true,key: 'searchWords' })) || [];
     this.getData();
   },
   mounted () {
@@ -604,10 +606,11 @@ export default {
   position: fixed;
   left: 0;
   right: 0;
+  top: 0;
   background-color: #fff;
   z-index: 20;
 }
-.input-empty {
+.search-header {
   height: 88px;
 }
 .search-input-left {

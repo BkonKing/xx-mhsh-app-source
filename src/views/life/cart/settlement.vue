@@ -26,7 +26,7 @@
     </div>
 
     <div class="cont-session goods-session">
-      <div v-for="(item,index) in carts" class="order-goods-info">
+      <div v-for="(item,index) in carts" class="order-goods-info" @click="linkFunc(5,{id: item.goods_id})">
         <div class="order-pic-block">
           <img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
         </div>
@@ -382,10 +382,10 @@ export default {
       let carts_arr = [];
       if (this.prev_page == 1){
         // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ key: 'cart2' })) || [];
+        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart2' })) || [];
       }else {
         // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
       }
       let carts_list = [];
       let carts_list2 = [];
@@ -425,10 +425,22 @@ export default {
     */
     payFunc: function (e) {
       const that = this;
-      if (!this.addressInfo.id){
-        Toast('请先选择收货地址');
-        return;
-      }
+      // if (!this.addressInfo || !this.addressInfo.id){
+      //   Toast('请先选择收货地址');
+      //   return;
+      // }
+      payOrderUp({
+        order_id: 18,
+        pay_type: 2
+      }).then(res => {
+        if (res.success) {
+          if(res.data){
+            this.payOrderInfo = res.data;
+            this.aliPayUp();
+          }
+        }
+      })
+      return;
       if(this.order_type == 0 || this.prev_page == 0){
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight));
         ordinaryCreate({
@@ -527,21 +539,22 @@ export default {
     },
     //支付宝支付
     aliPayUp(){
+      let that = this;
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
           if(ret.code == '9000'){  //支付成功
-            if(this.order_type == 1 || this.order_type == 2){ //闪购、拼单
-              this.linkFunc(13,{id: this.order_id});
+            if(that.order_type == 1 || that.order_type == 2){ //闪购、拼单
+              that.linkFunc(13,{id: that.order_id});
             }else {
-              this.linkFunc(12,{id: this.order_id});
-              if(this.prev_page == 0){
+              that.linkFunc(12,{id: that.order_id});
+              if(that.prev_page == 0){
                 //删除已购买商品缓存
                 api.removePrefs({ key: 'cart' });
-                api.setPrefs({ key: 'cart', value: JSON.stringify(this.nocarts) });
+                api.setPrefs({ key: 'cart', value: JSON.stringify(that.nocarts) });
               }
             }
-            if(this.prev_page == 1){
+            if(that.prev_page == 1){
               api.removePrefs({ key: 'cart2' });
             }
           }

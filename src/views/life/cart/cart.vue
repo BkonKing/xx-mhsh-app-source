@@ -35,7 +35,7 @@
       <div>暂无商品</div>
     </div>
     <div class="cart-empty"></div>
-    <div class="cart-bottom bottom-fixed">
+    <div v-if="carts.length" class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
         <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
         <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
@@ -67,7 +67,7 @@ export default {
   },
   created(){
     // var carts = JSON.parse(localStorage.getItem('cart'));
-    var carts = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+    var carts = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
     this.carts = carts;
     this.total();
     console.log(carts);
@@ -207,7 +207,6 @@ export default {
      * 结算
     */
     payFunc() {
-      Toast('请选择要结算的商品');
       if(this.numTotal === 0){
         Toast('请选择要结算的商品');
       }else {

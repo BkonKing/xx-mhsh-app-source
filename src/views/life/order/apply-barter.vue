@@ -219,7 +219,7 @@
 </template>
 
 <script>
-import { Icon, NavBar, ImagePreview } from 'vant'
+import { Icon, NavBar, ImagePreview, Toast } from 'vant'
 import { getApplyBarter, barterSubmit } from '@/api/life.js'
 import eventBus from '@/api/eventbus.js';
 import tfUploader from '@/components/tf-uploader/index'
@@ -231,6 +231,7 @@ export default {
     [Icon.name]: Icon,
     [NavBar.name]: NavBar,
     [ImagePreview.name]: ImagePreview,
+    [Toast.name]: Toast,
     reasonSwal,
     explainSwal,
     tfUploader

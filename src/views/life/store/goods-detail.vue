@@ -4,12 +4,12 @@
     <div class="bar-empty"></div>
 
     <div class="banner">
-      <van-swipe @change="onChange">
+      <van-swipe :autoplay="4000" @change="onChange">
         <van-swipe-item v-for="(item, index) in swiperArr" @click="predivPic(index,1)">
           <img class="img-100" :src="item" />
         </van-swipe-item>
         <div class="custom-indicator flex-center" slot="indicator">
-          {{ current + 1 }}/{{infoData.pic_url_arr.length}}
+          {{ current + 1 }}/{{swiperArr.length}}
         </div>
       </van-swipe>
     </div>
@@ -129,7 +129,7 @@
       </div>
     </div>
 
-    <div class="common-list goods-session" @click="ensureFunc">
+    <div v-if="infoData.goods_type == 3" class="common-list goods-session" @click="ensureFunc">
       <div class="common-item">
         <div class="font-26 color-222">基础保障</div>
         <div class="link-icon">
@@ -180,7 +180,7 @@
       </div>
       <div class="cart-btn flex-center" @click="linkFunc(7)">
         <img src="@/assets/img/icon_06.png" />
-        <div class="cart-num">22</div>
+        <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
       </div>
       <template v-if="infoData.is_sell_out > 0">
         <div class="add-btn btn-disabled">{{infoData.sell_out_text}}</div>
@@ -362,6 +362,7 @@ export default {
       f_orderid: '',        //拼单分享 分享人订单id
       specs_id: '',         //拼单分享 分享商品规格id
       ollage_ing_info: '',  //当前的拼单信息
+      cart_num: '',         //购物车商品数
       goods: {              //购物车
         goods_id: '',
         goods_name: '',
@@ -398,6 +399,8 @@ export default {
   },
   created(){
     this.goodsId = this.$route.query.id;
+    var cartList = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+    this.cart_num = cartList.length;
     this.getData();
   },
   methods: {
@@ -441,6 +444,7 @@ export default {
       ImagePreview({
         images: imagesArr,
         startPosition: index,
+        closeOnPopstate: true,
         onClose() {
           // do something
         }
@@ -509,7 +513,7 @@ export default {
       var arr = [];
       if (this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart'){
         // var arr = JSON.parse(localStorage.getItem('cart')) || [];
-        var arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+        var arr = JSON.parse(api.getPrefs({ sync: true, key: 'cart' })) || [];
         if (arr.length > 0) {
           // 遍历购物车数组  
           for (var j in arr) {
@@ -564,7 +568,7 @@ export default {
     */
     limitNum() {
       // let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
-      var carts_arr = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+      var carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
       let cart_counts = 0;
       var num_count = this.goods.count;
       let that = this;
@@ -686,9 +690,10 @@ export default {
     finish() {
       Toast('倒计时结束');
     },
-
-
-
+  },
+  beforeRouteLeave (to, from, next) {
+    
+    next();
   }
 }
 </script>
@@ -904,6 +909,7 @@ div.btn-disabled {
   height: 100%;
   display: flex;
   flex-shrink: 0;
+  /*background-color: #f4f4f4;*/
 }
 .params-goods-right {
   width: 431px;
