@@ -105,6 +105,10 @@ export function getExchangeInfo (params) {
 export function exchangeCreate (params) {
   return request.post('/life/order/create_credits_order', params)
 }
+export function payOrderUp (params) {
+  return request.post('/life/order/pay_order', params)
+}
+
 
 
 //订单列表

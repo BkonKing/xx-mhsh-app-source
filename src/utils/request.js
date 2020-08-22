@@ -42,6 +42,7 @@ service.interceptors.request.use(
       sync: true,
       key: 'access_token'
     })
+
     if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
       config.data = qs.stringify(config.data)
     }

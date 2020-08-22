@@ -239,7 +239,7 @@ import { NavBar, Toast } from 'vant'
 import explainSwal from './../components/explain-swal'
 import paySwal from './../components/pay-swal'
 import eventBus from '@/api/eventbus.js';
-import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate } from '@/api/life.js'
+import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate, payOrderUp } from '@/api/life.js'
 export default {
   name: 'settlement',
   components: {
@@ -318,7 +318,7 @@ export default {
     this.flashParam = {
       ollage_id: this.$route.query.ollage_id,
       specs_id: this.$route.query.specs_id,
-      specs_num: 1,
+      specs_num: this.$route.query.specs_num,
       is_credits: this.is_credits ? 1 : 0,
       order_type: this.order_type,
     }
@@ -373,41 +373,6 @@ export default {
           }
         })
       }
-      
-      return;
-      const that = this;
-      app.util.request({
-        'url': '/xcx/wxjson/get_user_address',
-        'cachetime': '0',
-        'showLoading': false,
-        'data': {
-          uid: this.userId,
-          cj_code: app.util.getScene(),
-        },
-        success(res) {
-          let result = res.data;
-          if (result.code == '0000') {
-            let address_info = result.data.address_info;
-            tmplIds_str = result.data.tmplIds_str;
-            that.setData({
-              addressInfo: address_info
-            })
-            console.log(address_info);
-            if (address_info) {  //判断是否有收货地址
-              let userAddress = '';
-              if (address_info.uaddress_name) {
-                userAddress = app.util.getArea(address_info.uaddress_detail) + address_info.uaddress_name + address_info.uaddress_house
-              } else {
-                userAddress = address_info.uaddress_detail + address_info.uaddress_house;
-              }
-              console.log(userAddress);
-              that.setData({
-                "addressInfo.userAddress": userAddress,
-              })
-            }
-          }
-        }
-      });
     },
     /**
      * 计算商品数量/价格
@@ -447,59 +412,6 @@ export default {
       }
       that.getData();
       return;
-
-      // that.setData({
-      //   priceTotal: priceTotal == 0 ? '0.00' : priceTotal.toFixed(2)
-      // })
-      app.util.request({
-        'url': '/xcx/wxvipjson/common_pay',
-        'cachetime': '0',
-        'showLoading': false,
-        'data': {
-          uid: this.userId,
-          user_coupon_id: this.couponInfo.user_coupon_id,
-          cj_code: app.util.getScene(),
-          giftbag: JSON.stringify(this.carts),
-        },
-        success(res) {
-          let result = res.data;
-          if (result.code == '0000') {
-            that.setData({
-              priceInfo: result.data,
-              couponInfo: result.data.coupon_arr.length > 0 && !this.couponInfo ? result.data.coupon_arr[0] : this.couponInfo,
-              carts: result.goods_arr
-            })
-            console.log(this.couponInfo);
-            if (this.isSelectCoupon){
-              that.setData({
-                "couponInfo.user_coupon_id": this.selectCouponId,
-                "couponInfo.coupon_text": this.selectCouponTxt
-              })
-              this.isSelectCoupon = '';
-            }
-            let carts_arr2 = result.goods_arr;
-            that.setData({
-              'priceInfo.total_price': result.data.total_price.toFixed(2),        //付款金额
-              'priceInfo.total_vip_money': result.data.total_vip_money.toFixed(2),//vip优惠金额
-              'priceInfo.total_e_money': result.data.total_e_money.toFixed(2),    //优享优惠金额
-              'priceInfo.activity_money': result.data.activity_money.toFixed(2),  //活动优惠金额
-              'priceInfo.coupon_money': result.data.coupon_money.toFixed(2),      //优惠券优惠金额
-              'priceInfo.sell_total': result.data.sell_total.toFixed(2),          //售价
-            })
-            if (this.isSelectAddress) {
-              that.setData({
-                "addressInfo.id": this.userAddId,
-                "addressInfo.uname": this.uname,
-                "addressInfo.utel": this.utel,
-                "addressInfo.userAddress": this.userAddress,
-                "addressInfo.is_default": this.is_default
-              })
-              this.isSelectAddress = false;
-              this.userAddress = '';
-            }
-          }
-        }
-      });
     },
     /**
      * 订单备注
@@ -512,12 +424,11 @@ export default {
      * 结算
     */
     payFunc: function (e) {
-      this.openPaySwal();
       const that = this;
-      // if (!this.addressInfo.id){
-      //   Toast('请先选择收货地址');
-      //   return;
-      // }
+      if (!this.addressInfo.id){
+        Toast('请先选择收货地址');
+        return;
+      }
       if(this.order_type == 0 || this.prev_page == 0){
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight));
         ordinaryCreate({
@@ -529,89 +440,40 @@ export default {
           user_explain: this.remarks
         }).then(res => {
           if (res.success) {
-            
+            if(res.code == '200'){
+              this.callbackData = res.order_info;
+              this.order_id = res.order_info.id;
+              this.openPaySwal();
+            }else {
+
+            }
           }
         })
       }else if(this.order_type == 3){
         exchangeCreate(this.flashParam).then(res => {
           if (res.success) {
-            
+            if(res.code == '200'){
+              this.order_id = res.order_info.id;
+              this.linkFunc(12,{id: this.order_id});
+            }else {
+
+            }
           }
         })
       }else {
         flashCreate(this.flashParam).then(res => {
           if (res.success) {
+            if(res.code == '200'){
+              this.order_id = res.order_info.id;
+              this.openPaySwal();
+            }else {
+
+            }
             
           }
         })
       }
-      return;
-      app.util.getMessage(function () {
-        app.util.request({
-          'url': '/xcx/wxvipjson/create_common_order',
-          'cachetime': '0',
-          data: {
-            uid: this.userId,
-            address_id: this.addressInfo.id,
-            remarks: this.remarks,
-            user_coupon_id: this.couponInfo.user_coupon_id,
-            giftbag: JSON.stringify(this.carts),
-            pricetotal: this.priceInfo.total_price
-          },
-          success(res) {
-            let result = res.data;
-            if (result.code == '0000') {
-              //付款
-              wx.requestPayment({
-                'timeStamp': result.data.timeStamp,
-                'nonceStr': result.data.nonceStr,
-                'package': result.data.package,
-                'signType': 'MD5',
-                'paySign': result.data.paySign,
-                'success': function (res2) {
-                  this.is_link = true;
-                  if (this.prev_page) {
-                    wx.removeStorageSync('cart2');
-                  } else {
-                    wx.removeStorageSync('cart');
-                    wx.setStorageSync('cart', this.nocarts);
-                  }
-                  this.carts = [];
-                  wx.navigateTo({
-                    url: '/page/product/pages/ordinary-order-details/ordinary-order-details?ordinary_id=' + result.common_id,
-                  })
-                },
-                'fail': function (res) {
-                  this.is_link = true;
-                  if (this.prev_page) {
-                    wx.removeStorageSync('cart2');
-                  } else {
-                    wx.removeStorageSync('cart');
-                    wx.setStorageSync('cart', this.nocarts);
-                  }
-                  this.carts = [];
-                  wx.navigateTo({
-                    url: '/page/product/pages/ordinary-order-details/ordinary-order-details?ordinary_id=' + result.common_id,
-                  })
-                }
-              })
-            } else {
-              wx.showModal({
-                title: '提示',
-                content: result.msg,
-                showCancel: false,
-                success: function (res) {
-                  if (res.confirm) {
-                    wx.navigateBack({});
-                  }
-                }
-              });
-            }
-          }
-        })
-      }, tmplIds_str);
     },
-
     /**
      * 积分选择
      */
@@ -649,8 +511,43 @@ export default {
       if(data == 0){  //微信支付
 
       }else {   //支付宝支付
-
+        
       }
+      payOrderUp({
+        order_id: this.order_id,
+        pay_type: data == 0 ? 1 : 2
+      }).then(res => {
+        if (res.success) {
+          if(res.data){
+            this.payOrderInfo = res.data;
+            this.aliPayUp();
+          }
+        }
+      })
+    },
+    //支付宝支付
+    aliPayUp(){
+      var aliPayPlus = api.require('aliPayPlus'); 
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
+        function(ret, err) { 
+          if(ret.code == '9000'){  //支付成功
+            if(this.order_type == 1 || this.order_type == 2){ //闪购、拼单
+              this.linkFunc(13,{id: this.order_id});
+            }else {
+              this.linkFunc(12,{id: this.order_id});
+              if(this.prev_page == 0){
+                //删除已购买商品缓存
+                api.removePrefs({ key: 'cart' });
+                api.setPrefs({ key: 'cart', value: JSON.stringify(this.nocarts) });
+              }
+            }
+            if(this.prev_page == 1){
+              api.removePrefs({ key: 'cart2' });
+            }
+          }
+          // api.alert({ title: '支付结果', msg: ret.code, buttons: ['确定'] }); 
+        }
+      );
     },
     linkFunc (type,obj={}) {
       switch (type){
@@ -668,6 +565,22 @@ export default {
           query: {
             prev_page: this.prev_page,
             user_coupon_id: this.couponInfo.user_coupon_id
+          }
+        })
+        break;
+        case 12:
+        this.$router.push({
+          path: '/order/detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+        case 13:
+        this.$router.push({
+          path: '/order/special-detail',
+          query: {
+            id: obj.id
           }
         })
         break;
