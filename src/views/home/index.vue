@@ -313,8 +313,6 @@ export default {
     },
     /* 跳转限时闪购列表 */
     goTimeLimit () {
-      console.log('限时闪购')
-      //
       this.$router.push('/store/flash-purchase')
     },
     /* 跳转限时闪购详情 */

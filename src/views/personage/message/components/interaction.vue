@@ -4,17 +4,6 @@
       <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
       <div class="tf-list" @click="jump(item)">
         <template v-if="item.type === 0">
-          <div class="tf-row-vertical-center tf-mb-lg">
-            <div class="tf-icon tf-icon-dianzan like-icon"></div>
-            <div class="tf-text-sm">我收到了点赞</div>
-          </div>
-          <div class="tf-row-vertical-center message-box">
-            <div class="tf-icon tf-icon-dianzan tf-text-orange"></div>
-            <div class="tf-text-sm tf-text-grey like-number">233</div>
-            <div class="tf-text-sm tf-text-grey">关于美好生活家园2020年中秋佳节社区活动</div>
-          </div>
-        </template>
-        <template v-else>
           <div class="tf-row-space-between">
             <div class="tf-row-vertical-center">
               <img class="tf-avatar-sm tf-mr-base" src="/static/app-icon.png" mode="aspectFit" />
@@ -30,6 +19,17 @@
           <div class="tf-row message-box">
             <div class="tf-text-sm tf-text-blue">233</div>
             <div class="tf-text-sm tf-text-grey">：关于美好生活家园2020年中秋佳节社区活动</div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="tf-row-vertical-center tf-mb-lg">
+            <div class="tf-icon tf-icon-dianzan like-icon"></div>
+            <div class="tf-text-sm">{{item.title}}</div>
+          </div>
+          <div class="tf-row-vertical-center message-box">
+            <div class="tf-icon tf-icon-dianzan tf-text-orange"></div>
+            <div class="tf-text-sm tf-text-grey like-number">233</div>
+            <div class="tf-text-sm tf-text-grey">{{item.content}}</div>
           </div>
         </template>
       </div>
@@ -53,6 +53,9 @@ export default {
     getMessageList (params) {
       params.remind_type = 3
       return getMessageList(params)
+    },
+    jump (item) {
+      this.$emit('click', item)
     }
   }
 }

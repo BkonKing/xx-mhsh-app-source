@@ -230,9 +230,24 @@ export function getMyJoinActivityList (params) {
 /* 我的互动 end */
 
 /* 我的消息 start */
+
+// 获取消息列表
 export function getMessageList (params) {
   return request.get('/my/message/getMessageList', { params })
 }
+// 统计未读消息
+export function getCountMessage (params) {
+  return request.get('/my/message/countMessage', { params })
+}
+// 消息已读
+export function messageRead (data) {
+  return request.post('/my/message/messageRead', data)
+}
+// 消息全部已读
+export function messageAllRead (data) {
+  return request.post('/my/message/messageAllRead', data)
+}
+
 /* 我的消息 end */
 
 /* 基础信息 start */
@@ -256,6 +271,10 @@ export function editBirthday (data) {
 // 编辑真实姓名
 export function editRealname (data) {
   return request.post('/my/account/editRealname', data)
+}
+// 人脸采集
+export function cjFace (data) {
+  return request.post('/my/face/cjFace', data)
 }
 
 /* 基础信息 end */

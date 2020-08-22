@@ -4,7 +4,7 @@
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-          <span v-if="userInfo.message_mum" class="van-info">{{userInfo.message_mum}}</span>
+          <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
         </span>
       </template>
     </van-nav-bar>

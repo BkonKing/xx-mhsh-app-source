@@ -40,3 +40,9 @@ export function getMyApp (params) {
 export function saveMyApp (data) {
   return request.post('/index/apps/saveMyApp', data)
 }
+// 用户协议
+export function getUserAgreement (params) {
+  return request.get('/ulogin/agreement/user_agreement', {
+    params
+  })
+}

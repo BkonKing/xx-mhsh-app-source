@@ -71,7 +71,9 @@
           ></tf-list-item>
         </tf-list>
         <tf-list class="basics-list">
-          <tf-list-item title="人脸采集"></tf-list-item>
+          <van-uploader :after-read="cjFace" style="width: 100%;">
+            <tf-list-item title="人脸采集"></tf-list-item>
+          </van-uploader>
         </tf-list>
         <tf-list class="basics-list">
           <tf-list-item
@@ -155,7 +157,8 @@ import {
   editNickname,
   editGender,
   editBirthday,
-  editRealname
+  editRealname,
+  cjFace
 } from '@/api/personage'
 export default {
   name: 'informationIndex',
@@ -210,11 +213,14 @@ export default {
     ...mapGetters(['userInfo', 'userType'])
   },
   mounted () {
-    eventBus.$on('chooseAddress', function (data) {
-      this.addressInfo = JSON.parse(data)
-      this.address_id = this.addressInfo.id
-      console.log(this.addressInfo)
-    }.bind(this))
+    eventBus.$on(
+      'chooseAddress',
+      function (data) {
+        this.addressInfo = JSON.parse(data)
+        this.address_id = this.addressInfo.id
+        console.log(this.addressInfo)
+      }.bind(this)
+    )
   },
   async created () {
     eventBus.$off('chooseAddress')
@@ -381,6 +387,27 @@ export default {
         }
       })
     },
+    // 人脸采集
+    cjFace (file) {
+      Toast.loading({
+        message: '人脸图片上传中'
+      })
+      const formData = new FormData()
+      formData.append('imgFile', file.file)
+      uImages(formData)
+        .then((res) => {
+          cjFace({
+            face_url: res.data
+          }).then((res) => {
+            Toast.success(res.message)
+            Toast.clear()
+          })
+        })
+        .catch((message) => {
+          Toast.clear()
+          Toast.fail(message)
+        })
+    },
     goback () {
       this.$router.replace('/personage')
     }
@@ -413,6 +440,7 @@ export default {
   /deep/ .van-uploader__input-wrapper {
     display: flex;
     align-items: center;
+    flex: 1;
   }
 }
 

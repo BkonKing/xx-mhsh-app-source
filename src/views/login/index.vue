@@ -45,7 +45,7 @@
       </div>
       <span class="agreement-text" style="color: #fff;">
         登录即表示您同意
-        <router-link style="color: #fff;" to="/home">《美好生活家园用户协议》</router-link>
+        <router-link style="color: #fff;" to="/agreement">《美好生活家园用户协议》</router-link>
       </span>
     </div>
   </div>

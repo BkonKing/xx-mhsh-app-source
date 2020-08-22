@@ -39,8 +39,8 @@ export default {
     // this.getFeedbackList()
   },
   methods: {
-    getFeedbackList () {
-      return getFeedbackList()
+    getFeedbackList (params) {
+      return getFeedbackList(params)
     },
     jump (item) {
       const url = `/pages/personage/feedback/details?id=${item.id}`

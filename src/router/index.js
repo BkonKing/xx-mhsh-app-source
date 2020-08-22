@@ -108,6 +108,15 @@ const routes = [{
       '@/views/home/applist.vue'
     )
 },
+{
+  path: '/agreement',
+  name: 'agreement',
+  component: () =>
+    import(
+      /* webpackChunkName: "agreement" */
+      '@/views/index/agreement.vue'
+    )
+},
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,

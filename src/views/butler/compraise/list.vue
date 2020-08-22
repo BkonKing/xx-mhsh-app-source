@@ -51,8 +51,8 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    getComPraiseList () {
-      return getComPraiseList()
+    getComPraiseList (params) {
+      return getComPraiseList(params)
     },
     jump (item) {
       const url = `/pages/butler/compraise/details?id=${item.id}&type=${item.info_type}`

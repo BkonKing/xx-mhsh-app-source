@@ -1,7 +1,7 @@
 <template>
   <refreshList class="reply-list" :list.sync="commentList" :load="getMyCommentList">
     <template v-slot="{item}">
-      <div class="reply-cell-content">
+      <div class="reply-cell-content" @click="goNeighbours(item)">
         <userInfo :avatar="userInfo.avatar || ''" :name="userInfo.nickname" :time="item.ctime" size="m"></userInfo>
         <div class="reply-cell-content__text">{{item.content}}</div>
         <div v-if="item.images && item.images.length > 0" class="reply-cell-content__img-box">
@@ -39,6 +39,15 @@ export default {
   methods: {
     getMyCommentList (params) {
       return getMyCommentList(params)
+    },
+    goNeighbours (item) {
+      this.$router.push({
+        path: '/pages/neighbours/details',
+        query: {
+          articleType: item.article_type,
+          id: item.article_id
+        }
+      })
     }
   }
 }

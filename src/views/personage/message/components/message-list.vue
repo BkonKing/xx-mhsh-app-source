@@ -66,15 +66,8 @@ export default {
       this.isRead = status
       this.moreShowChild = true
     },
-    mark () {},
-    jump () {
-      switch (this.type) {
-        case 'transaction':
-          break
-
-        default:
-          break
-      }
+    jump (item) {
+      this.$emit('click', item)
     }
   },
   watch: {

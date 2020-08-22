@@ -4,7 +4,7 @@ import {
   Toast
 } from 'vant'
 
-const whiteList = ['/login']
+const whiteList = ['/login', '/agreement']
 
 router.beforeEach(async (to, from, next) => {
   // Toast.loading({

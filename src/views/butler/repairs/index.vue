@@ -224,7 +224,7 @@ export default {
     }
   }
 }
-.tf-card {
+.tf-card + .tf-card {
   margin-top: @padding-lg;
 }
 .tf-card-header {

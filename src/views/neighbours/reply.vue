@@ -239,7 +239,7 @@ export default {
       this.replyNum++
       this.commentShow = false
       if (this.moreShow) {
-        this.replyList[this.index].child.unshift(data)
+        this.replyList.unshift(data)
         this.moreShow = false
       } else {
         this.replyList.unshift(data)
