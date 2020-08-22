@@ -2,7 +2,7 @@
   <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
     <page-nav-bar></page-nav-bar>
-    <van-notice-bar class="swiper-nav" left-icon="volume-o" :scrollable="false">
+    <van-notice-bar v-if="noticeList.length" class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
         <van-swipe-item
           v-for="item in noticeList"
@@ -38,60 +38,7 @@ export default {
   data () {
     return {
       noticeList: [],
-      appList: [
-        {
-          id: '1',
-          icon_image:
-            'https://test.mhshjy.com/upload/images/202006/26/1593160591_931157.jpg',
-          application: '云门禁',
-          url: '/gj/mj'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '公告通知',
-          url: '/pages/butler/notice/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '报事报修',
-          url: '/pages/butler/repairs/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '免费服务',
-          url: '/pages/butler/freeserver/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '访客邀约',
-          url: '/pages/butler/visitor/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '投诉表扬',
-          url: '/pages/butler/compraise/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '小区活动',
-          url: '/neighbours?active=2'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '问卷投票',
-          url: '/pages/butler/questionnaire/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '呼叫物业',
-          url: '/pages/butler/call-property/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '便民电话',
-          url: '/pages/butler/convenience-phone/index'
-        }
-      ]
+      appList: []
     }
   },
   computed: {
@@ -101,7 +48,7 @@ export default {
     }
   },
   created () {
-    // this.queryAllApp()
+    this.queryAllApp()
     this.getNoticeLbList()
   },
   methods: {

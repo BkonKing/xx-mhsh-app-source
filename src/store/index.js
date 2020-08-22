@@ -30,7 +30,7 @@ const store = {
     visitorList: null,
     houseSelected: null,
     current_project: null,
-    keepAliveList: [],
+    keepAliveList: ['mainIndex'],
     paddingTop: 0,
     paddingBottom: 0
   },

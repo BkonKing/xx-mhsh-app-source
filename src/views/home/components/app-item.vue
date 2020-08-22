@@ -1,14 +1,13 @@
 <template>
-  <div class="app-box" :class="{'app-box--edit': editMode}">
+  <div class="app-box" :class="{'app-box--edit': editMode}" @click.stop="operate">
     <img class="app-icon" :src="src" />
     <div class="app-name">{{name}}</div>
     <template v-if="editMode && status !== 1">
       <span
         v-if="mode == 'remove' && status == 2"
         class="tf-icon tf-icon-close-circle-fill"
-        @click="remove"
       ></span>
-      <span v-else-if="status == 0" class="tf-icon tf-icon-plus-circle-fill" @click="add"></span>
+      <span v-else-if="status == 0" class="tf-icon tf-icon-plus-circle-fill"></span>
       <span v-else-if="status == 2" class="tf-icon tf-icon-gouxuan"></span>
     </template>
   </div>
@@ -18,10 +17,12 @@
 export default {
   name: 'app-item',
   props: {
+    // 是否编辑状态
     editMode: {
       type: Boolean,
       default: false
     },
+    // 是否删除操作
     mode: {
       type: String,
       default: ''
@@ -34,12 +35,22 @@ export default {
       type: String,
       default: ''
     },
+    // 当前应用状态 0可添加，1常用，2已添加
     status: {
       type: Number || String,
       default: 1
     }
   },
   methods: {
+    operate () {
+      if (this.editMode && this.status !== 1) {
+        if (this.mode == 'remove' && this.status == 2) {
+          this.remove()
+        } else if (this.status == 0) {
+          this.add()
+        }
+      }
+    },
     add () {
       this.$emit('add')
     },

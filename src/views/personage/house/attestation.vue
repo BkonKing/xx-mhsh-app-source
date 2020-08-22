@@ -122,6 +122,7 @@ export default {
       checked: false,
       agreeValue: false,
       id: '',
+      bindingId: '', // 绑定id
       house_id: '1',
       project_id: '',
       building_id: '',
@@ -160,9 +161,14 @@ export default {
     this.mode = parseInt(this.$route.query.mode)
     this.select = parseInt(this.$route.query.select)
     if (this.type === 0 && this.mode === 1) {
-      const { realname, mobile, house_role, fc_info, project_name, id } = JSON.parse(
-        this.$route.query.info
-      )
+      const {
+        realname,
+        mobile,
+        house_role,
+        fc_info,
+        project_name,
+        id
+      } = JSON.parse(this.$route.query.info)
       this.id = id
       this.realname = realname
       this.mobile = mobile
@@ -170,7 +176,7 @@ export default {
       this.house_name = this.house_name = project_name + fc_info
     } else if (this.type === 1) {
       if (this.mode === 1) {
-        this.house_id = this.$route.query.id
+        this.bindingId = this.$route.query.id
         this.bindingRoomInfo()
       } else {
         this.mobile = this.userInfo.mobile
@@ -291,19 +297,14 @@ export default {
         house_name: this.house_name,
         realname: this.realname,
         mobile: this.mobile,
-        house_role: this.house_role
+        house_role: this.house_role,
+        is_default: this.checked ? 1 : 0
       }
       roomAttest(params).then((res) => {
         if (res.success) {
           Toast.success('审核成功')
           if (this.userInfo.user_type == 0) {
-            const user = this.userInfo
-            user.user_type = this.house_role
-            api.setPrefs({
-              key: 'user_info',
-              value: user
-            })
-            this.$store.commit('setUser_info', user)
+            this.$store.dispatch('getMyAccount')
           }
           if (this.select == '1') {
             this.$store.dispatch('getHouse')
@@ -316,10 +317,10 @@ export default {
         }
       })
     },
-    /* 认证房间详情 */
+    /* 获取认证房间详情 */
     bindingRoomInfo () {
       bindingRoomInfo({
-        binding_id: this.house_id
+        bindingId: this.bindingId
       }).then((res) => {
         const {
           realname,
@@ -328,29 +329,39 @@ export default {
           house_name,
           project_name,
           building_name,
-          unit_name
+          unit_name,
+          is_default
         } = res.data
         this.realname = realname
         this.mobile = mobile
         this.house_role = house_role
         this.house_name = project_name + building_name + unit_name + house_name
+        this.checked = is_default === '1'
       })
     },
     /* 设置当前房间 */
     bindingDefault () {
       bindingDefault({
-        binding_id: this.binding_id
-      }).then((res) => {})
+        binding_id: this.bindingId
+      }).then((res) => {
+        Toast.success('当前房间设置成功!')
+        this.$store.dispatch('getHouse')
+      })
     },
     /* 解除绑定房间 */
     unBinding () {
       unBinding({
-        binding_id: this.binding_id
-      }).then((res) => {})
+        binding_id: this.bindingId
+      }).then((res) => {
+        Toast.alert({
+          title: '解绑成功！'
+        }).then(() => {
+          this.$router.go(-1)
+        })
+      })
     },
     /* 删除报备成员 */
     deleteMember () {
-      console.log(this.id)
       deleteMember({
         id: this.id
       }).then((res) => {

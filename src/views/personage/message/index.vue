@@ -47,8 +47,7 @@ export default {
   },
   data () {
     return {
-      items: ['交易', '互动', '物业', '活动', '系统', '工作'],
-      badge: [1, 2, 3, 4, 5, 99],
+      badge: ['', '', '', '', '', ''],
       current: 0
     }
   },

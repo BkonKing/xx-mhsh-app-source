@@ -20,6 +20,11 @@ export function getCreditsGoodsList (data) {
   return request.post('/life/goods/credits_goods_list', data)
 }
 
+// 美好头条
+export function getMhttList (data) {
+  return request.post('/index/article/mhtt', data)
+}
+
 // 所有应用列表
 export function getAllApp () {
   return request.get('/index/apps/allApp')

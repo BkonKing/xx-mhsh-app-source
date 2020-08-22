@@ -127,7 +127,7 @@ export default {
     verifCode () {
       verifCode({
         mobile: this.mobile
-      }).then(res => {
+      }).then((res) => {
         Toast.success('验证码发送成功，请注意查收')
         this.codeStatus = true
         this.count()
@@ -209,6 +209,10 @@ export default {
   font-size: 34px;
   background-color: rgba(255, 255, 255, 0.4);
   .tf-icon {
+    display: flex;
+    line-height: 80px;
+    padding-left: 10px;
+    padding-right: 10px;
     font-size: 36px;
   }
   /deep/ .van-field__control {

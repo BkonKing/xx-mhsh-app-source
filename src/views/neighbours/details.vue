@@ -32,8 +32,8 @@
         </div>
         <template v-if="articleType == 1">
           <div class="article-title">{{info.title}}</div>
-          <div class="article-content">{{info.content}}</div>
-          <img class="activity-image" :src="info.thumbnail" />
+          <div class="article-content" v-html="info.content"></div>
+          <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
         <template v-else-if="articleType == 3">
           <tf-alert
@@ -44,14 +44,14 @@
             :showIcon="false"
             size="sm"
           ></tf-alert>
-          <div class="tf-card-content">{{ info.content }}</div>
+          <div class="tf-card-content">{{info.content}}</div>
           <tf-image-list v-if="info.images && info.images.length" :data="info.images" mode="show"></tf-image-list>
         </template>
         <template v-else-if="articleType == 2">
           <div class="article-title">{{info.title}}</div>
           <div class="activity-content">
-            <div class="tf-text tf-mb-base">{{info.content}}</div>
-            <img class="activity-image" :src="info.thumbnail" />
+            <div class="tf-text tf-mb-base" v-html="info.content"></div>
+            <!-- <img class="activity-image" :src="info.thumbnail" /> -->
             <div class="apply-box">
               <div class="apply-title">
                 报名人员
@@ -274,12 +274,18 @@ export default {
   border-top: 1px solid @divider-color;
   font-size: 28px;
   color: #666;
+  /deep/ img {
+    max-width: 100% !important;
+  }
 }
 .activity-content {
   @flex-column();
   align-items: center;
   border-top: 1px solid @divider-color;
   padding-top: 30px;
+  /deep/ img {
+    max-width: 100% !important;
+  }
   .apply-box {
     width: 100%;
     background: #ffffff;

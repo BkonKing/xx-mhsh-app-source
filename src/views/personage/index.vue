@@ -4,7 +4,7 @@
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-          <span class="van-info">2</span>
+          <span v-if="userInfo.message_mum" class="van-info">{{userInfo.message_mum}}</span>
         </span>
       </template>
     </van-nav-bar>
@@ -31,7 +31,7 @@
           <div class="user-text--lg">{{userInfo.credits}}</div>
           <div class="user-text--grey">幸福币</div>
         </div>
-        <div class="tf-flex-item tf-column">
+        <div class="tf-flex-item tf-column" @click="$router.push('/coupon/list')">
           <div class="user-text--lg">26</div>
           <div class="user-text--grey">优惠券</div>
         </div>

@@ -2,7 +2,12 @@
   <div class="tf-bg-white tf-body">
     <div class="home-header" :style="{'background': headerColor}">
       <page-nav-bar search></page-nav-bar>
-      <van-notice-bar class="home-notice" left-icon="volume-o" :scrollable="false">
+      <van-notice-bar
+        v-if="noticeList.length"
+        class="home-notice"
+        left-icon="volume-o"
+        :scrollable="false"
+      >
         <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
           <van-swipe-item
             v-for="item in noticeList"
@@ -12,7 +17,7 @@
         </van-swipe>
       </van-notice-bar>
     </div>
-    <div class="tf-body-container">
+    <div class="tf-body-container" :class="{'no-notice': !noticeList.length}">
       <van-swipe
         class="home-swipe"
         :autoplay="6000"
@@ -105,7 +110,7 @@
           </van-swipe-item>
         </van-swipe>
       </div>
-      <div class="community-box" v-if="userType != 0">
+      <div class="community-box">
         <div class="community-box__title" @click="goCommunity">
           社区活动
           <span class="tf-icon tf-icon-right"></span>
@@ -124,8 +129,8 @@
             </van-image>
             <div class="activity-info">
               <div class="activity-info__day">
-                <span class="tf-text">23</span>
-                <span class="font20">五月</span>
+                <span class="tf-text">{{new Date(item.stime.replace(/-/g, '/')).getDate()}}</span>
+                <span class="font20">{{new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText}}</span>
               </div>
               <div class="activity-info__right">
                 <div class="activity-info__title">{{item.title}}</div>
@@ -137,18 +142,26 @@
       </div>
       <van-notice-bar class="front-page" :scrollable="false">
         <template v-slot:left-icon>
-          <img class="front-page__tag" src="@/assets/imgs/home_toutiao.png" />
+          <img class="front-page__tag" src="@/assets/imgs/home_toutiao.png" @click="$router.push('/neighbours?active=3')" />
         </template>
-        <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+        <van-swipe
+          v-if="twoFrontList.length"
+          class="notice-swipe"
+          vertical
+          :autoplay="3000"
+          :show-indicators="false"
+        >
           <van-swipe-item v-for="(item, i) in twoFrontList" :key="i">
             <div
+              v-if="item[0]"
               class="front-page__text van-ellipsis"
               @click="clickFront(item[0])"
-            >{{item[0].content}}</div>
+            >{{item[0].title}}</div>
             <div
+              v-if="item[1]"
               class="front-page__text van-ellipsis"
               @click="clickFront(item[1])"
-            >{{item[1].content}}</div>
+            >{{item[1].title}}</div>
           </van-swipe-item>
         </van-swipe>
       </van-notice-bar>
@@ -164,7 +177,8 @@ import {
   GridItem,
   Image,
   NoticeBar,
-  Toast
+  Toast,
+  Dialog
 } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
@@ -173,7 +187,8 @@ import {
   getBannerIndex,
   getBargainGoods,
   getOllageGoods,
-  getCreditsGoodsList
+  getCreditsGoodsList,
+  getMhttList
 } from '@/api/home'
 import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
@@ -200,72 +215,7 @@ export default {
       bargainList: [], // 特价商品
       ollageGoods: [], // 闪购商品
       creditsGoods: [], // 幸福币商品
-      coinList: [
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        },
-        {
-          icon_image: 'https://img.yzcdn.cn/vant/cat.jpeg'
-        }
-      ],
-      saleImages: [
-        {
-          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          id: '1'
-        }
-      ],
-      timeLimitImages: [
-        {
-          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          price: '123',
-          id: '1'
-        },
-        {
-          src: 'https://img.yzcdn.cn/vant/cat.jpeg',
-          price: '1233',
-          id: '2'
-        }
-      ],
-      frontList: [
-        {
-          id: '1',
-          content:
-            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
-        },
-        {
-          id: '2',
-          content:
-            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
-        },
-        {
-          id: '4',
-          content:
-            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
-        },
-        {
-          id: '3',
-          content:
-            '聊一聊买手最爱的小众设计手表——跟买手聊一聊她们私藏的小众设计表单'
-        }
-      ],
+      frontList: [],
       activityList: []
     }
   },
@@ -284,12 +234,15 @@ export default {
     }
   },
   created () {
+    this.$store.dispatch('getMyAccount')
     this.getBannerIndex()
     this.getNoticeLbList()
     this.getMyApp()
     this.getCreditsGoodsList()
+    this.getBargainGoods()
     this.getActivityList()
     this.getOllageGoods()
+    this.getMhttList()
   },
   methods: {
     /* 获取通知轮播列表 */
@@ -346,12 +299,11 @@ export default {
     },
     /* 跳转9.9特卖专区 */
     goSpecialSale () {
-      console.log('9.9特卖专区')
-      // this.$router.push("")
+      this.$router.push('/store/special-sale')
     },
     /* 9.9特卖专区图片点击 */
-    clickSpecialSale ({ id }) {
-      console.log(id)
+    clickSpecialSale ({ goods_id }) {
+      this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
     /* 获取闪购专区 */
     getOllageGoods () {
@@ -359,15 +311,15 @@ export default {
         this.ollageGoods = res.data
       })
     },
-    /* 跳转限时闪购 */
+    /* 跳转限时闪购列表 */
     goTimeLimit () {
       console.log('限时闪购')
-      // this.$router.push("")
+      //
+      this.$router.push('/store/flash-purchase')
     },
-    /* 限时闪购图片点击 */
-    clickTimeLimit (id) {
-      console.log(id)
-      // this.$router.push("")
+    /* 跳转限时闪购详情 */
+    clickTimeLimit ({ goods_id }) {
+      this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
     /* 获取活动列表 */
     getActivityList () {
@@ -376,9 +328,8 @@ export default {
       })
     },
     /* 跳转活动详情 */
-    goActivity (item) {
-      console.log(item)
-      // this.$router.push("")
+    goActivity ({ id }) {
+      this.$router.push(`/pages/neighbours/details?articleType=2&id=${id}`)
     },
     /* 跳转社区活动 */
     goCommunity () {
@@ -399,9 +350,68 @@ export default {
       })
     },
     /* 点击头条跳转相应内容 */
-    clickFront (item) {
-      console.log(item)
-      // this.$router.push("")
+    clickFront ({ id }) {
+      this.$router.push(`/pages/neighbours/details?articleType=1&id=${id}`)
+    },
+    /* 获取美好头条 */
+    getMhttList () {
+      getMhttList().then((res) => {
+        this.frontList = res.data || []
+      })
+    }
+  },
+  filters: {
+    monthText (value) {
+      const numText = [
+        '一月',
+        '二月',
+        '三月',
+        '四月',
+        '五月',
+        '六月',
+        '七月',
+        '八月',
+        '九月',
+        '十月',
+        '十一',
+        '十二'
+      ]
+      return numText[value]
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    next((vm) => {
+      if (from.name === 'applist') {
+        vm.getMyApp()
+      }
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    const butlerList = [
+      'entranceIndex',
+      'noticeIndex',
+      'repairsIndex',
+      'freeserverIndex',
+      'visitorIndex',
+      'compraiseIndex',
+      'questionnaireIndex',
+      'propertyIndex',
+      'convenienceIndex',
+      'noticeDetails'
+    ]
+    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      Dialog.confirm({
+        title: '提示',
+        message: '您尚未认证房间，是否去认证？',
+        confirmButtonText: '去认证'
+      }).then((res) => {
+        this.$router.push(
+          '/pages/personage/house/attestation?type=1&mode=0&select=1'
+        )
+      })
+      next(false)
+    } else {
+      next()
     }
   }
 }
@@ -412,8 +422,9 @@ export default {
   height: 100%;
 }
 .home-notice {
-  height: 66px;
+  height: 96px;
   margin: 0 20px 0;
+  padding-bottom: 30px;
   background: #fff;
   /deep/ .notice-swipe {
     height: 66px;
@@ -434,7 +445,6 @@ export default {
   // top: 0;
   left: 0;
   width: 100%;
-  padding-bottom: 30px;
   z-index: 1;
 }
 .tf-body-container {
@@ -446,6 +456,9 @@ export default {
 .swipe-item__image {
   width: 100%;
   height: 344.4px;
+}
+.no-notice {
+  padding-top: 88px;
 }
 /* app列表 */
 .app-box {
@@ -624,11 +637,11 @@ export default {
   background: @background-color;
   border-radius: 10px;
   .notice-swipe {
-    height: 88px;
+    height: 80px;
     /deep/ .van-swipe-item {
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: space-between;
     }
   }
   &__tag {
@@ -643,8 +656,8 @@ export default {
     text-align: center;
   }
   &__text {
-    font-size: 26px;
-    line-height: 1.2;
+    font-size: 24px;
+    line-height: 1;
     color: #222;
   }
 }

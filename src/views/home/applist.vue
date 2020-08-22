@@ -10,7 +10,7 @@
         <span v-show="editMode" class="font-26" @click="cancelEdit">取消</span>
       </div>
       <div v-show="!editMode" class="search-box">
-        <van-search v-model="value" placeholder="全部应用" />
+        <van-search v-model="value" placeholder="全部应用" @input="searchChange" />
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
@@ -56,11 +56,11 @@
           <div class="module-title">最近使用</div>
           <app-container :data="latelyList" :editMode="editMode" @add="add"></app-container>
         </div> -->
-        <div class="tf-mb-lg">
+        <div v-if="showButler" class="tf-mb-lg">
           <div class="module-title">智慧管家</div>
           <app-container :data="butlerList" :search="value" :editMode="editMode" @add="add"></app-container>
         </div>
-        <div>
+        <div v-if="showNeighbour">
           <div class="module-title">和谐邻里</div>
           <app-container :data="neighbourList" :search="value" :editMode="editMode" @add="add"></app-container>
         </div>
@@ -94,7 +94,9 @@ export default {
       butlerList: [],
       neighbourList: [],
       myAppList_copy: [],
-      allAppList_copy: {}
+      allAppList_copy: {},
+      showButler: true,
+      showNeighbour: true
     }
   },
   created () {
@@ -135,6 +137,7 @@ export default {
       this.butlerList.some(changeStatus)
       this.neighbourList.some(changeStatus)
     },
+    // 拖拽监听事件
     onMove ({ relatedContext, draggedContext }) {
       const relatedElement = relatedContext.element
       const draggedElement = draggedContext.element
@@ -149,6 +152,11 @@ export default {
       this.butlerList = butlerList
       this.neighbourList = neighbourList
       this.editMode = false
+    },
+    /* 搜索 */
+    searchChange (value) {
+      this.showButler = this.butlerList.some(obj => obj.application.indexOf(value) > -1)
+      this.showNeighbour = this.neighbourList.some(obj => obj.application.indexOf(value) > -1)
     },
     /* 获取全部应用 */
     getAllApp () {
@@ -167,7 +175,7 @@ export default {
       //   message: '加载中'
       // })
       getMyApp().then((res) => {
-        this.myAppList = res.data
+        this.myAppList = res.data || []
         // Toast.clear()
       })
     },

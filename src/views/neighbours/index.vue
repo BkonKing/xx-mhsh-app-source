@@ -11,7 +11,7 @@
       <template #right>
         <span class="tf-icon tf-icon-bianxie" @click="goEdit"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-          <span v-if="status" class="van-info">2</span>
+          <span v-if="userInfo.message_mum" class="van-info">{{userInfo.message_mum}}</span>
         </span>
       </template>
     </van-nav-bar>
@@ -65,7 +65,6 @@ export default {
   },
   data () {
     return {
-      status: 1,
       current: 0,
       isAll: 1,
       showIsAll: false,

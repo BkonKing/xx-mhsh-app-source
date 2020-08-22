@@ -5,7 +5,7 @@
       :key="i"
       class="house-box"
       :class="{'house-owner': i === 0}"
-      @click="change(item.id, i)"
+      @click="change(item.binding_id, i)"
     >
       <div v-if="i === 0" class="tf-row-center">
         <div class="house-owner-current">当前房产</div>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
@@ -75,22 +76,21 @@ export default {
         }
       })
     },
-    change (id, index) {
+    change (bindingId, index) {
       if (this.mode) {
-        this.$emit('change', id)
+        this.$emit('change', bindingId)
       } else {
-        this.bindingDefault(id, index)
+        this.bindingDefault(bindingId, index)
       }
     },
-    bindingDefault (id, index) {
+    bindingDefault (bindingId, index) {
       bindingDefault({
-        binding_id: id
+        binding_id: bindingId
       }).then((res) => {
-        this.houseList.forEach((obj) => {
-          obj.current = false
-        })
-        this.houseList[index].current = true
-        this.$store.commit('setCurrentProject', this.houseList[index])
+        Toast.success('设置成功')
+        const current = this.houseList.splice(index, 1)
+        this.houseList.unshift(...current)
+        this.$store.commit('setCurrentProject', ...current)
       })
     }
   }

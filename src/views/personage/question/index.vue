@@ -11,7 +11,7 @@
     <div class="tf-body-container">
       <FAQ :data="questionList"></FAQ>
     </div>
-    <div class="question-footer-placeholder" v-if="hotline">
+    <div v-if="hotline" class="question-footer-placeholder" @click="makePhoneCall(hotline)">
       <div class="question-footer">
         <div class="tf-text">客服热线</div>
         <div class="tf-text-sm tf-text-grey">{{hotline}}</div>
@@ -43,6 +43,12 @@ export default {
       getEqList().then((res) => {
         this.questionList = res.data.eq
         this.hotline = res.data.hotline
+      })
+    },
+    makePhoneCall (phoneNumber) {
+      api.call({
+        type: 'tel_prompt',
+        number: phoneNumber
       })
     }
   }

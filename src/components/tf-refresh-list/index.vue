@@ -1,6 +1,7 @@
 <template>
+<div style="height: 100%;overflow: auto;">
   <van-pull-refresh
-    style="text-align: center;width: 100%;height: 100%;"
+    style="text-align: center;width: 100%;min-height: 100%;"
     v-model="refreshing"
     success-text="刷新成功"
     @refresh="onRefresh"
@@ -21,6 +22,7 @@
       </van-cell>
     </van-list>
   </van-pull-refresh>
+  </div>
 </template>
 
 <script>

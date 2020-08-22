@@ -352,9 +352,11 @@ export default {
     .instantly-btn {
       width: 300px;
       height: 300px;
-      line-height: 280px;
-      text-align: center;
       color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 34px;
       font-weight: bold;
       background-image: linear-gradient(to bottom right, @orange, @orange-dark);
       border: 10px solid #ffe6a2;

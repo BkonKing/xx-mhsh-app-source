@@ -65,7 +65,7 @@
           <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
           <tf-list-item
             title="收货地址"
-            rightText="福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省福建省省福建省福建省福建省"
+            :rightText="userInfo.address_name"
             rightWidth="460px"
             @click="goAddress"
           ></tf-list-item>
@@ -86,7 +86,7 @@
         </tf-list>
       </van-tab>
       <van-tab v-if="userType != 0" title="房产信息">
-        <house @manClick="current = 2" @change="(id) => goAttestation(1,1,id)"></house>
+        <house @manClick="current = 2" @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
       </van-tab>
       <van-tab v-if="userType != 0" title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">

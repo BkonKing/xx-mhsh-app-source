@@ -46,22 +46,7 @@ export default {
   },
   data () {
     return {
-      list: [
-        {
-          type: 0,
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        },
-        {
-          type: 1,
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        }
-      ]
+      list: []
     }
   },
   methods: {

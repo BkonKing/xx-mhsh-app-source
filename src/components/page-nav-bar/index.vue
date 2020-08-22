@@ -11,10 +11,10 @@
       </div>
     </template>
     <template #right>
-      <span v-if="search" class="tf-icon tf-icon-search" @click="onSearch"></span>
+      <span v-if="search" class="tf-icon tf-icon-sousuo" @click="onSearch"></span>
       <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
       <span class="tf-icon tf-icon-xiaoxi margin-left" @click="goMessage">
-        <span v-if="status" class="van-info">2</span>
+        <span v-if="userInfo.message_mum" class="van-info">{{userInfo.message_mum}}</span>
       </span>
     </template>
   </van-nav-bar>
@@ -28,10 +28,6 @@ export default {
     [NavBar.name]: NavBar
   },
   props: {
-    status: {
-      type: Number,
-      default: 0
-    },
     name: {
       type: String,
       default: ''
@@ -45,7 +41,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters(['currentProject'])
+    ...mapGetters(['currentProject', 'userInfo'])
   },
   methods: {
     goMessage () {
@@ -61,7 +57,9 @@ export default {
     scan () {
       this.$router.push('/pages/personage/scanCode/index')
     },
-    onSearch () {}
+    onSearch () {
+      this.$router.push('/store/search')
+    }
   }
 }
 </script>
