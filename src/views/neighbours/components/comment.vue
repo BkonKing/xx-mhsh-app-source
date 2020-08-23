@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="comment-popup-right">
-          <van-uploader :max-count="1">
+          <van-uploader :after-read="afterRead" :max-count="1">
             <span class="tf-icon tf-icon-tupian"></span>
           </van-uploader>
           <div class="send-btn" :class="{'tf-text-primary': content}" @click="addComment">发送</div>
@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import { Field, Popup, Uploader } from 'vant'
+import { Field, Popup, Uploader, Toast } from 'vant'
 import { addComment } from '@/api/neighbours'
+import { uImages } from '@/api/user'
 export default {
   components: {
     [Field.name]: Field,
@@ -74,6 +75,18 @@ export default {
     }
   },
   methods: {
+    /* 图片上传 */
+    afterRead (file) {
+      const formData = new FormData()
+      formData.append('imgFile', file.file)
+      uImages(formData)
+        .then((res) => {
+          this.images = res.data
+        })
+        .catch((message) => {
+          Toast.fail(message)
+        })
+    },
     showPopup () {
       this.show = true
     },

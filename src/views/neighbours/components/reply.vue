@@ -1,26 +1,26 @@
 <template>
   <div class="tf-bg-white reply-container" :class="{'gray': grayTheme}">
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id">
+      <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id" @click.stop="operate(cell, i)">
         <userInfo :avatar="cell.avatar" :name="cell.nickname" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
             <span class="thumbsups-number">{{cell.thumbsups}}</span>
             <span
               class="tf-icon tf-icon-zan"
               :class="{'like-active': cell.is_thumbsup}"
-              @click="thumbsUp(cell)"
+              @click.stop="thumbsUp(cell)"
             ></span>
           </template>
         </userInfo>
         <div class="reply-cell-content">
-          <div class="reply-cell-content__text" @click="operate(cell, i)">{{cell.content}}</div>
+          <div class="reply-cell-content__text">{{cell.content}}</div>
           <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
           <div
             v-if="parseInt(cell.reply_num) > 0"
             class="reply-cell-content__reply"
-            @click="goReply(cell)"
+            @click.stop="goReply(cell)"
           >
             <div
               class="reply-cell-content__reply__text van-multi-ellipsis--l3"
@@ -34,7 +34,7 @@
                 <span
                   class="tf-text-blue"
                   v-if="item.images"
-                  @click="lookImg(item.images)"
+                  @click.stop="lookImg(item.images)"
                 >
                   <span class="tf-icon tf-icon-tupian"></span>查看图片
                 </span>

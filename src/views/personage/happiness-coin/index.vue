@@ -46,7 +46,7 @@
             <div class="tf-space-between">
               <div class="task-item__title">{{item.task_name}}</div>
               <div class="tf-row">
-                <div class="task-item__remarks">{{item.remarks}}获得</div>
+                <div class="task-item__remarks">获得</div>
                 <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
               </div>
             </div>

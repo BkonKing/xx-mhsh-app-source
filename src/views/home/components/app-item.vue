@@ -39,6 +39,10 @@ export default {
     status: {
       type: Number || String,
       default: 1
+    },
+    url: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -49,6 +53,8 @@ export default {
         } else if (this.status == 0) {
           this.add()
         }
+      } else if (!this.editMode) {
+        this.$router.push(this.url)
       }
     },
     add () {
@@ -101,7 +107,11 @@ export default {
     line-height: 1;
     color: #ffa110;
   }
-  .tf-icon-guanbi-circle-fill {
+  .tf-icon-gouxuan {
+    font-size: 28px;
+    right: 16px;
+  }
+  .tf-icon-close-circle-fill {
     color: #aaa;
   }
 }

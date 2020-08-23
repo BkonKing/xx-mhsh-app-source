@@ -15,7 +15,7 @@
         <message-list type="transaction" :load="({pages}) => getMessageList(pages, 2)" @click="toTransaction"></message-list>
       </van-tab>
       <van-tab title="互动" :badge="badgeList[3]">
-        <interaction @click="toInteraction"></interaction>
+        <interaction @click="toInteraction" @read="(id) => messageRead(id)"></interaction>
       </van-tab>
       <van-tab title="物业" :badge="badgeList[4]">
         <message-list type="butler" :load="({pages}) => getMessageList(pages, 4)" @click="toButler"></message-list>
@@ -45,6 +45,7 @@ import {
 } from '@/api/personage.js'
 import { mapGetters } from 'vuex'
 export default {
+  name: 'messageIndex',
   components: {
     [NavBar.name]: NavBar,
     [Tab.name]: Tab,

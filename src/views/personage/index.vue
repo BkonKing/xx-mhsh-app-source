@@ -15,6 +15,7 @@
           <div class="user-info-box">
             <div class="user-name">{{userInfo.nickname}}</div>
             <van-tag
+              v-if="userType != '0'"
               class="user-role"
               plain
               :color="userType | houseRoleColor"

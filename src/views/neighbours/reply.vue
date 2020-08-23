@@ -26,7 +26,7 @@
             <span
               class="tf-icon tf-icon-zan"
               :class="{'like-active': replyInfo.is_thumbsup}"
-              @click="thumbsUp(replyInfo)"
+              @click.stop="thumbsUp(replyInfo)"
             ></span>
           </template>
         </userInfo>
@@ -45,7 +45,7 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <van-cell class="reply-cell" v-for="(item, i) in replyList" :key="i">
+        <van-cell class="reply-cell" v-for="(item, i) in replyList" :key="i"  @click="operate(item, i)">
           <userInfo
             class="user-info"
             :avatar="item.avatar"
@@ -58,11 +58,11 @@
               <span
                 class="tf-icon tf-icon-zan"
                 :class="{'like-active': item.is_thumbsup}"
-                @click="thumbsUp(item)"
+                @click.stop="thumbsUp(item)"
               ></span>
             </template>
           </userInfo>
-          <div class="reply-cell-content__text" @click="operate(item, i)">
+          <div class="reply-cell-content__text">
             <span class="tf-text" v-if="item.reply_nickname">
               回复
               <span class="tf-text-blue">@{{item.reply_nickname}}</span>：

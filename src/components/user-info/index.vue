@@ -2,8 +2,15 @@
   <div class="tf-row-space-between tf-flex-item">
     <div :class="size ? `user-info__left-box-${size}` : 'user-info__left-box'">
       <img
+        v-if="avatar"
         class="tf-mr-base tf-avatar"
         :src="avatar"
+        mode="aspectFit"
+      />
+      <img
+        v-else
+        class="tf-mr-base tf-avatar"
+        src="@/assets/imgs/touxiang.png"
         mode="aspectFit"
       />
       <slot name="left">

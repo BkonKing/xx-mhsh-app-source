@@ -189,7 +189,7 @@ export default {
       nickname: '',
       birthday: '',
       maxDate: new Date(getDate()),
-      minDate: new Date('1900-1-1'),
+      minDate: new Date('1900/1/1'),
       memberList: [], // 成员列表
       houseRoleColor: {
         1: 'danger',
@@ -238,7 +238,7 @@ export default {
     this.gender = gender
     this.avatar = avatar
     this.mobile = mobile
-    this.birthday = birthday
+    this.birthday = birthday || ''
     // this.getMemberList()
   },
   methods: {

@@ -2,16 +2,16 @@
   <div class="tf-bg">
     <van-nav-bar title="购买记录" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-main-container">
-      <refreshList :list.sync="list" @load="onLoad">
+      <refreshList :list.sync="list" :load="getCreditsOrderList">
         <template v-slot="{item}">
-          <div class="buy-list-item">
-            <img class="buy-list-item__image" src="/static/app-icon.png" />
+          <div class="buy-list-item" @click="goDetails(item)">
+            <img class="buy-list-item__image" :src="item.specs_img" />
             <div class="buy-list-item-right">
-              <div class="buy-list-item__name">{{item.name}}</div>
-              <div class="buy-list-item__specification">规格：{{item.specification}}</div>
+              <div class="buy-list-item__name">{{item.goods_name}}</div>
+              <div class="buy-list-item__specification">规格：{{item.specs_name}}</div>
               <div class="tf-row-vertical-center">
                 <div class="tf-icon tf-icon-xingfubi"></div>
-                <div class="buy-list-item__price">{{item.number}}</div>
+                <div class="buy-list-item__price">{{item.happiness_price}}</div>
               </div>
             </div>
           </div>
@@ -24,6 +24,7 @@
 <script>
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
+import { getCreditsOrderList } from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -31,24 +32,16 @@ export default {
   },
   data () {
     return {
-      list: [
-        {
-          id: 1,
-          name: '签到送积分',
-          specification: '白色',
-          number: '1'
-        },
-        {
-          id: 1,
-          name: '签到送积分',
-          specification: '白色',
-          number: '1'
-        }
-      ]
+      list: []
     }
   },
   methods: {
-    onLoad () {}
+    getCreditsOrderList (params) {
+      return getCreditsOrderList(params)
+    },
+    goDetails ({ order_project_id }) {
+      this.$router.push(`/order/detail?id=${order_project_id}`)
+    }
   }
 }
 </script>

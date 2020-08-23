@@ -20,7 +20,7 @@
       <div class="isAll-select__item" :class="{'active': isAll === 1}" @click.stop="isAll = 1;showIsAll =false">全部</div>
       <div class="isAll-select__item" :class="{'active': isAll === 0}" @click.stop="isAll = 0;showIsAll =false">小区</div>
     </div>
-    <van-tabs class="tf-body-container tf-column" v-model="current">
+    <van-tabs class="tf-body-container tf-column" v-model="current" @change="tabsChange">
       <van-tab title="最新">
         <list key="list" ref="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
@@ -108,6 +108,12 @@ export default {
     getNewestList (params) {
       params.is_all = this.isAll
       return getNewestList(params)
+    },
+    /* tab页改变，为最新时刷新最新列表 */
+    tabsChange (name) {
+      if (name === 0) {
+        this.$refs.list && this.$refs.list.reload()
+      }
     },
     /* 获取话题小组 */
     getPostBarCategoryList () {

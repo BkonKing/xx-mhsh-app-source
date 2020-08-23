@@ -49,7 +49,6 @@ service.interceptors.request.use(
     if (!config.headers.Authorization && token) {
       config.headers.Authorization = token
     }
-    config.headers.ProjectId = '1'
     if (!config.headers.ProjectId) {
       // 获取当前项目
       const project = api.getPrefs({

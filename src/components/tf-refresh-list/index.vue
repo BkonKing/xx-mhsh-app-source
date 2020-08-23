@@ -92,14 +92,14 @@ export default {
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true
-      this.reload()
-    },
-    reload () {
       this.isEndNum = 0
       this.pageNum = 1
       this.listChild = []
       // this.$emit('update:list', this.listChild)
       this.onLoad()
+    },
+    reload () {
+      this.onRefresh()
     }
   },
   watch: {

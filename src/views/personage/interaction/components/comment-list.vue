@@ -72,6 +72,7 @@ export default {
     background: #f2f2f4;
     padding: 25px 20px;
     border-radius: 4px;
+    @text-ellipsis();
   }
   &__img-box {
     margin-top: 30px;

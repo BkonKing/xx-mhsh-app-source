@@ -8,6 +8,7 @@
       :src="item.icon_image"
       :name="item.application"
       :status="item.status"
+      :url="item.url"
       :editMode="editMode"
       @add="add(item)"
     ></app-item>

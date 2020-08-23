@@ -244,6 +244,9 @@ export default {
     this.getOllageGoods()
     this.getMhttList()
   },
+  activated () {
+    this.swipeChange(0)
+  },
   methods: {
     /* 获取通知轮播列表 */
     getNoticeLbList () {
@@ -418,11 +421,14 @@ export default {
 <style lang='less' scoped>
 .tf-bg-white {
   height: 100%;
+  /deep/ .tf-image-grid .van-grid-item__content--square {
+    background: #f4f4f4;
+    border-radius: 10px;
+  }
 }
 .home-notice {
   height: 96px;
-  margin: 0 20px 0;
-  padding-bottom: 30px;
+  margin: 0 20px 30px;
   background: #fff;
   /deep/ .notice-swipe {
     height: 66px;

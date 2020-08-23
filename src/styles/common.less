@@ -280,6 +280,7 @@
   font-size: @font-size-md;
   color: #666;
   line-height: 58px;
+  word-break: break-all;
 }
 
 /* 副标题*/
@@ -293,6 +294,7 @@
 .tf-auxiliary-content {
   font-size: @font-size-md;
   color: #666;
+  word-break: break-all;
 }
 
 /* 图片*/
@@ -550,7 +552,7 @@
     }
 
     .tf-icon+.tf-icon {
-      margin-left: 20px;
+      margin-left: 30px;
     }
   }
 
@@ -619,6 +621,10 @@
 }
 
 .app {
+
+  .van-nav-bar__left:active, .van-nav-bar__right:active {
+    opacity: 1;
+  }
 
   >.tf-bg,
   .view-main>.tf-bg,

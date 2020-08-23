@@ -190,6 +190,9 @@ const store = {
             api.removePrefs({
               key: 'refresh_token'
             })
+            api.removePrefs({
+              key: 'currentProject'
+            })
             router.push('/login')
             resolve()
           } else {

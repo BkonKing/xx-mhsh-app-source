@@ -178,7 +178,7 @@ export default {
         })
         return
       }
-      let visitorData
+      let visitorData = {}
       if (this.visitorList.length === 0) {
         visitorData = this.$refs.form.getData()
       } else {

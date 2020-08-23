@@ -7,7 +7,7 @@
           {{item.question}}
         </div>
       </template>
-      <div class="question-content">{{item.answer}}</div>
+      <div class="question-content" v-html="item.answer.replace(/\r\n/g, '<br/>')"></div>
     </van-collapse-item>
   </van-collapse>
 </template>

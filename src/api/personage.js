@@ -202,6 +202,10 @@ export function getCreditsLog (params) {
 export function getCreditsInfo (params) {
   return request.get('/credits/account/credits_info', { params })
 }
+// 签到日历数据
+export function getCreditsOrderList (data) {
+  return request.post('/life/order/credits_order_list', data)
+}
 
 /* 幸福币 end */
 
@@ -275,6 +279,10 @@ export function editRealname (data) {
 // 人脸采集
 export function cjFace (data) {
   return request.post('/my/face/cjFace', data)
+}
+// 更换手机
+export function updateMobile (data) {
+  return request.post('/my/password/updateMobile', data)
 }
 
 /* 基础信息 end */

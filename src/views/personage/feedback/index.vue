@@ -39,7 +39,10 @@
           <tf-uploader v-model="images" max-count="6"></tf-uploader>
         </div>
       </div>
-      <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+      <div class="fixed-placeholder">
+        <van-button class="fixed-btn" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+        <div class="fixed-bg"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -140,6 +143,23 @@ export default {
   flex: 1;
   font-size: @font-size-md !important;
   padding: 0;
+}
+.fixed-placeholder {
+  height: 88px;
+}
+.fixed-btn {
+  position: fixed;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px);
+}
+.fixed-bg {
+  position: fixed;
+  bottom: 0;
+  height: 30px;
+  width: 100%;
+  background: #f2f2f4;
 }
 /deep/ .van-uploader__upload,
 /deep/ .van-uploader__preview {

@@ -44,8 +44,7 @@
         <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
       </div>
       <span class="agreement-text" style="color: #fff;">
-        登录即表示您同意
-        <router-link style="color: #fff;" to="/agreement">《美好生活家园用户协议》</router-link>
+        登录即表示您同意<router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
       </span>
     </div>
   </div>

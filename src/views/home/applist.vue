@@ -46,6 +46,7 @@
             :name="item.application"
             :status="item.status"
             :editMode="editMode"
+            :url="item.url"
             mode="remove"
             @remove="remove(item, i)"
           ></app-item>
@@ -206,7 +207,7 @@ export default {
   }
   /deep/ .van-search {
     .van-search__content {
-      height: 44px;
+      height: 66px;
       padding-left: @padding-md;
     }
 
@@ -215,7 +216,7 @@ export default {
 
       .van-field__left-icon,
       .van-field__control {
-        line-height: 44px;
+        line-height: 66px;
       }
 
       .van-field__control {

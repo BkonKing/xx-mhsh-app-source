@@ -4,7 +4,7 @@
       <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="preview(i)" />
       <template v-else>
         <van-image class="tf-image-item" fit="cover" :src="img | imgsrc(srcKey)" v-lazy="img" @click="onclick(img)"/>
-        <div class="tf-image--shade" v-if="i === 2" @click="onclick(img)">
+        <div class="tf-image--shade" v-if="data.length > 3" @click="onclick(img)">
           <span>+{{ data.length - 3 }}</span>
         </div>
       </template>

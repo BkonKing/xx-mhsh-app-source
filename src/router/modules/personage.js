@@ -163,7 +163,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "messageIndex" */
         '@/views/personage/message/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 签到 */
   {

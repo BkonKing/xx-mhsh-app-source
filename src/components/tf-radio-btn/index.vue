@@ -5,7 +5,7 @@
       v-for="(item, i) in data"
       :key="i"
       :class="{'radio-btn--active': multiple ? valueChild.indexOf(item[valueKey]) !== -1 : valueChild == item[valueKey]}"
-      @click="change(item[valueKey])"
+      @click="change(item[valueKey], item[labelKey])"
       :style="{'border-radius': `${radius}px`}"
     >
       <div class="radio-btn__text">{{item[labelKey]}}</div>
@@ -47,7 +47,7 @@ export default {
     }
   },
   methods: {
-    change (value) {
+    change (value, label) {
       if (this.multiple) {
         const index = this.valueChild.indexOf(value)
         if (index === -1) {
@@ -58,7 +58,7 @@ export default {
       } else {
         this.valueChild = value
       }
-      this.$emit('change', this.valueChild)
+      this.$emit('change', this.valueChild, label)
     }
   },
   watch: {

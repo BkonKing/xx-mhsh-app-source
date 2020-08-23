@@ -3,32 +3,33 @@
     <template v-slot="{item}">
       <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
       <div class="tf-list" @click="jump(item)">
-        <template v-if="item.type === 0">
+        <template v-if="item.sub_type == 11">
           <div class="tf-row-space-between">
             <div class="tf-row-vertical-center">
-              <img class="tf-avatar-sm tf-mr-base" src="/static/app-icon.png" mode="aspectFit" />
-              <div class="tf-text-sm">蔡文姬</div>
-              <div class="tf-circle-tag--warning"></div>
+              <img class="tf-avatar-sm tf-mr-base" :src="item.avatar" mode="aspectFit" />
+              <div class="tf-text-sm">{{item.nickname}}</div>
+              <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
             </div>
             <div class="tf-row-vertical-center">
               <div class="tf-icon tf-icon-comment reply-icon"></div>
               <div class="tf-text-sm tf-text-grey">回复</div>
             </div>
           </div>
-          <div class="content-box">中秋佳节活动策划方案的实施需要物业的全力以赴和广大业主的支持，美好生活家园为了更好地服务于社区业区业区业区业区业</div>
+          <div class="content-box">{{item.pl_content}}</div>
           <div class="tf-row message-box">
-            <div class="tf-text-sm tf-text-blue">233</div>
-            <div class="tf-text-sm tf-text-grey">：关于美好生活家园2020年中秋佳节社区活动</div>
+            <div class="tf-text-sm tf-text-blue">{{item.my_nickname}}</div>
+            <div class="tf-text-sm tf-text-grey">：{{item.wd_content}}</div>
           </div>
         </template>
-        <template v-else>
+        <template v-else-if="item.sub_type == 10">
           <div class="tf-row-vertical-center tf-mb-lg">
             <div class="tf-icon tf-icon-dianzan like-icon"></div>
             <div class="tf-text-sm">{{item.title}}</div>
+            <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
           </div>
           <div class="tf-row-vertical-center message-box">
             <div class="tf-icon tf-icon-dianzan tf-text-orange"></div>
-            <div class="tf-text-sm tf-text-grey like-number">233</div>
+            <div class="tf-text-sm tf-text-grey like-number">{{item.thumbsups}}</div>
             <div class="tf-text-sm tf-text-grey">{{item.content}}</div>
           </div>
         </template>
@@ -54,8 +55,9 @@ export default {
       params.remind_type = 3
       return getMessageList(params)
     },
-    jump (item) {
-      this.$emit('click', item)
+    jump ({ id, source_id, article_type }) {
+      this.$emit('read', id)
+      this.$router.push(`/pages/neighbours/details?articleType=${article_type}&id=${source_id}`)
     }
   }
 }

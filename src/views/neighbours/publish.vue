@@ -5,12 +5,12 @@
         <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
       </template>
       <template #right>
-        <span class="tf-icon tf-icon-fabu" @click="addPostBar"></span>
+        <span class="send-btn" @click="addPostBar">发送</span>
       </template>
     </van-nav-bar>
-    <div class="tf-body-container">
+    <div class="tf-container">
       <van-dropdown-menu class="publish-type" :overlay="false" :close-on-click-outside="false">
-        <van-dropdown-item title="发布类型" ref="item">
+        <van-dropdown-item :title="radioLabel || '发布类型'" ref="item">
           <tf-radio-btn v-model="category_id" :data="types" @change="handRadioChange"></tf-radio-btn>
         </van-dropdown-item>
       </van-dropdown-menu>
@@ -61,6 +61,7 @@ export default {
     return {
       category_id: '',
       content: '',
+      radioLabel: '',
       types: [],
       images: []
     }
@@ -85,7 +86,8 @@ export default {
       })
     },
     /* 选择完类型自动折叠起类型选择区域 */
-    handRadioChange (value) {
+    handRadioChange (value, label) {
+      this.radioLabel = label
       this.$refs.item.toggle()
     },
     /* 无内容(图片、文字)时直接返回；有内容时弹窗提示 */
@@ -135,8 +137,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-body-container {
-  padding: 30px 30px;
+.tf-container{
+  padding: 30px;
 }
 .publish-type {
   /deep/ .van-dropdown-item {
@@ -192,7 +194,7 @@ export default {
 .tf-icon-guanbi {
   font-size: 44px;
 }
-.tf-icon-fabu {
+.send-btn {
   color: #aaa;
 }
 </style>
