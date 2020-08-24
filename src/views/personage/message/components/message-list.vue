@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%;height:100%;">
-    <refreshList :list.sync="list" :load="load">
+    <refreshList :list.sync="list" :load="load" finished-text>
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)" v-longtap="{tap: operate, params: item}">
@@ -19,6 +19,12 @@
             </div>
             <div class="tf-list-content">{{item.content}}</div>
           </div>
+        </div>
+      </template>
+      <template v-slot:nodata>
+        <div class="empty-session">
+          <img class="empty-session__img" src="@/assets/imgs/message_xiaoxi.png" />
+          <div class="empty-session__text">暂无消息</div>
         </div>
       </template>
     </refreshList>
@@ -85,7 +91,7 @@ export default {
 .list-icon-box {
   width: 80px;
   height: 80px;
-  border-radius:10px;
+  border-radius: 10px;
 }
 .tf-list-title,
 .tf-list-content {
@@ -112,6 +118,22 @@ export default {
   }
   .more-btn + .more-btn {
     border-top: 1px solid @divider-color;
+  }
+}
+.empty-session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200px;
+  &__img {
+    width: 483px;
+    height: 335px;
+  }
+  &__text {
+    font-size: 28px;
+    text-align: center;
+    line-height: 96px;
+    color: #222;
   }
 }
 </style>

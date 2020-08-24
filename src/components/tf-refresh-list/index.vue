@@ -5,14 +5,16 @@
     success-text="刷新成功"
     @refresh="onRefresh"
   >
+    <slot v-if="!loading && listChild.length === 0" name="nodata">
+      <div class="tf-text tf-text-grey tf-padding">暂无数据</div>
+    </slot>
     <van-list
       class="tf-van-list"
       v-model="loading"
       :finished="finished"
       :error.sync="error"
       loading-text="加载中"
-      finished-text="没有更多了"
-      error-text="请重新加载"
+      error-text="请求失败，请重新加载"
       v-bind="$attrs"
       @load="onLoad"
     >
@@ -64,23 +66,25 @@ export default {
       if (this.load && !this.isEndNum) {
         await this.load({
           pages: this.pageNum
-        }).then(({ data }) => {
-          if (data && data.length > 0) {
-            this.listChild.push(...data)
-            this.$emit('update:list', this.listChild)
-            this.pageNum++
-            if (data.length >= 10) {
-              this.isEndNum = 0
-            } else {
-              this.isEndNum = 1
-            }
-          } else {
-            this.finished = true
-          }
-          this.loading = false
-        }).catch(() => {
-          this.error = true
         })
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              this.listChild.push(...data)
+              this.$emit('update:list', this.listChild)
+              this.pageNum++
+              if (data.length >= 10) {
+                this.isEndNum = 0
+              } else {
+                this.isEndNum = 1
+              }
+            } else {
+              this.finished = true
+            }
+            this.loading = false
+          })
+          .catch(() => {
+            this.error = true
+          })
       } else {
         this.finished = true
       }
@@ -104,9 +108,13 @@ export default {
   },
   watch: {
     list (value) {
+      console.log(value)
       this.listChild = value
       this.loading = false
       this.refreshing = false
+    },
+    listChild (value) {
+      console.log(value)
     }
   }
 }
@@ -114,10 +122,11 @@ export default {
 
 <style lang="less" scoped>
 .tf-van-list {
-  min-height: 100%;
+  // min-height: 100%;
+  flex: 1;
   width: 100%;
   padding: 20px;
-  overflow: auto;
+  // overflow: auto;
   -webkit-transform: translateZ(0px);
 }
 .tf-van-cell {
@@ -125,9 +134,9 @@ export default {
   padding: 0;
   margin-bottom: 20px;
 }
-// /deep/ .van-pull-refresh__track {
-//   min-height: 100%;
-// }
+/deep/ .van-pull-refresh__track {
+  @flex-column();
+}
 /deep/ .van-cell::after {
   border-bottom: none;
 }

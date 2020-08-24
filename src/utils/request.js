@@ -51,10 +51,7 @@ service.interceptors.request.use(
     }
     if (!config.headers.ProjectId) {
       // 获取当前项目
-      const project = api.getPrefs({
-        sync: true,
-        key: 'currentProject'
-      })
+      const project = store.getters.currentProject
       if (project) {
         config.headers.ProjectId = project.project_id
       }

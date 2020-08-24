@@ -78,12 +78,10 @@ export default {
         searchName
       } */).then(
         (res) => {
-          if (res.success) {
-            const { rg_num, jy_num, records } = res.data
-            this.rg_num = rg_num
-            this.jy_num = jy_num
-            this.serviceList = records
-          }
+          const { rg_num, jy_num, records } = res.data
+          this.rg_num = rg_num
+          this.jy_num = jy_num
+          this.serviceList = records
         }
       )
     },
