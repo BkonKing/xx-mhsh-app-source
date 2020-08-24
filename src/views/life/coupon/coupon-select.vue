@@ -150,10 +150,16 @@ export default {
       let carts_arr = [];
       if (this.prev_page == 1){
         // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart2' })) || [];
+        carts_arr = api.getPrefs({ sync: true, key: 'cart2' }) || [];
+        if(carts_arr && carts_arr.length > 0){
+          carts_arr = JSON.parse(carts_arr);
+        }
       }else {
         // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+        carts_arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
+        if(carts_arr && carts_arr.length > 0){
+          carts_arr = JSON.parse(carts_arr);
+        }
       }
       let carts_list = [];
       if (carts_arr && carts_arr.length > 0) {

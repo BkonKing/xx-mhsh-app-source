@@ -1,6 +1,6 @@
 <template>
   <div class="app-body">
-    <div class="order-bar bar-white"><van-nav-bar title="添加/修改地址" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
+    <div class="order-bar bar-white"><van-nav-bar :title="titName" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
     <div class="bar-empty"></div>
 		<div class="form-list">
 			<div class="form-item flex-align-center">
@@ -24,9 +24,9 @@
 						<div class="p-nowrap">{{address_name}}</div>
 						<div class="p-nowrap" hidden="true">{{address_detail}}</div>
 					</div>
-					<div v-else class="itemt-text">
+					<!-- <div v-else class="itemt-text">
 						<div class="p-nowrap">ddgaweg</div>
-					</div>
+					</div> -->
 				</template>
 				<template v-else>
 					<div class="itemt-text">
@@ -77,7 +77,7 @@
 			</div>
 		</div>
 
-    <div class="del-btn flex-center" v-if="1==1" @click="delAddress"><div class="color-eb5841 font-30">删除地址</div></div>
+    <div class="del-btn flex-center" v-if="addrId" @click="delAddress"><div class="color-eb5841 font-30">删除地址</div></div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
 			<div @click="onSubmit" :class="['submit-btn', btnDisabled ? 'submit-btn-unable' : '']">
@@ -135,14 +135,10 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      barObj: {
-        isBorder: true,
-        titName: '添加/编辑地址'
-        // goback_pic: '../../image/goback4.png'
-      },
+      titName: '地址',
       switchChecked: false, // 设置默认是否选择 false
       swalHidden: true, // 自定义标签弹窗是否隐藏 true
-      labelIndex: 1, // 标签选择 0、自定义 1、家 2、公司 3、学校(提交后台)
+      labelIndex: 0, // 标签选择 0、自定义 1、家 2、公司 3、学校(提交后台)
       swalIndex: 0, // 弹窗标签选择 0、自定义 1、家 2、公司 3、学校
       customVal: '', // 自定义标签值
       labelVal: '', // 标签值
@@ -176,13 +172,14 @@ export default {
   // 	}
   // },
   created(){
-    console.log(23211);
     this.addrId = this.$route.query.id;
     if(this.addrId){
+      this.titName = "编辑地址";
       this.getData();
+    }else {
+      this.titName = "添加地址";
     }
     eventBus.$off('chooseMap');
-    console.log(this.$route);
   },
   mounted(){
     var that = this;
@@ -194,7 +191,7 @@ export default {
       that.address_detail = addressData.address;
       that.lon = addressData.lon;
       that.lat = addressData.lat;
-      alert(that.address_name);
+      this.isAble()
       // this.city = addressData.city;
       // alert(data);
     }.bind(this));
@@ -241,14 +238,14 @@ export default {
       if(that.addrId){
         updateAddress(obj).then(res => {
           if (res.success) {
-            Toast(res.message);
+            // Toast(res.message);
             this.$router.go(-1);
           }
         })
       }else {
         addAddress(obj).then(res => {
           if (res.success) {
-            Toast(res.message);
+            // Toast(res.message);
             this.$router.go(-1);
           }
         })
@@ -357,7 +354,6 @@ export default {
 			*/
     isAble: function (e) {
       const that = this
-      console.log(this.realname.trim(), this.mobile.trim(), this.address_house.trim()); return
       if (that.realname.trim() == '' || that.mobile.trim() == '' || that.address_detail == '' || that.address_house == '') {
         that.btnDisabled = true
       } else {
@@ -508,6 +504,9 @@ export default {
 .itemt-text {
   width: 550px;
   padding: 20px 0;
+}
+.itemt-input {
+  width: 100%;
 }
 .itemt-input,.swal-input {
 	font-size: 28px;

@@ -1,6 +1,6 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
 	    <div class="bar-empty"></div>
 		<div class="nav-empty"></div>
 		<div class="nav-box" :style="{'margin-top':$store.state.paddingTop+'px'}">

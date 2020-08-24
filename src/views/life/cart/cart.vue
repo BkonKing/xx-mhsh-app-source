@@ -67,10 +67,12 @@ export default {
   },
   created(){
     // var carts = JSON.parse(localStorage.getItem('cart'));
-    var carts = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+    var carts = api.getPrefs({ sync: true, key: 'cart' }) || [];
+    if(carts && carts.length > 0){
+      carts = JSON.parse(carts);
+    }
     this.carts = carts;
     this.total();
-    console.log(carts);
     // this.getData();
   },
   methods: {
@@ -279,6 +281,7 @@ export default {
   flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
+  background-color: #f4f4f4;
 }
 .product-info {
   width: 478px;

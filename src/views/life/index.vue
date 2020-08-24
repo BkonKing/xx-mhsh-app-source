@@ -264,6 +264,7 @@
         <div class="life-seconds-list">
           <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
           	<div class="life-goods-pic">
+          		<img v-if="item.sign_url" class="img-100 goods-pic-icon" :src="item.sign_url" alt="">
 							<img class="img-100" :src="item.thumb" />
 						</div>
 						<div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
@@ -271,36 +272,6 @@
           </div>
         </div>
       </van-list>
-			<div v-show="false" class="life-seconds-list" @click="linkFunc(5)">
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-				<div class="life-goods-item">
-					<div class="life-goods-pic">
-						<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-					</div>
-					<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-					<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-				</div>
-			</div>
 		</template>
 		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
 	</div>
@@ -352,8 +323,10 @@ export default {
 		// });
   },
   created () {
-  	console.log(this.$store.state.userInfo);
-  	var cartList = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+  	var cartList = api.getPrefs({ key: 'cart' }) || [];
+  	if(cartList && cartList.length > 0){
+  		cartList = JSON.parse(cartList);
+  	}
   	this.cart_num = cartList.length;
     this.getData();
   },
@@ -381,6 +354,7 @@ export default {
         category_id: this.category_id,
       }).then(res => {
         if (res.success) {
+        	this.flag = true;
           if(this.navList.length == 0){
           	this.navList = [{'category_name': '推荐'}];
           	this.navList = this.navList.concat(res.data.category_list);
@@ -395,6 +369,7 @@ export default {
 	            this.finished = true;
 	            this.flag = true;
 	          }else {
+	          	this.flag = false;
 	            this.page = this.page+1;
 	          }
 	          this.loading = false;
@@ -451,15 +426,7 @@ export default {
 	      }else {
 	        this.navList2 = [];
 	      }
-	      this.page = 1;
-	      this.loading = false;
-	      // let prev_finished = this.finished;
-	      this.finished = false;
-	      console.log(this.flag);
-	      if(!this.flag){
-	      	this.getGoodsData();
-	      	this.flag = false;
-	      }
+	      this.listInit();
       }else {
       	this.page = 1;
       	this.finished = true;
@@ -468,9 +435,16 @@ export default {
     changeNav2(index, id) {
       this.activeIndex2 = index;
       this.category_id = id;
-      this.page = 1;
+      this.listInit();
+    },
+    listInit(){
+    	this.page = 1;
       this.loading = false;
       this.finished = false;
+      this.listData = [];
+      if(!this.flag){
+      	this.getGoodsData();
+      }
     },
     //倒计时开始
     start() {
@@ -675,6 +649,13 @@ export default {
 	border-radius: 10px;
 	overflow: hidden;
 	background-color: #f4f4f4;
+	position: relative;
+}
+.goods-pic-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 5;
 }
 .special-goods-list .life-goods-pic,
 .flash-goods-list .life-goods-pic {

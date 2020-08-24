@@ -15,7 +15,7 @@
     </div>
     
     <template v-if="infoData.goods_type == 3">
-      <div class="flash-session flash-session-bg">
+      <div :class="[infoData.ollage_info.is_start == 1 ? 'flash-session-bg' : '','flash-session']">
         <div class="flash-limit">
           <div class="flash-limit-l"></div>
           <div class="flash-limit-m">限量{{infoData.z_stock}}件</div>
@@ -36,14 +36,14 @@
       <div class="goods-name">{{infoData.goods_name}}</div>
 
       <template v-if="infoData.pay_type == 1">
-        <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
+        <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
         <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits}} 幸福币可兑换</div></div>
       </template>
       <template v-else>
-        <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
+        <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
 
         <!-- 闪购 -->
-        <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal">￥{{infoData.original_price/100}}</span></div>
+        <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
         
         <!-- 拼单 -->
         <div v-else class="price-block">
@@ -72,59 +72,53 @@
           <div class="collage-step-icon"></div>
           <div>④成功(失败退款)</div>
         </div>
-        <div class="collage-total flex-between">
+        <div v-if="collageList.length > 0" class="collage-total flex-between">
           <div class="color-8f8f94">以下小伙伴正在发起拼单，可直接参与</div>
-          <div class="color-222">8人拼单</div>
+          <div class="color-222">{{collageList[0].collage_num}}人拼单</div>
         </div>
-        <div class="collage-list">
-          <div class="collage-item flex-between">
-            <div class="collage-user flex-align-center">
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
+        <div v-if="collageList.length > 0" class="collage-list">
+          <template v-for="(item, index) in collageList">
+            <div class="collage-item flex-between">
+              <div class="collage-user flex-align-center">
+                <div v-for="(val, key) in item.user_arr" class="collage-user-info">
+                  <img class="collage-user-photo" :src="val.avatar" />
+                  <div class="collage-user-name p-nowrap">{{val.nickname}}</div>
+                </div>
+                <div v-if="item.user_arr.length > 5" class="collage-user-info">
+                  <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
+                  <img class="collage-user-photo" :src="val.avatar" />
+                </div>
               </div>
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
+              <div v-if="item.is_pay" class="collage-item-right">
+                <div class="collage-btn yq-btn">邀请好友</div>
+                <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
               </div>
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
-              </div>
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
-              </div>
-              <div class="collage-user-info">
-                <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/2015/tx_42.jpg" />
+              <div v-else class="collage-item-right">
+                <div @click="showFunc('collage',item.f_collage_order_id)" class="collage-btn pd-btn">一起拼单</div>
+                <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
               </div>
             </div>
-            <div class="collage-item-right">
-              <div class="collage-btn yq-btn">邀请好友</div>
-              <div class="collage-need-num">还差 <span class="color-eb5841">1</span> 人</div>
-            </div>
-          </div>
-          <div class="collage-item flex-between">
-            <div class="collage-user flex-align-center">
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
+            <!-- <div v-else class="collage-item flex-between">
+              <div class="collage-user flex-align-center">
+                <div class="collage-user-info">
+                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
+                  <div class="collage-user-name p-nowrap">旅途</div>
+                </div>
+                <div class="collage-user-info">
+                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
+                  <div class="collage-user-name p-nowrap">旅途</div>
+                </div>
+                <div class="collage-user-info">
+                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
+                  <div class="collage-user-name p-nowrap">旅途</div>
+                </div>
               </div>
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
+              <div class="collage-item-right">
+                <div class="collage-btn pd-btn">一起拼单</div>
+                <div class="collage-need-num">还差 <span class="color-eb5841">3</span> 人</div>
               </div>
-              <div class="collage-user-info">
-                <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                <div class="collage-user-name p-nowrap">旅途</div>
-              </div>
-            </div>
-            <div class="collage-item-right">
-              <div class="collage-btn pd-btn">一起拼单</div>
-              <div class="collage-need-num">还差 <span class="color-eb5841">3</span> 人</div>
-            </div>
-          </div>
+            </div> -->
+          </template>
         </div>
       </div>
     </div>
@@ -205,15 +199,15 @@
               <template v-else>
                 <template v-if="f_orderid && infoData.f_order_ollage_info && (!infoData.order_ollage_info || infoData.order_ollage_info.status!=0)">
                   <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-                      <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                      <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                       </template>
                     </van-count-down>结束</div>
-                  <div class="buy-btn btn-linear">一起拼单</div>
+                  <div @click="showFunc('collage')" class="buy-btn btn-linear">一起拼单</div>
                 </template>
                 <template v-else>
-                  <template v-if="ollage_ing_info">
+                  <template v-if="my_ing_info">
                     <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-                      <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                      <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                       </template>
                     </van-count-down>结束</div>
                     <div class="buy-btn btn-linear">邀请好友</div>
@@ -255,17 +249,17 @@
               <template v-if="infoData.goods_type<3">
                 <div class="goods-price">
                   <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                 </div>
               </template>
               <template v-else>
                 <div v-if="is_collage" class="goods-price">
                   <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                 </div>
                 <div v-else class="goods-price">
-                  <span class="font-24">￥</span>{{skuList[typeVal].o_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal">￥{{skuList[typeVal].y_price/100}}</span>
+                  <span class="font-24">￥</span>{{infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_price/100 : skuList[typeVal].s_price/100}} 
+                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                 </div>
               </template>
             </div>
@@ -277,7 +271,7 @@
                 <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
               </template>
               <template v-else>
-                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : skuList[typeVal].o_credits/100}}</div></div>
+                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : (infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_credits/100 : skuList[typeVal].credits/100)}}</div></div>
               </template>
             </template>
           </div>
@@ -288,8 +282,6 @@
             <div class="shops-dtit">规格</div>
             <div class="doption-list">
               <div v-for="(item, index) in skuList" :class="[typeVal == index ? 'active' : '','shops-doption']" @click="typeFunc(index)">{{item.specs_name}}</div>
-              <!-- <div :class="[typeVal == 1 ? 'active' : '','shops-doption']" @click="typeFunc(1)">绿色</div>
-              <div :class="[typeVal == 2 ? 'active' : '','shops-doption']" @click="typeFunc(2)">淡蓝色</div> -->
             </div>
           </div>
           <div class="shops-ditem">
@@ -359,9 +351,11 @@ export default {
       typeVal: 0,           //当前选中的商品规格index
       ensureShow: false,    //基础保障弹窗
       is_collage: true,     //是否拼单(拼单专用 true拼单 false 单独购买)
-      f_orderid: '',        //拼单分享 分享人订单id
+      f_orderid: '',        //拼单分享 分享人订单id(f_collage_order_project_id)
+      f_id: '',             //参与的拼单 id
       specs_id: '',         //拼单分享 分享商品规格id
       ollage_ing_info: '',  //当前的拼单信息
+      my_ing_info: '',      //我发起的拼单信息
       cart_num: '',         //购物车商品数
       goods: {              //购物车
         goods_id: '',
@@ -384,6 +378,7 @@ export default {
         tip_text: '',
       },
       cart_counts: 0,      //购物车中这个商品的总数量
+      collageList: [],     //闪购拼单列表
 
 
       goodsId: '',   //商品id
@@ -399,14 +394,19 @@ export default {
   },
   created(){
     this.goodsId = this.$route.query.id;
-    var cartList = JSON.parse(api.getPrefs({ key: 'cart' })) || [];
+    this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : '';
+    var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
+    if(cartList && cartList.length > 0){
+      cartList = JSON.parse(cartList);
+    }
     this.cart_num = cartList.length;
     this.getData();
   },
   methods: {
     getData () {
       getGoodsDetail({
-        goods_id: this.goodsId
+        goods_id: this.goodsId,
+        f_id: this.f_orderid
       }).then(res => {
         if (res.success) {
           this.infoData = res.data;
@@ -423,14 +423,20 @@ export default {
           this.tip_text = res.data.tip_text;
           if(res.data.goods_type == 3){
             this.goods.sign_url = res.data.sign_url;
+            if(this.is_collage){
+              this.collageList = res.data.f_collage_order_arr ? res.data.f_collage_order_arr : [];
+            }
+            if(res.data.user_order_project_info){
+              this.my_ing_info = res.data.user_order_project_info;
+            }
           }
           if(res.data.goods_type == 2){
             this.goods.special_bargain_type = res.data.special_bargain_type;
           }
-          if(this.infoData.goods_type == 3 && !this.is_collage){
-            this.goods.s_price = this.skuList[index].o_price;
-            this.goods.pay_price = this.skuList[index].o_price;
-          }
+          // if(this.infoData.goods_type == 3 && !this.is_collage){
+          //   this.goods.s_price = this.skuList[index].o_price;
+          //   this.goods.pay_price = this.skuList[index].o_price;
+          // }
           this.typeFunc(0);
         }
       })
@@ -454,18 +460,35 @@ export default {
     /*
     *显示/隐藏弹窗(规格)
     */
-    showFunc(type='') {
+    showFunc(type='',f_orderid='') {
       this.is_collage = type && type == 'collage' ? true : false;
       this.btn_type = type && type == 'buy' ? 'buy' : 'cart';
-      if(this.infoData.goods_type == 3){
+      this.f_id = f_orderid ? f_orderid : '';
+      // if(this.infoData.goods_type == 3){
+      //   this.goods.s_price = this.skuList[this.typeVal].o_price;
+      //   this.goods.pay_price = this.skuList[this.typeVal].o_price;
+      //   if(this.is_collage){
+      //     if(this.infoData.ollage_info.is_start == 1){
+      //       this.goods.s_price = this.skuList[this.typeVal].p_price;
+      //       this.goods.pay_price = this.skuList[this.typeVal].p_price;
+      //       this.goods.credits = this.skuList[this.typeVal].p_credits;
+      //     }
+      //   }
+      // }
+
+      if(this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 1){
         if(this.is_collage){
-          this.goods.s_price = this.skuList[this.typeVal].p_price;
-          this.goods.pay_price = this.skuList[this.typeVal].p_price;
+           this.goods.s_price = this.skuList[this.typeVal].p_price;
+            this.goods.pay_price = this.skuList[this.typeVal].p_price;
+            this.goods.credits = this.skuList[this.typeVal].p_credits;
         }else {
-          this.goods.s_price = this.skuList[this.typeVal].o_price;
-          this.goods.pay_price = this.skuList[this.typeVal].o_price;
+         this.goods.s_price = this.skuList[this.typeVal].o_price;
+            this.goods.pay_price = this.skuList[this.typeVal].o_price;
         }
+      }else {
+        this.goods.goods_type = 1;
       }
+
       this.isShow = !this.isShow;
     },
     /*
@@ -511,9 +534,12 @@ export default {
       // 获取购物车的缓存数组（没有数据，则赋予一个空数组）  
       
       var arr = [];
-      if (this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart'){
+      if ((this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0)){
         // var arr = JSON.parse(localStorage.getItem('cart')) || [];
-        var arr = JSON.parse(api.getPrefs({ sync: true, key: 'cart' })) || [];
+        var arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
+        if(arr && arr.length > 0){
+          arr = JSON.parse(arr);
+        }
         if (arr.length > 0) {
           // 遍历购物车数组  
           for (var j in arr) {
@@ -619,7 +645,7 @@ export default {
       });
     },
 
-    goLink(){
+    goLink(f_orderid=''){
       //order_type订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
       if(this.infoData.pay_type == 1){  //幸福币兑换
         this.$router.push({
@@ -631,7 +657,19 @@ export default {
           }
         })
       }else {
-        if(this.infoData.goods_type <3 ){
+        if(this.infoData.goods_type ==3 && this.infoData.ollage_info.is_start == 1 ){
+          this.$router.push({
+            path: '/life/settlement',
+            query: {
+              prev_page: 1,
+              order_type: this.is_collage ? 2 : 1,
+              specs_id: this.skuList[this.typeVal].specs_id,
+              ollage_id: this.infoData.ollage_info.id,
+              f_id: this.f_id
+            }
+          })
+          
+        }else {
           if(this.btn_type == 'buy'){
             this.$router.push({
               path: '/life/settlement',
@@ -644,16 +682,6 @@ export default {
           }else {
             this.$router.push('/life/cart');
           }
-        }else {
-          this.$router.push({
-            path: '/life/settlement',
-            query: {
-              prev_page: 1,
-              order_type: this.is_collage ? 2 : 1,
-              specs_id: this.skuList[this.typeVal].specs_id,
-              ollage_id: this.infoData.ollage_info.id
-            }
-          })
         }
       }
     },
@@ -909,7 +937,7 @@ div.btn-disabled {
   height: 100%;
   display: flex;
   flex-shrink: 0;
-  /*background-color: #f4f4f4;*/
+  background-color: #f4f4f4;
 }
 .params-goods-right {
   width: 431px;
@@ -1069,6 +1097,9 @@ div.btn-disabled {
   font-size: 24px;
   color: #8f8f94;
   font-weight: normal;
+}
+.through-line {
+  text-decoration: line-through;
 }
 .activity-presale-price {
   color: #ffae00;

@@ -17,16 +17,11 @@
         <div @click="cancelFunc" class="search-cancel flex-center">取消</div>
       </div>
     </div>
-    <!-- <div class="input-empty"></div> -->
     <template v-if="isFocus">
       <div v-if="hotWordsList.length > 0" class="search-session search-session1">
         <div class="search-tit">热门搜索</div>
         <div class="search-list">
           <div v-for="(item, index) in hotWordsList" @click="wordsSearch(item.search_word)" class="search-item">{{item.search_word}}</div>
-          <!-- <div class="search-item">限时闪购</div>
-          <div class="search-item">咖啡</div>
-          <div class="search-item">商品</div>
-          <div class="search-item">茶叶</div> -->
         </div>
       </div>
       <div v-if="searchList.length > 0" class="search-session">
@@ -58,120 +53,130 @@
         @load="onLoad"
       >
         <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0 || typeVal==3">
-          <div v-if="appList.length > 0" class="search-session result-session">
-            <div class="result-tit flex-between">
-              <div class="result-tit-l"><span class="color-222">应用</span>（{{app_count}}）</div>
-            </div>
-            <div class="result-list list-690">
-              <div v-for="(item, index) in appList" @click="goLink(item.url)" class="res-application-item">
-                <img :src="item.icon_image" />
-                <div class="application-name p-nowrap" v-html="item.application"></div>
+          <template v-if="appList.length > 0">
+            <div class="search-session result-session">
+              <div class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">应用</span>（{{app_count}}）</div>
+              </div>
+              <div class="result-list list-690">
+                <div v-for="(item, index) in appList" @click="goLink(item.url)" class="res-application-item">
+                  <img :src="item.icon_image" />
+                  <div class="application-name p-nowrap" v-html="item.application"></div>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </template>
         <template v-if="(tapIndex==0 || tapIndex==1) && typeVal==0 || typeVal==1">
-          <div v-if="goodsList.length > 0" class="search-session result-session">
-            <div v-if="typeVal!=1" class="result-tit flex-between">
-              <div class="result-tit-l"><span class="color-222">商品</span>（{{goods_count}}）</div>
-              <div @click="goMore(1)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多商品</div>
-            </div>
-            <div class="result-list list-690">
-              <template v-if="(tapIndex==0 || tapIndex==1) && typeVal==0">
-                <div v-for="(item, index) in goodsList" v-if="index < 3" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
-                  <img class="res-goods-pic" :src="item.thumb" />
-                  <div class="res-goods-info">
-                    <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
-                    <div v-if="item.goods_type > 1" class="flex-align-center">
-                      <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
-                      <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+          <template v-if="goodsList.length > 0">
+            <div class="search-session result-session">
+              <div v-if="typeVal!=1" class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">商品</span>（{{goods_count}}）</div>
+                <div @click="goMore(1)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多商品</div>
+              </div>
+              <div class="result-list list-690">
+                <template v-if="(tapIndex==0 || tapIndex==1) && typeVal==0">
+                  <div v-for="(item, index) in goodsList" v-if="index < 3" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
+                    <img class="res-goods-pic" :src="item.thumb" />
+                    <div class="res-goods-info">
+                      <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
+                      <div v-if="item.goods_type > 1" class="flex-align-center">
+                        <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
+                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+                      </div>
+                      <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
-                    <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                   </div>
-                </div>
-              </template>
-              <template v-else>
-                <div v-for="(item, index) in goodsList2" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
-                  <img class="res-goods-pic" :src="item.thumb" />
-                  <div class="res-goods-info">
-                    <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
-                    <div v-if="item.goods_type > 1" class="flex-align-center">
-                      <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
-                      <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+                </template>
+                <template v-else>
+                  <div v-for="(item, index) in goodsList2" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
+                    <img class="res-goods-pic" :src="item.thumb" />
+                    <div class="res-goods-info">
+                      <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
+                      <div v-if="item.goods_type > 1" class="flex-align-center">
+                        <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
+                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+                      </div>
+                      <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
-                    <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                   </div>
-                </div>
-              </template>
+                </template>
+              </div>
             </div>
-          </div>
+          </template>
         </template>
         <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0 || typeVal==2">
-          <div v-if="postbarList.length > 0" class="search-session result-session">
-            <div v-if="typeVal!=2" class="result-tit flex-between">
-              <div class="result-tit-l"><span class="color-222">帖子</span>（{{postbar_count}}）</div>
-              <div @click="goMore(2)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多帖子</div>
-            </div>
-            <div class="result-list list-710">
-              <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0">
-                <div v-for="(item, index) in postbarList" v-if="index < 3" @click="linkFunc(30,{id: item.id})" class="res-post-item">
-                  <div class="post-item-header">
-                    <div class="post-user-info flex-align-center">
-                      <img class="post-user-photo" :src="item.avatar" />
-                      <div class="flex-column-center">
-                        <div class="post-user-name">{{item.nickname}}</div>
-                        <div class="post-user-time">{{item.ctime}}</div>
+          <template v-if="postbarList.length > 0">
+            <div class="search-session result-session">
+              <div v-if="typeVal!=2" class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">帖子</span>（{{postbar_count}}）</div>
+                <div @click="goMore(2)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多帖子</div>
+              </div>
+              <div class="result-list list-710">
+                <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0">
+                  <div v-for="(item, index) in postbarList" v-if="index < 3" @click="linkFunc(30,{id: item.id})" class="res-post-item">
+                    <div class="post-item-header">
+                      <div class="post-user-info flex-align-center">
+                        <img class="post-user-photo" :src="item.avatar" />
+                        <div class="flex-column-center">
+                          <div class="post-user-name">{{item.nickname}}</div>
+                          <div class="post-user-time">{{item.ctime}}</div>
+                        </div>
+                      </div>
+                      <div v-if="item.category" class="post-group">{{item.category}}</div>
+                    </div>
+                    <div class="post-cont">{{item.content}}
+                      <template v-if="item.images">
+                        <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
+                        <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+                      </template>
+                      <!-- <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" /> -->
+                    </div>
+                    <div class="post-item-footer">
+                      <div class="post-icon flex-between">
+                        <div @click.stop="thumbsUp(item)" class="post-fabulous flex-align-center"><template v-if="item.is_thumbsup==1"><img src="@/assets/img/icon_13.png" /></template><template v-else><img src="@/assets/img/icon_15.png" /></template>{{item.thumbsups}}</div>
+                        <div class="post-comment flex-align-center"><img src="@/assets/img/icon_14.png" />{{item.comments > 0 ? item.comments : ''}}</div>
+                        <div class="post-point flex-center"><span></span><span></span><span></span></div>
                       </div>
                     </div>
-                    <div v-if="item.category" class="post-group">{{item.category}}</div>
                   </div>
-                  <div class="post-cont">{{item.content}}
-                    <template v-if="item.images">
-                      <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
-                      <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
-                    </template>
-                    <!-- <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" /> -->
-                  </div>
-                  <div class="post-item-footer">
-                    <div class="post-icon flex-between">
-                      <div @click.stop="thumbsUp(item)" class="post-fabulous flex-align-center"><template v-if="item.is_thumbsup==1"><img src="@/assets/img/icon_13.png" /></template><template v-else><img src="@/assets/img/icon_15.png" /></template>{{item.thumbsups}}</div>
-                      <div class="post-comment flex-align-center"><img src="@/assets/img/icon_14.png" />{{item.comments > 0 ? item.comments : ''}}</div>
-                      <div class="post-point flex-center"><span></span><span></span><span></span></div>
+                </template>
+                <template v-else>
+                  <div v-for="(item, index) in postbarList2" @click="linkFunc(30,{id: item.id})" class="res-post-item">
+                    <div class="post-item-header">
+                      <div class="post-user-info flex-align-center">
+                        <img class="post-user-photo" :src="item.avatar" />
+                        <div class="flex-column-center">
+                          <div class="post-user-name">{{item.nickname}}</div>
+                          <div class="post-user-time">{{item.ctime}}</div>
+                        </div>
+                      </div>
+                      <div v-if="item.category" class="post-group">{{item.category}}</div>
                     </div>
-                  </div>
-                </div>
-              </template>
-              <template v-else>
-                <div v-for="(item, index) in postbarList2" @click="linkFunc(30,{id: item.id})" class="res-post-item">
-                  <div class="post-item-header">
-                    <div class="post-user-info flex-align-center">
-                      <img class="post-user-photo" :src="item.avatar" />
-                      <div class="flex-column-center">
-                        <div class="post-user-name">{{item.nickname}}</div>
-                        <div class="post-user-time">{{item.ctime}}</div>
+                    <div class="post-cont">{{item.content}}
+                      <template v-if="item.images">
+                        <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
+                        <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+                      </template>
+                      <!-- <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" /> -->
+                    </div>
+                    <div class="post-item-footer">
+                      <div class="post-icon flex-between">
+                        <div @click.stop="thumbsUp(item)" class="post-fabulous flex-align-center"><template v-if="item.is_thumbsup==1"><img src="@/assets/img/icon_13.png" /></template><template v-else><img src="@/assets/img/icon_15.png" /></template>{{item.thumbsups}}</div>
+                        <div class="post-comment flex-align-center"><img src="@/assets/img/icon_14.png" />{{item.comments > 0 ? item.comments : ''}}</div>
+                        <div class="post-point flex-center"><span></span><span></span><span></span></div>
                       </div>
                     </div>
-                    <div v-if="item.category" class="post-group">{{item.category}}</div>
                   </div>
-                  <div class="post-cont">{{item.content}}
-                    <template v-if="item.images">
-                      <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
-                      <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
-                    </template>
-                    <!-- <img src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" /> -->
-                  </div>
-                  <div class="post-item-footer">
-                    <div class="post-icon flex-between">
-                      <div @click.stop="thumbsUp(item)" class="post-fabulous flex-align-center"><template v-if="item.is_thumbsup==1"><img src="@/assets/img/icon_13.png" /></template><template v-else><img src="@/assets/img/icon_15.png" /></template>{{item.thumbsups}}</div>
-                      <div class="post-comment flex-align-center"><img src="@/assets/img/icon_14.png" />{{item.comments > 0 ? item.comments : ''}}</div>
-                      <div class="post-point flex-center"><span></span><span></span><span></span></div>
-                    </div>
-                  </div>
-                </div>
-              </template>
+                </template>
+              </div>
             </div>
-          </div>
+          </template>
         </template>
+        <div v-if="(tapIndex==0&&typeVal==0&&goodsList.length==0&&postbarList.length==0&&appList.length==0) || (tapIndex==1&&typeVal==0&&goodsList.length==0 || typeVal==1&&goodsList2.length==0)|| (tapIndex==2&&typeVal==0&&postbarList.length==0 || typeVal==2&&postbarList2.length==0)|| (tapIndex==3&&typeVal==0&&appList.length==0)" class="empty-session">
+          <img src="@/assets/img/empty_search.png" />
+          <div>无搜索结果</div>
+        </div>
       </van-list>
     </template>
 	</div>
@@ -227,7 +232,10 @@ export default {
   created(){
     this.isSelect = this.$route.query.isSelect;
     // this.searchList = JSON.parse(localStorage.getItem('searchWords')) || [];
-    this.searchList = JSON.parse(api.getPrefs({ sync: true,key: 'searchWords' })) || [];
+    var searchWords = api.getPrefs({ sync: true, key: 'searchWords' }) || [];
+    if(searchWords && searchWords.length > 0){
+      this.searchList = JSON.parse(searchWords);
+    }
     this.getData();
   },
   mounted () {
@@ -262,17 +270,6 @@ export default {
       this.page = 1;
     },
     getSearchGoods(type=''){
-      // if(type == 1){
-      //   this.finished = false;
-      //   this.loading = false;
-      //   this.page = 1;
-      //   this.goodsList = [];
-      //   if(!this.goods_val){
-      //     this.goods_val = this.search_val;
-      //   }
-      //   console.log(this.goods_val);
-      // }
-
       var search_key = this.search_val;
       if(this.typeVal == 1){
         search_key = this.goods_val;
@@ -322,22 +319,6 @@ export default {
     },
     //搜索帖子
     getSearchPostbar(type=''){
-      // var search_key = this.search_val;
-      // if(type == 1){
-      //   this.finished = false;
-      //   this.loading = false;
-      //   this.page = 1;
-      //   this.postbarList = [];
-      //   if(!this.postbar_val){
-      //     this.postbar_val = this.search_val;
-      //   }
-      //   search_key = this.postbar_val;
-      // }else if(type == 2){
-      //   if(!this.postbar_val){
-      //     this.postbar_val = this.search_val;
-      //   }
-      //   search_key = this.postbar_val;
-      // }
       var search_key = this.search_val;
       if(this.typeVal == 2){
         search_key = this.postbar_val;
@@ -419,16 +400,6 @@ export default {
       this.isFocus = false;
     },
     /**
-     * 获取输入框值
-    */
-    // getInputVal: function (e) {
-    //   const that = this;
-    //   key_word = e.detail.value;
-    //   that.setData({
-    //     search_val: key_word
-    //   })
-    // },
-    /**
      * 点击关键词搜索
     */
     wordsSearch: function (val) {
@@ -485,45 +456,6 @@ export default {
         this.getSearchPostbar();
       }else {
         this.getSearchApp();
-      }
-      
-      return;
-      if (this.noMoreHidden) {
-        app.util.request({
-          'url': '/xcx/wxjson/search_goods',
-          'cachetime': '0',
-          'data': {
-            uid: this.userId,
-            keyword: key_word,
-            page: this.page,
-            cj_code: app.util.getScene()
-          },
-          success(res) {
-            let result = res.data;
-            if (result.code == '0000') {
-              if (result.data.goods_list.length && result.data.goods_list.length > 0) {
-                that.setData({
-                  resShopList: this.page == 1 ? result.data.goods_list : this.resShopList.concat(result.data.goods_list),
-                  noneHidden: true,
-                });
-              } else {
-                that.setData({
-                  noneHidden: false,
-                });
-              }
-              if (result.data.goods_list.length == 0 && this.page > 1) {
-                that.setData({
-                  noneHidden: true,
-                  noMoreHidden: false
-                })
-              }else {
-                that.setData({
-                  noMoreHidden: true
-                })
-              }
-            }
-          }
-        });
       }
     },
     /**

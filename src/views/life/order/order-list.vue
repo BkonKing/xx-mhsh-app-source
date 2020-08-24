@@ -75,117 +75,6 @@
         <div>暂无订单</div>
       </div>
     </van-list>
-		<!-- <div class="order-list">
-			<div class="order-item" @click.stop="linkFunc(12)">
-				<div class="order-header">
-					<div class="order-no">订单号：20181106121211061223</div>
-					<div class="order-status">配货中<text class="font-28 color-eb5841 text-right"></text></div>
-				</div>
-				<div class="order-goods-info" @click.stop="linkFunc(5,{id:12})">
-					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"/>
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-							<div class="order-price">￥20000.00</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku p-nowrap">规格：银色</div>
-							<div class="order-num">￥21000.00</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">不支持退货
-								<div class="order-action-btn">
-									<img class="img-100" src="http://192.168.1.158/library/img/xcx_img/activity/question_01.png" mode="" />
-								</div>
-							</div>
-							<div class="order-buy-num">x1</div>
-						</div>
-					</div>
-				</div>
-				<div class="order-goods-info" @click.stop="linkFunc(5,{id:12})">
-					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"/>
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-							<div class="order-price">￥20000.00</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku p-nowrap">规格：银色</div>
-							<div class="order-num">￥21000.00</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">不支持退货
-								<div class="order-action-btn">
-									<image class="order-action-pic" src="http://192.168.1.158/library/img/xcx_img/activity/question_01.png" mode=""></image>
-								</div>
-							</div>
-							<div class="order-buy-num">x1</div>
-						</div>
-					</div>
-				</div>
-				<div v-show="false" class="toggle-btn">111
-					<image src="" mode=""></image>
-				</div>
-				<div class="order-footer">
-					<div class="order-total">
-						<div class="color-8f8f94 font-24">共 1 件</div>
-						<div class="order-price-total">
-							合计:<span>￥200.00</span>
-						</div>
-					</div>
-					<div class="order-btn-box">
-						<div class="order-border-btn" @click.stop="linkFunc(20)">物流详情</div>
-						<div class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="time" @finish="finish">
-            <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
-            </template>
-          </van-count-down>)</div>
-					</div>
-				</div>
-			</div>
-			<div class="order-item" @click.stop="linkFunc(13)">
-				<div class="order-header">
-					<div class="order-no">订单号：20181106121211061223</div>
-					<div class="order-status">配货中<text class="font-28 color-eb5841 text-right"></text></div>
-				</div>
-				<div class="order-goods-info" @click.stop="linkFunc(5,{id:12})">
-					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"/>
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-							<div class="order-price">￥20000.00</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku p-nowrap">规格：银色</div>
-							<div class="order-num">￥21000.00</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">不支持退货
-								<div class="order-action-btn">
-									<image class="order-action-pic" src="http://192.168.1.158/library/img/xcx_img/activity/question_01.png" mode=""></image>
-								</div>
-							</div>
-							<div class="order-buy-num">x1</div>
-						</div>
-					</div>
-				</div>
-				<div class="order-total">
-					<div class="color-8f8f94 font-24">共 1 件</div>
-					<div class="order-price-total">
-						合计:<span>￥200.00</span>
-					</div>
-				</div>
-				<div class="order-btn-box">
-					<div class="order-border-btn" @click.stop="linkFunc(20)">物流详情</div>
-					<div class="order-border-btn" @click.stop="linkFunc(20)">物流详情</div>
-				</div>
-			</div>
-		</div> -->
 		<explain-swal 
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
@@ -205,7 +94,7 @@
 import { NavBar, CountDown, List } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
-import { getOrderList, cancelNoPayOrder, cancelPayOrder } from '@/api/life.js'
+import { getOrderList, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -263,13 +152,16 @@ export default {
         page_type: this.typeVal
       }).then(res => {
         if (res.success) {
+        	this.flag = true;
         	this.newTime = parseInt(new Date().getTime());
           this.listData = this.page == 1 ? res.data.order_project_list : this.listData.concat(res.data.order_project_list);
           this.isEmpty = this.page == 1 && res.data.order_project_list.length ==0 ? true : false;
           if(res.data.order_project_list.length < res.data.pageSize){
             this.finished = true;
+            this.flag = true;
           }else {
             this.page = this.page+1;
+            this.flag = false;
           }
           this.loading = false;
         }
@@ -300,11 +192,29 @@ export default {
       this.showPaySwal = data == 1 ? true : false;
     },
     surePaySwal(data){
-      if(data == 0){  //微信支付
-
-      }else {   //支付宝支付
-
-      }
+      payOrderUp({
+        order_id: this.payOderdId,
+        pay_type: data == 0 ? 1 : 2
+      }).then(res => {
+        if (res.success) {
+          if(res.data){
+            this.payOrderInfo = res.data;
+            this.aliPayUp();
+          }
+        }
+      })
+    },
+    //支付宝支付
+    aliPayUp(){
+      let that = this;
+      var aliPayPlus = api.require('aliPayPlus'); 
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
+        function(ret, err) { 
+          if(ret.code == '9000'){  //支付成功
+            this.initFunc(1);
+          }
+        }
+      );
     },
     // 取消订单
     cancelOrder(index,id){
@@ -313,7 +223,7 @@ export default {
 	        order_project_id: this.listData[index].order_id,
 	      }).then(res => {
 	        if (res.success) {
-	        	this.initFunc();
+	        	this.initFunc(1);
 	        }
 	      })
     	}else {
@@ -321,18 +231,20 @@ export default {
 	        order_project_id: this.listData[index].order_id,
 	      }).then(res => {
 	        if (res.success) {
-	        	this.initFunc();
+	        	this.initFunc(1);
 	        }
 	      })
     	}
     },
     //初始化列表
-    initFunc(){
-    	// this.listData = [];
+    initFunc(type=''){
+    	this.listData = [];
       this.page = 1;
       this.loading = false;
       this.finished = false;
-      this.getData();
+      if(!this.flag || type==1){
+      	this.getData();
+      }
     },
     // 打开弹窗
     openExplainSwal(){
