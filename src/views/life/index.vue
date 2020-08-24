@@ -323,7 +323,7 @@ export default {
 		// });
   },
   created () {
-  	var cartList = api.getPrefs({ key: 'cart' }) || [];
+  	var cartList = api.getPrefs({sync: true, key: 'cart' }) || [];
   	if(cartList && cartList.length > 0){
   		cartList = JSON.parse(cartList);
   	}

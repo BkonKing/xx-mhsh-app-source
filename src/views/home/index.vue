@@ -166,6 +166,10 @@
         </van-swipe>
       </van-notice-bar>
     </div>
+    <!-- 新手引导 -->
+    <div v-if="guideShow" @click="guideStep" :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']" :style="{'padding-top': $store.state.paddingTop+'px'}">
+      <img :src="guideList[guideIndex]">
+    </div>
   </div>
 </template>
 
@@ -216,13 +220,21 @@ export default {
       ollageGoods: [], // 闪购商品
       creditsGoods: [], // 幸福币商品
       frontList: [],
-      activityList: []
+      activityList: [],
+      guideShow: false, //是否显示新手引导图
+      guideIndex: 0,
+      guideList: [process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_01.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_02.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_03.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_04.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_05.png']
     }
   },
   computed: {
     ...mapGetters(['userType', 'userInfo'])
   },
   created () {
+    var guidetype = api.getPrefs({ sync: true, key: 'guidetype' });
+    if(!guidetype){
+      this.guideShow = true;
+    }
+
     this.$store.dispatch('getMyAccount')
     this.getBannerIndex()
     this.getNoticeLbList()
@@ -237,6 +249,14 @@ export default {
     this.swipeChange(0)
   },
   methods: {
+    /* 新手引导步骤 */
+    guideStep(){
+      this.guideIndex = this.guideIndex + 1;
+      if(this.guideIndex > 4){
+        this.guideShow = false;
+        api.setPrefs({ key: 'guidetype', value: 1 });
+      }
+    },
     /* 获取通知轮播列表 */
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {
@@ -410,6 +430,25 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.mask-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background-color: rgba(0,0,0,0.6);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  img {
+    width: 100%;
+    object-fit: contain;
+  }
+}
+.mask-bg.end-bottom {
+  align-items: flex-end;
+}
 .tf-bg-white {
   height: 100%;
   /deep/ .tf-image-grid .van-grid-item__content--square {
