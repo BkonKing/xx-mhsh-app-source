@@ -108,13 +108,9 @@ export default {
   },
   watch: {
     list (value) {
-      console.log(value)
       this.listChild = value
       this.loading = false
       this.refreshing = false
-    },
-    listChild (value) {
-      console.log(value)
     }
   }
 }

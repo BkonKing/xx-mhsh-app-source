@@ -156,7 +156,7 @@ const store = {
             commit('setUser_info', data)
             dispatch('getHouse')
             dispatch('getMyAccount')
-            resolve()
+            resolve(data)
           } else {
             reject(res.message)
           }
@@ -247,16 +247,23 @@ const store = {
     async getHouse ({
       commit
     }) {
-      const { data } = await bindingHouse()
+      const {
+        data
+      } = await bindingHouse()
       data && data.length && commit('setCurrentProject', data[0])
     },
-    async getMyAccount ({
+    getMyAccount ({
       commit
     }) {
-      await getMyAccount().then(({
-        data
-      }) => {
-        commit('setUser_info', data && data.user_info)
+      return new Promise((resolve, reject) => {
+        getMyAccount().then(({
+          data
+        }) => {
+          commit('setUser_info', data && data.user_info)
+          resolve(data)
+        }).catch(err => {
+          reject(err)
+        })
       })
     }
   }

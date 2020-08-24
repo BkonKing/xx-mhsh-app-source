@@ -69,7 +69,7 @@ export default {
       this.$router.push({
         name: 'noticeDetails',
         query: {
-          noticeId: id
+          id
         }
       })
     },

@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-ellipsis" @click="moreShow = true"></span>
+        <span class="van-icon van-icon-ellipsis" @click="moreShow = true"></span>
       </template>
     </van-nav-bar>
     <van-pull-refresh
@@ -45,7 +45,10 @@
             size="sm"
           ></tf-alert>
           <div class="tf-card-content">{{info.content}}</div>
-          <tf-image-list v-if="info.images && info.images.length" :data="info.images" mode="show"></tf-image-list>
+          <template v-if="info.images && info.images.length">
+            <img width="33%" :src="info.images[0]" v-if="info.images.length === 1" />
+            <tf-image-list v-else :data="info.images" mode="show"></tf-image-list>
+          </template>
         </template>
         <template v-else-if="articleType == 2">
           <div class="article-title">{{info.title}}</div>
@@ -170,7 +173,7 @@ export default {
     getPostBarInfo () {
       getPostBarInfo({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         this.info = res.data
         this.isLoading = false
       })
@@ -179,7 +182,7 @@ export default {
     getActivityInfo () {
       getActivityInfo({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         this.info = res.data
         this.isLoading = false
       })
@@ -188,7 +191,7 @@ export default {
     joinActivity () {
       joinActivity({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         Toast.success('活动报名成功')
         this.getInfo()
       })
@@ -197,7 +200,7 @@ export default {
     getArticleInfo () {
       getArticleInfo({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         this.info = res.data
         this.isLoading = false
       })
@@ -210,7 +213,7 @@ export default {
       thumbsUp({
         id: this.id,
         t_type: 1
-      }).then(res => {
+      }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
@@ -352,5 +355,8 @@ export default {
 }
 .activity-reply {
   flex: 1;
+}
+/deep/ .van-nav-bar__right .van-icon {
+  font-size: 44px;
 }
 </style>

@@ -33,7 +33,7 @@
           <div class="user-text--grey">幸福币</div>
         </div>
         <div class="tf-flex-item tf-column" @click="$router.push('/coupon/list')">
-          <div class="user-text--lg">26</div>
+          <div class="user-text--lg">{{orderData.yhq_count}}</div>
           <div class="user-text--grey">优惠券</div>
         </div>
         <div class="tf-flex-item tf-column tf-flex-center">
@@ -81,28 +81,31 @@
             <div class="order-box" @click="goOrderList(1)">
               <img class="manage-image" src="@/assets/imgs/personage_daifukuan.png" />
               <div class="text-sm">待付款</div>
-              <!-- <span class="personage-badge"></span> -->
+              <span v-if="orderData.dfk_count && orderData.dfk_count != 0" class="personage-badge">{{orderData.dfk_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(2)">
               <img class="manage-image" src="@/assets/imgs/personage_daifahuo.png" />
               <div class="text-sm">待发货</div>
+              <span v-if="orderData.dfk_count && orderData.dfh_count != 0" class="personage-badge">{{orderData.dfh_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(3)">
               <img class="manage-image" src="@/assets/imgs/personage_shouhuo.png" />
               <div class="text-sm">待收货</div>
+              <span v-if="orderData.dfk_count && orderData.dsh_count != 0" class="personage-badge">{{orderData.dsh_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(4)">
               <img class="manage-image" src="@/assets/imgs/personage_tuihuan.png" />
               <div class="text-sm">退换</div>
+              <span v-if="orderData.dfk_count && orderData.thz_count != 0" class="personage-badge">{{orderData.thz_count}}</span>
             </div>
-            <div class="order-box" @click="goOrderList">
+            <div class="order-box" @click="goOrderList(undefined)">
               <img class="manage-image" src="@/assets/imgs/personage_quanbu.png" />
               <div class="text-sm">全部</div>
             </div>
           </div>
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item border title="我的订单" @click="goOrderList">
+          <tf-list-item border title="我的订单" @click="goOrderList(undefined)">
             <template v-slot:image>
               <img class="tf-clist-cell__image" src="@/assets/imgs/personage_dingdan.png" />
             </template>
@@ -160,14 +163,17 @@ export default {
   data () {
     return {
       signStatus: true,
-      showCalendar: false // 签到日历是否隐藏
+      showCalendar: false, // 签到日历是否隐藏
+      orderData: {}
     }
   },
   computed: {
     ...mapGetters(['userInfo', 'userType', 'currentProject'])
   },
   created () {
-    this.$store.dispatch('getMyAccount')
+    this.$store.dispatch('getMyAccount').then(({ order_data }) => {
+      this.orderData = order_data
+    })
   },
   methods: {
     /* 签到 */
@@ -209,7 +215,12 @@ export default {
      * @param type {number} 无全部 1待付款 2待发货 3待收货 4退换
      */
     goOrderList (type) {
-      this.$router.push(`/order/list?type=${type}`)
+      this.$router.push({
+        path: '/order/list',
+        query: {
+          type
+        }
+      })
     },
     /* 意见反馈 */
     goFeedback () {

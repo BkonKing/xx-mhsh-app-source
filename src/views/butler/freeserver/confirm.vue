@@ -12,7 +12,7 @@
       <div class="share-box">
         <div class="tf-bg">
           <div class="tf-text-grey">服务项目：{{info.server_category}}</div>
-          <div class="tf-text-grey">申请：{{info.server_type}}({{info | serverInfo}})</div>
+          <div class="tf-text-grey">申请：{{info.server_type}}{{info | serverInfo}}</div>
         </div>
         <div class="pd20">
           <div class="tf-text-grey">申请人：{{info.realname}}</div>
@@ -29,6 +29,7 @@
 import { NavBar, Toast, Dialog } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { serverYuyue, serverClose } from '@/api/butler'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -40,9 +41,12 @@ export default {
       code_id: ''
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   created () {
     const { info, code_id } = this.$route.query
-    this.info = JSON.parse(this.$route.query.info)
+    this.info = JSON.parse(info)
     this.codeId = code_id
   },
   methods: {
@@ -58,7 +62,7 @@ export default {
       serverYuyue({
         code_id: this.info.code_id,
         uid: this.info.uid,
-        project_id: this.info.project_id,
+        project_id: this.userInfo.xm_project_id,
         category_id: this.info.category_id
       }).then((res) => {
         Dialog.alert({
@@ -77,7 +81,7 @@ export default {
         server_id: this.info.server_id
       }).then((res) => {
         Dialog.alert({
-          title: res.message
+          title: res.message || '服务结束'
         }).then(() => {
           this.$router.go(-1)
         })
@@ -97,13 +101,13 @@ export default {
     serverInfo (value) {
       switch (value.code_type) {
         case '1':
-          return `可借${value.duration}`
+          return `（可借${value.duration}）`
         case '2':
-          return value.yj_time
+          return value.yj_time ? `（${value.yj_time}）` : ''
         case '3':
-          return `预计第${parseInt(value.pd_num) + 1}位`
+          return `（预计第${parseInt(value.pd_num) + 1}位）`
         case '4':
-          return value.pd_time
+          return value.pd_time ? `（${value.pd_time}）` : ''
       }
     }
   }

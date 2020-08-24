@@ -9,15 +9,15 @@
       @click-left="goback"
     >
       <template #right>
-        <span v-if="mode && !editMode" class="tf-icon tf-icon-bianxie-square" @click="goEdit"></span>
+        <span v-if="mode && !editMode" class="tf-icon tf-icon-bianji" @click="goEdit"></span>
       </template>
     </van-nav-bar>
     <div class="tf-padding">
       <tf-list class="tf-mb-lg">
-        <tf-list-item title="房屋">
+        <tf-list-item title="房屋" @click="goCheckHouse">
           <template v-slot:right>
             <div v-if="mode === 1 && !editMode" class="tf-text">{{house_name}}</div>
-            <div v-else class="tf-text" @click="goCheckHouse">{{ house_name || '请选择'}}</div>
+            <div v-else class="tf-text">{{ house_name || '请选择'}}</div>
           </template>
         </tf-list-item>
       </tf-list>
@@ -53,6 +53,7 @@
               v-model="checked"
               size="24"
               @change="bindingDefault"
+              :disabled="checked"
               active-color="#EB5841"
             />
           </template>
@@ -330,8 +331,16 @@ export default {
           project_name,
           building_name,
           unit_name,
+          house_id,
+          project_id,
+          building_id,
+          unit_id,
           is_default
         } = res.data
+        this.house_id = house_id
+        this.project_id = project_id
+        this.unit_id = unit_id
+        this.building_id = building_id
         this.realname = realname
         this.mobile = mobile
         this.house_role = house_role
@@ -353,7 +362,7 @@ export default {
       unBinding({
         binding_id: this.bindingId
       }).then((res) => {
-        Toast.alert({
+        Dialog.alert({
           title: '解绑成功！'
         }).then(() => {
           this.$router.go(-1)
@@ -374,6 +383,9 @@ export default {
     },
     /* 选择房屋跳转 */
     goCheckHouse () {
+      if (this.mode === 1 && !this.editMode) {
+        return
+      }
       this.$router.push('/pages/personage/house/select-community')
     },
     /* 查看转编辑 */
@@ -403,6 +415,17 @@ export default {
 .tf-card-header {
   font-size: @font-size-md !important;
   font-weight: bold;
+}
+
+/deep/ .tf-clist-cell-left {
+  flex: initial;
+  width: 180px;
+}
+
+/deep/ .tf-clist-cell-right {
+  .tf-text {
+    line-height: 90px;
+  }
 }
 
 .tf-input {

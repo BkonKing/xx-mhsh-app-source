@@ -505,8 +505,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created () {
-    const { id, title, type } = this.$route.query
-    this.title = title
+    const { id, type } = this.$route.query
     this.repairId = id
     this.projectId = this.userInfo.xm_project_id
     this.getRepairInfo()
@@ -524,7 +523,8 @@ export default {
         this.projectId
       ).then(res => {
         this.isLoading = false
-        const { status, sub_status } = res.data
+        const { status, sub_status, category } = res.data
+        this.title = category
         this.detailInfo = res.data
         this.status = status
         this.sub_status = sub_status

@@ -12,22 +12,47 @@
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
       <van-tab title="交易" :badge="badgeList[2]">
-        <message-list type="transaction" :load="({pages}) => getMessageList(pages, 2)" @click="toTransaction"></message-list>
+        <message-list
+          ref="transaction"
+          type="transaction"
+          :load="({pages}) => getMessageList(pages, 2)"
+          @click="toTransaction"
+        ></message-list>
       </van-tab>
       <van-tab title="互动" :badge="badgeList[3]">
-        <interaction @click="toInteraction" @read="(id) => messageRead(id)"></interaction>
+        <interaction ref="interaction" @click="toInteraction"></interaction>
       </van-tab>
       <van-tab title="物业" :badge="badgeList[4]">
-        <message-list type="butler" :load="({pages}) => getMessageList(pages, 4)" @click="toButler"></message-list>
+        <message-list
+          ref="butler"
+          type="butler"
+          :load="({pages}) => getMessageList(pages, 4)"
+          @click="toButler"
+        ></message-list>
       </van-tab>
       <van-tab title="活动" :badge="badgeList[5]">
-        <message-list type="activity" :load="({pages}) => getMessageList(pages, 5)"></message-list>
+        <message-list
+          ref="activity"
+          type="activity"
+          :load="({pages}) => getMessageList(pages, 5)"
+          @click="onActivity"
+        ></message-list>
       </van-tab>
       <van-tab title="系统" :badge="badgeList[6]">
-        <message-list type="system" :load="({pages}) => getMessageList(pages, 6)"></message-list>
+        <message-list
+          ref="system"
+          type="system"
+          :load="({pages}) => getMessageList(pages, 6)"
+          @click="onSystem"
+        ></message-list>
       </van-tab>
       <van-tab v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
-        <message-list type="work" :load="({pages}) => getMessageList(pages, 1)"></message-list>
+        <message-list
+          ref="work"
+          type="work"
+          :load="({pages}) => getMessageList(pages, 1)"
+          @click="onWork"
+        ></message-list>
       </van-tab>
     </van-tabs>
   </div>
@@ -62,7 +87,10 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created () {
+  // created () {
+  //   this.getCountMessage()
+  // },
+  activated () {
     this.getCountMessage()
   },
   methods: {
@@ -75,33 +103,80 @@ export default {
     },
     // 获取统计未读消息
     getCountMessage () {
-      getCountMessage().then(res => {
+      getCountMessage().then((res) => {
         this.badgeList = res.data
       })
     },
     // 设置已读消息
-    messageRead (id) {
+    messageRead (item) {
       messageRead({
-        id
-      }).then(res => {
-        this.badgeList = res.data || []
+        id: item.id
+      }).then((res) => {
+        item.is_read = '1'
       })
     },
     // 设置消息全部已读
     messageAllRead () {
-      messageAllRead().then(res => {
-
+      messageAllRead().then((res) => {
+        this.getCountMessage()
+        Object.keys(this.$refs).forEach((key) => {
+          this.$refs[key] && this.$refs[key].readAll()
+        })
       })
     },
     // 交易操作
-    toTransaction ({ id, type }) {
+    toTransaction (item) {
+      const { sub_type } = item
+      switch (sub_type) {
+        case '1':
+          this.$router.push({
+            path: '/order/refund-detail',
+            query: {
+              type: item.refund_type,
+              id: item.source_id
+            }
+          })
+          break
+        case '2':
+          this.$router.push({
+            path: item.order_type == '1' ? '/order/detail' : '/order/special-detail',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
+        case '3':
+          this.$router.push({
+            path: '/store/flash-purchase'
+          })
+          break
+        case '4':
+          this.$router.push({
+            path: '/order/barter-detail',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
+        case '5':
+          this.$router.push({
+            path: '/order/refund-detail',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
+      }
       // 幸福币详情
-      if (type) {
-        this.$router.push(`/pages/personage/happiness-coin/details?id=${id}`)
+      if (sub_type == 6 || sub_type == 7) {
+        this.$router.push(
+          `/pages/personage/happiness-coin/details?id=${item.source_id}`
+        )
       }
     },
     // 互动操作
     toInteraction (item) {
+      this.messageRead(item)
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {
@@ -110,21 +185,66 @@ export default {
         }
       })
     },
+    // 活动操作
+    onActivity (item) {
+      this.messageRead(item)
+      this.$router.push({
+        path: '/pages/neighbours/details',
+        query: {
+          articleType: '2',
+          id: item.source_id
+        }
+      })
+    },
     // 物业操作
     toButler (item) {
-      switch (item.type) {
-        case '':
-
+      this.messageRead(item)
+      switch (item.sub_type) {
+        // 公告通知-详情
+        case '13':
+          this.$router.push({
+            path: '/pages/butler/notice/details',
+            query: {
+              id: item.source_id
+            }
+          })
           break
-
-        default:
+        // 归还通知-我的免费服务列表
+        case '14':
+          this.$router.push({
+            path: '/pages/butler/freeserver/list'
+          })
+          break
+        // 投诉表扬-详情
+        case '15':
+          this.$router.push({
+            path: '/pages/butler/compraise/details',
+            query: {
+              id: item.source_id
+            }
+          })
           break
       }
+    },
+    // 系统操作
+    onSystem (item) {
+      this.messageRead(item)
+      if (item.sub_type == 9) {
+        this.$router.push({
+          path: '/pages/personage/feedback/details',
+          query: {
+            id: item.source_id
+          }
+        })
+      }
+    },
+    // 工作操作 - 处理员报事报修详情
+    onWork (item) {
+      this.messageRead(item)
       this.$router.push({
-        path: '/pages/butler/repairs/details',
+        path: '/pages/personage/transaction/details',
         query: {
-          title: item.title,
-          id: item.id
+          id: item.source_id
         }
       })
     }

@@ -92,11 +92,8 @@ export default {
   left: 92px;
   width: 436px;
   height: 76px;
-  background-image: linear-gradient(
-    -45deg,
-    rgba(235, 88, 65, 1),
-    rgba(249, 134, 107, 1)
-  );
+  background-image: url('../../../assets/imgs/butler_yaoyue.png');
+  background-size: contain;
 }
 
 .share-name__text {

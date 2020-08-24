@@ -61,7 +61,7 @@ export default {
     },
     // 跳转到详情页
     jump (item) {
-      const url = `/pages/butler/notice/details?noticeId=${item.id}`
+      const url = `/pages/butler/notice/details?id=${item.id}`
       // this.setNoticeReaded(item.id)
       this.$router.push(url)
     },

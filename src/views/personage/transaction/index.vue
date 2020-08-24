@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="事务处理"
       :fixed="true"
@@ -12,7 +12,7 @@
       <div class="transaction-title">报事报修</div>
       <div class="transaction-underline"></div>
     </div>
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <van-sticky offset-top="2.42666rem" @scroll="scrollSticky">
         <div
           class="transaction-tab-box"
@@ -42,7 +42,7 @@
           >已结案({{list4.length}})</div>
         </div>
       </van-sticky>
-      <div class="transaction-list">
+      <div class="transaction-list" :class="{'padding63': isFixed}">
         <template v-if="userInfo.role_dep == 1">
           <list
             v-show="type === 1"
@@ -110,7 +110,7 @@ export default {
     this.getDbRepairList(4)
   },
   methods: {
-    scrollSticky ({ isFixed }) {
+    scrollSticky ({ isFixed, scrollTop }) {
       this.isFixed = isFixed
     },
     listLoad (params, status) {
@@ -129,17 +129,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-main-container {
-  padding-top: 0;
-  height: calc(100% - 186px);
+.tf-body-container {
   @flex-column();
 }
 .transaction-header {
   @flex-column();
   align-items: center;
   width: 100%;
-  height: 186px;
-  padding-top: 88px;
+  height: 98px;
   background-color: #fff;
 }
 .transaction-title {
@@ -208,5 +205,8 @@ export default {
   .transaction-tab {
     margin-right: 20px;
   }
+}
+.padding63 {
+  padding-top: 126px;
 }
 </style>

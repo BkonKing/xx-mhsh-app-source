@@ -24,8 +24,8 @@ export default {
     [NavBar.name]: NavBar
   },
   created () {
-    const { noticeId } = this.$route.query
-    this.getNoticInfo(noticeId)
+    const { id } = this.$route.query
+    this.getNoticInfo(id)
   },
   data () {
     return {

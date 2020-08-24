@@ -58,6 +58,11 @@ export default {
     jump ({ id, source_id, article_type }) {
       this.$emit('read', id)
       this.$router.push(`/pages/neighbours/details?articleType=${article_type}&id=${source_id}`)
+    },
+    readAll () {
+      this.list.forEach(obj => {
+        obj.is_read = '1'
+      })
     }
   }
 }

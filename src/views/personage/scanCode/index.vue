@@ -1,25 +1,23 @@
 <template>
   <div class="tf-bg">
-    <div class="tf-bg main">
-      <div class="tf-icon tf-icon-close-circle-fill" @click="goBack"></div>
-      <div class="tab-content">
-        <template v-if="current === 1"></template>
-        <template v-if="current === 2">
-          <div class="tab-title">付款码</div>
-          <div class="tab-content__box">
-            <div class="qrcode-box">
-              <img class="qrcode-image" :src="paymentCodeImg" />
-            </div>
+    <span class="tf-icon tf-icon-close-circle-fill" @click="goBack"></span>
+    <div class="tab-content">
+      <template v-if="current === 1"></template>
+      <div class="tab-container" v-if="current === 2">
+        <div class="tab-title">付款码</div>
+        <div class="tab-content__box">
+          <div class="qrcode-box">
+            <img class="qrcode-image" :src="paymentCodeImg" />
           </div>
-        </template>
-        <template v-if="current === 3">
-          <div class="tab-title">收款码</div>
-          <div class="tab-content__box">
-            <div class="qrcode-box">
-              <img class="qrcode-image" :src="collectCodeImg" />
-            </div>
+        </div>
+      </div>
+      <div class="tab-container" v-if="current === 3">
+        <div class="tab-title">收款码</div>
+        <div class="tab-content__box">
+          <div class="qrcode-box">
+            <img class="qrcode-image" :src="collectCodeImg" />
           </div>
-        </template>
+        </div>
       </div>
     </div>
     <div class="tabs">
@@ -71,7 +69,7 @@ export default {
     this.current = parseInt(this.$route.query.current) || 1
   },
   mounted () {
-    // this.scanSuccess()
+    // this.scanSuccess('yuyuefangke|40')
     this.FNScanner = api.require('FNScanner')
   },
   methods: {
@@ -249,7 +247,13 @@ export default {
       visitorCodeScan({
         code_info: value
       }).then((res) => {
-        Toast.success('登记成功')
+        api.alert({
+          title: res.message
+        })
+      }).catch(err => {
+        api.alert({
+          title: err
+        })
       })
     },
     /* 打开扫码frame */
@@ -331,15 +335,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.main {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 98px;
-}
 .tf-icon {
-  position: fixed;
+  position: relative;
   top: 62px;
   left: 32px;
   font-size: 44px;
@@ -353,25 +350,26 @@ export default {
   @flex-column();
   align-items: center;
 }
-.tab-title {
+.tab-container {
   width: 600px;
+  height: 760px;
+  margin-top: 142px;
+  @flex-column();
+  align-items: center;
+  background-image: url('../../../assets/imgs/fukuan_bg.png');
+  background-size: contain;
+}
+.tab-title {
+  width: 100%;
   height: 120px;
   line-height: 120px;
-  margin-top: 248px;
   text-align: center;
   color: #fff;
   font-size: 38px;
-  background-image: linear-gradient(
-    -90deg,
-    rgba(235, 88, 65, 1),
-    rgba(249, 134, 107, 1)
-  );
 }
 .tab-content__box {
-  width: 600px;
-  // height: 320px;
+  width: 100%;
   padding: 70px 50px;
-  background-color: #fff;
   justify-content: center;
   align-items: center;
 }

@@ -8,14 +8,20 @@
             v-if="type == 'transaction'"
             class="tf-list-image"
             :src="item.image"
-            mode="aspectFit"
           />
-          <template v-else-if="type !== 'system'">
-            <div class="list-icon-box"></div>
+          <template v-else-if="type == 'butler'">
+            <div class="list-icon-box tf-icon" :class="item.sub_type | butlerIcon"></div>
+          </template>
+          <template v-else-if="type == 'activity'">
+            <div class="list-icon-box tf-icon" :class="item.sub_type | activityIcon"></div>
+          </template>
+          <template v-else-if="item.sub_type == '16'">
+            <div class="list-icon-box tf-icon" :class="item.repairs_status | repairIcon"></div>
           </template>
           <div class="tf-space-around">
             <div class="tf-row-vertical-center" :class="{'tf-mb-base': type === 'system'}">
               <div class="tf-list-title" :class="{'tf-read-after-tag': item.status}">{{item.title}}</div>
+              <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
             </div>
             <div class="tf-list-content">{{item.content}}</div>
           </div>
@@ -74,6 +80,11 @@ export default {
     },
     jump (item) {
       this.$emit('click', item)
+    },
+    readAll () {
+      this.list.forEach(obj => {
+        obj.is_read = '1'
+      })
     }
   },
   watch: {
@@ -83,6 +94,33 @@ export default {
     data (value) {
       this.list = value
     }
+  },
+  filters: {
+    activityIcon (value) {
+      const icon = {
+        17: 'tf-icon-huodongbaoming',
+        18: 'tf-icon-huodongkaishi'
+      }
+      return icon[value]
+    },
+    butlerIcon (value) {
+      const icon = {
+        13: 'tf-icon-gonggao1',
+        14: 'tf-icon-guihuan',
+        15: 'tf-icon-biaoyangtousu',
+        16: 'if-icon-baoshibaoxiu'
+      }
+      return icon[value]
+    },
+    repairIcon (value) {
+      const icon = {
+        1: 'tf-icon-daichuli',
+        2: 'tf-icon-daifenpai',
+        3: 'tf-icon-daijiean',
+        4: 'tf-icon-yijiean'
+      }
+      return icon[value]
+    }
   }
 }
 </script>
@@ -91,7 +129,12 @@ export default {
 .list-icon-box {
   width: 80px;
   height: 80px;
+  line-height: 80px;
   border-radius: 10px;
+  font-size: 44px;
+  color: #fff;
+  text-align: center;
+  margin-right: 20px;
 }
 .tf-list-title,
 .tf-list-content {
@@ -135,5 +178,28 @@ export default {
     line-height: 96px;
     color: #222;
   }
+}
+.tf-circle-tag--warning {
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+}
+.tf-icon-daichuli,
+.tf-icon-gonggao1,
+.tf-icon-huodongbaoming {
+  background: #ffa110;
+}
+.tf-icon-daifenpai,
+.if-icon-baoshibaoxiu {
+  background: #5c76d8;
+}
+.tf-icon-yijiean,
+.tf-icon-biaoyangtousu {
+  background: #4bb192;
+}
+.tf-icon-daijiean,
+.tf-icon-tf-icon-guihuan,
+.tf-icon-huodongkaishi {
+  background: #fd7d6f;
 }
 </style>

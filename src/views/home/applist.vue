@@ -76,6 +76,7 @@ import appContainer from './components/app-container'
 import appItem from './components/app-item'
 import draggable from 'vuedraggable'
 import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -99,6 +100,9 @@ export default {
       showButler: true,
       showNeighbour: true
     }
+  },
+  computed: {
+    ...mapGetters(['userType', 'userInfo'])
   },
   created () {
     this.getAllApp()

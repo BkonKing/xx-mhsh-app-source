@@ -27,7 +27,7 @@
           :avatar="item.icon_images"
         ></phone-card>
       </div>
-      <div class="tf-bg-white">
+      <div v-if="eqList && eqList.length > 0" class="tf-bg-white">
         <div class="module-title">常见问题</div>
         <FAQ :data="eqList"></FAQ>
       </div>
@@ -95,7 +95,6 @@ export default {
   top: 0;
   left: 0;
   z-index: -1; /*-1 可以当背景*/
-  filter: blur(2px);
 }
 
 .logo-badge {

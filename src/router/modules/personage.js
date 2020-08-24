@@ -247,15 +247,6 @@ const personageRouter = [
         /* webpackChunkName: "scanCodeIndex" */
         '@/views/personage/scanCode/index.vue'
       )
-  },
-  {
-    path: '/pages/personage/scanCode/qrcode',
-    name: 'scanCodeQr',
-    component: () =>
-      import(
-        /* webpackChunkName: "scanCodeQr" */
-        '@/views/personage/scanCode/qrcode.vue'
-      )
   }
 ]
 

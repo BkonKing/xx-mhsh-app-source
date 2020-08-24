@@ -66,6 +66,7 @@
       </div>
     </div>
     <tf-dialog
+      class="explain-dialog"
       v-model="show"
       title="使用说明"
       :showFotter="true"
@@ -74,10 +75,10 @@
     >
       <div class="dialog-content">
         <div class="tf-text-lg">二维码开门</div>
-        <div class="tf-text-grey">智能门禁摄像头需要读到二维码信息后才能发送开幕指令给单元门门禁，正确的使用方法是将二维码对准摄像头。</div>
+        <div class="tf-text-sm">智能门禁摄像头需要读到二维码信息后才能发送开幕指令给单元门门禁，正确的使用方法是将二维码对准摄像头。</div>
         <div class="tf-text-lg tf-mt-lg">一键开门</div>
-        <div class="tf-text-grey">点击立即开门按钮即可远程开启单元门。</div>
-        <div class="tf-text-lg tf-mt-lg">提示：请勿随意点击或给陌生人开门，否则追究法律责任。具体查看协议<router-link class="tf-text-blue" to="">《XX协议》</router-link>。</div>
+        <div class="tf-text-sm">点击立即开门按钮即可远程开启单元门。</div>
+        <div class="tf-text-sm tf-mt-lg">提示：请勿随意点击或给陌生人开门，否则追究法律责任。具体查看协议<router-link class="tf-text-blue" to="">《XX协议》</router-link>。</div>
       </div>
     </tf-dialog>
   </div>
@@ -310,7 +311,6 @@ export default {
 }
 
 .dialog-content {
-  margin: 60px 0;
   // max-height: 345px;
   line-height: 46px;
   font-size: 24px;
@@ -395,6 +395,27 @@ export default {
   }
   .tf-icon {
     font-size: 34px;
+  }
+}
+
+.explain-dialog {
+  /deep/ .dialog-content {
+    // height: 400px;
+    // overflow: auto;
+    .tf-text-lg {
+      color: #222;
+      margin-bottom: 10px;
+    }
+    .tf-text-sm {
+      color: #666;
+    }
+  }
+  /deep/ .tf-dialog-footer {
+    justify-content: center;
+    .tf-dialog-footer__btn {
+      flex: initial;
+      width: 300px;
+    }
   }
 }
 </style>

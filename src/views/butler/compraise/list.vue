@@ -6,7 +6,7 @@
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header">
-              <userInfo :avatar="userInfo.avatar" :name="userInfo.account" :time="item.ctime">
+              <userInfo :avatar="userInfo.avatar" :name="userInfo.nickname" :time="item.ctime">
                 <template v-slot:right>
                   <div
                     class="tf-icon"
@@ -16,7 +16,7 @@
               </userInfo>
             </div>
             <div class="tf-card-content">{{ item.content }}</div>
-            <tf-image-list class="pb10" :data="item.images"></tf-image-list>
+            <tf-image-list v-if="item.images" class="pb10" :data="item.images"></tf-image-list>
             <div v-if="item.reply" class="reply-box">
               <div class="reply-title">社区回复</div>
               <div class="reply-content">{{ item.reply }}</div>
@@ -55,7 +55,7 @@ export default {
       return getComPraiseList(params)
     },
     jump (item) {
-      const url = `/pages/butler/compraise/details?id=${item.id}&type=${item.info_type}`
+      const url = `/pages/butler/compraise/details?id=${item.id}`
       this.$router.push(url)
     }
   }

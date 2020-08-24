@@ -1,6 +1,9 @@
 <template>
   <div class="tf-bg-white tf-body">
-    <div class="home-header" :style="{'background': headerColor}">
+    <div
+      class="home-header"
+      :style="[{'background': headerColor}, {'padding-top': `${$store.state.paddingTop}px`}]"
+    >
       <page-nav-bar :class="{'black-page-nav': scrollStatus}" search></page-nav-bar>
       <van-notice-bar
         v-if="noticeList.length"
@@ -18,7 +21,11 @@
         </van-swipe>
       </van-notice-bar>
     </div>
-    <div class="tf-body-container" :class="{'no-notice': !noticeList.length}" @scroll.passive="onScroll">
+    <div
+      class="tf-body-container"
+      :class="{'no-notice': !noticeList.length}"
+      @scroll.passive="onScroll"
+    >
       <van-swipe
         class="home-swipe"
         :autoplay="6000"
@@ -168,8 +175,13 @@
       </van-notice-bar>
     </div>
     <!-- 新手引导 -->
-    <div v-if="guideShow" @click="guideStep" :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']" :style="{'padding-top': $store.state.paddingTop+'px'}">
-      <img :src="guideList[guideIndex]">
+    <div
+      v-if="guideShow"
+      @click="guideStep"
+      :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']"
+      :style="{'padding-top': $store.state.paddingTop+'px'}"
+    >
+      <img :src="guideList[guideIndex]" />
     </div>
   </div>
 </template>
@@ -224,18 +236,24 @@ export default {
       creditsGoods: [], // 幸福币商品
       frontList: [],
       activityList: [],
-      guideShow: false, //是否显示新手引导图
+      guideShow: false, // 是否显示新手引导图
       guideIndex: 0,
-      guideList: [process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_01.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_02.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_03.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_04.png',process.env.VUE_APP_DOMAIN_NAME+'/library/img/app_img/guide_05.png']
+      guideList: [
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_01.png',
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_02.png',
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_03.png',
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
+      ]
     }
   },
   computed: {
     ...mapGetters(['userType', 'userInfo'])
   },
   created () {
-    var guidetype = api.getPrefs({ sync: true, key: 'guidetype' });
-    if(!guidetype){
-      this.guideShow = true;
+    var guidetype = api.getPrefs({ sync: true, key: 'guidetype' })
+    if (!guidetype) {
+      this.guideShow = true
     }
 
     this.$store.dispatch('getMyAccount')
@@ -253,11 +271,11 @@ export default {
   },
   methods: {
     /* 新手引导步骤 */
-    guideStep(){
-      this.guideIndex = this.guideIndex + 1;
-      if(this.guideIndex > 4){
-        this.guideShow = false;
-        api.setPrefs({ key: 'guidetype', value: 1 });
+    guideStep () {
+      this.guideIndex = this.guideIndex + 1
+      if (this.guideIndex > 4) {
+        this.guideShow = false
+        api.setPrefs({ key: 'guidetype', value: 1 })
       }
     },
     /* 获取通知轮播列表 */
@@ -284,8 +302,8 @@ export default {
       this.activeIndex = index
       if (!this.scrollStatus) {
         this.headerColor =
-        (this.swipeImages[index] && this.swipeImages[index].color_value) ||
-        '#eb5841'
+          (this.swipeImages[index] && this.swipeImages[index].color_value) ||
+          '#eb5841'
       }
     },
     /* 签到 */
@@ -363,7 +381,7 @@ export default {
       this.$router.push({
         name: 'noticeDetails',
         query: {
-          noticeId: id
+          id
         }
       })
     },
@@ -453,7 +471,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 50;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   overflow: hidden;
   display: flex;
   align-items: flex-start;
@@ -504,7 +522,7 @@ export default {
 }
 .home-header {
   position: fixed;
-  // top: 0;
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 1;

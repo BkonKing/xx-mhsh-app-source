@@ -1,4 +1,5 @@
 import request from '@/utils/request.js'
+import store from '../store'
 
 // 智慧管家应用列表接口
 export function queryAllApp (params) {
@@ -262,7 +263,11 @@ export function serverYuyue (data) {
 }
 // 服务预约结束
 export function serverClose (data) {
-  return request.post('/butler/freeserver/server_close', data)
+  return request.post('/butler/freeserver/server_close', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
 }
 // 预约服务二维码链接
 export function getServerCode (data) {
@@ -274,7 +279,11 @@ export function serverCodeStatus (data) {
 }
 // 预约服务扫码确认
 export function serverCodeScan (data) {
-  return request.post('/butler/freeserver/serverCodeScan', data)
+  return request.post('/butler/freeserver/serverCodeScan', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
 }
 
 /* 免费服务 end */
@@ -383,7 +392,11 @@ export function visitorCode (data) {
 }
 // 预约访客扫码
 export function visitorCodeScan (data) {
-  return request.post('/butler/visitor/visitorCodeScan', data)
+  return request.post('/butler/visitor/visitorCodeScan', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
 }
 
 /* 访客邀约 end */

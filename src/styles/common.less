@@ -42,10 +42,12 @@
   flex-direction: column;
   padding-top: 200px;
 }
+
 .empty-session img {
   width: 100%;
   height: 500px;
 }
+
 .empty-session div {
   text-align: center;
   line-height: 92px;
@@ -626,7 +628,8 @@
     height: 100px;
   }
 
-  .van-nav-bar__left:active, .van-nav-bar__right:active {
+  .van-nav-bar__left:active,
+  .van-nav-bar__right:active {
     opacity: 1;
   }
 
@@ -737,6 +740,52 @@
   }
 }
 
+.van-dialog {
+  width: 560px;
+  border-radius: 10px;
+
+  .van-dialog__header {
+    font-size: 30px;
+    font-weight: 500;
+    color: #000;
+  }
+
+  .van-dialog__footer {
+    justify-content: center;
+    padding: 0 50px 30px;
+
+    .van-button {
+      font-size: 30px;
+      height: 66px;
+      line-height: 62px;
+      border: 2px solid rgba(170, 170, 170, 1);
+      border-radius: 4px;
+      color: #8F8F94;
+    }
+
+    .van-button + .van-button {
+      margin-left: 30px;
+    }
+
+    .van-dialog__confirm {
+      height: 66px;
+      line-height: 62px;
+      color: #fff;
+      background: rgba(235, 88, 65, 1);
+      border-color: rgba(235, 88, 65, 1);
+      border-radius: 4px;
+    }
+  }
+
+  .van-hairline--top::after {
+    border-top-width: 0;
+  }
+
+  .van-hairline--left::after {
+    border-left-width: 0;
+  }
+}
+
 .van-dialog .van-button {
   height: 66px;
 }
@@ -772,18 +821,21 @@
 
 
 /*图片上传*/
-.pic-list .van-uploader,.pic-list .van-uploader__wrapper {
+.pic-list .van-uploader,
+.pic-list .van-uploader__wrapper {
   display: flex;
   width: 100%;
   height: 100%;
   position: relative;
 }
+
 .pic-list .van-uploader__preview {
   width: 114px;
   height: 114px;
   margin: 20px 20px 0 0;
   position: relative;
 }
+
 .pic-list .van-uploader__preview-image {
   width: 114px;
   height: 114px;
@@ -795,6 +847,7 @@
   overflow: hidden;
   object-fit: cover;
 }
+
 .pic-list .van-uploader__preview-delete {
   position: absolute;
   width: 37px;
@@ -804,29 +857,35 @@
   align-items: center;
   z-index: 5 !important;
 }
+
 .pic-list .van-uploader__upload {
   width: 114px;
   height: 114px;
   margin-top: 20px;
 }
+
 .search-input-block .search-input.van-search {
   width: 540px;
   height: 100%;
   padding: 0;
 }
+
 .search-input-block .search-input.van-search .van-search__content {
   width: 100%;
   height: 100%;
   background-color: #fff;
   padding-left: 0;
 }
+
 .search-input.van-search .van-field__control,
 .search-input.van-search .van-field__left-icon {
   line-height: 60px !important;
 }
+
 .goods-detail-cont img {
   max-width: 100%;
 }
+
 .search-session.result-session {
   margin-top: 30px;
   background-color: #fff;

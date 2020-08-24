@@ -1,5 +1,5 @@
 <template>
-  <refreshList :list.sync="list" :load="load">
+  <refreshList :list.sync="list" :load="load" finished-text="">
     <template v-slot="{item}">
       <div class="coin-list-item" @click="goDetails(item)">
         <div class="coin-list-item-left">

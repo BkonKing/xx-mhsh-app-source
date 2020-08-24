@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     jump (item) {
-      const url = `/pages/personage/transaction/details?id=${item.repairs_id}&title=${item.category}`
+      const url = `/pages/personage/transaction/details?id=${item.repairs_id}`
       this.$router.push(url)
     }
   },

@@ -1,7 +1,7 @@
 <template>
   <van-popup class="tf-van-popup" v-model="value" @click-overlay="close" :close-on-click-overlay="false">
     <div class="tf-dialog__wrapper-box">
-      <span class="tf-icon tf-icon-guanbi" @click="close"></span>
+      <span class="tf-icon tf-icon-guanbi1" @click="close"></span>
       <div class="tf-dialog">
         <div v-if="title" class="tf-dialog-header">
           <div class="tf-dialog-header__title">{{ title }}</div>
@@ -93,6 +93,7 @@ export default {
 .tf-dialog {
   width: 100%;
   padding: 0 50px;
+  border-radius: 10px;
   background-color: #fff;
 }
 
@@ -112,18 +113,17 @@ export default {
 }
 
 .tf-dialog-content {
-  padding: 20px 0;
+  padding: 60px 0;
 }
 
 .tf-dialog-footer {
   @flex();
-  padding-top: 20px;
-  padding-bottom: 40px;
+  padding-bottom: 60px;
 }
 .tf-dialog-footer__btn {
   flex: 1;
   height: 66px;
-  line-height: 66px;
+  line-height: 62px;
   border-radius: 4px;
   font-size: 30px;
   text-align: center;

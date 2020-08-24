@@ -37,7 +37,7 @@
       </div>
       <div class="qr-box qr-status-box" v-else-if="activeServe.server_status == 0">
         <div class="success-tag">
-          <span class="tf-icon tf-icon-check"></span>
+          <span class="tf-icon tf-icon-gou"></span>
         </div>
         <template v-if="activeServe.category_type == 1">
           <div class="tf-text-lg">排队成功</div>
@@ -63,7 +63,7 @@
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
 import { getServerCode, serverCodeStatus } from '@/api/butler.js'
-import { Toast } from 'vant'
+// import { Toast } from 'vant'
 export default {
   components: {
     tfDialog
@@ -87,7 +87,7 @@ export default {
       statusText: '',
       show: false,
       success: false,
-      FNScanner: null,
+      // FNScanner: null,
       qrImg: '',
       timer: null,
       codeId: '',
@@ -99,7 +99,7 @@ export default {
     ...mapGetters(['userInfo', 'currentProject'])
   },
   created () {
-    this.FNScanner = api.require('FNScanner')
+    // this.FNScanner = api.require('FNScanner')
   },
   methods: {
     /* 点击服务显示二维码 */
@@ -289,7 +289,7 @@ export default {
   background: #ffa110;
   color: #fff;
   border-radius: 50%;
-  .tf-icon-check {
+  .tf-icon-gou {
     font-size: 240px;
     line-height: 320px;
   }

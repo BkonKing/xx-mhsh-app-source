@@ -14,7 +14,7 @@
         <div class="tf-text tf-text-grey">{{ctime}}</div>
       </div>
       <div class="tf-auxiliary-content tf-mt-lg">{{content}}</div>
-      <tf-image-list :data="images" mode="show" class="tf-mt-base"></tf-image-list>
+      <tf-image-list v-if="images" :data="images" mode="show" class="tf-mt-base"></tf-image-list>
     </div>
     <div v-if="reply" class="tf-card tf-mt-lg">
       <div class="tf-card-header">回复</div>
