@@ -176,7 +176,7 @@
 				<template v-if="orderInfo.is_logistice_btn">
 					<div @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
 				</template>
-				<div v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish">
+				<div @click.stop="payFunc()" v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish">
 	            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
 	            </template>
 	          </van-count-down>)</div>
@@ -187,18 +187,27 @@
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
     ></explain-swal>
+    <pay-swal 
+    :show-swal="showPaySwal"
+    :pay-money="payMoney"
+    :down-time="downTime"
+    @closeSwal="closePaySwal"
+    @sureSwal="surePaySwal"
+    ></pay-swal>
 	</div>
 </template>
 
 <script>
 import { NavBar, CountDown, Toast } from 'vant'
+import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder } from '@/api/life.js'
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [Toast.name]: Toast,
+    paySwal,
     explainSwal
   },
   data () {
@@ -210,7 +219,11 @@ export default {
     	time: 11 * 60 * 60 * 1000,
     	goodsList: [],
     	orderInfo: '',
-    	logisticsInfo: ''
+    	logisticsInfo: '',
+
+    	showPaySwal: false,   //支付方式弹窗
+      payMoney: 0,          //支付金额
+      downTime: 0,          //支付结束时间
     }
   },
   created(){
@@ -238,6 +251,41 @@ export default {
   	// 关闭弹窗
   	closeExplainSwal(data){
       this.showExplainSwal = data == 1 ? true : false;
+    },
+    //再次付款
+    payFunc(){
+    	this.downTime = this.orderInfo.is_again_pay_time*1000-this.newTime;
+    	this.payMoney = this.orderInfo.pay_price/100;
+    	this.showPaySwal = true;
+    },
+    // 关闭支付选择弹窗
+    closePaySwal(data){
+      this.showPaySwal = data == 1 ? true : false;
+    },
+    surePaySwal(data){
+      payOrderUp({
+        order_id: this.orderInfo.order_id,
+        pay_type: data == 0 ? 1 : 2
+      }).then(res => {
+        if (res.success) {
+          if(res.data){
+            this.payOrderInfo = res.data;
+            this.aliPayUp();
+          }
+        }
+      })
+    },
+    //支付宝支付
+    aliPayUp(){
+      let that = this;
+      var aliPayPlus = api.require('aliPayPlus'); 
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
+        function(ret, err) { 
+          if(ret.code == '9000'){  //支付成功
+            this.getData();
+          }
+        }
+      );
     },
     // 取消订单
     cancelOrder(){

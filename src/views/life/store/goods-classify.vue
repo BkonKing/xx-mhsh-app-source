@@ -60,7 +60,7 @@
                 <div v-if="item.goods_type>1" class="flex-align-center">
                   <div :class="[item.goods_type == 2 ? 'res-goods-label-tm' : 'res-goods-label-xssg','res-goods-label']">{{item.goods_type == 2 ? '特卖' : '限时闪购'}}</div>
                 </div>
-                <div class="res-goods-price">￥{{item.s_price}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price}}</span></div>
+                <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
               </div>
             </div>
           </div>
@@ -118,8 +118,10 @@ export default {
           this.isEmpty = this.page == 1 && res.data.goods_list.length ==0 ? true : false;
           if(res.data.goods_list.length < res.pageSize){
             this.finished = true;
+            this.flag = true;
           }else {
             this.page = this.page+1;
+            this.flag = false;
           }
           this.loading = false;
         }

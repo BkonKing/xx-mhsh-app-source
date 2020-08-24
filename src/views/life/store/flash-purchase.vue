@@ -64,11 +64,11 @@
         <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
         <van-count-down v-show="navList[tapIndex].status == 2" class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
           <template v-slot="timeData">
-            <span class="count-num">{{ timeData.hours }}</span>
+            <span class="count-num">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
             <div class="count-colon"></div>
-            <span class="count-num">{{ timeData.minutes }}</span>
+            <span class="count-num">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
             <div class="count-colon"></div>
-            <span class="count-num">{{ timeData.seconds }}</span>
+            <span class="count-num">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
           </template>
         </van-count-down>
         <div v-show="navList[tapIndex].status == 3">
@@ -366,7 +366,7 @@ export default {
           if(this.tapStatus == 2){
             let newTime = parseInt(new Date().getTime());
             console.log(newTime)
-            this.time = res.data.nav_list[res.data.tap_index].over_time*1000-newTime;
+            this.time = res.data.nav_list[res.data.tap_index].end_time*1000-newTime;
             this.$nextTick(() => {
               this.start();
             });

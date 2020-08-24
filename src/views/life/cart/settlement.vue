@@ -290,16 +290,18 @@ export default {
     var that = this;
     //根据key名获取传递回来的参数，data就是map
     eventBus.$on('chooseAddress', function(data){
-      that.addressInfo = JSON.parse(data);
+      if(data){
+        that.addressInfo = JSON.parse(data);
+      }
       this.isSelectAddress = true;
       // that.getData();
     }.bind(this));
 
     eventBus.$on('chooseCoupon', function(data){
-      console.log(data);
       this.isSelectCoupon = true;
-      that.couponInfo = JSON.parse(data);
-      console.log(11,that.couponInfo.coupon_text)
+      if(data){
+        that.couponInfo = JSON.parse(data);
+      }
       that.getData();
     }.bind(this));
     
@@ -368,7 +370,7 @@ export default {
             if(this.isSelectAddress){
               this.isSelectAddress = false;
             }else {
-              this.addressInfo = res.address_info;
+              this.addressInfo = res.data.address_info;
             }
           }
         })
@@ -382,10 +384,16 @@ export default {
       let carts_arr = [];
       if (this.prev_page == 1){
         // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart2' })) || [];
+        carts_arr = api.getPrefs({ sync: true, key: 'cart2' }) || [];
+        if(carts_arr && carts_arr.length > 0){
+          carts_arr = JSON.parse(carts_arr);
+        }
       }else {
         // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
-        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+        carts_arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
+        if(carts_arr && carts_arr.length > 0){
+          carts_arr = JSON.parse(carts_arr);
+        }
       }
       let carts_list = [];
       let carts_list2 = [];
@@ -425,22 +433,10 @@ export default {
     */
     payFunc: function (e) {
       const that = this;
-      // if (!this.addressInfo || !this.addressInfo.id){
-      //   Toast('请先选择收货地址');
-      //   return;
-      // }
-      payOrderUp({
-        order_id: 18,
-        pay_type: 2
-      }).then(res => {
-        if (res.success) {
-          if(res.data){
-            this.payOrderInfo = res.data;
-            this.aliPayUp();
-          }
-        }
-      })
-      return;
+      if (!this.addressInfo || !this.addressInfo.id){
+        Toast('请先选择收货地址');
+        return;
+      }
       if(this.order_type == 0 || this.prev_page == 0){
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight));
         ordinaryCreate({
@@ -462,6 +458,7 @@ export default {
           }
         })
       }else if(this.order_type == 3){
+        this.flashParam.address_id = this.addressInfo.id;
         exchangeCreate(this.flashParam).then(res => {
           if (res.success) {
             if(res.code == '200'){
@@ -473,10 +470,12 @@ export default {
           }
         })
       }else {
+        this.flashParam.address_id = this.addressInfo.id;
         flashCreate(this.flashParam).then(res => {
           if (res.success) {
             if(res.code == '200'){
-              this.order_id = res.order_info.id;
+              // this.callbackData = res.order_info;
+              this.order_id = res.order_id;
               this.openPaySwal();
             }else {
 
@@ -519,12 +518,6 @@ export default {
       this.showPaySwal = data == 1 ? true : false;
     },
     surePaySwal(data){
-      console.log(data);
-      if(data == 0){  //微信支付
-
-      }else {   //支付宝支付
-        
-      }
       payOrderUp({
         order_id: this.order_id,
         pay_type: data == 0 ? 1 : 2
@@ -568,7 +561,7 @@ export default {
         this.$router.push({
           path: '/store/goods-detail',
           query: {
-            id: 1
+            id: obj.id
           }
         })
         break;
