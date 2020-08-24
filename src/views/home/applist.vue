@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { NavBar, Divider, Search, Toast } from 'vant'
+import { NavBar, Divider, Search, Toast, Dialog } from 'vant'
 import appContainer from './components/app-container'
 import appItem from './components/app-item'
 import draggable from 'vuedraggable'
@@ -191,6 +191,34 @@ export default {
     },
     cloneObject (obj) {
       return JSON.parse(JSON.stringify(obj))
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const butlerList = [
+      'entranceIndex',
+      'noticeIndex',
+      'repairsIndex',
+      'freeserverIndex',
+      'visitorIndex',
+      'compraiseIndex',
+      'questionnaireIndex',
+      'propertyIndex',
+      'convenienceIndex',
+      'noticeDetails'
+    ]
+    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      Dialog.confirm({
+        title: '提示',
+        message: '您尚未认证房间，是否去认证？',
+        confirmButtonText: '去认证'
+      }).then((res) => {
+        this.$router.push(
+          '/pages/personage/house/attestation?type=1&mode=0&select=1'
+        )
+      })
+      next(false)
+    } else {
+      next()
     }
   }
 }
