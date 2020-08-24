@@ -33,7 +33,7 @@
               :article-type="item.article_type || article_type"
               :key="item.id"
             >
-              <div class="tf-icon tf-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
+              <div class="van-icon van-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
             </operation>
           </div>
         </div>

@@ -67,11 +67,11 @@ export default {
       items: [
         {
           value: 1,
-          name: '投诉'
+          name: '我要投诉'
         },
         {
           value: 2,
-          name: '表扬'
+          name: '我要表扬'
         }
       ],
       content: '',

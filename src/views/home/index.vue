@@ -1,9 +1,10 @@
 <template>
   <div class="tf-bg-white tf-body">
     <div class="home-header" :style="{'background': headerColor}">
-      <page-nav-bar search></page-nav-bar>
+      <page-nav-bar :class="{'black-page-nav': scrollStatus}" search></page-nav-bar>
       <van-notice-bar
         v-if="noticeList.length"
+        v-show="!scrollStatus"
         class="home-notice"
         left-icon="volume-o"
         :scrollable="false"
@@ -17,7 +18,7 @@
         </van-swipe>
       </van-notice-bar>
     </div>
-    <div class="tf-body-container" :class="{'no-notice': !noticeList.length}">
+    <div class="tf-body-container" :class="{'no-notice': !noticeList.length}" @scroll.passive="onScroll">
       <van-swipe
         class="home-swipe"
         :autoplay="6000"
@@ -25,8 +26,8 @@
         indicator-color="#fff"
         @change="swipeChange"
       >
-        <van-swipe-item v-for="(item, i) in swipeImages" :key="i">
-          <van-image class="swipe-item__image" :src="item.img" @click="$router.push(item.url)" />
+        <van-swipe-item v-for="(item, i) in swipeImages" :key="i" @click="$router.push(item.url)">
+          <van-image class="swipe-item__image" :src="item.img" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
@@ -212,6 +213,8 @@ export default {
   },
   data () {
     return {
+      activeIndex: undefined,
+      scrollStatus: false,
       headerColor: '#fff', // 头部颜色
       swipeImages: [], // 轮播图
       myAppList: [], // 我的应用
@@ -278,9 +281,12 @@ export default {
     },
     /* 轮播图change事件 */
     swipeChange (index) {
-      this.headerColor =
+      this.activeIndex = index
+      if (!this.scrollStatus) {
+        this.headerColor =
         (this.swipeImages[index] && this.swipeImages[index].color_value) ||
         '#eb5841'
+      }
     },
     /* 签到 */
     sign () {
@@ -370,6 +376,16 @@ export default {
       getMhttList().then((res) => {
         this.frontList = res.data || []
       })
+    },
+    /* 滚动行为 */
+    onScroll ({ target }) {
+      if (target.scrollTop > 0) {
+        this.scrollStatus = true
+        this.headerColor = '#fff'
+      } else {
+        this.scrollStatus = false
+        this.swipeChange(this.activeIndex)
+      }
     }
   },
   filters: {
@@ -454,6 +470,18 @@ export default {
   /deep/ .tf-image-grid .van-grid-item__content--square {
     background: #f4f4f4;
     border-radius: 10px;
+  }
+}
+.black-page-nav {
+  /deep/ .tf-icon {
+    color: #222;
+  }
+  /deep/ .tf-text {
+    color: #222;
+  }
+  /deep/ .van-info {
+    background: #eb5841;
+    color: #fff;
   }
 }
 .home-notice {
@@ -680,8 +708,8 @@ export default {
     }
   }
   &__tag {
-    width: 88px;
-    height: 88px;
+    width: 80px;
+    height: 80px;
     margin-right: 20px;
   }
   &__text {

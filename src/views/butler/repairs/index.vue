@@ -15,7 +15,7 @@
     <div class="page-container">
       <van-notice-bar
         v-if="progressNum"
-        class="swiper-nav"
+        class="swiper-nav tf-mb-lg"
         left-icon="warning-o"
         mode="link"
         background="rgba(249,134,107,0.2)"

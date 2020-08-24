@@ -5,7 +5,10 @@
         <span v-if="userInfo.user_type === '0'" class="van-nav-bar__text">和谐邻里</span>
         <span v-else class="van-nav-bar__text" @click.stop="showIsAll = true">
           和谐邻里
-          <span class="tf-icon" :class="[showIsAll ? 'tf-icon-caret-up' : 'tf-icon-caret-down']"></span>
+          <span
+            class="tf-icon"
+            :class="[showIsAll ? 'tf-icon-caret-up' : 'tf-icon-caret-down']"
+          ></span>
         </span>
       </template>
       <template #right>
@@ -17,8 +20,16 @@
     </van-nav-bar>
     <div v-show="showIsAll" class="mask-box" @click.stop="showIsAll =false"></div>
     <div v-show="showIsAll" class="isAll-select">
-      <div class="isAll-select__item" :class="{'active': isAll === 1}" @click.stop="isAll = 1;showIsAll =false">全部</div>
-      <div class="isAll-select__item" :class="{'active': isAll === 0}" @click.stop="isAll = 0;showIsAll =false">小区</div>
+      <div
+        class="isAll-select__item"
+        :class="{'active': isAll === 1}"
+        @click.stop="isAll = 1;showIsAll =false"
+      >全部</div>
+      <div
+        class="isAll-select__item"
+        :class="{'active': isAll === 0}"
+        @click.stop="isAll = 0;showIsAll =false"
+      >小区</div>
     </div>
     <van-tabs class="tf-body-container tf-column" v-model="current" @change="tabsChange">
       <van-tab title="最新">
@@ -28,16 +39,29 @@
         <div v-if="group.length" class="group-box">
           <div class="group-item" v-for="item in group" :key="item.id" @click="goGroupList(item)">
             <img class="group-img" :src="item.icon_images" />
+            <div class="group-shade"></div>
             <div class="group-name">{{item.category}}</div>
           </div>
         </div>
         <div v-else class="van-list__finished-text">没有更多了</div>
       </van-tab>
       <van-tab title="活动">
-        <list key="activityList" ref="activityList" :data.sync="activityList" :load="getActivityList" article_type="2"></list>
+        <list
+          key="activityList"
+          ref="activityList"
+          :data.sync="activityList"
+          :load="getActivityList"
+          article_type="2"
+        ></list>
       </van-tab>
       <van-tab title="资讯">
-        <list key="articleList" ref="articleList" :data.sync="articleList" :load="getArticleList" article_type="1"></list>
+        <list
+          key="articleList"
+          ref="articleList"
+          :data.sync="articleList"
+          :load="getArticleList"
+          article_type="1"
+        ></list>
       </van-tab>
     </van-tabs>
   </div>
@@ -227,7 +251,6 @@ export default {
     width: 335px;
     height: 168px;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.6);
     margin-bottom: 20px;
   }
   .group-img {
@@ -235,12 +258,22 @@ export default {
     height: 100%;
     border-radius: 10px;
   }
+  .group-shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.6);
+  }
   .group-name {
     position: absolute;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
+    z-index: 1;
     font-size: @font-size-md;
     font-weight: 500;
     line-height: 168px;

@@ -6,7 +6,12 @@
       <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
       <div v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">删除</div>
     </van-popup>
-    <van-popup class="complain-dialog" v-model="complainShow" position="bottom" @closed="category_id = ''">
+    <van-popup
+      class="complain-dialog"
+      v-model="complainShow"
+      position="bottom"
+      @closed="category_id = ''"
+    >
       <i
         class="van-icon van-icon-close van-popup__close-icon van-popup__close-icon--top-right"
         @click="complainShow = false"
@@ -17,7 +22,7 @@
         <span class="tf-text-blue">@{{complainInfo.nickname}}</span>
         ：{{complainInfo.content}}
       </div>
-      <tf-radio-btn v-model="com_type" :data="types"></tf-radio-btn>
+      <tf-radio-btn class="complain-radio" v-model="com_type" :data="types" :radius="2"></tf-radio-btn>
       <div class="complain-footer" :class="{'primary-btn': com_type}" @click="submitComplain">提交</div>
     </van-popup>
     <van-share-sheet v-model="showShare" :options="options" @select="onSelect" />
@@ -137,7 +142,7 @@ export default {
           com_type: this.com_type,
           info_type: this.complainType,
           info_id: this.complainInfo.id
-        }).then(resr => {
+        }).then((resr) => {
           Toast.success('投诉成功')
           this.complainShow = false
           this.moreShowChild = false
@@ -201,15 +206,19 @@ export default {
     color: @red-dark;
   }
   /deep/ .radio-btn-group {
+    .radio-btn__item {
+      height: 66px;
+    }
     .radio-btn--active {
       border-color: #222;
       background: #222;
-    }
-    .radio-btn__text--active {
-      color: #fff;
+      .radio-btn__text {
+        color: #fff;
+      }
     }
     .radio-btn__text {
-      font-size: 24px
+      font-size: 24px;
+      line-height: 60px;
     }
   }
 }

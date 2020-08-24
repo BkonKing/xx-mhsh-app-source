@@ -18,7 +18,7 @@
           <div class="content-box">{{item.pl_content}}</div>
           <div class="tf-row message-box">
             <div class="tf-text-sm tf-text-blue">{{item.my_nickname}}</div>
-            <div class="tf-text-sm tf-text-grey">：{{item.wd_content}}</div>
+            <div class="tf-text-sm tf-text-grey van-ellipsis">：{{item.wd_content}}</div>
           </div>
         </template>
         <template v-else-if="item.sub_type == 10">

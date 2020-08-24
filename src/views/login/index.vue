@@ -1,6 +1,7 @@
 <template>
   <div class="page">
     <img class="logo" src="@/assets/imgs/login_logo.png" />
+    <img class="logo-text" src="@/assets/imgs/login_logo_text.png" />
     <div class="form">
       <div class="form-body">
         <Field v-model="mobile" class="form-input" maxlength="11" type="tel" placeholder="请输入您的手机号"></Field>
@@ -167,9 +168,9 @@ export default {
   background-image: url("../../assets/imgs/login_bg.png");
 }
 .logo {
-  width: 224px;
-  height: 330px;
-  margin-bottom: 80px;
+  width: 212px;
+  height: 214px;
+  margin-bottom: 30px;
 }
 .logo-text {
   width: 224px;

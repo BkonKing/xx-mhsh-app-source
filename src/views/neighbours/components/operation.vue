@@ -76,7 +76,7 @@ export default {
   @flex();
   padding: 20px 0;
   border-top: 1px solid @divider-color;
-  .tf-icon {
+  .tf-icon, .van-icon {
     text-align: center;
     width: 33.3%;
     font-size: 36px;
