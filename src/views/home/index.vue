@@ -130,7 +130,9 @@
             <div class="activity-info">
               <div class="activity-info__day">
                 <span class="tf-text">{{new Date(item.stime.replace(/-/g, '/')).getDate()}}</span>
-                <span class="font20">{{new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText}}</span>
+                <span
+                  class="font20"
+                >{{new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText}}</span>
               </div>
               <div class="activity-info__right">
                 <div class="activity-info__title">{{item.title}}</div>
@@ -142,26 +144,24 @@
       </div>
       <van-notice-bar class="front-page" :scrollable="false">
         <template v-slot:left-icon>
-          <img class="front-page__tag" src="@/assets/imgs/home_toutiao.png" @click="$router.push('/neighbours?active=3')" />
+          <img
+            class="front-page__tag"
+            src="@/assets/imgs/home_toutiao.png"
+            @click="$router.push('/neighbours?active=3')"
+          />
         </template>
         <van-swipe
-          v-if="twoFrontList.length"
+          v-if="frontList.length"
           class="notice-swipe"
           vertical
           :autoplay="3000"
           :show-indicators="false"
         >
-          <van-swipe-item v-for="(item, i) in twoFrontList" :key="i">
+          <van-swipe-item v-for="(item, i) in frontList" :key="i">
             <div
-              v-if="item[0]"
-              class="front-page__text van-ellipsis"
-              @click="clickFront(item[0])"
-            >{{item[0].title}}</div>
-            <div
-              v-if="item[1]"
-              class="front-page__text van-ellipsis"
-              @click="clickFront(item[1])"
-            >{{item[1].title}}</div>
+              class="front-page__text van-multi-ellipsis--l2"
+              @click="clickFront(item)"
+            >{{item.title}}</div>
           </van-swipe-item>
         </van-swipe>
       </van-notice-bar>
@@ -220,18 +220,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userType', 'userInfo']),
-    twoFrontList () {
-      const arr = []
-      this.frontList.forEach((obj, index) => {
-        const i = Math.floor(index / 2)
-        if (!arr[i]) {
-          arr[i] = []
-        }
-        arr[i].push(obj)
-      })
-      return arr
-    }
+    ...mapGetters(['userType', 'userInfo'])
   },
   created () {
     this.$store.dispatch('getMyAccount')
@@ -269,7 +258,9 @@ export default {
     },
     /* 轮播图change事件 */
     swipeChange (index) {
-      this.headerColor = this.swipeImages[index].color_value || '#eb5841'
+      this.headerColor =
+        (this.swipeImages[index] && this.swipeImages[index].color_value) ||
+        '#eb5841'
     },
     /* 签到 */
     sign () {
@@ -638,7 +629,8 @@ export default {
   margin: 20px 20px 80px;
   padding: 24px 30px 30px;
   height: 142px;
-  background: @background-color;
+  background: url("../../assets/imgs/toutiao_bg.png") no-repeat;
+  background-size: contain;
   border-radius: 10px;
   .notice-swipe {
     height: 80px;
@@ -649,20 +641,18 @@ export default {
     }
   }
   &__tag {
-    font-size: 16px;
     width: 88px;
     height: 88px;
-    padding: 8px 14px;
-    background: #fff;
-    border: 1px solid #f0f0f0;
-    border-radius: 10px;
     margin-right: 20px;
-    text-align: center;
   }
   &__text {
-    font-size: 24px;
-    line-height: 1;
+    height: 100%;
+    font-size: 26px;
+    line-height: 40px;
     color: #222;
+    display: flex;
+    align-items: center;
+    white-space: normal;
   }
 }
 .tf-mt-base {
