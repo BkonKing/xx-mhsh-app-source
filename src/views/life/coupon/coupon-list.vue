@@ -1,14 +1,20 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-	    <div class="bar-empty"></div>
-		<div class="nav-empty"></div>
-		<div class="nav-box" :style="{'margin-top':$store.state.paddingTop+'px'}">
-			<div v-for="(item, index) in navItems" :class="[index == typeVal-1 ? 'cur' : '','nav-item']" @click="navFun(index+1)" data-typeval="1">{{item}}</div>
-		  <!-- <div :class="['cur' : '','nav-item']" @click="navFun(1)" data-typeval="1">未使用</div>
-		  <div class="nav-item" @click="navFun(2)" data-typeval="2">已使用</div>
-		  <div class="nav-item" @click="navFun(3)" data-typeval="3">已过期</div> -->
-		</div>
+		<div class="order-bar bar-white"><van-nav-bar
+        title="优惠券"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
+
+		<div class="nav-box-block">
+  		<div class="nav-box">
+  			<div v-for="(item, index) in navItems" :class="[index == typeVal-1 ? 'cur' : '','nav-item']" @click="navFun(index+1)" data-typeval="1">{{item}}</div>
+  		</div>
+    </div>
 
     <van-list
         v-model="loading"

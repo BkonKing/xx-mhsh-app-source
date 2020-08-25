@@ -15,6 +15,9 @@ export function getFlashNav (params) {
 export function getFlashGoods (params) {
   return request.post('/life/goods/flash_goods_json', params)
 }
+export function remindSend (params) {
+  return request.post('/life/goods/messages_json', params)
+}
 
 // 特卖
 export function getSaleNav (params) {
@@ -118,6 +121,10 @@ export function getOrderList (params) {
 //订单详情
 export function getOrderDetail (params) {
   return request.post('/life/my_order/order_project_info', params)
+}
+//闪购订单超时
+export function collageOver (params) {
+  return request.post('/life/my_order/one_ollage_over', params)
 }
 //申请退款/退货退款
 export function getApplyRefund (params) {

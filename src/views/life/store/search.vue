@@ -1,7 +1,7 @@
 <template>
 	<div :class="[isFocus ? 'white-bg' : '','app-body']">
     <div class="search-header">
-      <div :style="{'top':$store.state.paddingTop+'px'}" class="search-input-block flex-between">
+      <div class="search-input-block flex-between">
         <div v-if="typeVal == 0" class="search-input-left flex-align-center">
           <img class="search-icon" src="@/assets/img/icon_11.png" />
           <van-search class="search-input" ref="input" v-model="search_val" @focus="focus" @search="onSearch" left-icon="" placeholder="搜索应用、商品、帖子" />
@@ -538,7 +538,7 @@ export default {
   position: fixed;
   left: 0;
   right: 0;
-  top: 0;
+  top: auto;
   background-color: #fff;
   z-index: 20;
 }

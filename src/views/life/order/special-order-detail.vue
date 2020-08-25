@@ -240,7 +240,7 @@
 <script>
 import { NavBar, CountDown, Toast } from 'vant'
 import explainSwal from './../components/explain-swal'
-import { getOrderDetail } from '@/api/life.js'
+import { getOrderDetail, collageOver } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -298,7 +298,13 @@ export default {
     },
     //倒计时结束
     finish() {
-      Toast('倒计时结束');
+    	collageOver({
+        order_project_id: this.order_id
+      }).then(res => {
+        if (res.success) {
+        	this.getData();
+        }
+      })
     },
     logisticsLink() {
       if(this.orderInfo.project_logistice_count > 1){
@@ -351,6 +357,23 @@ export default {
 	      	}
 	      })
     		break;
+    		case 16:
+        this.$router.push({
+          path: '/order/barter-detail',
+          query: {
+            id: obj.id,
+          }
+        })
+        break;
+        case 18:
+        this.$router.push({
+          path: '/order/refund-detail',
+          query: {
+            id: obj.id,
+            type: obj.type
+          }
+        })
+        break;
     	}
     },
     copy_cont(text_c){

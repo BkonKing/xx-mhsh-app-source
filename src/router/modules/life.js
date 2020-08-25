@@ -24,7 +24,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "flashPurchase" */
         '@/views/life/store/flash-purchase'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/special-sale',

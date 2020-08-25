@@ -1,5 +1,8 @@
-.nav-empty {
+.nav-empty,.nav-box-block {
   height: 98px;
+}
+.nav-box-block .nav-box {
+  top: auto;
 }
 .nav-box {
   height: 98px;

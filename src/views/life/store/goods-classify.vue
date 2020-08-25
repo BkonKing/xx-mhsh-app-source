@@ -1,38 +1,38 @@
 <template>
 	<div class="app-body white-bg">
-    <div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
-      <div class="search-input-block flex-between">
-        <div class="search-back flex-center" @click="$router.go(-1)">
-          <img class="img-100" src="@/assets/img/icon_19.png" />
+    <div :class="[navList.length == 0 ? 'empty-188' : 'empty-276','search-fixed']">
+      <div class="fixed-top">
+        <div class="search-input-block flex-between">
+          <div class="search-back flex-center" @click="$router.go(-1)">
+            <img class="img-100" src="@/assets/img/icon_19.png" />
+          </div>
+          <div class="search-input-session flex-align-center" @click="linkFunc(6)">
+            <img class="search-icon" src="@/assets/img/icon_11.png" />
+            <input class="search-input" type="text" placeholder="输入关键词搜索" />
+          </div>
         </div>
-        <div class="search-input-session flex-align-center" @click="linkFunc(6)">
-          <img class="search-icon" src="@/assets/img/icon_11.png" />
-          <input class="search-input" type="text" placeholder="输入关键词搜索" />
-        </div>
-      </div>
-      
-      <div class="right-header">
-        <div v-if="navList.length > 0" class="right-nav">
-          <scrollBar direction="x" :activeIndex="activeIndex">
-            <div
-              class="scroll-barItem"
-              v-for="(item, index) in navList"
-              :key="index"
-              @click="changeNav(index, item.id)"
-              :class="index === activeIndex ? 'active' : null"
-            >
-              <div>{{item.category_name}}</div>
-            </div>
-          </scrollBar>
-        </div>
-        <div class="sort-session flex-align-center">
-          <div :class="['price-sort', sort_val == 2 ? 'cur asc' : '',sort_val == 3 ? 'cur desc' : '']" @click="sortFunc(23)">价格</div>
-          <div :class="['sales-sort', sort_val == 1 ? 'cur' : '']" @click="sortFunc(1)">销量</div>
+        
+        <div class="right-header">
+          <div v-if="navList.length > 0" class="right-nav">
+            <scrollBar direction="x" :activeIndex="activeIndex">
+              <div
+                class="scroll-barItem"
+                v-for="(item, index) in navList"
+                :key="index"
+                @click="changeNav(index, item.id)"
+                :class="index === activeIndex ? 'active' : null"
+              >
+                <div>{{item.category_name}}</div>
+              </div>
+            </scrollBar>
+          </div>
+          <div class="sort-session flex-align-center">
+            <div :class="['price-sort', sort_val == 2 ? 'cur asc' : '',sort_val == 3 ? 'cur desc' : '']" @click="sortFunc(23)">价格</div>
+            <div :class="['sales-sort', sort_val == 1 ? 'cur' : '']" @click="sortFunc(1)">销量</div>
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="navList.length == 0" class="empty-188"></div>
-    <div v-else class="empty-276"></div>
 		
     <!-- <div class="">
       <van-tree-select
@@ -42,9 +42,12 @@
 />
     </div> -->
     <div class="classify-cont">
-      <div class="classify-nav" :style="{'margin-top':$store.state.paddingTop+'px'}">
-        <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
+      <div class="classify-nav-block">
+        <div class="classify-nav" :style="{'margin-top': marginTop+'px'}">
+          <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
+        </div>
       </div>
+      
       <div class="classify-right">
         <van-list
           v-model="loading"
@@ -52,7 +55,7 @@
           finished-text=""
           @load="onLoad"
         >
-          <div class="classify-list">
+          <div v-if="listData.length > 0" class="classify-list">
             <div v-for="(item,index) in listData" class="classify-item flex-between" :data-id="2" @click="linkFunc(5,{id:item.id})">
               <img class="res-goods-pic" :src="item.thumb" />
               <div class="res-goods-info">
@@ -63,6 +66,10 @@
                 <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
               </div>
             </div>
+          </div>
+          <div v-else class="empty-session">
+            <img src="@/assets/img/empty_goods.png" />
+            <div>暂无商品</div>
           </div>
         </van-list>
       </div>
@@ -95,8 +102,14 @@ export default {
       page: 1,         //页码
       listData: [],
       loading: false,
-      finished: false
+      finished: false,
+      marginTop: 0,
     }
+  },
+  mounted () {
+    this.$nextTick(function(){
+      this.marginTop = this.$store.state.paddingTop;
+    })
   },
   methods: {
     getGoodsData () {
@@ -198,7 +211,7 @@ export default {
 
 .fixed-top {
   position: fixed;
-  top: 0;
+  top: auto;
   left: 0;
   right: 0;
   z-index: 22;
@@ -242,11 +255,19 @@ export default {
 }
 
 .classify-cont {
-  padding-left: 190px;
+  /*padding-left: 190px;*/
+  display: flex;
+  justify-content: space-between;
 }
 /*左侧菜单*/
+.classify-nav-block {
+  /*margin-top: 88px;*/
+  
+  width: 160px;
+}
 .classify-nav {
   position: fixed;
+  /*top: 88px;*/
   top: 88px;
   bottom: 0;
   left: 0;
@@ -272,6 +293,8 @@ export default {
  
 /*右侧列表*/
 .classify-right {
+  width: 530px;
+  margin-right: 30px;
   position: relative;
 }
 .right-header {

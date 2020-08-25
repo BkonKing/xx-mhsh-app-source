@@ -10,10 +10,12 @@
 	      @click-left="$router.go(-1)"
 	    ></van-nav-bar>
 		</div>
-		<div v-if="!navHide" class="nav-empty"></div>
-		<div v-if="!navHide" :style="{'margin-top':$store.state.paddingTop+'px'}" class="nav-box">
-			<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
+		<div class="nav-box-block">
+			<div v-if="!navHide" class="nav-box">
+				<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
+			</div>
 		</div>
+		
     <van-list
         v-model="loading"
         :finished="finished"
@@ -211,19 +213,20 @@ export default {
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
           if(ret.code == '9000'){  //支付成功
-            this.initFunc(1);
+            that.initFunc(1);
           }
         }
       );
     },
     // 取消订单
     cancelOrder(index,id){
+    	let that = this;
     	if(this.listData[index].is_pay == 0){ //未付款
     		cancelNoPayOrder({
 	        order_project_id: this.listData[index].order_id,
 	      }).then(res => {
 	        if (res.success) {
-	        	this.initFunc(1);
+	        	that.initFunc(1);
 	        }
 	      })
     	}else {
@@ -231,7 +234,7 @@ export default {
 	        order_project_id: this.listData[index].order_id,
 	      }).then(res => {
 	        if (res.success) {
-	        	this.initFunc(1);
+	        	that.initFunc(1);
 	        }
 	      })
     	}

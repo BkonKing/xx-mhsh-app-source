@@ -128,7 +128,7 @@
                   <div v-else class="btn-over">已抢光</div>
                 </template>
                 <template v-else>
-                  <div v-if="!item.is_set" class="btn-remind flex-center" @click="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+                  <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
                   <div v-else class="btn-remind-isset flex-center">已设提醒</div>
                 </template>
               </template>
@@ -307,16 +307,18 @@
 </template>
 
 <script>
-import { NavBar, CountDown,List } from 'vant'
+import { NavBar, CountDown, List, Toast } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './../components/remind-swal'
 import { mapGetters } from 'vuex'
-import { getFlashNav,getFlashGoods } from '@/api/life.js'
+import { getFlashNav,getFlashGoods, remindSend } from '@/api/life.js'
 export default {
+  name: 'flashPurchase',
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [List.name]: List,
+    [Toast.name]: Toast,
     scrollBar,
     remindSwal
   },
@@ -401,7 +403,8 @@ export default {
     },
     //倒计时结束
     finish() {
-      Toast('倒计时结束');
+      this.getData();
+      this.getGoodsData();
     },
     //菜单点击
     changeNav(item, index) {
@@ -413,7 +416,6 @@ export default {
       this.finished = false;
       let newTime = parseInt(new Date().getTime()/1000);
       let startTime = this.navList[index].start_time;
-      console.log(newTime,startTime);
       if(newTime >=startTime && this.tapStatus == 3){
         if(newTime >=startTime){   //当前时间大于等于活动开始时间
           this.getData();
@@ -429,62 +431,37 @@ export default {
      * 提醒
     */
     remindFunc(index, id) {
-      this.showSwal = true;
-      const self = this;
-      let set_id =  e.currentTarget.dataset.id;
-      let tap_index = e.currentTarget.dataset.index;
-      self.data.set_id = set_id;
-      self.data.set_index = tap_index;
+      const that = this;
+      this.set_id = id;
+      this.set_index = index;
       let newTime = parseInt(new Date().getTime()/1000);
-      let overTime = self.data.navList[self.data.tapIndex].start_time;
-      console.log(newTime);
+      let overTime = this.navList[this.tapIndex].start_time;
       if(newTime >=overTime){   //当前时间大于等于活动开始时间
-        wx.showToast({
-          title: '该商品已开抢',
-          icon: 'none'
-        })
+        Toast('该商品已开抢');
         setTimeout(() => {
-          self.data.page = 1;
-          self.getData();
+          this.getData();
+          that.data.page = 1;
+          that.getGoodsData();
         }, 1500);
       }else {
-        self.data.set_status =  newTime+600<overTime ? 0 : 1;
-        self.setData({
-          'swalObj.swalTxt': newTime+600<overTime ? self.data.model_txt[0] : self.data.model_txt[1],
-          'swalObj.swalShow': true
-        })
+        this.showSwal = true;
       }
     },
     /**
      * 提醒回调
     */
     sureSwal: function (e) {
+      const that = this;
       this.closeSwal(0);
-      console.log(11);return;
-      const self = this;
-      app.util.getMessageSucess(function () {
-        console.log('成功')
-        app.util.request({
-          'url': '/xcx/wxactivityjson/messages_json',
-          'cachetime': '0',
-          data: {
-            uid: self.data.userId,
-            is_vip: self.data.is_vip,
-            type: 2,
-            goods_id: self.data.set_id,
-            activity_id: self.data.ollage_id
-          },
-          success(res) {
-            let result = res.data;
-            if (result.code == '0000') {
-              let u = "listData["+self.data.set_index+"].is_set";
-              self.setData({
-                [u]: true
-              })
-            }
-          }
-        })
-      }, [self.data.tmplIds_str[self.data.set_status]]);
+      remindSend({
+        goods_id: this.set_id,
+        ollage_id: this.navList[this.tapIndex].id
+      }).then(res => {
+        if (res.success) {
+          Toast(res.message);
+          this.listData[this.set_index].is_set = true;
+        }
+      })
     },
     linkFunc (type,obj={}) {
       switch (type){
@@ -498,6 +475,13 @@ export default {
         break;
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'life'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    next();
   }
 }
 </script>

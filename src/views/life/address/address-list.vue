@@ -20,7 +20,7 @@
               <div class="address-tel"><div class="color-222 font-30">{{item.mobile}}</div></div>
             </div>
             <div class="address-detail flex-align-center">
-              <div v-if="item.is_default" class="address-default">默认</div>
+              <div v-if="item.is_default == 1" class="address-default">默认</div>
               <div class="default-detail-text color-8f8f94 font-24 p-nowrap">{{item.address_name+item.address_house}}</div>
             </div>
           </div>

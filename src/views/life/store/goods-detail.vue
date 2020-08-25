@@ -22,9 +22,9 @@
           <div class="flash-limit-r"></div>
         </div>
         <div v-if="infoData.ollage_info.is_start" class="flash-time">距离结束还剩<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-              <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
-              </template>
-            </van-count-down></div>
+            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
+            </template>
+          </van-count-down></div>
         <div v-else class="flash-time">{{infoData.ollage_info.start_time_txt}}</div>
       </div>
       <!-- <div class="flash-session flash-over">
@@ -221,7 +221,9 @@
             </template>
             <template v-else>
               <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
-              <div class="buy-btn" data-type="buy">开抢提醒</div>
+              <!-- <div class="buy-btn" data-type="buy">开抢提醒</div> -->
+              <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()">开抢提醒</div>
+              <div v-else class="buy-btn btn-disabled">已设提醒</div>
               <!-- <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
                   <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
                   </template>
@@ -320,12 +322,17 @@
       <div class="submit-btn" @click="ensureFunc">确认</div>
     </div>
     <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
+    <remind-swal 
+    :show-swal="showSwal"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal()"></remind-swal>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, ImagePreview, NavBar, CountDown } from 'vant'
-import { getGoodsDetail } from '@/api/life.js'
+import { Swipe, SwipeItem, Icon, ImagePreview, NavBar, CountDown, Toast } from 'vant'
+import remindSwal from './../components/remind-swal'
+import { getGoodsDetail, remindSend } from '@/api/life.js'
 export default {
   components: {
     [Swipe.name]: Swipe,
@@ -334,12 +341,15 @@ export default {
     [ImagePreview.name]: ImagePreview,
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
+    [Toast.name]: Toast,
+    remindSwal
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       time: 11 * 60 * 60 * 1000,
       newTime: '',
+      showSwal: false,       //提醒弹窗
 
 
       shop_id: '',          //商品id
@@ -631,18 +641,7 @@ export default {
      * 拼单倒计时结束
     */
     overFunc: function () {
-      const self = this;
-      app.util.request({
-        'url': '/xcx/wxactivityjson/flash_over_json',
-        'cachetime': '0',
-        data: {
-          uid: this.userId,
-          order_id: this.infoData.order_ollage_info.f_id
-        },
-        success(res) {
-          self.listData();
-        }
-      });
+      
     },
 
     goLink(f_orderid=''){
@@ -716,7 +715,42 @@ export default {
     },
     //倒计时结束
     finish() {
-      Toast('倒计时结束');
+      that.getData();
+    },
+    closeSwal(data){
+      this.showSwal = data == 1 ? true : false;
+    },
+    /**
+     * 提醒
+    */
+    remindFunc() {
+      const that = this;
+      let newTime = parseInt(new Date().getTime()/1000);
+      let overTime = this.infoData.ollage_info.start_time;
+      if(newTime >=overTime){   //当前时间大于等于活动开始时间
+        Toast('该商品已开抢');
+        setTimeout(() => {
+          that.getData();
+        }, 1500);
+      }else {
+        this.showSwal = true;
+      }
+    },
+    /**
+     * 提醒回调
+    */
+    sureSwal: function (e) {
+      const that = this;
+      this.closeSwal(0);
+      remindSend({
+        goods_id: this.infoData.id,
+        ollage_id: this.infoData.ollage_info.id
+      }).then(res => {
+        if (res.success) {
+          Toast(res.message);
+          this.infoData.is_set = true;
+        }
+      })
     },
   },
   beforeRouteLeave (to, from, next) {
@@ -916,7 +950,7 @@ export default {
    background-image: linear-gradient(to right, #f9856b, #eb5841);
 }
 div.btn-disabled {
-  background-color: #919499;
+  background-color: #aaa;
 }
 
 /*规格*/

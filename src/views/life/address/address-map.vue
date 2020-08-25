@@ -1,8 +1,16 @@
 <template>
   <div class="app-body">
-    <div class="order-bar bar-white"><van-nav-bar title="收货地址" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
-    <div class="map-bottom bottom-fixed">
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="收货地址"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
+    <div class="map-bottom bottom-fixed" :style="{'top': 344+$store.state.paddingTop + 'px'}">
       <div class="search-box">
         <!-- <input type="text" placeholder="搜索地点" v-model="searchVal" @search="searchAddress" /> -->
         <van-search
@@ -52,6 +60,7 @@ export default {
   methods: {
     getData(){
       var bMap = api.require('bMap');
+      var maptop = this.$store.state.paddingTop;
       this.bMap = bMap;
       var that = this;
       bMap.getLocation({
@@ -89,7 +98,7 @@ export default {
               bMap.open({
                   rect: {
                       x: 0,
-                      y: 44,
+                      y: 44+maptop,
                       w: api.winWidth,
                       h: 300
                   },

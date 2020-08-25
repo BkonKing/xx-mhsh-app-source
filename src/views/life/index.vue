@@ -128,7 +128,7 @@
 	                  <div v-else class="btn-over">已抢光</div>
 	                </template>
 	                <template v-else>
-	                  <div v-if="!val.is_push" class="btn-remind flex-center" @click.stop="remindFunc(index,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+	                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
 	                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
 	                </template>
 									<!-- <div class="btn-flash">马上抢</div> -->
@@ -261,7 +261,7 @@
           finished-text=""
           @load="onLoad"
         >
-        <div class="life-seconds-list">
+        <div v-if="listData.length > 0" class="life-seconds-list">
           <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
           	<div class="life-goods-pic">
           		<img v-if="item.sign_url" class="img-100 goods-pic-icon" :src="item.sign_url" alt="">
@@ -271,16 +271,25 @@
 						<div class="life-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
           </div>
         </div>
+        <div v-else class="empty-session">
+          <img src="@/assets/img/empty_goods.png" />
+          <div>暂无商品</div>
+        </div>
       </van-list>
 		</template>
 		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
+		<remind-swal 
+    :show-swal="showSwal"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal()"></remind-swal>
 	</div>
 </template>
 
 <script>
 import { Swipe, SwipeItem, Icon, CountDown, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
-import { getLifeInfo, getBanner, getClassifyGoods} from '@/api/life.js'
+import remindSwal from './components/remind-swal'
+import { getLifeInfo, getBanner, getClassifyGoods, remindSend} from '@/api/life.js'
 export default {
   components: {
     [Icon.name]: Icon,
@@ -288,7 +297,8 @@ export default {
     [SwipeItem.name]: SwipeItem,
     [CountDown.name]: CountDown,
     [List.name]: List,
-    scrollBar
+    scrollBar,
+    remindSwal
   },
   data () {
     return {
@@ -301,6 +311,7 @@ export default {
       newTime: '',       //当前时间
       bannerList: [],    //轮播图
       cart_num: 0,
+      showSwal: false,       //提醒弹窗
 
       category_id: '',  //分类id
       listData: [],     //分类商品
@@ -380,42 +391,6 @@ export default {
     goLink(url){
     	this.$router.push(url);
     },
-    linkFunc (type,obj={}) {
-    	switch (type){
-    		case 1:
-    		// this.$router.push('/address/list');
-    		this.$router.push('/store/goods-classify');
-    		break;
-    		case 2:
-    		this.$router.push('/store/flash-purchase');
-    		break;
-    		case 3:
-    		this.$router.push('/store/special-sale');
-    		break;
-    		case 4:
-    		this.$router.push({
-	      	path: '/store/special-area',
-	      	query: {
-	      		id: obj.id
-	      	}
-	      });
-    		break;
-    		case 5:
-    		this.$router.push({
-	      	path: '/store/goods-detail',
-	      	query: {
-	      		id: obj.id
-	      	}
-	      })
-    		break;
-    		case 6:
-    		this.$router.push('/store/search');
-    		break;
-    		case 7:
-    		this.$router.push('/life/cart');
-    		break;
-    	}
-    },
     changeNav(item, index) {
       this.activeIndex = index;
       if(index > 0){
@@ -457,6 +432,80 @@ export default {
     //倒计时结束
     finish() {
       Toast('倒计时结束');
+    },
+    closeSwal(data){
+      this.showSwal = data == 1 ? true : false;
+    },
+    /**
+     * 提醒
+    */
+    remindFunc(index,key, id) {
+      const that = this;
+      this.set_id = id;
+      this.set_index = key;
+      this.set_item_index = index;
+      let newTime = parseInt(new Date().getTime()/1000);
+      let overTime = this.listData[this.set_item_index].ollage_info.start_time;
+      if(newTime >=overTime){   //当前时间大于等于活动开始时间
+        Toast('该商品已开抢');
+        setTimeout(() => {
+          that.listData[that.set_item_index].ollage_info.is_start = true;
+        }, 1500);
+      }else {
+        this.showSwal = true;
+      }
+    },
+    /**
+     * 提醒回调
+    */
+    sureSwal: function (e) {
+      const that = this;
+      this.closeSwal(0);
+      remindSend({
+        goods_id: this.set_id,
+        ollage_id: this.listData[this.set_item_index].ollage_info.id
+      }).then(res => {
+        if (res.success) {
+          Toast(res.message);
+          this.listData[this.set_item_index].ollage_info.child[this.set_index].is_set = true;
+        }
+      })
+    },
+    linkFunc (type,obj={}) {
+    	switch (type){
+    		case 1:
+    		// this.$router.push('/address/list');
+    		this.$router.push('/store/goods-classify');
+    		break;
+    		case 2:
+    		this.$router.push('/store/flash-purchase');
+    		break;
+    		case 3:
+    		this.$router.push('/store/special-sale');
+    		break;
+    		case 4:
+    		this.$router.push({
+	      	path: '/store/special-area',
+	      	query: {
+	      		id: obj.id
+	      	}
+	      });
+    		break;
+    		case 5:
+    		this.$router.push({
+	      	path: '/store/goods-detail',
+	      	query: {
+	      		id: obj.id
+	      	}
+	      })
+    		break;
+    		case 6:
+    		this.$router.push('/store/search');
+    		break;
+    		case 7:
+    		this.$router.push('/life/cart');
+    		break;
+    	}
     },
   }
 }
@@ -911,5 +960,8 @@ export default {
 .life-goods-price {
 	font-size: 34px;
 	line-height: 46px;
+}
+div.empty-session {
+	padding-top: 100px;
 }
 </style>

@@ -324,6 +324,10 @@ export default {
       is_credits: this.is_credits ? 1 : 0,
       order_type: this.order_type,
     }
+    this.f_id = this.$route.query.f_id;
+    if(typeof this.f_id!='undefined' && this.f_id){
+      this.flashParam.f_id = this.f_id;
+    }
 
     this.prev_page = prev_page ? prev_page : 0;
     if(!this.prev_page) this.order_type = 0;
@@ -536,7 +540,7 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
-          if(ret.code == '9000'){  //支付成功
+          if(ret.code == '9000' || ret.code == '6001'){  //支付成功
             if(that.order_type == 1 || that.order_type == 2){ //闪购、拼单
               that.linkFunc(13,{id: that.order_id});
             }else {
