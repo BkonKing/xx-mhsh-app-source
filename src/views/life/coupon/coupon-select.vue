@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="优惠券" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-	  <div class="bar-empty"></div>
+		<div class="order-bar bar-white">
+      <van-nav-bar
+        title="优惠券"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
 	  <template v-if="ableNum">
 	  	<div class="coupon-num">可用优惠券<span>（{{ableNum}}张）</span></div>
 			<div class="coupon-list">
@@ -80,40 +88,6 @@
             </div>
           </div>
 		    </div>
-		    <!-- <div class="coupon-item coupon-invalid">
-		      <div class="coupon-block flex-align-center">
-		        <div class="coupon-info flex-align-center">
-	            <div v-if="1==1" class="coupon-price">
-	            	<div class="coupon-price-num"><span>￥</span>121</div>
-	            </div>
-	            <div v-else class="coupon-price">6<span>折</span></div>
-	            <div class="coupon-line"></div>
-	            <div class="coupon-time">
-	            	<div>满150减20</div>
-	            	<div class="color-ffa110 font-24">还剩5天到期</div>
-	            </div>
-	          </div>
-		        <div class="coupon-btn" bindtap="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
-		      </div>
-		      <div class="coupon-down">
-		        <div :class="['toggle-btn',1==1 ? '' : 'toggle-btn-down']" bindtap="contToggle" data-id="index"></div>
-		        <div class="toggle-box p-nowrap" v-if="1==1">
-		          券前金额满1000元减200元，全场通用
-		        </div>
-		        <div class="coupon-detail" v-if="1==2">
-		          <span>券编号：fafe60540</span>
-		          <div>优惠说明：券前金额满150元减50元，全场通用</div>
-		          <div>有效期：2019.05.05-2019.05.10</div>
-		          <div>使用须知：</div>
-		          <div class="point-bg">
-		            <span v-html="msg"></span>
-		          </div>
-		          <div>
-		            <span>领取时间：2019.05.05 10:00</span>
-		          </div>
-		        </div>
-		      </div>
-		    </div> -->
 			</div>
   	</template>
 	</div>

@@ -2,7 +2,7 @@
 	<div class="app-body">
 		<div class="order-bar bar-white">
 			<van-nav-bar
-	      title="我的订单"
+	      :title="titList[typeVal]"
 	      :fixed="true"
 	      :border="false"
 	      placeholder
@@ -10,8 +10,8 @@
 	      @click-left="$router.go(-1)"
 	    ></van-nav-bar>
 		</div>
-		<div class="nav-box-block">
-			<div v-if="!navHide" class="nav-box">
+		<div v-if="!navHide" class="nav-box-block">
+			<div class="nav-box">
 				<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
 			</div>
 		</div>
@@ -28,7 +28,7 @@
 						<div class="order-no">订单号：{{item.order_numb}}</div>
 						<div class="order-status">{{item.order_status_name}}<text class="font-28 color-eb5841 text-right"></text></div>
 					</div>
-					<div v-for="(goods, key) in item.order_goods_specs_list" class="order-goods-info" @click.stop="linkFunc(5,{id:goods.goods_id})">
+					<div v-for="(goods, key) in item.order_goods_specs_list" class="order-goods-info">
 						<div class="order-pic-block">
 							<img class="img-100" mode="aspectFill" :src="goods.specs_img"/>
 						</div>
@@ -108,6 +108,7 @@ export default {
   data () {
     return {
       navItems: ['全部', '待付款', '待发货', '待收货', '退换'],
+      titList: ['我的订单','待付款','待发货','待收货','退换'],
       showExplainSwal: false,  //弹窗
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
 
@@ -134,7 +135,6 @@ export default {
   	if(type&&type!='undefined'){
   		this.typeVal = type;
   		this.navHide = true;
-  		console.log(this.typeVal)
   	}
   	// console.log(this.$store.state.paddingTop)
   },

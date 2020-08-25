@@ -1,8 +1,15 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar"><van-nav-bar title="结算" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
-
+    <div class="order-bar">
+      <van-nav-bar
+        title="结算"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
     <div class="address-session">
       <div class="address-bg"></div>
       <div v-if="addressInfo" class="bht-session address-info" @click="linkFunc(23,{isSelect: 1})">
@@ -52,52 +59,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="order-goods-info">
-        <div class="order-pic-block">
-          <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
-        </div>
-        <div class="order-info">
-          <div class="order-name-price">
-            <div class="order-name p-nowrap">yeah jewelry U形项链</div>
-            <div class="order-price">￥20000.00</div>
-          </div>
-          <div class="order-sku-num">
-            <div class="order-sku p-nowrap">规格：银色</div>
-            <div class="order-num">￥21000.00</div>
-          </div>
-          <div class="order-action-session">
-            <div class="order-action-text color-8f8f94">不支持退货
-              <div class="order-action-btn" @click.stop="openExplainSwal">
-                <img class="img-100" src="@/assets/img/question_01.png" mode="" />
-              </div>
-            </div>
-            <div class="order-buy-num">x1</div>
-          </div>
-        </div>
-      </div>
-      <div class="order-goods-info">
-        <div class="order-pic-block">
-          <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
-        </div>
-        <div class="order-info">
-          <div class="order-name-price">
-            <div class="order-name p-nowrap">yeah jewelry U形项链</div>
-            <div class="order-price">￥20000.00</div>
-          </div>
-          <div class="order-sku-num">
-            <div class="order-sku p-nowrap">规格：银色</div>
-            <div class="order-num">￥21000.00</div>
-          </div>
-          <div class="order-action-session">
-            <div class="order-action-text color-8f8f94">不支持退货
-              <div class="order-action-btn" @click.stop="openExplainSwal">
-                <img class="img-100" src="@/assets/img/question_01.png" mode="" />
-              </div>
-            </div>
-            <div class="order-buy-num">x1</div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <div v-if="order_type!=3" class="cont-session common-list">
@@ -113,7 +74,7 @@
           </div>
         </div>
       </div>
-      <div @click="selectFunc" class="common-item">
+      <div v-if="order_type==0&&settlementInfo.z_total_credits!=0 || (order_type==1 || order_type==2)&&settlementInfo.pay_credits!=0" @click="selectFunc" class="common-item">
         <div class="common-item-left">
           <div :class="[is_credits ? 'cur' : '', 'checkbox-xfb flex-center']"></div>
           <div v-if="order_type==0" class="color-222 font-28">可用{{settlementInfo.z_total_credits/10}}幸福币抵扣￥{{settlementInfo.z_total_credits/100}}</div>
@@ -184,9 +145,6 @@
       </div>
       <div class="order-total order-total-detail">
         <div class="color-8f8f94 font-24">共 1 件</div>
-        <!-- <div class="order-price-total">
-          合计:<span><template v-if="settlementInfo.freight">￥{{settlementInfo.freight/100}} + </template><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</span>
-        </div> -->
         <div class="order-price-total">
           合计:<span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</span>
         </div>
@@ -198,7 +156,6 @@
         <div class="order-remarks-item-left color-222 font-28">订单备注:</div>
         <div class="shipping-address-item-right">
           <input v-model="remarks" class="color-222 font-28 order-remarks-text" type="text" placeholder="备注">
-          <!-- <div class="color-222 font-28 order-remarks-text">电子商品做好防潮防摔措施</div> -->
         </div>
       </div>
     </div>
@@ -311,12 +268,6 @@ export default {
     eventBus.$off('chooseCoupon');
     var prev_page = this.$route.query.prev_page;
     this.order_type = this.$route.query.order_type;  //订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
-    // this.flashParam = {
-    //   ollage_id: this.$route.query.ollage_id,
-    //   specs_num: this.$route.query.specs_num,
-    //   is_credits: 0,
-    //   order_type: this.$route.query.order_type,
-    // }
     this.flashParam = {
       ollage_id: this.$route.query.ollage_id,
       specs_id: this.$route.query.specs_id,
@@ -335,9 +286,6 @@ export default {
     // that.getData();
   },
   methods: {
-    /**
-     * 
-    */
     getData: function (e) {
       if(this.order_type == 0 || this.prev_page == 0){
         getOrdinaryInfo({
@@ -363,8 +311,6 @@ export default {
             if(!this.isSelectAddress){
               this.addressInfo = res.address_info;
             }
-
-            // this.addressInfo = res.data.address_info;
           }
         })
       }else {
@@ -425,13 +371,6 @@ export default {
       that.getData();
       return;
     },
-    /**
-     * 订单备注
-    */
-    // remarksFunc: function (e) {
-    //   const that = this;
-    //   this.remarks = e.detail.value.trim();
-    // },
     /**
      * 结算
     */
@@ -577,6 +516,9 @@ export default {
             user_coupon_id: this.couponInfo.user_coupon_id
           }
         })
+        break;
+        case 11:
+        this.$router.push('/order/list');
         break;
         case 12:
         this.$router.push({

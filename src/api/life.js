@@ -122,7 +122,7 @@ export function getOrderList (params) {
 export function getOrderDetail (params) {
   return request.post('/life/my_order/order_project_info', params)
 }
-//闪购订单超时
+//闪购(拼单)订单超时
 export function collageOver (params) {
   return request.post('/life/my_order/one_ollage_over', params)
 }

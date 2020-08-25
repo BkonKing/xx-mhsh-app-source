@@ -61,58 +61,6 @@
           <div class="goods-old-price">￥46</div>
         </div>
       </div>
-      <!-- <div class="special-item">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-icon flex-align-center">
-            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
-            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
-          </div>
-          <div class="goods-old-price">￥46</div>
-        </div>
-      </div>
-      <div class="special-item">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-icon flex-align-center">
-            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
-            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
-          </div>
-          <div class="goods-old-price">￥46</div>
-        </div>
-      </div>
-      <div class="special-item">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-icon flex-align-center">
-            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
-            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
-          </div>
-          <div class="goods-old-price">￥46</div>
-        </div>
-      </div>
-      <div class="special-item">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-icon flex-align-center">
-            <div class="goods-price-bg flex-align-center">特卖￥<span>19.9</span></div>
-            <img class="goods-price-triangle" src="@/assets/img/special_01.png" />
-          </div>
-          <div class="goods-old-price">￥46</div>
-        </div>
-      </div> -->
     </div>
 	</div>
 </template>

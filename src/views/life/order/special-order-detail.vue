@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-		<div class="bar-empty"></div>
+		<div class="order-bar">
+			<van-nav-bar
+        title="订单详情"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+		</div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
 			<div class="order-status-session">
@@ -388,6 +396,12 @@ export default {
         }
       });
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'settlement'){
+      this.$router.push('/order/list');
+    }
+    next();
   }
 }
 </script>

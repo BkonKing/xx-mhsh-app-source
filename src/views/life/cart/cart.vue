@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="购物车"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
 		<div v-if="carts.length" class="cart-session">
 			<div class="cart-list">
 	      <div :class="[item.goods_type == 2 ? 'cart-item-tm' : '','cart-item']" v-for="(item,index) in carts" @click="linkFunc(5,{id: item.goods_id})">
@@ -358,7 +366,7 @@ export default {
   height: 44px;
   top: 20px;
   bottom: 20px;
-  border: 1px solid #aaa;
+  border: 1.2px solid #aaa;
   box-sizing: border-box;
 }
 .product-sub::after {
@@ -393,6 +401,10 @@ export default {
   padding: 20px;
   display: flex;
   z-index: 5;
+}
+.product-del img {
+  width: 20px;
+  height: 20px;
 }
 
 /*底部*/

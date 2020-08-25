@@ -1,7 +1,19 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar"><van-nav-bar title="订单详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-		<div class="bar-empty"></div>
+		<div class="order-bar">
+			<van-nav-bar
+        title="订单详情"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      >
+	      <template #right>
+	        <span class="nav" @click=""></span>
+	      </template>
+	    </van-nav-bar>
+		</div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>
 			<div class="order-status-session">
@@ -13,7 +25,7 @@
 	      <div v-else class="order-status-tip">{{orderInfo.order_status_text_name}}</div>
 			</div>
 			<div class="cont-session goods-session">
-				<div v-for="(item, index) in goodsList" class="order-goods-info">
+				<div v-for="(item, index) in goodsList" @click.stop="linkFunc(5,{id: item.goods_id})" class="order-goods-info">
 					<div class="order-pic-block">
 						<img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
 					</div>
@@ -48,28 +60,6 @@
 						<div v-if="item.is_returnfund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 2})" class="order-border-btn" hover-class="none">退款详情</div>
 					</div>
 				</div>
-				<!-- <div class="order-goods-info">
-					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"></img>
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-							<div class="order-price">￥20000.00</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku p-nowrap">规格：银色</div>
-							<div class="order-num">￥21000.00</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text color-8f8f94"></div>
-							<div class="order-buy-num">x1</div>
-						</div>
-					</div>
-					<div class="order-goods-btn">
-						<div class="order-border-btn" hover-class="none">申请退换</div>
-					</div>
-				</div> -->
 				<div class="detail-price-list">
 					<div class="detail-price-item">
 						<div>商品总价</div>
@@ -403,6 +393,12 @@ export default {
       	}
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'settlement'){
+      this.$router.push('/order/list');
+    }
+    next();
   }
 }
 </script>

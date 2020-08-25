@@ -3,6 +3,14 @@
     <div class="area-header">
       <div class="order-bar bar-nobg">
         <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
+        <!-- <van-nav-bar
+        title=""
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar> -->
       </div>
       <div class="header-session">
         <div class="area-tit">{{infoData.special_name}}</div>
@@ -30,44 +38,6 @@
         </div>
       </div>
     </van-list>
-    <div v-show="false" class="special-list">
-      <div class="special-item flex-between">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
-          </div>
-        </div>
-      </div>
-      <div class="special-item flex-between">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
-          </div>
-        </div>
-      </div>
-      <div class="special-item flex-between">
-        <div class="special-goods-pic">
-          <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-        </div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
-          </div>
-        </div>
-      </div>
-    </div>
 	</div>
 </template>
 

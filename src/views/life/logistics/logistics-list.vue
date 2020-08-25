@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="物流详情"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
     <div class="logistics-list">
       <template v-for="(item, index) in listData">
         <div class="logistics-item block-session" @click="logisticsLink(index)">

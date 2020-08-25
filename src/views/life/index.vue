@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body" :style="{ 'min-height': windowHeight-40+'px'}">
+	<div class="app-body">
 		<!-- <div class="status-box"></div> -->
 		<div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
 			<div class="life-header">

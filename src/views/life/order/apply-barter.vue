@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="申请换货" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+		<div class="order-bar bar-white">
+      <van-nav-bar
+        title="申请换货"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
     <div class="apply-tip">如有多件商品需要换货，请一并提交申请</div>
 		<div class="order-session">
 			<div class="cont-session goods-session">
@@ -39,38 +47,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="apply-goods">
-						<div class="cart-checkbox flex-center cur" bindtap="checkboxOne" data-index="">
-		          <div class="checkbox-session"></div>
-		        </div>
-						<div class="order-goods-info">
-							<div class="order-pic-block">
-								<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg">
-							</div>
-							<div class="order-info">
-								<div class="order-name-price">
-									<div class="order-name order-name-text p-nowrap">yeah jewelry U形项链</div>
-									<div class="order-price">￥20000.00</div>
-								</div>
-								<div class="order-sku-num">
-									<div class="order-sku order-sku-text p-nowrap">规格：银色</div>
-									<div class="order-buy-num">x1</div>
-								</div>
-								<div class="order-action-session">
-									<div class="order-action-text">换货中</div>
-								</div>
-							</div>
-							<div class="apply-select flex-between">
-								<div class="select-left">
-									<div>换货原因：商品质量问题</div>
-									<div class="color-eb5841">换成：黑色</div>
-								</div>
-								<div class="select-right">
-									<img class="img-100" src="@/assets/img/right.png" />
-								</div>
-							</div>
-						</div>
-					</div> -->
 				</div>
 				<div v-if="unableList.length > 0" class="not-apply">
 					<div @click="toggle" :class="[toggleDown ? 'cur' : '', 'apply-toggle']">部分商品不支持换货({{unableList.length}})</div>

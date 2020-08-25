@@ -1,8 +1,15 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-white":style="{ 'padding-top': paddingTop+'px'}"><van-nav-bar title="商品详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
-
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="商品详情"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
     <div class="banner">
       <van-swipe :autoplay="4000" @change="onChange">
         <van-swipe-item v-for="(item, index) in swiperArr" @click="predivPic(index,1)">
@@ -98,26 +105,6 @@
                 <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
               </div>
             </div>
-            <!-- <div v-else class="collage-item flex-between">
-              <div class="collage-user flex-align-center">
-                <div class="collage-user-info">
-                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                  <div class="collage-user-name p-nowrap">旅途</div>
-                </div>
-                <div class="collage-user-info">
-                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                  <div class="collage-user-name p-nowrap">旅途</div>
-                </div>
-                <div class="collage-user-info">
-                  <img class="collage-user-photo" src="http://192.168.1.158/library/user_avatar/202007/0220/tx_39.jpg" />
-                  <div class="collage-user-name p-nowrap">旅途</div>
-                </div>
-              </div>
-              <div class="collage-item-right">
-                <div class="collage-btn pd-btn">一起拼单</div>
-                <div class="collage-need-num">还差 <span class="color-eb5841">3</span> 人</div>
-              </div>
-            </div> -->
           </template>
         </div>
       </div>
@@ -395,7 +382,6 @@ export default {
       infoData: '',  //商品数据
       btn_type: 'cart',            //cart点击了加入购物 buy点击了立即购买
       current: 0,
-      paddingTop: '',
 
       // show: false,
       swiperArr: [], //轮播图

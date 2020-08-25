@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-	<div class="order-bar bar-white"><van-nav-bar :title="titName" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+		<div class="order-bar bar-white">
+			<van-nav-bar
+        :title="titName"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+		</div>
     <div class="apply-tip">如有多件商品需要退款，请一并提交申请</div>
 		<div class="order-session refund-session">
 			<div class="cont-session goods-session">

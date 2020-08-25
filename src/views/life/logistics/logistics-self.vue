@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body tf-bg">
-    <div class="order-bar bar-white"><van-nav-bar title="物流详情" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="物流详情"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
     <div class="block-session logistics-goods">
       <div class="logistics-goods-pic">
         <div class="goods-num">共{{infoData.img_arr.length}}件</div>

@@ -1,6 +1,15 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="申请退换" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
+		<div class="order-bar bar-white">
+			<van-nav-bar
+        title="申请退换"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+		</div>
 		<div class="bar-empty"></div>
 		<div class="apply-tit">请选择退换</div>
 		<div class="block-session">

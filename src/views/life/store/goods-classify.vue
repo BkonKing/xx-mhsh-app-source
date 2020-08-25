@@ -119,6 +119,7 @@ export default {
         order_type: this.sort_val
       }).then(res => {
         if (res.success) {
+          this.flag = true;
           console.log(this.leftNav.length);
           if(this.leftNav.length == 0){
             this.leftNav = res.data.category_list;
@@ -153,17 +154,22 @@ export default {
       }else {
         this.navList = [];
       }
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
+      this.listInit();
     },
     //右侧菜单点击
     changeNav(index, id) {
       this.activeIndex = index;
       this.category_id = id;
+      this.listInit();
+    },
+    listInit(){
       this.page = 1;
       this.loading = false;
       this.finished = false;
+      this.listData = [];
+      if(!this.flag){
+        this.getGoodsData();
+      }
     },
     // 排序
     sortFunc: function (sort='') {
@@ -176,9 +182,7 @@ export default {
       }else {
         this.sort_val = this.sort_val == 1 ? 0 : sort;
       }
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
+      this.listInit();
     },
     linkFunc (type,obj={}) {
       switch (type){
@@ -252,6 +256,10 @@ export default {
   width: 80px;
   height: 100%;
   padding: 29px 31px;
+}
+.search-back img {
+  width: 18px;
+  height: 30px;
 }
 
 .classify-cont {

@@ -1,27 +1,17 @@
 <template>
 	<div class="app-body">
-		<div class="order-bar bar-white"><van-nav-bar title="填写换货物流" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-		<div class="bar-empty"></div>
+		<div class="order-bar bar-white">
+			<van-nav-bar
+        :title="titName"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+		</div>
 		<div class="order-session">
 			<div class="cont-session goods-session">
-				<!-- <div class="order-goods-info">
-					<div class="order-pic-block">
-						<img class="img-100" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg"/>
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name"><div class="color-222 font-28 order-name-text">yeah jewelry U形项链yeah jewelry U形项链ry U形项链yeah jewelry U形</div></div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku"><div class="color-8f8f94 font-24 order-sku-text">规格：银色</div></div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">
-								<div class="color-eb5841 font-24">换货规格：粉色</div>
-							</div>
-						</div>
-					</div>
-				</div> -->
 				<div v-for="(item,index) in goodsList" class="order-goods-info">
 					<div class="order-pic-block">
 						<img class="img-100" :src="item.specs_img" />
@@ -38,22 +28,6 @@
 						</div>
 					</div>
 				</div>
-				<!-- <div class="order-goods-info">
-					<div class="order-pic-block">
-						<img class="img-100" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name order-name-text p-nowrap">yeah jewelry U形项链</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku order-sku-text p-nowrap">规格：银色</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">换货中</div>
-						</div>
-					</div>
-				</div> -->
 			</div>
 			<div class="cont-session common-list">
 				<div @click="closeReasonSwal(1)" class="common-item common-item-first">
@@ -87,45 +61,6 @@
 				</div>
 				<div class="common-item pic-list">
 					<tf-uploader v-model="images" max-count="5"></tf-uploader>
-					<!-- <div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<div class="upload-pic">
-							<van-uploader :after-read="onRead">
-							  <van-icon class="van-icon" name="plus" size="26px" color="#aaa" />
-							</van-uploader>
-						</div>
-					</div> -->
 				</div>
 			</div>
 		</div>
@@ -167,11 +102,15 @@ export default {
     	swalInfo: new Object(),  //标题描述
       showReasonSwal: false,  //原因弹窗
       swalList: [],
+      titName: '填写换货物流'
     }
   },
   created(){
     this.sale_order_id = this.$route.query.id;
     this.sale_type = this.$route.query.type;
+    if(this.sale_type == 2){
+    	this.titName = '填写退货物流';
+    }
     this.getData();
   },
   methods: {

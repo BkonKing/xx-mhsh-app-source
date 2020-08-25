@@ -1,7 +1,15 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-flash"><van-nav-bar title="限时闪购" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
+    <div class="order-bar bar-flash">
+      <van-nav-bar
+        title="限时闪购"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
 
     <div :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
@@ -20,32 +28,6 @@
             </div>
           </div>
         </scrollBar>
-
-        <!-- <div class="flash-nav" data-index="0" catchtap="navFunc">
-          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
-          <div class="nav-line"></div>
-          <div class="nav-status">已结束</div>
-        </div> -->
-        <!-- <div class="flash-nav" data-index="1" catchtap="navFunc">
-          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
-          <div class="nav-line"></div>
-          <div class="nav-status">已结束</div>
-        </div>
-        <div class="flash-nav cur" data-index="2" catchtap="navFunc">
-          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
-          <div class="nav-line"></div>
-          <div class="nav-status">即将开始</div>
-        </div>
-        <div :class="[3 == tapIndex ? 'cur' : '','flash-nav']" data-index="3" catchtap="navFunc">
-          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
-          <div class="nav-line"></div>
-          <div class="nav-status">即将开始</div>
-        </div>
-        <div class="flash-nav" catchtap="navFunc">
-          <div class="nav-time" v-html="'4月30日\n21:00'"></div>
-          <div class="nav-line"></div>
-          <div class="nav-status">即将开始</div>
-        </div> -->
       </div>
     </div>
     <!-- <div class="flash-time flash-time-over" v-if="{{navList[tapIndex].status == 1}}">本场已结束</div> -->
@@ -75,15 +57,6 @@
           <div class="flash-time-text">即将开始</div>
         </div>
       </template>
-        
-
-      <!-- <div class="count-time">
-        <div class="count-num">23</div>
-        <div class="count-colon"></div>
-        <div class="count-num">23</div>
-        <div class="count-colon"></div>
-        <div class="count-num">23</div>
-      </div> -->
     </div>
     <van-list
         v-model="loading"
