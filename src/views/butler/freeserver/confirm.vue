@@ -15,7 +15,7 @@
           <div class="tf-text-grey">申请：{{info.server_type}}{{info | serverInfo}}</div>
         </div>
         <div class="pd20">
-          <div class="tf-text-grey">申请人：{{info.realname}}</div>
+          <div class="tf-text-grey">申请人：{{info.realname}}（{{info.code_type | houseRoleText}}）</div>
           <div class="tf-text-grey">手机号：{{info.mobile}}</div>
           <div class="tf-text-grey">房屋：{{info.fc_info}}</div>
         </div>
@@ -101,7 +101,7 @@ export default {
     serverInfo (value) {
       switch (value.code_type) {
         case '1':
-          return `（可借${value.duration}）`
+          return `（可借${value.duration / 3600}小时）`
         case '2':
           return value.yj_time ? `（${value.yj_time}）` : ''
         case '3':

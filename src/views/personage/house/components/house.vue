@@ -83,14 +83,16 @@ export default {
         this.bindingDefault(bindingId, index)
       }
     },
+    /* 设置当前 */
     bindingDefault (bindingId, index) {
       bindingDefault({
         binding_id: bindingId
       }).then((res) => {
-        Toast.success('设置成功')
+        // Toast.success('设置成功')
         const current = this.houseList.splice(index, 1)
         this.houseList.unshift(...current)
         this.$store.commit('setCurrentProject', ...current)
+        this.$router.go(-1)
       })
     }
   }

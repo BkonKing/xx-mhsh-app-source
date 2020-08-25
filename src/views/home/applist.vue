@@ -29,7 +29,8 @@
           v-model="myAppList"
           handle="#app-container"
           v-bind="{
-            animation: 0,
+            animation: 100,
+            delay: 500,
             group: 'description',
             disabled: !editMode,
             ghostClass: 'ghost'

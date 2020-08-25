@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar title="我的免费预约" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar title="我的免费服务" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getMyFreeServerList">
         <template v-slot="{item}">

@@ -17,10 +17,11 @@
           type="transaction"
           :load="({pages}) => getMessageList(pages, 2)"
           @click="toTransaction"
+          @mark="messageRead"
         ></message-list>
       </van-tab>
       <van-tab title="互动" :badge="badgeList[3]">
-        <interaction ref="interaction" @click="toInteraction"></interaction>
+        <interaction ref="interaction" @click="toInteraction" @mark="messageRead"></interaction>
       </van-tab>
       <van-tab title="物业" :badge="badgeList[4]">
         <message-list
@@ -28,6 +29,7 @@
           type="butler"
           :load="({pages}) => getMessageList(pages, 4)"
           @click="toButler"
+          @mark="messageRead"
         ></message-list>
       </van-tab>
       <van-tab title="活动" :badge="badgeList[5]">
@@ -36,6 +38,7 @@
           type="activity"
           :load="({pages}) => getMessageList(pages, 5)"
           @click="onActivity"
+          @mark="messageRead"
         ></message-list>
       </van-tab>
       <van-tab title="系统" :badge="badgeList[6]">
@@ -44,6 +47,7 @@
           type="system"
           :load="({pages}) => getMessageList(pages, 6)"
           @click="onSystem"
+          @mark="messageRead"
         ></message-list>
       </van-tab>
       <van-tab v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
@@ -52,6 +56,7 @@
           type="work"
           :load="({pages}) => getMessageList(pages, 1)"
           @click="onWork"
+          @mark="messageRead"
         ></message-list>
       </van-tab>
     </van-tabs>
@@ -113,6 +118,7 @@ export default {
         id: item.id
       }).then((res) => {
         item.is_read = '1'
+        this.getCountMessage()
       })
     },
     // 设置消息全部已读

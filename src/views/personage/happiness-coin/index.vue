@@ -60,7 +60,7 @@
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
       </div>
       <div class="sale-area">
-        <div class="commodity-box" v-for="(item, i) in creditsGoods" :key="i">
+        <div class="commodity-box" v-for="(item, i) in creditsGoods" :key="i" @click="goCoinCommodity(item)">
           <img class="commodity-image" :src="item.thumb" />
           <div class="commodity-name">{{item.goods_name}}</div>
           <div class="tf-row" style="align-items: flex-end;">
@@ -156,6 +156,10 @@ export default {
       getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
+    },
+    /* 幸福币专区商品详情 */
+    goCoinCommodity (item) {
+      this.$router.push(`/store/goods-detail?id=${item.id}`)
     }
   }
 }
@@ -322,6 +326,8 @@ export default {
 .commodity-image {
   width: 330px;
   height: 330px;
+  background: #f4f4f4;
+  border-radius: 10px;
 }
 .commodity-name {
   font-size: 28px;

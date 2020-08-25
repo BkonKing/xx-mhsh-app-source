@@ -27,6 +27,7 @@ export default {
   data () {
     return {
       title: '',
+      id: '',
       formData: {}
     }
   },
@@ -41,12 +42,13 @@ export default {
       const data = JSON.parse(info)
       data.gender = parseInt(data.gender)
       this.formData = data
+      this.id = data.id
     }
   },
   methods: {
     save () {
       const params = this.$refs.form.getData()
-      params.id = this.currentProject.house_id
+      params.id = this.id
       const validator = [
         {
           value: params.realname,

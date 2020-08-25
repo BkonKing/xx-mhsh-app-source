@@ -10,7 +10,8 @@
     </van-nav-bar>
     <div class="tf-bg-white">
       <div class="tf-row tf-padding-lg" @click="goInformation">
-        <img class="personage-info__avatar" :src="userInfo.avatar" />
+        <img v-if="userInfo.avatar" class="personage-info__avatar" :src="userInfo.avatar" />
+        <img v-else class="personage-info__avatar" src="@/assets/imgs/touxiang.png" />
         <div class="personage-info--base">
           <div class="user-info-box">
             <div class="user-name">{{userInfo.nickname}}</div>
@@ -24,7 +25,7 @@
               size="small"
             >{{userType | houseRoleText}}</van-tag>
           </div>
-          <div class="user-address">{{currentProject && currentProject.fc_info}}</div>
+          <div class="user-address">{{(currentProject && currentProject.fc_info) || '暂无绑定房间'}}</div>
         </div>
       </div>
       <div class="tf-row coin-box">
@@ -170,7 +171,7 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'userType', 'currentProject'])
   },
-  created () {
+  activated () {
     this.$store.dispatch('getMyAccount').then(({ order_data }) => {
       this.orderData = order_data
     })
@@ -289,6 +290,7 @@ export default {
 
 .user-role {
   margin-left: 10px;
+  padding: 7px 8px;
 }
 
 .user-address {

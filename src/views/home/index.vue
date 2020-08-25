@@ -57,21 +57,6 @@
               <span>{{userInfo.credits}}</span>
             </span>
           </div>
-          <!-- <van-notice-bar
-            v-if="1"
-            class="coin-message"
-            :scrollable="false"
-            color="#8F8F94"
-            background="#fff"
-            @click="goHappiness"
-          >
-            <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
-              <van-swipe-item v-for="(item, i) in 6" :key="i">
-                <div class="coin-message-name">关于中秋节活动方式投票</div>
-                <div class="coin-message-number">+10</div>
-              </van-swipe-item>
-            </van-swipe>
-          </van-notice-bar>-->
         </div>
         <div class="coin-box__content">
           <div class="coin-image-box">
@@ -112,7 +97,7 @@
           <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
             <tf-image-list :data="item" :column="2" srcKey="thumb" @click="clickTimeLimit">
               <template v-slot:tag="{img}">
-                <div class="price-tag">{{img.s_price}}</div>
+                <div class="price-tag">￥{{img.s_price}}</div>
               </template>
             </tf-image-list>
           </van-swipe-item>
@@ -144,7 +129,7 @@
               </div>
               <div class="activity-info__right">
                 <div class="activity-info__title">{{item.title}}</div>
-                <div class="activity-info__time">报名截止：{{item.etime}}</div>
+                <div class="activity-info__time">报名截止：{{item.jtime}}</div>
               </div>
             </div>
           </div>
@@ -255,18 +240,18 @@ export default {
     if (!guidetype) {
       this.guideShow = true
     }
-
     this.$store.dispatch('getMyAccount')
     this.getBannerIndex()
-    this.getNoticeLbList()
     this.getMyApp()
+  },
+  activated () {
+    this.getNoticeLbList()
     this.getCreditsGoodsList()
     this.getBargainGoods()
     this.getActivityList()
     this.getOllageGoods()
     this.getMhttList()
-  },
-  activated () {
+    this.scrollStatus = false
     this.swipeChange(0)
   },
   methods: {
@@ -326,8 +311,8 @@ export default {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
     /* 幸福币专区商品详情 */
-    goCoinCommodity () {
-      console.log('幸福币专区')
+    goCoinCommodity (item) {
+      this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
     /* 获取9.9特卖区 */
     getBargainGoods () {
@@ -596,6 +581,8 @@ export default {
     .coin-image {
       height: 100%;
       flex: 0 0 160px;
+      background: #f4f4f4;
+      border-radius: 10px;
       /deep/ .van-image__img {
         border-radius: 4px;
       }
@@ -767,11 +754,13 @@ export default {
 /deep/ .coin-tag {
   position: absolute;
   left: 20px;
+  right: 20px;
   bottom: 10px;
   padding: 0 23px;
   height: 36px;
   line-height: 36px;
   font-size: 24px;
+  text-align: center;
   color: #fff;
   background: @orange-dark;
   opacity: 0.8;
@@ -783,7 +772,7 @@ export default {
 .coin-number {
   font-size: 36px;
   font-weight: 500;
-  color: @orange-dark;
+  color: @red-dark;
   .tf-icon {
     font-size: 28px;
   }

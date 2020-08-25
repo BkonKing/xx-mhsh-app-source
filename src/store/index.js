@@ -15,6 +15,7 @@ import {
   Dialog
 } from 'vant'
 import router from '@/router'
+import { clearUserInfo } from '@/utils/util'
 
 Vue.use(Vuex)
 
@@ -173,26 +174,7 @@ const store = {
         outLogin().then((res) => {
           Toast.clear()
           if (res.success) {
-            const ajParams = {
-              alias: 0
-            }
-            Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-              if (ret && ret.status) {
-                alert(ret)
-              }
-            })
-            api.removePrefs({
-              key: 'user_info'
-            })
-            api.removePrefs({
-              key: 'access_token'
-            })
-            api.removePrefs({
-              key: 'refresh_token'
-            })
-            api.removePrefs({
-              key: 'currentProject'
-            })
+            clearUserInfo()
             router.push('/login')
             resolve()
           } else {
@@ -229,15 +211,7 @@ const store = {
             title: '提示',
             message: '登录信息已经过期了，请重新登录'
           }).then(() => {
-            api.removePrefs({
-              key: 'user_info'
-            })
-            api.removePrefs({
-              key: 'access_token'
-            })
-            api.removePrefs({
-              key: 'refresh_token'
-            })
+            clearUserInfo()
             router.push('/login')
           })
         }

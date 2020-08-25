@@ -1,6 +1,6 @@
 <template>
   <van-pull-refresh
-    style="text-align: center;width: 100%;height: 100%;overflow: auto;"
+    class="tf-list-refresh"
     v-model="refreshing"
     success-text="刷新成功"
     @refresh="onRefresh"
@@ -117,11 +117,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-list-refresh {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  text-align: center;
+  padding: 20px;
+}
 .tf-van-list {
   // min-height: 100%;
   flex: 1;
   width: 100%;
-  padding: 20px;
   // overflow: auto;
   -webkit-transform: translateZ(0px);
 }

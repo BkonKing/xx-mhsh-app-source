@@ -49,6 +49,9 @@ export default {
   },
   created () {
     this.queryAllApp()
+    // this.getNoticeLbList()
+  },
+  activated () {
     this.getNoticeLbList()
   },
   methods: {

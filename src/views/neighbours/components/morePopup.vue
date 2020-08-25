@@ -10,7 +10,7 @@
       class="complain-dialog"
       v-model="complainShow"
       position="bottom"
-      @closed="category_id = ''"
+      @closed="com_type = ''"
     >
       <i
         class="van-icon van-icon-close van-popup__close-icon van-popup__close-icon--top-right"

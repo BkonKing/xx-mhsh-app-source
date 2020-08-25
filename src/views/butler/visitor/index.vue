@@ -1,6 +1,13 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="访客邀约" :fixed="true" :border="false" placeholder left-arrow @click-left="goback">
+    <van-nav-bar
+      title="访客邀约"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    >
       <template #right>
         <span class="tf-icon tf-icon-tongxunlu" @click="goVisitorList(1)"></span>
         <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>
@@ -11,7 +18,13 @@
         <div class="list-title">邀约设置</div>
         <tf-list-item border title="来访日期" :required="true">
           <template v-slot:right>
-            <tf-date-time-picker v-model="form.lfday" type="date" title="选择日期" :min-date="startDate">
+            <tf-date-time-picker
+              v-model="form.lfday"
+              type="date"
+              title="选择日期"
+              :min-date="startDate"
+              :max-date="endDate"
+            >
               <template>
                 <div class="tf-text text-right">{{form.lfday || '选择日期'}}</div>
               </template>
@@ -20,11 +33,7 @@
         </tf-list-item>
         <tf-list-item border title="来访时间">
           <template v-slot:right>
-            <tf-picker
-              v-model="form.time"
-              title="选择时间"
-              :columns="timeArray"
-            >
+            <tf-picker v-model="form.time" title="选择时间" :columns="timeArray">
               <template v-slot="{valueText}">
                 <div class="tf-text text-right">{{valueText || '选择时间'}}</div>
               </template>
@@ -156,11 +165,21 @@ export default {
         remark: ''
       },
       startDate: new Date(),
+      endDate: new Date(new Date().getTime() + 2592000000),
       showDatePicker: false,
       showPicker: false,
       agreeValue: false,
-      visitorList: []
+      visitorList: [],
+      invitedStatus: true
     }
+  },
+  created () {
+    // 未发起邀约时不默认选中协议
+    this.invitedStatus = api.getPrefs({
+      sync: true,
+      key: 'invited-status'
+    })
+    this.agreeValue = Boolean(this.invitedStatus)
   },
   activated () {
     const visitorInfo = this.$store.state.visitorList
@@ -184,7 +203,9 @@ export default {
       } else {
         visitorData = this.visitorList[0]
       }
-      const params = JSON.parse(JSON.stringify(Object.assign({}, visitorData, this.form)))
+      const params = JSON.parse(
+        JSON.stringify(Object.assign({}, visitorData, this.form))
+      )
       if (!this.form.lfday) {
         Toast({
           message: '请选择来访日期'
@@ -216,6 +237,12 @@ export default {
     },
     /* 发起邀约成功跳转邀约页面 */
     sendInvite (id) {
+      if (!this.invitedStatus) {
+        api.setPrefs({
+          key: 'invited-status',
+          value: 1
+        })
+      }
       this.$router.replace({
         path: '/pages/butler/visitor/invite',
         query: {

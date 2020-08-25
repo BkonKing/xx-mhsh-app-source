@@ -118,7 +118,7 @@ export default {
           params
         })
         .then(() => {
-          this.$router.push({
+          this.$router.replace({
             name: 'home'
           })
         })

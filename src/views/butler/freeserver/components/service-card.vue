@@ -5,7 +5,7 @@
       :key="i"
       v-show="(!active || active == item.category_type) && (item.category.indexOf(search) !== -1)"
       class="service-card"
-      :class="{'service-card--disabled': item.is_stop == 1 || (item.sy_num == 0 && item.category_type == 2)}"
+      :class="{'service-card--disabled': item.is_stop == 1 || (item.sy_num == 0 && item.category_type == 2 && item.server_status == 0)}"
       @click="showService(item)"
     >
       <div
@@ -16,15 +16,10 @@
         <div class="service-card-name">{{item.category}}</div>
         <div v-if="item.is_stop == 1" class="service-card-info service-card-info--gray">暂停服务</div>
         <div
-          v-else-if="item.category_type == 1"
-          class="service-card-info"
-          :class="{'service-card-info--gray': item.pd_num == 0 || item.server_status == 0}"
-        >{{item.pd_num ? (item.server_status == 0 ? `正在排队${item.pd_num}人` : `排队中：第${item.pd_num + 1}位`) : '当前无人排队'}}</div>
-        <div
           v-else
           class="service-card-info"
-          :class="{'service-card-info--gray': item.sy_num == 0}"
-        >{{`剩余${item.sy_num}个可借`}}</div>
+          :class="{'tf-text-primary': item.server_status == 1}"
+        >{{item | pdText}}</div>
       </div>
     </div>
     <tfDialog v-model="show" :title="activeServe.category">
@@ -115,7 +110,7 @@ export default {
         server_id
       } = item
       // 暂停使用或者没有可借的借用服务直接返回
-      if (is_stop == 1 || (syNum == 0 && categoryType == 2)) {
+      if (is_stop == 1 || (syNum == 0 && categoryType == 2 && status == 0)) {
         return
       }
       this.activeServe = item
@@ -131,7 +126,7 @@ export default {
           codeType = 4
         }
       } else if (categoryType == 2) {
-        if ((status == 0 || !status)) {
+        if (status == 0 || !status) {
           codeType = 1
           this.statusText = '借用'
         } else {
@@ -181,8 +176,38 @@ export default {
   watch: {
     show (value) {
       if (!value) {
-        this.success = false
         this.timer && clearTimeout(this.timer)
+        if (this.success) {
+          this.$emit('reload')
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.success = false
+            }, 500)
+          })
+        }
+      }
+    }
+  },
+  filters: {
+    pdText (obj) {
+      if (obj.category_type == '1') {
+        if (obj.is_lineup == 0) {
+          return '无需排队'
+        }
+        if (obj.pd_num == 0) {
+          return '当前无人排队'
+        }
+        if (obj.server_status == 0) {
+          return `正在排队${obj.pd_num}人`
+        } else {
+          return `排队中：第${obj.pd_num}位`
+        }
+      } else {
+        if (obj.server_status == 0) {
+          return `剩余${obj.sy_num}个可借`
+        } else {
+          return '借用中'
+        }
       }
     }
   },
@@ -245,7 +270,7 @@ export default {
 
 .service-card-info {
   font-size: 24px;
-  color: @red-dark;
+  color: @gray-7;
 }
 
 .service-card-info--gray {

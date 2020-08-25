@@ -32,12 +32,14 @@ export default {
   data () {
     return {
       categoryId: '',
-      postBarList: []
+      postBarList: [],
+      isAll: 1
     }
   },
   created () {
     this.categoryId = this.$route.query.categoryId
     this.title = this.$route.query.category
+    this.isAll = this.$route.query.isAll
     // this.getPostBarList()
   },
   methods: {
@@ -53,7 +55,8 @@ export default {
     /* 获取最新列表 */
     getPostBarList (params) {
       return getPostBarList(Object.assign({
-        categoryId: this.categoryId
+        categoryId: this.categoryId,
+        is_all: this.isAll
       }, params))
     }
   }

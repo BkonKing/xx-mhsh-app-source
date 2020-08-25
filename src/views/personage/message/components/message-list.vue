@@ -35,7 +35,7 @@
       </template>
     </refreshList>
     <van-popup class="more-dialog" v-model="moreShowChild">
-      <div v-if="isRead" class="more-btn" @click="mark">标记已读</div>
+      <div v-if="isRead == '0'" class="more-btn" @click="mark">标记已读</div>
       <div class="more-btn tf-text-primary">删除</div>
     </van-popup>
   </div>
@@ -69,13 +69,15 @@ export default {
   data () {
     return {
       list: this.data,
+      active: null,
       moreShowChild: false,
-      isRead: false // 是否已读，判断是否需要显示标记已读
+      isRead: '1' // 是否已读，判断是否需要显示标记已读
     }
   },
   methods: {
-    operate ({ status }) {
-      this.isRead = status
+    operate (item) {
+      this.isRead = item.is_read
+      this.active = item
       this.moreShowChild = true
     },
     jump (item) {
@@ -85,6 +87,9 @@ export default {
       this.list.forEach(obj => {
         obj.is_read = '1'
       })
+    },
+    mark () {
+      this.$emit('mark', this.active)
     }
   },
   watch: {

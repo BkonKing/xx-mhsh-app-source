@@ -69,7 +69,7 @@ export default {
     this.current = parseInt(this.$route.query.current) || 1
   },
   mounted () {
-    // this.scanSuccess('yuyuefangke|40')
+    // this.scanSuccess('yuyuefuwu|205|100000|1|7|4|1598337339|018acc4be7e5c3a36e8301b3d88ad0d3')
     this.FNScanner = api.require('FNScanner')
   },
   methods: {

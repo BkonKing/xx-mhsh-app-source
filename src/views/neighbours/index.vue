@@ -124,7 +124,8 @@ export default {
         path: '/pages/neighbours/groupList',
         query: {
           categoryId: id,
-          category
+          category,
+          isAll: this.isAll
         }
       })
     },

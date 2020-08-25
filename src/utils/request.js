@@ -6,6 +6,7 @@ import {
   Toast,
   Dialog
 } from 'vant'
+import { clearUserInfo } from '@/utils/util'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -78,10 +79,13 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (status == 401 || code == 401) {
-      const isGetToken = config.url.indexOf('getToken') !== -1
-      if (!isGetToken) {
-        await store.dispatch('refresh')
-      }
+      Dialog.alert({
+        title: '提示',
+        message: '登录信息已经过期了，请重新登录'
+      }).then(() => {
+        clearUserInfo()
+        router.push('/login')
+      })
       return Promise.reject(code)
     } else if (code != '200') {
       Toast(res.message || codeMessage[code])

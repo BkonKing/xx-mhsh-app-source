@@ -34,6 +34,16 @@ export default {
       // 此时可以自行将文件上传至服务器
       file.status = 'uploading'
       file.message = '上传中...'
+      if (Array.isArray(file)) {
+        file.forEach(obj => {
+          this.uImages(obj)
+        })
+      } else {
+        this.uImages(file)
+      }
+    },
+    // 上传图片
+    uImages (file) {
       const formData = new FormData()
       formData.append('imgFile', file.file)
       uImages(formData)
@@ -46,6 +56,7 @@ export default {
           file.message = '上传失败'
         })
     },
+    // 删除上传图片
     onDelete (value, { index }) {
       this.images.splice(index, 1)
     }

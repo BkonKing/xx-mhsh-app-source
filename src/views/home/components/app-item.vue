@@ -1,5 +1,5 @@
 <template>
-  <div class="app-box" :class="{'app-box--edit': editMode}" @click.stop="operate">
+  <div class="app-box" :class="{'app-box--edit': editMode}" @click="operate">
     <img class="app-icon" :src="src" />
     <div class="app-name">{{name}}</div>
     <template v-if="editMode && status !== 1">

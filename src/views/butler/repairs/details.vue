@@ -242,8 +242,7 @@ export default {
     }
   },
   created () {
-    const { id, title, type } = this.$route.query
-    this.title = title
+    const { id, type } = this.$route.query
     this.repairId = id
     this.getRepairInfo().then(() => {
       if (type) {

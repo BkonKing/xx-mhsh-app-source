@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import {
   Toast
 } from 'vant'
@@ -50,5 +51,30 @@ export function validForm (arr) {
     } else {
       reject(status)
     }
+  })
+}
+
+export function clearUserInfo () {
+  const ajParams = {
+    alias: 0
+  }
+  if (process.env.VUE_APP_IS_APP === '1') {
+    Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
+      if (ret && ret.status) {
+        // alert(ret)
+      }
+    })
+  }
+  api.removePrefs({
+    key: 'user_info'
+  })
+  api.removePrefs({
+    key: 'access_token'
+  })
+  api.removePrefs({
+    key: 'refresh_token'
+  })
+  api.removePrefs({
+    key: 'currentProject'
   })
 }

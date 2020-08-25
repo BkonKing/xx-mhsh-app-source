@@ -40,7 +40,10 @@ const routes = [{
       import(
         /* webpackChunkName: "home" */
         '@/views/home/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   }, {
     path: '/life',
     name: 'life',

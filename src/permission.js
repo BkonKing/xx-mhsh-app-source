@@ -21,7 +21,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 有token
   if (hasToken && hasToken != 'undefined') {
-    if (!store.state.current_project) {
+    if (store.state.user_info.user_type != 0 && !store.state.current_project) {
       // 获取当前项目
       await store.dispatch('getHouse')
     }

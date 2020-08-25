@@ -67,7 +67,7 @@ export default {
     },
     /* 跳转详情页（带参数，报事报修类型名称和id） */
     goDetails (item, type) {
-      const url = `/pages/butler/repairs/details?id=${item.id}&title=${item.category}`
+      const url = `/pages/butler/repairs/details?id=${item.id}`
       this.$router.push({
         path: url,
         query: {

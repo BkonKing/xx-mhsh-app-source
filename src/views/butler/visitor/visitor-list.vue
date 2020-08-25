@@ -58,7 +58,7 @@ export default {
       })
     },
     deleteMyVisitor (id) {
-      Dialog.alert({
+      Dialog.confirm({
         title: '是否删除该访客信息'
       }).then(() => {
         deleteMyVisitor({

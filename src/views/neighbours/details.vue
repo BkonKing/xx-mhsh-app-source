@@ -62,12 +62,20 @@
                 <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
-                <img
-                  v-for="(item, i) in info.join_uids"
-                  :key="i"
-                  class="apply-user__avatar"
-                  :src="item.avatar"
-                />
+                <template v-for="(item, i) in info.join_uids">
+                  <img
+                    v-if="item.avatar"
+                    class="apply-user__avatar"
+                    :src="item.avatar"
+                    :key="i"
+                  />
+                  <img
+                    v-else
+                    class="apply-user__avatar"
+                    src="@/assets/imgs/touxiang.png"
+                    :key="i"
+                  />
+                </template>
               </div>
             </div>
             <div v-if="!info.is_join" class="apply-btn" @click="joinActivity">报名</div>
@@ -317,7 +325,7 @@ export default {
         width: 56px;
         height: 56px;
         border-radius: 50%;
-        background: @gray-7;
+        // background: @gray-7;
         margin-right: 10px;
       }
     }

@@ -120,10 +120,10 @@ export default {
     /* 获取报事报修类型 */
     getRepairCategoryList () {
       getRepairCategoryList().then(({ data }) => {
-        const { category, num, id } = data
+        const { category, num, repair_id } = data
         this.categoryList = category
         this.progressNum = num
-        this.repairId = id
+        this.repairId = repair_id
       })
     },
     /* 表单提交 */
@@ -169,7 +169,7 @@ export default {
         若是有多个正在进行中，跳转至记录列表页； */
     goProgress () {
       if (this.progressNum == 1) {
-        this.goRepairDetails(this.repairId)
+        this.goRepairDetails()
       } else {
         this.goList()
       }
@@ -179,8 +179,8 @@ export default {
       this.$router.push('/pages/butler/repairs/list')
     },
     // 跳转到详情页
-    goRepairDetails ({ id, category }) {
-      const url = `/pages/butler/repairs/details?id=${id}&title=${category}`
+    goRepairDetails () {
+      const url = `/pages/butler/repairs/details?id=${this.repairId}`
       this.$router.push(url)
     },
     // 图片上传回调

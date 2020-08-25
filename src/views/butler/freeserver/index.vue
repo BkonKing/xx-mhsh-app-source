@@ -21,7 +21,7 @@
         <div
           class="tab-btn"
           :class="{'tab-btn--blue': category_type === 1}"
-          @click="category_type = 1"
+          @click="changeType(1)"
           style="border-color: #448fe4;"
         >
           <div v-if="category_type !== 1" class="tf-circle-tag--blue"></div>
@@ -33,7 +33,7 @@
         <div
           class="tab-btn"
           :class="{'tf-bg-success': category_type === 2}"
-          @click="category_type = 2"
+          @click="changeType(2)"
           style="border-color: #55b862;"
         >
           <div v-if="category_type !== 2" class="tf-circle-tag--success"></div>
@@ -43,7 +43,7 @@
           </div>
         </div>
       </div>
-      <service-card :active="category_type" :search="search" :data="serviceList"></service-card>
+      <service-card :active="category_type" :search="search" :data="serviceList" @reload="getFreeServerList"></service-card>
     </div>
   </div>
 </template>
@@ -88,6 +88,14 @@ export default {
     /* 搜索服务（暂时弃用） */
     searchList ({ value }) {
       this.getFreeServerList(value)
+    },
+    /* 选中类型 */
+    changeType (type) {
+      if (type !== this.category_type) {
+        this.category_type = type
+      } else {
+        this.category_type = 0
+      }
     }
   }
 }
