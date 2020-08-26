@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div class="tf-date-time-picker" style="height: 100%;">
     <div style="height: 100%;" @click="showDatePicker = true">
       <slot :valueText="valueText"></slot>
     </div>

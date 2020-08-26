@@ -1,5 +1,6 @@
 <template>
   <div class="tf-bg">
+    <div style="position: relative;height: 100%;width: 100%;" :style="{'min-height': `${minHeight}px`}">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -68,7 +69,10 @@
             shape="square"
           >
             阅读并同意
-            <router-link class="tf-text-blue" to>《XXX协议》</router-link>
+            <span
+              class="tf-text-blue"
+              @click.stop="$router.push('/agreement?type=1')"
+            >《{{otherAgreement.title}}》</span>
           </van-checkbox>
           <van-button class="tf-mt-lg" type="danger" size="large" @click="submit">提交</van-button>
         </template>
@@ -80,6 +84,7 @@
           @click="onDelete"
         >删除</van-button>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -151,11 +156,12 @@ export default {
           name: '租户成员'
         }
       ],
-      userText
+      userText,
+      minHeight: 0
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo', 'otherAgreement'])
   },
   created () {
     this.type = parseInt(this.$route.query.type)
@@ -184,6 +190,7 @@ export default {
       }
     }
     this.title = this.type ? '房屋认证' : this.mode ? '成员' : '添加成员'
+    this.minHeight = window.innerHeight - api.safeArea.top - api.safeArea.bottom
   },
   activated () {
     const { houseSelected } = this.$store.state
@@ -252,8 +259,11 @@ export default {
         house_role: this.house_role
       }).then((res) => {
         if (res.success) {
-          Toast.success('保存成功')
-          this.$router.go(-1)
+          Dialog.alert({
+            title: '添加成功'
+          }).then(() => {
+            this.$router.go(-1)
+          })
         } else {
           Toast.fail('保存失败')
         }
@@ -365,6 +375,7 @@ export default {
         Dialog.alert({
           title: '解绑成功！'
         }).then(() => {
+          this.$store.dispatch('getHouse')
           this.$router.go(-1)
         })
       })
@@ -401,6 +412,7 @@ export default {
   beforeRouteLeave (to, from, next) {
     if (to.name !== 'houSelectCommunity') {
       this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
     }
     next()
   }
@@ -438,7 +450,7 @@ export default {
 }
 
 .page-footer {
-  position: fixed;
+  position: absolute;
   left: 20px;
   right: 20px;
   bottom: 40px;

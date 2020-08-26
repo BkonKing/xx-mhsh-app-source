@@ -24,7 +24,7 @@
           <van-uploader :after-read="afterRead" :max-count="1">
             <span class="tf-icon tf-icon-tupian"></span>
           </van-uploader>
-          <div class="send-btn" :class="{'tf-text-primary': content}" @click="addComment">发送</div>
+          <div class="send-btn" :class="{'tf-text-orange': content}" @click="addComment">发送</div>
         </div>
       </div>
     </van-popup>

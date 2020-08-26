@@ -158,17 +158,20 @@ export default {
     }
   },
   watch: {
-    $route (route) {
-      const { active } = route.query
-      if (active && active !== this.current) {
-        this.current = parseInt(active)
-      }
-    },
     isAll (value) {
       this.$refs.list && this.$refs.list.reload()
       this.$refs.activityList && this.$refs.activityList.reload()
       this.$refs.articleList && this.$refs.articleList.reload()
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    const { active } = to.query
+    next((vm) => {
+      if (active && active !== vm.current) {
+        vm.current = parseInt(active)
+        vm.$router.push('/neighbours')
+      }
+    })
   }
 }
 </script>
@@ -230,6 +233,11 @@ export default {
 /deep/ .van-nav-bar__text {
   font-size: 34px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  .tf-icon {
+    margin-left: 10px;
+  }
 }
 /deep/ .van-tabs__content {
   flex: 1;

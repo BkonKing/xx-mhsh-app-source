@@ -53,7 +53,7 @@
             幸福币专区
             <span v-if="userInfo.signin_today == '0'" class="sign-btn" @click.stop="sign">签到</span>
             <span class="coin-number" v-else>
-              <span class="tf-icon tf-icon-xingfubi"></span>
+              <span class="tf-icon tf-icon-xingfubi mr10"></span>
               <span>{{userInfo.credits}}</span>
             </span>
           </div>
@@ -166,7 +166,7 @@
       :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']"
       :style="{'padding-top': $store.state.paddingTop+'px'}"
     >
-      <img :class="[noticeList.length==0&&guideIndex==1 ? 'guide-top' : '']" :src="guideList[guideIndex]" />
+      <img :src="guideList[guideIndex]" />
     </div>
   </div>
 </template>
@@ -464,9 +464,6 @@ export default {
     width: 100%;
     object-fit: contain;
   }
-  .guide-top {
-    margin-top: -66px;
-  }
 }
 .mask-bg.end-bottom {
   align-items: flex-end;
@@ -600,12 +597,13 @@ export default {
 }
 /* 专区 */
 .life-box {
-  padding: 30px 20px;
+  padding: 30px 0;
   &__title {
     font-size: 34px;
     font-weight: 500;
     line-height: 1;
     margin-bottom: 20px;
+    padding: 0 20px;
   }
   &__description {
     display: flex;
@@ -614,6 +612,10 @@ export default {
     font-size: 24px;
     line-height: 1;
     margin-bottom: 30px;
+    padding: 0 20px;
+  }
+  /deep/ .van-swipe-item {
+    padding: 0 20px;
   }
   /deep/ .van-image__img {
     border-radius: 10px;
@@ -822,5 +824,8 @@ export default {
 }
 .font20 {
   font-size: 20px;
+}
+.mr10 {
+  margin-right: 10px;
 }
 </style>

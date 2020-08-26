@@ -11,14 +11,14 @@
     <van-tabs class="tf-body-container" v-model="current">
       <van-tab title="基础信息">
         <tf-list class="basics-list">
-          <tf-list-item border title="头像">
-            <template v-slot:right>
-              <van-uploader :after-read="afterRead">
+          <van-uploader :after-read="afterRead" style="width: 100%;">
+            <tf-list-item border title="头像">
+              <template v-slot:right>
                 <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
                 <img v-else class="tf-avatar-m" src="@/assets/imgs/touxiang.png" />
-              </van-uploader>
-            </template>
-          </tf-list-item>
+              </template>
+            </tf-list-item>
+          </van-uploader>
           <tf-list-item border title="昵称" :showArrow="false">
             <template v-slot:right>
               <input v-model="nickname" class="tf-input" @change="setNickname" />
@@ -43,6 +43,7 @@
           <tf-list-item title="生日">
             <template v-slot:right>
               <tf-date-time-picker
+                class="tf-date-time-picker"
                 v-model="birthday"
                 type="date"
                 title="生日"
@@ -88,10 +89,14 @@
           ></tf-list-item>
         </tf-list>
       </van-tab>
-      <van-tab v-if="userType != 0" title="房产信息">
-        <house @manClick="current = 2" @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
+      <van-tab v-if="userType != 0 && currentProject" title="房产信息">
+        <house
+          ref="house"
+          @manClick="toHouseMember"
+          @change="(bindingId) => goAttestation(1,1,bindingId)"
+        ></house>
       </van-tab>
-      <van-tab v-if="userType != 0" title="成员信息">
+      <van-tab v-if="userType != 0 && currentProject" title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
           <van-dropdown-item v-model="value" :options="list" />
         </van-dropdown-menu>
@@ -211,7 +216,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType'])
+    ...mapGetters(['userInfo', 'userType', 'currentProject'])
   },
   mounted () {
     eventBus.$on(
@@ -223,26 +228,38 @@ export default {
       }.bind(this)
     )
   },
-  async created () {
+  created () {
     eventBus.$off('chooseAddress')
-    await this.$store.dispatch('getMyAccount')
-    const {
-      realname,
-      gender,
-      avatar,
-      mobile,
-      nickname,
-      birthday
-    } = this.userInfo
-    this.realname = realname
-    this.nickname = nickname
-    this.gender = gender
-    this.avatar = avatar
-    this.mobile = mobile
-    this.birthday = birthday || ''
-    // this.getMemberList()
+  },
+  activated () {
+    if (this.current === 0) {
+      this.getMyAccount()
+    } else if (this.current === 1) {
+      this.$refs.house.reload()
+    } else if (this.current === 2) {
+      this.yzHouse(1)
+      this.getMemberList()
+    }
   },
   methods: {
+    /* 获取用户信息 */
+    async getMyAccount () {
+      await this.$store.dispatch('getMyAccount')
+      const {
+        realname,
+        gender,
+        avatar,
+        mobile,
+        nickname,
+        birthday
+      } = this.userInfo
+      this.realname = realname
+      this.nickname = nickname
+      this.gender = gender
+      this.avatar = avatar
+      this.mobile = mobile
+      this.birthday = birthday || ''
+    },
     /* 图片上传 */
     afterRead (file) {
       Toast.loading({
@@ -306,7 +323,8 @@ export default {
       })
     },
     /* 获取业主房产信息 */
-    yzHouse () {
+    yzHouse (type) {
+      // type: 0 - 默认选中第一个， 1 - 保持当前状态
       yzHouse().then((res) => {
         const data = res.data || []
         this.list = data.map((obj) => {
@@ -316,7 +334,9 @@ export default {
             value: house_id
           }
         })
-        this.value = res.data[0].house_id
+        if (!type) {
+          this.value = res.data[0].house_id
+        }
       })
     },
     /* 获取成员列表 */
@@ -409,8 +429,14 @@ export default {
           Toast.fail(message)
         })
     },
+    /* 跳转房产成员信息 */
+    toHouseMember (info) {
+      this.value = info.house_id
+      this.current = 2
+    },
     goback () {
-      this.$router.replace('/personage')
+      this.$router.go(-1)
+      // this.$router.replace('/personage')
     }
   },
   watch: {
@@ -422,6 +448,14 @@ export default {
         !this.list.length && this.yzHouse()
       }
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['settingIndex', 'personage']
+    if (names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
@@ -478,6 +512,17 @@ export default {
   @flex();
   align-items: center;
   color: #222;
+}
+
+.tf-picker,
+.tf-date-time-picker {
+  width: 100%;
+  text-align: right;
+}
+
+/deep/ .tf-clist-cell-left {
+  width: 240px;
+  flex: initial;
 }
 
 /deep/ .van-dropdown-menu__bar {

@@ -78,7 +78,7 @@
         <div class="tf-text-sm">智能门禁摄像头需要读到二维码信息后才能发送开幕指令给单元门门禁，正确的使用方法是将二维码对准摄像头。</div>
         <div class="tf-text-lg tf-mt-lg">一键开门</div>
         <div class="tf-text-sm">点击立即开门按钮即可远程开启单元门。</div>
-        <div class="tf-text-sm tf-mt-lg">提示：请勿随意点击或给陌生人开门，否则追究法律责任。具体查看协议<router-link class="tf-text-blue" to="">《XX协议》</router-link>。</div>
+        <div class="tf-text-sm tf-mt-lg">提示：请勿随意点击或给陌生人开门，否则追究法律责任。具体查看协议<router-link class="tf-text-blue" to="/agreement?type=1">《{{otherAgreement.title}}》</router-link>。</div>
       </div>
     </tf-dialog>
   </div>
@@ -123,7 +123,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProject']),
+    ...mapGetters(['currentProject', 'otherAgreement']),
     houseName () {
       if (this.currentProject) {
         return this.currentProject.project_name + this.currentProject.fc_info

@@ -39,13 +39,11 @@ if (process.env.VUE_APP_IS_APP === '1') {
     // 极光推送
     Vue.prototype.ajpush = api.require('ajpush')
 
-    if (api.systemType === 'android') {
-      Vue.prototype.ajpush.init((ret) => {
-        if (ret && ret.status) {
-          // success
-        }
-      })
-    }
+    Vue.prototype.ajpush.init((ret) => {
+      if (ret && ret.status) {
+        // console.log(ret.status)
+      }
+    })
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
     api.addEventListener({

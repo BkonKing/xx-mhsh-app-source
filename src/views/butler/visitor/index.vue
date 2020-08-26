@@ -87,7 +87,10 @@
       </tf-list>
       <van-checkbox class="agreement-checkbox" v-model="agreeValue" shape="square">
         阅读并同意
-        <router-link class="tf-text-blue" to>《XXX协议》</router-link>
+        <span
+          class="tf-text-blue"
+          @click.stop="$router.push('/agreement?type=1')"
+        >《{{otherAgreement.title}}》</span>
       </van-checkbox>
       <van-button class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
     </div>
@@ -109,6 +112,7 @@ import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import tfPicker from '@/components/tf-picker/index'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
+import { mapGetters } from 'vuex'
 import { addVisitorLog } from '@/api/butler.js'
 import { getTime } from '@/utils/util.js'
 export default {
@@ -129,20 +133,6 @@ export default {
   data () {
     return {
       title: 'picker',
-      array: [
-        {
-          label: '当日一次',
-          value: 1
-        },
-        {
-          label: '当日二次',
-          value: 2
-        },
-        {
-          label: '当日三次及以上',
-          value: 3
-        }
-      ],
       timeArray: [
         '0:00~2:00',
         '2:00~4:00',
@@ -173,6 +163,28 @@ export default {
       invitedStatus: true
     }
   },
+  computed: {
+    ...mapGetters(['otherAgreement']),
+    array () {
+      const status = !this.form.time
+      return [
+        {
+          label: '当日一次',
+          value: 1
+        },
+        {
+          label: '当日二次',
+          value: 2,
+          disabled: status
+        },
+        {
+          label: '当日三次及以上',
+          value: 3,
+          disabled: status
+        }
+      ]
+    }
+  },
   created () {
     // 未发起邀约时不默认选中协议
     this.invitedStatus = api.getPrefs({
@@ -180,6 +192,8 @@ export default {
       key: 'invited-status'
     })
     this.agreeValue = Boolean(this.invitedStatus)
+    const index = Math.floor(new Date().getHours() / 2)
+    this.timeArray.splice(0, index)
   },
   activated () {
     const visitorInfo = this.$store.state.visitorList
@@ -286,6 +300,11 @@ export default {
   flex: 1;
   font-size: 30px;
   text-align: right;
+}
+
+.tf-picker,
+.tf-date-time-picker {
+  width: 100%;
 }
 
 .visitor-btn {

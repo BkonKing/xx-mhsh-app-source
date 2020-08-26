@@ -21,7 +21,7 @@
         <div
           v-if="mode && item.members && item.house_role == 1"
           class="tf-row-vertical-center house-people-box"
-          @click.stop="$emit('manClick')"
+          @click.stop="manClick(item)"
         >
           <div class="tf-icon tf-icon-renshu"></div>
           <div class="house-people-number">{{item.members}}</div>
@@ -94,6 +94,12 @@ export default {
         this.$store.commit('setCurrentProject', ...current)
         this.$router.go(-1)
       })
+    },
+    manClick (item) {
+      this.$emit('manClick', item)
+    },
+    reload () {
+      this.bindingHouse()
     }
   }
 }

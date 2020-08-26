@@ -15,7 +15,7 @@
           <div class="tf-text-grey">申请：{{info.server_type}}{{info | serverInfo}}</div>
         </div>
         <div class="pd20">
-          <div class="tf-text-grey">申请人：{{info.realname}}（{{info.code_type | houseRoleText}}）</div>
+          <div class="tf-text-grey">申请人：{{info.realname}}（{{info.user_type | houseRoleText}}）</div>
           <div class="tf-text-grey">手机号：{{info.mobile}}</div>
           <div class="tf-text-grey">房屋：{{info.fc_info}}</div>
         </div>

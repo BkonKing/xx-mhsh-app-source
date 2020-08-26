@@ -51,8 +51,8 @@
           <div>订单详情</div>
           <span class="tf-icon tf-icon-right"></span>
         </div>
-      </div>
-      <div class="module-box">
+      </div> -->
+      <!--<div class="module-box">
         <div class="tf-row-space-between">
           <div>往来记录</div>
           <span class="tf-icon tf-icon-right"></span>

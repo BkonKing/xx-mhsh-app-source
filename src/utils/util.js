@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '../store'
 import {
   Toast
 } from 'vant'
@@ -58,9 +59,11 @@ export function clearUserInfo () {
   const ajParams = {
     alias: 0
   }
+  console.log(process.env.VUE_APP_IS_APP, process.env.VUE_APP_IS_APP === '1')
   if (process.env.VUE_APP_IS_APP === '1') {
     Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-      if (ret && ret.status) {
+      // console.log(JSON.stringify(ret))
+      if (ret && ret.statusCode) {
         // alert(ret)
       }
     })
@@ -68,6 +71,8 @@ export function clearUserInfo () {
   api.removePrefs({
     key: 'user_info'
   })
+  store.commit('setUser_info', '')
+  store.commit('setCurrentProject', null)
   api.removePrefs({
     key: 'access_token'
   })

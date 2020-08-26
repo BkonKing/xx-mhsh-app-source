@@ -7,7 +7,7 @@
       :fixed="true"
       left-arrow
       @click-left="goBack"
-      @click-right="setNoticeReaded(0)"
+      @click-right="setNoticeReaded"
     />
     <div class="tf-body-container">
       <refreshList :list.sync="noticeList" :load="getNoticeList">
@@ -15,7 +15,7 @@
           <div class="list-item--time">{{item.ctime}}</div>
           <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header" style="justify-content: flex-start;">
-              <span v-if="item.is_readed === '1'" class="tf-readed-tag"></span>
+              <span v-if="item.is_readed == '0'" class="tf-readed-tag"></span>
               <span class="tf-card-header__title">{{item.title}}</span>
             </div>
             <div class="tf-card-content">
@@ -50,13 +50,12 @@ export default {
     getNoticeList (params) {
       return getNoticeList(params)
     },
-    // 设置消息已读
-    setNoticeReaded (noticeId) {
-      setNoticeReaded({
-        noticeId
-      }).then((res) => {
-        if (res.success) {
-        }
+    // 设置消息全部已读
+    setNoticeReaded () {
+      setNoticeReaded().then((res) => {
+        this.noticeList.forEach(obj => {
+          obj.is_readed = 1
+        })
       })
     },
     // 跳转到详情页

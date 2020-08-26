@@ -21,6 +21,8 @@
 <script>
 import { NavBar } from 'vant'
 import { getUserAgreement } from '@/api/home'
+import { mapGetters } from 'vuex'
+
 export default {
   components: {
     [NavBar.name]: NavBar
@@ -31,8 +33,17 @@ export default {
       content: ''
     }
   },
+  computed: {
+    ...mapGetters(['otherAgreement'])
+  },
   created () {
-    this.getUserAgreement()
+    const type = this.$route.query.type
+    if (type) {
+      this.title = this.otherAgreement.title
+      this.content = this.otherAgreement.content
+    } else {
+      this.getUserAgreement()
+    }
   },
   methods: {
     getUserAgreement () {

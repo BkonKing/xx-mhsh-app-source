@@ -42,6 +42,7 @@ export default {
       sync: true
     })
     userInfo && this.$store.commit('setUser_info', userInfo)
+    this.$store.dispatch('getOtherAgreement')
     api.setStatusBarStyle({
       style: 'dark'
     })

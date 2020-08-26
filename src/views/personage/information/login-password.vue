@@ -117,7 +117,7 @@ export default {
 
 <style lang="less" scoped>
 .tf-bg-white {
-  padding: 50px;
+  padding: 0 50px;
   height: 100%;
 }
 

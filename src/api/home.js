@@ -46,3 +46,7 @@ export function getUserAgreement (params) {
     params
   })
 }
+// 其他协议
+export function getOtherAgreement () {
+  return request.get('/ulogin/agreement/other_agreement')
+}

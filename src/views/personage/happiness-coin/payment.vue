@@ -28,9 +28,9 @@
           />
           <span v-if="value && type !== '3'" class="tf-icon tf-icon-close-circle-fill" @click="value = ''"></span>
         </div>
-        <van-field v-model="remarks" :disabled="type === '3'" placeholder="添加备注(10字以内)" />
+        <van-field v-model="remarks" :disabled="type === '3'" maxlength="10" placeholder="添加备注(10字以内)" />
       </div>
-      <van-button v-if="type !== '2'" class="tf-mt-lg" type="primary" size="large" @click="pay">确认支付</van-button>
+      <van-button class="tf-mt-lg" type="primary" size="large" @click="pay">{{type !== '2' ? '确认支付' : '确认'}}</van-button>
     </div>
     <tf-dialog v-model="payCodeShow" title="请输入密码" @closed="paypassword = ''">
       <van-password-input
@@ -46,7 +46,7 @@
       key="number"
       theme="custom"
       :extra-key="['.']"
-      :close-button-text="type !== '2' ? '支付' : '完成'"
+      :close-button-text="type !== '2' ? '支付' : '确定'"
       @close="pay"
       @blur="showKeyboard = false"
     />
@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      type: '1', // 1：付款 2: 收款
+      type: '1', // 1：付款 2: 收款 3:确认付款
       title: '',
       codeId: '',
       info: {},
@@ -186,7 +186,7 @@ export default {
       })
         .then((res) => {
           Dialog.alert({
-            title: '请耐心等待对方付款，注意查收消息'
+            title: '请等待对方确认付款'
           }).then(() => {
             this.$router.go(-1)
           })
@@ -219,7 +219,7 @@ export default {
 
 <style lang='less' scoped>
 .tf-main-container {
-  padding: 118px 20px 0;
+  padding: 30px 20px 0;
 }
 .payment-box {
   background: #fff;
@@ -253,5 +253,12 @@ export default {
     margin: 30px 0;
     height: 80px;
   }
+}
+/deep/ .van-key {
+  height: 120px;
+  font-size: 36px;
+}
+/deep/ .van-key--large {
+  height: 100%;
 }
 </style>

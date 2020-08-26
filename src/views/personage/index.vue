@@ -28,7 +28,9 @@
           <div class="user-address">{{(currentProject && currentProject.fc_info) || '暂无绑定房间'}}</div>
         </div>
       </div>
-      <div class="tf-row coin-box">
+    </div>
+    <div class="tf-body-container tf-overflow-auto">
+      <div class="tf-row tf-bg-white coin-box">
         <div class="tf-flex-item tf-column" @click="goHappiness">
           <div class="user-text--lg">{{userInfo.credits}}</div>
           <div class="user-text--grey">幸福币</div>
@@ -45,8 +47,6 @@
           >{{userInfo.signin_today | signText}}</button>
         </div>
       </div>
-    </div>
-    <div class="tf-body-container tf-overflow-auto">
       <div class="functional-box">
         <div v-if="userInfo.swrole == 1" class="module-box">
           <div class="module-title">事务处理</div>
@@ -82,22 +82,34 @@
             <div class="order-box" @click="goOrderList(1)">
               <img class="manage-image" src="@/assets/imgs/personage_daifukuan.png" />
               <div class="text-sm">待付款</div>
-              <span v-if="orderData.dfk_count && orderData.dfk_count != 0" class="personage-badge">{{orderData.dfk_count}}</span>
+              <span
+                v-if="orderData.dfk_count && orderData.dfk_count != 0"
+                class="personage-badge"
+              >{{orderData.dfk_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(2)">
               <img class="manage-image" src="@/assets/imgs/personage_daifahuo.png" />
               <div class="text-sm">待发货</div>
-              <span v-if="orderData.dfk_count && orderData.dfh_count != 0" class="personage-badge">{{orderData.dfh_count}}</span>
+              <span
+                v-if="orderData.dfk_count && orderData.dfh_count != 0"
+                class="personage-badge"
+              >{{orderData.dfh_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(3)">
               <img class="manage-image" src="@/assets/imgs/personage_shouhuo.png" />
               <div class="text-sm">待收货</div>
-              <span v-if="orderData.dfk_count && orderData.dsh_count != 0" class="personage-badge">{{orderData.dsh_count}}</span>
+              <span
+                v-if="orderData.dfk_count && orderData.dsh_count != 0"
+                class="personage-badge"
+              >{{orderData.dsh_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(4)">
               <img class="manage-image" src="@/assets/imgs/personage_tuihuan.png" />
               <div class="text-sm">退换</div>
-              <span v-if="orderData.dfk_count && orderData.thz_count != 0" class="personage-badge">{{orderData.thz_count}}</span>
+              <span
+                v-if="orderData.dfk_count && orderData.thz_count != 0"
+                class="personage-badge"
+              >{{orderData.thz_count}}</span>
             </div>
             <div class="order-box" @click="goOrderList(undefined)">
               <img class="manage-image" src="@/assets/imgs/personage_quanbu.png" />

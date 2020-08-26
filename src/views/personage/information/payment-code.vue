@@ -33,7 +33,11 @@
 </template>
 <script>
 import { NavBar, PasswordInput, NumberKeyboard, Toast, Dialog } from 'vant'
-import { setPayPassword, updatePayPassword, yzPayPassword } from '@/api/personage'
+import {
+  setPayPassword,
+  updatePayPassword,
+  yzPayPassword
+} from '@/api/personage'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -70,7 +74,7 @@ export default {
       if (this.old_paypassword.length === 6) {
         yzPayPassword({
           old_paypassword: this.old_paypassword
-        }).then(res => {
+        }).then((res) => {
           this.steps = 2
         })
       }
@@ -138,7 +142,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+/deep/ .van-key {
+  height: 100px;
+}
 .tf-bg-white {
   height: 100%;
   padding: 0 50px;

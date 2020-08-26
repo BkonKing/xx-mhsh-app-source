@@ -1,48 +1,50 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar
-      :title="title"
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    ></van-nav-bar>
-    <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
-    <div class="tf-body-container tf-overflow-auto">
-      <transition tag="div" :name="transitionName">
-        <tf-list v-show="step === 0" class="tf-bg-white" key="0">
-          <tf-list-item
-            v-for="(item, i) in projectList"
-            :key="i"
-            v-show="item.project_name.indexOf(value[0]) !== -1"
-            :title="item.project_name"
-            @click="select(item)"
-          ></tf-list-item>
-        </tf-list>
-      </transition>
-      <transition tag="div" :name="transitionName">
-        <tf-list v-show="step === 1" class="tf-bg-white" key="1">
-          <tf-list-item
-            v-for="(item, i) in buildList"
-            :key="i"
-            v-show="item.unit_name.indexOf(value[1]) !== -1"
-            :title="`${item.unit_name}`"
-            @click="select(item)"
-          ></tf-list-item>
-        </tf-list>
-      </transition>
-      <transition tag="div" :name="transitionName">
-        <tf-list v-show="step === 2" class="tf-bg-white" key="1">
-          <tf-list-item
-            v-for="(item, i) in houseList"
-            :key="i"
-            v-show="item.house_name.indexOf(value[2]) !== -1"
-            :title="`${activeBuild.unit_name}${item.house_name}`"
-            @click="select(item)"
-          ></tf-list-item>
-        </tf-list>
-      </transition>
+    <div style="position: relative;width: 100%;height: 100%;">
+      <van-nav-bar
+        :title="title"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="goback"
+      ></van-nav-bar>
+      <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
+      <div class="tf-body-container tf-overflow-auto">
+        <transition tag="div" :name="transitionName">
+          <tf-list v-show="step === 0" class="tf-bg-white" key="0">
+            <tf-list-item
+              v-for="(item, i) in projectList"
+              :key="i"
+              v-show="item.project_name.indexOf(value[0]) !== -1"
+              :title="item.project_name"
+              @click="select(item)"
+            ></tf-list-item>
+          </tf-list>
+        </transition>
+        <transition tag="div" :name="transitionName">
+          <tf-list v-show="step === 1" class="tf-bg-white" key="1">
+            <tf-list-item
+              v-for="(item, i) in buildList"
+              :key="i"
+              v-show="item.unit_name.indexOf(value[1]) !== -1"
+              :title="`${item.unit_name}`"
+              @click="select(item)"
+            ></tf-list-item>
+          </tf-list>
+        </transition>
+        <transition tag="div" :name="transitionName">
+          <tf-list v-show="step === 2" class="tf-bg-white" key="1">
+            <tf-list-item
+              v-for="(item, i) in houseList"
+              :key="i"
+              v-show="item.house_name.indexOf(value[2]) !== -1"
+              :title="`${activeBuild.unit_name}${item.house_name}`"
+              @click="select(item)"
+            ></tf-list-item>
+          </tf-list>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
@@ -157,9 +159,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg {
-  position: relative;
-}
 /deep/ .tf-clist {
   border-radius: 0;
 }

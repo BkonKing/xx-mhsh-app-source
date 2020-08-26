@@ -5,7 +5,7 @@
         <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
       </template>
       <template #right>
-        <span class="send-btn" @click="addPostBar">发送</span>
+        <span class="send-btn" :class="{'tf-text-orange': category_id && content}" @click="addPostBar">发送</span>
       </template>
     </van-nav-bar>
     <div class="tf-container">

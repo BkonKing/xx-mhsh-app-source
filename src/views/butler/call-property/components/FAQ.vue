@@ -50,7 +50,7 @@ export default {
   font-size: 26px;
   color: #666;
   line-height: 54px;
-  padding: 0 30px 50px;
+  padding: 0 30px 30px;
 }
 
 /deep/ .van-collapse-item__title {

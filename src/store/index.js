@@ -11,11 +11,16 @@ import {
   bindingHouse
 } from '@/api/personage.js'
 import {
+  getOtherAgreement
+} from '@/api/home'
+import {
   Toast,
   Dialog
 } from 'vant'
 import router from '@/router'
-import { clearUserInfo } from '@/utils/util'
+import {
+  clearUserInfo
+} from '@/utils/util'
 
 Vue.use(Vuex)
 
@@ -33,7 +38,8 @@ const store = {
     current_project: null,
     keepAliveList: ['mainIndex'],
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
+    otherAgreement: null
   },
   mutations: {
     setUser_info (state, value) {
@@ -92,6 +98,9 @@ const store = {
     },
     setPaddingBottom (state, value) {
       state.paddingBottom = value
+    },
+    setOtherAgreement (state, value) {
+      state.otherAgreement = value
     }
   },
   getters: {
@@ -109,6 +118,9 @@ const store = {
     },
     keepAlives (state) {
       return state.keepAliveList
+    },
+    otherAgreement (state) {
+      return state.otherAgreement
     }
   },
   actions: {
@@ -137,8 +149,8 @@ const store = {
                 alias: data.id
               }
               Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-                if (ret && ret.status) {
-                  alert(ret)
+                if (ret && ret.statusCode) {
+                  // alert(ret)
                 }
               })
             }
@@ -155,8 +167,8 @@ const store = {
             //   value: data
             // })
             commit('setUser_info', data)
-            dispatch('getHouse')
-            dispatch('getMyAccount')
+            // dispatch('getHouse')
+            // dispatch('getMyAccount')
             resolve(data)
           } else {
             reject(res.message)
@@ -238,6 +250,13 @@ const store = {
         }).catch(err => {
           reject(err)
         })
+      })
+    },
+    getOtherAgreement ({
+      commit
+    }) {
+      getOtherAgreement().then(({ data }) => {
+        commit('setOtherAgreement', data || {})
       })
     }
   }

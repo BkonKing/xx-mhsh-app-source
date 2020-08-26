@@ -139,4 +139,8 @@ export default {
   color: @text-color;
   padding: 40px 30px;
 }
+/deep/ .van-hairline--top-bottom::after,
+.van-hairline-unset--top-bottom::after {
+  border-width: 2px 0;
+}
 </style>
