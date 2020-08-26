@@ -11,8 +11,8 @@
     <div class="tf-padding">
       <userInfo :avatar="info.avatar" :name="info.username"></userInfo>
       <div class="module-box money-box">
-        <div class="money-num">{{info.credits}}</div>
-        <div class="tf-text-lg tf-text-grey">退款成功</div>
+        <div class="money-num">{{parseInt(info.credits) > 0 ? '+' : ''}}{{info.credits}}</div>
+        <!-- <div class="tf-text-lg tf-text-grey">退款成功</div> -->
       </div>
       <div class="module-box">
         <div class="clist-item">
@@ -42,7 +42,7 @@
           <div>{{info.source_var}}</div>
         </div>
       </div>
-      <div class="module-box">
+      <!-- <div class="module-box">
         <div class="clist-item">
           <div class="clist-item__label">商品说明</div>
           <div>{{info.to_username}}</div>
@@ -57,7 +57,7 @@
           <div>往来记录</div>
           <span class="tf-icon tf-icon-right"></span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

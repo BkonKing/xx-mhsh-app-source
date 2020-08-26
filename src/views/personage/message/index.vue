@@ -153,7 +153,10 @@ export default {
           break
         case '3':
           this.$router.push({
-            path: '/store/flash-purchase'
+            path: '/store/goods-detail',
+            query: {
+              id: item.source_id
+            }
           })
           break
         case '4':
@@ -168,6 +171,7 @@ export default {
           this.$router.push({
             path: '/order/refund-detail',
             query: {
+              type: item.refund_type,
               id: item.source_id
             }
           })

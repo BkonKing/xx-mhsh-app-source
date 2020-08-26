@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="van-icon van-icon-ellipsis" @click="moreShow = true"></span>
+        <span v-if="articleType == 3" class="van-icon van-icon-ellipsis" @click="articleOperate"></span>
       </template>
     </van-nav-bar>
     <van-pull-refresh
@@ -63,18 +63,8 @@
               </div>
               <div class="apply-user">
                 <template v-for="(item, i) in info.join_uids">
-                  <img
-                    v-if="item.avatar"
-                    class="apply-user__avatar"
-                    :src="item.avatar"
-                    :key="i"
-                  />
-                  <img
-                    v-else
-                    class="apply-user__avatar"
-                    src="@/assets/imgs/touxiang.png"
-                    :key="i"
-                  />
+                  <img v-if="item.avatar" class="apply-user__avatar" :src="item.avatar" :key="i" />
+                  <img v-else class="apply-user__avatar" src="@/assets/imgs/touxiang.png" :key="i" />
                 </template>
               </div>
             </div>
@@ -103,12 +93,20 @@
         @thumbsup="thumbsUp(info)"
       ></reply>
     </van-pull-refresh>
-    <more-popup :moreShow.sync="moreShow" :share="true"></more-popup>
+    <!-- <more-popup :moreShow.sync="moreShow" :share="true"></more-popup> -->
+    <more-popup
+      :complainInfo="info"
+      :complainType="1"
+      :moreShow.sync="moreShow"
+      :complain="!info.is_mine && articleType == 3"
+      :deleteProp="info.is_mine"
+      @delete="deleteArticle"
+    ></more-popup>
   </div>
 </template>
 
 <script>
-import { NavBar, Popup, Toast, PullRefresh } from 'vant'
+import { NavBar, Popup, Toast, PullRefresh, Dialog } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
@@ -119,7 +117,8 @@ import {
   joinActivity,
   getArticleInfo,
   getPostBarInfo,
-  thumbsUp
+  thumbsUp,
+  deleteArticle
 } from '@/api/neighbours'
 
 export default {
@@ -183,6 +182,7 @@ export default {
         id: this.id
       }).then((res) => {
         this.info = res.data
+        this.info.id = this.id
         this.isLoading = false
       })
     },
@@ -213,6 +213,7 @@ export default {
         this.isLoading = false
       })
     },
+    /* 点赞 */
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
       if (item.is_thumbsup) {
@@ -225,6 +226,22 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+      })
+    },
+    articleOperate () {
+      this.moreShow = true
+    },
+    /* 删除帖子 */
+    deleteArticle () {
+      deleteArticle({
+        id: this.id
+      }).then(res => {
+        Dialog.alert({
+          title: '删除成功'
+        }).then(() => {
+          this.$router.go(-1)
+        })
+        this.moreShow = false
       })
     }
   },

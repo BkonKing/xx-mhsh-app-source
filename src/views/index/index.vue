@@ -25,6 +25,11 @@ export default {
     }
   },
   created () {},
+  activated () {
+    if (this.$route.name !== 'personage') {
+      this.$store.dispatch('getMyAccount')
+    }
+  },
   methods: {
     onClickRight () {}
   }

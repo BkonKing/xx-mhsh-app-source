@@ -4,11 +4,13 @@
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)" v-longtap="{tap: operate, params: item}">
-          <img
-            v-if="type == 'transaction'"
-            class="tf-list-image"
-            :src="item.image"
-          />
+          <template v-if="type == 'transaction'">
+            <div
+              v-if="item.sub_type == 6 || item.sub_type == 7"
+              class="list-icon-box tf-icon tf-icon-xingfubi"
+            ></div>
+            <img v-else class="tf-list-image" :src="item.thumb" />
+          </template>
           <template v-else-if="type == 'butler'">
             <div class="list-icon-box tf-icon" :class="item.sub_type | butlerIcon"></div>
           </template>
@@ -84,7 +86,7 @@ export default {
       this.$emit('click', item)
     },
     readAll () {
-      this.list.forEach(obj => {
+      this.list.forEach((obj) => {
         obj.is_read = '1'
       })
     },
@@ -191,7 +193,8 @@ export default {
 }
 .tf-icon-daichuli,
 .tf-icon-gonggao1,
-.tf-icon-huodongbaoming {
+.tf-icon-huodongbaoming,
+.tf-icon-xingfubi {
   background: #ffa110;
 }
 .tf-icon-daifenpai,

@@ -14,7 +14,8 @@
           <tf-list-item border title="头像">
             <template v-slot:right>
               <van-uploader :after-read="afterRead">
-                <img class="tf-avatar-m" :src="avatar" />
+                <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
+                <img v-else class="tf-avatar-m" src="@/assets/imgs/touxiang.png" />
               </van-uploader>
             </template>
           </tf-list-item>

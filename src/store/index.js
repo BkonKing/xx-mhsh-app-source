@@ -224,7 +224,7 @@ const store = {
       const {
         data
       } = await bindingHouse()
-      data && data.length && commit('setCurrentProject', data[0])
+      data && commit('setCurrentProject', data[0])
     },
     getMyAccount ({
       commit

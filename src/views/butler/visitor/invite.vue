@@ -25,7 +25,7 @@
           <template v-if="info.visitor_num">({{info.visitor_num}}人)</template> {{info.gender | sexText}} {{info.mobile}}
         </div>
       </div>
-      <button class="share-btn" type="warn">分享给访客</button>
+      <!-- <button class="share-btn" type="warn">分享给访客</button> -->
     </div>
   </div>
 </template>
