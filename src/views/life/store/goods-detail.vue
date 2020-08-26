@@ -156,9 +156,9 @@
 
     <div class="fixed-empty"></div>
     <div class="bottom-fixed operate-session flex-align-center">
-      <div class="kf-btn flex-center">
+      <a href="tel: 400-111-6601" class="kf-btn flex-center">
         <img src="@/assets/img/icon_07.png" />
-      </div>
+      </a>
       <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)">
         <img src="@/assets/img/icon_06.png" />
         <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
@@ -279,7 +279,7 @@
             <div class="goods-num-count">
               <div class="goods-btn-block">
                 <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
-                <div class="goods-num">{{goods.count}}</div>
+                <div class="goods-num">{{skuList[typeVal].count}}</div>
                 <div :class="[notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
               </div>
             </div>
@@ -512,16 +512,17 @@ export default {
       this.goods.y_price = this.skuList[index].y_price ? this.skuList[index].y_price : 0;
       this.goods.credits = this.skuList[index].credits;
       this.goods.stock = this.skuList[index].stock;
-      this.goods.count = 1;
+      this.skuList[index].count = this.skuList[index].count ? this.skuList[index].count : 1;
+      // this.goods.count = 1;
       this.limitNum()
     },
     /*
     *商品数量加减
     */
     countTab(types) {
-      if(this.goods.count >= this.skuList[this.typeVal].stock) return;
-      if (this.goods.count + types > 0) {
-        this.goods.count = parseInt(this.goods.count) + types;
+      if(this.skuList[this.typeVal].count >= this.skuList[this.typeVal].stock) return;
+      if (this.skuList[this.typeVal].count + types > 0) {
+        this.skuList[this.typeVal].count = parseInt(this.skuList[this.typeVal].count) + types;
       }
     },
     /**
@@ -529,9 +530,10 @@ export default {
      */
     addCar: function (e) {
       var goods = this.goods;
+      goods.count = this.skuList[this.typeVal].count;
       //goods.isSelect = false;
-      var count = this.goods.count;
-      var title = this.goods.goods_name;
+      var count = goods.count;
+      var title = goods.goods_name;
       // 获取购物车的缓存数组（没有数据，则赋予一个空数组）  
       
       var arr = [];
@@ -597,7 +599,7 @@ export default {
       // let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
       var carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
       let cart_counts = 0;
-      var num_count = this.goods.count;
+      var num_count = this.skuList[this.typeVal].count;
       let that = this;
 
       if (carts_arr.length > 0){

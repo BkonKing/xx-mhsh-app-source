@@ -20,7 +20,7 @@
             <div class="link-icon"><img class="img-100" src="@/assets/img/right.png" /></div>
           </div>
           <div class="address-detail">
-            <div class="address-default" v-if="addressInfo.is_default">默认</div>
+            <div class="address-default" v-if="addressInfo.is_default == 1">默认</div>
             <div class="p-nowrap">{{addressInfo.address_name}}</div>
           </div>
         </div>
@@ -250,6 +250,7 @@ export default {
       if(data){
         that.addressInfo = JSON.parse(data);
       }
+      console.log(that.addressInfo);
       this.isSelectAddress = true;
       // that.getData();
     }.bind(this));
@@ -462,6 +463,7 @@ export default {
       this.goDetail();
     },
     surePaySwal(data){
+      this.showPaySwal = false;
       payOrderUp({
         order_id: this.order_id,
         pay_type: data == 0 ? 1 : 2

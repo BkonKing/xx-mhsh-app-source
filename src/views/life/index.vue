@@ -449,11 +449,11 @@ export default {
       this.set_index = key;
       this.set_item_index = index;
       let newTime = parseInt(new Date().getTime()/1000);
-      let overTime = this.listData[this.set_item_index].ollage_info.start_time;
+      let overTime = this.listData[this.set_index].ollage_info.start_time;
       if(newTime >=overTime){   //当前时间大于等于活动开始时间
         Toast('该商品已开抢');
         setTimeout(() => {
-          that.listData[that.set_item_index].ollage_info.is_start = true;
+          that.listData[that.set_index].ollage_info.is_start = true;
         }, 1500);
       }else {
         this.showSwal = true;

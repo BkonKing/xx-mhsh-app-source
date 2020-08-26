@@ -16,11 +16,23 @@
 		    <div v-for="(item,index) in ableList" class="coupon-item">
           <div class="coupon-block flex-align-center">
             <div class="coupon-info flex-align-center">
-              <div v-if="item.type == 1" class="coupon-price coupon-icon">
+              <template v-if="item.i_img">
+                <div class="coupon-icon coupon-price">
+                  <div v-if="item.type == 1" class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
+                  <div v-else class="coupon-price-num"><span>{{item.discount_num}}</span>折</div>
+                  <div class="coupon-icon-block"><img class="img-100" :src="item.i_img" /></div>
+                </div>
+              </template>
+              <template v-else>
+                <div v-if="item.type == 1" class="coupon-price"><span>￥</span>{{item.coupon_pay/100}}</div>
+                <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div>
+              </template>
+
+              <!-- <div v-if="item.type == 1" class="coupon-price coupon-icon">
                 <div class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
                 <div class="coupon-icon-block">{{item.coupon_name}}</div>
               </div>
-              <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div>
+              <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div> -->
               <div class="coupon-line"></div>
               <div class="coupon-time">
                 <div>{{item.coupon_text}}</div>
@@ -52,15 +64,26 @@
 	  </template>
 	  <template v-if="unableNum">
 	  	<div class="coupon-num unable-num">不可用优惠券<span>（{{unableNum}}张）</span></div>
-			<div v-for="(item,index) in unableList" class="coupon-list">
-		    <div class="coupon-item coupon-invalid">
+			<div class="coupon-list">
+		    <div v-for="(item,index) in unableList" class="coupon-item coupon-invalid">
 		      <div class="coupon-block flex-align-center">
 		        <div class="coupon-info flex-align-center">
-              <div v-if="item.type == 1" class="coupon-price coupon-icon">
+              <template v-if="item.i_img">
+                <div class="coupon-icon coupon-price">
+                  <div v-if="item.type == 1" class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
+                  <div v-else class="coupon-price-num"><span>{{item.discount_num}}</span>折</div>
+                  <div class="coupon-icon-block"><img class="img-100" :src="item.i_img" /></div>
+                </div>
+              </template>
+              <template v-else>
+                <div v-if="item.type == 1" class="coupon-price"><span>￥</span>{{item.coupon_pay/100}}</div>
+                <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div>
+              </template>
+              <!-- <div v-if="item.type == 1" class="coupon-price coupon-icon">
                 <div class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
                 <div class="coupon-icon-block">{{item.coupon_name}}</div>
               </div>
-              <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div>
+              <div v-else class="coupon-price">{{item.discount_num}}<span>折</span></div> -->
               <div class="coupon-line"></div>
               <div class="coupon-time">
                 <div>{{item.coupon_text}}</div>
@@ -70,7 +93,7 @@
 		        <div class="coupon-btn" bindtap="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
 		      </div>
 		      <div class="coupon-down">
-            <div :class="['toggle-btn',item.is_down ? 'toggle-btn-down' : '']" @click="contToggle(index,1)" data-id="index"></div>
+            <div :class="['toggle-btn',item.is_down ? 'toggle-btn-down' : '']" @click="contToggle(index,0)" data-id="index"></div>
             <div v-if="!item.is_down" class="toggle-box p-nowrap">
               {{item.coupon_explain}}
             </div>
@@ -166,13 +189,14 @@ export default {
     	if(type == 1){
     		this.ableList[index].is_down = !this.ableList[index].is_down;
     	}else {
+        console.log(this.unableList[index]);
     		this.unableList[index].is_down = !this.unableList[index].is_down;
     	}
     },
     clickItem(index){
       //传递一个map，chooseCoupon是key，id是value
       var obj = {
-      	user_coupon_id: this.ableList[index].coupon_id,
+      	user_coupon_id: this.ableList[index].user_coupon_id,
       	coupon_text: this.ableList[index].coupon_text,
       }
       eventBus.$emit('chooseCoupon',JSON.stringify(obj));

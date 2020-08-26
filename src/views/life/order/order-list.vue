@@ -43,9 +43,9 @@
 							</div>
 							<div class="order-action-session">
 								<div class="order-action-text">
-									<!-- <template v-if="goods.is_returnfund==1 || goods.is_return==1">
-										{{goods.is_returnfund==1 ? '不支持退换' : '不支持退货'}}
-									</template> -->
+									<template v-if="goods.order_status_name">
+										{{goods.order_status_name}}
+									</template>
 								</div>
 								<div class="order-buy-num">x1</div>
 							</div>
@@ -204,6 +204,7 @@ export default {
       this.showPaySwal = data == 1 ? true : false;
     },
     surePaySwal(data){
+      this.showPaySwal = false;
       payOrderUp({
         order_id: this.payOderdId,
         pay_type: data == 0 ? 1 : 2
@@ -222,8 +223,9 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
+          that.initFunc(1);
           if(ret.code == '9000'){  //支付成功
-            that.initFunc(1);
+            
           }
         }
       );

@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+	<div v-if="infoData" class="app-body">
     <div class="order-bar bar-white">
       <van-nav-bar
         title="物流详情"
@@ -17,7 +17,7 @@
       </div>
       <div class="logistics-tip">
         <div>物流配送：{{infoData.name}}</div>
-        <div>运单编号：{{infoData.name2}}</div>
+        <div>运单编号：{{infoData.kd_text_arr.nu}}</div>
       </div>
       <div class="copy-btn" @click="copy_cont(infoData.name2)">
         <div class="copy-text">复制</div>
@@ -45,11 +45,12 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import { getLogisticsInfo } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Toast.name]: Toast
   },
   data () {
     return {
@@ -93,7 +94,6 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 .block-session {
   margin-bottom: 30px;

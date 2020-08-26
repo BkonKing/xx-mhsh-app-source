@@ -28,7 +28,7 @@
 						</div>
 						<div class="order-sku-num">
 							<div class="order-sku p-nowrap">{{item.specs_name}}</div>
-							<div class="order-num">幸福币{{item.happiness_price/10}}</div>
+							<div class="order-num color-222">幸福币{{item.happiness_price/10}}</div>
 						</div>
 						<div class="order-action-session">
 							<div class="order-action-text">{{item.order_status_name}}</div>
@@ -70,7 +70,7 @@
 						<div class="color-222 font-28">{{infoData.ctime}}</div>
 					</div>
 					<div v-if="infoData.refund_time" class="flex-sart-item">
-						<div class="color-222 font-28 flex-sart-item-left">完成时间：</div>
+						<div class="color-222 font-28 flex-sart-item-left">退款时间：</div>
 						<div class="color-222 font-28">{{infoData.refund_time}}</div>
 					</div>
 					<div v-if="infoData.cancel_time" class="flex-sart-item">

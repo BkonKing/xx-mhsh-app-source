@@ -10,7 +10,7 @@
         @click-left="$router.go(-1)"
       >
 	      <template #right>
-	        <span class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></span>
+	        <a href="tel: 400-111-6601" class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></a>
 	      </template>
 	    </van-nav-bar>
 		</div>
@@ -170,21 +170,29 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="logisticsInfo" class="shipping-logistics">
-					<div class="shipping-address-item">
+				<div @click="logisticsLink" v-if="logisticsInfo" class="shipping-logistics">
+					<div v-if="logisticsInfo.l_status == 0" class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">物流配送:</div>
 						<div class="shipping-address-item-right">
-							<div class="color-222 font-28">顺丰速运</div>
-							<div class="color-8f8f94 font-28">(SF123456789002)</div>
-							<img class="shipping-address-icon" src="" mode="" />
+							<div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
+							<div class="color-8f8f94 font-28">({{logisticsInfo.kuaidi_numb}})</div>
+							<img class="shipping-address-icon" src="@/assets/img/right.png" />
 						</div>
 					</div>
-					<div class="shipping-logistics-item">
+					<div v-else class="shipping-address-item">
+						<div class="shipping-address-item-left color-222 font-28">物流配送:</div>
+						<div class="shipping-address-item-right">
+							<div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
+							<div class="color-8f8f94 font-28">(已签收)</div>
+							<img class="shipping-address-icon" src="@/assets/img/right.png" />
+						</div>
+					</div>
+					<div v-if="logisticsInfo.l_status == 0" class="shipping-logistics-item">
 						<div class="shipping-address-item-left"></div>
 						<div class="shipping-address-item-right shipping-logistics-item-right">
 							<div class="shipping-logistics-point"></div>
 							<div class="shipping-logistics-line"></div>
-							<div class="shipping-logistics-text">快递已到达仓山区菜鸟驿站\n2020-07-02 10:00:00</div>
+							<div class="shipping-logistics-text">{{logisticsInfo.kd_data.data[0].context}}<br />{{logisticsInfo.kd_data.data[0].time}}</div>
 						</div>
 					</div>
 				</div>

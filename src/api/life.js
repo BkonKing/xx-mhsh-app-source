@@ -122,6 +122,10 @@ export function getOrderList (params) {
 export function getOrderDetail (params) {
   return request.post('/life/my_order/order_project_info', params)
 }
+//订单详情(未付款修改收货地址)
+export function editOrderAddress (params) {
+  return request.post('/life/order/up_address_order', params)
+}
 //闪购(拼单)订单超时
 export function collageOver (params) {
   return request.post('/life/my_order/one_ollage_over', params)

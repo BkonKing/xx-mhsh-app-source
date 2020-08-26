@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      tapIndex: 0
+      tapIndex: 1
     }
   },
   watch: {
@@ -74,7 +74,6 @@ export default {
     },
     sureSwal(index) {
       this.$emit('sureSwal',this.tapIndex);
-      this.calcel(0);
     },
     selectSwal(index) {
       this.tapIndex = index;

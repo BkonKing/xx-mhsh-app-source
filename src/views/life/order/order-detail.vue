@@ -10,11 +10,11 @@
         @click-left="$router.go(-1)"
       >
 	      <template #right>
-	        <span class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></span>
+	        <a href="tel: 400-111-6601" class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></a>
 	      </template>
 	    </van-nav-bar>
 		</div>
-		<div class="order-session">
+		<div v-if="orderInfo" class="order-session">
 			<div class="order-header-bg"></div>
 			<div class="order-status-session">
 				<div class="order-status-name">{{orderInfo.order_status_name}}</div>
@@ -86,12 +86,13 @@
 				</div>
 			</div>
 			<div class="cont-session address-logistics">
-				<div class="shipping-address">
+				<div @click="linkFunc(23)" class="shipping-address">
 					<div class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">收货地址:</div>
 						<div class="shipping-address-item-right">
 							<div class="shipping-address-username p-nowrap">{{orderInfo.rece_realname}}</div>
 							<div class="color-222 font-28">{{orderInfo.rece_mobile}}</div>
+              <img v-if="orderInfo.is_again_pay_btn" class="shipping-address-icon" src="@/assets/img/right.png" />
 						</div>
 					</div>
 					<div class="shipping-address-item">
@@ -101,13 +102,13 @@
 						</div>
 					</div>
 				</div>
-				<div v-if="logisticsInfo" class="shipping-logistics">
+				<div @click="logisticsLink" v-if="logisticsInfo" class="shipping-logistics">
 					<div v-if="logisticsInfo.l_status == 0" class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">物流配送:</div>
 						<div class="shipping-address-item-right">
 							<div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
 							<div class="color-8f8f94 font-28">({{logisticsInfo.kuaidi_numb}})</div>
-							<img class="shipping-address-icon" src="" mode="" />
+							<img class="shipping-address-icon" src="@/assets/img/right.png" />
 						</div>
 					</div>
 					<div v-else class="shipping-address-item">
@@ -115,7 +116,7 @@
 						<div class="shipping-address-item-right">
 							<div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
 							<div class="color-8f8f94 font-28">(已签收)</div>
-							<img class="shipping-address-icon" src="" mode="" />
+							<img class="shipping-address-icon" src="@/assets/img/right.png" />
 						</div>
 					</div>
 					<div v-if="logisticsInfo.l_status == 0" class="shipping-logistics-item">
@@ -202,8 +203,10 @@ import { NavBar, CountDown, Toast } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
+import eventBus from '@/api/eventbus.js';
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress } from '@/api/life.js'
 export default {
+  name: 'orderDetail',
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
@@ -230,7 +233,22 @@ export default {
       downTime: 0,          //支付结束时间
     }
   },
+  mounted(){
+    var that = this;
+    //根据key名获取传递回来的参数，data就是map
+    eventBus.$on('chooseAddress', function(data){
+      console.log(data);
+      if(data){
+        that.addressInfo = JSON.parse(data);
+        that.orderInfo.rece_realname = that.addressInfo.realname;
+        that.orderInfo.rece_mobile = that.addressInfo.mobile;
+        that.orderInfo.rece_address = that.addressInfo.address_detail+that.addressInfo.address_name+that.addressInfo.address_house;
+        that.orderAddress(that.addressInfo.id);
+      }   
+    }.bind(this));
+  },
   created(){
+    eventBus.$off('chooseAddress');
     this.order_id = this.$route.query.id;
     this.getData();
   },
@@ -244,7 +262,16 @@ export default {
         	this.orderInfo = res.order_project_info;
         	this.logisticsInfo = res.logistice_info;
         	this.newTime = parseInt(new Date().getTime());
-        	console.log(this.orderInfo.goods_price_total);
+        }
+      })
+    },
+    orderAddress(address_id){
+      editOrderAddress({
+        order_id: this.order_id,
+        address_id: address_id
+      }).then(res => {
+        if (res.success) {
+          
         }
       })
     },
@@ -281,6 +308,7 @@ export default {
       this.showPaySwal = data == 1 ? true : false;
     },
     surePaySwal(data){
+      this.showPaySwal = false;
       payOrderUp({
         order_id: this.orderInfo.order_id,
         pay_type: data == 0 ? 1 : 2
@@ -299,9 +327,7 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
-          if(ret.code == '9000'){  //支付成功
-            that.getData();
-          }
+          that.getData();
         }
       );
     },
@@ -386,6 +412,16 @@ export default {
           }
         })
         break;
+        case 23:
+        if(this.orderInfo.is_again_pay_btn){
+          this.$router.push({
+            path: '/address/list',
+            query: {
+              isSelect: 1
+            }
+          })
+        }
+        break;
       }
     },
     logisticsLink() {
@@ -425,6 +461,10 @@ export default {
   beforeRouteLeave (to, from, next) {
     if(to.name == 'settlement'){
       this.$router.push('/order/list');
+    }
+    if(to.name != 'addressList'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
     }
     next();
   }

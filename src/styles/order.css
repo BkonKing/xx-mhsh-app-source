@@ -286,8 +286,10 @@
 	align-items: center;
 	position: relative;
 }
-.order-remarks-item .order-remarks-text {
+.order-remarks-item .order-remarks-text,
+.order-remarks-item .order-remarks-item-left {
 	color: #222;
+	line-height: 52px;
 }
 .shipping-logistics-item {
 	display: flex;
@@ -304,10 +306,12 @@
 	max-width: 280px;
 	@extend .p-ellipsis;
 }
+.shipping-address-text {
+	font-size: 24px;
+}
 .shipping-address-text,.order-remarks-text {
 	max-width: 504px;
 	color: #8f8f94;
-	font-size: 24px;
 }
 .shipping-logistics-item-right {
 	position: relative;
@@ -316,7 +320,8 @@
 .shipping-address-icon {
 	position: absolute;
 	right: 0;
-	top: 0;
+	top: 50%;
+	margin-top: -13px;
 	width: 16px;
 	height: 26px;
 }
@@ -347,7 +352,12 @@
 	font-size: 24px;
 }
 .order-remarks {
-	height: 120px;
+	min-height: 120px;
+}
+.order-remarks .order-remarks-item {
+	height: auto;
+	align-items: flex-start;
+	padding: 26px 30px;
 }
    /* 订单信息 */
 .order-message {
@@ -398,7 +408,8 @@
 }
   /* 底部按钮 */
 .fixed-empty {
-	height: 150px;
+	/*height: 150px;*/
+	height: 120px;
 }
 .btn-fixed-buttom {
 	position: fixed;

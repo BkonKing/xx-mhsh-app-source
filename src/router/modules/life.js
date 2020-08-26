@@ -123,7 +123,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "orderDetail" */
         '@/views/life/order/order-detail'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/order/special-detail',

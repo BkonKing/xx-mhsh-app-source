@@ -19,7 +19,7 @@
             <div v-if="item.buy_type==0 && item.l_status==0" class="logistics-info">
               <div class="logistics-icon-circular"></div>
               <div class="logistics-icon-line"></div>
-              <div class="logistics-text">{{item.kd_text_arr.data[0].context}}</div>
+              <div class="logistics-text p-nowrap">{{item.kd_text_arr.data[0].context}}</div>
               <div class="logistics-time">{{item.kd_text_arr.data[0].time}}</div>
             </div>
           </div>
@@ -36,7 +36,7 @@
           <div class="logistics-info">
             <div class="logistics-icon-circular"></div>
             <div class="logistics-icon-line"></div>
-            <div class="logistics-text">仓库已接单</div>
+            <div class="logistics-text p-nowrap">仓库已接单</div>
             <div class="logistics-time">2018-11-11 11:11:11</div>
           </div>
         </div>
