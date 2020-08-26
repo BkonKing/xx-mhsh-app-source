@@ -8,7 +8,11 @@
         placeholder
         left-arrow
         @click-left="$router.go(-1)"
-      ></van-nav-bar>
+      >
+	      <template #right>
+	        <span class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></span>
+	      </template>
+	    </van-nav-bar>
 		</div>
 		<div class="order-session">
 			<div class="order-header-bg"></div>

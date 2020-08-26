@@ -62,7 +62,7 @@
 							</div>
 						</div>
 						<div class="order-btn-box">
-							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="cancelOrder(index,item.order_id)">取消订单</div>
+							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.order_id)">取消订单</div>
 							<div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
 							<div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.order_id)">
 	            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
@@ -89,6 +89,12 @@
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     ></pay-swal>
+    <remind-swal 
+    :show-swal="showSwal"
+    :remind-tit="remindTit"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal()">
+    </remind-swal>
 	</div>
 </template>
 
@@ -96,6 +102,7 @@
 import { NavBar, CountDown, List } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
+import remindSwal from './../components/remind-swal'
 import { getOrderList, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
   components: {
@@ -103,6 +110,7 @@ export default {
     [CountDown.name]: CountDown,
     [List.name]: List,
     explainSwal,
+    remindSwal,
     paySwal
   },
   data () {
@@ -111,6 +119,8 @@ export default {
       titList: ['我的订单','待付款','待发货','待收货','退换'],
       showExplainSwal: false,  //弹窗
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
+      showSwal: false,                           //提醒弹窗
+      remindTit: '确定取消订单', //提醒标题
 
 	    typeVal: 0,          //tab切换index
 	    navHide: false,
@@ -256,6 +266,23 @@ export default {
     // 关闭弹窗
     closeExplainSwal(data){
       this.showExplainSwal = data == 1 ? true : false;
+    },
+    //打开取消弹窗
+    openSwal(index,id){
+      this.clickIndex = index;
+      this.clickId = id;
+      this.showSwal = true;
+    },
+    //关闭取消弹窗
+    closeSwal(data){
+      this.showSwal = data == 1 ? true : false;
+    },
+    // 取消提醒回调
+    sureSwal: function (e) {
+      const that = this;
+      this.closeSwal(0);
+      console.log(this.clickIndex);
+      this.cancelOrder(this.clickIndex,this.clickId);
     },
     linkFunc (type,obj={}) {
     	switch (type){

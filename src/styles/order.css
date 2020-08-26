@@ -415,4 +415,15 @@
 }
 
 
+.order-bar .van-nav-bar__right .nav-serve {
+	height: 100%;
+	width: 100%;
+	padding: 0 10px 0 20px;
+	display: flex;
+	align-items: center;
+}
+.order-bar .van-nav-bar__right .nav-serve img {
+	width: 44px;
+	height: 44px;
+}
 

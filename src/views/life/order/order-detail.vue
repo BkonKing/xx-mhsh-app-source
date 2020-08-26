@@ -10,7 +10,7 @@
         @click-left="$router.go(-1)"
       >
 	      <template #right>
-	        <span class="nav" @click=""></span>
+	        <span class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></span>
 	      </template>
 	    </van-nav-bar>
 		</div>
@@ -156,13 +156,17 @@
 					<div class="order-message-item-left color-8f8f94 font-28">支付时间:</div>
 					<div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.pay_time}}</div>
 				</div>
+				<div v-if="orderInfo.cancel_time" class="order-message-item">
+					<div class="order-message-item-left color-8f8f94 font-28">取消时间:</div>
+					<div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.cancel_time}}</div>
+				</div>
 			</div>
 		</div>
 
 		<template v-if="orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn">
 			<div class="fixed-empty"></div>
 			<div class="btn-fixed-buttom">
-				<div v-if="orderInfo.is_cancel_btn" @click="cancelOrder" class="order-border-btn" hover-class="none">取消订单</div>
+				<div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none">取消订单</div>
 				<template v-if="orderInfo.is_logistice_btn">
 					<div @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
 				</template>
@@ -184,6 +188,12 @@
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     ></pay-swal>
+    <remind-swal 
+    :show-swal="showSwal"
+    :remind-tit="remindTit"
+    @closeSwal="closeSwal"
+    @sureSwal="sureSwal()">
+    </remind-swal>
 	</div>
 </template>
 
@@ -191,6 +201,7 @@
 import { NavBar, CountDown, Toast } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
+import remindSwal from './../components/remind-swal'
 import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
   components: {
@@ -198,7 +209,8 @@ export default {
     [CountDown.name]: CountDown,
     [Toast.name]: Toast,
     paySwal,
-    explainSwal
+    explainSwal,
+    remindSwal
   },
   data () {
     return {
@@ -210,6 +222,8 @@ export default {
     	goodsList: [],
     	orderInfo: '',
     	logisticsInfo: '',
+    	showSwal: false,                           //提醒弹窗
+      remindTit: '确定取消订单', //提醒标题
 
     	showPaySwal: false,   //支付方式弹窗
       payMoney: 0,          //支付金额
@@ -242,6 +256,20 @@ export default {
   	closeExplainSwal(data){
       this.showExplainSwal = data == 1 ? true : false;
     },
+    //打开取消弹窗
+    openSwal(){
+      this.showSwal = true;
+    },
+    //关闭取消弹窗
+    closeSwal(data){
+      this.showSwal = data == 1 ? true : false;
+    },
+    // 取消提醒回调
+    sureSwal: function (e) {
+      const that = this;
+      this.closeSwal(0);
+      this.cancelOrder();
+    },
     //再次付款
     payFunc(){
     	this.downTime = this.orderInfo.is_again_pay_time*1000-this.newTime;
@@ -272,7 +300,7 @@ export default {
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
           if(ret.code == '9000'){  //支付成功
-            this.getData();
+            that.getData();
           }
         }
       );

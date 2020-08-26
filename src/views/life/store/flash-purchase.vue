@@ -258,24 +258,10 @@
 
     <remind-swal 
     :show-swal="showSwal"
+    :remind-tit="remindTit"
     @closeSwal="closeSwal"
-    @sureSwal="sureSwal()"></remind-swal>
-
-    <div v-show="false" class="mask-bg">
-      <div class="mask-block">
-        <div class="mask-close">
-          <img class="img-100" src="@/assets/img/close.png" />
-        </div>
-        <div class="mask-tit flex-center">
-          提醒消息将在活动开始时通知您
-        </div>
-        <div class="mask-btn flex-between">
-          <div class="mask-cancel-btn flex-center">取消</div>
-          <div class="mask-sure-btn flex-center">确定</div>
-        </div>
-      </div>
-    </div>
-
+    @sureSwal="sureSwal()">
+    </remind-swal>
 	</div>
 </template>
 
@@ -303,6 +289,7 @@ export default {
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
       model_txt: '',//通知消息提示词
       showSwal: false,       //提醒弹窗
+      remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
       set_id: '',            //提醒的商品id
       set_index: '',         //点击提醒的商品index
       ollage_id: '',         //当前选中的闪购id

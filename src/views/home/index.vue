@@ -166,7 +166,7 @@
       :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']"
       :style="{'padding-top': $store.state.paddingTop+'px'}"
     >
-      <img :src="guideList[guideIndex]" />
+      <img :class="[noticeList.length==0&&guideIndex==1 ? 'guide-top' : '']" :src="guideList[guideIndex]" />
     </div>
   </div>
 </template>
@@ -463,6 +463,9 @@ export default {
   img {
     width: 100%;
     object-fit: contain;
+  }
+  .guide-top {
+    margin-top: -66px;
   }
 }
 .mask-bg.end-bottom {

@@ -5,7 +5,7 @@
         <img class="img-100" src="@/assets/img/close.png" @click.stop="calcel(0)" />
       </div>
       <div class="mask-tit flex-center">
-        提醒消息将在活动开始时通知您
+        {{remindTit}}
       </div>
       <div class="mask-btn flex-between">
         <div class="mask-cancel-btn flex-center" @click.stop="calcel(0)">取消</div>
@@ -23,6 +23,10 @@ export default {
       type: Boolean,
       default: false
     },
+    remindTit: {
+      type: String,
+      default: ''
+    }
     // mode: {
     //   type: String,
     //   default: ''

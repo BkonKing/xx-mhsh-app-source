@@ -159,7 +159,7 @@
       <div class="kf-btn flex-center">
         <img src="@/assets/img/icon_07.png" />
       </div>
-      <div class="cart-btn flex-center" @click="linkFunc(7)">
+      <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)">
         <img src="@/assets/img/icon_06.png" />
         <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
       </div>
@@ -220,6 +220,7 @@
           </template>
         </template>
         <template v-else>
+          <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{infoData.credits}}</div>
           <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即兑换</div>
         </template>
       </template>
@@ -285,7 +286,7 @@
           </div>
         </div>
       </div>
-      <div class="submit-btn" @click="addCar()">确认</div>
+      <div class="submit-btn" @click="addCar()">{{infoData.pay_type == 1 ? '确认兑换' : '确认'}}</div>
     </div>
     <div v-show="isShow" class="mask-bg" catchtouchmove="true" @click="showFunc()"></div>
 
@@ -392,10 +393,14 @@ export default {
     this.goodsId = this.$route.query.id;
     this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : '';
     var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
+    var cart_num = 0;
     if(cartList && cartList.length > 0){
       cartList = JSON.parse(cartList);
+      for(var i=0;i<cartList.length;i++){
+        cart_num+=parseInt(cartList[i].count);
+      }
     }
-    this.cart_num = cartList.length;
+    this.cart_num = cart_num;
     this.getData();
   },
   methods: {
@@ -937,6 +942,18 @@ export default {
 }
 div.btn-disabled {
   background-color: #aaa;
+}
+.credits-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: bold;
+}
+.credits-info img {
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
 }
 
 /*规格*/

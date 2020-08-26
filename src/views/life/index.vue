@@ -335,10 +335,14 @@ export default {
   },
   created () {
   	var cartList = api.getPrefs({sync: true, key: 'cart' }) || [];
+  	var cart_num = 0;
   	if(cartList && cartList.length > 0){
   		cartList = JSON.parse(cartList);
+  		for(var i=0;i<cartList.length;i++){
+  			cart_num+=parseInt(cartList[i].count);
+  		}
   	}
-  	this.cart_num = cartList.length;
+  	this.cart_num = cart_num;
     this.getData();
   },
   methods:{
@@ -530,7 +534,7 @@ export default {
 	height: 206px;
 }
 .seconds-nav-show.fixed-empty {
-	height: 260px;
+	height: 300px;
 }
 .life-header {
 	background-color: #fff;
@@ -941,7 +945,7 @@ export default {
 	padding-left: 30px;
 	display: flex;
 	flex-wrap: wrap;
-	padding-bottom: 100px;
+	/*padding-bottom: 100px;*/
 }
 .life-seconds-list .life-goods-item {
 	width: 330px;

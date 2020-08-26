@@ -172,7 +172,7 @@
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">结算({{goodsNum}})</div>
         <template v-else>
           <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc">兑换</div>
-          <div v-else class="all-go flex-center">兑换</div>
+          <div v-else class="all-go flex-center btn-disabled">兑换</div>
         </template>
       </div>
     </div>
@@ -309,7 +309,7 @@ export default {
           if (res.success) {
             this.settlementInfo = res.data.pay;
             if(!this.isSelectAddress){
-              this.addressInfo = res.address_info;
+              this.addressInfo = res.data.address_info;
             }
           }
         })
@@ -394,9 +394,10 @@ export default {
             if(res.code == '200'){
               this.callbackData = res.order_info;
               this.order_id = res.order_info.id;
+              that.cartInit();
               this.openPaySwal();
             }else {
-
+              
             }
           }
         })
@@ -406,9 +407,8 @@ export default {
           if (res.success) {
             if(res.code == '200'){
               this.order_id = res.order_info.id;
+              that.cartInit();
               this.linkFunc(12,{id: this.order_id});
-            }else {
-
             }
           }
         })
@@ -419,11 +419,11 @@ export default {
             if(res.code == '200'){
               // this.callbackData = res.order_info;
               this.order_id = res.order_id;
+              that.cartInit();
               this.openPaySwal();
             }else {
-
-            }
-            
+              
+            } 
           }
         })
       }
@@ -459,6 +459,7 @@ export default {
     // 关闭支付选择弹窗
     closePaySwal(data){
       this.showPaySwal = data == 1 ? true : false;
+      this.goDetail();
     },
     surePaySwal(data){
       payOrderUp({
@@ -479,24 +480,28 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
-          if(ret.code == '9000' || ret.code == '6001'){  //支付成功
-            if(that.order_type == 1 || that.order_type == 2){ //闪购、拼单
-              that.linkFunc(13,{id: that.order_id});
-            }else {
-              that.linkFunc(12,{id: that.order_id});
-              if(that.prev_page == 0){
-                //删除已购买商品缓存
-                api.removePrefs({ key: 'cart' });
-                api.setPrefs({ key: 'cart', value: JSON.stringify(that.nocarts) });
-              }
-            }
-            if(that.prev_page == 1){
-              api.removePrefs({ key: 'cart2' });
-            }
-          }
+          that.goDetail();
           // api.alert({ title: '支付结果', msg: ret.code, buttons: ['确定'] }); 
         }
       );
+    },
+    goDetail(){
+      if(this.order_type == 1 || this.order_type == 2){ //闪购、拼单
+        this.linkFunc(13,{id: this.order_id});
+      }else {
+        this.linkFunc(12,{id: this.order_id});
+      }
+    },
+    //清理购物车
+    cartInit(){
+      let that = this;
+      if(that.prev_page == 0){
+        //删除已购买商品缓存
+        api.removePrefs({ key: 'cart' });
+        api.setPrefs({ key: 'cart', value: JSON.stringify(that.nocarts) });
+      }else {
+        api.removePrefs({ key: 'cart2' });
+      }
     },
     linkFunc (type,obj={}) {
       switch (type){
@@ -731,6 +736,9 @@ input.order-remarks-text {
   background-image: linear-gradient(to right, #f9866b, #eb5841);
   border-radius: 10px;
   margin-right: 20px;
+}
+.all-go.btn-disabled {
+  background: #aaa;
 }
 
 </style>
