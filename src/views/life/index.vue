@@ -37,7 +37,6 @@
 	        </div>
 	      </scrollBar>
 	    </div>
-	    <div v-else class="seconds-nav-empty"></div>
 		</div>
 		<div :class="[activeIndex > 0 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
 		
@@ -47,9 +46,6 @@
 				  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
 				  	<img class="img-100" :src="item.img" />
 				  </van-swipe-item>
-				  <!-- <van-swipe-item>
-				  	<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-				  </van-swipe-item> -->
 				</van-swipe>
 			</div>
 			<template v-for="(item, index) in lifeData">
@@ -69,27 +65,6 @@
 								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
 								<div class="life-goods-price">￥{{val.te_price/100}} <span>￥{{val.s_price/100}}</span></div>
 							</div>
-							<!-- <div class="life-goods-item">
-								<div class="life-goods-pic">
-									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-								</div>
-								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-							</div>
-							<div class="life-goods-item">
-								<div class="life-goods-pic">
-									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-								</div>
-								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-							</div>
-							<div class="life-goods-item">
-								<div class="life-goods-pic">
-									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-								</div>
-								<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-								<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-							</div> -->
 						</div>
 					</div>
 				</template>
@@ -131,31 +106,8 @@
 	                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
 	                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
 	                </template>
-									<!-- <div class="btn-flash">马上抢</div> -->
-			            <!-- <div class="btn-collage">邀请拼单</div> -->
-			            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-			            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-			            <!-- <div class="btn-over">已抢光</div> -->
 		            </div>
 							</div>
-							<!-- <div class="life-goods-item flex-between">
-								<div class="life-goods-pic">
-									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-								</div>
-								<div class="flash-goods-info">
-									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-								</div>
-							</div>
-							<div class="life-goods-item flex-between">
-								<div class="life-goods-pic">
-									<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-								</div>
-								<div class="flash-goods-info">
-									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-								</div>
-							</div> -->
 						</div>
 					</div>
 				</template>
@@ -222,27 +174,6 @@
 									<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
 									<div class="life-goods-price">￥{{val.s_price/100}} <span v-if="val.original_price && val.original_price!='0'">￥{{val.original_price/100}}</span></div>
 								</div>
-								<!-- <div class="life-goods-item">
-									<div class="life-goods-pic">
-										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-									</div>
-									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-								</div>
-								<div class="life-goods-item">
-									<div class="life-goods-pic">
-										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-									</div>
-									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-								</div>
-								<div class="life-goods-item">
-									<div class="life-goods-pic">
-										<img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-									</div>
-									<div class="life-goods-name color-222 font-24 p-nowrap">宠物调节安全趾甲剪</div>
-									<div class="life-goods-price">￥2200 <span>￥2400</span></div>
-								</div> -->
 							</div>
 						</div>
 					</template>
@@ -258,6 +189,7 @@
 			<van-list
           v-model="loading"
           :finished="finished"
+          :class="[navList2.length ? '' : 'mt-30']"
           finished-text=""
           @load="onLoad"
         >
@@ -280,13 +212,14 @@
 		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
 		<remind-swal 
     :show-swal="showSwal"
+    :remind-tit="remindTit"
     @closeSwal="closeSwal"
     @sureSwal="sureSwal()"></remind-swal>
 	</div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, CountDown, List } from 'vant'
+import { Swipe, SwipeItem, Icon, CountDown, List, Toast } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './components/remind-swal'
 import { getLifeInfo, getBanner, getClassifyGoods, remindSend} from '@/api/life.js'
@@ -297,6 +230,7 @@ export default {
     [SwipeItem.name]: SwipeItem,
     [CountDown.name]: CountDown,
     [List.name]: List,
+    [Toast.name]: Toast,
     scrollBar,
     remindSwal
   },
@@ -312,6 +246,7 @@ export default {
       bannerList: [],    //轮播图
       cart_num: 0,
       showSwal: false,       //提醒弹窗
+      remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
 
       category_id: '',  //分类id
       listData: [],     //分类商品
@@ -319,22 +254,11 @@ export default {
       finished: true
     }
   },
-	// beforeRouteEnter(to, form, next) {
-	// 	var txAnalysis = api.require('txAnalysis');
-	// 	txAnalysis.trackPageBegin({
-	// 	    page : 'life'
-	// 	});
- //    next()
- //  },
-  deactivated(){
-  	// console.log('leave')
-  // 	var txAnalysis = api.require('txAnalysis');
-		// txAnalysis.trackPageEnd({
-		//     page : 'life'
-		// });
-  },
   created () {
-  	var cartList = api.getPrefs({sync: true, key: 'cart' }) || [];
+  	
+  },
+  activated () {
+    var cartList = api.getPrefs({sync: true, key: 'cart' }) || [];
   	var cart_num = 0;
   	if(cartList && cartList.length > 0){
   		cartList = JSON.parse(cartList);
@@ -343,6 +267,7 @@ export default {
   		}
   	}
   	this.cart_num = cart_num;
+  	this.page = 1;
     this.getData();
   },
   methods:{
@@ -449,11 +374,11 @@ export default {
       this.set_index = key;
       this.set_item_index = index;
       let newTime = parseInt(new Date().getTime()/1000);
-      let overTime = this.listData[this.set_index].ollage_info.start_time;
+      let overTime = this.lifeData[index].ollage_info.start_time;
       if(newTime >=overTime){   //当前时间大于等于活动开始时间
         Toast('该商品已开抢');
         setTimeout(() => {
-          that.listData[that.set_index].ollage_info.is_start = true;
+          that.lifeData[index].ollage_info.is_start = true;
         }, 1500);
       }else {
         this.showSwal = true;
@@ -467,11 +392,11 @@ export default {
       this.closeSwal(0);
       remindSend({
         goods_id: this.set_id,
-        ollage_id: this.listData[this.set_item_index].ollage_info.id
+        ollage_id: this.lifeData[this.set_item_index].ollage_info.id
       }).then(res => {
         if (res.success) {
           Toast(res.message);
-          this.listData[this.set_item_index].ollage_info.child[this.set_index].is_set = true;
+          that.lifeData[that.set_item_index].child[that.set_index].is_set = true;
         }
       })
     },
@@ -531,10 +456,11 @@ export default {
 }
 .fixed-empty {
 	/*height: 176px;*/
-	height: 206px;
+	/*height: 206px;*/
+	height: 176px;
 }
 .seconds-nav-show.fixed-empty {
-	height: 300px;
+	height: 310px;
 }
 .life-header {
 	background-color: #fff;
@@ -946,6 +872,9 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	/*padding-bottom: 100px;*/
+}
+.mt-30 {
+	margin-top: 30px;
 }
 .life-seconds-list .life-goods-item {
 	width: 330px;

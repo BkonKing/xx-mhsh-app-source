@@ -220,7 +220,7 @@
           </template>
         </template>
         <template v-else>
-          <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{infoData.credits}}</div>
+          <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
           <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即兑换</div>
         </template>
       </template>
@@ -280,7 +280,7 @@
               <div class="goods-btn-block">
                 <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
                 <div class="goods-num">{{skuList[typeVal].count}}</div>
-                <div :class="[notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
+                <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
               </div>
             </div>
           </div>
@@ -345,7 +345,6 @@ export default {
       isShow: false,        //商品规格弹窗是否显示
       btnIsShow: true,      //商品加入礼包按钮是否显示
       is_sell_out: false,   //商品是否售罄
-      notAdd: false,       //不能增加商品数量，默认否
       typeVal: 0,           //当前选中的商品规格index
       ensureShow: false,    //基础保障弹窗
       is_collage: true,     //是否拼单(拼单专用 true拼单 false 单独购买)
@@ -383,6 +382,7 @@ export default {
       infoData: '',  //商品数据
       btn_type: 'cart',            //cart点击了加入购物 buy点击了立即购买
       current: 0,
+      ableCredits: '',
 
       // show: false,
       swiperArr: [], //轮播图
@@ -392,18 +392,22 @@ export default {
   created(){
     this.goodsId = this.$route.query.id;
     this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : '';
-    var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
-    var cart_num = 0;
-    if(cartList && cartList.length > 0){
-      cartList = JSON.parse(cartList);
-      for(var i=0;i<cartList.length;i++){
-        cart_num+=parseInt(cartList[i].count);
-      }
-    }
-    this.cart_num = cart_num;
+    this.getNum();
     this.getData();
   },
   methods: {
+    //获取购物车数量
+    getNum(){
+      var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
+      var cart_num = 0;
+      if(cartList && cartList.length > 0){
+        cartList = JSON.parse(cartList);
+        for(var i=0;i<cartList.length;i++){
+          cart_num+=parseInt(cartList[i].count);
+        }
+      }
+      this.cart_num = cart_num;
+    },
     getData () {
       getGoodsDetail({
         goods_id: this.goodsId,
@@ -411,6 +415,7 @@ export default {
       }).then(res => {
         if (res.success) {
           this.infoData = res.data;
+          this.ableCredits = res.ok_credits;
           this.swiperArr = res.data.pic_url_arr;
           this.skuList = res.data.formats;
           this.skuList.forEach((res2)=>{
@@ -513,6 +518,7 @@ export default {
       this.goods.credits = this.skuList[index].credits;
       this.goods.stock = this.skuList[index].stock;
       this.skuList[index].count = this.skuList[index].count ? this.skuList[index].count : 1;
+      this.skuList[index].notAdd = this.skuList[index].notAdd ? this.skuList[index].notAdd : false;
       // this.goods.count = 1;
       this.limitNum()
     },
@@ -520,15 +526,23 @@ export default {
     *商品数量加减
     */
     countTab(types) {
-      if(this.skuList[this.typeVal].count >= this.skuList[this.typeVal].stock) return;
+      if(this.skuList[this.typeVal].notAdd && types==1) return;
+      if(this.skuList[this.typeVal].count + types >= this.skuList[this.typeVal].stock){
+        if(this.skuList[this.typeVal].count + types == this.skuList[this.typeVal].stock){
+          this.skuList[this.typeVal].count = parseInt(this.skuList[this.typeVal].count) + types;
+        }
+        this.skuList[this.typeVal].notAdd = true;return;
+      }
       if (this.skuList[this.typeVal].count + types > 0) {
         this.skuList[this.typeVal].count = parseInt(this.skuList[this.typeVal].count) + types;
+        this.skuList[this.typeVal].notAdd = false;
       }
     },
     /**
      * 加入购物车
      */
     addCar: function (e) {
+      this.isShow = false;
       var goods = this.goods;
       goods.count = this.skuList[this.typeVal].count;
       //goods.isSelect = false;
@@ -563,7 +577,10 @@ export default {
               } catch (e) {
                 console.log(e)
               }
-              this.goLink();
+              if(this.btn_type != 'cart'){
+                this.goLink();
+              }
+              this.getNum();
               // 返回（在if内使用return，跳出循环节约运算，节约性能） 
               return;
             }
@@ -579,7 +596,10 @@ export default {
           api.setPrefs({ key: 'cart', value: JSON.stringify(arr) });
           // 返回（在if内使用return，跳出循环节约运算，节约性能） 
           //关闭窗口
-          this.goLink();
+          if(this.btn_type != 'cart'){
+            this.goLink();
+          }
+          this.getNum();
           return;
         } catch (e) {
           console.log(e)
@@ -588,7 +608,10 @@ export default {
         arr.push(goods);
         // localStorage.setItem('cart2', JSON.stringify(arr));
         api.setPrefs({ key: 'cart2', value: JSON.stringify(arr) });
-        this.goLink();
+        if(this.btn_type != 'cart'){
+          this.goLink();
+        }
+        this.getNum();
         return;
       }
     },
@@ -601,11 +624,12 @@ export default {
       let cart_counts = 0;
       var num_count = this.skuList[this.typeVal].count;
       let that = this;
-
       if (carts_arr.length > 0){
         carts_arr.forEach(function (val, index) {
           if (val.specs_id == that.skuList[that.typeVal].specs_id){
-            num_count += parseInt(val.count);
+            if(that.infoData.goods_type!=3||that.infoData.ollage_info.is_start != 1){
+              num_count += parseInt(val.count);
+            }
             cart_counts += parseInt(val.count);
           }
         })
@@ -624,9 +648,9 @@ export default {
         }
       }
       if(num_count  >= this.goods.max_buy){
-        this.notAdd = true
+        this.skuList[this.typeVal].notAdd = true
       }else {
-        this.notAdd = false
+        this.skuList[this.typeVal].notAdd = false
       }
       
     },
@@ -951,6 +975,8 @@ div.btn-disabled {
   justify-content: center;
   font-size: 42px;
   font-weight: bold;
+  color: #eb5841;
+  background-color: #fff;
 }
 .credits-info img {
   width: 36px;

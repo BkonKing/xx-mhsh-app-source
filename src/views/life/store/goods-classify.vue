@@ -108,7 +108,9 @@ export default {
   },
   mounted () {
     this.$nextTick(function(){
-      this.marginTop = this.$store.state.paddingTop;
+      setTimeout(()=>{
+        this.marginTop = this.$store.state.paddingTop;
+      },500)
     })
   },
   methods: {

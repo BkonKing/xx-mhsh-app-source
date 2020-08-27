@@ -10,7 +10,6 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
 		</div>
-		<div class="bar-empty"></div>
 		<div class="apply-tit">请选择退换</div>
 		<div class="block-session">
 			<div class="common-list">

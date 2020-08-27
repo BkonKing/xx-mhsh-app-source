@@ -169,7 +169,7 @@
           <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
         </template>
-        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">结算({{goodsNum}})</div>
+        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">付款</div>
         <template v-else>
           <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc">兑换</div>
           <div v-else class="all-go flex-center btn-disabled">兑换</div>
@@ -571,6 +571,9 @@ export default {
 <style scoped>
 .app-body {
   background-color: #f2f2f4;
+  font-size: 28px;
+}
+.detail-price-list .detail-price-item {
   font-size: 28px;
 }
 /* 收货地址 start */

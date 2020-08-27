@@ -38,7 +38,7 @@ import {
   paymentStatus,
   collectStatus
 } from '@/api/personage'
-import { serverCodeScan, visitorCodeScan } from '@/api/butler'
+import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { Dialog, Toast } from 'vant'
 export default {
   data () {
@@ -174,6 +174,9 @@ export default {
         case 'yuyuefangke':
           this.visitorCodeScan(value, values)
           break
+        case 'smzt':
+          this.takeCodeScan(value, values)
+          break
         default:
           break
       }
@@ -253,6 +256,20 @@ export default {
     /* 扫了邀约码 */
     visitorCodeScan (value) {
       visitorCodeScan({
+        code_info: value
+      }).then((res) => {
+        api.alert({
+          title: res.message
+        })
+      }).catch(err => {
+        api.alert({
+          title: err
+        })
+      })
+    },
+    /* 扫了提货码 */
+    takeCodeScan () {
+      takeCodeScan({
         code_info: value
       }).then((res) => {
         api.alert({

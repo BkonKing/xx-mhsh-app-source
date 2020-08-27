@@ -398,5 +398,9 @@ export function visitorCodeScan (data) {
     }
   })
 }
+// 提货码链接
+export function takeCodeScan (data) {
+  return request.post('/life/order/projectSmztScanCode', data)
+}
 
 /* 访客邀约 end */

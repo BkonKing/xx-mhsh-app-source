@@ -43,7 +43,7 @@
 				<div class="common-item">
 					<div class="common-item-left">
 						<div class="color-222 font-28 width-146">物流单号</div>
-						<div class="color-222 font-28">SF123456789012</div>
+						<div class="color-222 font-28">{{kuaidi_num}}</div>
 					</div>
 					<div class="common-item-right">
 						<div class="common-item-code" @click="scanFunc">
@@ -102,6 +102,7 @@ export default {
     	swalInfo: new Object(),  //标题描述
       showReasonSwal: false,  //原因弹窗
       swalList: [],
+      kuaidi_num: '',        //物流单号
       titName: '填写换货物流'
     }
   },
@@ -137,7 +138,6 @@ export default {
     },
     // 弹窗选择(回调)
     sureSwal(data){
-    	console.log(data)
     	this.selectedVal = this.logisticsList[data];
     	console.log(this.logisticsList);
     	this.closeReasonSwal(0);
@@ -156,21 +156,22 @@ export default {
       }).then(res => {
         if (res.success) {
         	Toast(res.message);
-        	//跳转订单详情
+        	this.$router.go(-1);
         }
       })
     },
   	scanFunc(){
   		let that = this;
   		var FNScanner = api.require('FNScanner');
-      FNScanner.open({
+      FNScanner.openScanner ({
         autorotation: true
       }, function(ret, err) {
         if (ret) {
-        	that.kuaidi_num = ret;
-          alert(JSON.stringify(ret));
+        	if(ret.eventType == 'success'){
+        		that.kuaidi_num = ret.content;
+        	}
         } else {
-          alert(JSON.stringify(err));
+          // alert(JSON.stringify(err));
         }
       });
   	}
