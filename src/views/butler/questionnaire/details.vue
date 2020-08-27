@@ -10,7 +10,7 @@
     />
     <div class="tf-main-container">
       <div class="tf-bg-white" style="position:relative;overflow: hidden;">
-        <userInfo :avatar="wjtp_info.avatar" :name="wjtp_info.nickname" :time="wjtp_info.ctime"></userInfo>
+        <userInfo :avatar="wjtp_info.avatar" :name="wjtp_info.nickname" :time="wjtp_info.ptime"></userInfo>
         <div class="finish-tag-box" v-if="wjtp_info.status == 3">
           <div class="finish-tag">
             <div class="finish-text">已结束</div>
@@ -37,7 +37,7 @@
               <div
                 class="question__text"
                 :class="{'required': item.is_required == 1}"
-              >Q{{i + 1}}：{{item.question}}？</div>
+              >Q{{i + 1}}：{{item.question}}</div>
               <!-- 问卷-单选 -->
               <template v-if="item.item_type == 1">
                 <van-radio-group v-model="item.answer" :disabled="Boolean(finishStatus)">
@@ -74,13 +74,14 @@
               </template>
             </div>
           </div>
-          <van-button
-            class="tf-mt-lg"
-            v-if="!finishStatus"
-            size="large"
-            type="danger"
-            @click="confirm"
-          >提交</van-button>
+          <div v-if="!finishStatus" class="confirm-btn-placeholder">
+            <van-button
+              class="tf-mt-lg confirm-btn"
+              size="large"
+              type="danger"
+              @click="confirm"
+            >提交</van-button>
+          </div>
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
           <div
@@ -90,14 +91,14 @@
             class="vote-box tf-row-space-between"
             v-for="(item, i) in voteList.option"
             :key="i"
-            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && wjtp_info.tp_type === 2 && !finishStatus}"
+            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && wjtp_info.tp_type == 2 && !finishStatus}"
           >
             <!--  投票统计进度条-->
             <div class="vote-progress-placeholder">
               <div
                 v-if="finishStatus && voteList.answer_count[i] && voteList.answer_count[i].num"
                 class="vote-progress"
-                :style="{width: `${(parseInt(voteList.answer_count[i].num) / parseInt(wjtp_info.joins)) * 100}%`}"
+                :style="{width: `${(parseInt(voteList.answer_count[i].num) / parseInt(totalNum)) * 100}%`}"
               ></div>
             </div>
             <div class="vote-title">{{ item.content }}</div>
@@ -116,17 +117,19 @@
               <button v-else class="tf-icon vote-btn vote-btn--multiple" @click="changeValue(item)">
                 <div
                   class="tf-text-white tf-icon"
-                  :class="{'tf-icon-check': answer.indexOf(item.id) > -1}"
+                  :class="{'tf-icon-gou': answer.indexOf(item.id) > -1}"
                 >{{ answer.indexOf(item.id) > -1 ? '' : '投票' }}</div>
               </button>
             </template>
           </div>
-          <van-button
-            v-if="!finishStatus && wjtp_info.tp_type == 2"
-            size="large"
-            type="danger"
-            @click="confirm"
-          >确定</van-button>
+          <div v-if="!finishStatus && wjtp_info.tp_type == 2" class="confirm-btn-placeholder">
+            <van-button
+              class="confirm-btn"
+              size="large"
+              type="danger"
+              @click="confirm"
+            >确定</van-button>
+          </div>
         </template>
       </div>
     </div>
@@ -159,7 +162,7 @@ export default {
   },
   data () {
     return {
-      title: '投票',
+      title: '',
       wjtpId: '',
       wjtp_info: {},
       voteList: [],
@@ -174,6 +177,14 @@ export default {
   computed: {
     finishStatus () {
       return this.wjtp_info.is_answer || this.wjtp_info.status == 3
+    },
+    totalNum () {
+      const list = this.voteList
+      let num = 0
+      list.answer_count.forEach((obj) => {
+        num += parseInt(obj.num) || 0
+      })
+      return num
     }
   },
   methods: {
@@ -184,9 +195,16 @@ export default {
       }).then((res) => {
         const { wjtp_info, item } = res.data
         this.wjtp_info = wjtp_info
+        this.title = this.wjtp_info.wjtp_type == '1' ? '问卷' : '投票'
         // 遍历将答案为''转为[]
         this.voteList = item.map((obj) => {
-          obj.answer = obj.answer ? obj.answer : []
+          if (obj.item_type == 2) {
+            obj.answer = obj.answer ? obj.answer : []
+          } else {
+            if (Array.isArray(obj.answer)) {
+              obj.answer = obj.answer[0]
+            }
+          }
           return obj
         })
         // 如果是投票只需取第一个
@@ -198,7 +216,9 @@ export default {
     /* 投票选中 */
     changeValue ({ id: value }) {
       if (this.wjtp_info.tp_type == 1) {
-        this.addWjtp(value)
+        this.addWjtp({
+          [this.voteList.item_id]: value
+        })
       } else {
         const index = this.answer.indexOf(value)
         if (index === -1) {
@@ -220,10 +240,13 @@ export default {
         const params = {}
         const status = this.voteList.every((obj) => {
           if (obj.is_required && isEmpty(obj.answer)) {
-            Toast(`${obj.question}不能为空`)
+            Toast('请填写未回答的问题')
             return false
           }
-          params[obj.item_id] = obj.answer.join(',')
+          params[obj.item_id] =
+            obj.item_type == 2
+              ? (params[obj.item_id] = obj.answer.join(','))
+              : obj.answer
           return true
         })
         status && this.addWjtp(params)
@@ -369,10 +392,6 @@ export default {
   padding: 30px 20px;
 }
 
-.tf-icon-check {
-  font-size: 43px;
-}
-
 .question-container {
   width: 100%;
   padding: 30px;
@@ -467,6 +486,18 @@ export default {
     position: absolute;
     top: 56px;
     right: 30px;
+  }
+}
+
+.confirm-btn-placeholder {
+  height: 110px;
+  display: flex;
+  .confirm-btn {
+    position: fixed;
+    left: 20px;
+    right: 20px;
+    bottom: 30px;
+    width: calc(100% - 40px);
   }
 }
 </style>

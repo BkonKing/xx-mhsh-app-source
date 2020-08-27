@@ -25,7 +25,7 @@
               <div class="tf-list-title" :class="{'tf-read-after-tag': item.status}">{{item.title}}</div>
               <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
             </div>
-            <div class="tf-list-content">{{item.content}}</div>
+            <div class="tf-list-content" :class="{'system-content': type == 'transaction'}">{{item.content}}</div>
           </div>
         </div>
       </template>
@@ -154,6 +154,10 @@ export default {
 }
 .tf-list-content {
   @text-ellipsis();
+}
+.system-content {
+  line-height: 1.4;
+  white-space: initial;
 }
 /* 更多弹窗 */
 .more-dialog {

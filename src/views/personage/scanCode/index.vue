@@ -197,7 +197,9 @@ export default {
               }
             })
           } else {
-            Toast('您已经支付过')
+            api.toast({
+              msg: '您已经支付过'
+            })
           }
         }
       })
@@ -221,7 +223,9 @@ export default {
               }
             })
           } else {
-            Toast('对方已付款')
+            api.toast({
+              msg: '对方已付款'
+            })
           }
         }
       })
@@ -240,6 +244,10 @@ export default {
             }
           })
         }
+      }).catch((message) => {
+        api.alert({
+          title: message
+        })
       })
     },
     /* 扫了邀约码 */

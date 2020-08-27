@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
 import { getQrCode, ycOpenDoor } from '@/api/butler.js'
@@ -116,10 +116,7 @@ export default {
           text: 'item3',
           value: 2
         }
-      ],
-      // 使用说明
-      instructionContent:
-        '说明书，是以应用文体的方式对某事或物来进行相对的详细描述，方便人们认识和了解某事或物。说明书要实事求是，有一说一、有二说二，不可为达到某种目的而夸大产品作用和性能。说明书要全面的说明事物，不仅介绍其优点，同时还要清楚地说明应注意的事项和可能产生的问题。产品说明书、使用说明书、安装说明书一般采用说明性文字，而戏剧演出类说明书则可以以记叙、抒情为主。说明书可根据情况需要，使用图片、图表等多样的形式，以期达到最好的说明效果。'
+      ]
     }
   },
   computed: {
@@ -160,6 +157,8 @@ export default {
         houseId: this.currentProject.house_id
       }).then((res) => {
         this.makeQRCode(res.data)
+      }).catch((err) => {
+        Toast.fail(err)
       })
     },
     /**

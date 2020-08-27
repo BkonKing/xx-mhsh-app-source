@@ -652,7 +652,10 @@ export default {
       width: 100%;
       height: 270px;
       background: #f0f0f0;
-      border-radius: 10px 10px 0px 0px;
+      border-radius: 10px;
+      /deep/ .van-image__img {
+        border-radius: 10px;
+      }
     }
     /deep/ .activity-item__description {
       position: absolute;
