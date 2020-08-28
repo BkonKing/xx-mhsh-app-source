@@ -3,8 +3,8 @@
     <van-grid-item v-for="(img, i) in list" :key="i">
       <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="preview(i)" />
       <template v-else>
-        <van-image class="tf-image-item" fit="cover" :src="img | imgsrc(srcKey)" v-lazy="img" @click="onclick(img)"/>
-        <div class="tf-image--shade" v-if="data.length > 3 && i === 2" @click="onclick(img)">
+        <van-image class="tf-image-item" fit="cover" :src="img | imgsrc(srcKey)" v-lazy="img" @click="onclick(img, i)"/>
+        <div class="tf-image--shade" v-if="data.length > 3 && i === 2" @click="onclick(img, 2)">
           <span>+{{ data.length - 3 }}</span>
         </div>
       </template>
@@ -46,7 +46,10 @@ export default {
     }
   },
   methods: {
-    onclick (data) {
+    onclick (data, index) {
+      if (this.mode === 'shadeShow') {
+        this.preview(index)
+      }
       this.$emit('click', data)
     },
     preview (i) {
@@ -61,7 +64,7 @@ export default {
   },
   computed: {
     list () {
-      if (this.mode === 'list') {
+      if (this.mode !== 'show') {
         const len = this.data.length
         return len > 3 ? this.data.slice(0, 3) : this.data
       }

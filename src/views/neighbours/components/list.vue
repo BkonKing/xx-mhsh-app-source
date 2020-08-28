@@ -15,18 +15,18 @@
           <operation :item="item" :article-type="item.article_type || article_type" :key="item.id"></operation>
         </div>
         <div v-else-if="item.article_type == 3 || article_type == 3">
-          <div class="tf-card" @click="goDetails('3', item.id)">
-            <div class="tf-card-header">
+          <div class="tf-card">
+            <div class="tf-card-header" @click="goDetails('3', item.id)">
               <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
                 <template v-slot:right>
                   <div class="group-tag">{{item.category}}</div>
                 </template>
               </userInfo>
             </div>
-            <div v-if="item.content" class="tf-card-content">{{ item.content }}</div>
+            <div v-if="item.content" class="tf-card-content" @click="goDetails('3', item.id)">{{ item.content }}</div>
             <template v-if="item.images">
-              <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
-              <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+              <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" @click.stop="preview(item.images[0])" />
+              <tf-image-list class="tf-mt-base" mode="shadeShow" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
             </template>
             <operation
               :item="item"
@@ -66,7 +66,7 @@ import morePopup from './morePopup'
 import operation from './operation'
 import { deleteComment, deleteArticle, addComplaint } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
-import { Toast } from 'vant'
+import { Toast, ImagePreview } from 'vant'
 
 export default {
   components: {
@@ -124,6 +124,11 @@ export default {
           articleType,
           id
         }
+      })
+    },
+    preview (src) {
+      ImagePreview({
+        images: [src]
       })
     },
     reload () {

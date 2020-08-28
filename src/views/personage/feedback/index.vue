@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="意见反馈"
       :fixed="true"
@@ -12,7 +12,7 @@
         <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-padding">
+    <div class="tf-padding tf-item-auto">
       <div class="tf-card">
         <div class="tf-card-header">选择反馈类型</div>
         <div class="tf-card-content" style="padding-bottom: 10px;">
@@ -39,10 +39,10 @@
           <tf-uploader v-model="images" max-count="6"></tf-uploader>
         </div>
       </div>
-      <div class="fixed-placeholder">
-        <van-button class="fixed-btn" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
-        <div class="fixed-bg"></div>
-      </div>
+    </div>
+    <div class="fixed-placeholder">
+      <van-button class="fixed-btn" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+      <div class="fixed-bg"></div>
     </div>
   </div>
 </template>
@@ -145,7 +145,7 @@ export default {
   padding: 0;
 }
 .fixed-placeholder {
-  height: 88px;
+  height: 118px;
 }
 .fixed-btn {
   position: fixed;

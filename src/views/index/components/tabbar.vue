@@ -1,5 +1,5 @@
 <template>
-  <van-tabbar v-model="active" @change="onChange" route placeholder>
+  <van-tabbar v-model="active" @change="onChange" route placeholder safe-area-inset-bottom>
     <van-tabbar-item to="/" replace>
       <template #icon="props">
         <img v-if="props.active" src="@/assets/imgs/tab_home_active.png" />
@@ -124,6 +124,7 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .van-tabbar--fixed {
+  bottom: auto;
   border-top: 1px solid #e5e5e5;
 }
 </style>

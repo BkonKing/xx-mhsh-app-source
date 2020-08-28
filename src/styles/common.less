@@ -117,8 +117,21 @@
   @flex-column-around();
 }
 
+.tf-flex {
+  display: flex;
+}
+
+.tf-flex-column {
+  @flex-column();
+}
+
 .tf-flex-item {
   flex: 1;
+}
+
+.tf-item-auto {
+  flex: 1;
+  overflow: auto;
 }
 
 .tf-flex-center {
@@ -737,6 +750,12 @@
   .van-hairline--top-bottom::after,
   .van-hairline-unset--top-bottom::after {
     border-width: 0;
+  }
+  
+  .van-radio__icon .van-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 

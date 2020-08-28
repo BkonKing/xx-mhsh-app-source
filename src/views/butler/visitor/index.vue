@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="访客邀约"
       :fixed="true"
@@ -13,78 +13,80 @@
         <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-padding">
-      <tf-list>
-        <div class="list-title">邀约设置</div>
-        <tf-list-item border title="来访日期" :required="true">
-          <template v-slot:right>
-            <tf-date-time-picker
-              v-model="form.lfday"
-              type="date"
-              title="选择日期"
-              :min-date="startDate"
-              :max-date="endDate"
-            >
-              <template>
-                <div class="tf-text text-right">{{form.lfday || '选择日期'}}</div>
-              </template>
-            </tf-date-time-picker>
-          </template>
-        </tf-list-item>
-        <tf-list-item border title="来访时间">
-          <template v-slot:right>
-            <tf-picker v-model="form.time" title="选择时间" :columns="timeArray">
-              <template v-slot="{valueText}">
-                <div class="tf-text text-right">{{valueText || '选择时间'}}</div>
-              </template>
-            </tf-picker>
-          </template>
-        </tf-list-item>
-        <tf-list-item border title="进出次数">
-          <template v-slot:right>
-            <tf-picker
-              v-model="form.vtimes"
-              title="进出次数"
-              value-key="label"
-              selected-key="value"
-              :columns="array"
-            >
-              <template v-slot="{valueText}">
-                <div class="tf-text text-right">{{valueText}}</div>
-              </template>
-            </tf-picker>
-          </template>
-        </tf-list-item>
-        <tf-list-item border title="同行人数" :showArrow="false">
-          <template v-slot:right>
-            <input v-model="form.num" type="number" class="tf-input" />
-          </template>
-        </tf-list-item>
-        <tf-list-item title="来访目的" :showArrow="false">
-          <template v-slot:right>
-            <input v-model="form.remark" class="tf-input" />
-          </template>
-        </tf-list-item>
-      </tf-list>
-      <div class="visitor-btn" @click="goVisitorList(2)">
-        <span class="tf-icon tf-icon-tongxunlu"></span>
-        <div class="visitor-btn__text">选择访客</div>
-      </div>
-      <tf-list>
-        <div class="list-title">访客信息</div>
-        <template v-if="visitorList.length > 0">
-          <div v-for="(item, i) in visitorList" :key="i" class="visitor-info">
-            <div class="tf-row">
-              <div
-                class="visitor-info__text tf-mr-base"
-              >{{item.realname}} {{item.gender == '1' ? '男' : '女'}}</div>
-              <div class="visitor-info__text tf-text-grey">{{item.mobile}} {{item.car_number}}</div>
+    <div class="tf-padding tf-body-container tf-flex-column">
+      <div class="tf-item-auto">
+        <tf-list>
+          <div class="list-title">邀约设置</div>
+          <tf-list-item border title="来访日期" :required="true">
+            <template v-slot:right>
+              <tf-date-time-picker
+                v-model="form.lfday"
+                type="date"
+                title="选择日期"
+                :min-date="startDate"
+                :max-date="endDate"
+              >
+                <template>
+                  <div class="tf-text text-right">{{form.lfday || '选择日期'}}</div>
+                </template>
+              </tf-date-time-picker>
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="来访时间">
+            <template v-slot:right>
+              <tf-picker v-model="form.time" title="选择时间" :columns="timeArray">
+                <template v-slot="{valueText}">
+                  <div class="tf-text text-right">{{valueText || '选择时间'}}</div>
+                </template>
+              </tf-picker>
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="进出次数">
+            <template v-slot:right>
+              <tf-picker
+                v-model="form.vtimes"
+                title="进出次数"
+                value-key="label"
+                selected-key="value"
+                :columns="array"
+              >
+                <template v-slot="{valueText}">
+                  <div class="tf-text text-right">{{valueText}}</div>
+                </template>
+              </tf-picker>
+            </template>
+          </tf-list-item>
+          <tf-list-item border title="同行人数" :showArrow="false">
+            <template v-slot:right>
+              <input v-model="form.num" type="number" class="tf-input" />
+            </template>
+          </tf-list-item>
+          <tf-list-item title="来访目的" :showArrow="false">
+            <template v-slot:right>
+              <input v-model="form.remark" class="tf-input" />
+            </template>
+          </tf-list-item>
+        </tf-list>
+        <div class="visitor-btn" @click="goVisitorList(2)">
+          <span class="tf-icon tf-icon-tongxunlu"></span>
+          <div class="visitor-btn__text">选择访客</div>
+        </div>
+        <tf-list>
+          <div class="list-title">访客信息</div>
+          <template v-if="visitorList.length > 0">
+            <div v-for="(item, i) in visitorList" :key="i" class="visitor-info">
+              <div class="tf-row">
+                <div
+                  class="visitor-info__text tf-mr-base"
+                >{{item.realname}} {{item.gender == '1' ? '男' : '女'}}</div>
+                <div class="visitor-info__text tf-text-grey">{{item.mobile}} {{item.car_number}}</div>
+              </div>
+              <div class="tf-icon tf-icon-delete" @click="deleteVisitor(i)"></div>
             </div>
-            <div class="tf-icon tf-icon-delete" @click="deleteVisitor(i)"></div>
-          </div>
-        </template>
-        <visitor-form v-else ref="form"></visitor-form>
-      </tf-list>
+          </template>
+          <visitor-form v-else ref="form"></visitor-form>
+        </tf-list>
+      </div>
       <van-checkbox class="agreement-checkbox" v-model="agreeValue" shape="square">
         阅读并同意
         <span

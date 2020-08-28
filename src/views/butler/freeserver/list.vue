@@ -66,8 +66,11 @@ export default {
     // this.getMyFreeServerList()
   },
   methods: {
-    getMyFreeServerList (params) {
-      return getMyFreeServerList(params)
+    getMyFreeServerList () {
+      const len = this.data.length
+      return getMyFreeServerList({
+        serverId: (len && this.data[len - 1].id) || ''
+      })
     },
     /* 点击服务显示二维码 */
     showService (item) {

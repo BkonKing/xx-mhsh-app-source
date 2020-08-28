@@ -241,10 +241,10 @@ export default {
       this.guideShow = true
     }
     this.$store.dispatch('getMyAccount')
-    this.getBannerIndex()
     this.getMyApp()
   },
   activated () {
+    this.getBannerIndex()
     this.getNoticeLbList()
     this.getCreditsGoodsList()
     this.getBargainGoods()

@@ -75,12 +75,7 @@
             </div>
           </div>
           <div v-if="!finishStatus" class="confirm-btn-placeholder">
-            <van-button
-              class="tf-mt-lg confirm-btn"
-              size="large"
-              type="danger"
-              @click="confirm"
-            >提交</van-button>
+            <van-button class="tf-mt-lg confirm-btn" size="large" type="danger" @click="confirm">提交</van-button>
           </div>
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
@@ -123,12 +118,7 @@
             </template>
           </div>
           <div v-if="!finishStatus && wjtp_info.tp_type == 2" class="confirm-btn-placeholder">
-            <van-button
-              class="confirm-btn"
-              size="large"
-              type="danger"
-              @click="confirm"
-            >确定</van-button>
+            <van-button class="confirm-btn" size="large" type="danger" @click="confirm">确定</van-button>
           </div>
         </template>
       </div>
@@ -239,14 +229,17 @@ export default {
       if (this.wjtp_info.wjtp_type == 1) {
         const params = {}
         const status = this.voteList.every((obj) => {
-          if (obj.is_required && isEmpty(obj.answer)) {
+          if (obj.is_required == '1' && isEmpty(obj.answer)) {
+            console.log(obj)
             Toast('请填写未回答的问题')
             return false
           }
-          params[obj.item_id] =
-            obj.item_type == 2
-              ? (params[obj.item_id] = obj.answer.join(','))
-              : obj.answer
+          if (obj.answer) {
+            params[obj.item_id] =
+              obj.item_type == 2
+                ? (params[obj.item_id] = obj.answer.join(','))
+                : obj.answer
+          }
           return true
         })
         status && this.addWjtp(params)
@@ -406,9 +399,6 @@ export default {
     .radio-checked-box {
       &::before {
         content: "";
-        position: absolute;
-        top: 2px;
-        left: 2px;
         width: 14px;
         height: 14px;
         background: @red-dark;
@@ -436,18 +426,20 @@ export default {
     /deep/ .van-checkbox {
       height: 46px;
       .van-checkbox__icon {
-        height: 26px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         .van-icon {
-          width: 26px;
-          height: 26px;
+          width: 30px;
+          height: 30px;
         }
       }
       .van-checkbox__icon--checked .van-icon {
         background: none;
         color: @red-dark;
         border-color: #c8c7cc;
-        font-size: 14px;
-        line-height: 1;
+        font-size: 24px;
       }
       .van-checkbox__label {
         font-size: 24px;

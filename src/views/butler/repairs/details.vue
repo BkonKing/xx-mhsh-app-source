@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -12,7 +12,11 @@
         <span class="tf-icon tf-icon-customerservice"></span>
       </template>
     </van-nav-bar>
-    <van-pull-refresh class="tf-main-container" :class="{'pb20': sub_status >= 10}" v-model="isLoading" @refresh="onRefresh">
+    <van-pull-refresh
+      class="tf-body-container tf-padding"
+      v-model="isLoading"
+      @refresh="onRefresh"
+    >
       <div class="tf-card">
         <div class="tf-card-header">
           <div class="tf-card-header__title">内容描述</div>
@@ -32,21 +36,17 @@
           @evaluate="viewEvaluate"
         ></tfTimeline>
       </div>
-      <div v-if="sub_status < 10" class="operation-box">
-        <!-- 不是已结案和已取消 -->
-        <div v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
-        <!-- 待结案和发起协商 -->
-        <div
-          v-if="sub_status == 5"
-          class="tf-btn tf-btn-primary"
-          @click="toNegotiateConfirm"
-        >确认协商信息</div>
-        <!-- 预结案 -->
-        <div v-if="sub_status == 8" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
-        <!-- 评价 -->
-        <div v-if="sub_status == 9" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
-      </div>
     </van-pull-refresh>
+    <div v-if="sub_status < 10" class="operation-box">
+      <!-- 不是已结案和已取消 -->
+      <div v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
+      <!-- 待结案和发起协商 -->
+      <div v-if="sub_status == 5" class="tf-btn tf-btn-primary" @click="toNegotiateConfirm">确认协商信息</div>
+      <!-- 预结案 -->
+      <div v-if="sub_status == 8" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
+      <!-- 评价 -->
+      <div v-if="sub_status == 9" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
+    </div>
     <!-- 确认协商信息 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
       <template>
@@ -79,7 +79,9 @@
             <span class="lp18">拒绝原</span>
             因：
           </div>
-          <div class="tf-flex-item">{{negotiateInfo.refuse_reason || refuseArray[refuseReason]}}({{other_reason}})</div>
+          <div
+            class="tf-flex-item"
+          >{{negotiateInfo.refuse_reason || refuseArray[refuseReason]}}({{other_reason}})</div>
         </div>
         <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
       </div>
@@ -267,7 +269,7 @@ export default {
     getRepairInfo () {
       return getRepairInfo({
         repairId: this.repairId
-      }).then(res => {
+      }).then((res) => {
         this.isLoading = false
         const {
           content,
@@ -294,7 +296,7 @@ export default {
       }).then(() => {
         cancelRepair({
           repair_id: this.repairId
-        }).then(res => {
+        }).then((res) => {
           if (res.success) {
             this.$router.go(-1)
           }
@@ -311,7 +313,7 @@ export default {
       getNegotiationInfo({
         repairId: this.repairId,
         negotiationId
-      }).then(res => {
+      }).then((res) => {
         this.negotiateInfo = res.data || {}
       })
     },
@@ -328,7 +330,7 @@ export default {
     },
     /* 获取拒绝协商原因 */
     getRefuseReasonList () {
-      getRefuseReasonList().then(res => {
+      getRefuseReasonList().then((res) => {
         this.refuseArray = res.data
       })
     },
@@ -346,7 +348,7 @@ export default {
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
-        negotiationRefuse(params).then(res => {
+        negotiationRefuse(params).then((res) => {
           Toast('已拒绝该协商信息')
           this.getRepairInfo()
           this.refuseDialog = false
@@ -359,7 +361,7 @@ export default {
     confirmNegotiate () {
       negotiationAffirm({
         repair_id: this.repairId
-      }).then(res => {
+      }).then((res) => {
         this.getRepairInfo()
         this.negotiateConfirm = false
         this.negotiateShow = true
@@ -369,10 +371,10 @@ export default {
     caseOverAffirm () {
       caseOverAffirm({
         repair_id: this.repairId
-      }).then(res => {
+      }).then((res) => {
         Dialog.alert({
           title: '您已确认结案成功，请对该此服务进行评价'
-        }).then(res => {
+        }).then((res) => {
           this.goEvaluate()
         })
       })
@@ -396,7 +398,7 @@ export default {
       getEvaluateInfo({
         repairId: this.repairId,
         evaluate_id: item.evaluate_id
-      }).then(res => {
+      }).then((res) => {
         this.evaluateInfo = res.data || {}
       })
     }
@@ -422,9 +424,6 @@ export default {
 }
 
 .operation-box {
-  position: fixed;
-  left: 0;
-  bottom: 0;
   display: flex;
   justify-content: space-between;
   width: 100%;

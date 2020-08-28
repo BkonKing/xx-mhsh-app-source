@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="选择房产"
       :fixed="true"
@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-padding">
+    <div class="tf-padding tf-body-container">
       <house :mode="0"></house>
     </div>
   </div>

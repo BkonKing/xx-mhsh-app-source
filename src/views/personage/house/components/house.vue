@@ -1,30 +1,32 @@
 <template>
-  <div class="house-container">
-    <div
-      v-for="(item, i) in houseList"
-      :key="i"
-      class="house-box"
-      :class="{'house-owner': i === 0}"
-      @click="change(item.binding_id, i)"
-    >
-      <div v-if="i === 0" class="tf-row-center">
-        <div class="house-owner-current">当前房产</div>
-      </div>
-      <div class="tf-row-space-between">
-        <div class="tf-row">
-          <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
-          <div class="tf-space-around">
-            <div class="house-name">{{item.project_name}}</div>
-            <div class="house-address">{{item.fc_info}}</div>
-          </div>
+  <div class="house-container tf-flex-column">
+    <div class="tf-item-auto">
+      <div
+        v-for="(item, i) in houseList"
+        :key="i"
+        class="house-box"
+        :class="{'house-owner': i === 0}"
+        @click="change(item.binding_id, i)"
+      >
+        <div v-if="i === 0" class="tf-row-center">
+          <div class="house-owner-current">当前房产</div>
         </div>
-        <div
-          v-if="mode && item.members && item.house_role == 1"
-          class="tf-row-vertical-center house-people-box"
-          @click.stop="manClick(item)"
-        >
-          <div class="tf-icon tf-icon-renshu"></div>
-          <div class="house-people-number">{{item.members}}</div>
+        <div class="tf-row-space-between">
+          <div class="tf-row">
+            <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
+            <div class="tf-space-around">
+              <div class="house-name">{{item.project_name}}</div>
+              <div class="house-address">{{item.fc_info}}</div>
+            </div>
+          </div>
+          <div
+            v-if="mode && item.members && item.house_role == 1"
+            class="tf-row-vertical-center house-people-box"
+            @click.stop="manClick(item)"
+          >
+            <div class="tf-icon tf-icon-renshu"></div>
+            <div class="house-people-number">{{item.members}}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -187,8 +189,6 @@ export default {
 }
 .tf-btn {
   width: 710px;
-  position: fixed;
-  bottom: 20px;
 }
 .tf-icon-renshu {
   font-size: 36px;

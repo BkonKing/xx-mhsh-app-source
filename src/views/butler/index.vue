@@ -47,11 +47,12 @@ export default {
       return this.appList.filter(obj => obj.id !== '1')
     }
   },
-  created () {
-    this.queryAllApp()
-    // this.getNoticeLbList()
-  },
+  // created () {
+  //   this.queryAllApp()
+  //   // this.getNoticeLbList()
+  // },
   activated () {
+    this.queryAllApp()
     this.getNoticeLbList()
   },
   methods: {
