@@ -3,7 +3,7 @@
     <van-popup class="more-dialog" v-model="moreShowChild">
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
       <div v-if="share" class="more-btn" @click="clickShare">分享</div>
-      <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
+      <!-- <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div> -->
       <div v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">删除</div>
     </van-popup>
     <van-popup

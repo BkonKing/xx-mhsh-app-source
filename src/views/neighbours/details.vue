@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span v-if="articleType == 3" class="van-icon van-icon-ellipsis" @click="articleOperate"></span>
+        <span v-if="articleType == 3 && info.is_mine" class="van-icon van-icon-ellipsis" @click="articleOperate"></span>
       </template>
     </van-nav-bar>
     <van-pull-refresh
