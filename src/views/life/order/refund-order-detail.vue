@@ -28,7 +28,7 @@
 						</div>
 						<div class="order-sku-num">
 							<div class="order-sku p-nowrap">{{item.specs_name}}</div>
-							<div class="order-num color-222">幸福币{{item.happiness_price/10}}</div>
+							<div class="order-num color-222" v-if="item.happiness_price!=0">幸福币{{item.happiness_price/10}}</div>
 						</div>
 						<div class="order-action-session">
 							<div class="order-action-text">{{item.order_status_name}}</div>

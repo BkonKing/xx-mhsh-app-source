@@ -207,7 +207,7 @@
               </template>
             </template>
             <template v-else>
-              <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+              <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
               <!-- <div class="buy-btn" data-type="buy">开抢提醒</div> -->
               <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()">开抢提醒</div>
               <div v-else class="buy-btn btn-disabled">已设提醒</div>
@@ -221,7 +221,7 @@
         </template>
         <template v-else>
           <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
-          <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即兑换</div>
+          <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy">立即兑换</div>
         </template>
       </template>
     </div>
@@ -258,10 +258,10 @@
             </template>
             <template v-else>
               <template v-if="infoData.goods_type<3">
-                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
+                <div v-if="skuList[typeVal].credits!=0" class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
               </template>
               <template v-else>
-                <div class="happy-block"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : (infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_credits/100 : skuList[typeVal].credits/100)}}</div></div>
+                <div class="happy-block" v-if="(is_collage&&skuList[typeVal].p_credits!=0) || (infoData.ollage_info.is_start==1&&skuList[typeVal].o_credits!=0) || (infoData.ollage_info.is_start!=1&&skuList[typeVal].credits!=0)"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : (infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_credits/100 : skuList[typeVal].credits/100)}}</div></div>
               </template>
             </template>
           </div>
@@ -468,7 +468,7 @@ export default {
     */
     showFunc(type='',f_orderid='') {
       this.is_collage = type && type == 'collage' ? true : false;
-      this.btn_type = type && type == 'buy' ? 'buy' : 'cart';
+      this.btn_type = type && (type == 'buy'||type == 'collage'||type == 'flash') ? 'buy' : 'cart';
       this.f_id = f_orderid ? f_orderid : '';
       // if(this.infoData.goods_type == 3){
       //   this.goods.s_price = this.skuList[this.typeVal].o_price;
@@ -552,6 +552,7 @@ export default {
       
       var arr = [];
       if ((this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0)){
+
         // var arr = JSON.parse(localStorage.getItem('cart')) || [];
         var arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
         if(arr && arr.length > 0){

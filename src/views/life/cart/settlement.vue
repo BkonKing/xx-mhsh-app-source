@@ -33,7 +33,7 @@
     </div>
 
     <div class="cont-session goods-session">
-      <div v-for="(item,index) in carts" class="order-goods-info" @click="linkFunc(5,{id: item.goods_id})">
+      <div v-for="(item,index) in carts" class="order-goods-info">
         <div class="order-pic-block">
           <img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
         </div>
@@ -49,7 +49,7 @@
           </div>
           <div class="order-action-session">
             <div class="order-action-text color-8f8f94">
-              <template v-if="item.tip_text">不支持退货
+              <template v-if="item.tip_text||item.is_returnfund==0 || item.is_return==0">不支持退货
                 <div class="order-action-btn" @click.stop="openExplainSwal">
                   <img class="img-100" src="@/assets/img/question_01.png" mode="" />
                 </div>
@@ -214,7 +214,7 @@ export default {
       downTime: 0,          //支付结束时间
 
       nocarts: [],         //未选中商品
-      carts: [],           //购物车
+      carts: [],           //选中商品
       goodsNum: '',        //购物车商品件数
       priceTotal: '',      //商品总额
       userId: '',          //用户uid
@@ -238,6 +238,7 @@ export default {
       userAddress: '',       //选中的地址详情
       is_default: 0,         //默认地址
       prev_page: 0,          //1商品详情页直接购买
+      isNew: false,          //购物车商品是否有变动
 
       flashInfo: '',         //闪购结算信息
       settlementInfo: '',
@@ -361,9 +362,13 @@ export default {
             carts_list2.push(carts_arr[j]);
           }
         }
-        this.carts = carts_list;
+        this.carts = carts_list;  //选中的
+        if(this.isNew){
+          this.carts = this.backCarts;
+          this.isNew = false;
+        }
         this.goodsNum = goodsNum;
-        this.nocarts = carts_list2;
+        this.nocarts = carts_list2;  //没选中的
         this.priceTotal = priceTotal;
         this.flashParam.specs_num = goodsNum;
       }else {
@@ -397,9 +402,18 @@ export default {
               this.order_id = res.order_info.id;
               that.cartInit();
               this.openPaySwal();
-            }else {
-              
             }
+          }else {
+            // if (this.prev_page == 1){
+            //   api.setPrefs({ key: 'cart2', value: JSON.stringify(that.backCarts) });
+            // }else {
+            //   api.setPrefs({ key: 'cart', value: JSON.stringify(that.backCarts) });
+            // }
+            Toast(res.message);
+            that.backCarts = res.goods_arr;
+            that.isNew = true;
+            console.log(that.backCarts)
+            that.total();
           }
         })
       }else if(this.order_type == 3){

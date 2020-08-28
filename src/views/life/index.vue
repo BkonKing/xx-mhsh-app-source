@@ -268,6 +268,11 @@ export default {
   	}
   	this.cart_num = cart_num;
   	this.page = 1;
+  	this.isRefresh = true;
+  	// this.navList = [];
+  	// this.category_id = '';
+  	// this.activeIndex = 0;
+  	// this.activeIndex2 = 0;
     this.getData();
   },
   methods:{
@@ -295,10 +300,19 @@ export default {
       }).then(res => {
         if (res.success) {
         	this.flag = true;
+        	if(this.isRefresh){
+        		this.isRefresh = false;
+        		if(JSON.stringify(this.navList)!=JSON.stringify(res.data.category_list)){
+        			this.navList = [];
+        			this.navList2 = [];
+					  	this.category_id = '';
+					  	this.activeIndex = 0;
+					  	this.activeIndex2 = 0;
+        		}
+        	}
           if(this.navList.length == 0){
           	this.navList = [{'category_name': '推荐'}];
           	this.navList = this.navList.concat(res.data.category_list);
-            console.log(this.navList);
             if(res.data.category_list[this.activeIndex].children){
               this.navList2 = res.data.category_list[this.activeIndex].children
             }
@@ -332,8 +346,9 @@ export default {
 	      }
 	      this.listInit();
       }else {
-      	this.page = 1;
-      	this.finished = true;
+      	this.flag = true;
+      	// this.page = 1;
+      	// this.finished = true;
       }
     },
     changeNav2(index, id) {

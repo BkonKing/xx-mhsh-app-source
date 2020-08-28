@@ -91,6 +91,7 @@ export default {
       }).then(res => {
         if (res.success) {
           this.carts = res.goods_arr;
+          api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
         }
       })
     },

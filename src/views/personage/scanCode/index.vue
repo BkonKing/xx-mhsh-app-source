@@ -268,7 +268,7 @@ export default {
       })
     },
     /* 扫了提货码 */
-    takeCodeScan () {
+    takeCodeScan (value) {
       takeCodeScan({
         code_info: value
       }).then((res) => {

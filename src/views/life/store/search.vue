@@ -271,6 +271,7 @@ export default {
     },
     getSearchGoods(type=''){
       var search_key = this.search_val;
+      let that =  this;
       if(this.typeVal == 1){
         search_key = this.goods_val;
       }
@@ -280,6 +281,18 @@ export default {
         search_num: this.pageSize,
       }).then(res => {
         if (res.success) {
+          let dataArr = res.data;
+          var val = that.search_val;
+          if(that.typeVal == 1){
+            val = that.goods_val;
+          }
+          if(dataArr&&dataArr.length > 0){
+            for (var i=0; i<dataArr.length; i++) {
+              var findText = dataArr[i].goods_name.split(val);
+              var result= findText.join('<span style="color:#448fe4;">' + val + '</span>');
+              dataArr[i].goods_name = result;
+            }
+          }
           if(this.typeVal > 0){
             this.goodsList2 = this.page == 1 ? res.data : this.goodsList2.concat(res.data);
             if(res.data.length < this.pageSize){
@@ -298,12 +311,22 @@ export default {
     },
     //搜索app
     getSearchApp(){
+      let that =  this;
       getSearchApp({
         search_key: this.search_val,
         pages: this.page,
         search_num: this.pageSize,
       }).then(res => {
         if (res.success) {
+          let dataArr = res.data;
+          var val = that.search_val;
+          if(dataArr&&dataArr.length > 0){
+            for (var i=0; i<dataArr.length; i++) {
+              var findText = dataArr[i].application.split(val);
+              var result= findText.join('<span style="color:#448fe4;">' + val + '</span>');
+              dataArr[i].application = result;
+            }
+          }
           this.appList = this.page == 1 ? res.data : this.appList.concat(res.data);
           this.app_count = res.count_num;
           if(this.typeVal > 0){
@@ -329,7 +352,18 @@ export default {
         search_num: this.pageSize,
       }).then(res => {
         if (res.success) {
-          
+          // let dataArr = res.data;
+          // var val = that.search_val;
+          // if(that.typeVal == 2){
+          //   val = that.postbar_val;
+          // }
+          // if(dataArr&&dataArr.length > 0){
+          //   for (var i=0; i<dataArr.length; i++) {
+          //     var findText = dataArr[i].content.split(val);
+          //     var result= findText.join('<span style="color:#448fe4;">' + val + '</span>');
+          //     dataArr[i].content = result;
+          //   }
+          // }
           if(this.typeVal > 0){
             this.postbarList2 = this.page == 1 ? res.data : this.postbarList2.concat(res.data);
             if(res.data.length < this.pageSize){
