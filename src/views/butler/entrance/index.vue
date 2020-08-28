@@ -62,7 +62,7 @@
           <div class="triangle" :class="{'triangle-right': active === 2}"></div>
           <div class="instantly-btn" @click="ycOpenDoor">立即开门</div>
         </div>
-        <div class="entrance-operation__alert">{{openDoorTime ? `${openDoorTime}已开门` : '点击即可开门'}}</div>
+        <div class="entrance-operation__alert">{{openDoorTime ? `已开门` : '点击即可开门'}}</div>
       </div>
     </div>
     <tf-dialog
@@ -157,8 +157,6 @@ export default {
         houseId: this.currentProject.house_id
       }).then((res) => {
         this.makeQRCode(res.data)
-      }).catch((err) => {
-        Toast.fail(err)
       })
     },
     /**
@@ -206,7 +204,7 @@ export default {
         houseId: this.currentProject.house_id
       }).then((res) => {
         if (res.success) {
-          this.openDoorTime = new Date(parseInt(res.timestamp) * 1000)
+          this.openDoorTime = true
             .toLocaleString()
             .replace(/:\d{1,2}$/, ' ')
         }

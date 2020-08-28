@@ -3,7 +3,7 @@
     <refreshList :list.sync="list" :load="load" finished-text>
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
-        <div class="tf-list" @click="jump(item)" v-longtap="{tap: operate, params: item}">
+        <div class="tf-list" @click="jump(item)">
           <template v-if="type == 'transaction'">
             <div
               v-if="item.sub_type == 6 || item.sub_type == 7"

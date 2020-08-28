@@ -1,10 +1,10 @@
 <template>
   <!-- 签到start -->
-  <div v-show="value" class="mask-block sign-mask" catchtouchmove="true">
+  <div v-show="value" class="calendar-mask-block sign-mask" catchtouchmove="true">
     <div class="sign-mask-block">
       <div class="sign-block" data-show="show">
         <div class="mask-header">
-          <div class="mask-tit">签到</div>
+          <div class="calendar-mask-tit">签到</div>
           <div class="mask-icon mask-icon-left"></div>
           <div class="mask-icon mask-icon-right"></div>
         </div>
@@ -180,7 +180,7 @@ export default {
 
 <style lang="less" scoped>
 /* 日历 start */
-.mask-block {
+.calendar-mask-block {
   position: fixed;
   @flex();
   top: 0;
@@ -221,7 +221,7 @@ export default {
   height: 140px;
   position: relative;
 }
-.mask-tit {
+.calendar-mask-tit {
   height: 98px;
   line-height: 98px;
   font-size: 34px;
