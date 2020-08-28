@@ -22,7 +22,7 @@
           size="m"
         >
           <template v-slot:right>
-            <span class="thumbsups-number">{{replyInfo.thumbsups}}</span>
+            <span class="thumbsups-number">{{replyInfo.thumbsups | numberText}}</span>
             <span
               class="tf-icon tf-icon-zan"
               :class="{'like-active': replyInfo.is_thumbsup}"
@@ -251,6 +251,17 @@ export default {
       if (!value) {
         this.reply_nickname = ''
       }
+    }
+  },
+  filters: {
+    numberText (value) {
+      let text = ''
+      if (value < 10000 && value > 0) {
+        text = value
+      } else if (value >= 10000) {
+        text = `${Math.floor(value / 10000)}万+`
+      }
+      return text
     }
   }
 }

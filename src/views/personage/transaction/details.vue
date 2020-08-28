@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -54,45 +54,45 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3"
-        class="operation-box"
-      >
-        <div class="operation-content">
-          等待
-          <span class="tf-text-orange">{{detailInfo.designee}}</span>
-          {{sub_status | statusFilter}}
-          <span
-            v-if="detailInfo.time_limit"
-            class="tf-text-primary"
-          >({{detailInfo.time_limit}})</span>
-        </div>
-        <template v-if="userInfo.role_dep == 1">
-          <div v-if="status == 1 || status == 2" class="tf-row-space-between">
-            <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-            <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
-            <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
-          </div>
-          <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
-        </template>
-        <template v-else>
-          <div v-if="['3', '6', '10'].indexOf(sub_status) > -1" class="tf-row-space-between">
-            <div class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
-            <div
-              v-if="sub_status == 3"
-              class="tf-btn tf-btn-primary"
-              @click="acceptPlanShow = true"
-            >接受任务</div>
-            <div v-if="sub_status == 6" class="tf-btn tf-btn-primary" @click="toCaseOver">确认结案</div>
-            <div
-              v-if="sub_status == 10"
-              class="tf-btn tf-btn-primary"
-              @click="imgUploadShow = true"
-            >上传照片</div>
-          </div>
-        </template>
-      </div>
     </van-pull-refresh>
+    <div
+      v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3"
+      class="operation-box"
+    >
+      <div class="operation-content">
+        等待
+        <span class="tf-text-orange">{{detailInfo.designee}}</span>
+        {{sub_status | statusFilter}}
+        <span
+          v-if="detailInfo.time_limit"
+          class="tf-text-primary"
+        >({{detailInfo.time_limit}})</span>
+      </div>
+      <template v-if="userInfo.role_dep == 1">
+        <div v-if="status == 1 || status == 2" class="tf-row-space-between">
+          <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
+          <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
+          <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
+        </div>
+        <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
+      </template>
+      <template v-else>
+        <div v-if="['3', '6', '10'].indexOf(sub_status) > -1" class="tf-row-space-between">
+          <div class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
+          <div
+            v-if="sub_status == 3"
+            class="tf-btn tf-btn-primary"
+            @click="acceptPlanShow = true"
+          >接受任务</div>
+          <div v-if="sub_status == 6" class="tf-btn tf-btn-primary" @click="toCaseOver">确认结案</div>
+          <div
+            v-if="sub_status == 10"
+            class="tf-btn tf-btn-primary"
+            @click="imgUploadShow = true"
+          >上传照片</div>
+        </div>
+      </template>
+    </div>
     <!-- 撤销 -->
     <tf-dialog
       v-model="revocationShow"
@@ -521,7 +521,7 @@ export default {
           repairId: this.repairId
         },
         this.projectId
-      ).then(res => {
+      ).then((res) => {
         this.isLoading = false
         const { status, sub_status, category } = res.data
         this.title = category
@@ -532,7 +532,7 @@ export default {
     },
     /* 获取撤消提报原因 */
     getUndoReasonList () {
-      getUndoReasonList(this.projectId).then(res => {
+      getUndoReasonList(this.projectId).then((res) => {
         this.reasonList = res.data
       })
     },
@@ -555,7 +555,7 @@ export default {
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
-        cancelRepair(params, this.projectId).then(res => {
+        cancelRepair(params, this.projectId).then((res) => {
           this.getRepairInfo()
           Toast('已经撤销提报')
           this.revocationShow = false
@@ -569,7 +569,7 @@ export default {
           repair_id: this.repairId
         },
         this.projectId
-      ).then(res => {
+      ).then((res) => {
         this.showAssign()
       })
     },
@@ -583,9 +583,9 @@ export default {
       getDesigneeList(this.projectId).then(({ data }) => {
         const newData = {}
         // 格式转换 姓名-电话号码-工作日期-擅长
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           if (data[key].length) {
-            newData[key] = data[key].map(obj => {
+            newData[key] = data[key].map((obj) => {
               const { realname, mobile, weeks, skill, uid } = obj
               return {
                 label: `${realname} ${mobile} ${weeks} ${skill}`,
@@ -607,7 +607,7 @@ export default {
           limit_hours: this.limit_hours
         },
         this.projectId
-      ).then(res => {
+      ).then((res) => {
         this.getRepairInfo()
         Toast.success('分派人员成功')
         this.assignShow = false
@@ -620,7 +620,7 @@ export default {
     },
     /* 获取取消任务原因 */
     getCancelReasonList () {
-      getCancelReasonList(this.projectId).then(res => {
+      getCancelReasonList(this.projectId).then((res) => {
         this.cancelReasonList = res.data
       })
     },
@@ -638,10 +638,10 @@ export default {
           other_reason: this.cancelExplain,
           refuse_reason: this.cancelReason
         }
-        refuseTasks(params, this.projectId).then(res => {
+        refuseTasks(params, this.projectId).then((res) => {
           Dialog.alert({
             title: '已取消任务'
-          }).then(res => {
+          }).then((res) => {
             this.$router.go(-1)
           })
         })
@@ -661,7 +661,7 @@ export default {
           negotiation_costs: this.isCharge == 1 ? this.negotiation_costs : '',
           negotiation_time: this.negotiation_time
         }
-        negotiation(params, this.projectId).then(res => {
+        negotiation(params, this.projectId).then((res) => {
           Toast.success('您已接受该任务')
           this.getRepairInfo()
           this.acceptPlanShow = false
@@ -681,7 +681,7 @@ export default {
           negotiationId
         },
         this.projectId
-      ).then(res => {
+      ).then((res) => {
         this.negotiateInfo = res.data || {}
       })
     },
@@ -703,7 +703,7 @@ export default {
           repair_id: this.repairId,
           content: this.planContent
         }
-        timeaxis(params, this.projectId).then(res => {
+        timeaxis(params, this.projectId).then((res) => {
           Toast.success('进度添加成功')
           this.getRepairInfo()
           this.planShow = false
@@ -728,7 +728,7 @@ export default {
         }
         params.images = this.imageFiles.join(',')
       }
-      caseOver(params, this.projectId).then(res => {
+      caseOver(params, this.projectId).then((res) => {
         Toast.success('您已结案成功')
         this.getRepairInfo()
         this.settleShow = false
@@ -742,7 +742,7 @@ export default {
           images: this.imageFiles.join(',')
         },
         this.projectId
-      ).then(res => {
+      ).then((res) => {
         Toast.success('结案图片上传成功')
       })
     },
@@ -782,12 +782,10 @@ export default {
   padding: 20px 30px 20px 0;
 }
 .tf-main-container {
-  padding-bottom: 217px;
+  flex: 1;
   overflow: auto !important;
 }
 .operation-box {
-  position: fixed;
-  bottom: 0;
   width: 100%;
   padding: 20px 20px 40px;
   background-color: #fff;

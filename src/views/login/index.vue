@@ -164,12 +164,7 @@ export default {
           } else {
             // iOS预取号成功
             this.phoneNum = ret.data.number
-            // this.openActivity()
           }
-          console.log(
-            'callback---button--shanyanSdkGetPhoneInfo========' +
-              JSON.stringify(ret)
-          )
         })
       }
     },
@@ -207,29 +202,40 @@ export default {
         })
       } else if (this.platform == 'ios') {
         // 一键登录
-        // iOS 简单竖屏全屏模式
-
+        // iOS 弹窗模式
         const screenWidth_Portrait = api.winWidth // 竖屏宽
+        const screenHeight_Portrait = api.winHeight // 竖屏宽
+        const screenWidth_Landscape = api.winHeight // 横屏宽(即竖屏高)
+        const screenHeight_Landscape = api.winWidth // 横屏高(即竖屏宽)
 
-        let screenScale = screenWidth_Portrait / 375.0 // 相对iphone6屏幕
+        var screenScale = screenWidth_Portrait / 375.0 // 相对iphone6屏幕
         if (screenScale > 1) {
           screenScale = 1 // 大屏的无需放大
         }
 
-        // 先计算各控件位置及相对关系
-        // logo
-        const clLayoutLogoTop_Portrait = screenScale * 60
+        // 竖屏
+        // 窗口中心
+        const clAuthWindowOrientationCenterX_Portrait =
+          screenWidth_Portrait * 0.5
+        const clAuthWindowOrientationCenterY_Portrait =
+          screenHeight_Portrait * 0.5
+
+        // 窗口宽高
+        const clAuthWindowOrientationWidth_Portrait =
+          screenWidth_Portrait * 0.8
+        const clAuthWindowOrientationHeight_Portrait =
+          clAuthWindowOrientationWidth_Portrait * 0.8
+
+        const clLayoutLogoTop_Portrait = screenScale * 25
         const clLayoutLogoWidth_Portrait = 60 * screenScale
         const clLayoutLogoHeight_Portrait = 60 * screenScale
         const clLayoutLogoCenterX_Portrait = 0
 
-        // 手机号
         const clLayoutPhoneCenterY_Portrait = -20 * screenScale
         const clLayoutPhoneLeft_Portrait = 50 * screenScale
         const clLayoutPhoneRight_Portrait = -50 * screenScale
         const clLayoutPhoneHeight_Portrait = 20 * screenScale
 
-        // 一键登录按钮
         const clLayoutLoginBtnCenterY_Portrait =
           clLayoutPhoneCenterY_Portrait +
           clLayoutPhoneHeight_Portrait * 0.5 * screenScale +
@@ -239,54 +245,84 @@ export default {
         const clLayoutLoginBtnLeft_Portrait = 70 * screenScale
         const clLayoutLoginBtnRight_Portrait = -70 * screenScale
 
-        // 隐私协议
         const clLayoutAppPrivacyLeft_Portrait = 40 * screenScale
         const clLayoutAppPrivacyRight_Portrait = -40 * screenScale
         const clLayoutAppPrivacyBottom_Portrait = 0 * screenScale
         const clLayoutAppPrivacyHeight_Portrait = 45 * screenScale
 
-        // 运营商能力标签(认证服务由**提供)
         const clLayoutSloganLeft_Portrait = 0
         const clLayoutSloganRight_Portrait = 0
         const clLayoutSloganHeight_Portrait = 15 * screenScale
         const clLayoutSloganBottom_Portrait =
           clLayoutAppPrivacyBottom_Portrait - clLayoutAppPrivacyHeight_Portrait
 
-        // ios_uiConfigure 用于传入一键登录方法
-        this.ios_uiConfigure = {
-          clBackgroundImg: '../../assets/imgs/login_bg.png', // 全屏背景
-          shouldAutorotate: false, // 支持自动旋转
-          supportedInterfaceOrientations: 0,
-          clNavigationBackgroundClear: true, // 导航栏透明
-          clNavigationBackBtnImage: 'image/shanyanImg/close-white.png', // 返回按钮图片，自带返回按钮大小将由1x图片大小决定
-          clNavBackBtnAlimentRight: false, // 返回按钮居右
+        // 横屏
+        // 窗口中心
+        const clAuthWindowOrientationCenterX_Landscape =
+          screenWidth_Landscape * 0.5
+        const clAuthWindowOrientationCenterY_Landscape =
+          screenHeight_Landscape * 0.5
 
-          clLogoImage: '../../assets/imgs/login_logo.png', // logo图片
+        // 窗口宽高
+        const clAuthWindowOrientationWidth_Landscape =
+          screenWidth_Portrait * 0.8 // 窗口宽度为竖屏宽度的0.8;
+        const clAuthWindowOrientationHeight_Landscape =
+          clAuthWindowOrientationWidth_Landscape * 0.8 // 窗口高度为窗口宽度的0.8
+
+        const clLayoutLogoWidth_Landscape = 60 * screenScale
+        const clLayoutLogoHeight_Landscape = 60 * screenScale
+        const clLayoutLogoCenterX_Landscape = 0
+        const clLayoutLogoTop_Landscape = 25 * screenScale
+
+        const clLayoutPhoneCenterY_Landscape = -20 * screenScale
+        const clLayoutPhoneLeft_Landscape = 50 * screenScale
+        const clLayoutPhoneRight_Landscape = -50 * screenScale
+        const clLayoutPhoneHeight_Landscape = 20 * screenScale
+
+        const clLayoutLoginBtnCenterY_Landscape =
+          clLayoutPhoneCenterY_Landscape +
+          clLayoutPhoneHeight_Landscape * 0.5 * screenScale +
+          20 * screenScale +
+          15 * screenScale
+        const clLayoutLoginBtnHeight_Landscape = 30 * screenScale
+        const clLayoutLoginBtnLeft_Landscape = 70 * screenScale
+        const clLayoutLoginBtnRight_Landscape = -70 * screenScale
+
+        const clLayoutAppPrivacyLeft_Landscape = 40 * screenScale
+        const clLayoutAppPrivacyRight_Landscape = -40 * screenScale
+        const clLayoutAppPrivacyBottom_Landscape = 0 * screenScale
+        const clLayoutAppPrivacyHeight_Landscape = 45 * screenScale
+
+        const clLayoutSloganLeft_Landscape = 0
+        const clLayoutSloganRight_Landscape = 0
+        const clLayoutSloganHeight_Landscape = 15 * screenScale
+        const clLayoutSloganBottom_Landscape =
+          clLayoutAppPrivacyBottom_Landscape -
+          clLayoutAppPrivacyHeight_Landscape
+
+        this.ios_uiConfigure = {
+          shouldAutorotate: false, // 自动旋转
+          clNavigationBackgroundClear: true, // 导航栏透明
+          clNavigationBackBtnImage: 'image/shanyanImg/close-white.png', // 返回按钮图片
+          clNavBackBtnAlimentRight: true, // 返回按钮居右
 
           clLoginBtnText: '本机号码一键登录', // 一键登录按钮文字
           clLoginBtnTextColor: [1, 1, 1, 1.0], // rgba
           clLoginBtnBgColor: [235, 88, 65, 1.0], // rgba
           clLoginBtnTextFont: 15 * screenScale,
-          clLayoutLoginBtnHeight: 90 * screenScale,
           clLoginBtnCornerRadius: 10,
           clLoginBtnBorderWidth: 0.5,
           clLoginBtnBorderColor: [235, 88, 65, 1.0], // rgba
 
-          clPhoneNumberFont: 26.0 * screenScale, // 手机号字体
+          clPhoneNumberFont: 26.0 * screenScale,
 
-          clAuthTypeUseWindow: true, // 弹窗模式
-          // clAuthWindowCornerRadius: 20,//弹窗模式下的窗口圆角
+          clAuthTypeUseWindow: true,
+          clAuthWindowCornerRadius: 10,
 
-          // 隐私协议
-          clAppPrivacyColor: [
-            [0.6, 0.6, 0.6, 1.0],
-            [0, 1, 0, 1.0]
-          ], // 2 item,commomTextColor and appPrivacyTextColor
+          clAppPrivacyColor: [[34, 34, 34, 1.0]], // 2 item,commomTextColor and appPrivacyTextColor
           clAppPrivacyTextFont: 11 * screenScale,
           clAppPrivacyTextAlignment: 0, // 0: center 1: left 2: right
-          clAppPrivacyFirst: ['《美好生活家园用户协议》', '/agreement'],
 
-          // 隐私协议勾选框
           clCheckBoxVerticalAlignmentToAppPrivacyCenterY: true,
           clCheckBoxSize: [30 * screenScale, 30 * screenScale], // 2 item, width and height
           clCheckBoxImageEdgeInsets: [
@@ -295,10 +331,9 @@ export default {
             13 * screenScale,
             5 * screenScale
           ], // 4 item, top left bottom right
-          clCheckBoxUncheckedImage: 'image/shanyanImg/checkBoxNor.png',
-          clCheckBoxCheckedImage: 'image/shanyanImg/checkBoxSEL.png',
+          clCheckBoxUncheckedImage: 'static/img/checkBoxNor.png',
+          clCheckBoxCheckedImage: 'static/img/checkBoxSEL.png',
 
-          // 加载动画
           clLoadingSize: [50, 50], // 2 item, width and height
           clLoadingTintColor: [0.2, 0.8, 0.2, 1],
           clLoadingBackgroundColor: [1, 1, 1, 1],
@@ -306,28 +341,34 @@ export default {
 
           // 竖屏布局对象
           clOrientationLayOutPortrait: {
-            // 控件:
-            // logo
+            // 窗口
+            clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Portrait,
+            clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Portrait,
+
+            clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Portrait,
+            clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Portrait,
+
+            // 控件
             clLayoutLogoWidth: clLayoutLogoWidth_Portrait,
             clLayoutLogoHeight: clLayoutLogoHeight_Portrait,
             clLayoutLogoCenterX: clLayoutLogoCenterX_Portrait,
             clLayoutLogoTop: clLayoutLogoTop_Portrait,
-            // 手机号
+
             clLayoutPhoneCenterY: clLayoutPhoneCenterY_Portrait,
             clLayoutPhoneHeight: clLayoutPhoneHeight_Portrait,
             clLayoutPhoneLeft: clLayoutPhoneLeft_Portrait,
             clLayoutPhoneRight: clLayoutPhoneRight_Portrait,
-            // 一键登录按钮
+
             clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Portrait,
             clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Portrait,
             clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Portrait,
             clLayoutLoginBtnRight: clLayoutLoginBtnRight_Portrait,
-            // 隐私协议
+
             clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Portrait,
             clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Portrait,
             clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Portrait,
             clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Portrait,
-            // 运营商能力标签(认证服务由**提供)
+
             clLayoutSloganLeft: clLayoutSloganLeft_Portrait,
             clLayoutSloganRight: clLayoutSloganRight_Portrait,
             clLayoutSloganHeight: clLayoutSloganHeight_Portrait,

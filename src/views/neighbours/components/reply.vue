@@ -4,7 +4,7 @@
       <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id" @click.stop="operate(cell, i)">
         <userInfo :avatar="cell.avatar" :name="cell.nickname" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
-            <span class="thumbsups-number">{{cell.thumbsups}}</span>
+            <span class="thumbsups-number">{{cell.thumbsups | numberText}}</span>
             <span
               class="tf-icon tf-icon-zan"
               :class="{'like-active': cell.is_thumbsup}"
@@ -250,6 +250,17 @@ export default {
       if (!value) {
         this.parentId = ''
       }
+    }
+  },
+  filters: {
+    numberText (value) {
+      let text = ''
+      if (value < 10000 && value > 0) {
+        text = value
+      } else if (value >= 10000) {
+        text = `${Math.floor(value / 10000)}万+`
+      }
+      return text
     }
   }
 }

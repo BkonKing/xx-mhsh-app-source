@@ -8,28 +8,37 @@
         </span>
       </template>
     </van-nav-bar>
-    <div class="tf-bg-white">
-      <div class="tf-row tf-padding-lg" @click="goInformation">
-        <img v-if="userInfo.avatar" class="personage-info__avatar" :src="userInfo.avatar" />
-        <img v-else class="personage-info__avatar" src="@/assets/imgs/touxiang.png" />
-        <div class="personage-info--base">
-          <div class="user-info-box">
-            <div class="user-name">{{userInfo.nickname}}</div>
-            <van-tag
-              v-if="userType != '0'"
-              class="user-role"
-              plain
-              :color="userType | houseRoleColor"
-              :text-color="userType | houseRoleColor"
-              :inverted="true"
-              size="small"
-            >{{userType | houseRoleText}}</van-tag>
+    <div class="tf-body-container tf-overflow-auto">
+      <div class="tf-bg-white">
+        <div class="tf-row tf-padding-lg" @click="goInformation">
+          <img v-if="userInfo.avatar" class="personage-info__avatar" :src="userInfo.avatar" />
+          <img v-else class="personage-info__avatar" src="@/assets/imgs/touxiang.png" />
+          <div class="personage-info--base">
+            <div class="user-info-box">
+              <div class="user-name">{{userInfo.nickname}}</div>
+              <van-tag
+                v-if="userType != '0'"
+                class="user-role"
+                plain
+                :color="userType | houseRoleColor"
+                :text-color="userType | houseRoleColor"
+                :inverted="true"
+                size="small"
+              >{{userType | houseRoleText}}</van-tag>
+              <van-tag
+                v-if="userInfo.role_dep == 1"
+                class="user-role"
+                plain
+                :color="5 | houseRoleColor"
+                :text-color="5 | houseRoleColor"
+                :inverted="true"
+                size="small"
+              >{{userInfo.position}}</van-tag>
+            </div>
+            <div class="user-address">{{(currentProject && currentProject.fc_info) || '暂无绑定房间'}}</div>
           </div>
-          <div class="user-address">{{(currentProject && currentProject.fc_info) || '暂无绑定房间'}}</div>
         </div>
       </div>
-    </div>
-    <div class="tf-body-container tf-overflow-auto">
       <div class="tf-row tf-bg-white coin-box">
         <div class="tf-flex-item tf-column" @click="goHappiness">
           <div class="user-text--lg">{{userInfo.credits}}</div>

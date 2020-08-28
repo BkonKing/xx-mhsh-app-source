@@ -35,7 +35,8 @@ export function houseRoleColor (value) {
     1: '#EB5841',
     2: '#FFA110',
     3: '#31B4B9',
-    4: '#31B4B9'
+    4: '#31B4B9',
+    5: '#448FE4'
   }
   return houseRole[value] || '-'
 }

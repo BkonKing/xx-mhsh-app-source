@@ -69,7 +69,7 @@ export default {
     this.current = parseInt(this.$route.query.current) || 1
   },
   mounted () {
-    // this.scanSuccess('yuyuefuwu|205|100000|1|7|4|1598337339|018acc4be7e5c3a36e8301b3d88ad0d3')
+    // this.scanSuccess('shoukuan|360|100024|1|1598600092|77095a01f3ad8d818297f253d2b66abd')
     this.FNScanner = api.require('FNScanner')
   },
   methods: {
@@ -152,7 +152,7 @@ export default {
           this.pollingCollect()
         } else {
           Dialog.alert({
-            title: '对方已经支付成功'
+            title: `获得${data.credits}幸福币`
           })
         }
       })
@@ -181,7 +181,7 @@ export default {
           break
       }
     },
-    /* 扫了收款码 */
+    /* 付款人扫了收款码 */
     collectScan (value, values) {
       collectScan({
         code_info: value
@@ -207,14 +207,14 @@ export default {
         }
       })
     },
-    /* 扫了付款码 */
+    /* 收款人扫了付款码 */
     paymentScan (value, values) {
       paymentScan({
         code_info: value
       }).then((res) => {
         const { check_status, is_pay, avatar, realname, mobile } = res.data
         if (check_status) {
-          if (is_pay == '0') {
+          if (is_pay == 0) {
             this.$router.push({
               name: 'happinessCoinPayment',
               query: {
@@ -230,6 +230,8 @@ export default {
               msg: '对方已付款'
             })
           }
+        } else {
+          Toast('扫码失败，二维码可能过期')
         }
       })
     },

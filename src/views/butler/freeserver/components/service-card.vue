@@ -30,17 +30,10 @@
           <div class="qr-status">{{statusText}}</div>
         </div>
       </div>
-      <div class="qr-box qr-status-box" v-else-if="activeServe.server_status == 0">
-        <div class="success-tag">
-          <span class="tf-icon tf-icon-gou"></span>
-        </div>
-        <template v-if="activeServe.category_type == 1">
-          <div class="tf-text-lg">排队成功</div>
-          <div class="tf-text-lg tf-text-primary">排队中：第{{activeServe.pd_num + 1}}位</div>
-        </template>
-        <div class="tf-text-lg" v-if="activeServe.category_type==2">借用成功</div>
-      </div>
-      <div class="qr-status-box" v-else>
+      <div
+        class="qr-status-box"
+        v-else-if="activeServe.server_status == 1 || (activeServe.category_type == 1 && activeServe.is_lineup == 0)"
+      >
         <template v-if="activeServe.category_type==1">
           <div class="box-tag">开始享受服务</div>
           <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
@@ -49,6 +42,16 @@
           <div class="box-tag">归还成功</div>
           <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
         </template>
+      </div>
+      <div class="qr-box qr-status-box" v-else>
+        <div class="success-tag">
+          <span class="tf-icon tf-icon-gou"></span>
+        </div>
+        <template v-if="activeServe.category_type == 1">
+          <div class="tf-text-lg">排队成功</div>
+          <div class="tf-text-lg tf-text-primary">排队中：第{{activeServe.pd_num + 1}}位</div>
+        </template>
+        <div class="tf-text-lg" v-if="activeServe.category_type==2">借用成功</div>
       </div>
     </tfDialog>
   </div>

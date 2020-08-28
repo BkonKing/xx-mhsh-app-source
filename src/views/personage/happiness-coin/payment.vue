@@ -261,4 +261,7 @@ export default {
 /deep/ .van-key--large {
   height: 100%;
 }
+/deep/ .van-popup--center {
+  top: 35%;
+}
 </style>

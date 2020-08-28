@@ -36,7 +36,7 @@
         <img class="qr-img" :src="qrImg" />
         <div class="qr-status-box">
           <div class="qr-triangle"></div>
-          <div class="qr-status">{{active.categoryType == 1 ? '开始享受服务' : '归还'}}</div>
+          <div class="qr-status">{{active.category_type == 1 ? '开始享受服务' : '归还'}}</div>
         </div>
       </div>
     </tfDialog>
@@ -79,7 +79,8 @@ export default {
         id,
         category_id
       } = item
-      const codeType = categoryType === '1' ? 4 : 2
+      this.active = item
+      const codeType = categoryType == '1' ? 4 : 2
       this.dialog = true
       this.getServerCode(category_id, codeType, id)
     },
