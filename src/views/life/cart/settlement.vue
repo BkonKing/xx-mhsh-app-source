@@ -49,7 +49,7 @@
           </div>
           <div class="order-action-session">
             <div class="order-action-text color-8f8f94">
-              <template v-if="item.tip_text||item.is_returnfund==0 || item.is_return==0">不支持退货
+              <template v-if="item.tip_text||item.is_returnfund==0 || item.is_return==0">{{item.tip_text ? item.tip_text : (item.is_returnfund==0 ? '不支持退换' : '不支持退货')}}
                 <div class="order-action-btn" @click.stop="openExplainSwal">
                   <img class="img-100" src="@/assets/img/question_01.png" mode="" />
                 </div>
@@ -421,7 +421,7 @@ export default {
         exchangeCreate(this.flashParam).then(res => {
           if (res.success) {
             if(res.code == '200'){
-              this.order_id = res.order_info.id;
+              this.order_id = res.order_id;
               that.cartInit();
               this.linkFunc(12,{id: this.order_id});
             }

@@ -195,7 +195,8 @@
 }
 
 
-.refund-session .item-first-text::-webkit-input-placeholder {
+.refund-session .money-text.item-first-text::-webkit-input-placeholder,
+.money-text.item-first-text {
   color: #eb5841;
 }
 .public-mask.reason-mask {

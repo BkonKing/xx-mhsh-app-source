@@ -96,9 +96,10 @@ export default {
     changeNav(item, index) {
       this.activeIndex = index;
       this.bargain_id = this.navList[index].id;
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
+      // this.page = 1;
+      // this.loading = false;
+      // this.finished = false;
+      this.listInit();
       // this.getGoodsData();
     },
     onLoad() {
@@ -119,16 +120,28 @@ export default {
         bargain_id: this.bargain_id
       }).then(res => {
         if (res.success) {
+          this.flag = true;
           this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
           this.isEmpty = this.page == 1 && res.data.length ==0 ? true : false;
           if(res.data.length < res.pageSize){
             this.finished = true;
+            this.flag = true;
           }else {
             this.page = this.page+1;
+            this.flag = false;
           }
           this.loading = false;
         }
       })
+    },
+    listInit(){
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+      this.listData = [];
+      if(!this.flag){
+        this.getGoodsData();
+      }
     },
     linkFunc(type,obj={}) {
       switch (type){

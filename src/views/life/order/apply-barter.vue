@@ -376,9 +376,14 @@ export default {
 	        pic: this.images,
 	      }).then(res => {
 	        if (res.success) {
-            this.$router.go(-2);
 	        	// Toast(res.message);
-	        	//跳转订单详情
+	        	//跳转换货详情
+            this.$router.push({
+              path: '/order/barter-detail',
+              query: {
+                id: res.barter_id,
+              }
+            })
 	        }
 	      })
     	}

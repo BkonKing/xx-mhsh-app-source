@@ -131,7 +131,7 @@
 				<div class="common-item no-top-border refund-item-number">
 					<div class="common-item-left color-222 font-28">
 						<div class="item-left-name">退款金额</div>
-						<input class="item-first-text" type="text" :placeholder="'￥'+refundPrice" v-model="refundNum" />
+						<input class="item-first-text money-text" type="text" :placeholder="'￥'+refundPrice" v-model="refundNum" />
 					</div>
 					<div class="item-left-tip">可修改金额，最多￥{{refundPrice}}</div>
 				</div>
@@ -358,9 +358,15 @@ export default {
 		        pic: this.images,
 		      }).then(res => {
 		        if (res.success) {
-		        	this.$router.go(-2);
 		        	// Toast(res.message);
-		        	//跳转订单详情
+		        	//跳转退款详情
+		        	this.$router.push({
+			          path: '/order/refund-detail',
+			          query: {
+			            id: res.refund_id,
+			            type: 1
+			          }
+			        })
 		        }
 		      })
     		}else {
@@ -376,7 +382,14 @@ export default {
 		        if (res.success) {
 		        	this.$router.go(-2);
 		        	// Toast(res.message);
-		        	//跳转订单详情
+		        	//跳转退款详情
+		        	this.$router.push({
+			          path: '/order/refund-detail',
+			          query: {
+			            id: res.returnfund_id,
+			            type: 2
+			          }
+			        })
 		        }
 		      })
     		}

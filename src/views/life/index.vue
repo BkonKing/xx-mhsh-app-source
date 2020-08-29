@@ -302,6 +302,8 @@ export default {
         	this.flag = true;
         	if(this.isRefresh){
         		this.isRefresh = false;
+        		// console.log(JSON.stringify(this.navList))
+        		// console.log(JSON.stringify(res.data.category_list))
         		if(JSON.stringify(this.navList)!=JSON.stringify(res.data.category_list)){
         			this.navList = [];
         			this.navList2 = [];

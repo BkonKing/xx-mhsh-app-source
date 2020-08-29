@@ -44,7 +44,7 @@
 
       <template v-if="infoData.pay_type == 1">
         <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-        <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits}} 幸福币可兑换</div></div>
+        <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits/10}} 幸福币可兑换</div></div>
       </template>
       <template v-else>
         <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
@@ -312,6 +312,7 @@
     <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
     <remind-swal 
     :show-swal="showSwal"
+    :remind-tit="remindTit"
     @closeSwal="closeSwal"
     @sureSwal="sureSwal()"></remind-swal>
 	</div>
@@ -338,6 +339,7 @@ export default {
       time: 11 * 60 * 60 * 1000,
       newTime: '',
       showSwal: false,       //提醒弹窗
+      remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
 
 
       shop_id: '',          //商品id
@@ -426,7 +428,7 @@ export default {
           this.goods.goods_id = res.data.id;
           this.goods.goods_name = res.data.goods_name;
           this.goods.goods_type = res.data.goods_type;
-          this.tip_text = res.data.tip_text;
+          this.goods.tip_text = res.data.tip_text;
           if(res.data.goods_type == 3){
             this.goods.sign_url = res.data.sign_url;
             if(this.is_collage){

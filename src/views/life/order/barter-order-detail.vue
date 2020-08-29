@@ -247,6 +247,12 @@ export default {
         }
       })
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'applyBarter'){
+      this.$router.go(-2);
+    }
+    next();
   }
 }
 </script>

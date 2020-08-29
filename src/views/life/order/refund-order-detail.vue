@@ -289,6 +289,12 @@ export default {
     	}
     },
 
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'applyRefund'){
+      this.$router.go(-2);
+    }
+    next();
   }
 }
 </script>
