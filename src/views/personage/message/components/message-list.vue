@@ -115,7 +115,7 @@ export default {
         13: 'tf-icon-gonggao1',
         14: 'tf-icon-guihuan',
         15: 'tf-icon-biaoyangtousu',
-        16: 'if-icon-baoshibaoxiu'
+        16: 'tf-icon-baoshibaoxiu'
       }
       return icon[value]
     },
@@ -202,7 +202,7 @@ export default {
   background: #ffa110;
 }
 .tf-icon-daifenpai,
-.if-icon-baoshibaoxiu {
+.tf-icon-baoshibaoxiu {
   background: #5c76d8;
 }
 .tf-icon-yijiean,

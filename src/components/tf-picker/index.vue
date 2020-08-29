@@ -65,14 +65,17 @@ export default {
       })
     },
     confirm (value, index) {
-      this.index = index
-      this.$emit('input', this.selectedKey ? value[this.selectedKey] : value)
-      this.$emit('confirm', this.selectedKey ? value[this.selectedKey] : value)
+      if (this.columns.length > 0) {
+        this.index = index
+        this.$emit('input', this.selectedKey ? value[this.selectedKey] : value)
+        this.$emit('confirm', this.selectedKey ? value[this.selectedKey] : value)
+      }
       this.showPicker = false
     }
   },
   watch: {
     value () {
+      console.log(123)
       this.getIndex()
     }
   }

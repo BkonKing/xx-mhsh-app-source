@@ -21,7 +21,7 @@
           </van-uploader>
           <tf-list-item border title="昵称" :showArrow="false">
             <template v-slot:right>
-              <input v-model="nickname" class="tf-input" @change="setNickname" />
+              <input v-model="nickname" class="tf-input" @change="setNickname" maxlength="15" />
             </template>
           </tf-list-item>
           <tf-list-item border title="性别">
@@ -326,14 +326,20 @@ export default {
     yzHouse (type) {
       // type: 0 - 默认选中第一个， 1 - 保持当前状态
       yzHouse().then((res) => {
-        const data = res.data || []
-        this.list = data.map((obj) => {
+        const allItem = {
+          text: '全部',
+          value: undefined
+        }
+        let data = res.data || []
+        data = data.map((obj) => {
           const { project_name, fc_info, members, house_id } = obj
           return {
             text: `${project_name}${fc_info}(${members})`,
             value: house_id
           }
         })
+        data.unshift(allItem)
+        this.list = data
         if (!type) {
           this.value = res.data[0].house_id
         }

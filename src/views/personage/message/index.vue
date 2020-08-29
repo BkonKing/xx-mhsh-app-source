@@ -145,7 +145,10 @@ export default {
           break
         case '2':
           this.$router.push({
-            path: item.order_type == '1' ? '/order/detail' : '/order/special-detail',
+            path:
+              item.order_type == '1'
+                ? '/order/detail'
+                : '/order/special-detail',
             query: {
               id: item.source_id
             }
@@ -258,6 +261,14 @@ export default {
         }
       })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const name = ['home', 'butler', 'neighbours', 'personage']
+    if (name.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

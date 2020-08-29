@@ -42,22 +42,22 @@
           <div>{{info.source_var}}</div>
         </div>
       </div>
-      <!-- <div class="module-box">
+      <div v-if="info.jy_type != '0'" class="module-box">
         <div class="clist-item">
           <div class="clist-item__label">商品说明</div>
-          <div>{{info.to_username}}</div>
+          <div class="van-ellipsis">{{info.sp_description}}</div>
         </div>
-        <div class="tf-row-space-between divider-box">
+        <div class="tf-row-space-between divider-box" @click="goOrderDefail">
           <div>订单详情</div>
           <span class="tf-icon tf-icon-right"></span>
         </div>
-      </div> -->
+      </div>
       <!--<div class="module-box">
         <div class="tf-row-space-between">
           <div>往来记录</div>
           <span class="tf-icon tf-icon-right"></span>
         </div>
-      </div> -->
+      </div>-->
     </div>
   </div>
 </template>
@@ -89,6 +89,28 @@ export default {
       }).then(res => {
         this.info = res.data
       })
+    },
+    goOrderDefail () {
+      const { order_id } = this.info
+      let path = ''
+      switch (this.info.jy_type) {
+        case '1':
+          path = `/order/refund-detail?type=1&id=${order_id}`
+          break
+        case '2':
+          path = `/order/refund-detail?type=2&id=${order_id}`
+          break
+        case '3':
+          if (this.info.order_type == 1) {
+            path = `/order/detail?id=${order_id}`
+          } else {
+            path = `/order/special-detail?id=${order_id}`
+          }
+          break
+      }
+      this.$router.push({
+        path
+      })
     }
   }
 }
@@ -111,6 +133,9 @@ export default {
   .clist-item + .clist-item {
     margin-top: 15px;
   }
+  .van-ellipsis {
+    flex: 1;
+  }
 }
 .money-box {
   display: flex;
@@ -132,6 +157,6 @@ export default {
 .divider-box {
   margin-top: 30px;
   padding-top: 30px;
-  border-top: 2px solid #F0F0F0;
+  border-top: 2px solid #f0f0f0;
 }
 </style>

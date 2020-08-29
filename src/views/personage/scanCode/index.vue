@@ -92,7 +92,7 @@ export default {
         const { url, code_id } = res.data
         this.collectCodeImg = url
         this.codeId = code_id
-        // this.pollingCollect()
+        this.pollingCollect()
       })
     },
     /* 轮询付款码当前状态 */
@@ -153,6 +153,8 @@ export default {
         } else {
           Dialog.alert({
             title: `获得${data.credits}幸福币`
+          }).then(() => {
+            this.getCollectCode()
           })
         }
       })
@@ -188,22 +190,16 @@ export default {
       }).then((res) => {
         const { check_status, is_pay, avatar, realname, mobile } = res.data
         if (check_status) {
-          if (is_pay === '0') {
-            this.$router.push({
-              name: 'happinessCoinPayment',
-              query: {
-                type: '1',
-                value: values[1],
-                avatar,
-                realname,
-                mobile
-              }
-            })
-          } else {
-            api.toast({
-              msg: '您已经支付过'
-            })
-          }
+          this.$router.push({
+            name: 'happinessCoinPayment',
+            query: {
+              type: '1',
+              value: values[1],
+              avatar,
+              realname,
+              mobile
+            }
+          })
         }
       })
     },

@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;height: 100%;">
-    <refreshList :list.sync="list" :load="getMessageList">
+    <refreshList ref="messageList" :list.sync="list" :load="getMessageList">
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)">

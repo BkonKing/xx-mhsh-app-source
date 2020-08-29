@@ -1,5 +1,5 @@
 <template>
-  <refreshList :key="Math.random()" :list.sync="list" :load="load" :immediate-check="false">
+  <refreshList ref="list" :list.sync="list" :load="load" :immediate-check="false">
     <template v-slot="{item}">
       <div class="transaction-box" @click="jump(item)">
         <div class="transaction-item">
@@ -64,6 +64,9 @@ export default {
     jump (item) {
       const url = `/pages/personage/transaction/details?id=${item.repairs_id}`
       this.$router.push(url)
+    },
+    reload () {
+      this.$refs.list.reload()
     }
   },
   watch: {

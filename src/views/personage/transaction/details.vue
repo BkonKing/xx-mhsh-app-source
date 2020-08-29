@@ -10,11 +10,20 @@
     ></van-nav-bar>
     <van-pull-refresh class="tf-main-container" v-model="isLoading" @refresh="getRepairInfo">
       <div class="user-info-box">
-        <user-info
-          :avatar="detailInfo.avatar"
-          :name="`${detailInfo.realname} ${detailInfo.mobile}`"
-          :time="detailInfo.fc_info"
-        ></user-info>
+        <user-info :avatar="detailInfo.avatar">
+          <template #left>
+            <div class="tf-space-around">
+              <div class="user-info--name">
+                {{detailInfo.realname}}
+                <span
+                  class="tf-text-blue"
+                  @click="callPhoneNumber(detailInfo.mobile)"
+                >{{detailInfo.mobile}}</span>
+              </div>
+              <div class="user-info-time">{{detailInfo.fc_info}}</div>
+            </div>
+          </template>
+        </user-info>
       </div>
       <div class="tf-padding">
         <div class="tf-card">
@@ -56,7 +65,7 @@
       </div>
     </van-pull-refresh>
     <div
-      v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || status < 3"
+      v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || sub_status < 5"
       class="operation-box"
     >
       <div class="operation-content">
@@ -266,12 +275,12 @@
             <span class="tf-text-grey">(请提前告知用户相关收费信息)</span>
           </div>
           <div class="tf-row-space-between">
-            <van-radio-group v-model="isCharge">
+            <van-radio-group v-model="isCharge" @change="negotiation_costs = ''">
               <van-radio name="1" checked-color="#EB5841">收费</van-radio>
               <van-radio name="0" checked-color="#EB5841">免费</van-radio>
             </van-radio-group>
             <div class="money-input">
-              <van-field v-model="negotiation_costs" label="预计" placeholder="钱">
+              <van-field v-if="isCharge == '1'" type="number" v-model="negotiation_costs" label="预计">
                 <template #button>元</template>
               </van-field>
             </div>
@@ -570,12 +579,17 @@ export default {
         },
         this.projectId
       ).then((res) => {
+        this.getRepairInfo()
         this.showAssign()
       })
     },
     /* 打开分派人员 */
     showAssign () {
       this.getDesigneeList()
+      this.departmentValue = ''
+      this.designee_uid = ''
+      this.limit_day = ''
+      this.limit_hours = ''
       this.assignShow = true
     },
     /* 获取事务处理人员列表 */
@@ -746,6 +760,13 @@ export default {
         Toast.success('结案图片上传成功')
       })
     },
+    /*  */
+    callPhoneNumber (phoneNumber) {
+      api.call({
+        type: 'tel_prompt',
+        number: phoneNumber
+      })
+    },
     showImage () {
       ImagePreview({
         images: [
@@ -765,6 +786,7 @@ export default {
         1: '处理',
         2: '分派',
         3: '接受任务',
+        4: '分派',
         6: '结案'
       }
       return text[value]
@@ -857,6 +879,8 @@ export default {
 .money-input {
   flex: 1;
   padding-left: 50px;
+  display: flex;
+  align-items: center;
   /deep/ .van-field {
     align-items: center;
     .van-field__label {

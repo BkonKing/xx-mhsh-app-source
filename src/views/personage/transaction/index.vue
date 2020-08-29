@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div ref="container" class="tf-bg tf-body">
     <van-nav-bar
       title="事务处理"
       :fixed="true"
@@ -12,46 +12,46 @@
       <div class="transaction-title">报事报修</div>
       <div class="transaction-underline"></div>
     </div>
-    <div class="tf-body-container">
-      <van-sticky offset-top="2.42666rem" @scroll="scrollSticky">
+    <div
+      class="transaction-tab-box"
+      :class="[{'tf-bg-white': isFixed}, {'flex-start': userInfo.role_dep != 1}]"
+    >
+      <template v-if="userInfo.role_dep == 1">
         <div
-          class="transaction-tab-box"
-          :class="[{'tf-bg-white': isFixed}, {'flex-start': userInfo.role_dep != 1}]"
-        >
-          <template v-if="userInfo.role_dep == 1">
-            <div
-              class="transaction-tab"
-              :class="{'transaction-tab--active': type === 1 }"
-              @click="type = 1"
-            >待处理({{list1.length}})</div>
-            <div
-              class="transaction-tab"
-              :class="{'transaction-tab--active': type === 2 }"
-              @click="type = 2"
-            >待分派({{list2.length}})</div>
-          </template>
-          <div
-            class="transaction-tab"
-            :class="{'transaction-tab--active': type === 3 }"
-            @click="type = 3"
-          >待结案({{list3.length}})</div>
-          <div
-            class="transaction-tab"
-            :class="{'transaction-tab--active': type === 4 }"
-            @click="type = 4"
-          >已结案({{list4.length}})</div>
-        </div>
-      </van-sticky>
-      <div class="transaction-list" :class="{'padding63': isFixed}">
+          class="transaction-tab"
+          :class="{'transaction-tab--active': type === 1 }"
+          @click="type = 1"
+        >待处理({{list1.length}})</div>
+        <div
+          class="transaction-tab"
+          :class="{'transaction-tab--active': type === 2 }"
+          @click="type = 2"
+        >待分派({{list2.length}})</div>
+      </template>
+      <div
+        class="transaction-tab"
+        :class="{'transaction-tab--active': type === 3 }"
+        @click="type = 3"
+      >待结案({{list3.length}})</div>
+      <div
+        class="transaction-tab"
+        :class="{'transaction-tab--active': type === 4 }"
+        @click="type = 4"
+      >已结案({{list4.length}})</div>
+    </div>
+    <div class="tf-body-container" @scroll.passive="scrollSticky">
+      <div class="transaction-list">
         <template v-if="userInfo.role_dep == 1">
           <list
             v-show="type === 1"
+            ref="list1"
             key="1"
             :data.sync="list1"
             :load="(params) => listLoad(params, 1)"
           ></list>
           <list
             v-show="type === 2"
+            ref="list2"
             key="2"
             :data.sync="list2"
             :load="(params) => listLoad(params, 2)"
@@ -59,12 +59,14 @@
         </template>
         <list
           v-show="type === 3"
+          ref="list3"
           key="3"
           :data.sync="list3"
           :load="(params) => listLoad(params, 3)"
         ></list>
         <list
           v-show="type === 4"
+          ref="list4"
           key="4"
           :data.sync="list4"
           :load="(params) => listLoad(params, 4)"
@@ -94,7 +96,9 @@ export default {
       list2: [],
       list3: [],
       list4: [],
-      isFixed: false
+      isFixed: false,
+      container: null,
+      backStatus: false
     }
   },
   computed: {
@@ -109,21 +113,44 @@ export default {
     this.getDbRepairList(3)
     this.getDbRepairList(4)
   },
+  mounted () {
+    this.container = this.$refs.container
+  },
+  activated () {
+    if (this.backStatus) {
+      this.$refs[`list${this.type}`].reload()
+    }
+  },
   methods: {
-    scrollSticky ({ isFixed, scrollTop }) {
-      this.isFixed = isFixed
+    scrollSticky ({ target }) {
+      this.isFixed = target.scrollTop > 0
     },
     listLoad (params, status) {
       params.status = status
       return getDbRepairList(params, this.userInfo.xm_project_id)
     },
     getDbRepairList (status) {
-      getDbRepairList({
-        status
-      }, this.userInfo.xm_project_id).then(res => {
+      getDbRepairList(
+        {
+          status
+        },
+        this.userInfo.xm_project_id
+      ).then((res) => {
         this[`list${status}`] = res.data
       })
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      vm.backStatus = from.name === 'transactionDetails'
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name === 'personage') {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
+    }
+    next()
   }
 }
 </script>
@@ -158,12 +185,13 @@ export default {
   padding: 30px;
 }
 .transaction-tab {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 155px;
   height: 66px;
-  line-height: 66px;
   border-radius: 33px;
   font-size: 24px;
-  text-align: center;
   color: @gray-7;
   border-width: 2px;
   border-style: solid;
@@ -175,8 +203,7 @@ export default {
   background-color: @red-dark;
 }
 .transaction-list {
-  flex: 1;
-  padding-bottom: 30px;
+  height: 100% !important;
 }
 .transaction-list-item--time {
   text-align: center;

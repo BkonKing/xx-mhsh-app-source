@@ -58,9 +58,9 @@ export default {
   },
   methods: {
     // 获取我的报事报修
-    getRepairList () {
+    getRepairList (params) {
       const len = this.repairList.length
-      const id = len ? this.repairList[len - 1].id : ''
+      const id = len && params.pages !== 1 ? this.repairList[len - 1].id : ''
       return getRepairList({
         repairId: id
       })

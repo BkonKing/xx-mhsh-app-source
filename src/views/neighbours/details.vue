@@ -55,11 +55,11 @@
           <div class="activity-content">
             <div class="tf-text tf-mb-base" v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
-            <div class="apply-box">
+            <div class="apply-box" v-if="info.is_join">
               <div class="apply-title">
                 报名人员
                 <span class="tf-text-grey">({{info.joins}}人)</span>
-                <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
+                <span class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
                 <template v-for="(item, i) in info.join_uids">

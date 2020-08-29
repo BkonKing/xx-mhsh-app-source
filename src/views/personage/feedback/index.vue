@@ -69,14 +69,18 @@ export default {
       items: [
         {
           value: 1,
-          name: '功能使用'
+          name: '功能异常'
         },
         {
           value: 2,
-          name: '产品建议'
+          name: '功能改进'
         },
         {
           value: 3,
+          name: '产品建议'
+        },
+        {
+          value: 4,
           name: '其他'
         }
       ],
