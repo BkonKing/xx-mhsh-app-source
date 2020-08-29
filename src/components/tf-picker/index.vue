@@ -1,6 +1,6 @@
 <template>
   <div class="tf-picker">
-    <div @click="showPicker = true">
+    <div style="width: 100%;" @click="showPicker = true">
       <slot :valueText="valueText" @click="showPicker = true"></slot>
     </div>
     <van-popup v-model="showPicker" round position="bottom" get-container="body">

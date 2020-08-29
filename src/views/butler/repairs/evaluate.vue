@@ -19,9 +19,8 @@
           rows="2"
           autosize
           type="textarea"
-          maxlength="300"
+          maxlength="200"
           placeholder="请输入"
-          show-word-limit
         />
       </div>
       <van-button type="primary" size="large" @click="submit">匿名提交</van-button>

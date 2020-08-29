@@ -6,7 +6,7 @@
       :border="false"
       placeholder
       left-arrow
-      @click-left="$router.go(-1)"
+      @click-left="goBack"
     >
       <template #right>
         <span class="tf-icon tf-icon-customerservice"></span>
@@ -123,7 +123,6 @@
             type="textarea"
             maxlength="300"
             placeholder="请输入"
-            show-word-limit
           />
         </div>
       </template>
@@ -240,7 +239,8 @@ export default {
         3: '一般，还需改善',
         4: '比较满意，仍可改善',
         5: '非常满意，无可挑剔'
-      }
+      },
+      goBackStatus: 0 // 0：从列表来 1：从新增来
     }
   },
   created () {
@@ -326,6 +326,8 @@ export default {
     toRefuse () {
       this.getNegotiationInfo(this.negotiation_id)
       this.getRefuseReasonList()
+      this.refuse_reason = 0
+      this.other_reason = ''
       this.refuseDialog = true
     },
     /* 获取拒绝协商原因 */
@@ -372,11 +374,7 @@ export default {
       caseOverAffirm({
         repair_id: this.repairId
       }).then((res) => {
-        Dialog.alert({
-          title: '您已确认结案成功，请对该此服务进行评价'
-        }).then((res) => {
-          this.goEvaluate()
-        })
+        this.goEvaluate()
       })
     },
     /* 跳转评价 */
@@ -401,6 +399,27 @@ export default {
       }).then((res) => {
         this.evaluateInfo = res.data || {}
       })
+    },
+    goBack () {
+      this.$router.go(-1)
+    }
+  },
+  beforeRouteEnter (to, from, next) {
+    if (from.name === 'repairsIndex') {
+      next(vm => {
+        vm.goBackStatus = 1
+      })
+    }
+    next()
+  },
+  beforeRouteLeave (to, from, next) {
+    if (this.goBackStatus && to.name !== 'repairsList') {
+      next({
+        name: 'repairsList',
+        replace: true
+      })
+    } else {
+      next()
     }
   }
 }
@@ -417,10 +436,18 @@ export default {
   padding-bottom: 30px;
 }
 
+/deep/ .van-pull-refresh {
+  overflow: auto;
+}
+
+/deep/ .van-button--small {
+  font-size: 30px;
+}
+
 .reason-text {
   font-size: 28px;
   line-height: 66px;
-  color: #8f8f94;
+  color: #222;
 }
 
 .operation-box {

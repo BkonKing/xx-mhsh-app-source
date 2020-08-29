@@ -35,7 +35,7 @@
                 size="small"
               >{{userInfo.position}}</van-tag>
             </div>
-            <div class="user-address">{{(currentProject && currentProject.fc_info) || '暂无绑定房间'}}</div>
+            <div class="user-address">{{(currentProject && currentProject.fc_info)}}</div>
           </div>
         </div>
       </div>

@@ -97,7 +97,7 @@
           <div
             v-if="sub_status == 10"
             class="tf-btn tf-btn-primary"
-            @click="imgUploadShow = true"
+            @click="imageFiles = []; imgUploadShow = true"
           >上传照片</div>
         </div>
       </template>
@@ -140,7 +140,6 @@
             type="textarea"
             maxlength="300"
             placeholder="请输入"
-            show-word-limit
           />
         </div>
       </template>
@@ -155,7 +154,7 @@
     >
       <template>
         <div class="tf-form-box">
-          <div class="tf-form-label">处理部门：</div>
+          <div class="tf-form-label required">处理部门：</div>
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
@@ -173,7 +172,7 @@
           </div>
         </div>
         <div class="tf-form-box">
-          <div class="tf-form-label">处理人员：</div>
+          <div class="tf-form-label required">处理人员：</div>
           <div class="tf-form-item">
             <tf-picker
               class="tf-form-item__input"
@@ -191,7 +190,7 @@
           </div>
         </div>
         <div class="tf-form-box">
-          <div class="tf-form-label">任务完成时限：</div>
+          <div class="tf-form-label required">任务完成时限：</div>
           <div class="time-limit-box">
             <tf-picker
               class="tf-form-item__input"
@@ -228,7 +227,7 @@
       @confirm="cancelSubmit"
     >
       <div class="tf-form-box">
-        <div class="tf-form-label">取消原因：</div>
+        <div class="tf-form-label required">取消原因：</div>
         <div class="tf-form-item">
           <tf-picker
             class="tf-form-item__input"
@@ -255,7 +254,6 @@
           type="textarea"
           maxlength="300"
           placeholder="请输入"
-          show-word-limit
         />
       </div>
     </tf-dialog>
@@ -268,7 +266,7 @@
       @confirm="negotiation"
     >
       <template>
-        <div class="plan-alert">任务完成时限：{{detailInfo.time_limit}}天</div>
+        <div class="plan-alert tf-mb-lg">任务完成时限：{{detailInfo.time_limit}}天</div>
         <div class="tf-form-box">
           <div class="tf-form-label">
             是否收费：
@@ -325,7 +323,6 @@
           type="textarea"
           maxlength="300"
           placeholder="请输入"
-          show-word-limit
         />
       </div>
     </tf-dialog>
@@ -367,7 +364,7 @@
               <span class="tf-text-grey">(24小时内)</span>
             </van-radio>
           </van-radio-group>
-          <tf-uploader class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
+          <tf-uploader v-if="upload_type == 1" class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
@@ -379,7 +376,6 @@
             type="textarea"
             maxlength="300"
             placeholder="请输入原因"
-            show-word-limit
           />
         </div>
       </template>
@@ -758,6 +754,7 @@ export default {
         this.projectId
       ).then((res) => {
         Toast.success('结案图片上传成功')
+        this.imgUploadShow = false
       })
     },
     /*  */
@@ -825,6 +822,7 @@ export default {
 }
 .tf-form-item__textarea {
   padding: 0;
+  height: auto;
   /deep/ .van-field__control {
     padding: 20px;
     background: @gray-2;
@@ -918,10 +916,16 @@ export default {
 }
 .upload-img-box {
   margin-top: 40px;
-  /deep/ .van-uploader__upload {
-    width: 113px;
-    height: 113px;
+  /deep/ .van-uploader__upload, /deep/ .van-uploader__preview {
+    width: 140px;
+    height: 140px;
   }
+}
+.tf-form-box {
+  margin-top: 0;
+}
+.tf-form-box + .tf-form-box {
+  margin-top: 40px;
 }
 .padding40 {
   padding: 40px 0;
@@ -938,10 +942,15 @@ export default {
     line-height: 1;
   }
 }
+.tf-form-item__input {
+  width: 100%;
+}
 .reason-text {
+  width: 100%;
   font-size: 28px;
   line-height: 66px;
-  color: #8f8f94;
+  color: #222;
+  @text-ellipsis();
 }
 .time-limit-box {
   display: flex;

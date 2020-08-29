@@ -156,9 +156,8 @@ export default {
           Dialog.alert({
             title: '提交成功'
           }).then(() => {
-            setTimeout(() => {
-              this.goList()
-            }, 1000)
+            this.repairId = res.data.repair_id
+            this.goRepairDetails()
           })
         } else {
           Toast.fail('提交失败')
