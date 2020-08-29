@@ -380,7 +380,6 @@ export default {
 		        pic: this.images,
 		      }).then(res => {
 		        if (res.success) {
-		        	this.$router.go(-2);
 		        	// Toast(res.message);
 		        	//跳转退款详情
 		        	this.$router.push({
