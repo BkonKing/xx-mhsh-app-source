@@ -593,6 +593,7 @@ export default {
         } else {
           arr.push(goods);
         }
+
         // 最后，把购物车数据，存放入缓存  
         try {
           // localStorage.setItem('cart', JSON.stringify(arr));

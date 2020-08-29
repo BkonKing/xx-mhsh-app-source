@@ -542,7 +542,7 @@ export default {
         this.$router.push('/order/list');
         break;
         case 12:
-        this.$router.push({
+        this.$router.replace({
           path: '/order/detail',
           query: {
             id: obj.id
@@ -550,7 +550,7 @@ export default {
         })
         break;
         case 13:
-        this.$router.push({
+        this.$router.replace({
           path: '/order/special-detail',
           query: {
             id: obj.id

@@ -362,6 +362,7 @@ export default {
     linkFunc (type,obj={}) {
     	switch (type){
     		case 5:
+    		this.clickGoods = true;
     		this.$router.push({
 	      	path: '/store/goods-detail',
 	      	query: {
@@ -410,7 +411,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name == 'settlement'){
+    if(!this.clickGoods && (to.name == 'goodsDetail')){
       this.$router.push('/order/list');
     }
     next();

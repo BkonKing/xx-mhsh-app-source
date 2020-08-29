@@ -119,39 +119,44 @@
 									<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
 										<img class="img-100" :src="val.special_thumb" />
 										<div class="special-tip">
-											<div>{{val.special_name}}</div>
-											<div>{{val.special_text}}</div>
+											<div class="p-nowrap">{{val.special_name}}</div>
+											<div class="p-nowrap">{{val.special_text}}</div>
 										</div>
+										<div class="special-tip-bg"></div>
 									</div>
 								</template>
 								<template v-else>
 									<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
 										<img class="img-100" :src="val.special_thumb" />
 										<div class="special-tip">
-											<div>{{val.special_name}}</div>
-											<div>{{val.special_text}}</div>
+											<div class="p-nowrap">{{val.special_name}}</div>
+											<div class="p-nowrap">{{val.special_text}}</div>
 										</div>
+										<div class="special-tip-bg"></div>
 									</div>
 									<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
 										<img class="img-100" :src="val.special_thumb" />
 										<div class="special-tip">
-											<div>{{val.special_name}}</div>
-											<div>{{val.special_text}}</div>
+											<div class="p-nowrap">{{val.special_name}}</div>
+											<div class="p-nowrap">{{val.special_text}}</div>
 										</div>
+										<div class="special-tip-bg"></div>
 									</div>
 									<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
 										<img class="img-100" :src="val.special_thumb" />
 										<div class="special-tip">
-											<div>{{val.special_name}}</div>
-											<div>{{val.special_text}}</div>
+											<div class="p-nowrap">{{val.special_name}}</div>
+											<div class="p-nowrap">{{val.special_text}}</div>
 										</div>
+										<div class="special-tip-bg"></div>
 									</div>
 									<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
 										<img class="img-100" :src="val.special_thumb" />
 										<div class="special-tip">
-											<div>{{val.special_name}}</div>
-											<div>{{val.special_text}}</div>
+											<div class="p-nowrap">{{val.special_name}}</div>
+											<div class="p-nowrap">{{val.special_text}}</div>
 										</div>
+										<div class="special-tip-bg"></div>
 									</div>
 								</template>
 							</div>
@@ -302,14 +307,16 @@ export default {
         	this.flag = true;
         	if(this.isRefresh){
         		this.isRefresh = false;
-        		// console.log(JSON.stringify(this.navList))
-        		// console.log(JSON.stringify(res.data.category_list))
-        		if(JSON.stringify(this.navList)!=JSON.stringify(res.data.category_list)){
-        			this.navList = [];
-        			this.navList2 = [];
-					  	this.category_id = '';
-					  	this.activeIndex = 0;
-					  	this.activeIndex2 = 0;
+        		var navArr = this.navList.concat();
+        		navArr.splice(0,1);
+        		if(navArr.length && res.data.category_list.length){
+        			if(JSON.stringify(navArr)!=JSON.stringify(res.data.category_list)){
+	        			this.navList = [];
+	        			this.navList2 = [];
+						  	this.category_id = '';
+						  	this.activeIndex = 0;
+						  	this.activeIndex2 = 0;
+	        		}
         		}
         	}
           if(this.navList.length == 0){
@@ -333,6 +340,26 @@ export default {
         }
       })
     },
+    compare(origin, target) {
+		  if (typeof target !== "object") {
+		    //target不是对象/数组
+		    return origin === target; //直接返回全等的比较结果
+		  }
+		  if (typeof origin !== "object") {
+		    //origin不是对象/数组
+		    return false; //直接返回false
+		  }
+		  for (let key of Object.keys(target)) {
+		    //遍历target的所有自身属性的key
+		    if (!this.compare(origin[key], target[key])) {
+		      //递归比较key对应的value，
+		      //value不等，则两对象不等，结束循环，退出函数，返回false
+		      return false;
+		    }
+		  }
+		  //遍历结束，所有value都深度比较相等，则两对象相等
+		  return true;
+		},
     goLink(url){
     	this.$router.push(url);
     },
@@ -585,7 +612,8 @@ export default {
 	height: 162px;
 	margin: 0 auto;
 }
-.life-arrow-right {
+.life-arrow-right,
+.life-arrow-right img {
 	width: 15px;
 	height: 26px;
 }
@@ -757,6 +785,8 @@ export default {
 	/*padding-bottom: 20px;*/
 	break-inside: avoid;
 	margin-bottom: 20px;
+	border-radius: 10px;
+	overflow: hidden;
 }
 .special-list > div img {
 	border-radius: 10px;
@@ -769,11 +799,21 @@ export default {
 	height: 345px;
 	overflow: hidden;
 }
+.special-tip-bg {
+	position: absolute;;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 120px;
+	background-image: linear-gradient(to bottom, rgb(129, 129, 129), transparent);
+}
 .special-tip {
 	position: absolute;
 	top: 20px;
 	left: 20px;
+	right: 10px;
 	color: #fff;
+	z-index: 10;
 }
 .special-tip div:nth-child(1) {
 	font-size: 30px;
