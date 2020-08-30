@@ -135,10 +135,10 @@ export default {
       })
     },
     listInit(){
+      this.listData = [];
       this.page = 1;
       this.loading = false;
       this.finished = false;
-      this.listData = [];
       if(!this.flag){
         this.getGoodsData();
       }
@@ -155,6 +155,13 @@ export default {
         break;
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'life'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    next();
   }
 }
 </script>

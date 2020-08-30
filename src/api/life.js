@@ -169,6 +169,10 @@ export function cancelBarterApply (params) {
   return request.post('/life/my_order/cancelbarterBarter', params)
 }
 
+//售后(售后选择)
+export function getApplyType (params) {
+  return request.post('/life/my_order/sale_order_type', params)
+}
 //申请换货
 export function getApplyBarter (params) {
   return request.post('/life/my_order/logistice_barter_sale', params)

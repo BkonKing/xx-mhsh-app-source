@@ -94,7 +94,7 @@
 								
 							</div>
 							<div class="order-action-session">
-								<div class="order-action-text">
+								<div class="order-action-text color-8f8f94">
 									<template v-if="item.is_returnfund==0 || item.is_return==0">
 										{{item.is_returnfund==0 ? '不支持退换' : '不支持退货'}}
 										<div class="order-action-btn">

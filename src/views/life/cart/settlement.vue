@@ -76,10 +76,11 @@
       </div>
       <div v-if="order_type==0&&settlementInfo.z_total_credits!=0 || (order_type==1 || order_type==2)&&settlementInfo.pay_credits!=0" @click="selectFunc" class="common-item">
         <div class="common-item-left">
-          <div :class="[is_credits ? 'cur' : '', 'checkbox-xfb flex-center']"></div>
+          
           <div v-if="order_type==0" class="color-222 font-28">可用{{settlementInfo.z_total_credits/10}}幸福币抵扣￥{{settlementInfo.z_total_credits/100}}</div>
           <div v-else-if="order_type==1 || order_type==2" class="color-222 font-28">可用{{settlementInfo.pay_credits/10}}幸福币抵扣￥{{settlementInfo.pay_credits/100}}</div>
         </div>
+        <div :class="[is_credits ? 'cur' : '', 'checkbox-xfb flex-center']"></div>
       </div>
     </div>
 
@@ -701,7 +702,6 @@ input.order-remarks-text {
   width: 24px;
   height: 24px;
   border: 1px solid #eb5841;
-  margin-right: 10px;
 }
 .checkbox-xfb.cur {
   background: url('../../../assets/img/tick3.png') no-repeat center center/100% 100%;

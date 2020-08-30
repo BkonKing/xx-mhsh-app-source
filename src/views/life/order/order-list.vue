@@ -28,7 +28,7 @@
 						<div class="order-no">订单号：{{item.order_numb}}</div>
 						<div class="order-status">{{item.order_status_name}}<text class="font-28 color-eb5841 text-right"></text></div>
 					</div>
-					<div v-for="(goods, key) in item.order_goods_specs_list" class="order-goods-info">
+					<div v-for="(goods, key) in item.order_goods_specs_list" :class="[key > 4 ? 'toggle-up' : '', item.is_toggle ? 'toggle-down' : '', 'order-goods-info']">
 						<div class="order-pic-block">
 							<img class="img-100" mode="aspectFill" :src="goods.specs_img"/>
 						</div>
@@ -51,8 +51,8 @@
 							</div>
 						</div>
 					</div>
-					<div v-show="item.order_goods_specs_list.length > 5" class="toggle-btn">111
-						<img src="" />
+					<div @click.stop="toggle(index)" v-show="item.order_goods_specs_list.length > 5" :class="[item.is_toggle ? 'btn-up' : '', 'toggle-btn']">
+						<img src="@/assets/img/icon_25.png" />
 					</div>
 					<div class="order-footer">
 						<div class="order-total">
@@ -285,6 +285,10 @@ export default {
       this.closeSwal(0);
       console.log(this.clickIndex);
       this.cancelOrder(this.clickIndex,this.clickId);
+    },
+    //列表商品显示隐藏
+    toggle (index) {
+      this.listData[index].is_toggle = this.listData[index].is_toggle ? false : true;
     },
     linkFunc (type,obj={}) {
     	switch (type){

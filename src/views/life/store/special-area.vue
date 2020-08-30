@@ -1,16 +1,8 @@
 <template>
 	<div class="app-body">
-    <div class="area-header">
+    <div class="area-header" :style="{backgroundImage: 'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'}">
       <div class="order-bar bar-nobg">
         <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
-        <!-- <van-nav-bar
-        title=""
-        fixed
-        :border="false"
-        placeholder
-        left-arrow
-        @click-left="$router.go(-1)"
-      ></van-nav-bar> -->
       </div>
       <div class="header-session">
         <div class="area-tit">{{infoData.special_name}}</div>
@@ -59,7 +51,8 @@ export default {
       pageSize: 10,  //分页条数
       isEmpty: false, //是否为空
       loading: false,
-      finished: true
+      finished: true,
+      bgImg: require("@/assets/img/area_01.png")
     }
   },
   created () {
@@ -116,8 +109,10 @@ export default {
 }
 
 .area-header {
+  background-position: center top;
+  background-size: 100% 100%;
   height: 381px;
-  background: url('../../../assets/img/area_01.png') center top /100% 100%;
+  /*background: url('../../../assets/img/area_01.png') center top /100% 100%;*/
   position: relative;
   z-index: 2;
   position: relative;

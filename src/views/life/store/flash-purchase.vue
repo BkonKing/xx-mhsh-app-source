@@ -342,16 +342,28 @@ export default {
         ollage_id: this.ollage_id
       }).then(res => {
         if (res.success) {
+          this.flag = true;
           this.listData = this.page == 1 ? res.data.list_data : this.listData.concat(res.data.list_data);
           this.isEmpty = this.page == 1 && res.data.list_data.length ==0 ? true : false;
           if(res.data.list_data.length < res.pageSize){
             this.finished = true;
+            this.flag = true;
           }else {
             this.page = this.page+1;
+            this.flag = false;
           }
           this.loading = false;
         }
       })
+    },
+    listInit(){
+      this.page = 1;
+      this.loading = false;
+      this.finished = false;
+      this.listData = [];
+      if(!this.flag){
+        this.getGoodsData();
+      }
     },
     //倒计时开始
     start() {
@@ -371,9 +383,7 @@ export default {
       this.tapIndex = index;
       this.tapStatus = this.navList[index].status;
       this.ollage_id = this.navList[index].id;
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
+      this.listInit();
       let newTime = parseInt(new Date().getTime()/1000);
       let startTime = this.navList[index].start_time;
       if(newTime >=startTime && this.tapStatus == 3){
@@ -627,6 +637,7 @@ export default {
 .flash-goods-pic {
   width: 230px;
   height: 230px;
+  background-color: #f4f4f4;
 }
 .flash-goods-info {
   width: 398px;

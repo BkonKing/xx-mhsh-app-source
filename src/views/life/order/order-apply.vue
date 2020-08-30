@@ -13,7 +13,7 @@
 		<div class="apply-tit">请选择退换</div>
 		<div class="block-session">
 			<div class="common-list">
-				<div class="common-item" @click="linkFunc(15,{id:2})">
+				<div v-if="infoData.is_barter" class="common-item" @click="linkFunc(15,{id:2})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要换货</div>
 						<div class="font-24 color-8f8f94">自行寄回退货商品</div>
@@ -22,7 +22,7 @@
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
 				</div>
-				<div class="common-item" @click="linkFunc(17,{id:3,type:2})">
+				<div v-if="infoData.is_returnfund" class="common-item" @click="linkFunc(17,{id:3,type:2})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要退货退款</div>
 						<div class="font-24 color-8f8f94">自行寄回退货商品</div>
@@ -31,7 +31,7 @@
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
 				</div>
-				<div class="common-item" @click="linkFunc(17,{id:3,type:1})">
+				<div v-if="infoData.is_refund" class="common-item" @click="linkFunc(17,{id:3,type:1})">
 					<div class="item-left flex-column-center">
 						<div class="font-30 color-222">我要退款</div>
 						<div class="font-24 color-8f8f94">无需退货</div>
@@ -47,6 +47,7 @@
 
 <script>
 import { NavBar } from 'vant'
+import { getApplyType} from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -55,13 +56,24 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       id: '',
+      infoData: ''
     }
   },
   created(){
     this.order_id = this.$route.query.id;
     this.logistice_id = this.$route.query.logistice_id;
+    this.getData();
   },
   methods: {
+  	getData () {
+      getApplyType({
+        logistice_id: this.logistice_id
+      }).then(res => {
+        if (res.success) {
+        	this.infoData = res.data;
+        }
+      })
+    },
     linkFunc (type,obj={}) {
     	switch (type){
     		case 15:

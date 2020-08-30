@@ -187,6 +187,22 @@
 .toggle-btn {
 	height: 66px;
 	margin-top: -30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.toggle-btn.btn-up img {
+	transform: rotate(180deg);
+}
+.toggle-btn img {
+	width: 22px;
+	height: 13px;
+}
+.toggle-up {
+	display: none;
+}
+.toggle-up.toggle-down {
+	display: flex;
 }
 
 

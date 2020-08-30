@@ -25,9 +25,9 @@
 	      <div v-else class="order-status-tip">{{orderInfo.order_status_text_name}}</div>
 			</div>
 			<div class="cont-session goods-session">
-				<div v-for="(item, index) in goodsList" @click.stop="linkFunc(5,{id: item.goods_id})" class="order-goods-info">
+				<div v-for="(item, index) in goodsList" @click.stop="linkFunc(5,{id: item.goods_id})" :class="[index > 4 ? 'toggle-up' : '', is_toggle ? 'toggle-down' : '', 'order-goods-info']">
 					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
+						<img class="img-100" mode="aspectFill" :src="item.specs_img" />
 					</div>
 					<div class="order-info">
 						<div class="order-name-price">
@@ -39,7 +39,7 @@
 							<div v-if="item.y_pay_price && item.y_pay_price!='0'" class="order-num">￥{{item.y_pay_price/100}}</div>
 						</div>
 						<div class="order-action-session">
-							<div @click.stop="openExplainSwal" class="order-action-text">
+							<div @click.stop="openExplainSwal" class="order-action-text color-8f8f94">
 								<template v-if="item.is_returnfund==0 || item.is_return==0">
 									{{item.is_returnfund==0 ? '不支持退换' : '不支持退货'}}
 									<div class="order-action-btn">
@@ -60,6 +60,9 @@
 						<div v-if="item.is_returnfund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 2})" class="order-border-btn" hover-class="none">退款详情</div>
 					</div>
 				</div>
+        <div @click.stop="toggle()" v-show="goodsList.length > 5" :class="[is_toggle ? 'btn-up' : '', 'toggle-btn']">
+          <img src="@/assets/img/icon_25.png" />
+        </div>
 				<div class="detail-price-list">
 					<div class="detail-price-item">
 						<div>商品总价</div>
@@ -231,6 +234,7 @@ export default {
     	showPaySwal: false,   //支付方式弹窗
       payMoney: 0,          //支付金额
       downTime: 0,          //支付结束时间
+      is_toggle: false
     }
   },
   mounted(){
@@ -350,6 +354,10 @@ export default {
 	        }
 	      })
     	}
+    },
+    //列表商品显示隐藏
+    toggle (index) {
+      this.is_toggle = !this.is_toggle;
     },
   	//倒计时开始
     start() {

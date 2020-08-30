@@ -39,7 +39,7 @@
 							<div v-if="item.y_pay_price && item.y_pay_price!='0'" class="order-num">￥{{item.y_pay_price/100}}</div>
 						</div>
 						<div class="order-action-session">
-							<div @click.stop="openExplainSwal" class="order-action-text">
+							<div @click.stop="openExplainSwal" class="order-action-text color-8f8f94">
 								<template v-if="item.is_returnfund==1 || item.is_return==1">
 									{{item.is_returnfund==1 ? '不支持退换' : '不支持退货'}}
 									<div class="order-action-btn">
