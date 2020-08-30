@@ -2,68 +2,50 @@
   <div class="page">
     <img class="logo" src="@/assets/imgs/login_logo.png" />
     <img class="logo-text" src="@/assets/imgs/login_logo_text.png" />
-    <template v-if="isExempt">
-      <div class="form">
-        <div class="form-body">
-          <div class="form-input form-input-phoneNum">{{phoneNum}}</div>
-        </div>
+    <div class="form">
+      <div class="form-body">
+        <Field v-model="mobile" class="form-input" maxlength="11" type="tel" placeholder="请输入您的手机号"></Field>
+        <Field
+          v-if="login_type === 1"
+          v-model="yzm"
+          key="code"
+          class="form-input"
+          maxlength="11"
+          type="digit"
+          placeholder="验证码"
+        >
+          <template #button>
+            <div class="tf-text-white" v-if="codeStatus">{{countDown}}s</div>
+            <van-button v-else class="query-btn" @click="verifCode">获取</van-button>
+          </template>
+        </Field>
+        <Field
+          v-if="login_type === 2"
+          v-model="pwd"
+          class="form-input"
+          key="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="请输入您的密码"
+        >
+          <template #button>
+            <span
+              class="tf-icon tf-text-white"
+              :class="[showPassword ? 'tf-icon-kejian' : 'tf-icon-bukejian']"
+              @click="changePassword"
+            ></span>
+          </template>
+        </Field>
       </div>
-      <span class="login-text" @click="openActivity">本机号码一键登录</span>
-      <span class="login-method__text" @click="isExempt = false">其他登录</span>
-    </template>
-    <template v-else>
-      <div class="form">
-        <div class="form-body">
-          <Field
-            v-model="mobile"
-            class="form-input"
-            maxlength="11"
-            type="tel"
-            placeholder="请输入您的手机号"
-          ></Field>
-          <Field
-            v-if="login_type === 1"
-            v-model="yzm"
-            key="code"
-            class="form-input"
-            maxlength="11"
-            type="digit"
-            placeholder="验证码"
-          >
-            <template #button>
-              <div class="tf-text-white" v-if="codeStatus">{{countDown}}s</div>
-              <van-button v-else class="query-btn" @click="verifCode">获取</van-button>
-            </template>
-          </Field>
-          <Field
-            v-if="login_type === 2"
-            v-model="pwd"
-            class="form-input"
-            key="password"
-            :type="showPassword ? 'text' : 'password'"
-            placeholder="请输入您的密码"
-          >
-            <template #button>
-              <span
-                class="tf-icon tf-text-white"
-                :class="[showPassword ? 'tf-icon-kejian' : 'tf-icon-bukejian']"
-                @click="changePassword"
-              ></span>
-            </template>
-          </Field>
-        </div>
-      </div>
-      <span class="login-text" @click="login">登 录</span>
-      <span v-if="login_type === 1" class="login-method__text" @click="login_type = 2">密码登录</span>
-      <span v-else-if="login_type === 2" class="login-method__text" @click="login_type = 1">验证码登录</span>
-    </template>
+    </div>
+    <span class="login-text" @click="login">登 录</span>
+    <span v-if="login_type === 1" class="login-method__text" @click="login_type = 2">密码登录</span>
+    <span v-else-if="login_type === 2" class="login-method__text" @click="login_type = 1">验证码登录</span>
     <div class="agreement" @click="changeRememberPasswrod">
       <div class="uni-checkbox-input">
         <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
       </div>
       <span class="agreement-text" style="color: #fff;">
-        登录即表示您同意
-        <router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
+        登录即表示您同意<router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
       </span>
     </div>
   </div>
@@ -83,21 +65,13 @@ export default {
       mobile: undefined,
       yzm: undefined,
       pwd: undefined,
-      isExempt: 1, // 1: 一键登录 2：账号登录
       login_type: 1, // 1:验证码登录 2：密码登陆
       agree: true, // 同意协议
       showPassword: false,
       codeStatus: false,
       countDown: 59,
-      timer: null,
-      shanyan: null,
-      phoneNum: '', // 一键登录手机号
-      platform: '' // 系统
+      timer: null
     }
-  },
-  created () {
-    this.platform = api.systemType
-    this.oneKeyInit()
   },
   methods: {
     changeRememberPasswrod () {
@@ -106,341 +80,6 @@ export default {
     changePassword () {
       this.showPassword = !this.showPassword
     },
-    /* 一键登录 - 初始化 */
-    oneKeyInit () {
-      this.shanyan = api.require('clSDKShanYanSDKModule')
-      // ios appid:Yf4r8DYF appkey:bWrcMriC
-      // android appid:Co1XaiAR appkey:YHiNa8xN
-      let appid
-      if (this.platform == 'android') {
-        appid = 'Co1XaiAR'
-      } else if (this.platform == 'ios') {
-        appid = 'Yf4r8DYF'
-      }
-
-      this.shanyan.init(
-        {
-          appid: appid
-        },
-        (ret, err) => {
-          if (this.platform == 'android') {
-            this.preLogin()
-            api.alert({
-              title: JSON.stringify(ret)
-            })
-          } else if (this.platform == 'ios') {
-            // iOS回调
-            if (err != null) {
-              // iOS初始化失败
-              this.isExempt = false
-            } else {
-              // iOS初始化成功
-              this.preLogin()
-            }
-            api.alert({
-              title: JSON.stringify(ret)
-            })
-          }
-          console.log(
-            'callback---button--shanyanSdkInit========' + JSON.stringify(ret)
-          )
-        }
-      )
-    },
-    /* 一键登录 - 获取预号码 */
-    preLogin () {
-      if (this.platform == 'android') {
-        // 安卓预取号
-        this.shanyan.preLogin((ret, err) => {
-          api.alert({
-            title: JSON.stringify(ret)
-          })
-        })
-      } else if (this.platform == 'ios') {
-        // iOS预取号
-        this.shanyan.preGetPhonenumber((ret, err) => {
-          if (err != null) {
-            // iOS预取号失败
-          } else {
-            // iOS预取号成功
-            this.phoneNum = ret.data.number
-          }
-        })
-      }
-    },
-    /* 拉起授权页 */
-    openActivity () {
-      api.showProgress()
-      setTimeout(function () {
-        api.hideProgress()
-      }, 5000)
-      if (this.platform == 'android') {
-        // Android 全屏模式
-        var param = {
-          isFinish: false
-        }
-        this.shanyan.openActivity(param, function (ret, err) {
-          api.hideProgress()
-
-          if (ret.type == 1) {
-            // ret.type：1 调起授权页成功，后续回调
-            this.shanyan.finishAuthActivity()
-            if (ret.code == 1000) {
-              // 获取Token成功
-              api.alert({
-                title: 'SDK获取Token成功',
-                msg: JSON.stringify(ret.result)
-              })
-            } else {
-              // 获取Token失败
-            }
-          } else {
-            // ret.type：0 拉授权页的回调
-          }
-
-          console.log(JSON.stringify(ret))
-        })
-      } else if (this.platform == 'ios') {
-        // 一键登录
-        // iOS 弹窗模式
-        const screenWidth_Portrait = api.winWidth // 竖屏宽
-        const screenHeight_Portrait = api.winHeight // 竖屏宽
-        const screenWidth_Landscape = api.winHeight // 横屏宽(即竖屏高)
-        const screenHeight_Landscape = api.winWidth // 横屏高(即竖屏宽)
-
-        var screenScale = screenWidth_Portrait / 375.0 // 相对iphone6屏幕
-        if (screenScale > 1) {
-          screenScale = 1 // 大屏的无需放大
-        }
-
-        // 竖屏
-        // 窗口中心
-        const clAuthWindowOrientationCenterX_Portrait =
-          screenWidth_Portrait * 0.5
-        const clAuthWindowOrientationCenterY_Portrait =
-          screenHeight_Portrait * 0.5
-
-        // 窗口宽高
-        const clAuthWindowOrientationWidth_Portrait =
-          screenWidth_Portrait * 0.8
-        const clAuthWindowOrientationHeight_Portrait =
-          clAuthWindowOrientationWidth_Portrait * 0.8
-
-        const clLayoutLogoTop_Portrait = screenScale * 25
-        const clLayoutLogoWidth_Portrait = 60 * screenScale
-        const clLayoutLogoHeight_Portrait = 60 * screenScale
-        const clLayoutLogoCenterX_Portrait = 0
-
-        const clLayoutPhoneCenterY_Portrait = -20 * screenScale
-        const clLayoutPhoneLeft_Portrait = 50 * screenScale
-        const clLayoutPhoneRight_Portrait = -50 * screenScale
-        const clLayoutPhoneHeight_Portrait = 20 * screenScale
-
-        const clLayoutLoginBtnCenterY_Portrait =
-          clLayoutPhoneCenterY_Portrait +
-          clLayoutPhoneHeight_Portrait * 0.5 * screenScale +
-          20 * screenScale +
-          15 * screenScale
-        const clLayoutLoginBtnHeight_Portrait = 30 * screenScale
-        const clLayoutLoginBtnLeft_Portrait = 70 * screenScale
-        const clLayoutLoginBtnRight_Portrait = -70 * screenScale
-
-        const clLayoutAppPrivacyLeft_Portrait = 40 * screenScale
-        const clLayoutAppPrivacyRight_Portrait = -40 * screenScale
-        const clLayoutAppPrivacyBottom_Portrait = 0 * screenScale
-        const clLayoutAppPrivacyHeight_Portrait = 45 * screenScale
-
-        const clLayoutSloganLeft_Portrait = 0
-        const clLayoutSloganRight_Portrait = 0
-        const clLayoutSloganHeight_Portrait = 15 * screenScale
-        const clLayoutSloganBottom_Portrait =
-          clLayoutAppPrivacyBottom_Portrait - clLayoutAppPrivacyHeight_Portrait
-
-        // 横屏
-        // 窗口中心
-        const clAuthWindowOrientationCenterX_Landscape =
-          screenWidth_Landscape * 0.5
-        const clAuthWindowOrientationCenterY_Landscape =
-          screenHeight_Landscape * 0.5
-
-        // 窗口宽高
-        const clAuthWindowOrientationWidth_Landscape =
-          screenWidth_Portrait * 0.8 // 窗口宽度为竖屏宽度的0.8;
-        const clAuthWindowOrientationHeight_Landscape =
-          clAuthWindowOrientationWidth_Landscape * 0.8 // 窗口高度为窗口宽度的0.8
-
-        const clLayoutLogoWidth_Landscape = 60 * screenScale
-        const clLayoutLogoHeight_Landscape = 60 * screenScale
-        const clLayoutLogoCenterX_Landscape = 0
-        const clLayoutLogoTop_Landscape = 25 * screenScale
-
-        const clLayoutPhoneCenterY_Landscape = -20 * screenScale
-        const clLayoutPhoneLeft_Landscape = 50 * screenScale
-        const clLayoutPhoneRight_Landscape = -50 * screenScale
-        const clLayoutPhoneHeight_Landscape = 20 * screenScale
-
-        const clLayoutLoginBtnCenterY_Landscape =
-          clLayoutPhoneCenterY_Landscape +
-          clLayoutPhoneHeight_Landscape * 0.5 * screenScale +
-          20 * screenScale +
-          15 * screenScale
-        const clLayoutLoginBtnHeight_Landscape = 30 * screenScale
-        const clLayoutLoginBtnLeft_Landscape = 70 * screenScale
-        const clLayoutLoginBtnRight_Landscape = -70 * screenScale
-
-        const clLayoutAppPrivacyLeft_Landscape = 40 * screenScale
-        const clLayoutAppPrivacyRight_Landscape = -40 * screenScale
-        const clLayoutAppPrivacyBottom_Landscape = 0 * screenScale
-        const clLayoutAppPrivacyHeight_Landscape = 45 * screenScale
-
-        const clLayoutSloganLeft_Landscape = 0
-        const clLayoutSloganRight_Landscape = 0
-        const clLayoutSloganHeight_Landscape = 15 * screenScale
-        const clLayoutSloganBottom_Landscape =
-          clLayoutAppPrivacyBottom_Landscape -
-          clLayoutAppPrivacyHeight_Landscape
-
-        this.ios_uiConfigure = {
-          shouldAutorotate: false, // 自动旋转
-          clNavigationBackgroundClear: true, // 导航栏透明
-          clNavigationBackBtnImage: 'image/shanyanImg/close-white.png', // 返回按钮图片
-          clNavBackBtnAlimentRight: true, // 返回按钮居右
-
-          clLoginBtnText: '本机号码一键登录', // 一键登录按钮文字
-          clLoginBtnTextColor: [1, 1, 1, 1.0], // rgba
-          clLoginBtnBgColor: [235, 88, 65, 1.0], // rgba
-          clLoginBtnTextFont: 15 * screenScale,
-          clLoginBtnCornerRadius: 10,
-          clLoginBtnBorderWidth: 0.5,
-          clLoginBtnBorderColor: [235, 88, 65, 1.0], // rgba
-
-          clPhoneNumberFont: 26.0 * screenScale,
-
-          clAuthTypeUseWindow: true,
-          clAuthWindowCornerRadius: 10,
-
-          clAppPrivacyColor: [[34, 34, 34, 1.0]], // 2 item,commomTextColor and appPrivacyTextColor
-          clAppPrivacyTextFont: 11 * screenScale,
-          clAppPrivacyTextAlignment: 0, // 0: center 1: left 2: right
-
-          clCheckBoxVerticalAlignmentToAppPrivacyCenterY: true,
-          clCheckBoxSize: [30 * screenScale, 30 * screenScale], // 2 item, width and height
-          clCheckBoxImageEdgeInsets: [
-            2 * screenScale,
-            10 * screenScale,
-            13 * screenScale,
-            5 * screenScale
-          ], // 4 item, top left bottom right
-          clCheckBoxUncheckedImage: 'static/img/checkBoxNor.png',
-          clCheckBoxCheckedImage: 'static/img/checkBoxSEL.png',
-
-          clLoadingSize: [50, 50], // 2 item, width and height
-          clLoadingTintColor: [0.2, 0.8, 0.2, 1],
-          clLoadingBackgroundColor: [1, 1, 1, 1],
-          clLoadingCornerRadius: 5,
-
-          // 竖屏布局对象
-          clOrientationLayOutPortrait: {
-            // 窗口
-            clAuthWindowOrientationWidth: clAuthWindowOrientationWidth_Portrait,
-            clAuthWindowOrientationHeight: clAuthWindowOrientationHeight_Portrait,
-
-            clAuthWindowOrientationCenterX: clAuthWindowOrientationCenterX_Portrait,
-            clAuthWindowOrientationCenterY: clAuthWindowOrientationCenterY_Portrait,
-
-            // 控件
-            clLayoutLogoWidth: clLayoutLogoWidth_Portrait,
-            clLayoutLogoHeight: clLayoutLogoHeight_Portrait,
-            clLayoutLogoCenterX: clLayoutLogoCenterX_Portrait,
-            clLayoutLogoTop: clLayoutLogoTop_Portrait,
-
-            clLayoutPhoneCenterY: clLayoutPhoneCenterY_Portrait,
-            clLayoutPhoneHeight: clLayoutPhoneHeight_Portrait,
-            clLayoutPhoneLeft: clLayoutPhoneLeft_Portrait,
-            clLayoutPhoneRight: clLayoutPhoneRight_Portrait,
-
-            clLayoutLoginBtnCenterY: clLayoutLoginBtnCenterY_Portrait,
-            clLayoutLoginBtnHeight: clLayoutLoginBtnHeight_Portrait,
-            clLayoutLoginBtnLeft: clLayoutLoginBtnLeft_Portrait,
-            clLayoutLoginBtnRight: clLayoutLoginBtnRight_Portrait,
-
-            clLayoutAppPrivacyLeft: clLayoutAppPrivacyLeft_Portrait,
-            clLayoutAppPrivacyRight: clLayoutAppPrivacyRight_Portrait,
-            clLayoutAppPrivacyBottom: clLayoutAppPrivacyBottom_Portrait,
-            clLayoutAppPrivacyHeight: clLayoutAppPrivacyHeight_Portrait,
-
-            clLayoutSloganLeft: clLayoutSloganLeft_Portrait,
-            clLayoutSloganRight: clLayoutSloganRight_Portrait,
-            clLayoutSloganHeight: clLayoutSloganHeight_Portrait,
-            clLayoutSloganBottom: clLayoutSloganBottom_Portrait
-          }
-        }
-
-        // 先设置SDK回调
-        this.shanyan.openLoginAuthListener(
-          {},
-          // openLoginAuthListener:调起授权页回调
-          function (ret, err) {
-            api.hideProgress()
-
-            if (err != null) {
-              // 调起授权页 失败
-            } else {
-              // 调起授权页 成功
-            }
-
-            api.toast({
-              msg: JSON.stringify(ret),
-              location: 'middle'
-            })
-
-            console.log(JSON.stringify(ret))
-          }
-        )
-        this.shanyan.oneKeyLoginListener(
-          {},
-          // oneKeyLoginListener:调起授权页成功，后续回调
-          function (ret, err) {
-            api.hideProgress()
-
-            if (err != null) {
-              if (err.errorCode == 1011) {
-                // 点了返回,自动授权页关闭
-                // 提示：错误无需提示给用户，可以在用户无感知的状态下直接切换登录方式
-                // 用户取消登录（点返回）
-                // 处理建议：如无特殊需求可不做处理，仅作为交互状态回调，此时已经回到当前用户自己的页面
-                // 点击sdk自带的返回，无论是否设置手动销毁，授权页面都会强制关闭
-              } else {
-                // 处理建议：其他错误代码表示闪验通道无法继续，可以统一走开发者自己的其他登录方式，也可以对不同的错误单独处理
-                // 关闭授权页
-                this.shanyan.finishAuthControllerCompletion()
-              }
-            } else {
-              // SDK获取Token成功
-              api.alert({
-                title: 'SDK获取Token成功',
-                msg: JSON.stringify(ret.data.token)
-              })
-
-              // 此处根据token调用户后台接口获取手机号，获取成功或失败后再调shanYanSDKModule.finishAuthControllerCompletion()关闭页面
-              // //关闭授权页
-              this.shanyan.finishAuthControllerCompletion()
-            }
-
-            api.toast({
-              msg: JSON.stringify(ret),
-              location: 'middle'
-            })
-
-            console.log(JSON.stringify(ret))
-          }
-        )
-        // 调起授权页
-        this.shanyan.quickAuthLoginWithConfigure(this.ios_uiConfigure)
-      }
-    },
-    /* 一键登录 */
-    oneKeyLogin () {},
     /* 登录 */
     login () {
       if (!this.agree) {
@@ -579,15 +218,6 @@ export default {
   /deep/ .van-field__control {
     color: #fff;
   }
-}
-.form-input-phoneNum {
-  height: 200px;
-  font-size: 52px;
-  line-height: 200px;
-  text-align: center;
-  color: #fff;
-  padding: 0;
-  margin-top: 80px;
 }
 .phone-input {
   flex: 1;

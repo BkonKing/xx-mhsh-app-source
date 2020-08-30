@@ -518,7 +518,7 @@ export default {
   z-index: 1;
 }
 .tf-body-container {
-  padding-top: 184px;
+  padding-top: 214px;
 }
 .home-swipe {
   height: 344.4px;

@@ -2,7 +2,7 @@
   <div
     class="app"
     id="app"
-    :style="[{'padding-top': `${paddingTop}px`},{'padding-bottom': `${paddingBottom}px`}]"
+    :style="[{'padding-top': `${paddingTop}px`}]"
   >
     <transition
       :name="transitionName"
