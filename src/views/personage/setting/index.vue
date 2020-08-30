@@ -24,6 +24,9 @@
           </template>
         </tf-list-item>
       </tf-list>
+      <tf-list class="tf-mt-lg">
+        <tf-list-item title="协议及声明" @click="goAgreementList"></tf-list-item>
+      </tf-list>
       <!-- <button class="btn" @click="goAccount">切换账号</button> -->
       <button class="btn tf-text-primary" @click="outLogin">退出登录</button>
     </div>
@@ -111,6 +114,10 @@ export default {
     /* 跳转我的资料 */
     goInformation () {
       this.$router.push('/pages/personage/information/index')
+    },
+    /* 跳转协议 */
+    goAgreementList () {
+      this.$router.push('/pages/personage/agreement/list')
     },
     /* 更新说明提醒 */
     openDialog () {

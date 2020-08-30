@@ -1,17 +1,13 @@
 <template>
 <div class='tf-bg-white'>
   <van-nav-bar
-    :title='title'
-    :fixed='true'
-    :border='false'
+    :title="title"
+    :fixed="true"
+    :border="false"
     placeholder
     left-arrow
     @click-left='$router.go(-1)'
-  >
-    <template #right>
-      <span class='tf-icon tf-icon-time-circle'></span>
-    </template>
-  </van-nav-bar>
+  />
   <div class='tf-padding'>
     <div class="tf-text" v-html="content"></div>
   </div>
@@ -20,7 +16,7 @@
 
 <script>
 import { NavBar } from 'vant'
-import { getUserAgreement } from '@/api/home'
+import { getUserAgreement, getNeighboursAgreement } from '@/api/home'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -38,9 +34,11 @@ export default {
   },
   created () {
     const type = this.$route.query.type
-    if (type) {
+    if (type == 1) { // 使用协议
       this.title = this.otherAgreement.title
       this.content = this.otherAgreement.content
+    } else if (type == 2) { // 邻里协议
+      this.getNeighboursAgreement()
     } else {
       this.getUserAgreement()
     }
@@ -49,6 +47,14 @@ export default {
     getUserAgreement () {
       getUserAgreement().then(res => {
         const { title, content } = res.data
+        this.title = title
+        this.content = content
+      })
+    },
+    /* 邻里使用协议 */
+    getNeighboursAgreement () {
+      getNeighboursAgreement().then(({ data }) => {
+        const { title, content } = data
         this.title = title
         this.content = content
       })

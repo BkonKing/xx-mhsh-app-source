@@ -247,6 +247,16 @@ const personageRouter = [
         /* webpackChunkName: "scanCodeIndex" */
         '@/views/personage/scanCode/index.vue'
       )
+  },
+  /* 协议列表 */
+  {
+    path: '/pages/personage/agreement/list',
+    name: 'agreementList',
+    component: () =>
+      import(
+        /* webpackChunkName: "agreementList" */
+        '@/views/personage/setting/agreementList.vue'
+      )
   }
 ]
 

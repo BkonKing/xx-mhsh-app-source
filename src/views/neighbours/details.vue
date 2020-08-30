@@ -9,7 +9,11 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span v-if="articleType == 3 && info.is_mine" class="van-icon van-icon-ellipsis" @click="articleOperate"></span>
+        <span
+          v-if="articleType == 3 && info.is_mine"
+          class="van-icon van-icon-ellipsis"
+          @click="articleOperate"
+        ></span>
       </template>
     </van-nav-bar>
     <van-pull-refresh
@@ -55,7 +59,7 @@
           <div class="activity-content">
             <div class="tf-text tf-mb-base" v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
-            <div class="apply-box" v-if="info.is_join">
+            <div class="apply-box" v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
                 报名人员
                 <span class="tf-text-grey">({{info.joins}}人)</span>
@@ -235,7 +239,7 @@ export default {
     deleteArticle () {
       deleteArticle({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         Dialog.alert({
           title: '删除成功'
         }).then(() => {
@@ -284,8 +288,13 @@ export default {
   border-top: 1px solid @divider-color;
   .tf-icon {
     flex: 1;
-    text-align: center;
     font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .tf-text-sm {
+      margin-left: 10px;
+    }
   }
 }
 .border-none {
@@ -348,16 +357,17 @@ export default {
     }
   }
   .apply-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 150px;
     height: 150px;
-    line-height: 150px;
     background-image: linear-gradient(to bottom right, @red, @red-dark);
     border: 6px solid #ffdbd9;
     border-radius: 50%;
     margin-top: 45px;
     font-size: 30px;
     color: #fff;
-    text-align: center;
   }
 }
 .group-tag {

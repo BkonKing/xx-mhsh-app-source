@@ -73,9 +73,9 @@
           ></tf-list-item>
         </tf-list>
         <tf-list class="basics-list">
-          <van-uploader :after-read="cjFace" style="width: 100%;">
-            <tf-list-item title="人脸采集"></tf-list-item>
-          </van-uploader>
+          <!-- <van-uploader :after-read="cjFace" style="width: 100%;"> -->
+          <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item>
+          <!-- </van-uploader> -->
         </tf-list>
         <tf-list class="basics-list">
           <tf-list-item
@@ -131,6 +131,11 @@
         </div>
       </van-tab>
     </van-tabs>
+    <tf-dialog class="explain-dialog" v-model="faceDialog" title="请上传一张清晰的人脸照片" :showFotter="false">
+      <van-uploader :after-read="cjFace" style="width: 100%;">
+        <van-button type="danger" style="width: 100%;">确定</van-button>
+      </van-uploader>
+    </tf-dialog>
   </div>
 </template>
 
@@ -145,12 +150,14 @@ import {
   Dialog,
   Toast,
   uploader,
-  Field
+  Field,
+  Button
 } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import tfPicker from '@/components/tf-picker/index'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
+import tfDialog from '@/components/tf-dialog/index.vue'
 import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
@@ -175,13 +182,15 @@ export default {
     [DropdownMenu.name]: DropdownMenu,
     [DropdownItem.name]: DropdownItem,
     [uploader.name]: uploader,
+    [Button.name]: Button,
     [Tag.name]: Tag,
     [Field.name]: Field,
     tfDateTimePicker,
     tfList,
     tfListItem,
     tfPicker,
-    house
+    house,
+    tfDialog
   },
   data () {
     return {
@@ -194,6 +203,7 @@ export default {
       mobile: '',
       nickname: '',
       birthday: '',
+      faceDialog: false,
       maxDate: new Date(getDate()),
       minDate: new Date('1900/1/1'),
       memberList: [], // 成员列表
@@ -426,8 +436,12 @@ export default {
           cjFace({
             face_url: res.data
           }).then((res) => {
-            Toast.success(res.message)
             Toast.clear()
+            Toast.success(res.message)
+            this.faceDialog = false
+          }).catch((message) => {
+            Toast.clear()
+            Toast.fail(message)
           })
         })
         .catch((message) => {
@@ -478,11 +492,12 @@ export default {
       overflow: auto;
     }
   }
-  /deep/ .van-uploader__input-wrapper {
-    display: flex;
-    align-items: center;
-    flex: 1;
-  }
+}
+
+/deep/ .van-uploader__input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
 }
 
 .basics-list {

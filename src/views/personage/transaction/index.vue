@@ -106,14 +106,14 @@ export default {
   },
   created () {
     this.type = parseInt(this.$route.query.type)
-    if (this.userInfo.role_dep == 1) {
-      this.getDbRepairList(1)
-      this.getDbRepairList(2)
-    }
-    this.getDbRepairList(3)
-    this.getDbRepairList(4)
   },
   mounted () {
+    if (this.userInfo.role_dep == 1) {
+      this.$refs.list1.reload()
+      this.$refs.list2.reload()
+    }
+    this.$refs.list3.reload()
+    this.$refs.list4.reload()
     this.container = this.$refs.container
   },
   activated () {
@@ -141,7 +141,7 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
-    next(vm => {
+    next((vm) => {
       vm.backStatus = from.name === 'transactionDetails'
     })
   },

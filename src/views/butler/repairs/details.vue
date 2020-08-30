@@ -30,7 +30,7 @@
       </div>
       <div class="time-line-box">
         <tfTimeline
-          class="tf-bg-white tf-mt-base tf-padding-base"
+          class="tf-bg-white tf-mt-base tf-padding-lg"
           :options="timelineList"
           @negotiate="viewNegotiate"
           @evaluate="viewEvaluate"
@@ -484,8 +484,6 @@ export default {
     position: relative;
     width: 88px;
     height: 88px;
-    line-height: 88px;
-    text-align: center;
     border: 1px solid #383838;
     border-radius: 50%;
     color: #383838;

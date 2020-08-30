@@ -1,7 +1,8 @@
 <template>
   <!-- 签到start -->
-  <div v-show="value" class="calendar-mask-block sign-mask" catchtouchmove="true">
-    <div class="sign-mask-block">
+  <div v-show="value" class="calendar-mask-container sign-mask" catchtouchmove="true">
+    <div class="calendar-mask-block" @click="toggleFunc"></div>
+    <div class="sign-mask-block" style="position: relative;z-index: 1000;">
       <div class="sign-block" data-show="show">
         <div class="mask-header">
           <div class="calendar-mask-tit">签到</div>
@@ -10,12 +11,18 @@
         </div>
         <div class="sign-cont">
           <div class="mask-bar">
-            <div class="bar-btn bar-prev tf-icon  tf-icon-caret-left" @click.stop="handlePrev" data-handle="prev">
-            </div>
+            <div
+              class="bar-btn bar-prev tf-icon tf-icon-caret-left"
+              @click.stop="handlePrev"
+              data-handle="prev"
+            ></div>
             <div class="bar-month">{{curYear}}年{{curMonth}}月</div>
             <template v-if="year!=curYear || month!=curMonth">
-              <div class="bar-btn bar-next tf-icon tf-icon-caret-right" @click.stop="handleNext" data-handle="next">
-              </div>
+              <div
+                class="bar-btn bar-next tf-icon tf-icon-caret-right"
+                @click.stop="handleNext"
+                data-handle="next"
+              ></div>
             </template>
             <template v-else>
               <div class="bar-btn bar-next"></div>
@@ -82,7 +89,7 @@ export default {
       signinCalendar({
         year: this.curYear,
         month: this.curMonth
-      }).then(res => {
+      }).then((res) => {
         this.data = res.data.calendar
       })
     },
@@ -180,6 +187,17 @@ export default {
 
 <style lang="less" scoped>
 /* 日历 start */
+.calendar-mask-container {
+  position: fixed;
+  @flex();
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 .calendar-mask-block {
   position: fixed;
   @flex();
@@ -190,6 +208,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 .mask-close-block {
   height: 120px;

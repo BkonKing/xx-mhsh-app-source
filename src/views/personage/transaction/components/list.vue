@@ -28,8 +28,8 @@
           </div>
           <van-button v-if="item.status == 1" type="warning">去处理</van-button>
           <van-button v-else-if="item.status == 2" type="danger">去分派</van-button>
-          <van-button v-else-if="item.sub_status == 3">接受任务</van-button>
-          <van-button v-else-if="item.sub_status == 6" type="danger">确认结案</van-button>
+          <van-button v-else-if="item.sub_status == 3 && item.uid === userInfo.id">接受任务</van-button>
+          <van-button v-else-if="item.sub_status == 6 && item.uid === userInfo.id" type="danger">确认结案</van-button>
         </div>
         <!-- <div
               class="tf-card-header__status"
@@ -43,6 +43,7 @@
 <script>
 import { Button } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [Button.name]: Button,
@@ -59,6 +60,9 @@ export default {
     return {
       list: this.data
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
     jump (item) {

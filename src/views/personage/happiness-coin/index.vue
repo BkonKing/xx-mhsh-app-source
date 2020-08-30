@@ -42,16 +42,26 @@
       <div class="task-box">
         <div class="task-item" v-for="(item, i) in taskList" :key="i">
           <div class="tf-row tf-flex-item">
-            <img class="task-item__icon" v-if="item.id == 1" src />
+            <img class="task-item__icon" v-if="item.task_type == 1" src />
             <img
               class="task-item__icon"
-              v-else-if="item.id == 2"
+              v-else-if="item.task_type == 2"
               src="@/assets/imgs/credits_renzheng.png"
             />
             <img
               class="task-item__icon"
-              v-else-if="item.id == 3"
+              v-else-if="item.task_type == 3"
               src="@/assets/imgs/credits_yunmenjin.png"
+            />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 4"
+              src="@/assets/imgs/credits_wenjuan.png"
+            />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 5"
+              src="@/assets/imgs/credits_toupiao.png"
             />
             <div class="tf-space-between">
               <div class="task-item__title">{{item.task_name}}</div>
@@ -62,7 +72,7 @@
             </div>
           </div>
           <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
-          <div v-else class="task-item__btn" @click="complete(item.id)">去完成</div>
+          <div v-else class="task-item__btn" @click="complete(item.task_type, item.source_id)">去完成</div>
         </div>
       </div>
       <div class="sale-box">
@@ -182,8 +192,9 @@ export default {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
     /* 去完成页面 */
-    complete (id) {
-      switch (id) {
+    complete (type, id) {
+      console.log(type)
+      switch (type) {
         case '1':
           this.signin()
           break
@@ -193,20 +204,25 @@ export default {
           )
           break
         case '3':
-          if (this.userType == 0) {
-            Dialog.confirm({
-              title: '提示',
-              message: '您尚未认证房间，是否去认证？',
-              confirmButtonText: '去认证'
-            }).then((res) => {
-              this.$router.push(
-                '/pages/personage/house/attestation?type=1&mode=0&select=1'
-              )
-            })
-          } else {
-            this.$router.push('/pages/butler/entrance/index')
-          }
+          this.authentication('/pages/butler/entrance/index')
           break
+        default:
+          this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
+          break
+      }
+    },
+    /* 认证提醒 */
+    authentication (url) {
+      if (this.userType == 0) {
+        Dialog.confirm({
+          title: '提示',
+          message: '您尚未认证房间，是否去认证？',
+          confirmButtonText: '去认证'
+        }).then((res) => {
+          this.$router.push('/pages/personage/house/attestation?type=1&mode=0&select=1')
+        })
+      } else {
+        this.$router.push(url)
       }
     }
   }

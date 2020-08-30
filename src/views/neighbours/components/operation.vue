@@ -77,10 +77,15 @@ export default {
   padding: 20px 0;
   border-top: 1px solid @divider-color;
   .tf-icon, .van-icon {
-    text-align: center;
     width: 33.3%;
     font-size: 36px;
     color: #aaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .tf-text-sm {
+      margin-left: 10px;
+    }
   }
 }
 .like-active::before {

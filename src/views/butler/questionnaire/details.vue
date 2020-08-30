@@ -264,8 +264,9 @@ export default {
         answer
       }).then((res) => {
         if (res.success) {
+          const message = this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
           Toast.success({
-            message: '投票成功'
+            message
           })
           this.getWjtpInfo()
         } else {
@@ -407,6 +408,7 @@ export default {
     }
     /deep/ .van-radio {
       height: 46px;
+      margin-bottom: 10px;
       .van-radio__icon {
         height: 22px;
         .van-icon {
@@ -425,6 +427,7 @@ export default {
     }
     /deep/ .van-checkbox {
       height: 46px;
+      margin-bottom: 10px;
       .van-checkbox__icon {
         height: 30px;
         display: flex;

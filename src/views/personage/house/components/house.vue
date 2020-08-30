@@ -94,6 +94,7 @@ export default {
         const current = this.houseList.splice(index, 1)
         this.houseList.unshift(...current)
         this.$store.commit('setCurrentProject', ...current)
+        this.$store.dispatch('getMyAccount')
         this.$router.go(-1)
       })
     },

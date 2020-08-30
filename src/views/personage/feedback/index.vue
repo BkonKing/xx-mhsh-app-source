@@ -170,4 +170,10 @@ export default {
   width: 114px;
   height: 114px;
 }
+/deep/ .radio-btn__item {
+  margin-right: 0;
+  & + .radio-btn__item {
+    margin-left: 20px;
+  }
+}
 </style>

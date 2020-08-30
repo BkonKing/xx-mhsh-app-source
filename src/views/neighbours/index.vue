@@ -64,6 +64,23 @@
         ></list>
       </van-tab>
     </van-tabs>
+    <tf-dialog
+      class="explain-dialog"
+      v-model="agreementDialog"
+      title="邻里使用协议"
+      :showFotter="true"
+      :hiddenOff="true"
+      okText="我知道了"
+      @confirm="agreementDialog = false"
+    >
+      <div class="dialog-content">
+        <div class="tf-text-sm">
+          您在使用邻里服务前，请认真阅读并充分理解相关法律条款、平台规则及用户隐私政策。当您开始使用产品或服务，即表示您已经理解并同意该协议，该协议将构成对您具有法律约束力的法律文件。
+          使用邻里请阅读
+          <router-link class="tf-text-blue" to="/agreement?type=2">《{{agreementTitle}}》</router-link>。
+        </div>
+      </div>
+    </tf-dialog>
   </div>
 </template>
 
@@ -76,6 +93,8 @@ import {
   getActivityList,
   getArticleList
 } from '@/api/neighbours'
+import { getNeighboursAgreement } from '@/api/home'
+import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -85,7 +104,8 @@ export default {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Popup.name]: Popup,
-    list
+    list,
+    tfDialog
   },
   data () {
     return {
@@ -95,13 +115,28 @@ export default {
       group: [],
       newestList: [],
       activityList: [],
-      articleList: []
+      articleList: [],
+      agreementDialog: false,
+      agreementTitle: ''
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   created () {
+    // 首次进入页面需弹窗一次邻里协议
+    const firstStatus = api.getPrefs({
+      sync: true,
+      key: 'first-neighbours'
+    })
+    if (!firstStatus) {
+      this.getNeighboursAgreement()
+      this.agreementDialog = true
+      api.setPrefs({
+        key: 'first-neighbours',
+        value: 1
+      })
+    }
     const { active } = this.$route.query
     if (active) {
       this.current = parseInt(active)
@@ -155,6 +190,12 @@ export default {
     getArticleList (params) {
       params.is_all = this.isAll
       return getArticleList(params)
+    },
+    /* 邻里使用协议 */
+    getNeighboursAgreement () {
+      getNeighboursAgreement().then(({ data }) => {
+        this.agreementTitle = data.title
+      })
     }
   },
   watch: {

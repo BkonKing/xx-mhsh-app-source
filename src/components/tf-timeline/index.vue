@@ -2,75 +2,73 @@
   <div class="tf-timeline">
     <div class="tf-timeline__column">
       <div class="tf-timeline__column-text-container">
-        <div
-          v-for="(item,index) in options"
-          :key="index"
-          class="tf-timeline__column-text-box"
-          :class="{'tf-timeline__column-text-grey': index>active}"
-        >
-          <div class="tf-timeline__column-time">{{item.ctime}}</div>
-          <!-- 撤销提报 -->
-          <div class="tf-timeline__column-desc">
-            <template v-if="item.sub_status == 3">
-              {{item.remark}}
-              <span
-                class="tf-text-blue"
-                @click="makePhoneCall(item.mobile)"
-              >{{item.mobile}}</span>
-            </template>
-            <template v-else-if="item.sub_status == 6 || item.sub_status == 7">
-              <div v-if="item.mobile">
-                <div style="display: inline-block;" v-html="item.remark"></div>
-                <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
-                <div
-                  class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
-                  @click="$emit('negotiate', item)"
-                ></div>
-              </div>
-              <div v-else>{{item.sub_realname}}：{{item.remark}}</div>
-            </template>
-            <template v-else-if="item.sub_status == 10">
-              {{item.remark}}
-              <!-- 评价信息 -->
-              <div
-                v-if="evaluateBtn"
-                class="tf-icon tf-icon-pingfenwancheng transaction-btn"
-                @click="$emit('evaluate', item)"
-              ></div>
-            </template>
-            <template v-else-if="item.sub_status == 11">
-              {{item.remark}}
-              <!-- 评价信息 -->
-              <div
-                v-if="evaluateBtn"
-                class="tf-icon tf-icon-pingfenwancheng transaction-btn"
-                @click="$emit('evaluate', item)"
-              ></div>
-            </template>
-            <template v-else>
-              {{item.remark}}
-              <div v-if="item.refuse_reason">取消说明：{{item.refuse_reason}}</div>
-            </template>
+        <div class="tf-flex" v-for="(item,index) in options" :key="index">
+          <div class="tf-timeline__column-line-item">
+            <div
+              class="tf-timeline__column-line tf-timeline__column-line--before"
+              :style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}"
+            ></div>
+            <div
+              class="tf-timeline__column-check"
+              :style="{'background-color':index===active?activeColor:deactiveColor}"
+              v-if="index === active"
+            ></div>
+            <div
+              class="tf-timeline__column-circle"
+              v-else
+              :style="{backgroundColor:index<active?activeColor:deactiveColor}"
+            ></div>
+            <div class="tf-timeline__column-line tf-timeline__column-line--after"></div>
           </div>
-        </div>
-      </div>
-      <div class="tf-timeline__column-container">
-        <div class="tf-timeline__column-line-item" v-for="(item,index) in options" :key="index">
           <div
-            class="tf-timeline__column-line tf-timeline__column-line--before"
-            :style="{backgroundColor:index<=active&&index!==0?activeColor:index===0?'transparent':deactiveColor}"
-          ></div>
-          <div
-            class="tf-timeline__column-check"
-            :style="{'background-color':index===active?activeColor:deactiveColor}"
-            v-if="index === active"
-          ></div>
-          <div
-            class="tf-timeline__column-circle"
-            v-else
-            :style="{backgroundColor:index<active?activeColor:deactiveColor}"
-          ></div>
-          <div class="tf-timeline__column-line tf-timeline__column-line--after"></div>
+            class="tf-timeline__column-text-box"
+            :class="{'tf-timeline__column-text-grey': index>active}"
+          >
+            <div class="tf-timeline__column-time">{{item.ctime}}</div>
+            <!-- 撤销提报 -->
+            <div class="tf-timeline__column-desc">
+              <template v-if="item.sub_status == 3">
+                {{item.remark}}
+                <span
+                  class="tf-text-blue"
+                  @click="makePhoneCall(item.mobile)"
+                >{{item.mobile}}</span>
+              </template>
+              <template v-else-if="item.sub_status == 6 || item.sub_status == 7">
+                <div v-if="item.mobile">
+                  <div style="display: inline-block;" v-html="item.remark"></div>
+                  <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
+                  <div
+                    class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
+                    @click="$emit('negotiate', item)"
+                  ></div>
+                </div>
+                <div v-else>{{item.sub_realname}}：{{item.remark}}</div>
+              </template>
+              <template v-else-if="item.sub_status == 10">
+                {{item.remark}}
+                <!-- 评价信息 -->
+                <div
+                  v-if="evaluateBtn"
+                  class="tf-icon tf-icon-pingfenwancheng transaction-btn"
+                  @click="$emit('evaluate', item)"
+                ></div>
+              </template>
+              <template v-else-if="item.sub_status == 11">
+                {{item.remark}}
+                <!-- 评价信息 -->
+                <div
+                  v-if="evaluateBtn"
+                  class="tf-icon tf-icon-pingfenwancheng transaction-btn"
+                  @click="$emit('evaluate', item)"
+                ></div>
+              </template>
+              <template v-else>
+                {{item.remark}}
+                <div v-if="item.refuse_reason">取消说明：{{item.refuse_reason}}</div>
+              </template>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -213,14 +211,6 @@ export default {
   flex-direction: row;
 }
 
-.tf-timeline__column-container {
-  /* #ifndef APP-NVUE */
-  display: inline-flex;
-  /* #endif */
-  width: 30px;
-  flex-direction: column;
-}
-
 .tf-timeline__row-line-item {
   /* #ifndef APP-NVUE */
   display: inline-flex;
@@ -238,9 +228,10 @@ export default {
   display: flex;
   /* #endif */
   flex-direction: column;
-  flex: 1;
+  // flex: 1;
   align-items: center;
   justify-content: center;
+  margin-right: 30px;
 }
 
 .tf-timeline__row-line {
@@ -250,7 +241,7 @@ export default {
 }
 
 .tf-timeline__column-line {
-  width: 1px;
+  width: 2px;
   background-color: @gray-7;
 }
 
@@ -281,8 +272,8 @@ export default {
 }
 
 .tf-timeline__column-circle {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background-color: @gray-6;
   margin: 4px 0px 5px 0px;
@@ -293,8 +284,8 @@ export default {
 }
 
 .tf-timeline__column-check {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   margin: 2px 0px;
 }
@@ -312,12 +303,13 @@ export default {
 }
 .transaction-btn {
   position: absolute;
-  top: 0;
+  top: -40px;
   right: 0;
   width: 88px;
   height: 88px;
-  line-height: 88px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid #383838;
   border-radius: 50%;
   color: #383838;

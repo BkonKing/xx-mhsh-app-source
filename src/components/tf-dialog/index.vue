@@ -1,5 +1,5 @@
 <template>
-  <van-popup class="tf-van-popup" v-model="value" @click-overlay="close" :close-on-click-overlay="false">
+  <van-popup class="tf-van-popup" v-model="valueChild" @click-overlay="close" :close-on-click-overlay="false">
     <div class="tf-dialog__wrapper-box">
       <span class="tf-icon tf-icon-guanbi1" @click="close"></span>
       <div class="tf-dialog">
@@ -60,15 +60,24 @@ export default {
   },
   data () {
     return {
+      valueChild: this.value
     }
   },
   methods: {
     close () {
-      this.$emit('input', false)
+      this.valueChild = false
       this.$emit('closed')
     },
     confirm () {
       this.$emit('confirm')
+    }
+  },
+  watch: {
+    value (val) {
+      this.valueChild = val
+    },
+    valueChild (val) {
+      this.$emit('input', val)
     }
   }
 }

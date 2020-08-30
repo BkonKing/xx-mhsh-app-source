@@ -75,7 +75,6 @@ export default {
   },
   watch: {
     value () {
-      console.log(123)
       this.getIndex()
     }
   }

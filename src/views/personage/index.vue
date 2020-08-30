@@ -60,7 +60,7 @@
         <div v-if="userInfo.swrole == 1" class="module-box">
           <div class="module-title">事务处理</div>
           <div class="tf-padding-base">
-            <div v-if="userInfo.swrole == 1" class="tf-row manage-border-bottom">
+            <div v-if="userInfo.role_dep == 1" class="tf-row manage-border-bottom">
               <div class="manage-box manage-border-right" @click="goTransaction(1)">
                 <img class="manage-image" src="@/assets/imgs/personage_daichuli.png" />
                 <div class="text-sm">待处理</div>

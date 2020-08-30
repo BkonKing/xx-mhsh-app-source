@@ -50,3 +50,7 @@ export function getUserAgreement (params) {
 export function getOtherAgreement () {
   return request.get('/ulogin/agreement/other_agreement')
 }
+// 邻里使用协议
+export function getNeighboursAgreement () {
+  return request.get('/ulogin/agreement/neighbours_agreement')
+}

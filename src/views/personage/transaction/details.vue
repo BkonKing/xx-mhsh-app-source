@@ -20,7 +20,7 @@
                   @click="callPhoneNumber(detailInfo.mobile)"
                 >{{detailInfo.mobile}}</span>
               </div>
-              <div class="user-info-time">{{detailInfo.fc_info}}</div>
+              <div class="user-info-time">{{detailInfo.project}} {{detailInfo.fc_info}}</div>
             </div>
           </template>
         </user-info>
@@ -47,7 +47,7 @@
             </van-button>
           </div>
           <tfTimeline
-            class="tf-bg-white tf-mt-base tf-padding-base"
+            class="tf-bg-white tf-mt-base tf-padding-lg"
             :evaluateBtn="false"
             :options="detailInfo.records"
             @negotiate="viewNegotiate"
@@ -266,7 +266,7 @@
       @confirm="negotiation"
     >
       <template>
-        <div class="plan-alert tf-mb-lg">任务完成时限：{{detailInfo.time_limit}}天</div>
+        <div class="plan-alert tf-mb-lg">任务完成时限：{{detailInfo.time_limit}}</div>
         <div class="tf-form-box">
           <div class="tf-form-label">
             是否收费：
@@ -847,8 +847,6 @@ export default {
     position: relative;
     width: 88px;
     height: 88px;
-    line-height: 88px;
-    text-align: center;
     border: 1px solid #383838;
     border-radius: 50%;
     color: #383838;
