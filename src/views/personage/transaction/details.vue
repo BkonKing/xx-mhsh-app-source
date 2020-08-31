@@ -40,7 +40,7 @@
           ></tf-image-list>
         </div>
         <div class="time-line-box">
-          <div v-if="sub_status == 6" class="plan-btn-box">
+          <div v-if="userInfo.role_dep != 1 && sub_status == 6" class="plan-btn-box">
             <van-button class="plan-btn" @click="addPlan">
               <span class="tf-icon tf-icon-plus"></span>
               添加任务进度
@@ -56,7 +56,7 @@
       </div>
     </van-pull-refresh>
     <!-- 客服人员 -->
-    <div v-if="userInfo.role_dep == 1 && (sub_status < 5 || sub_status == 7)" class="operation-box">
+    <div v-if="userInfo.role_dep == 1 && status < 4" class="operation-box">
       <div class="operation-content">
         等待
         <span class="tf-text-orange">{{detailInfo.designee}}</span>
@@ -71,7 +71,7 @@
         <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
         <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
       </div>
-      <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
+      <div v-if="status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
     </div>
     <!-- 处理人员 -->
     <div
@@ -111,7 +111,7 @@
       @confirm="revocationSubmit"
     >
       <template>
-        <div class="plan-alert tf-mt-base">撤销后将不再进行处理解决</div>
+        <div class="plan-alert tf-mt-base tf-mb-lg">撤销后将不再进行处理解决</div>
         <div class="tf-form-box">
           <div class="tf-form-label required">撤销原因：</div>
           <div class="tf-form-item">
@@ -207,7 +207,7 @@
               class="tf-form-item__input"
               v-model="limit_hours"
               title="小时"
-              :columns="[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
+              :columns="[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
             >
               <template v-slot="{valueText}">
                 <div class="reason-text">{{valueText}}</div>
@@ -268,7 +268,7 @@
       <template>
         <div class="plan-alert tf-mb-lg">任务完成时限：{{detailInfo.time_limit}}</div>
         <div class="tf-form-box">
-          <div class="tf-form-label">
+          <div class="tf-form-label required">
             是否收费：
             <span class="tf-text-grey">(请提前告知用户相关收费信息)</span>
           </div>
@@ -290,7 +290,7 @@
           </div>
         </div>
         <div class="tf-form-box">
-          <div class="tf-form-label">
+          <div class="tf-form-label required">
             预约处理时间：
             <span class="tf-text-grey">(请提前与用户协商确定）</span>
           </div>
@@ -662,7 +662,7 @@ export default {
           Dialog.alert({
             title: '已取消任务'
           }).then((res) => {
-            this.$router.go(-1)
+            this.getRepairInfo()
           })
         })
       })

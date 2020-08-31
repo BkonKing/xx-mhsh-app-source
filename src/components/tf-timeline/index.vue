@@ -34,16 +34,30 @@
                   @click="makePhoneCall(item.mobile)"
                 >{{item.mobile}}</span>
               </template>
-              <template v-else-if="item.sub_status == 6 || item.sub_status == 7">
-                <div v-if="item.mobile">
+              <template v-else-if="item.sub_status == 6">
+                <div>
+                  {{item.sub_realname}}：
                   <span v-html="item.remark"></span>
-                  <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
-                  <div
-                    class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
-                    @click="$emit('negotiate', item)"
-                  ></div>
+                  <template v-if="item.mobile">
+                    <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
+                    <div
+                      class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
+                      @click="$emit('negotiate', item)"
+                    ></div>
+                  </template>
                 </div>
-                <div v-else>{{item.sub_realname}}：{{item.remark}}</div>
+              </template>
+              <template v-else-if="item.sub_status == 7">
+                <div v-html="item.remark"></div>
+                <div v-if="item.refuse_reason">拒绝原因：{{item.refuse_reason}}</div>
+                <div>
+                  处理人员：
+                  <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.designee}} {{item.mobile}}</span>
+                </div>
+                <div
+                  class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
+                  @click="$emit('negotiate', item)"
+                ></div>
               </template>
               <template v-else-if="item.sub_status == 10">
                 {{item.remark}}
@@ -54,14 +68,16 @@
                   @click="$emit('evaluate', item)"
                 ></div>
               </template>
-              <template v-else-if="item.sub_status == 11">
+              <template v-else-if="parseInt(item.sub_status) > 7 && parseInt(item.sub_status) < 12">
                 {{item.remark}}
                 <!-- 图片信息 -->
                 <div
-                  v-if="item.images"
+                  v-if="item.images.length"
                   class="tf-icon tf-icon-tupian transaction-btn"
                   @click="showImage(item.images)"
-                ><span class="van-info">{{item.images.length}}</span></div>
+                >
+                  <span class="van-info">{{item.images.length}}</span>
+                </div>
               </template>
               <template v-else>
                 {{item.remark}}

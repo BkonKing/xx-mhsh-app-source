@@ -39,9 +39,17 @@
       <!-- 待结案和发起协商 -->
       <div v-if="sub_status == 5" class="tf-btn tf-btn-primary" @click="toNegotiateConfirm">确认协商信息</div>
       <!-- 预结案 -->
-      <div v-if="sub_status >= 8 && is_confirm == 0" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
+      <div
+        v-if="sub_status >= 8 && is_confirm == 0"
+        class="tf-btn tf-btn-primary"
+        @click="finishShow = true"
+      >确认完成</div>
       <!-- 评价 -->
-      <div v-if="sub_status >= 8 && is_confirm == 1 && is_evaluate == 0" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
+      <div
+        v-if="sub_status >= 8 && is_confirm == 1 && is_evaluate == 0"
+        class="tf-btn tf-btn-primary"
+        @click="goEvaluate"
+      >评价</div>
     </div>
     <!-- 确认协商信息 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
@@ -49,9 +57,14 @@
         <div class="plan-alert">若与处理人员协商不一致，可拒绝</div>
         <div class="tf-text tf-mt-lg tf-mb-lg">
           <span class="lp112">费</span>
-          <span>用：预计</span>
-          <span>{{negotiateInfo.negotiation_costs}}</span>
-          元
+          <template v-if="parseInt(negotiateInfo.negotiation_costs) > 0">
+            <span>用：预计</span>
+            <span>{{negotiateInfo.negotiation_costs}}</span>
+            元
+          </template>
+          <template v-else>
+            <span>用：{{negotiateInfo.negotiation_costs}}元</span>
+          </template>
         </div>
         <div class="tf-text tf-mb-lg">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
         <div class="dialog-footer">
