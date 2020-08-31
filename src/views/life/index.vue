@@ -805,6 +805,8 @@ export default {
 	left: 0;
 	right: 0;
 	height: 120px;
+	border-radius: 10px 10px 0 0;
+	overflow: hidden;
 	background-image: linear-gradient(to bottom, rgb(129, 129, 129), transparent);
 }
 .special-tip {

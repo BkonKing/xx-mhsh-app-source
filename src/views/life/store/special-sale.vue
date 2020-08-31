@@ -28,15 +28,15 @@
     <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
+        finished-text=""
         @load="onLoad"
       >
-      <div class="special-list flex-between">
+      <div v-if="listData.length" class="special-list flex-between">
         <div v-for="(item,index) in listData" class="special-item" @click="linkFunc(5,{id:item.goods_id})">
           <div class="special-goods-pic">
             <img class="img-100" :src="item.thumb" />
           </div>
-          <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
+          <div class="special-goods-name p-nowrap">{{item.goods_name}}</div>
           <div class="special-goods-price flex-align-center">
             <div class="goods-price-icon flex-align-center">
               <div class="goods-price-bg flex-align-center">特卖￥<span>{{item.te_price/100}}</span></div>
@@ -46,8 +46,9 @@
           </div>
         </div>
       </div>
+      <div v-else style="height: 1px"></div>
     </van-list>
-    <div v-show="false" class="special-list flex-between">
+    <!-- <div v-show="false" class="special-list flex-between">
       <div v-for="(item,index) in listData" class="special-item">
         <div class="special-goods-pic">
           <img class="img-100" :src="item.thumb" />
@@ -61,7 +62,7 @@
           <div class="goods-old-price">￥46</div>
         </div>
       </div>
-    </div>
+    </div> -->
 	</div>
 </template>
 
@@ -219,7 +220,7 @@ export default {
 }
 .special-item {
   width: 345px;
-  min-height: 533px;
+  min-height: 505px;
   background-color: #fff;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -229,12 +230,13 @@ export default {
   width: 100%;
   height: 345px;
   display: flex;
+  /*background-color: #f4f4f4;*/
 }
 .special-goods-name {
   font-size: 26px;
   color: #222;
-  line-height: 44px;
-  height: 88px;
+  line-height: 60px;
+  height: 60px;
   padding: 0 20px;
   margin: 11px 0;
 }

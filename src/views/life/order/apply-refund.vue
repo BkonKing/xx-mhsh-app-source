@@ -255,7 +255,7 @@ export default {
     this.order_project_id = this.$route.query.order_id;
     this.logistice_id = this.$route.query.logistice_id;
     this.sale_type = this.$route.query.type;
-    this.titName = this.$route.query.type == 2 ? '申请退换退款' : '申请退款';
+    this.titName = this.$route.query.type == 2 ? '申请退货退款' : '申请退款';
     console.log(this.type);
     this.getData();
   },

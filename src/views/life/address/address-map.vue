@@ -69,11 +69,11 @@ export default {
           filter: 1
       }, function(ret, err) {
           if (ret.status) {
-              let log_val = ret.lon;
+              let lon_val = ret.lon;
               let lat_val = ret.lat
               //根据定位查找地址
               bMap.getNameFromCoords({
-                  lon: log_val,
+                  lon: lon_val,
                   lat: lat_val
               }, function(ret, err) {
                   if (ret.status) {
@@ -103,7 +103,7 @@ export default {
                       h: 300
                   },
                   center: {
-                      lon: log_val,
+                      lon: lon_val,
                       lat: lat_val
                   },
                   zoomLevel: 15,

@@ -239,8 +239,12 @@ export default {
     this.getData();
   },
   mounted () {
+    const that = this;
     this.$nextTick(() => {
-      this.$refs.input.getElementsByClassName('van-field__control')[0].focus()
+      setTimeout(()=>{
+        that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
+      },500)
+      
     })
   },
   methods: {

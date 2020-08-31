@@ -147,6 +147,11 @@ export default {
       this.showReasonSwal = data == 1 ? true : false;
     },
     submitAjax(){
+    	if(!this.selectedVal.express_name){
+    		Toast("请选择物流公司");return;
+    	}else if(!this.kuaidi_num){
+    		Toast("请填写物流单号");return;
+    	}
     	logisticsSubmit({
         sale_order_id: this.sale_order_id,
         sale_type: this.sale_type,
@@ -155,7 +160,7 @@ export default {
         pic: this.images,
       }).then(res => {
         if (res.success) {
-        	Toast(res.message);
+        	// Toast(res.message);
         	this.$router.go(-1);
         }
       })

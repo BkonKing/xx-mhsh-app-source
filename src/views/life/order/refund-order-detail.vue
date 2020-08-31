@@ -35,31 +35,12 @@
 							<div class="order-buy-num">x1</div>
 						</div>
 					</div>
-					<div class="apply-select flex-between">
+					<div v-if="item.reason_type!=''" class="apply-select flex-between">
 						<div class="select-left">
 							<div>退款原因：{{item.reason_type}}</div>
 						</div>
 					</div>
 				</div>
-				<!-- <div class="order-goods-info">
-					<div class="order-pic-block">
-						<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
-					</div>
-					<div class="order-info">
-						<div class="order-name-price">
-							<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-							<div class="order-price">￥20000.00</div>
-						</div>
-						<div class="order-sku-num">
-							<div class="order-sku p-nowrap">规格：银色</div>
-							<div class="order-num">￥21000.00</div>
-						</div>
-						<div class="order-action-session">
-							<div class="order-action-text">退款中</div>
-							<div class="order-buy-num">x1</div>
-						</div>
-					</div>
-				</div> -->
 				<div class="detail-price-list">
 					<div class="flex-sart-item">
 						<div class="color-222 font-28 flex-sart-item-left">退款编号：</div>
@@ -131,10 +112,9 @@
 						<template v-if="infoData.order_status == 1">
 							<div class="shipping-address">
 								<div class="shipping-address-item">
-									<div class="shipping-address-item-left color-222 font-28">退换地址:</div>
+									<div class="shipping-address-item-left color-222 font-28">退货地址:</div>
 									<div class="shipping-address-item-right">
 										<div class="shipping-address-username p-nowrap">{{infoData.tuihuo1}}</div>
-										<div class="color-222 font-28">{{infoData.tuihuo1}}</div>
 									</div>
 								</div>
 								<div class="shipping-address-item">
@@ -144,36 +124,40 @@
 									</div>
 								</div>
 							</div>
-							<div class="order-tip-item">
+							<div @click="linkFunc(19)" class="order-tip-item">
 								<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
 								<div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
-								<van-icon class="van-icon tip-icon" name="arrow" size="0.32rem" color="#aaa" />
+								<img class="shipping-address-icon" src="@/assets/img/right.png" />
 							</div>
 						</template>
 						<template v-else>
-							<div v-if="infoData.order_status == 2 || infoData.order_status == 3" class="shipping-logistics">
-								<div class="shipping-address-item">
-									<div class="shipping-address-item-left color-222 font-28">退货物流:</div>
-									<div class="shipping-address-item-right">
-										<div class="color-222 font-28">顺丰速运</div>
-										<div class="color-8f8f94 font-28">(SF123456789002)</div>
-										<img class="shipping-address-icon" src="" mode="" />
+							<template v-if="go_logistice_info">
+								<div @click="linkFunc(22,{id:go_logistice_info.id})" v-if="go_logistice_info.s_time && go_logistice_info.s_time!='0'" class="order-tip-item">
+									<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
+									<div class="color-222 font-28 order-tip-text">{{go_logistice_info.kuaidi_name}}</div>
+									<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
+									<img class="shipping-address-icon" src="@/assets/img/right.png" />
+								</div>
+								<div @click="linkFunc(22,{id:go_logistice_info.id})" v-else class="shipping-address">
+									<div class="shipping-address-item">
+										<div class="shipping-address-item-left color-222 font-28">退货物流:</div>
+										<div class="shipping-address-item-right">
+											<div class="color-222 font-28">{{go_logistice_info.kuaidi_name}}</div>
+											<div class="color-8f8f94 font-28">({{go_logistice_info.kuaidi_numb}})</div>
+											<img class="shipping-address-icon" src="@/assets/img/right.png" />
+										</div>
+									</div>
+									<div class="shipping-logistics-item">
+										<div class="shipping-address-item-left"></div>
+										<div class="shipping-address-item-right shipping-logistics-item-right">
+											<div class="shipping-logistics-point"></div>
+											<div class="shipping-logistics-line"></div>
+											<div class="shipping-logistics-text">{{go_logistice_info.kd_text_arr.data[0].context}}<br />{{go_logistice_info.kd_text_arr.data[0].time}}</div>
+										</div>
 									</div>
 								</div>
-								<div class="shipping-logistics-item">
-									<div class="shipping-address-item-left"></div>
-									<div class="shipping-address-item-right shipping-logistics-item-right">
-										<div class="shipping-logistics-point"></div>
-										<div class="shipping-logistics-line"></div>
-										<div class="shipping-logistics-text">快递已到达仓山区菜鸟驿站\n2020-07-02 10:00:00</div>
-									</div>
-								</div>
-							</div>
-							<div v-else class="order-tip-item">
-								<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
-								<div class="color-222 font-28 order-tip-text">顺丰速运</div>
-								<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
-							</div>
+							</template>
+							
 						</template>
 					</template>
 						
@@ -224,7 +208,7 @@ export default {
     	typeVal: 1,
     	goodsList: [],  //商品列表
     	infoData: '',   //退款信息
-    	logisticsInfo: ''//物流信息
+    	go_logistice_info: ''//物流信息
     }
   },
   created(){
@@ -250,7 +234,7 @@ export default {
 	        if (res.success) {
 	        	this.goodsList = res.sale_goods_specs_list;
 	        	this.infoData = res.returnfund_info;
-	        	this.logisticsInfo = res.mail_logistice_info ? res.mail_logistice_info : res.go_logistice_info;
+	        	this.go_logistice_info = res.go_logistice_info;
 	        }
 	      })
   		}
@@ -286,6 +270,16 @@ export default {
 	      	}
 	      })
     		break;
+    		case 22:
+    		this.$router.push({
+          path: '/logistics/logistics-express',
+          query: {
+            logistice_id: obj.id,
+            num: this.goodsList.length,
+            url: this.goodsList[0].specs_img,
+          }
+        })
+    		break;
     	}
     },
 
@@ -318,7 +312,7 @@ export default {
   line-height: 44px;
 }
 .public-hr {
-	height: 1.3px;
+	height: 1.5px;
 	background-color: #f0f0f0;
 	margin: 20px 0;
 }

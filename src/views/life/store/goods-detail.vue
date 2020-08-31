@@ -1074,9 +1074,10 @@ div.btn-disabled {
 .goods-btn {
   width: 47px;
   height: 100%;
-  border: 1px solid #aaa;
-  line-height: 42px;
-  text-align: center;
+  border: 1.3px solid #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 30px;
 }
 .not-add.goods-btn {
@@ -1086,12 +1087,14 @@ div.btn-disabled {
   float: left;
   width: 58px;
   height: 100%;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-top: 1.3px solid #aaa;
+  border-bottom: 1.3px solid #aaa;
   box-sizing: border-box;
   min-height: 100%;
   text-align: center;
-  line-height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #222;
 }
 

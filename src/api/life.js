@@ -200,3 +200,6 @@ export function logisticsSubmit (params) {
 export function getLogisticsInfo (params) {
   return request.post('/life/my_order/order_project_logistice_list', params)
 }
+export function getLogisticsOne (params) {
+  return request.post('/life/my_order/get_logistice_info', params)
+}

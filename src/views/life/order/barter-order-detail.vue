@@ -99,87 +99,100 @@
 						</div>
 					</div>
 				</div>
-				<!-- <div class="shipping-logistics">
-					<div class="shipping-address-item">
-						<div class="shipping-address-item-left color-222 font-28">物流配送:</div>
-						<div class="shipping-address-item-right">
-							<div class="color-222 font-28">顺丰速运</div>
-							<div class="color-8f8f94 font-28">(SF123456789002)</div>
-							<img class="shipping-address-icon" src="" mode="" />
-						</div>
+				<div v-if="mail_logistice_info" class="shipping-logistics">
+					<div @click="linkFunc(22,{id:mail_logistice_info.id})" v-if="mail_logistice_info.s_time && mail_logistice_info.s_time!='0'" class="order-tip-item">
+						<div class="order-tip-item-left order-tip-text color-222 font-28">收货物流: </div>
+						<div class="color-222 font-28 order-tip-text">{{mail_logistice_info.kuaidi_name}}</div>
+						<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
+						<img class="shipping-address-icon" src="@/assets/img/right.png" />
 					</div>
-					<div class="shipping-logistics-item">
-						<div class="shipping-address-item-left"></div>
-						<div class="shipping-address-item-right shipping-logistics-item-right">
-							<div class="shipping-logistics-point"></div>
-							<div class="shipping-logistics-line"></div>
-							<div class="shipping-logistics-text">快递已到达仓山区菜鸟驿站\n2020-07-02 10:00:00</div>
+					<template v-else>
+						<div @click="linkFunc(22,{id:mail_logistice_info.id})" class="shipping-address-item">
+							<div class="shipping-address-item-left color-222 font-28">收货物流:</div>
+							<div class="shipping-address-item-right">
+								<div class="color-222 font-28">{{mail_logistice_info.kuaidi_name}}</div>
+								<div class="color-8f8f94 font-28">({{mail_logistice_info.kuaidi_numb}})</div>
+								<img class="shipping-address-icon" src="@/assets/img/right.png" />
+							</div>
 						</div>
-					</div>
-				</div> -->
+						<div @click="linkFunc(22,{id:mail_logistice_info.id})" class="shipping-logistics-item">
+							<div class="shipping-address-item-left"></div>
+							<div class="shipping-address-item-right shipping-logistics-item-right">
+								<div class="shipping-logistics-point"></div>
+								<div class="shipping-logistics-line"></div>
+								<div class="shipping-logistics-text">{{mail_logistice_info.kd_text_arr.data[0].context}}<br />{{mail_logistice_info.kd_text_arr.data[0].time}}</div>
+							</div>
+						</div>
+					</template>
+				</div>
 			</div>
 			<div v-if="infoData.order_status == 0 || infoData.order_status == 1" class="cont-session order-message">
-				<template v-if="infoData.reason_text">
+				<template>
 					<div class="order-tip-item">
-						<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明：</div>
-						<div class="order-tip-item-right color-222 font-28 order-tip-text">{{infoData.reason_text}}</div>
+						<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明:</div>
+						<div class="order-tip-item-right color-222 font-28 order-tip-text">{{infoData.reason_text ? infoData.reason_text : '无'}}</div>
 					</div>
 					<div class="public-hr"></div>
 				</template>
 				<div class="shipping-address">
 					<div class="shipping-address-item">
-						<div class="shipping-address-item-left color-222 font-28">退换地址:</div>
+						<div class="shipping-address-item-left color-222 font-28">退货地址:</div>
 						<div class="shipping-address-item-right">
-							<div class="shipping-address-username p-nowrap">{{infoData.rece_realname}}</div>
-							<div class="color-222 font-28">{{infoData.rece_mobile}}</div>
+							<div class="shipping-address-username p-nowrap">{{infoData.tuihuo1}}</div>
+							<!-- <div class="color-222 font-28">{{infoData.tuihuo2}}</div> -->
 						</div>
 					</div>
 					<div class="shipping-address-item">
 						<div class="shipping-address-item-left"></div>
 						<div class="shipping-address-item-right">
-							<div class="shipping-address-text p-nowrap">{{infoData.rece_address}}</div>
+							<div class="shipping-address-text p-nowrap">{{infoData.tuihuo2}}</div>
 						</div>
 					</div>
 				</div>
 				<template v-if="infoData.order_status == 1">
 					<div class="public-hr"></div>
-					<div class="order-tip-item">
+					<div @click="linkFunc(19)" class="order-tip-item">
 						<div class="order-tip-item-left order-tip-text color-222 font-28">寄出物流: </div>
 						<div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
+						<img class="shipping-address-icon" src="@/assets/img/right.png" />
 					</div>
 				</template>
 			</div>
-			<div v-else-if="infoData.order_status == 2" class="cont-session order-message">
-				<template v-if="infoData.reason_text">
+			<div v-else class="cont-session order-message">
+				<template>
 					<div class="order-tip-item">
 						<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明:</div>
-						<div class="order-tip-item-right color-8f8f94 font-28 order-tip-text">{{infoData.reason_text}}</div>
+						<div class="order-tip-item-right color-8f8f94 font-28 order-tip-text">{{infoData.reason_text ? infoData.reason_text : '无'}}</div>
 					</div>
 					<div class="public-hr"></div>
 				</template>
-				<!-- <div class="shipping-address">
-					<div class="shipping-address-item">
-						<div class="shipping-address-item-left color-222 font-28">退货物流:</div>
-						<div class="shipping-address-item-right">
-							<div class="color-222 font-28">顺丰速运</div>
-							<div class="color-8f8f94 font-28">(SF123456789002)</div>
-							<img class="shipping-address-icon" src="" mode="" />
+				<template v-if="go_logistice_info">
+					<div @click="linkFunc(22,{id:go_logistice_info.id})" v-if="go_logistice_info.s_time && go_logistice_info.s_time!='0'" class="order-tip-item">
+						<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
+						<div class="color-222 font-28 order-tip-text">{{go_logistice_info.kuaidi_name}}</div>
+						<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
+						<img class="shipping-address-icon" src="@/assets/img/right.png" />
+					</div>
+					<div @click="linkFunc(22,{id:go_logistice_info.id})" v-else class="shipping-address">
+						<div class="shipping-address-item">
+							<div class="shipping-address-item-left color-222 font-28">退货物流:</div>
+							<div class="shipping-address-item-right">
+								<div class="color-222 font-28">{{go_logistice_info.kuaidi_name}}</div>
+								<div class="color-8f8f94 font-28">({{go_logistice_info.kuaidi_numb}})</div>
+								<img class="shipping-address-icon" src="@/assets/img/right.png" />
+							</div>
+						</div>
+						<div class="shipping-logistics-item">
+							<div class="shipping-address-item-left"></div>
+							<div class="shipping-address-item-right shipping-logistics-item-right">
+								<div class="shipping-logistics-point"></div>
+								<div class="shipping-logistics-line"></div>
+								<div class="shipping-logistics-text">{{go_logistice_info.kd_text_arr.data[0].context}}<br />{{go_logistice_info.kd_text_arr.data[0].time}}</div>
+							</div>
 						</div>
 					</div>
-					<div class="shipping-logistics-item">
-						<div class="shipping-address-item-left"></div>
-						<div class="shipping-address-item-right shipping-logistics-item-right">
-							<div class="shipping-logistics-point"></div>
-							<div class="shipping-logistics-line"></div>
-							<div class="shipping-logistics-text">快递已到达仓山区菜鸟驿站\n2020-07-02 10:00:00</div>
-						</div>
-					</div>
-				</div> -->
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
-					<div class="color-222 font-28 order-tip-text">顺丰速运</div>
-					<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
-				</div>
+					
+				</template>
 			</div>
 		</div>
 		<template v-if="infoData.order_status == 0 || infoData.order_status == 1">
@@ -205,7 +218,8 @@ export default {
     	windowHeight: document.documentElement.clientHeight,
     	goodsList: [],  //商品列表
     	infoData: '',   //换货信息
-    	logisticsInfo: ''//物流信息
+    	mail_logistice_info: '',//卖家发回物流信息
+    	go_logistice_info: ''//买家寄回物流信息
     }
   },
   created(){
@@ -220,7 +234,8 @@ export default {
         if (res.success) {
         	this.goodsList = res.sale_goods_specs_list;
         	this.infoData = res.barter_info;
-        	this.logisticsInfo = res.mail_logistice_info ? res.mail_logistice_info : res.go_logistice_info;
+        	this.mail_logistice_info = res.mail_logistice_info;
+        	this.go_logistice_info = res.go_logistice_info;
         }
       })
     },
@@ -234,6 +249,16 @@ export default {
 	      		id: this.sale_order_id,
 	      	}
 	      })
+    		break;
+    		case 22:
+    		this.$router.push({
+          path: '/logistics/logistics-express',
+          query: {
+            logistice_id: obj.id,
+            num: this.goodsList.length,
+            url: this.goodsList[0].specs_img,
+          }
+        })
     		break;
     	}
     },
@@ -279,7 +304,7 @@ export default {
   line-height: 44px;
 }
 .public-hr {
-	height: 1.3px;
+	height: 1.5px;
 	background-color: #f0f0f0;
 	margin: 20px 0;
 }

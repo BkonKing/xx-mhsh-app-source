@@ -189,7 +189,7 @@ export default {
       
       that.address_name = addressData.name;
       that.address_detail = addressData.address;
-      that.lon = addressData.lon;
+      that.lng = addressData.lon;
       that.lat = addressData.lat;
       this.isAble()
       // this.city = addressData.city;

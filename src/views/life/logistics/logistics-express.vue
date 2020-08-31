@@ -1,5 +1,5 @@
 <template>
-	<div v-if="infoData" class="app-body">
+	<div class="app-body">
     <div class="order-bar bar-white">
       <van-nav-bar
         title="物流详情"
@@ -10,43 +10,71 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="block-session logistics-goods">
-      <div class="logistics-goods-pic">
-        <div class="goods-num">共{{infoData.img_arr.length}}件</div>
-        <img class="img-100" :src="infoData.img_arr[0]" />
-      </div>
-      <div class="logistics-tip">
-        <div>物流配送：{{infoData.name}}</div>
-        <div>运单编号：{{infoData.kd_text_arr.nu}}</div>
-      </div>
-      <div class="copy-btn" @click="copy_cont(infoData.name2)">
-        <div class="copy-text">复制</div>
-      </div>
-    </div>
-    
-    <div v-if="infoData.kd_text_arr.data.length" class="block-session logistics-body">
-      <div class="logistics-list">
-        <div v-for="(item, index) in infoData.kd_text_arr.data" class="logistics-item">
-          <div class="item-icon-box"><div class="item-icon"></div></div>
-          <div class="item-msg">{{item.context}}</div>
-          <div class="item-time">{{item.time}}</div>
+    <template v-if="order_id">
+      <template v-if="infoData">
+        <div class="block-session logistics-goods">
+          <div class="logistics-goods-pic">
+            <div class="goods-num">共{{infoData.img_arr.length}}件</div>
+            <img class="img-100" :src="infoData.img_arr[0]" />
+          </div>
+          <div class="logistics-tip">
+            <div>物流配送：{{infoData.name}}</div>
+            <div>运单编号：{{infoData.kd_text_arr.nu}}</div>
+          </div>
+          <div class="copy-btn" @click="copy_cont(infoData.name2)">
+            <div class="copy-text">复制</div>
+          </div>
         </div>
-        <!-- <div class="logistics-item">
-          <div class="item-icon-box"><div class="item-icon"></div></div>
-          <div class="item-msg">哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王哈个我哥玩歌王鹅王</div>
-          <div class="item-time">2020.1.2 10:11:11</div>
-        </div> -->
-      </div>
-      <div class="logistics-line"></div>
-    </div>
-    <div v-else class="no-logistics color-8f8f94">暂无物流进度</div>
+        
+        <div v-if="infoData.kd_text_arr.data.length" class="block-session logistics-body">
+          <div class="logistics-list">
+            <div v-for="(item, index) in infoData.kd_text_arr.data" class="logistics-item">
+              <div class="item-icon-box"><div class="item-icon"></div></div>
+              <div class="item-msg">{{item.context}}</div>
+              <div class="item-time">{{item.time}}</div>
+            </div>
+          </div>
+          <div class="logistics-line"></div>
+        </div>
+        <div v-else class="no-logistics color-8f8f94">暂无物流进度</div>
+      </template>
+    </template>
+    <template v-else>
+      <template v-if="infoData2">
+        <div class="block-session logistics-goods">
+          <div class="logistics-goods-pic">
+            <div class="goods-num">共{{num}}件</div>
+            <img class="img-100" :src="url" />
+          </div>
+          <div class="logistics-tip">
+            <div>物流配送：{{infoData2.kuaidi_name}}</div>
+            <div>运单编号：{{infoData2.kuaidi_numb}}</div>
+          </div>
+          <div class="copy-btn" @click="copy_cont(infoData2.kuaidi_numb)">
+            <div class="copy-text">复制</div>
+          </div>
+        </div>
+        
+        <div v-if="infoData2.kd_text_arr.data.length" class="block-session logistics-body">
+          <div class="logistics-list">
+            <div v-for="(item, index) in infoData2.kd_text_arr.data" class="logistics-item">
+              <div class="item-icon-box"><div class="item-icon"></div></div>
+              <div class="item-msg">{{item.context}}</div>
+              <div class="item-time">{{item.time}}</div>
+            </div>
+          </div>
+          <div class="logistics-line"></div>
+        </div>
+        <div v-else class="no-logistics color-8f8f94">暂无物流进度</div>
+      </template>
+    </template>
     
 	</div>
 </template>
 
 <script>
 import { NavBar, Toast } from 'vant'
-import { getLogisticsInfo } from '@/api/life.js'
+import { getLogisticsInfo, getLogisticsOne } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -55,23 +83,44 @@ export default {
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
+      order_id: '',
       infoData: '',
+      infoData2: '',
+      num: '',
+      url: ''
     }
   },
   created(){
     this.order_id = this.$route.query.id;
     this.index = this.$route.query.index ? this.$route.query.index : 0;
+
+    this.logistice_id = this.$route.query.logistice_id;
+    this.num = this.$route.query.num;
+    this.url = this.$route.query.url;
     this.getData();
   },
   methods: {
     getData () {
-      getLogisticsInfo({
-        order_project_id: this.order_id
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data[this.index];
-        }
-      })
+      if(this.order_id){
+        getLogisticsInfo({
+          order_project_id: this.order_id
+        }).then(res => {
+          if (res.success) {
+            this.infoData = res.data[this.index];
+          }
+        })
+      }else {
+
+        getLogisticsOne({
+          logistice_id: this.logistice_id
+        }).then(res => {
+          if (res.success) {
+            this.infoData2 = res.data;
+            console.log(this.infoData2.kd_text_arr.data);
+          }
+        })
+      }
+      
     },
     copy_cont(text_c){
       var clipBoard = api.require('clipBoard');

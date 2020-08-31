@@ -367,7 +367,7 @@ export default {
   height: 44px;
   top: 20px;
   bottom: 20px;
-  border: 1.2px solid #aaa;
+  border: 1.3px solid #aaa;
   box-sizing: border-box;
 }
 .product-sub::after {
@@ -387,8 +387,8 @@ export default {
   font-size: 26px;
   color: #222;
   text-align: center;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-top: 1.3px solid #aaa;
+  border-bottom: 1.3px solid #aaa;
   display: flex;
   justify-content: center;
   align-items: center;

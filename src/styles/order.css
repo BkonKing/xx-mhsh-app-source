@@ -294,7 +294,7 @@
 .shipping-logistics {
 	margin-top: 26px;
 	padding-top: 26px;
-	border-top: 1px solid #f0f0f0;
+	border-top: 1.4px solid #f0f0f0;
 }
 .shipping-address-item,.order-remarks-item,.order-message-item {
 	display: flex;
