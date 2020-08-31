@@ -312,7 +312,7 @@ export default {
 }
 .dragging {
   /deep/ .sortable-drag::after {
-    border: 1px solid @divider-color !important;
+    border: 2px solid #222 !important;
   }
 }
 </style>

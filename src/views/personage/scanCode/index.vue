@@ -40,6 +40,7 @@ import {
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { Dialog, Toast } from 'vant'
+import { hasPermission, reqPermission } from '@/utils/util'
 export default {
   data () {
     return {

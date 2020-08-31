@@ -74,8 +74,11 @@
       @confirm="agreementDialog = false"
     >
       <div class="dialog-content">
-        <div class="tf-text-sm">
-          您在使用邻里服务前，请认真阅读并充分理解相关法律条款、平台规则及用户隐私政策。当您开始使用产品或服务，即表示您已经理解并同意该协议，该协议将构成对您具有法律约束力的法律文件。
+        <div
+          class="tf-text-sm"
+          style="text-indent: 24px;line-height: 1.8;"
+        >您在使用邻里服务前，请认真阅读并充分理解相关法律条款、平台规则及用户隐私政策。当您开始使用产品或服务，即表示您已经理解并同意该协议，该协议将构成对您具有法律约束力的法律文件。</div>
+        <div class="tf-text-sm" style="text-indent: 24px;line-height: 1.8;">
           使用邻里请阅读
           <router-link class="tf-text-blue" to="/agreement?type=2">《{{agreementTitle}}》</router-link>。
         </div>

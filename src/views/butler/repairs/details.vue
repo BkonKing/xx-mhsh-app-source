@@ -12,11 +12,7 @@
         <span class="tf-icon tf-icon-customerservice"></span>
       </template>
     </van-nav-bar>
-    <van-pull-refresh
-      class="tf-body-container tf-padding"
-      v-model="isLoading"
-      @refresh="onRefresh"
-    >
+    <van-pull-refresh class="tf-body-container tf-padding" v-model="isLoading" @refresh="onRefresh">
       <div class="tf-card">
         <div class="tf-card-header">
           <div class="tf-card-header__title">内容描述</div>
@@ -37,15 +33,15 @@
         ></tfTimeline>
       </div>
     </van-pull-refresh>
-    <div v-if="sub_status < 10" class="operation-box">
+    <div v-if="sub_status < 12 && (is_confirm == 0 || is_evaluate == 0)" class="operation-box">
       <!-- 不是已结案和已取消 -->
       <div v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
       <!-- 待结案和发起协商 -->
       <div v-if="sub_status == 5" class="tf-btn tf-btn-primary" @click="toNegotiateConfirm">确认协商信息</div>
       <!-- 预结案 -->
-      <div v-if="sub_status == 8" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
+      <div v-if="sub_status >= 8 && is_confirm == 0" class="tf-btn tf-btn-primary" @click="finishShow = true">确认完成</div>
       <!-- 评价 -->
-      <div v-if="sub_status == 9" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
+      <div v-if="sub_status >= 8 && is_confirm == 1 && is_evaluate == 0" class="tf-btn tf-btn-primary" @click="goEvaluate">评价</div>
     </div>
     <!-- 确认协商信息 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
@@ -79,9 +75,10 @@
             <span class="lp18">拒绝原</span>
             因：
           </div>
-          <div
-            class="tf-flex-item"
-          >{{negotiateInfo.refuse_reason || refuseArray[refuseReason]}}({{other_reason}})</div>
+          <div class="tf-flex-item">
+            {{negotiateInfo.refuse_reason}}
+            <span v-if="other_reason">({{other_reason}})</span>
+          </div>
         </div>
         <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
       </div>
@@ -141,7 +138,7 @@
         <div class="tf-form-box">
           <div class="evaluate-title">
             对处理人员
-            <span class="tf-text-grey">({{evaluateInfo.designee}})</span>
+            <span class="tf-text-grey">({{evaluateInfo.nickname}})</span>
             {{rateText[evaluateInfo.evaluate_stars]}}
           </div>
           <div class="rate-box">
@@ -230,7 +227,7 @@ export default {
       value: 3,
       refuseReason: '',
       other_reason: '', // 协商拒绝说明
-      refuse_reason: 0, // 协商拒绝原因值
+      refuse_reason: undefined, // 协商拒绝原因值
       refuseArray: [], // 协商拒绝原因数组
       // 评分对应内容
       rateText: {
@@ -240,15 +237,19 @@ export default {
         4: '比较满意，仍可改善',
         5: '非常满意，无可挑剔'
       },
-      goBackStatus: 0 // 0：从列表来 1：从新增来
+      goBackStatus: 0, // 0：从列表来 1：从新增来
+      is_confirm: 0,
+      is_evaluate: 0
     }
   },
   created () {
-    const { id, type } = this.$route.query
+    const { id } = this.$route.query
+    const { temporaryType } = this.$store.state
     this.repairId = id
     this.getRepairInfo().then(() => {
-      if (type) {
-        this[type] = true
+      if (temporaryType) {
+        this[temporaryType] = true
+        this.$store.commit('setTemporaryType', undefined)
         this.getNegotiationInfo(this.negotiation_id)
         this.getRefuseReasonList()
       }
@@ -278,13 +279,17 @@ export default {
           records,
           sub_status,
           new_negotiation_id,
-          category
+          category,
+          is_confirm,
+          is_evaluate
         } = res.data
-        this.status = status
-        this.sub_status = sub_status
+        this.status = parseInt(status)
+        this.sub_status = parseInt(sub_status)
         this.images = images
         this.timelineList = records
         this.content = content
+        this.is_confirm = is_confirm
+        this.is_evaluate = is_evaluate
         this.negotiation_id = new_negotiation_id
         this.title = this.title ? this.title : category
       })
@@ -326,7 +331,7 @@ export default {
     toRefuse () {
       this.getNegotiationInfo(this.negotiation_id)
       this.getRefuseReasonList()
-      this.refuse_reason = 0
+      this.refuse_reason = undefined
       this.other_reason = ''
       this.refuseDialog = true
     },
@@ -346,13 +351,14 @@ export default {
       ]
       validForm(validator).then(() => {
         const params = {
-          repairId: this.repairId,
+          repair_id: this.repairId,
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
         negotiationRefuse(params).then((res) => {
           Toast('已拒绝该协商信息')
           this.getRepairInfo()
+          this.getNegotiationInfo(this.negotiation_id)
           this.refuseDialog = false
           this.negotiateConfirm = false
           this.negotiateShow = true
@@ -394,7 +400,7 @@ export default {
     /* 获取评价信息 */
     getEvaluateInfo (item) {
       getEvaluateInfo({
-        repairId: this.repairId,
+        repair_id: this.repairId,
         evaluate_id: item.evaluate_id
       }).then((res) => {
         this.evaluateInfo = res.data || {}
@@ -406,7 +412,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     if (from.name === 'repairsIndex') {
-      next(vm => {
+      next((vm) => {
         vm.goBackStatus = 1
       })
     }
@@ -559,7 +565,7 @@ export default {
   text-align: center;
 }
 .padding40 {
-  padding: 40px 0;
+  padding: 20px 0 10px;
 }
 .lp112 {
   letter-spacing: 113px;

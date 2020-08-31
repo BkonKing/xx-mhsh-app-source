@@ -5,27 +5,24 @@
       :style="[{'background': headerColor}, {'padding-top': `${$store.state.paddingTop}px`}]"
     >
       <page-nav-bar :class="{'black-page-nav': scrollStatus}" search></page-nav-bar>
-      <van-notice-bar
-        v-if="noticeList.length"
-        v-show="!scrollStatus"
-        class="home-notice"
-        left-icon="volume-o"
-        :scrollable="false"
-      >
-        <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
-          <van-swipe-item
-            v-for="item in noticeList"
-            :key="item.id"
-            @click="goNotice(item)"
-          >{{item.title}}</van-swipe-item>
-        </van-swipe>
-      </van-notice-bar>
     </div>
-    <div
-      class="tf-body-container"
-      :class="{'no-notice': !noticeList.length}"
-      @scroll.passive="onScroll"
-    >
+    <div class="tf-body-container" @scroll.passive="onScroll">
+      <div
+        v-if="noticeList.length"
+        class="home-notice-box"
+        id="home-notice-box"
+        :style="{'background': headerColor}"
+      >
+        <van-notice-bar class="home-notice" left-icon="volume-o" :scrollable="false">
+          <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+            <van-swipe-item
+              v-for="item in noticeList"
+              :key="item.id"
+              @click="goNotice(item)"
+            >{{item.title}}</van-swipe-item>
+          </van-swipe>
+        </van-notice-bar>
+      </div>
       <van-swipe
         class="home-swipe"
         :autoplay="6000"
@@ -135,29 +132,31 @@
           </div>
         </div>
       </div>
-      <van-notice-bar class="front-page" :scrollable="false">
-        <template v-slot:left-icon>
-          <img
-            class="front-page__tag"
-            src="@/assets/imgs/home_toutiao.png"
-            @click="$router.push('/neighbours?active=3')"
-          />
-        </template>
-        <van-swipe
-          v-if="frontList.length"
-          class="notice-swipe"
-          vertical
-          :autoplay="3000"
-          :show-indicators="false"
-        >
-          <van-swipe-item v-for="(item, i) in frontList" :key="i">
-            <div
-              class="front-page__text van-multi-ellipsis--l2"
-              @click="clickFront(item)"
-            >{{item.title}}</div>
-          </van-swipe-item>
-        </van-swipe>
-      </van-notice-bar>
+      <div class="front-page-container">
+        <van-notice-bar class="front-page" :scrollable="false">
+          <template v-slot:left-icon>
+            <img
+              class="front-page__tag"
+              src="@/assets/imgs/home_toutiao.png"
+              @click="$router.push('/neighbours?active=3')"
+            />
+          </template>
+          <van-swipe
+            v-if="frontList.length"
+            class="notice-swipe"
+            vertical
+            :autoplay="3000"
+            :show-indicators="false"
+          >
+            <van-swipe-item v-for="(item, i) in frontList" :key="i">
+              <div
+                class="front-page__text van-multi-ellipsis--l2"
+                @click="clickFront(item)"
+              >{{item.title}}</div>
+            </van-swipe-item>
+          </van-swipe>
+        </van-notice-bar>
+      </div>
     </div>
     <!-- 新手引导 -->
     <div
@@ -241,9 +240,9 @@ export default {
       this.guideShow = true
     }
     this.$store.dispatch('getMyAccount')
-    this.getMyApp()
   },
   activated () {
+    this.getMyApp()
     this.getBannerIndex()
     this.getNoticeLbList()
     this.getCreditsGoodsList()
@@ -382,12 +381,18 @@ export default {
     },
     /* 滚动行为 */
     onScroll ({ target }) {
-      if (target.scrollTop > 0) {
-        this.scrollStatus = true
-        this.headerColor = '#fff'
-      } else {
-        this.scrollStatus = false
-        this.swipeChange(this.activeIndex)
+      if (this.noticeList.length > 0) {
+        const el = document.getElementById('home-notice-box')
+        const height = (el && el.clientHeight) || 0
+        if (target.scrollTop > height + 15) {
+          this.scrollStatus = true
+          this.headerColor = '#fff'
+        } else if (target.scrollTop > 0) {
+          if (this.scrollStatus) {
+            this.scrollStatus = false
+            this.swipeChange(this.activeIndex)
+          }
+        }
       }
     }
   },
@@ -409,13 +414,6 @@ export default {
       ]
       return numText[value]
     }
-  },
-  beforeRouteEnter (to, from, next) {
-    next((vm) => {
-      if (from.name === 'applist') {
-        vm.getMyApp()
-      }
-    })
   },
   beforeRouteLeave (to, from, next) {
     const butlerList = [
@@ -492,9 +490,11 @@ export default {
     color: #fff;
   }
 }
+.home-notice-box {
+  padding: 0 20px 30px;
+}
 .home-notice {
   height: 96px;
-  margin: 0 20px 30px;
   background: #fff;
   /deep/ .notice-swipe {
     height: 66px;
@@ -518,7 +518,7 @@ export default {
   z-index: 1;
 }
 .tf-body-container {
-  padding-top: 214px;
+  padding-top: 88px;
 }
 .home-swipe {
   height: 344.4px;
@@ -526,9 +526,6 @@ export default {
 .swipe-item__image {
   width: 100%;
   height: 344.4px;
-}
-.no-notice {
-  padding-top: 88px;
 }
 /* app列表 */
 .app-box {
@@ -710,8 +707,10 @@ export default {
     }
   }
 }
+.front-page-container {
+  padding: 20px 20px 60px;
+}
 .front-page {
-  margin: 20px 20px 80px;
   padding: 24px 30px 30px;
   height: 142px;
   background: url("../../assets/imgs/toutiao_bg.png") no-repeat;

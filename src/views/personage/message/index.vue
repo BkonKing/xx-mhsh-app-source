@@ -11,6 +11,15 @@
       @click-right="messageAllRead"
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
+      <van-tab v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
+        <message-list
+          ref="work"
+          type="work"
+          :load="({pages}) => getMessageList(pages, 1)"
+          @click="onWork"
+          @mark="messageRead"
+        ></message-list>
+      </van-tab>
       <van-tab title="交易" :badge="badgeList[2]">
         <message-list
           ref="transaction"
@@ -47,15 +56,6 @@
           type="system"
           :load="({pages}) => getMessageList(pages, 6)"
           @click="onSystem"
-          @mark="messageRead"
-        ></message-list>
-      </van-tab>
-      <van-tab v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
-        <message-list
-          ref="work"
-          type="work"
-          :load="({pages}) => getMessageList(pages, 1)"
-          @click="onWork"
           @mark="messageRead"
         ></message-list>
       </van-tab>

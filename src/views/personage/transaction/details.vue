@@ -52,20 +52,30 @@
             :options="detailInfo.records"
             @negotiate="viewNegotiate"
           ></tfTimeline>
-          <div class="transaction-btn-box">
-            <div
-              v-if="sub_status == 11"
-              class="tf-icon tf-icon-tupian transaction-btn"
-              @click="showImage"
-            >
-              <span class="van-info">2</span>
-            </div>
-          </div>
         </div>
       </div>
     </van-pull-refresh>
+    <!-- 客服人员 -->
+    <div v-if="userInfo.role_dep == 1 && (sub_status < 5 || sub_status == 7)" class="operation-box">
+      <div class="operation-content">
+        等待
+        <span class="tf-text-orange">{{detailInfo.designee}}</span>
+        {{sub_status | statusFilter}}
+        <span
+          v-if="detailInfo.time_limit"
+          class="tf-text-primary"
+        >({{detailInfo.time_limit}})</span>
+      </div>
+      <div v-if="status == 1 || status == 2" class="tf-row-space-between">
+        <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
+        <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
+        <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
+      </div>
+      <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
+    </div>
+    <!-- 处理人员 -->
     <div
-      v-if="(userInfo.role_dep != 1 && ['3', '6', '10'].indexOf(sub_status) > -1) || sub_status < 5"
+      v-if="userInfo.role_dep != 1 && [3, 6, 10].indexOf(sub_status) > -1 || (status == 4 && detailInfo.is_upload_images == 0)"
       class="operation-box"
     >
       <div class="operation-content">
@@ -77,30 +87,20 @@
           class="tf-text-primary"
         >({{detailInfo.time_limit}})</span>
       </div>
-      <template v-if="userInfo.role_dep == 1">
-        <div v-if="status == 1 || status == 2" class="tf-row-space-between">
-          <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-          <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
-          <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
-        </div>
-        <div v-if="sub_status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
-      </template>
-      <template v-else>
-        <div v-if="['3', '6', '10'].indexOf(sub_status) > -1" class="tf-row-space-between">
-          <div class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
-          <div
-            v-if="sub_status == 3"
-            class="tf-btn tf-btn-primary"
-            @click="acceptPlanShow = true"
-          >接受任务</div>
-          <div v-if="sub_status == 6" class="tf-btn tf-btn-primary" @click="toCaseOver">确认结案</div>
-          <div
-            v-if="sub_status == 10"
-            class="tf-btn tf-btn-primary"
-            @click="imageFiles = []; imgUploadShow = true"
-          >上传照片</div>
-        </div>
-      </template>
+      <div class="tf-row-space-between">
+        <div v-if="[3,6].includes(sub_status)" class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
+        <div
+          v-if="sub_status == 3"
+          class="tf-btn tf-btn-primary"
+          @click="acceptPlanShow = true"
+        >接受任务</div>
+        <div v-if="sub_status == 6" class="tf-btn tf-btn-primary" @click="toCaseOver">确认结案</div>
+        <div
+          v-if="status == 4 && detailInfo.is_upload_images == 0"
+          class="tf-btn tf-btn-primary"
+          @click="imageFiles = []; imgUploadShow = true"
+        >上传照片</div>
+      </div>
     </div>
     <!-- 撤销 -->
     <tf-dialog
@@ -278,7 +278,12 @@
               <van-radio name="0" checked-color="#EB5841">免费</van-radio>
             </van-radio-group>
             <div class="money-input">
-              <van-field v-if="isCharge == '1'" type="number" v-model="negotiation_costs" label="预计">
+              <van-field
+                v-if="isCharge == '1'"
+                type="number"
+                v-model="negotiation_costs"
+                label="预计"
+              >
                 <template #button>元</template>
               </van-field>
             </div>
@@ -314,7 +319,7 @@
       @confirm="timeaxis"
     >
       <div class="tf-form-box">
-        <div class="tf-form-label">进度内容：</div>
+        <div class="tf-form-label required">进度内容：</div>
         <van-field
           v-model="planContent"
           class="tf-form-item__textarea"
@@ -364,7 +369,12 @@
               <span class="tf-text-grey">(24小时内)</span>
             </van-radio>
           </van-radio-group>
-          <tf-uploader v-if="upload_type == 1" class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
+          <tf-uploader
+            v-if="upload_type == 1"
+            class="upload-img-box"
+            v-model="imageFiles"
+            max-count="9"
+          ></tf-uploader>
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label">补充说明：</div>
@@ -531,8 +541,8 @@ export default {
         const { status, sub_status, category } = res.data
         this.title = category
         this.detailInfo = res.data
-        this.status = status
-        this.sub_status = sub_status
+        this.status = parseInt(status)
+        this.sub_status = parseInt(sub_status)
       })
     },
     /* 获取撤消提报原因 */
@@ -754,6 +764,7 @@ export default {
         this.projectId
       ).then((res) => {
         Toast.success('结案图片上传成功')
+        this.getRepairInfo()
         this.imgUploadShow = false
       })
     },
@@ -762,18 +773,6 @@ export default {
       api.call({
         type: 'tel_prompt',
         number: phoneNumber
-      })
-    },
-    showImage () {
-      ImagePreview({
-        images: [
-          'https://img.yzcdn.cn/vant/apple-1.jpg',
-          'https://img.yzcdn.cn/vant/apple-2.jpg'
-        ],
-        startPosition: 0,
-        onClose () {
-          // do something
-        }
       })
     }
   },
@@ -784,7 +783,8 @@ export default {
         2: '分派',
         3: '接受任务',
         4: '分派',
-        6: '结案'
+        6: '结案',
+        7: '分派'
       }
       return text[value]
     }
@@ -914,7 +914,8 @@ export default {
 }
 .upload-img-box {
   margin-top: 40px;
-  /deep/ .van-uploader__upload, /deep/ .van-uploader__preview {
+  /deep/ .van-uploader__upload,
+  /deep/ .van-uploader__preview {
     width: 140px;
     height: 140px;
   }

@@ -39,7 +39,8 @@ const store = {
     keepAliveList: ['mainIndex'],
     paddingTop: 0,
     paddingBottom: 0,
-    otherAgreement: null
+    otherAgreement: null,
+    temporaryType: undefined
   },
   mutations: {
     setUser_info (state, value) {
@@ -101,6 +102,9 @@ const store = {
     },
     setOtherAgreement (state, value) {
       state.otherAgreement = value
+    },
+    setTemporaryType (state, value) {
+      state.temporaryType = value
     }
   },
   getters: {

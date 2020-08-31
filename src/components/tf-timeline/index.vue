@@ -36,7 +36,7 @@
               </template>
               <template v-else-if="item.sub_status == 6 || item.sub_status == 7">
                 <div v-if="item.mobile">
-                  <div style="display: inline-block;" v-html="item.remark"></div>
+                  <span v-html="item.remark"></span>
                   <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
                   <div
                     class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
@@ -56,12 +56,12 @@
               </template>
               <template v-else-if="item.sub_status == 11">
                 {{item.remark}}
-                <!-- 评价信息 -->
+                <!-- 图片信息 -->
                 <div
-                  v-if="evaluateBtn"
-                  class="tf-icon tf-icon-pingfenwancheng transaction-btn"
-                  @click="$emit('evaluate', item)"
-                ></div>
+                  v-if="item.images"
+                  class="tf-icon tf-icon-tupian transaction-btn"
+                  @click="showImage(item.images)"
+                ><span class="van-info">{{item.images.length}}</span></div>
               </template>
               <template v-else>
                 {{item.remark}}
@@ -76,6 +76,7 @@
 </template>
 
 <script>
+import { ImagePreview } from 'vant'
 export default {
   name: 'tfTimeline',
   props: {
@@ -126,6 +127,15 @@ export default {
       api.call({
         type: 'tel_prompt',
         number: phoneNumber
+      })
+    },
+    showImage (images) {
+      ImagePreview({
+        images,
+        startPosition: 0,
+        onClose () {
+          // do something
+        }
       })
     }
   }
