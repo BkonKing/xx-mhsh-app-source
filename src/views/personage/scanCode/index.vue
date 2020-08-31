@@ -339,7 +339,15 @@ export default {
     current (value) {
       const len = api.frames().length
       if (value === 1) {
-        !len && this.openFrame()
+        if (!hasPermission('camera')[0].granted) {
+          reqPermission('camera', ({ list }) => {
+            if (list[0].granted) {
+              !len && this.openFrame()
+            }
+          })
+        } else {
+          !len && this.openFrame()
+        }
       } else {
         len && this.closeFrame()
         this.timer && clearTimeout(this.timer)
