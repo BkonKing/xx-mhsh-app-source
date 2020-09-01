@@ -118,7 +118,7 @@ export default {
         id: item.id
       }).then((res) => {
         item.is_read = '1'
-        this.getCountMessage()
+        // this.getCountMessage()
       })
     },
     // 设置消息全部已读
@@ -132,6 +132,9 @@ export default {
     },
     // 交易操作
     toTransaction (item) {
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       const { sub_type } = item
       switch (sub_type) {
         case '1':
@@ -189,7 +192,9 @@ export default {
     },
     // 互动操作
     toInteraction (item) {
-      this.messageRead(item)
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {
@@ -200,7 +205,9 @@ export default {
     },
     // 活动操作
     onActivity (item) {
-      this.messageRead(item)
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {
@@ -211,7 +218,9 @@ export default {
     },
     // 物业操作
     toButler (item) {
-      this.messageRead(item)
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       switch (item.sub_type) {
         // 公告通知-详情
         case '13':
@@ -237,11 +246,22 @@ export default {
             }
           })
           break
+        // 报事报修-详情
+        case '16':
+          this.$router.push({
+            path: '/pages/butler/repairs/details',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
       }
     },
     // 系统操作
     onSystem (item) {
-      this.messageRead(item)
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       if (item.sub_type == 9) {
         this.$router.push({
           path: '/pages/personage/feedback/details',
@@ -253,7 +273,9 @@ export default {
     },
     // 工作操作 - 处理员报事报修详情
     onWork (item) {
-      this.messageRead(item)
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
       this.$router.push({
         path: '/pages/personage/transaction/details',
         query: {

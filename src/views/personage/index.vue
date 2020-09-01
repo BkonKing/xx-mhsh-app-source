@@ -441,10 +441,15 @@ export default {
 }
 .tf-icon-pinglun {
   @relative();
-  margin-right: 27px;
 }
 .tf-icon-xiaoxi {
   position: relative;
-  margin-right: 27px;
+}
+/deep/ .van-nav-bar__right {
+  padding-right: 0;
+}
+.van-info {
+  top: 24px;
+  right: 22px;
 }
 </style>

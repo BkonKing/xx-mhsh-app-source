@@ -237,10 +237,11 @@ const store = {
     async getHouse ({
       commit
     }) {
-      const {
-        data
-      } = await bindingHouse()
-      data && commit('setCurrentProject', data[0])
+      await bindingHouse().then(({ data }) => {
+        data && commit('setCurrentProject', data[0])
+      }).catch(err => {
+        console.log(err)
+      })
     },
     getMyAccount ({
       commit

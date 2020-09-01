@@ -84,3 +84,8 @@ export function deleteArticle (data) {
 export function addComplaint (data) {
   return request.post('/neighbours/newest/addComplaint', data)
 }
+
+// 屏蔽接口
+export function addShielding (data) {
+  return request.post('/neighbours/shielding/addShielding', data)
+}

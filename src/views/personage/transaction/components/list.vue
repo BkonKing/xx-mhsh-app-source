@@ -11,25 +11,30 @@
         </div>
         <div class="transaction-item">
           <div class="transaction-item__label">内容描述：</div>
-          <div
-            class="transaction-item__content"
-            :class="{'transaction-item__content--manager': item.status > 5}"
-          >{{ item.content }}</div>
+          <div class="transaction-item__content">{{ item.content }}</div>
         </div>
-        <div v-if="item.sub_status < 8" class="transaction-footer">
+        <div v-if="parseInt(item.status) < 4" class="transaction-footer">
           <div class="transaction-footer__text">
             等待
-            <span class="tf-text-blue">{{item.designee}}</span>
-            {{item.sub_status | statusText}}
-            <span
-              v-if="item.sy_time"
-              class="tf-text-primary"
-            >({{item.sy_time}})</span>
+            <template v-if="item.sub_status == 5">
+              <span class="tf-text-blue">用户</span> 确认协商消息
+            </template>
+            <template v-else>
+              <span class="tf-text-blue">{{item.designee}}</span>
+              {{item.sub_status | statusText}}
+              <span
+                v-if="item.sy_time"
+                class="tf-text-primary"
+              >({{item.sy_time}})</span>
+            </template>
           </div>
           <van-button v-if="item.status == 1" type="warning">去处理</van-button>
           <van-button v-else-if="item.status == 2" type="danger">去分派</van-button>
           <van-button v-else-if="item.sub_status == 3 && item.uid === userInfo.id">接受任务</van-button>
-          <van-button v-else-if="item.sub_status == 6 && item.uid === userInfo.id" type="danger">确认结案</van-button>
+          <van-button
+            v-else-if="item.sub_status == 6 && item.uid === userInfo.id"
+            type="danger"
+          >确认结案</van-button>
         </div>
         <!-- <div
               class="tf-card-header__status"

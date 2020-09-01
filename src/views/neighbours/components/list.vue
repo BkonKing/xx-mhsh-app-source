@@ -33,7 +33,7 @@
               :article-type="item.article_type || article_type"
               :key="item.id"
             >
-              <div v-if="item.is_mine" class="van-icon van-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
+              <div class="van-icon van-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
             </operation>
           </div>
         </div>
@@ -51,6 +51,7 @@
       :moreShow.sync="moreShow"
       :deleteProp="status"
       :complain="!status"
+      :shield="!status"
       :complainInfo="active"
       :complainType="1"
       @delete="deleteArticle"

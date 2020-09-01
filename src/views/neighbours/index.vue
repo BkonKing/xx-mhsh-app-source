@@ -32,10 +32,10 @@
       >小区</div>
     </div>
     <van-tabs class="tf-body-container tf-column" v-model="current" @change="tabsChange">
-      <van-tab title="最新">
+      <van-tab title="最新" id="neighboursList0">
         <list key="list" ref="list" :data.sync="newestList" :load="getNewestList"></list>
       </van-tab>
-      <van-tab title="小组">
+      <van-tab title="小组" id="neighboursList1">
         <div v-if="group.length" class="group-box">
           <div class="group-item" v-for="item in group" :key="item.id" @click="goGroupList(item)">
             <img class="group-img" :src="item.icon_images" />
@@ -45,7 +45,7 @@
         </div>
         <div v-else class="van-list__finished-text">没有更多了</div>
       </van-tab>
-      <van-tab title="活动">
+      <van-tab title="活动" id="neighboursList2">
         <list
           key="activityList"
           ref="activityList"
@@ -54,7 +54,7 @@
           article_type="2"
         ></list>
       </van-tab>
-      <van-tab title="资讯">
+      <van-tab title="资讯" id="neighboursList3">
         <list
           key="articleList"
           ref="articleList"
@@ -120,7 +120,8 @@ export default {
       activityList: [],
       articleList: [],
       agreementDialog: false,
-      agreementTitle: ''
+      agreementTitle: '',
+      scrollTop: 0
     }
   },
   computed: {
@@ -140,13 +141,13 @@ export default {
         value: 1
       })
     }
-    const { active } = this.$route.query
-    if (active) {
-      this.current = parseInt(active)
-    }
     this.getPostBarCategoryList()
   },
-  activated () {},
+  activated () {
+    if (this.scrollTop && this.current !== 1) {
+      document.getElementById(`neighboursList${this.current}`).getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+    }
+  },
   methods: {
     /* 发布 */
     goEdit () {
@@ -172,7 +173,7 @@ export default {
       params.is_all = this.isAll
       return getNewestList(params)
     },
-    /* tab页改变，为最新时刷新最新列表 */
+    /* tab页改变，为最新标签时刷新最新列表 */
     tabsChange (name) {
       if (name === 0) {
         this.$refs.list && this.$refs.list.reload()
@@ -212,10 +213,18 @@ export default {
     const { active } = to.query
     next((vm) => {
       if (active && active !== vm.current) {
+        vm.scrollTop = 0
         vm.current = parseInt(active)
         vm.$router.push('/neighbours')
       }
     })
+  },
+  beforeRouteLeave (to, from, next) {
+    if (this.current !== 1) {
+      const el = document.getElementById(`neighboursList${this.current}`).getElementsByClassName('tf-list-refresh')
+      this.scrollTop = (el.length && el[0].scrollTop) || 0
+    }
+    next()
   }
 }
 </script>
@@ -259,12 +268,21 @@ export default {
 /deep/ .van-nav-bar__left:active {
   opacity: 1;
 }
+
+/deep/ .van-nav-bar__right {
+  padding-right: 0;
+}
+
+.van-info {
+  top: 24px;
+  right: 22px;
+}
+
 .pt88 {
   padding-top: 88px;
 }
 .tf-icon-xiaoxi {
   @relative();
-  margin-right: 27px;
 }
 .tf-bg {
   @flex-column();

@@ -4,7 +4,7 @@
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
         <div class="tf-list" @click="jump(item)">
-          <template v-if="item.sub_type == 11">
+          <template v-if="item.sub_type == 11 || item.sub_type == 12">
             <div class="tf-row-space-between">
               <div class="tf-row-vertical-center">
                 <img class="tf-avatar-sm tf-mr-base" :src="item.avatar" mode="aspectFit" />

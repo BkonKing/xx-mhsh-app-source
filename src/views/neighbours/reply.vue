@@ -76,6 +76,7 @@
       :moreShow.sync="moreShow"
       :comment="true"
       :complain="!oneself && category == 3"
+      :shield="isMine && !oneself && category == 3"
       :deleteProp="oneself"
       :complainInfo="active"
       :complainType="3"
@@ -134,14 +135,16 @@ export default {
       commentShow: false,
       active: {},
       oneself: 0,
-      reply_nickname: ''// 回复人昵称
+      reply_nickname: '', // 回复人昵称
+      isMine: 0
     }
   },
   created () {
-    const { category, articleId, id } = this.$route.query
+    const { category, articleId, id, isMine } = this.$route.query
     this.category = category
     this.articleId = articleId
     this.id = id
+    this.isMine = isMine
     this.getCommentInfo()
     // this.getCommentList()
   },
@@ -239,11 +242,12 @@ export default {
       this.replyNum++
       this.commentShow = false
       if (this.moreShow) {
-        this.replyList.unshift(data)
+        // this.replyList.unshift(data)
         this.moreShow = false
       } else {
-        this.replyList.unshift(data)
+        // this.replyList.unshift(data)
       }
+      Toast.success('评论成功')
     }
   },
   watch: {

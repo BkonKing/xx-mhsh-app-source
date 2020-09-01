@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white reply-container" :class="{'gray': grayTheme}">
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list class="reply-list" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
       <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id" @click.stop="operate(cell, i)">
         <userInfo :avatar="cell.avatar" :name="cell.nickname" :time="cell.ctime" size="m">
           <template v-if="!grayTheme" v-slot:right>
@@ -52,6 +52,7 @@
       :moreShow.sync="moreShow"
       :comment="true"
       :complain="!oneself && articleType == 3"
+      :shield="isMine && !oneself && articleType == 3"
       :deleteProp="oneself"
       :complainInfo="active"
       :complainType="2"
@@ -100,6 +101,10 @@ export default {
     articleId: {
       type: String,
       default: ''
+    },
+    isMine: {
+      type: [Boolean, Number],
+      default: 0
     }
   },
   components: {
@@ -151,7 +156,8 @@ export default {
           query: {
             category: this.articleType,
             articleId: this.articleId,
-            id: data.id
+            id: data.id,
+            isMine: this.isMine
           }
         })
       }
@@ -231,12 +237,13 @@ export default {
     commentSuccess (data) {
       this.commentShow = false
       if (this.moreShow) {
-        this.list[this.index].child.unshift(data)
+        // this.list[this.index].child.unshift(data)
         this.moreShow = false
       } else {
-        this.list.unshift(data)
+        // this.list.unshift(data)
         // console.table(this.list)
       }
+      Toast.success('评论成功')
     },
     /* 刷新回复列表 */
     reload () {

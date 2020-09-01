@@ -13,7 +13,7 @@
     <template #right>
       <span v-if="search" class="tf-icon tf-icon-sousuo" @click="onSearch"></span>
       <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
-      <span class="tf-icon tf-icon-xiaoxi margin-left" @click="goMessage">
+      <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
         <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
       </span>
     </template>
@@ -86,19 +86,20 @@ export default {
 
 .tf-icon-xiaoxi {
   position: relative;
-  margin-right: 27px;
+}
+
+/deep/ .van-nav-bar__right {
+  padding-right: 0;
 }
 
 .van-info {
   background: #fff;
   color: @red-dark;
+  top: 24px;
+  right: 22px;
 }
 
 .underline {
   text-decoration: underline;
-}
-
-.margin-left {
-  margin-left: 28px;
 }
 </style>

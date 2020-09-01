@@ -51,7 +51,7 @@ export default {
       default: ''
     },
     parentId: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     thumbsupStatus: {

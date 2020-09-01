@@ -10,7 +10,7 @@
     >
       <template #right>
         <span
-          v-if="articleType == 3 && info.is_mine"
+          v-if="articleType == 3"
           class="van-icon van-icon-ellipsis"
           @click="articleOperate"
         ></span>
@@ -91,6 +91,7 @@
       <reply
         ref="reply"
         class="tf-mt-lg activity-reply"
+        :is-mine="info.is_mine"
         :articleId="id"
         :articleType="articleType"
         :thumbsupStatus="info.is_thumbsup"
@@ -103,6 +104,7 @@
       :complainType="1"
       :moreShow.sync="moreShow"
       :complain="!info.is_mine && articleType == 3"
+      :shield="!info.is_mine && articleType == 3"
       :deleteProp="info.is_mine"
       @delete="deleteArticle"
     ></more-popup>

@@ -124,7 +124,7 @@
               :columns="reasonList"
             >
               <template v-slot="{valueText}">
-                <div class="reason-text">{{valueText}}</div>
+                <div class="reason-text" :class="{'picker-active': refuse_reason}">{{valueText}}</div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -165,7 +165,7 @@
               :columns="departmentList"
             >
               <template v-slot="{valueText}">
-                <div class="reason-text">{{valueText}}</div>
+                <div class="reason-text" :class="{'picker-active': departmentValue}">{{valueText}}</div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -183,7 +183,7 @@
               :columns="personnelList[departmentValue]"
             >
               <template v-slot="{valueText}">
-                <div class="reason-text">{{valueText}}</div>
+                <div class="reason-text" :class="{'picker-active': designee_uid}">{{valueText}}</div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -199,7 +199,7 @@
               :columns="[0,1,2,3,4,5,6,7,8,9,10]"
             >
               <template v-slot="{valueText}">
-                <div class="reason-text">{{valueText}}</div>
+                <div class="reason-text" :class="{'picker-active': limit_day}">{{valueText}}</div>
               </template>
             </tf-picker>
             <span class="tf-text tf-mr-base">天</span>
@@ -210,7 +210,7 @@
               :columns="[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
             >
               <template v-slot="{valueText}">
-                <div class="reason-text">{{valueText}}</div>
+                <div class="reason-text" :class="{'picker-active': limit_hours}">{{valueText}}</div>
               </template>
             </tf-picker>
             <span class="tf-text">小时</span>
@@ -238,7 +238,7 @@
             :columns="cancelReasonList"
           >
             <template v-slot="{valueText}">
-              <div class="reason-text">{{valueText}}</div>
+              <div class="reason-text" :class="{'picker-active': cancelReason}">{{valueText}}</div>
             </template>
           </tf-picker>
           <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -948,8 +948,11 @@ export default {
   width: 100%;
   font-size: 28px;
   line-height: 66px;
-  color: #222;
+  color: @gray-7;
   @text-ellipsis();
+}
+.picker-active {
+  color: #222;
 }
 .time-limit-box {
   display: flex;
