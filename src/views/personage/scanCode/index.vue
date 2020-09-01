@@ -40,7 +40,7 @@ import {
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { Dialog, Toast } from 'vant'
-import { hasPermission, reqPermission } from '@/utils/util'
+import { hasPermission, reqPermission } from '@/utils/permission'
 export default {
   data () {
     return {
@@ -339,7 +339,8 @@ export default {
     current (value) {
       const len = api.frames().length
       if (value === 1) {
-        if (!hasPermission('camera')[0].granted) {
+        const perms = hasPermission('camera')
+        if (!perms[0].granted) {
           reqPermission('camera', ({ list }) => {
             if (list[0].granted) {
               !len && this.openFrame()
