@@ -128,6 +128,8 @@ export default {
   color: #8f8f94;
   line-height: 86px;
   margin-top: 50px;
+  width: 100%;
+  text-align: center;
 }
 .code-pic {
   width: 380px;

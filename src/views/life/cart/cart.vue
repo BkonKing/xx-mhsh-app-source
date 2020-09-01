@@ -32,7 +32,7 @@
 	          <div class="shop-btn-block">
 	            <div class="shop-num">{{item.count}}</div>
 	          </div>
-	          <div :class="[item.count >= item.max_buy ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
+	          <div :class="[parseInt(item.count) >= parseInt(item.max_buy) ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
 	        </div>
 	        <div class="product-del" @click.stop="delCarts(index)" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>

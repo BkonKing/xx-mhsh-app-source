@@ -421,6 +421,7 @@ export default {
           this.swiperArr = res.data.pic_url_arr;
           this.skuList = res.data.formats;
           this.skuList.forEach((res2)=>{
+            this.$set(res2,"count",1);
             this.skuPicArr.push(res2.specs_img)
           })
           this.newTime = parseInt(new Date().getTime());
@@ -509,18 +510,19 @@ export default {
     *选中规格
     */
     typeFunc(index) {
+      let nowSku = this.skuList[index];
       this.typeVal = index;
-      this.goods.y_specs_img = this.skuList[index].y_specs_img;
-      this.goods.specs_img = this.skuList[index].specs_img;
-      this.goods.specs_name = this.skuList[index].specs_name;
-      this.goods.specs_id = this.skuList[index].specs_id;
-      this.goods.s_price = this.skuList[index].s_price;
-      this.goods.pay_price = this.skuList[index].s_price;
-      this.goods.y_price = this.skuList[index].y_price ? this.skuList[index].y_price : 0;
-      this.goods.credits = this.skuList[index].credits;
-      this.goods.stock = this.skuList[index].stock;
-      this.skuList[index].count = this.skuList[index].count ? this.skuList[index].count : 1;
-      this.skuList[index].notAdd = this.skuList[index].notAdd ? this.skuList[index].notAdd : false;
+      this.goods.y_specs_img = nowSku.y_specs_img;
+      this.goods.specs_img = nowSku.specs_img;
+      this.goods.specs_name = nowSku.specs_name;
+      this.goods.specs_id = nowSku.specs_id;
+      this.goods.s_price = nowSku.s_price;
+      this.goods.pay_price = nowSku.s_price;
+      this.goods.y_price = nowSku.y_price ? nowSku.y_price : 0;
+      this.goods.credits = nowSku.credits;
+      this.goods.stock = nowSku.stock;
+      nowSku.count = nowSku.count ? nowSku.count : 1;
+      nowSku.notAdd = nowSku.notAdd ? nowSku.notAdd : false;
       // this.goods.count = 1;
       this.limitNum()
     },
@@ -528,16 +530,25 @@ export default {
     *商品数量加减
     */
     countTab(types) {
-      if(this.skuList[this.typeVal].notAdd && types==1) return;
-      if(this.skuList[this.typeVal].count + types >= this.skuList[this.typeVal].stock){
-        if(this.skuList[this.typeVal].count + types == this.skuList[this.typeVal].stock){
-          this.skuList[this.typeVal].count = parseInt(this.skuList[this.typeVal].count) + types;
-        }
-        this.skuList[this.typeVal].notAdd = true;return;
+      let nowSku = this.skuList[this.typeVal];
+      nowSku.stock = parseInt(nowSku.stock);
+      if(nowSku.notAdd && types==1) return;
+      if(nowSku.stock > this.goods.max_buy){
+        nowSku.stock = this.goods.max_buy;
       }
-      if (this.skuList[this.typeVal].count + types > 0) {
-        this.skuList[this.typeVal].count = parseInt(this.skuList[this.typeVal].count) + types;
-        this.skuList[this.typeVal].notAdd = false;
+      
+      if(nowSku.count + types >= nowSku.stock){
+        console.log(nowSku.count,nowSku.stock);
+        if(nowSku.count + types == nowSku.stock){
+          nowSku.count = parseInt(nowSku.count) + types;
+        }
+        console.log(nowSku.count,nowSku.stock);
+        nowSku.notAdd = true;return;
+      }
+      console.log(456);
+      if (nowSku.count + types > 0) {
+        nowSku.count = parseInt(nowSku.count) + types;
+        nowSku.notAdd = false;
       }
     },
     /**
@@ -567,10 +578,13 @@ export default {
             if (arr[j].goods_id == goods.goods_id && arr[j].specs_id == goods.specs_id) {
               // 相等的话，给count+1（即再次添加入购物车，数量+1）  
               // console.log(this.cart_counts >= this.infoData.quota_num);return;
-              if (arr[j].count >= goods.max_buy){   //判断是否已经达到限购
+              if (parseInt(arr[j].count) >= goods.max_buy){   //判断是否已经达到限购
                 arr[j].count = parseInt(arr[j].count) + goods.count - 1;
               }else {
                 arr[j].count = parseInt(arr[j].count) + goods.count;
+              }
+              if(parseInt(arr[j].max_buy)>goods.max_buy){
+                arr[j].max_buy = goods.max_buy;
               }
               
               // 最后，把购物车数据，存放入缓存（此处不用再给购物车数组push元素进去，因为这个是购物车有的，直接更新当前数组即可）  
@@ -593,6 +607,7 @@ export default {
         } else {
           arr.push(goods);
         }
+        console.log(arr);
 
         // 最后，把购物车数据，存放入缓存  
         try {
@@ -624,7 +639,11 @@ export default {
     */
     limitNum() {
       // let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
-      var carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+      var carts_arr = [];
+      var arr = api.getPrefs({ sync: true,key: 'cart' }) || [];
+      if(arr.length){
+        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+      }
       let cart_counts = 0;
       var num_count = this.skuList[this.typeVal].count;
       let that = this;
@@ -640,15 +659,15 @@ export default {
         // this.cart_counts = cart_counts;
       }
 
-      this.goods.max_buy = this.skuList[this.typeVal].stock
+      this.goods.max_buy = parseInt(this.skuList[this.typeVal].stock);
       if(this.infoData.goods_type == 3){
-        if(this.goods.max_buy > this.infoData.ollage_quota_num){
-          this.goods.max_buy = this.infoData.ollage_quota_num;
+        if(this.goods.max_buy > parseInt(this.infoData.ollage_quota_num)){
+          this.goods.max_buy = parseInt(this.infoData.ollage_quota_num);
         }
       }
       if(this.infoData.is_quota == 1){
-        if(this.goods.max_buy > this.infoData.quota_num){
-          this.goods.max_buy = this.infoData.quota_num;
+        if(parseInt(this.goods.max_buy) > parseInt(this.infoData.quota_num)){
+          this.goods.max_buy = parseInt(this.infoData.quota_num);
         }
       }
       if(num_count  >= this.goods.max_buy){

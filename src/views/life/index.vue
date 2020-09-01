@@ -517,13 +517,12 @@ export default {
 	height: 100%;
 }
 .header-link {
-	height: 100%;
-	width: 72px;
-	height: 72px;
-	padding: 14px;
+	width: 88px;
+	height: 88px;
+	padding: 22px;
 }
-.header-link:last-child {
-	margin-right: 16px;
+.header-link {
+	margin-right: 10px;
 }
 
 /*导航*/

@@ -66,6 +66,7 @@ export default {
   height: 147px;
   font-size: 30px;
   color: #000;
+  border-bottom: none;
 }
 .mask-btn div.mask-sure-btn {
   width: 215px;
