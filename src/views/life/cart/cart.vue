@@ -413,9 +413,10 @@ export default {
   height: 120px;
 }
 .cart-data {
-  height: 120px;
+  height: 121px;
   background-color: #fff;
   line-height: 120px;
+  border-top: 1.4px solid #E5E5E5;
 }
 .all-checkbox {
   width: 140px;

@@ -21,7 +21,7 @@
           </div>
           <div class="address-detail">
             <div class="address-default" v-if="addressInfo.is_default == 1">默认</div>
-            <div class="p-nowrap">{{addressInfo.address_name}}</div>
+            <div class="p-nowrap">{{addressInfo.address_name+addressInfo.address_house}}</div>
           </div>
         </div>
       </div>
@@ -681,7 +681,7 @@ export default {
 }
 /* 收货地址 end */
 .order-goods-info:last-child{
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 .detail-list-block {
   padding-top: 25px;
@@ -712,9 +712,10 @@ input.order-remarks-text {
   height: 120px;
 }
 .cart-data {
-  height: 120px;
+  height: 121px;
   background-color: #fff;
   line-height: 120px;
+  border-top: 1.4px solid #E5E5E5;
 }
 .all-checkbox {
   width: 140px;

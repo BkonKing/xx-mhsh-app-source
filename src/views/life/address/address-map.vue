@@ -10,7 +10,7 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="map-bottom bottom-fixed" :style="{'top': 344+$store.state.paddingTop + 'px'}">
+    <div class="map-bottom bottom-fixed" :style="{'top': fixedTop,'height': fixedHeight}">
       <div class="search-box">
         <!-- <input type="text" placeholder="搜索地点" v-model="searchVal" @search="searchAddress" /> -->
         <van-search
@@ -47,10 +47,14 @@ export default {
       searchVal: '',
       searchList: [],
       // searchList: [{name: 'gewagaw',address:'eee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
-      bMap: ''
+      bMap: '',
+      fixedTop: '344px',
+      fixedHeight: '300px',
     }
   },
   created () {
+    this.fixedTop = 344+this.$store.state.paddingTop + 'px';
+    this.fixedHeight = api.winHeight - (344+this.$store.state.paddingTop) + 'px';
     this.getData()
   },
   deactivated(){
