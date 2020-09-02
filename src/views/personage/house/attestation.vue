@@ -1,6 +1,5 @@
 <template>
-  <div class="tf-bg">
-    <div style="position: relative;height: 100%;width: 100%;" :style="{'min-height': `${minHeight}px`}">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -13,78 +12,81 @@
         <span v-if="mode && !editMode" class="tf-icon tf-icon-bianji" @click="goEdit"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-padding">
-      <tf-list class="tf-mb-lg">
-        <tf-list-item title="房屋" @click="goCheckHouse">
-          <template v-slot:right>
-            <div v-if="mode === 1 && !editMode" class="tf-text">{{house_name}}</div>
-            <div v-else class="tf-text">{{ house_name || '请选择'}}</div>
+    <div class="tf-padding tf-flex-item tf-flex-column">
+      <div class="tf-body-container">
+        <tf-list class="tf-mb-lg">
+          <tf-list-item title="房屋" @click="goCheckHouse">
+            <template v-slot:right>
+              <div v-if="mode === 1 && !editMode" class="tf-text">{{house_name}}</div>
+              <div v-else class="tf-text">{{ house_name || '请选择'}}</div>
+            </template>
+          </tf-list-item>
+        </tf-list>
+        <div v-if="mode === 0 || editMode" class="tf-card tf-mb-lg">
+          <div class="tf-card-header" style="font-weight: normal;">认证类型</div>
+          <div class="tf-card-content" style="padding-bottom: 10px;">
+            <tf-radio-btn v-model="house_role" :data="items"></tf-radio-btn>
+          </div>
+        </div>
+        <tf-list>
+          <tf-list-item v-if="mode === 1 && !editMode" title="认证类型" :showArrow="false">
+            <template v-slot:right>
+              <div class="tf-text">{{userText[house_role]}}</div>
+            </template>
+          </tf-list-item>
+          <tf-list-item title="真实姓名" :showArrow="false">
+            <template v-slot:right>
+              <div v-if="mode === 1 && !editMode" class="tf-text">{{realname}}</div>
+              <input v-else class="tf-input" v-model="realname" />
+            </template>
+          </tf-list-item>
+          <tf-list-item title="手机号" :showArrow="false">
+            <template v-slot:right>
+              <div v-if="mode === 1 && !editMode" class="tf-text">{{mobile}}</div>
+              <input v-else type="number" class="tf-input" v-model="mobile" />
+            </template>
+          </tf-list-item>
+        </tf-list>
+        <tf-list v-if="type === 1 && mode === 1 && !editMode">
+          <tf-list-item title="设置当前房屋" :showArrow="false">
+            <template v-slot:right>
+              <van-switch
+                v-model="checked"
+                size="24"
+                @change="bindingDefault"
+                :disabled="checked"
+                active-color="#EB5841"
+              />
+            </template>
+          </tf-list-item>
+        </tf-list>
+      </div>
+      <div class="page-footer-placeholder">
+        <div class="page-footer">
+          <template v-if="!mode || editMode">
+            <van-checkbox
+              v-if="type === 0"
+              class="agreement-checkbox"
+              v-model="agreeValue"
+              shape="square"
+            >
+              阅读并同意
+              <span
+                class="tf-text-blue"
+                @click.stop="$router.push('/agreement?type=1')"
+              >《{{otherAgreement.title}}》</span>
+            </van-checkbox>
+            <van-button type="danger" size="large" @click="submit">提交</van-button>
           </template>
-        </tf-list-item>
-      </tf-list>
-      <div v-if="mode === 0 || editMode" class="tf-card tf-mb-lg">
-        <div class="tf-card-header" style="font-weight: normal;">认证类型</div>
-        <div class="tf-card-content" style="padding-bottom: 10px;">
-          <tf-radio-btn v-model="house_role" :data="items"></tf-radio-btn>
+          <van-button
+            v-else
+            class="tf-mt-lg tf-text-primary"
+            type="default"
+            size="large"
+            @click="onDelete"
+          >删除</van-button>
         </div>
       </div>
-      <tf-list>
-        <tf-list-item v-if="mode === 1 && !editMode" title="认证类型" :showArrow="false">
-          <template v-slot:right>
-            <div class="tf-text">{{userText[house_role]}}</div>
-          </template>
-        </tf-list-item>
-        <tf-list-item title="真实姓名" :showArrow="false">
-          <template v-slot:right>
-            <div v-if="mode === 1 && !editMode" class="tf-text">{{realname}}</div>
-            <input v-else class="tf-input" v-model="realname" />
-          </template>
-        </tf-list-item>
-        <tf-list-item title="手机号" :showArrow="false">
-          <template v-slot:right>
-            <div v-if="mode === 1 && !editMode" class="tf-text">{{mobile}}</div>
-            <input v-else type="number" class="tf-input" v-model="mobile" />
-          </template>
-        </tf-list-item>
-      </tf-list>
-      <tf-list v-if="type === 1 && mode === 1 && !editMode">
-        <tf-list-item title="设置当前房屋" :showArrow="false">
-          <template v-slot:right>
-            <van-switch
-              v-model="checked"
-              size="24"
-              @change="bindingDefault"
-              :disabled="checked"
-              active-color="#EB5841"
-            />
-          </template>
-        </tf-list-item>
-      </tf-list>
-      <div class="page-footer">
-        <template v-if="!mode || editMode">
-          <van-checkbox
-            v-if="type === 0"
-            class="agreement-checkbox"
-            v-model="agreeValue"
-            shape="square"
-          >
-            阅读并同意
-            <span
-              class="tf-text-blue"
-              @click.stop="$router.push('/agreement?type=1')"
-            >《{{otherAgreement.title}}》</span>
-          </van-checkbox>
-          <van-button class="tf-mt-lg" type="danger" size="large" @click="submit">提交</van-button>
-        </template>
-        <van-button
-          v-else
-          class="tf-mt-lg tf-text-primary"
-          type="default"
-          size="large"
-          @click="onDelete"
-        >删除</van-button>
-      </div>
-    </div>
     </div>
   </div>
 </template>
@@ -156,8 +158,7 @@ export default {
           name: '租户成员'
         }
       ],
-      userText,
-      minHeight: 0
+      userText
     }
   },
   computed: {
@@ -190,7 +191,6 @@ export default {
       }
     }
     this.title = this.type ? '房屋认证' : this.mode ? '成员' : '添加成员'
-    this.minHeight = window.innerHeight - api.safeArea.top - api.safeArea.bottom
   },
   activated () {
     const { houseSelected } = this.$store.state
@@ -449,30 +449,32 @@ export default {
   border: none;
 }
 
-.page-footer {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-  .agreement-checkbox {
-    font-size: 24px;
-    color: #8f8f94;
-    /deep/ .van-checkbox__icon--checked .van-icon {
-      color: @red-dark;
-      background: none;
-      border-color: @red-dark;
-    }
-    /deep/ .van-checkbox__icon {
-      height: 28px;
-      line-height: 28px;
-      .van-icon {
-        width: 28px;
+.page-footer-placeholder {
+  height: 88px;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
+  .page-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    .agreement-checkbox {
+      font-size: 24px;
+      color: #8f8f94;
+      margin-bottom: 30px;
+      /deep/ .van-checkbox__icon--checked .van-icon {
+        color: @red-dark;
+        background: none;
+        border-color: @red-dark;
+      }
+      /deep/ .van-checkbox__icon {
         height: 28px;
         line-height: 28px;
+        .van-icon {
+          width: 28px;
+          height: 28px;
+          line-height: 28px;
+        }
       }
     }
   }

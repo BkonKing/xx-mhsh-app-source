@@ -4,7 +4,7 @@
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
       <!-- <div v-if="share" class="more-btn" @click="clickShare">分享</div> -->
       <div v-if="shield" class="more-btn" @click="clickShield">屏蔽</div>
-      <!-- <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div> -->
+      <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
       <div v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">删除</div>
     </van-popup>
     <van-popup
@@ -30,7 +30,7 @@
       <div
         class="more-btn van-ellipsis"
         @click="userShieldDialog = true"
-      >屏蔽用户 @{{complainInfo.nickname}}</div>
+      >屏蔽 @{{complainInfo.nickname}}</div>
       <div class="more-btn" @click="contentShieldDialog = true">屏蔽 此条内容</div>
     </van-popup>
     <van-popup class="shield-confirm" v-model="userShieldDialog">
@@ -235,6 +235,7 @@ export default {
         this.shieldShow = false
         this.userShieldDialog = false
         this.contentShieldDialog = false
+        Toast.success('屏蔽成功')
         this.$emit('shielding')
       })
     }

@@ -320,6 +320,9 @@ export default {
       }
     }
   }
+  /deep/ .van-list__finished-text {
+    padding: 20px 0;
+  }
 }
 .gray {
   background: @background-color;

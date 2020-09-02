@@ -6,7 +6,7 @@ const {
 } = require('child_process')
 
 const appname = 'mhsh2' // 项目文件名
-const appPort = 10915 // 真机同步端口,浏览器打开端口。
+const appPort = 8111 // 真机同步端口,浏览器打开端口。
 const scriptActive = process.env.npm_lifecycle_event
 
 module.exports = {

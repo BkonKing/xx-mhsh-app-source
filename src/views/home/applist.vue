@@ -33,7 +33,9 @@
             delay: 500,
             group: 'description',
             disabled: !editMode,
-            ghostClass: 'ghost'
+            dragClass: 'app-drag',
+            ghostClass: 'app-ghost',
+            delayOnTouchOnly: true
           }"
           :move="onMove"
           @start="isDragging=true"
@@ -57,7 +59,7 @@
         <!-- <div class="tf-mb-lg">
           <div class="module-title">最近使用</div>
           <app-container :data="latelyList" :editMode="editMode" @add="add"></app-container>
-        </div> -->
+        </div>-->
         <div v-if="showButler" class="tf-mb-lg">
           <div class="module-title">智慧管家</div>
           <app-container :data="butlerList" :search="value" :editMode="editMode" @add="add"></app-container>
@@ -161,8 +163,12 @@ export default {
     },
     /* 搜索 */
     searchChange (value) {
-      this.showButler = this.butlerList.some(obj => obj.application.indexOf(value) > -1)
-      this.showNeighbour = this.neighbourList.some(obj => obj.application.indexOf(value) > -1)
+      this.showButler = this.butlerList.some(
+        (obj) => obj.application.indexOf(value) > -1
+      )
+      this.showNeighbour = this.neighbourList.some(
+        (obj) => obj.application.indexOf(value) > -1
+      )
     },
     /* 获取全部应用 */
     getAllApp () {
@@ -311,8 +317,18 @@ export default {
   }
 }
 .dragging {
-  /deep/ .sortable-drag::after {
-    border: 2px solid #222 !important;
+  .app-drag {
+    background-color: #fff;
+    &::after {
+      border: 2px solid @divider-color !important;
+    }
+  }
+  .app-ghost {
+    /deep/ .app-icon,
+    /deep/ .app-name,
+    /deep/ .tf-icon {
+      opacity: 0;
+    }
   }
 }
 </style>

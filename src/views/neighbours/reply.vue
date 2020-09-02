@@ -277,6 +277,9 @@ export default {
   /deep/ .van-pull-refresh__track {
     @flex-column();
   }
+  /deep/ .van-list__finished-text {
+    padding: 20px 0;
+  }
 }
 .reply-cell-content {
   padding: 30px;

@@ -1,14 +1,14 @@
-<widget id="A6040369256280" version="0.0.1">
+<widget id="A6042468485812" version="0.0.1">
 
-	<name>美好生活家园</name>
+	<name>美好生活家园CS</name>
 
 	<description>
 
-        美好生活家园
+        美好生活家园CS
 
 	</description>
 
-	<author email="developer@apicloud.com" href="http://www.apicloud.com">
+	<author>
 
         福建线下信息科技有限公司
 
@@ -28,20 +28,20 @@
 
 	<!-- 支付宝支付 -->
 	<feature name="aliPayPlus">
-      <param name="urlScheme" value="AliPayPlusA6040369256280" />
+      <param name="urlScheme" value="AliPayPlusA6042468485812" />
   </feature>
 
 	<!-- 极光推送 -->
 	<feature name="ajpush">
-		<param name="app_key" value="717f513d82146e4e6a8c0525" />
+		<param name="app_key" value="0f12d5ff4fc832b860504db7" />
 		<param name="channel" value="qihu360" />
 	</feature>
     
     <!-- 百度地图 -->
 	<feature name="bMap">
-	  <param name="android_api_key" value="47KitjRYLxTg4q8KpCefbyk25y94IPgP" />
-	  <param name="ios_api_key" value="2sXGE4s8IOxySbI1wwDaujqeeXIymu9U" />
-	</feature>
+		<param name="android_api_key" value="rFiTfwEjju4HNCOoHKGwP94AcsPCLL1z" />
+		<param name="ios_api_key" value="Zdxxje3lV7LRRy4WNvNjprZ3xIDoSbs1" />
+ 	</feature>
 
 	<!-- 腾讯统计 -->
 	<feature name="txAnalysis">

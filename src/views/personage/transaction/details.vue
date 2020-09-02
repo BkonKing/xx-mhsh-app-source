@@ -302,7 +302,7 @@
               :min-date="new Date()"
             >
               <template>
-                <div class="tf-text text-right">{{negotiation_time || '选择日期时间'}}</div>
+                <div class="tf-text text-right" :class="{'picker-active': negotiation_time}">{{negotiation_time || '选择日期时间'}}</div>
               </template>
             </tf-date-time-picker>
             <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>
@@ -968,7 +968,11 @@ export default {
 .date-time-box {
   flex: 1;
   /deep/ .tf-text.text-right {
+    color: @gray-7;
     line-height: 66px;
+  }
+  /deep/ .tf-text.picker-active {
+    color: #222;
   }
 }
 </style>

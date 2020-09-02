@@ -226,7 +226,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "interactionIndex" */
         '@/views/personage/interaction/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 常见问题 */
   {
@@ -256,6 +259,16 @@ const personageRouter = [
       import(
         /* webpackChunkName: "agreementList" */
         '@/views/personage/setting/agreementList.vue'
+      )
+  },
+  /* 屏蔽设置 */
+  {
+    path: '/pages/personage/setting/shield',
+    name: 'settingShield',
+    component: () =>
+      import(
+        /* webpackChunkName: "settingShield" */
+        '@/views/personage/setting/shield.vue'
       )
   }
 ]

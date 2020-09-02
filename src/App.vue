@@ -46,6 +46,13 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
+    api.addEventListener({
+      name: 'swiperight'
+    }, (ret, err) => {
+      if (this.$route.matched.length === 1) {
+        this.$router.go(-1)
+      }
+    })
     this.paddingTop = api.safeArea.top
     this.$store.commit('setPaddingTop', this.paddingTop)
     this.paddingBottom = api.safeArea.bottom
@@ -73,7 +80,6 @@ export default {
       } else {
         el.children[0].style.paddingTop = `${this.paddingTop}px`
       }
-      el.style.bottom = `${this.paddingBottom}px`
       el.style.height = 'auto'
     },
     afterEnter (el) {
@@ -91,7 +97,6 @@ export default {
       } else {
         el.children[0].style.paddingTop = `${this.paddingTop}px`
       }
-      el.style.bottom = `${this.paddingBottom}px`
       el.style.height = 'auto'
     },
     afterLeave (el) {

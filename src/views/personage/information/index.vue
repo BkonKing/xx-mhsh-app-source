@@ -507,6 +507,8 @@ export default {
 
 .btn-placeholder {
   height: 88px;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
 }
 
 .basics-list + .basics-list {

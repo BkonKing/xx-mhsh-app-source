@@ -89,3 +89,20 @@ export function addComplaint (data) {
 export function addShielding (data) {
   return request.post('/neighbours/shielding/addShielding', data)
 }
+
+/* 屏蔽设置 start */
+
+// 解除屏蔽
+export function removeShielding (data) {
+  return request.post('/neighbours/shielding/removeShielding', data)
+}
+// 屏蔽内容列表
+export function getShieldingInfoList (params) {
+  return request.get('/neighbours/shielding/getShieldingInfoList', { params })
+}
+// 屏蔽用户列表
+export function getShieldingUserList (params) {
+  return request.get('/neighbours/shielding/getShieldingUserList', { params })
+}
+
+/* 屏蔽设置 end */

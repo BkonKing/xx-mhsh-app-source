@@ -352,4 +352,7 @@ export default {
     color: #fff;
   }
 }
+/deep/ .complain-dialog {
+  bottom: 98px;
+}
 </style>

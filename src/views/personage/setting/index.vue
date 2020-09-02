@@ -13,6 +13,9 @@
         <tf-list-item title="个人资料" @click="goInformation"></tf-list-item>
       </tf-list>
       <tf-list class="tf-mt-lg">
+        <tf-list-item title="屏蔽设置" @click="goShieldSetting"></tf-list-item>
+      </tf-list>
+      <tf-list class="tf-mt-lg">
         <tf-list-item title="检查更新" @click="openDialog" border>
           <template v-if="updateStatus" v-slot:right>
             <div class="right-text tf-text-primary">发现更新版本</div>
@@ -118,6 +121,10 @@ export default {
     /* 跳转协议 */
     goAgreementList () {
       this.$router.push('/pages/personage/agreement/list')
+    },
+    /* 跳转屏蔽设置 */
+    goShieldSetting () {
+      this.$router.push('/pages/personage/setting/shield')
     },
     /* 更新说明提醒 */
     openDialog () {

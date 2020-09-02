@@ -179,7 +179,7 @@ export default {
   }
   &-right {
     @flex-column();
-    justify-content: flex-end;
+    justify-content: space-between;
     width: 48px;
     text-align: center;
     margin-left: 20px;
