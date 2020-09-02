@@ -420,7 +420,8 @@ export default {
   position: fixed;
   bottom: 0;
   width: 750px;
-  height: 98px;
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
   background-color: #383838;
   display: flex;
 }
@@ -429,6 +430,7 @@ export default {
   flex-direction: column;
   flex: 1;
   align-items: center;
+  height: 98px;
 }
 .tab-text {
   height: 76px;

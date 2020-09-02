@@ -143,4 +143,8 @@ export default {
 .van-hairline-unset--top-bottom::after {
   border-width: 2px 0;
 }
+.tf-bg-white {
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
+}
 </style>

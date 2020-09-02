@@ -131,17 +131,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.comment-container {
-  height: 98px;
-}
 .comment-box {
   position: fixed;
   left: 0;
   bottom: 0;
   @flex();
   width: 100%;
-  height: 98px;
   padding: 15px 30px;
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
   background: #fff;
   border-top: 2px solid @gray-2;
   .tf-icon-zan {
