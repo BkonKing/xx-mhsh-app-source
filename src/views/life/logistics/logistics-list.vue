@@ -15,7 +15,7 @@
         <div class="logistics-item block-session" @click="logisticsLink(index)">
           <div class="item-header">
             <img v-if="item.buy_type == 1 && item.l_status == 0" class="wxchart-code" src="@/assets/img/code_01.png" />
-            <div class="logistics-name">{{item.name}}<span :class="[item.buy_type!=0 && item.l_status == 0 ? 'color-eb5841' : '',item.buy_type!=0 && item.l_status == 1 ? 'color-8f8f94' : '']">（{{item.name2}}）</span></div>
+            <div class="logistics-name">{{item.name}}<span :class="[item.buy_type!=0 && item.l_status == 0 ? 'color-eb5841' : 'color-8f8f94']">（{{item.name2}}）</span></div>
             <div v-if="item.buy_type==0 && item.l_status==0" class="logistics-info">
               <div class="logistics-icon-circular"></div>
               <div class="logistics-icon-line"></div>

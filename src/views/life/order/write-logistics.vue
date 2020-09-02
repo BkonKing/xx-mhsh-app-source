@@ -22,6 +22,7 @@
 						</div>
 						<div class="order-sku-num">
 							<div class="order-sku order-sku-text p-nowrap">{{item.specs_name}}</div>
+							<div class="order-buy-num">x1</div>
 						</div>
 						<div v-if="item.type == 3" class="order-action-session">
 							<div class="order-action-text">{{item.new_specs_name}}</div>
@@ -43,7 +44,8 @@
 				<div class="common-item">
 					<div class="common-item-left">
 						<div class="color-222 font-28 width-146">物流单号</div>
-						<div class="color-222 font-28">{{kuaidi_num}}</div>
+						<input data-v-4423eeff="" type="text" placeholder="请输入" class="color-222 font-28 kuaidi-num" v-model="kuaidi_num">
+						<!-- <div class="color-222 font-28">{{kuaidi_num}}</div> -->
 					</div>
 					<div class="common-item-right">
 						<div class="common-item-code" @click="scanFunc">
@@ -204,6 +206,9 @@ export default {
 .code-pic {
 	width: 44px;
 	height: 44px;
+}
+.kuaidi-num {
+  width: 410px;
 }
 
 .common-list-pic {

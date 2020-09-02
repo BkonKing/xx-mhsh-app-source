@@ -556,6 +556,10 @@ export default {
      */
     addCar: function (e) {
       this.isShow = false;
+      this.checkData();
+    },
+    //加入购物车
+    checkNext(){
       var goods = this.goods;
       goods.count = this.skuList[this.typeVal].count;
       //goods.isSelect = false;
@@ -633,6 +637,44 @@ export default {
         this.getNum();
         return;
       }
+    },
+    //再次请求数据，验证商品信息是否更改
+    checkData(){
+      const that = this;
+      var backVal = true;
+      getGoodsDetail({
+        goods_id: this.goodsId,
+        f_id: this.f_orderid
+      }).then(res => {
+        var newData = res.data;
+        if(newData.is_sell_out > 0){  //上下架变动
+          backVal = false;
+          // toastTxt = newData.sell_out_text;
+          // Toast({
+          //   message: newData.sell_out_text,
+          //   onClose: function(){
+          //     that.getData();
+          //   }
+          // })
+        }else {
+          if(that.infoData.pay_type != newData.pay_type){  //购买方式变动（兑换/购买）
+            backVal = false;
+          }else {
+            if(that.infoData.goods_type != newData.goods_type){  //商品购买类型变动（闪购/特卖）
+              backVal = false;
+            }else {
+              if(that.infoData.goods_type == 3 && that.infoData.ollage_info.is_start != newData.ollage_info.is_start){  //闪购状态改变
+                backVal = false;
+              }
+            }
+          }
+        }
+        if(backVal){
+          that.checkNext();
+        }else {
+          that.getData();
+        }
+      })
     },
     /**
      * 判断限购数量是否大于购物车数量

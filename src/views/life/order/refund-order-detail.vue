@@ -114,7 +114,11 @@
 								<div class="shipping-address-item">
 									<div class="shipping-address-item-left color-222 font-28">退货地址:</div>
 									<div class="shipping-address-item-right">
-										<div class="shipping-address-username p-nowrap">{{infoData.tuihuo1}}</div>
+										<div class="shipping-address-username p-nowrap">{{infoData.return_name}}</div>
+										<div class="color-222 font-28">{{infoData.return_tel}}</div>
+									</div>
+									<div class="copy-btn" @click="copy_cont(infoData.return_name+infoData.return_tel+infoData.tuihuo2)">
+										<div class="copy-text">复制</div>
 									</div>
 								</div>
 								<div class="shipping-address-item">
@@ -196,11 +200,12 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import { getRefundInfo, getReturnRefundInfo, cancelRefundApply, cancelRefundReturnApply } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Toast.name]: Toast,
   },
   data () {
     return {
@@ -258,6 +263,18 @@ export default {
 	        }
 	      })
     	}
+    },
+    copy_cont(text_c){
+      var clipBoard = api.require('clipBoard');
+      clipBoard.set({
+        value: text_c
+      }, function(ret, err) {
+        if (ret) {
+            Toast('复制成功');
+        } else {
+            alert(JSON.stringify(err));
+        }
+      });
     },
     linkFunc (type,obj={}) {
     	switch (type){

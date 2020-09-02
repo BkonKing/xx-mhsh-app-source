@@ -160,6 +160,7 @@ export default {
   display: flex;
   border-radius: 4px;
   overflow: hidden;
+  background-color: #f4f4f4;
 }
 .special-goods-info {
   width: 472px;

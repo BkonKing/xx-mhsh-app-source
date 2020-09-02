@@ -2,7 +2,7 @@
 	<div class="app-body">
 		<div class="order-bar bar-white">
 			<van-nav-bar
-	      :title="titList[typeVal]"
+	      :title="navHide ? titList[typeVal] : titList[0]"
 	      :fixed="true"
 	      :border="false"
 	      placeholder
@@ -26,7 +26,7 @@
 				<div v-for="(item, index) in listData" class="order-item" @click="linkFunc(item.order_type==1 ? 12 : 13,{id: item.id})">
 					<div class="order-header">
 						<div class="order-no">订单号：{{item.order_numb}}</div>
-						<div class="order-status">{{item.order_status_name}}<text class="font-28 color-eb5841 text-right"></text></div>
+						<div :class="[item.order_status==3 || item.order_status==5 ? 'color-8f8f94' : 'color-eb5841','order-status']">{{item.order_status_name}}</div>
 					</div>
 					<div v-for="(goods, key) in item.order_goods_specs_list" :class="[key > 4 ? 'toggle-up' : '', item.is_toggle ? 'toggle-down' : '', 'order-goods-info']">
 						<div class="order-pic-block">
@@ -328,7 +328,7 @@ export default {
     },
     logisticsLink(index) {
     	var _this = this.listData[index];
-      if(_this.project_logistice_count > 1){
+      if(_this.project_logistice_count > 1 || (_this.project_logistice_count = 1 && _this.order_status == 1)){
       	this.$router.push({
           path: '/logistics/list',
           query: {

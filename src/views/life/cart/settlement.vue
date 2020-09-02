@@ -419,6 +419,7 @@ export default {
         })
       }else if(this.order_type == 3){
         this.flashParam.address_id = this.addressInfo.id;
+        this.flashParam.old_pay_credits = this.settlementInfo.pay_credits;
         exchangeCreate(this.flashParam).then(res => {
           if (res.success) {
             if(res.code == '200'){
@@ -430,6 +431,7 @@ export default {
         })
       }else {
         this.flashParam.address_id = this.addressInfo.id;
+        this.flashParam.old_pay_credits = this.settlementInfo.new_pay_money;
         flashCreate(this.flashParam).then(res => {
           if (res.success) {
             if(res.code == '200'){
@@ -570,7 +572,7 @@ export default {
     },
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name == 'goodsDetail' || to.name == 'cart'){
+    if(to.name == 'goodsDetail' || to.name == 'cart' || to.name == 'orderDetail' || to.name == 'specialDetail'){
       console.log(to.name)
       
       this.$destroy();

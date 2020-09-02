@@ -138,8 +138,11 @@
 					<div class="shipping-address-item">
 						<div class="shipping-address-item-left color-222 font-28">退货地址:</div>
 						<div class="shipping-address-item-right">
-							<div class="shipping-address-username p-nowrap">{{infoData.tuihuo1}}</div>
-							<!-- <div class="color-222 font-28">{{infoData.tuihuo2}}</div> -->
+							<div class="shipping-address-username p-nowrap">{{infoData.return_name}}</div>
+							<div class="color-222 font-28">{{infoData.return_tel}}</div>
+						</div>
+						<div class="copy-btn" @click="copy_cont(infoData.return_name+infoData.return_tel+infoData.tuihuo2)">
+							<div class="copy-text">复制</div>
 						</div>
 					</div>
 					<div class="shipping-address-item">
@@ -164,7 +167,7 @@
 						<div class="order-tip-item-left order-tip-text color-222 font-28">换货说明:</div>
 						<div class="order-tip-item-right color-8f8f94 font-28 order-tip-text">{{infoData.reason_text ? infoData.reason_text : '无'}}</div>
 					</div>
-					<div class="public-hr"></div>
+					<div v-if="go_logistice_info" class="public-hr"></div>
 				</template>
 				<template v-if="go_logistice_info">
 					<div @click="linkFunc(22,{id:go_logistice_info.id})" v-if="go_logistice_info.s_time && go_logistice_info.s_time!='0'" class="order-tip-item">
@@ -207,11 +210,12 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast } from 'vant'
 import { getBarterInfo, cancelBarterApply } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Toast.name]: Toast,
   },
   data () {
     return {
@@ -238,6 +242,18 @@ export default {
         	this.go_logistice_info = res.go_logistice_info;
         }
       })
+    },
+    copy_cont(text_c){
+      var clipBoard = api.require('clipBoard');
+      clipBoard.set({
+        value: text_c
+      }, function(ret, err) {
+        if (ret) {
+            Toast('复制成功');
+        } else {
+            alert(JSON.stringify(err));
+        }
+      });
     },
     linkFunc (type,obj={}) {
     	switch (type){

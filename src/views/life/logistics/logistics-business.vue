@@ -10,24 +10,26 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="block-session logistics-goods">
-      <div class="logistics-goods-pic">
-        <div class="goods-num">共{{infoData.img_arr.length}}件</div>
-        <img class="img-100" :src="infoData.img_arr[0]" />
+    <template v-if="infoData">
+      <div class="block-session logistics-goods">
+        <div class="logistics-goods-pic">
+          <div class="goods-num">共{{infoData.img_arr.length}}件</div>
+          <img class="img-100" :src="infoData.img_arr[0]" />
+        </div>
+        <div class="logistics-tip">
+          <div>配送方式：{{infoData.name}}</div>
+          <div>联系电话：{{infoData.tel}}</div>
+        </div>
       </div>
-      <div class="logistics-tip">
-        <div>配送方式：{{infoData.name}}</div>
-        <div>联系电话：{{infoData.tel}}</div>
+      <div v-if="infoData.l_status == 1" class="block-session logistics-code logistics-success">
+        <img class="logistics-tick" src="@/assets/img/tick4.png" />
+        <div class="logistics-status">
+          <div>{{infoData.s_txt}}</div>
+          <div class="color-999 font-24">{{infoData.s_time}}</div>
+        </div>
       </div>
-    </div>
-    <div v-if="infoData.l_status == 1" class="block-session logistics-code logistics-success">
-      <img class="logistics-tick" src="@/assets/img/tick4.png" />
-      <div class="logistics-status">
-        <div>{{infoData.s_txt}}</div>
-        <div class="color-999 font-24">{{infoData.s_time}}</div>
-      </div>
-    </div>
-    <div v-else class="no-logistics color-8f8f94">暂未配送</div>
+      <div v-else class="no-logistics color-8f8f94">暂未配送</div>
+    </template>
   </div>
 </template>
 
