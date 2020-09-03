@@ -138,8 +138,8 @@ export default {
   @flex();
   width: 100%;
   padding: 15px 30px;
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-bottom: constant(safe-area-inset-bottom);
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
   background: #fff;
   border-top: 2px solid @gray-2;
   .tf-icon-zan {

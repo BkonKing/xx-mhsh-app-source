@@ -291,6 +291,7 @@ export default {
   flex: 1;
   padding: 20px 0;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 /deep/ .van-nav-bar__text {
   font-size: 34px;
@@ -351,8 +352,5 @@ export default {
     text-align: center;
     color: #fff;
   }
-}
-/deep/ .complain-dialog {
-  bottom: 98px;
 }
 </style>

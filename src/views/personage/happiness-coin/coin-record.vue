@@ -80,6 +80,7 @@ export default {
   /deep/ .van-tabs__content {
     flex: 1;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
     // .van-tab__pane {
     //   height: 100%;
     //   padding: 30px 0;

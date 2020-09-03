@@ -282,6 +282,7 @@ export default {
 .coin-main-box {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .coin-number {
   font-size: 72px;

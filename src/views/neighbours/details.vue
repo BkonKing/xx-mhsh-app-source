@@ -268,6 +268,7 @@ export default {
 <style lang='less' scoped>
 .tf-body-container {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   /deep/ .van-pull-refresh__track {
     @flex-column();
   }

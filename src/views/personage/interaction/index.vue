@@ -64,10 +64,9 @@ export default {
         name: 'swiperight'
       },
       (ret, err) => {
-        if (this.active !== 4) {
-          this.active++
+        if (this.active !== 0) {
+          this.active--
         }
-        console.log(this.active)
       }
     )
     api.addEventListener(
@@ -75,15 +74,19 @@ export default {
         name: 'swipeleft'
       },
       (ret, err) => {
-        if (this.active !== 0) {
-          this.active--
+        if (this.active !== 4) {
+          this.active++
         }
       }
     )
   },
   activated () {
     if (this.scrollTop) {
-      document.getElementById(`interaction${this.active}`).getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+      document
+        .getElementById(`interaction${this.active}`)
+        .getElementsByClassName(
+          'tf-list-refresh'
+        )[0].scrollTop = this.scrollTop
     }
   },
   methods: {
@@ -105,7 +108,9 @@ export default {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
-    const el = document.getElementById(`interaction${this.active}`).getElementsByClassName('tf-list-refresh')
+    const el = document
+      .getElementById(`interaction${this.active}`)
+      .getElementsByClassName('tf-list-refresh')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
     next()
   }
@@ -118,6 +123,7 @@ export default {
   /deep/ .van-tabs__content {
     flex: 1;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .van-tab__pane {
       height: 100%;
     }

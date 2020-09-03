@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg-white tf-c">
+  <div class="tf-bg-white tf-body">
     <van-nav-bar :fixed="true" placeholder border>
       <template #left>
         <span class="tf-icon tf-icon-guanbi" @click="closePublish"></span>
@@ -8,7 +8,7 @@
         <span class="send-btn" :class="{'tf-text-orange': category_id && content}" @click="addPostBar">发送</span>
       </template>
     </van-nav-bar>
-    <div class="tf-container">
+    <div class="tf-body-container">
       <van-dropdown-menu class="publish-type" :overlay="false" :close-on-click-outside="false">
         <van-dropdown-item :title="radioLabel || '发布类型'" ref="item">
           <tf-radio-btn v-model="category_id" :data="types" @change="handRadioChange"></tf-radio-btn>
@@ -137,7 +137,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-container{
+.tf-body-container{
   padding: 30px;
 }
 .publish-type {

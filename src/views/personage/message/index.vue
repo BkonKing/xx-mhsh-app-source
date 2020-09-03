@@ -301,6 +301,7 @@ export default {
   /deep/ .van-tabs__content {
     flex: 1;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .van-tab__pane {
       height: 100%;
     }
@@ -308,6 +309,7 @@ export default {
 }
 .tf-flex-item {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 /deep/ .van-info {
   top: 16px;

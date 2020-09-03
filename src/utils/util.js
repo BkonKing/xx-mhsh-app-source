@@ -56,13 +56,11 @@ export function validForm (arr) {
 }
 
 export function clearUserInfo () {
-  const ajParams = {
-    alias: 0
-  }
-  console.log(process.env.VUE_APP_IS_APP, process.env.VUE_APP_IS_APP === '1')
   if (process.env.VUE_APP_IS_APP === '1') {
+    const ajParams = {
+      alias: 0
+    }
     Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-      // console.log(JSON.stringify(ret))
       if (ret && ret.statusCode) {
         // alert(ret)
       }

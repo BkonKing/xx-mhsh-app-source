@@ -26,13 +26,33 @@
             :value="value"
             @touchstart.native.stop="touchstart"
           />
-          <span v-if="value && type !== '3'" class="tf-icon tf-icon-close-circle-fill" @click="value = ''"></span>
+          <span
+            v-if="value && type !== '3'"
+            class="tf-icon tf-icon-close-circle-fill"
+            @click="value = ''"
+          ></span>
         </div>
-        <van-field v-model="remarks" :disabled="type === '3'" maxlength="10" placeholder="添加备注(10字以内)" />
+        <van-field
+          v-model="remarks"
+          :disabled="type === '3'"
+          maxlength="10"
+          placeholder="添加备注(10字以内)"
+        />
       </div>
-      <van-button class="tf-mt-lg" type="primary" size="large" @click="pay">{{type !== '2' ? '确认支付' : '确认'}}</van-button>
+      <van-button
+        class="tf-mt-lg"
+        type="primary"
+        size="large"
+        @click="pay"
+      >{{type !== '2' ? '确认支付' : '确认'}}</van-button>
     </div>
-    <tf-dialog v-model="payCodeShow" title="请输入密码" @closed="paypassword = ''">
+    <tf-dialog
+      v-model="payCodeShow"
+      title="请输入密码"
+      @closed="paypassword = ''"
+      top="30%"
+      getContainer
+    >
       <van-password-input
         :value="paypassword"
         :gutter="7"
@@ -43,6 +63,8 @@
     <van-number-keyboard
       v-model="value"
       :show="showKeyboard"
+      safe-area-inset-bottom
+      get-container="body"
       key="number"
       theme="custom"
       :extra-key="['.']"
@@ -52,6 +74,8 @@
     />
     <van-number-keyboard
       :show="showPasswordboard"
+      safe-area-inset-bottom
+      get-container="body"
       key="password"
       z-index="9999"
       theme="custom"
@@ -110,7 +134,15 @@ export default {
     }
   },
   created () {
-    const { type, value, avatar, realname, mobile, credits, remarks } = this.$route.query
+    const {
+      type,
+      value,
+      avatar,
+      realname,
+      mobile,
+      credits,
+      remarks
+    } = this.$route.query
     this.type = type
     this.codeId = value
     this.info = { avatar, realname, mobile }
@@ -153,13 +185,17 @@ export default {
         code_id: this.codeId,
         paypassword: this.paypassword
       }
-      paymentCredits(params).then((res) => {
-        Dialog.alert({
-          title: '付款成功'
-        }).then(() => {
-          this.$router.go(-1)
+      paymentCredits(params)
+        .then((res) => {
+          Dialog.alert({
+            title: '付款成功'
+          }).then(() => {
+            this.$router.go(-1)
+          })
         })
-      })
+        .catch((message) => {
+          this.setPaymentPassword(message)
+        })
     },
     // 收款码支付
     collectCredits () {
@@ -169,13 +205,17 @@ export default {
         code_id: this.codeId,
         paypassword: this.paypassword
       }
-      collectCredits(params).then((res) => {
-        Dialog.alert({
-          title: '付款成功'
-        }).then(() => {
-          this.$router.go(-1)
+      collectCredits(params)
+        .then((res) => {
+          Dialog.alert({
+            title: '付款成功'
+          }).then(() => {
+            this.$router.go(-1)
+          })
         })
-      })
+        .catch((message) => {
+          this.setPaymentPassword(message)
+        })
     },
     // 收款方提交收款金额
     skCredits () {
@@ -183,14 +223,31 @@ export default {
         credits: this.value,
         remarks: this.remarks,
         code_id: this.codeId
-      })
-        .then((res) => {
-          Dialog.alert({
-            title: '请等待对方确认付款'
-          }).then(() => {
-            this.$router.go(-1)
-          })
+      }).then((res) => {
+        Dialog.alert({
+          title: '请等待对方确认付款'
+        }).then(() => {
+          this.$router.go(-1)
         })
+      })
+    },
+    // 设置支付密码
+    setPaymentPassword (message) {
+      Toast.clear()
+      if (message === '您还未设置支付密码！') {
+        Dialog.confirm({
+          title: '您还未设置支付密码，是否前往设置'
+        }).then(() => {
+          this.payCodeShow = false
+          this.$nextTick(() => {
+            this.$router.push(
+              '/pages/personage/information/payment-code?status=0'
+            )
+          })
+        }).catch(() => {
+          this.showPasswordboard = true
+        })
+      }
     },
     touchstart () {
       if (this.type !== '3') {

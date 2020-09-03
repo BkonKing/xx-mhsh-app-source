@@ -486,10 +486,12 @@ export default {
   /deep/ .van-tabs__content {
     flex: 1;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .van-tab__pane {
       height: 100%;
       padding: 20px;
       overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
   }
 }
@@ -506,7 +508,6 @@ export default {
 }
 
 .btn-placeholder {
-  height: 88px;
   margin-bottom: env(safe-area-inset-bottom);
   margin-bottom: constant(safe-area-inset-bottom);
 }
@@ -521,6 +522,7 @@ export default {
   top: 196px;
   bottom: 128px;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .tf-btn {
   width: 710px;

@@ -450,7 +450,6 @@ export default {
 }
 
 .page-footer-placeholder {
-  height: 88px;
   margin-bottom: env(safe-area-inset-bottom);
   margin-bottom: constant(safe-area-inset-bottom);
   .page-footer {
@@ -458,6 +457,7 @@ export default {
     flex-direction: column;
     align-items: center;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
     .agreement-checkbox {
       font-size: 24px;
       color: #8f8f94;

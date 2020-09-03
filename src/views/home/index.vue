@@ -6,7 +6,7 @@
     >
       <page-nav-bar :class="{'black-page-nav': scrollStatus}" search></page-nav-bar>
     </div>
-    <div class="tf-body-container" @scroll.passive="onScroll">
+    <div class="tf-body-container" id="home-body-container" @scroll.passive="onScroll">
       <div
         v-if="noticeList.length"
         class="home-notice-box"
@@ -242,6 +242,11 @@ export default {
     this.$store.dispatch('getMyAccount')
   },
   activated () {
+    if (this.scrollTop) {
+      document.getElementById('home-body-container').scrollTop = this.scrollTop
+    } else {
+      this.scrollStatus = false
+    }
     this.getMyApp()
     this.getBannerIndex()
     this.getNoticeLbList()
@@ -250,7 +255,6 @@ export default {
     this.getActivityList()
     this.getOllageGoods()
     this.getMhttList()
-    this.scrollStatus = false
     this.swipeChange(0)
   },
   methods: {
@@ -381,17 +385,15 @@ export default {
     },
     /* 滚动行为 */
     onScroll ({ target }) {
-      if (this.noticeList.length > 0) {
-        const el = document.getElementById('home-notice-box')
-        const height = (el && el.clientHeight) || 0
-        if (target.scrollTop > height + 15) {
-          this.scrollStatus = true
-          this.headerColor = '#fff'
-        } else if (target.scrollTop > 0) {
-          if (this.scrollStatus) {
-            this.scrollStatus = false
-            this.swipeChange(this.activeIndex)
-          }
+      const el = document.getElementById('home-notice-box')
+      const height = (el && el.clientHeight) || 0
+      if (target.scrollTop > height + 15) {
+        this.scrollStatus = true
+        this.headerColor = '#fff'
+      } else if (target.scrollTop > 0) {
+        if (this.scrollStatus) {
+          this.scrollStatus = false
+          this.swipeChange(this.activeIndex)
         }
       }
     }
@@ -444,6 +446,8 @@ export default {
       if (to.matched.length === 0) {
         next(false)
       } else {
+        const el = document.getElementById('home-body-container')
+        this.scrollTop = (el && el.scrollTop) || 0
         next()
       }
     }

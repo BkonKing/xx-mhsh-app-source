@@ -803,6 +803,7 @@ export default {
 .tf-main-container {
   flex: 1;
   overflow: auto !important;
+  -webkit-overflow-scrolling: touch;
 }
 .operation-box {
   width: 100%;

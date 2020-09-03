@@ -2,16 +2,24 @@
   <refreshList class="reply-list" :list.sync="commentList" :load="getMyCommentList">
     <template v-slot="{item}">
       <div class="reply-cell-content" @click="goNeighbours(item)">
-        <userInfo :avatar="userInfo.avatar || ''" :name="userInfo.nickname" :time="item.ctime" size="m"></userInfo>
+        <userInfo
+          :avatar="userInfo.avatar || ''"
+          :name="userInfo.nickname"
+          :time="item.ctime"
+          size="m"
+        ></userInfo>
         <div class="reply-cell-content__text">{{item.content}}</div>
         <div v-if="item.images && item.images.length > 0" class="reply-cell-content__img-box">
           <img class="reply-cell-content__img" :src="item.images[0]" />
         </div>
         <div class="reply-cell-content__reply">
-          <span class="tf-text">
-            <strong style="color: #222">{{item.yh_nickname}}</strong>：
-          </span>
-          {{item.yh_content}}
+          <template v-if="item.yh_is_del == '1'">该内容已被删除</template>
+          <template v-else>
+            <span class="tf-text">
+              <strong style="color: #222">{{item.yh_nickname}}</strong>：
+            </span>
+            {{item.yh_content}}
+          </template>
         </div>
       </div>
     </template>
@@ -23,6 +31,7 @@ import UserInfo from '@/components/user-info/index.vue'
 import refreshList from '@/components/tf-refresh-list'
 import { getMyCommentList } from '@/api/personage.js'
 import { mapGetters } from 'vuex'
+import { Toast } from 'vant'
 export default {
   components: {
     UserInfo,
@@ -41,6 +50,13 @@ export default {
       return getMyCommentList(params)
     },
     goNeighbours (item) {
+      if (item.article_is_del == '1') {
+        Toast('该贴已被删除')
+        return
+      }
+      if (item.yh_is_del == '1') {
+        return
+      }
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {

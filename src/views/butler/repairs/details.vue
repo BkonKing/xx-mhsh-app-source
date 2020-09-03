@@ -457,6 +457,7 @@ export default {
 
 /deep/ .van-pull-refresh {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /deep/ .van-button--small {

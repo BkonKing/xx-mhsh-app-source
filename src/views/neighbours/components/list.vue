@@ -3,7 +3,7 @@
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{item, index}">
         <div v-if="item.article_type == 2 || article_type == 2" class="activity-cell">
-          <div @click="goDetails('2', item.id)">
+          <div @click="goDetails('2', item)">
             <div class="activity-image-box">
               <img class="activity-image" :src="item.thumbnail" />
               <div class="activity-join">{{item.joins || 0}}人已报名</div>
@@ -16,14 +16,14 @@
         </div>
         <div v-else-if="item.article_type == 3 || article_type == 3">
           <div class="tf-card">
-            <div class="tf-card-header" @click="goDetails('3', item.id)">
+            <div class="tf-card-header" @click="goDetails('3', item)">
               <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
                 <template v-slot:right>
                   <div class="group-tag">{{item.category}}</div>
                 </template>
               </userInfo>
             </div>
-            <div v-if="item.content" class="tf-card-content" @click="goDetails('3', item.id)">{{ item.content }}</div>
+            <div v-if="item.content" class="tf-card-content" @click="goDetails('3', item)">{{ item.content }}</div>
             <template v-if="item.images">
               <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" @click.stop="preview(item.images[0])" />
               <tf-image-list class="tf-mt-base" mode="shadeShow" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="activity-cell" v-else-if="item.article_type == 1 || article_type == 1">
-          <div @click="goDetails('1', item.id)">
+          <div @click="goDetails('1', item)">
             <img class="activity-image" :src="item.thumbnail" />
             <div class="tf-status-tag">资讯</div>
             <div class="activity-title">{{item.title}}</div>
@@ -118,7 +118,11 @@ export default {
         this.moreShow = false
       })
     },
-    goDetails (articleType, id) {
+    goDetails (articleType, { id, is_del }) {
+      if (is_del == '1') {
+        Toast('该贴已被删除')
+        return
+      }
       this.$router.push({
         path: '/pages/neighbours/details',
         query: {

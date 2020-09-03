@@ -1,29 +1,39 @@
 <template>
-  <van-popup class="tf-van-popup" v-model="valueChild" @click-overlay="close" :close-on-click-overlay="false">
-    <div class="tf-dialog__wrapper-box">
-      <span class="tf-icon tf-icon-guanbi1" @click="close"></span>
-      <div class="tf-dialog">
-        <div v-if="title" class="tf-dialog-header">
-          <div class="tf-dialog-header__title">{{ title }}</div>
-        </div>
-        <div class="tf-dialog-content">
-          <slot></slot>
-        </div>
-        <div v-if="showFotter" class="tf-dialog-footer">
-          <div
-            v-if="!hiddenOff"
-            class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
-            style="margin-right: 30px;"
-            @click="close"
-          >取消</div>
-          <div
-            class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
-            @click="confirm"
-          >{{okText}}</div>
+  <div class="tf-dialog-container">
+    <van-popup
+      safe-area-inset-bottom
+      :get-container="getContainer"
+      class="tf-van-popup"
+      v-model="valueChild"
+      @click-overlay="close"
+      :close-on-click-overlay="false"
+      :style="{'top': top}"
+    >
+      <div class="tf-dialog__wrapper-box">
+        <span class="tf-icon tf-icon-guanbi1" @click="close"></span>
+        <div class="tf-dialog">
+          <div v-if="title" class="tf-dialog-header">
+            <div class="tf-dialog-header__title">{{ title }}</div>
+          </div>
+          <div class="tf-dialog-content">
+            <slot></slot>
+          </div>
+          <div v-if="showFotter" class="tf-dialog-footer">
+            <div
+              v-if="!hiddenOff"
+              class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
+              style="margin-right: 30px;"
+              @click="close"
+            >取消</div>
+            <div
+              class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
+              @click="confirm"
+            >{{okText}}</div>
+          </div>
         </div>
       </div>
-    </div>
-  </van-popup>
+    </van-popup>
+  </div>
 </template>
 
 <script>
@@ -56,6 +66,14 @@ export default {
     value: {
       type: Boolean,
       default: false
+    },
+    top: {
+      type: String,
+      default: '50%'
+    },
+    getContainer: {
+      type: String,
+      default: 'body'
     }
   },
   data () {

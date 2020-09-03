@@ -53,5 +53,6 @@ export default {
 .view-main {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 </style>

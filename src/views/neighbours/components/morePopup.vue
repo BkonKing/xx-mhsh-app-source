@@ -1,6 +1,11 @@
 <template>
   <div>
-    <van-popup class="more-dialog" v-model="moreShowChild">
+    <van-popup
+      safe-area-inset-bottom
+      get-container="body"
+      class="more-dialog"
+      v-model="moreShowChild"
+    >
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
       <!-- <div v-if="share" class="more-btn" @click="clickShare">分享</div> -->
       <div v-if="shield" class="more-btn" @click="clickShield">屏蔽</div>
@@ -9,9 +14,12 @@
     </van-popup>
     <van-popup
       class="complain-dialog"
+      safe-area-inset-bottom
+      get-container="body"
       v-model="complainShow"
       position="bottom"
       @closed="com_type = ''"
+      style="-webkit-overflow-scrolling: auto;overflow: initial;"
     >
       <i
         class="van-icon van-icon-close van-popup__close-icon van-popup__close-icon--top-right"
@@ -26,14 +34,19 @@
       <tf-radio-btn class="complain-radio" v-model="com_type" :data="types" :radius="2"></tf-radio-btn>
       <div class="complain-footer" :class="{'primary-btn': com_type}" @click="submitComplain">提交</div>
     </van-popup>
-    <van-popup class="more-dialog" v-model="shieldShow">
+    <van-popup safe-area-inset-bottom get-container="body" class="more-dialog" v-model="shieldShow">
       <div
         class="more-btn van-ellipsis"
-        @click="userShieldDialog = true"
+        @click="shieldShow = false;userShieldDialog = true"
       >屏蔽 @{{complainInfo.nickname}}</div>
-      <div class="more-btn" @click="contentShieldDialog = true">屏蔽 此条内容</div>
+      <div class="more-btn" @click="shieldShow = false;contentShieldDialog = true">屏蔽 此条内容</div>
     </van-popup>
-    <van-popup class="shield-confirm" v-model="userShieldDialog">
+    <van-popup
+      safe-area-inset-bottom
+      get-container="body"
+      class="shield-confirm"
+      v-model="userShieldDialog"
+    >
       <div class="shield-confirm-title">@{{complainInfo.nickname}}</div>
       <div class="shield-confirm-content">
         <div class="tf-text">不看他的动态</div>
@@ -55,7 +68,12 @@
         >确定</van-button>
       </div>
     </van-popup>
-    <van-popup class="shield-confirm" v-model="contentShieldDialog">
+    <van-popup
+      safe-area-inset-bottom
+      get-container="body"
+      class="shield-confirm"
+      v-model="contentShieldDialog"
+    >
       <div class="tf-text">
         <span class="tf-text-blue">@{{complainInfo.nickname}}</span>
         ：{{complainInfo.content}}
@@ -182,6 +200,7 @@ export default {
       this.showShare = false
     },
     clickComment () {
+      this.moreShowChild = false
       this.$emit('comment')
     },
     /* 删除 */
@@ -190,7 +209,7 @@ export default {
     },
     /* 打开投诉 */
     clickComplain () {
-      // this.moreShowChild = false
+      this.moreShowChild = false
       this.complainShow = true
     },
     /* 提交投诉 */
@@ -211,6 +230,7 @@ export default {
     },
     /* 打开屏蔽 */
     clickShield () {
+      this.moreShowChild = false
       this.shieldShow = true
     },
     /* 屏蔽用户 */

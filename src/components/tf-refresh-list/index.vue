@@ -121,6 +121,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   text-align: center;
   padding: 20px;
 }
@@ -128,8 +129,6 @@ export default {
   // min-height: 100%;
   flex: 1;
   width: 100%;
-  // overflow: auto;
-  -webkit-transform: translateZ(0px);
 }
 .tf-van-cell {
   background: none;

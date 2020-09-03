@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg">
-    <span class="tf-icon tf-icon-close-circle-fill" @click="goBack"></span>
+    <span v-if="current !== 1" class="tf-icon tf-icon-close-circle-fill" @click="goBack"></span>
     <div class="tab-content">
       <template v-if="current === 1"></template>
       <div class="tab-container" v-if="current === 2">
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class="tabs">
+    <div class="tabs" id="scan-tabs">
       <div class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
         <div class="tab-text">{{ item.name }}</div>
         <div v-if="item.value === current" class="tab-active"></div>
@@ -63,15 +63,20 @@ export default {
       paymentCodeImg: '',
       collectCodeImg: '',
       FNScanner: null,
-      timer: null
+      timer: null,
+      footerHeight: 0
     }
   },
   created () {
     this.current = parseInt(this.$route.query.current) || 1
+    // 绑定frame关闭事件
+    window.closeFrame = new CustomEvent('closeFrame')
+    document.addEventListener('closeFrame', this.goBack)
   },
   mounted () {
-    // this.scanSuccess('shoukuan|360|100024|1|1598600092|77095a01f3ad8d818297f253d2b66abd')
+    // this.scanSuccess('fukuan|526|100000|2|1599105402|78d219b889cd7887fa695da9bbf8d988')
     this.FNScanner = api.require('FNScanner')
+    this.footerHeight = document.getElementById('scan-tabs').clientHeight
   },
   methods: {
     /* 切换tab */
@@ -188,97 +193,115 @@ export default {
     collectScan (value, values) {
       collectScan({
         code_info: value
-      }).then((res) => {
-        const { check_status, is_pay, avatar, realname, mobile } = res.data
-        if (check_status) {
-          this.$router.push({
-            name: 'happinessCoinPayment',
-            query: {
-              type: '1',
-              value: values[1],
-              avatar,
-              realname,
-              mobile
-            }
-          })
-        }
       })
-    },
-    /* 收款人扫了付款码 */
-    paymentScan (value, values) {
-      paymentScan({
-        code_info: value
-      }).then((res) => {
-        const { check_status, is_pay, avatar, realname, mobile } = res.data
-        if (check_status) {
-          if (is_pay == 0) {
+        .then((res) => {
+          const { check_status, is_pay, avatar, realname, mobile } = res.data
+          if (check_status) {
             this.$router.push({
               name: 'happinessCoinPayment',
               query: {
-                type: '2',
+                type: '1',
                 value: values[1],
                 avatar,
                 realname,
                 mobile
               }
             })
-          } else {
-            api.toast({
-              msg: '对方已付款'
-            })
           }
-        } else {
-          Toast('扫码失败，二维码可能过期')
-        }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
+    },
+    /* 收款人扫了付款码 */
+    paymentScan (value, values) {
+      paymentScan({
+        code_info: value
       })
+        .then((res) => {
+          const { check_status, is_pay, avatar, realname, mobile } = res.data
+          if (check_status) {
+            if (is_pay == 0) {
+              this.$router.push({
+                name: 'happinessCoinPayment',
+                query: {
+                  type: '2',
+                  value: values[1],
+                  avatar,
+                  realname,
+                  mobile
+                }
+              })
+            } else {
+              api.toast({
+                msg: '对方已付款'
+              })
+            }
+          } else {
+            api.toast('扫码失败，二维码可能过期')
+          }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
     },
     /* 扫了免费服务码 */
     serverCodeScan (value, values) {
       serverCodeScan({
         code_info: value
-      }).then(({ data }) => {
-        if (data.check_status == 1) {
-          this.$router.push({
-            name: 'freeserverConfirm',
-            query: {
-              info: JSON.stringify(data),
-              code_id: values[1]
-            }
-          })
-        }
-      }).catch((message) => {
-        api.alert({
-          title: message
-        })
       })
+        .then(({ data }) => {
+          if (data.check_status == 1) {
+            this.$router.push({
+              name: 'freeserverConfirm',
+              query: {
+                info: JSON.stringify(data),
+                code_id: values[1]
+              }
+            })
+          }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
     },
     /* 扫了邀约码 */
     visitorCodeScan (value) {
       visitorCodeScan({
         code_info: value
-      }).then((res) => {
-        api.alert({
-          title: res.message
-        })
-      }).catch(err => {
-        api.alert({
-          title: err
-        })
       })
+        .then((res) => {
+          api.alert({
+            title: res.message
+          })
+        })
+        .catch((err) => {
+          api.alert({
+            title: err
+          })
+        })
     },
     /* 扫了提货码 */
     takeCodeScan (value) {
       takeCodeScan({
         code_info: value
-      }).then((res) => {
-        api.alert({
-          title: res.message
-        })
-      }).catch(err => {
-        api.alert({
-          title: err
-        })
       })
+        .then((res) => {
+          api.alert({
+            title: res.message
+          })
+        })
+        .catch((err) => {
+          api.alert({
+            title: err
+          })
+        })
     },
     /* 打开扫码frame */
     openFrame () {
@@ -290,19 +313,19 @@ export default {
           y: 0,
           w: 'auto',
           h: 'auto',
-          marginLeft: 37.5,
-          marginRight: 37.5,
-          marginTop: 124,
-          marginBottom: 163
-        },
-        pageParam: {
-          name: 'test'
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 0,
+          marginBottom: this.footerHeight
         }
       })
       this.scan()
     },
     /* 关闭扫码frame */
     closeFrame () {
+      api.closeFrame({
+        name: 'closebtn'
+      })
       this.FNScanner.closeView()
       api.closeFrame({
         name: 'scan'
@@ -322,6 +345,9 @@ export default {
               case 'success':
                 this.scanSuccess(content)
                 break
+              case 'show':
+                this.showClose()
+                break
               default:
                 break
             }
@@ -330,6 +356,22 @@ export default {
           }
         }
       )
+    },
+    showClose () {
+      api.openFrame({
+        name: 'closebtn',
+        url: './closebtn.html',
+        rect: {
+          x: 0,
+          y: 0,
+          w: 'auto',
+          h: 'auto',
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 0,
+          marginBottom: this.footerHeight
+        }
+      })
     },
     goBack () {
       this.$router.go(-1)
@@ -363,6 +405,8 @@ export default {
   beforeDestroy () {
     this.closeFrame()
     this.timer && clearTimeout(this.timer)
+    document.removeEventListener('closeFrame', this.goBack)
+    window.closeFrame = ''
   }
 }
 </script>
@@ -389,7 +433,7 @@ export default {
   margin-top: 142px;
   @flex-column();
   align-items: center;
-  background-image: url('../../../assets/imgs/fukuan_bg.png');
+  background-image: url("../../../assets/imgs/fukuan_bg.png");
   background-size: contain;
 }
 .tab-title {

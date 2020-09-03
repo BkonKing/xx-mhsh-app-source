@@ -1,7 +1,7 @@
 * {
   box-sizing: border-box;
   line-height: 1.4;
-  -webkit-overflow-scrolling: touch;
+  // -webkit-overflow-scrolling: touch;
   /*解决移动端滑动卡顿问题*/
   // -webkit-transform: translateZ(0px);
   /*开启GPU加速*/
@@ -132,6 +132,7 @@
 .tf-item-auto {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tf-flex-center {
@@ -495,10 +496,12 @@
   // padding-top: 88px;
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tf-overflow-auto {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tf-readed-tag {
@@ -658,6 +661,7 @@
   .view-main>.tf-bg-white {
     height: 100%;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .van-nav-bar--fixed {

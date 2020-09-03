@@ -59,10 +59,6 @@
       @comment="comment"
       @delete="deleteComment"
     ></more-popup>
-    <div class="comment-box">
-      <span class="tf-icon tf-icon-zan"></span>
-      <van-field placeholder="写评论" @click="showPopup" />
-    </div>
     <comment
       ref="comment"
       v-model="commentShow"
@@ -124,6 +120,7 @@ export default {
       moreShow: false,
       isEndNum: false,
       commentShow: false,
+      isReply: false,
       path: '',
       parentId: '',
       uid: '',
@@ -182,11 +179,7 @@ export default {
     },
     /* 操作框回复回调打开评论框 */
     comment () {
-      this.commentShow = true
-    },
-    /* 打开评论框 */
-    showPopup () {
-      this.parentId = ''
+      this.isReply = true
       this.commentShow = true
     },
     /* 点赞 */
@@ -236,7 +229,7 @@ export default {
     /* 评论成功回调 */
     commentSuccess (data) {
       this.commentShow = false
-      if (this.moreShow) {
+      if (this.isReply) {
         // this.list[this.index].child.unshift(data)
         this.moreShow = false
       } else {
@@ -256,6 +249,11 @@ export default {
     moreShow (value) {
       if (!value) {
         this.parentId = ''
+      }
+    },
+    commentShow (value) {
+      if (!value) {
+        this.isReply = false
       }
     }
   },
