@@ -847,6 +847,7 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
+  -webkit-overflow-scrolling: touch;
   /*overflow: hidden;*/
 }
 /*轮播*/

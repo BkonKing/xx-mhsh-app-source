@@ -158,7 +158,8 @@ export default {
     },
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name == 'life'){
+    console.log(to.name);
+    if(to.name == 'life' || to.name == 'home'){
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }

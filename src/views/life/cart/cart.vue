@@ -90,6 +90,7 @@ export default {
         giftbag: JSON.stringify(this.carts)
       }).then(res => {
         if (res.success) {
+          this.infoData = res.data;
           this.carts = res.goods_arr;
           api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
         }
@@ -193,24 +194,6 @@ export default {
         if (numTotal > 0) {
           this.getData();
           return;
-          app.util.request({
-            'url': '/xcx/wxvipjson/common_pay',
-            'cachetime': '0',
-            'showLoading': false,
-            'data': {
-              uid: this.userId,
-              giftbag: JSON.stringify(this.carts),
-            },
-            success(res) {
-              let result = res.data;
-              // that.setData({
-              //   discountInfo: result.data,
-              //   carts: result.goods_arr,
-              //   priceTotal: (result.data.total_pay_price).toFixed(2)
-              // })
-              wx.setStorageSync('cart', result.goods_arr);
-            }
-          });
         }
       } 
     },
@@ -218,10 +201,24 @@ export default {
      * 结算
     */
     payFunc() {
+      const that = this;
       if(this.numTotal === 0){
         Toast('请选择要结算的商品');
       }else {
-        this.linkFunc(8);
+        getCart({
+          giftbag: JSON.stringify(this.carts)
+        }).then(res => {
+          if (res.success) {
+            if(res.goods_arr.length && that.infoData.total_pay_price == res.data.total_pay_price){
+              that.linkFunc(8);
+            }else {
+              that.carts = res.goods_arr;
+              api.setPrefs({ key: 'cart', value: JSON.stringify(that.carts) });
+              that.total();
+            }
+          }
+        })
+        return;
       }
     }
   }

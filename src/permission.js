@@ -7,6 +7,15 @@ import {
 const whiteList = ['/login', '/agreement']
 
 router.beforeEach(async (to, from, next) => {
+  // console.log(11,to)
+  // var pageName = to.name;
+  // if(process.env.VUE_APP_IS_APP){
+  //   var txAnalysis = api.require('txAnalysis');
+  //   txAnalysis.trackPageBegin({
+  //     page: pageName
+  //   });
+  // }
+
   // Toast.loading({
   //   duration: 0, // 持续展示 toast
   //   message: '',
@@ -40,6 +49,14 @@ router.beforeEach(async (to, from, next) => {
   // Toast.clear()
 })
 
-router.afterEach(() => {
+router.afterEach(async (to, from, next) => {
+  console.log(22,to)
+  // var pageName = to.name;
+  // if(process.env.VUE_APP_IS_APP){
+  //   var txAnalysis = api.require('txAnalysis');
+  //   txAnalysis.trackPageBegin({
+  //     page: pageName
+  //   });
+  // }
   // Toast.clear()
 })

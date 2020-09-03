@@ -13,7 +13,7 @@
 
     <div :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
-        <scrollBar direction="x" :tapIndex="tapIndex">
+        <scrollBar direction="x" :activeIndex="tapIndex">
           <div
             class=""
             v-for="(item, index) in navList"
@@ -312,7 +312,6 @@ export default {
   methods: {
     onLoad() {
       // 异步更新数据
-      console.log(2);
       this.getGoodsData();
       return;
     },

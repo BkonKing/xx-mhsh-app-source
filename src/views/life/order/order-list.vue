@@ -35,7 +35,7 @@
 						<div class="order-info">
 							<div class="order-name-price">
 								<div class="order-name p-nowrap">{{goods.goods_name}}</div>
-								<div class="order-price">￥{{goods.pay_price/100}}</div>
+								<div class="order-price">￥{{item.pay_type == 1 ? goods.happiness_price/100 : goods.pay_price/100}}</div>
 							</div>
 							<div class="order-sku-num">
 								<div class="order-sku p-nowrap">{{goods.specs_name}}</div>
@@ -58,7 +58,7 @@
 						<div class="order-total">
 							<div class="color-8f8f94 font-24">共 {{item.goods_num}} 件</div>
 							<div class="order-price-total">
-								合计:<span>￥{{item.pay_price/100}}</span>
+								合计:<span>￥{{item.pay_type == 1 ? item.happiness_price/100 : item.pay_price/100}}</span>
 							</div>
 						</div>
 						<div class="order-btn-box">

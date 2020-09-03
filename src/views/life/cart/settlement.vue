@@ -41,7 +41,7 @@
           <div class="order-name-price">
             <div class="order-name p-nowrap">{{item.goods_name}}</div>
             <div v-if="order_type!=3" class="order-price">￥{{item.s_price/100}}</div>
-            <div v-else class="order-price"><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits/item.count}}</div>
+            <div v-else class="order-price"><img src="@/assets/img/icon_26.png" />{{settlementInfo.credits/item.count}}</div>
           </div>
           <div class="order-sku-num">
             <div class="order-sku p-nowrap">{{item.specs_name}}</div>
@@ -136,18 +136,18 @@
       <div class="detail-price-list">
         <div class="detail-price-item">
           <div>商品总价</div>
-          <div><img src="@/assets/img/icon_20.png" />{{settlementInfo.credits}}</div>
+          <div><img src="@/assets/img/icon_26.png" />{{settlementInfo.credits}}</div>
         </div>
         <div class="detail-price-item">
           <div>运费</div>
-          <div><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight/10}}</div>
+          <div><img src="@/assets/img/icon_26.png" />{{settlementInfo.freight/10}}</div>
         </div>
       
       </div>
       <div class="order-total order-total-detail">
         <div class="color-8f8f94 font-24">共 1 件</div>
         <div class="order-price-total">
-          合计:<span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</span>
+          合计:<span><img src="@/assets/img/icon_26.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</span>
         </div>
       </div>
     </div>
@@ -167,7 +167,7 @@
         <div v-if="order_type==0" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100}}</div>
         <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
         <template v-else>
-          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_20.png" />{{settlementInfo.freight ? parseInt(settlementInfo.freight/10) + parseInt(settlementInfo.credits) : settlementInfo.credits}}</div>
+          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_24.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
         </template>
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">付款</div>
@@ -297,6 +297,7 @@ export default {
           // user_coupon_id: 2
         }).then(res => {
           if (res.success) {
+            api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) });
             this.settlementInfo = res.data;
             if (!this.isSelectCoupon){
               this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo;
@@ -320,6 +321,10 @@ export default {
         getFlashInfo(this.flashParam).then(res => {
           if (res.success) {
             this.settlementInfo = res.data.pay;
+            this.infoData = res.data.info_data;
+            this.priceTotal = parseInt(this.settlementInfo.new_pay_money)-parseInt(this.settlementInfo.freight);
+            this.carts[0].s_price = parseInt(this.infoData.pay_price);
+            this.carts[0].y_price = parseInt(this.infoData.sale_price);
             if(this.isSelectAddress){
               this.isSelectAddress = false;
             }else {
@@ -367,6 +372,12 @@ export default {
         if(this.isNew){
           this.carts = this.backCarts;
           this.isNew = false;
+          goodsNum = 0;
+          priceTotal = 0;
+          for (var j in this.carts) {
+            goodsNum += this.carts[j].count;
+            priceTotal+= this.carts[j].count * this.carts[j].s_price;
+          }
         }
         this.goodsNum = goodsNum;
         this.nocarts = carts_list2;  //没选中的
@@ -398,34 +409,40 @@ export default {
           user_explain: this.remarks
         }).then(res => {
           if (res.success) {
-            if(res.code == '200'){
-              this.callbackData = res.order_info;
-              this.order_id = res.order_info.id;
-              that.cartInit();
-              this.openPaySwal();
-            }
+            this.callbackData = res.order_info;
+            this.order_id = res.order_info.id;
+            that.cartInit();
+            this.openPaySwal();
           }else {
             // if (this.prev_page == 1){
             //   api.setPrefs({ key: 'cart2', value: JSON.stringify(that.backCarts) });
             // }else {
             //   api.setPrefs({ key: 'cart', value: JSON.stringify(that.backCarts) });
             // }
-            Toast(res.message);
-            that.backCarts = res.goods_arr;
-            that.isNew = true;
-            console.log(that.backCarts)
-            that.total();
+            // Toast(res.message);
+            if(res.goods_arr.length){
+              that.backCarts = res.goods_arr;
+              that.isNew = true;
+              that.total();
+            }else{
+              this.$router.go(-1);
+            }
+              
           }
         })
       }else if(this.order_type == 3){
         this.flashParam.address_id = this.addressInfo.id;
         this.flashParam.old_pay_credits = this.settlementInfo.pay_credits;
-        exchangeCreate(this.flashParam).then(res => {
+        exchangeCreate(this.flashParam).then(res => { //幸福币兑换
           if (res.success) {
-            if(res.code == '200'){
-              this.order_id = res.order_id;
-              that.cartInit();
-              this.linkFunc(12,{id: this.order_id});
+            this.order_id = res.order_id;
+            that.cartInit();
+            this.linkFunc(12,{id: this.order_id});
+          }else {
+            if(res.code_val == 1){
+              this.$router.go(-1);
+            }else if(res.code_val == 2 || res.code_val == 3){
+              this.getData();
             }
           }
         })
@@ -434,14 +451,16 @@ export default {
         this.flashParam.old_pay_credits = this.settlementInfo.new_pay_money;
         flashCreate(this.flashParam).then(res => {
           if (res.success) {
-            if(res.code == '200'){
-              // this.callbackData = res.order_info;
-              this.order_id = res.order_id;
-              that.cartInit();
-              this.openPaySwal();
-            }else {
-              
-            } 
+            // this.callbackData = res.order_info;
+            this.order_id = res.order_id;
+            this.cartInit();
+            this.openPaySwal();
+          }else {
+            if(res.code_val == 2){
+              this.getData();
+            }else{
+              this.$router.go(-1);
+            }
           }
         })
       }
@@ -477,7 +496,9 @@ export default {
     // 关闭支付选择弹窗
     closePaySwal(data){
       this.showPaySwal = data == 1 ? true : false;
-      this.goDetail();
+      if(this.order_type != 1 && this.order_type != 2){
+        this.goDetail();
+      }
     },
     surePaySwal(data){
       this.showPaySwal = false;
@@ -499,7 +520,15 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
-          that.goDetail();
+          if(that.order_type == 1 || that.order_type == 2){ //闪购、拼单
+            if(ret.code == 9000){  //支付成功
+              that.goDetail();
+            }else{
+              that.$router.go(-1);
+            }
+          }else {
+            that.goDetail();
+          }
           // api.alert({ title: '支付结果', msg: ret.code, buttons: ['确定'] }); 
         }
       );

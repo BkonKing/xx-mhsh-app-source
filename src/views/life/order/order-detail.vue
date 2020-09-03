@@ -434,7 +434,7 @@ export default {
       }
     },
     logisticsLink() {
-      if(this.orderInfo.project_logistice_count > 1){
+      if(this.orderInfo.project_logistice_count > 1 || (this.orderInfo.project_logistice_count = 1 && this.orderInfo.order_status == 1)){
       	this.$router.push({
           path: '/logistics/list',
           query: {

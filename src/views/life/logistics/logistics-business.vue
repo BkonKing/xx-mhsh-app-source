@@ -13,7 +13,7 @@
     <template v-if="infoData">
       <div class="block-session logistics-goods">
         <div class="logistics-goods-pic">
-          <div class="goods-num">共{{infoData.img_arr.length}}件</div>
+          <div class="goods-num">共{{infoData.count}}件</div>
           <img class="img-100" :src="infoData.img_arr[0]" />
         </div>
         <div class="logistics-tip">
