@@ -1,9 +1,31 @@
 <template>
-  <van-grid class="tf-image-grid" :square="square" :border="false" :column-num="column" :gutter="10" style="margin-right: -10px !important;">
+  <van-grid
+    class="tf-image-grid"
+    :square="square"
+    :border="false"
+    :column-num="column"
+    :gutter="10"
+    style="margin-right: -10px !important;"
+  >
     <van-grid-item v-for="(img, i) in list" :key="i">
-      <van-image v-if="mode === 'show'" class="tf-image-item" fit="cover" :src="img" v-lazy="img" @click="preview(i)" />
+      <van-image
+        v-if="mode === 'show'"
+        class="tf-image-item"
+        fit="cover"
+        :src="img"
+        v-lazy="img"
+        v-imageCach="img"
+        @click="preview(i)"
+      />
       <template v-else>
-        <van-image class="tf-image-item" fit="cover" :src="img | imgsrc(srcKey)" v-lazy="img" @click="onclick(img, i)"/>
+        <van-image
+          class="tf-image-item"
+          fit="cover"
+          :src="img | imgsrc(srcKey)"
+          v-lazy="img"
+          v-imageCach="img[srcKey] || img"
+          @click="onclick(img, i)"
+        />
         <div class="tf-image--shade" v-if="data.length > 3 && i === 2" @click="onclick(img, 2)">
           <span>+{{ data.length - 3 }}</span>
         </div>

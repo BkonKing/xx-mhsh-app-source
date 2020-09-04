@@ -66,6 +66,25 @@ export function clearUserInfo () {
       }
     })
   }
+  const userId = store.getters.userInfo.id
+  const tokenList = api.getPrefs({
+    key: 'token_list',
+    sync: true
+  })
+  delete tokenList[userId]
+  api.setPrefs({
+    key: 'token_list',
+    value: tokenList
+  })
+  const userList = api.getPrefs({
+    key: 'user_list',
+    sync: true
+  })
+  delete userList[userId]
+  api.setPrefs({
+    key: 'user_list',
+    value: userList
+  })
   api.removePrefs({
     key: 'user_info'
   })

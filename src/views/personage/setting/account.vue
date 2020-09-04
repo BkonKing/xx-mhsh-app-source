@@ -10,14 +10,15 @@
         :class="{'account-active': active.id === item.id}"
         @click="switchAccount(item)"
       >
-        <img class="user-avatar" :src="item.avatar" mode="aspectFill" />
+        <img v-if="item.avatar" class="user-avatar" :src="item.avatar"/>
+        <img v-else class="user-avatar" src="@/assets/imgs/touxiang.png"/>
         <div class="tf-space-around">
-          <div class="user-name">{{item.realname}}</div>
+          <div class="user-name">{{item.nickname}}</div>
           <div class="tf-text-grey">{{item.mobile}}</div>
         </div>
         <template v-if="active.id === item.id">
           <div class="checked-tag"></div>
-          <div class="tf-icon tf-icon-check"></div>
+          <div class="tf-icon tf-icon-gou"></div>
         </template>
       </div>
       <van-button class="account-btn" type="danger" @click="login">换个账户登录</van-button>
@@ -27,6 +28,7 @@
 
 <script>
 import { NavBar, Button, Toast } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -35,24 +37,41 @@ export default {
   data () {
     return {
       active: {},
-      accountList: [
-        {
-          id: 1,
-          avatar: '/static/app-icon.png',
-          realname: '这是一个默认昵称',
-          mobile: '15022223333'
-        }
-      ]
+      accountList: {}
     }
   },
-  created () {},
+  created () {
+    this.accountList =
+      api.getPrefs({
+        key: 'user_list',
+        sync: true
+      }) || {}
+    this.active = this.accountList[this.userInfo.id]
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
     /* 切换账号 */
-    switchAccount (item) {
-      this.active = item
+    async switchAccount (item) {
+      Toast.loading('正在切换')
+      const tokenList = api.getPrefs({
+        key: 'token_list',
+        sync: true
+      })
+      api.setPrefs({
+        key: 'access_token',
+        value: tokenList[item.id]
+      })
+      this.$store.dispatch('getMyAccount')
+      await this.$store.dispatch('getHouse')
+      this.$router.replace('/')
+      Toast.clear()
     },
     /* 账号登录 */
-    login () {}
+    login () {
+      this.$router.push('/login?status=1')
+    }
   }
 }
 </script>
@@ -73,6 +92,7 @@ export default {
   padding: 30px;
   border: 1px solid #aaa;
   border-radius: 10px;
+  margin-bottom: 30px;
 }
 
 .account-active {
@@ -116,12 +136,12 @@ export default {
   border-bottom-color: @red-dark;
   border-left-color: transparent;
 }
-.tf-icon-check {
+.tf-icon-gou {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 2px;
+  bottom: -4px;
   z-index: 1;
   color: #fff;
-  font-size: 43px;
+  font-size: 50px;
 }
 </style>

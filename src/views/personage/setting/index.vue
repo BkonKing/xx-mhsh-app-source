@@ -30,7 +30,7 @@
       <tf-list class="tf-mt-lg">
         <tf-list-item title="协议及声明" @click="goAgreementList"></tf-list-item>
       </tf-list>
-      <!-- <button class="btn" @click="goAccount">切换账号</button> -->
+      <button class="btn" @click="goAccount">切换账号</button>
       <button class="btn tf-text-primary" @click="outLogin">退出登录</button>
     </div>
     <tf-dialog v-model="showDialog" title="版本更新" :showFotter="true" okText="更新">

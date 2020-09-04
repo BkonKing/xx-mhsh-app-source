@@ -392,7 +392,8 @@ export default {
   align-items: center;
   height: 174px;
   .personage-badge {
-    top: 26px;
+    top: 16px;
+    right: 16px;
   }
 }
 .text-sm {
@@ -422,12 +423,13 @@ export default {
   right: 20px;
   min-width: 34px;
   height: 34px;
-  line-height: 34px;
   border: 1px solid @red-dark;
   border-radius: 50%;
   font-size: 24px;
   color: @red-dark;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
 }
 .tf-main-container {
   overflow: hidden;

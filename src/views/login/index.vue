@@ -1,5 +1,10 @@
 <template>
   <div class="page">
+    <i
+      v-if="status"
+      class="van-icon van-icon-arrow-left van-nav-bar__arrow"
+      @click="$router.go(-1)"
+    ></i>
     <img class="logo" src="@/assets/imgs/login_logo.png" />
     <img class="logo-text" src="@/assets/imgs/login_logo_text.png" />
     <div class="form">
@@ -45,20 +50,22 @@
         <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
       </div>
       <span class="agreement-text" style="color: #fff;">
-        登录即表示您同意<router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
+        登录即表示您同意
+        <router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import { Field, Button, Toast } from 'vant'
+import { NavBar, Field, Button, Toast } from 'vant'
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
 export default {
   components: {
     Field,
-    [Button.name]: Button
+    [Button.name]: Button,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
@@ -70,8 +77,12 @@ export default {
       showPassword: false,
       codeStatus: false,
       countDown: 59,
-      timer: null
+      timer: null,
+      status: 0
     }
+  },
+  created () {
+    this.status = this.$route.query.status
   },
   methods: {
     changeRememberPasswrod () {
@@ -166,6 +177,12 @@ export default {
   align-items: center;
   background-color: #333;
   background-image: url("../../assets/imgs/login_bg.png");
+  .van-nav-bar__arrow {
+    position: fixed;
+    left: 20px;
+    top: 24px;
+    color: #fff;
+  }
 }
 .logo {
   width: 212px;

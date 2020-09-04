@@ -142,7 +142,7 @@ const store = {
           message: '正在登录中'
         })
         const loginUrl = type === 1 ? yzmLogin : pwdLogin
-        loginUrl(params).then((res) => {
+        loginUrl(params).then(async (res) => {
           Toast.clear()
           if (res.success) {
             const {
@@ -166,13 +166,19 @@ const store = {
               key: 'refresh_token',
               value: data.refresh_token
             })
-            // api.setPrefs({
-            //   key: 'user_info',
-            //   value: data
-            // })
+            const tokenList = api.getPrefs({
+              key: 'token_list',
+              sync: true
+            }) || {}
+            tokenList[data.id] = data.access_token
+            api.setPrefs({
+              key: 'token_list',
+              value: tokenList
+            })
             commit('setUser_info', data)
             // dispatch('getHouse')
             // dispatch('getMyAccount')
+            await dispatch('getHouse')
             resolve(data)
           } else {
             reject(res.message)
@@ -251,6 +257,15 @@ const store = {
           data
         }) => {
           commit('setUser_info', data && data.user_info)
+          const userList = api.getPrefs({
+            key: 'user_list',
+            sync: true
+          }) || {}
+          userList[data.user_info.id] = data.user_info
+          api.setPrefs({
+            key: 'user_list',
+            value: userList
+          })
           resolve(data)
         }).catch(err => {
           reject(err)
