@@ -26,7 +26,10 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "noticeIndex" */
         '@/views/butler/notice/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/butler/notice/details',

@@ -37,7 +37,7 @@
         </Field>
       </div>
     </div>
-    <span class="login-text" @click="login">登 录</span>
+    <span class="login-text" @click="login" v-txAnalysis="1">登 录</span>
     <span v-if="login_type === 1" class="login-method__text" @click="login_type = 2">密码登录</span>
     <span v-else-if="login_type === 2" class="login-method__text" @click="login_type = 1">验证码登录</span>
     <div class="agreement" @click="changeRememberPasswrod">

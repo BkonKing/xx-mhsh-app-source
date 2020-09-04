@@ -9,7 +9,7 @@
       @click-left="goBack"
       @click-right="setNoticeReaded"
     />
-    <div class="tf-body-container">
+    <div class="tf-body-container" id="notice-list-container">
       <refreshList :list.sync="noticeList" :load="getNoticeList">
         <template v-slot="{item}">
           <div class="list-item--time">{{item.ctime}}</div>
@@ -33,6 +33,7 @@ import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import { getNoticeList, setNoticeReaded } from '@/api/butler.js'
 export default {
+  name: 'noticeIndex',
   components: {
     [NavBar.name]: NavBar,
     refreshList
@@ -40,10 +41,16 @@ export default {
   data () {
     return {
       isAllRead: false,
-      noticeList: []
+      noticeList: [],
+      scrollTop: 0
     }
   },
   created () {
+  },
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+    }
   },
   methods: {
     // 获取公告通知列表
@@ -67,6 +74,11 @@ export default {
     goBack () {
       this.$router.go(-1)
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const el = document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')
+    this.scrollTop = (el[0] && el[0].scrollTop) || 0
+    next()
   }
 }
 </script>

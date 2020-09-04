@@ -234,7 +234,7 @@ export default {
       function (data) {
         this.addressInfo = JSON.parse(data)
         this.address_id = this.addressInfo.id
-        console.log(this.addressInfo)
+        // console.log(this.addressInfo)
       }.bind(this)
     )
   },

@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import * as filters from './filters'
+import txAnalysis from './directive/txAnalysis'
 import './styles/base.css'
 // import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
@@ -21,6 +22,7 @@ const isApp = false // 手动切换
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+Vue.use(txAnalysis)
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
 if (process.env.VUE_APP_IS_APP === '1') {
@@ -44,6 +46,8 @@ if (process.env.VUE_APP_IS_APP === '1') {
         // console.log(ret.status)
       }
     })
+    // 腾讯统计
+    Vue.prototype.txAnalysis = api.require('txAnalysis')
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
     api.addEventListener({

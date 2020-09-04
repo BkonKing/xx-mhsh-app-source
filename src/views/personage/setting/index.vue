@@ -78,8 +78,8 @@ export default {
     }
   },
   created () {
-    // this.checkUpdate()
-    // this.getCacheSize()
+    this.checkUpdate()
+    this.getCacheSize()
   },
   methods: {
     /* 检查版本更新 */
@@ -108,6 +108,7 @@ export default {
     clearCache () {
       this.$api.clearCache(() => {
         Toast('清除成功')
+        this.getCacheSize()
       })
     },
     /* 切换账号 */
