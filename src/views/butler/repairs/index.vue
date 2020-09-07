@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="报事报修"
       :fixed="true"
@@ -202,6 +202,10 @@ export default {
 <style lang="less" scoped>
 .page-container {
   padding: 30px 20px;
+  flex: 1;
+  overflow: auto;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
 }
 .swiper-nav {
   height: 88px;

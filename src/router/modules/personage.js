@@ -270,6 +270,16 @@ const personageRouter = [
         /* webpackChunkName: "settingShield" */
         '@/views/personage/setting/shield.vue'
       )
+  },
+  /* 人脸收集 */
+  {
+    path: '/pages/personage/information/faceCollect',
+    name: 'faceCollect',
+    component: () =>
+      import(
+        /* webpackChunkName: "faceCollect" */
+        '@/views/personage/information/faceCollect.vue'
+      )
   }
 ]
 

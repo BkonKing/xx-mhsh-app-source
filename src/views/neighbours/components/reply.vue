@@ -73,12 +73,13 @@
 </template>
 
 <script>
-import { List, Cell, ImagePreview, Field, Toast } from 'vant'
+import { List, Cell, Field, Toast } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import comment from './comment'
 import morePopup from './morePopup'
 import { thumbsUp, getCommentList, deleteComment } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
+import { imagePreview } from '@/utils/util'
 
 export default {
   props: {
@@ -106,7 +107,6 @@ export default {
   components: {
     [List.name]: List,
     [Cell.name]: Cell,
-    [ImagePreview.name]: ImagePreview,
     [Field.name]: Field,
     UserInfo,
     morePopup,
@@ -161,7 +161,7 @@ export default {
     },
     /* 查看图片 */
     lookImg (images) {
-      ImagePreview({
+      imagePreview({
         images,
         closeable: true
       })

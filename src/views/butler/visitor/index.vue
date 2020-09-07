@@ -298,6 +298,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-body-container {
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
+}
+
 .tf-input {
   flex: 1;
   font-size: 30px;

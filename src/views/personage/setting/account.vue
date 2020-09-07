@@ -41,11 +41,12 @@ export default {
     }
   },
   created () {
-    this.accountList =
+    const userList =
       api.getPrefs({
         key: 'user_list',
         sync: true
       }) || {}
+    this.accountList = typeof userList === 'string' ? JSON.parse(userList) : userList
     this.active = this.accountList[this.userInfo.id]
   },
   computed: {
@@ -55,10 +56,11 @@ export default {
     /* 切换账号 */
     async switchAccount (item) {
       Toast.loading('正在切换')
-      const tokenList = api.getPrefs({
+      let tokenList = api.getPrefs({
         key: 'token_list',
         sync: true
       })
+      tokenList = typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
       api.setPrefs({
         key: 'access_token',
         value: tokenList[item.id]

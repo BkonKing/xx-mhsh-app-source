@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="投诉表扬"
       :fixed="true"
@@ -15,7 +15,7 @@
     <div class="tf-padding">
       <div class="tf-card">
         <div class="tf-card-header">选择类型</div>
-        <div class="tf-card-content" style="padding-bottom: 10px;">
+        <div class="tf-card-content" style="padding-bottom: 0;">
           <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default {
           message: '请输入内容'
         }
       ]
-      validForm(validator).then(res => {
+      validForm(validator).then((res) => {
         this.addComPraise()
       })
     },
@@ -112,7 +112,7 @@ export default {
           info_type: this.info_type
         },
         this.currentProject.house_id
-      ).then(res => {
+      ).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
@@ -134,6 +134,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-padding {
+  flex: 1;
+  overflow: auto;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
+}
 /deep/ .van-uploader__upload,
 /deep/ .van-uploader__preview {
   width: 114px;

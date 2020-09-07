@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { ImagePreview } from 'vant'
+import { imagePreview } from '@/utils/util'
 export default {
   name: 'tfTimeline',
   props: {
@@ -146,7 +146,7 @@ export default {
       })
     },
     showImage (images) {
-      ImagePreview({
+      imagePreview({
         images,
         startPosition: 0,
         onClose () {

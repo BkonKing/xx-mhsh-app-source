@@ -11,7 +11,7 @@
       @click-right="messageAllRead"
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
-      <van-tab v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
+      <van-tab id="message-list-0" v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
         <message-list
           ref="work"
           type="work"
@@ -20,7 +20,7 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab title="交易" :badge="badgeList[2]">
+      <van-tab id="message-list-1" title="交易" :badge="badgeList[2]">
         <message-list
           ref="transaction"
           type="transaction"
@@ -29,10 +29,10 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab title="互动" :badge="badgeList[3]">
+      <van-tab id="message-list-2" title="互动" :badge="badgeList[3]">
         <interaction ref="interaction" @click="toInteraction" @mark="messageRead"></interaction>
       </van-tab>
-      <van-tab title="物业" :badge="badgeList[4]">
+      <van-tab id="message-list-3" title="物业" :badge="badgeList[4]">
         <message-list
           ref="butler"
           type="butler"
@@ -41,7 +41,7 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab title="活动" :badge="badgeList[5]">
+      <van-tab id="message-list-4" title="活动" :badge="badgeList[5]">
         <message-list
           ref="activity"
           type="activity"
@@ -50,7 +50,7 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab title="系统" :badge="badgeList[6]">
+      <van-tab id="message-list-5" title="系统" :badge="badgeList[6]">
         <message-list
           ref="system"
           type="system"
@@ -92,11 +92,15 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  // created () {
-  //   this.getCountMessage()
-  // },
   activated () {
     this.getCountMessage()
+    if (this.scrollTop) {
+      let index = this.current
+      if (this.userInfo.swrole != 1) {
+        index = index + 1
+      }
+      document.getElementById(`message-list-${index}`).getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+    }
   },
   methods: {
     // 获取消息列表
@@ -289,6 +293,13 @@ export default {
     if (name.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
+    } else {
+      let index = this.current
+      if (this.userInfo.swrole != 1) {
+        index = index + 1
+      }
+      const el = document.getElementById(`message-list-${index}`).getElementsByClassName('tf-list-refresh')
+      this.scrollTop = (el[0] && el[0].scrollTop) || 0
     }
     next()
   }

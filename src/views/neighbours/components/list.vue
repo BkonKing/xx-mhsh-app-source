@@ -67,7 +67,8 @@ import morePopup from './morePopup'
 import operation from './operation'
 import { deleteComment, deleteArticle, addComplaint } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
-import { Toast, ImagePreview } from 'vant'
+import { Toast } from 'vant'
+import { imagePreview } from '@/utils/util'
 
 export default {
   components: {
@@ -132,7 +133,7 @@ export default {
       })
     },
     preview (src) {
-      ImagePreview({
+      imagePreview({
         images: [src]
       })
     },

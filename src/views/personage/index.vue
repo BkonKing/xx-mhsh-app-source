@@ -41,11 +41,11 @@
       </div>
       <div class="tf-row tf-bg-white coin-box">
         <div class="tf-flex-item tf-column" @click="goHappiness">
-          <div class="user-text--lg">{{userInfo.credits}}</div>
+          <div class="user-text--lg">{{userInfo.credits || 0}}</div>
           <div class="user-text--grey">幸福币</div>
         </div>
         <div class="tf-flex-item tf-column" @click="$router.push('/coupon/list')">
-          <div class="user-text--lg">{{orderData.yhq_count}}</div>
+          <div class="user-text--lg">{{orderData.yhq_count || 0}}</div>
           <div class="user-text--grey">优惠券</div>
         </div>
         <div class="tf-flex-item tf-column tf-flex-center">

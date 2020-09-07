@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import store from '../store'
 import {
-  Toast
+  Toast,
+  ImagePreview
 } from 'vant'
 
 export function getDate (time) {
@@ -55,6 +56,22 @@ export function validForm (arr) {
   })
 }
 
+export function imagePreview (options) {
+  const params = Object.assign({
+    onClose () {
+      api.removeEventListener({
+        name: 'keyback'
+      })
+    }
+  }, options)
+  const instance = ImagePreview(params)
+  api.addEventListener({
+    name: 'keyback'
+  }, function (ret, err) {
+    instance.close()
+  })
+}
+
 export function clearUserInfo () {
   if (process.env.VUE_APP_IS_APP === '1') {
     const ajParams = {
@@ -67,24 +84,28 @@ export function clearUserInfo () {
     })
   }
   const userId = store.getters.userInfo.id
-  const tokenList = api.getPrefs({
-    key: 'token_list',
-    sync: true
-  })
-  delete tokenList[userId]
-  api.setPrefs({
-    key: 'token_list',
-    value: tokenList
-  })
-  const userList = api.getPrefs({
-    key: 'user_list',
-    sync: true
-  })
-  delete userList[userId]
-  api.setPrefs({
-    key: 'user_list',
-    value: userList
-  })
+  if (userId) {
+    let tokenList = api.getPrefs({
+      key: 'token_list',
+      sync: true
+    })
+    tokenList = typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
+    delete tokenList[userId]
+    api.setPrefs({
+      key: 'token_list',
+      value: tokenList
+    })
+    let userList = api.getPrefs({
+      key: 'user_list',
+      sync: true
+    })
+    userList = typeof userList === 'string' ? JSON.parse(userList) : userList
+    delete userList[userId]
+    api.setPrefs({
+      key: 'user_list',
+      value: userList
+    })
+  }
   api.removePrefs({
     key: 'user_info'
   })

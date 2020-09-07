@@ -412,7 +412,6 @@ import {
   RadioGroup,
   Radio,
   Uploader,
-  ImagePreview,
   Toast,
   Dialog,
   PullRefresh
@@ -453,7 +452,6 @@ export default {
     [Radio.name]: Radio,
     [Uploader.name]: Uploader,
     [PullRefresh.name]: PullRefresh,
-    [ImagePreview.Component.name]: ImagePreview.Component,
     tfTimeline,
     tfImageList,
     tfDialog,

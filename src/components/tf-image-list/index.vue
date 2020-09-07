@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import { Grid, GridItem, Image, ImagePreview, Lazyload } from 'vant'
+import { Grid, GridItem, Image, Lazyload } from 'vant'
+import { imagePreview } from '@/utils/util'
 
 export default {
   components: {
     [Grid.name]: Grid,
     [GridItem.name]: GridItem,
-    [ImagePreview.name]: ImagePreview,
     [Image.name]: Image
   },
   props: {
@@ -75,12 +75,9 @@ export default {
       this.$emit('click', data)
     },
     preview (i) {
-      ImagePreview({
+      imagePreview({
         images: this.data,
-        startPosition: i,
-        onClose () {
-          // do something
-        }
+        startPosition: i
       })
     }
   },

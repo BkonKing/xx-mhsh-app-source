@@ -166,10 +166,11 @@ const store = {
               key: 'refresh_token',
               value: data.refresh_token
             })
-            const tokenList = api.getPrefs({
+            let tokenList = api.getPrefs({
               key: 'token_list',
               sync: true
             }) || {}
+            tokenList = typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
             tokenList[data.id] = data.access_token
             api.setPrefs({
               key: 'token_list',
@@ -257,10 +258,11 @@ const store = {
           data
         }) => {
           commit('setUser_info', data && data.user_info)
-          const userList = api.getPrefs({
+          let userList = api.getPrefs({
             key: 'user_list',
             sync: true
           }) || {}
+          userList = typeof userList === 'string' ? JSON.parse(userList) : userList
           userList[data.user_info.id] = data.user_info
           api.setPrefs({
             key: 'user_list',

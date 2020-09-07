@@ -76,8 +76,13 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const el = document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')
-    this.scrollTop = (el[0] && el[0].scrollTop) || 0
+    if (to.name === 'butler') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    } else {
+      const el = document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')
+      this.scrollTop = (el[0] && el[0].scrollTop) || 0
+    }
     next()
   }
 }

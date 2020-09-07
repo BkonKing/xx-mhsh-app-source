@@ -74,7 +74,8 @@
         </tf-list>
         <tf-list class="basics-list">
           <!-- <van-uploader :after-read="cjFace" style="width: 100%;"> -->
-          <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item>
+          <!-- <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item> -->
+          <tf-list-item title="人脸采集" @click="openCamera"></tf-list-item>
           <!-- </van-uploader> -->
         </tf-list>
         <tf-list class="basics-list">
@@ -269,6 +270,11 @@ export default {
       this.avatar = avatar
       this.mobile = mobile
       this.birthday = birthday || ''
+    },
+    openCamera () {
+      this.$router.push({
+        name: 'faceCollect'
+      })
     },
     /* 图片上传 */
     afterRead (file) {

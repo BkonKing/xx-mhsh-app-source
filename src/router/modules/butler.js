@@ -66,7 +66,10 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "repairsList" */
         '@/views/butler/repairs/list.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 评价
   {

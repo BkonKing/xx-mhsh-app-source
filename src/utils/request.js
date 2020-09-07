@@ -65,7 +65,7 @@ service.interceptors.request.use(
   }
 )
 
-// 相应拦截器
+// 响应拦截器
 service.interceptors.response.use(
   async response => {
     const {
@@ -89,7 +89,7 @@ service.interceptors.response.use(
       return Promise.reject(code)
     } else if (code != '200') {
       Toast(res.message || codeMessage[code])
-      return Promise.reject(res.message || 'Error')
+      return Promise.reject(res || 'Error')
     } else {
       return res
     }

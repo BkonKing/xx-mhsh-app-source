@@ -2,7 +2,7 @@
   <div class="tf-bg tf-body">
     <van-nav-bar title="我的报事报修" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
     <div class="tf-body-container">
-      <list></list>
+      <list id="repairs-list"></list>
     </div>
   </div>
 </template>
@@ -12,17 +12,31 @@ import { NavBar } from 'vant'
 import list from './components/list'
 
 export default {
+  name: 'repairsList',
   components: {
     [NavBar.name]: NavBar,
     list
   },
   data () {
     return {
-
+      scrollTop: 0
     }
   },
-  created () {},
-  methods: {}
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('repairs-list').scrollTop = this.scrollTop
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'repairsDetails') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    } else {
+      const el = document.getElementById('repairs-list')
+      this.scrollTop = (el && el.scrollTop) || 0
+    }
+    next()
+  }
 }
 </script>
 
