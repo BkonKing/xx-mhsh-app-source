@@ -395,11 +395,9 @@ export default {
       if (target.scrollTop > height + 15) {
         this.scrollStatus = true
         this.headerColor = '#fff'
-      } else if (target.scrollTop > 0) {
-        if (this.scrollStatus) {
-          this.scrollStatus = false
-          this.swipeChange(this.activeIndex)
-        }
+      } else if (this.scrollStatus) {
+        this.scrollStatus = false
+        this.swipeChange(this.activeIndex)
       }
     }
   },
