@@ -66,10 +66,10 @@ export default {
     // this.getMyFreeServerList()
   },
   methods: {
-    getMyFreeServerList () {
+    getMyFreeServerList ({ pages }) {
       const len = this.data.length
       return getMyFreeServerList({
-        serverId: (len && this.data[len - 1].id) || ''
+        serverId: (len && pages !== 1 && this.data[len - 1].id) || ''
       })
     },
     /* 点击服务显示二维码 */
