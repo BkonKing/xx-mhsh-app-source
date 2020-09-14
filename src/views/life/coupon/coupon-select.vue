@@ -19,7 +19,7 @@
               <template v-if="item.i_img">
                 <div class="coupon-icon coupon-price">
                   <div v-if="item.type == 1" class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
-                  <div v-else class="coupon-price-num"><span>{{item.discount_num}}</span>折</div>
+                  <div v-else class="coupon-price-num">{{item.discount_num}}<span>折</span></div>
                   <div class="coupon-icon-block"><img class="img-100" :src="item.i_img" /></div>
                 </div>
               </template>
@@ -90,7 +90,7 @@
                 <div class="color-ffa110 font-24">{{item.term_of_validity}}</div>
               </div>
             </div>
-		        <div class="coupon-btn" bindtap="linkFunc" data-url="/page/tabBar/store/index">立即使用</div>
+		        
 		      </div>
 		      <div class="coupon-down">
             <div :class="['toggle-btn',item.is_down ? 'toggle-btn-down' : '']" @click="contToggle(index,0)" data-id="index"></div>

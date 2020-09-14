@@ -17,11 +17,13 @@
 		</div>
 		
     <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text=""
-        @load="onLoad"
-      >
+      id="scroll-body"
+      :class="[navHide ? 'scroll-body-other' : '', 'scroll-body']"
+      v-model="loading"
+      :finished="finished"
+      finished-text=""
+      @load="onLoad"
+    >
       <div v-if="listData.length > 0" class="order-list">
 				<div v-for="(item, index) in listData" class="order-item" @click="linkFunc(item.order_type==1 ? 12 : 13,{id: item.id})">
 					<div class="order-header">
@@ -62,9 +64,9 @@
 							</div>
 						</div>
 						<div class="order-btn-box">
-							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.order_id)">取消订单</div>
+							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)">取消订单</div>
 							<div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-							<div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.order_id)">
+							<div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
 	            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
 	            </template>
 	          </van-count-down>)</div>
@@ -103,8 +105,9 @@ import { NavBar, CountDown, List } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
-import { getOrderList, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
+import { getOrderList, getOrderOne, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
+  name: 'orderList',
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
@@ -148,6 +151,11 @@ export default {
   	}
   	// console.log(this.$store.state.paddingTop)
   },
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('scroll-body').scrollTop = this.scrollTop
+    }
+  },
   methods: {
     navFun (index) {
       this.typeVal = index;
@@ -157,6 +165,31 @@ export default {
       // 异步更新数据
       this.getData();
       return;
+    },
+    updateOne(){
+      getOrderOne({
+        page_type: this.typeVal,
+        order_project_id: this.tapId
+      }).then(res => {
+        if (res.success) {
+          if(res.data.order_project_list && res.data.order_project_list.length){
+            var listOne = res.data.order_project_list[0];
+            for (var i=0; i < this.listData.length; i++) {
+              if(this.listData[i].id == this.tapId){
+                this.listData.splice(i,1,listOne);
+                break;
+              }
+            }
+          }else {
+            for (var i=0; i < this.listData.length; i++) {
+              if(this.listData[i].id == this.tapId){
+                this.listData.splice(i,1);
+                break;
+              }
+            }
+          }
+        }
+      })
     },
     getData () {
       getOrderList({
@@ -198,6 +231,7 @@ export default {
     	this.payMoney = this.listData[index].pay_price/100;
     	this.showPaySwal = true;
     	this.payOderdId = id;
+      this.tapId = this.listData[index].id;
     },
     // 关闭支付选择弹窗
     closePaySwal(data){
@@ -223,7 +257,8 @@ export default {
       var aliPayPlus = api.require('aliPayPlus'); 
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
-          that.initFunc(1);
+          that.updateOne();
+          // that.initFunc(1);
           if(ret.code == '9000'){  //支付成功
             
           }
@@ -235,18 +270,20 @@ export default {
     	let that = this;
     	if(this.listData[index].is_pay == 0){ //未付款
     		cancelNoPayOrder({
-	        order_project_id: this.listData[index].order_id,
+	        order_project_id: this.listData[index].id,
 	      }).then(res => {
 	        if (res.success) {
-	        	that.initFunc(1);
+            that.updateOne();
+	        	// that.initFunc(1);
 	        }
 	      })
     	}else {
     		cancelPayOrder({
-	        order_project_id: this.listData[index].order_id,
+	        order_project_id: this.listData[index].id,
 	      }).then(res => {
 	        if (res.success) {
-	        	that.initFunc(1);
+            that.updateOne();
+	        	// that.initFunc(1);
 	        }
 	      })
     	}
@@ -274,6 +311,7 @@ export default {
       this.clickIndex = index;
       this.clickId = id;
       this.showSwal = true;
+      this.tapId = this.listData[index].id;
     },
     //关闭取消弹窗
     closeSwal(data){
@@ -301,6 +339,7 @@ export default {
 	      })
     		break;
     		case 12:
+        this.tapId = obj.id;
     		this.$router.push({
 	      	path: '/order/detail',
 	      	query: {
@@ -309,6 +348,7 @@ export default {
 	      })
     		break;
     		case 13:
+        this.tapId = obj.id;
     		this.$router.push({
 	      	path: '/order/special-detail',
 	      	query: {
@@ -327,6 +367,7 @@ export default {
     	}
     },
     logisticsLink(index) {
+      this.tapId = this.listData[index].id;
     	var _this = this.listData[index];
       if(_this.project_logistice_count > 1 || (_this.project_logistice_count = 1 && _this.order_status == 1)){
       	this.$router.push({
@@ -360,6 +401,22 @@ export default {
       	}
       }
     },
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if(from.name=='orderDetail' || from.name=='specialDetail' || from.name=='logisticsList' || from.name=='logisticsSelf' || from.name=='logisticsExpress' || from.name=='logisticsBusiness'){
+        vm.updateOne();
+      }
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'personage'||to.name == 'goodsDetail'||to.name == 'cart'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    const el = document.getElementById('scroll-body')
+    this.scrollTop = (el && el.scrollTop) || 0
+    next();
   }
 }
 </script>
@@ -381,4 +438,11 @@ export default {
   width: 0.58rem;
   margin-left: -0.29rem;
 }*/
+.scroll-body {
+  max-height: calc(100% - 186px);
+  overflow-y: auto;
+}
+.scroll-body.scroll-body-other {
+  max-height: calc(100% - 88px);
+}
 </style>

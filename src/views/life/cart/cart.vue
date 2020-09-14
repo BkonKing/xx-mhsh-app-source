@@ -47,7 +47,7 @@
       <div class="cart-data flex-align-center">
         <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
         <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
-        <div class="all-go flex-center" @click="payFunc">结算({{numTotal}})</div>
+        <div class="all-go flex-center" v-txAnalysis="15" @click="payFunc">结算({{numTotal}})</div>
       </div>
     </div>
 	</div>

@@ -1,320 +1,381 @@
 <template>
 	<div class="app-body">
-    <div class="order-bar bar-white">
-      <van-nav-bar
-        title="商品详情"
-        fixed
-        :border="false"
-        placeholder
-        left-arrow
-        @click-left="$router.go(-1)"
-      ></van-nav-bar>
-    </div>
-    <div class="banner">
-      <van-swipe :autoplay="4000" @change="onChange">
-        <van-swipe-item v-for="(item, index) in swiperArr" @click="predivPic(index,1)">
-          <img class="img-100" :src="item" />
-        </van-swipe-item>
-        <div class="custom-indicator flex-center" slot="indicator">
-          {{ current + 1 }}/{{swiperArr.length}}
-        </div>
-      </van-swipe>
-    </div>
-    
-    <template v-if="infoData.goods_type == 3">
-      <div :class="[infoData.ollage_info.is_start == 1 ? 'flash-session-bg' : '','flash-session']">
-        <div class="flash-limit">
-          <div class="flash-limit-l"></div>
-          <div class="flash-limit-m">限量{{infoData.z_stock}}件</div>
-          <div class="flash-limit-r"></div>
-        </div>
-        <div v-if="infoData.ollage_info.is_start" class="flash-time">距离结束还剩<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-            </template>
-          </van-count-down></div>
-        <div v-else class="flash-time">{{infoData.ollage_info.start_time_txt}}</div>
+    <div class="body-block">
+      <div class="order-bar bar-white">
+        <van-nav-bar
+          title="商品详情"
+          fixed
+          :border="false"
+          placeholder
+          left-arrow
+          @click-left="$router.go(-1)"
+        ></van-nav-bar>
       </div>
-      <!-- <div class="flash-session flash-over">
-        <div>已结束</div>
-      </div> -->
-    </template>
-
-    <div class="goods-info goods-session">
-      <div class="goods-name">{{infoData.goods_name}}</div>
-
-      <template v-if="infoData.pay_type == 1">
-        <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-        <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits/10}} 幸福币可兑换</div></div>
-      </template>
-      <template v-else>
-        <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-
-        <!-- 闪购 -->
-        <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-        
-        <!-- 拼单 -->
-        <div v-else class="price-block">
-          <div class="price-left">
-            <div class="activity-limit-price activity-flash-price">限时闪购</div>
-            <div class="activity-now-price activity-pay-price">拼单价</div>
+      <div class="scroll-body">
+      <div class="banner">
+        <van-swipe :autoplay="4000" @change="onChange">
+          <van-swipe-item v-for="(item, index) in swiperArr" @click="predivPic(index,1)">
+            <img class="img-100" :src="item" />
+          </van-swipe-item>
+          <div class="custom-indicator flex-center" slot="indicator">
+            {{ current + 1 }}/{{swiperArr.length}}
           </div>
-          <div class="price-right">
-            <div class="activity-flash-price"><span class="font-24">￥</span>{{infoData.flash_price/100}}<div class="activity-old-price">￥{{infoData.original_price/100}}</div></div>
-            <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}</div>
+        </van-swipe>
+      </div>
+      
+      <template v-if="infoData.goods_type == 3">
+        <div :class="[infoData.ollage_info.is_start == 1 ? 'flash-session-bg' : '','flash-session']">
+          <div class="flash-limit">
+            <div class="flash-limit-l"></div>
+            <div class="flash-limit-m">限量{{infoData.z_stock}}件</div>
+            <div class="flash-limit-r"></div>
           </div>
-        </div>
-        <div v-if="infoData.credits" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits/100}}</div></div>
-      </template>
-    </div>
-
-    <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
-      <div class="flex-between collage-header"><span>拼单</span>(新老用户均可参加)</div>
-      <div class=" p-30">
-        <div class="flex-between collage-step">
-          <div>①选择商品</div>
-          <div class="collage-step-icon"></div>
-          <div>②支付开团</div>
-          <div class="collage-step-icon"></div>
-          <div>③分享好友</div>
-          <div class="collage-step-icon"></div>
-          <div>④成功(失败退款)</div>
-        </div>
-        <div v-if="collageList.length > 0" class="collage-total flex-between">
-          <div class="color-8f8f94">以下小伙伴正在发起拼单，可直接参与</div>
-          <div class="color-222">{{collageList[0].collage_num}}人拼单</div>
-        </div>
-        <div v-if="collageList.length > 0" class="collage-list">
-          <template v-for="(item, index) in collageList">
-            <div class="collage-item flex-between">
-              <div class="collage-user flex-align-center">
-                <div v-for="(val, key) in item.user_arr" class="collage-user-info">
-                  <img class="collage-user-photo" :src="val.avatar" />
-                  <div class="collage-user-name p-nowrap">{{val.nickname}}</div>
-                </div>
-                <div v-if="item.user_arr.length > 5" class="collage-user-info">
-                  <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
-                  <img class="collage-user-photo" :src="val.avatar" />
-                </div>
-              </div>
-              <div v-if="item.is_pay" class="collage-item-right">
-                <div class="collage-btn yq-btn">邀请好友</div>
-                <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
-              </div>
-              <div v-else class="collage-item-right">
-                <div @click="showFunc('collage',item.f_collage_order_id)" class="collage-btn pd-btn">一起拼单</div>
-                <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="infoData.goods_type == 3" class="common-list goods-session" @click="ensureFunc">
-      <div class="common-item">
-        <div class="font-26 color-222">基础保障</div>
-        <div class="link-icon">
-          <img class="img-100" src="@/assets/img/right.png" />
-        </div>
-      </div>
-    </div>
-
-    <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
-      <div class="tip-left flex-center">
-        <img src="@/assets/img/icon_02.png" />
-      </div>
-      <div class="tip-right">
-        <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
-      </div>
-    </div>
-
-    <div class="goods-tip goods-session flex-align-center">
-      <template v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2">
-        <div class="tip-left logistics-left">
-          <div>配送</div>
-          <div>运费</div>
-        </div>
-        <div class="tip-right color-222">
-          <div>{{infoData.distribution_type_name}}</div>
-          <div>{{infoData.freight ? (infoData.freight) : '免邮'}}</div>
-        </div>
-      </template>
-      <template v-else-if="infoData.distribution_type == 1">
-        <div class="tip-left logistics-left">
-          <div>配送</div>
-        </div>
-        <div class="tip-right color-222">
-          <div>{{infoData.distribution_type_name}}({{infoData.take_address}})</div>
-        </div>
-      </template>
-    </div>
-
-    <div class="goods-cont goods-session">
-      <div class="goods-cont-tit">商品详情</div>
-      <div class="goods-detail-cont" v-html="infoData.content"></div>
-    </div>
-
-    <div class="fixed-empty"></div>
-    <div class="bottom-fixed operate-session flex-align-center">
-      <a href="tel: 400-111-6601" class="kf-btn flex-center">
-        <img src="@/assets/img/icon_07.png" />
-      </a>
-      <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)">
-        <img src="@/assets/img/icon_06.png" />
-        <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
-      </div>
-      <template v-if="infoData.is_sell_out > 0">
-        <div class="add-btn btn-disabled">{{infoData.sell_out_text}}</div>
-      </template>
-      <template v-else>
-        <template v-if="infoData.pay_type == 0">
-          <template v-if="infoData.goods_type < 3">
-            <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
-            <div class="buy-btn" @click="showFunc('buy')">立即购买</div>
-          </template>
-          <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
-          <div class="buy-btn" @click="showFunc()" data-type="buy">立即购买</div> -->
-          <!-- <div class="add-btn btn-disabled">售罄</div> -->
-          <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
-          <div class="buy-btn" @click="showFunc()" data-type="buy">开抢提醒</div> -->
-          <!-- <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即购买</div> -->
-          <template v-else>
-            <template v-if="infoData.ollage_info.is_start">
-              <template v-if="infoData.dq_collage_type == 1">
-                <div class="buy-btn btn-linear" @click="showFunc('buy')">立即购买</div>
+          <div v-if="infoData.ollage_info.is_start" class="flash-time">距离结束还剩<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+              <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
               </template>
-              <template v-else>
-                <template v-if="f_orderid && infoData.f_order_ollage_info && (!infoData.order_ollage_info || infoData.order_ollage_info.status!=0)">
-                  <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-                      <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-                      </template>
-                    </van-count-down>结束</div>
-                  <div @click="showFunc('collage')" class="buy-btn btn-linear">一起拼单</div>
-                </template>
-                <template v-else>
-                  <template v-if="my_ing_info">
-                    <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-                      <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-                      </template>
-                    </van-count-down>结束</div>
-                    <div class="buy-btn btn-linear">邀请好友</div>
-                  </template>
-                  <template v-else>
-                    <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price/100}}</div>
-                    <div class="buy-btn" @click="showFunc('collage')">发起拼单￥{{infoData.sell_price/100}}</div>
-                  </template>
-                </template>
-              </template>
-            </template>
-            <template v-else>
-              <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
-              <!-- <div class="buy-btn" data-type="buy">开抢提醒</div> -->
-              <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()">开抢提醒</div>
-              <div v-else class="buy-btn btn-disabled">已设提醒</div>
-              <!-- <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
-                  <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
-                  </template>
-                </van-count-down>结束</div> -->
-            </template>
-            
-          </template>
+            </van-count-down></div>
+          <div v-else class="flash-time">{{infoData.ollage_info.start_time_txt}}</div>
+        </div>
+        <!-- <div class="flash-session flash-over">
+          <div>已结束</div>
+        </div> -->
+      </template>
+
+      <div class="goods-info goods-session">
+        <div class="goods-name">{{infoData.goods_name}}</div>
+
+        <template v-if="infoData.pay_type == 1">
+          <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
+          <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits/10}} 幸福币可兑换</div></div>
         </template>
         <template v-else>
-          <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
-          <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy">立即兑换</div>
-        </template>
-      </template>
-    </div>
+          <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
 
-    <div v-show="isShow" class="public-mask  bottom-fixed">
-      <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
-      <div class="shops-params" v-if="skuList.length > 0">
-        <div class="params-goods-info">
-          <div class="params-goods-left">
-            <img class="img-100" @click="predivPic(typeVal,2)" :src="skuList[typeVal].specs_img" data-src="" />
-          </div>
-          <div class="params-goods-right">
-            <div>
-              <div class="goods-name p-nowrapm">{{infoData.goods_name}}</div>
-              <template v-if="infoData.goods_type<3">
-                <div class="goods-price">
-                  <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
-                </div>
-              </template>
-              <template v-else>
-                <div v-if="is_collage" class="goods-price">
-                  <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
-                </div>
-                <div v-else class="goods-price">
-                  <span class="font-24">￥</span>{{infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_price/100 : skuList[typeVal].s_price/100}} 
-                  <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
-                </div>
-              </template>
+          <!-- 闪购 -->
+          <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
+          
+          <!-- 拼单 -->
+          <div v-else class="price-block">
+            <div class="price-left">
+              <div class="activity-limit-price activity-flash-price">限时闪购</div>
+              <div class="activity-now-price activity-pay-price">拼单价</div>
             </div>
-            <template v-if="infoData.pay_type == 1">
-              <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/10}}</div></div>
-            </template>
-            <template v-else>
-              <template v-if="infoData.goods_type<3">
-                <div v-if="skuList[typeVal].credits!=0" class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
-              </template>
-              <template v-else>
-                <div class="happy-block" v-if="(is_collage&&skuList[typeVal].p_credits!=0) || (infoData.ollage_info.is_start==1&&skuList[typeVal].o_credits!=0) || (infoData.ollage_info.is_start!=1&&skuList[typeVal].credits!=0)"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : (infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_credits/100 : skuList[typeVal].credits/100)}}</div></div>
-              </template>
+            <div class="price-right">
+              <div class="activity-flash-price"><span class="font-24">￥</span>{{infoData.flash_price/100}}<div class="activity-old-price">￥{{infoData.original_price/100}}</div></div>
+              <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}</div>
+            </div>
+          </div>
+          <div v-if="infoData.credits && infoData.credits!='0'" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits/100}}</div></div>
+        </template>
+      </div>
+
+      <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
+        <div class="flex-between collage-header"><span>拼单</span>(新老用户均可参加)</div>
+        <div class=" p-30">
+          <div class="flex-between collage-step">
+            <div>①选择商品</div>
+            <div class="collage-step-icon"></div>
+            <div>②支付开团</div>
+            <div class="collage-step-icon"></div>
+            <div>③分享好友</div>
+            <div class="collage-step-icon"></div>
+            <div>④成功(失败退款)</div>
+          </div>
+          <div v-if="collageList.length > 0" class="collage-total flex-between">
+            <div class="color-8f8f94">以下小伙伴正在发起拼单，可直接参与</div>
+            <div class="color-222">{{collageList[0].collage_num}}人拼单</div>
+          </div>
+          <div v-if="collageList.length > 0" class="collage-list">
+            <template v-for="(item, index) in collageList">
+              <div class="collage-item flex-between">
+                <div class="collage-user flex-align-center">
+                  <div v-for="(val, key) in item.user_arr" class="collage-user-info">
+                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
+                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
+                    <div class="collage-user-name p-nowrap">{{val.nickname}}</div>
+                  </div>
+                  <div v-if="item.user_arr.length > 5" class="collage-user-info">
+                    <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
+                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
+                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
+                  </div>
+                </div>
+                <div v-if="item.is_pay" class="collage-item-right">
+                  <div class="collage-btn yq-btn">邀请好友</div>
+                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
+                </div>
+                <div v-else class="collage-item-right">
+                  <div @click="showFunc('collage',item.f_collage_order_id)" class="collage-btn pd-btn">一起拼单</div>
+                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
+                </div>
+              </div>
             </template>
           </div>
         </div>
-      
-        <div class="shops-dlist">
-          <div class="shops-ditem">
-            <div class="shops-dtit">规格</div>
-            <div class="doption-list">
-              <div v-for="(item, index) in skuList" :class="[typeVal == index ? 'active' : '','shops-doption']" @click="typeFunc(index)">{{item.specs_name}}</div>
+      </div>
+
+      <div v-if="infoData.goods_type == 3" class="common-list goods-session" @click="ensureFunc">
+        <div class="common-item">
+          <div class="font-26 color-222">基础保障</div>
+          <div class="link-icon">
+            <img class="img-100" src="@/assets/img/right.png" />
+          </div>
+        </div>
+      </div>
+
+      <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
+        <div class="tip-left flex-center">
+          <img src="@/assets/img/icon_02.png" />
+        </div>
+        <div class="tip-right">
+          <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
+        </div>
+      </div>
+
+      <div class="goods-tip goods-session flex-align-center">
+        <!-- <template v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2">
+          <div class="tip-left logistics-left">
+            <div>配送</div>
+            <div>运费</div>
+          </div>
+          <div class="tip-right color-222">
+            <div>{{infoData.distribution_type_name}}</div>
+            <div>{{infoData.freight ? (infoData.freight) : '免邮'}}</div>
+          </div>
+        </template>
+        <template v-else-if="infoData.distribution_type == 1">
+          <div class="tip-left logistics-left">
+            <div>配送</div>
+          </div>
+          <div class="tip-right color-222">
+            <div>{{infoData.distribution_type_name}}({{infoData.take_address}})</div>
+          </div>
+        </template> -->
+        <div v-if="infoData.goods_type == 3" @click="ensureFunc" class="tip-item">
+          <div class="tip-left logistics-left">
+            保障
+          </div>
+          <div class="tip-right color-222">
+            假一赔二 · 破损补寄 · 15天保价
+          </div>
+          <div class="link-icon">
+            <img class="img-100" src="@/assets/img/right.png" />
+          </div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-left logistics-left">
+            配送
+          </div>
+          <div v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2" class="tip-right color-222">
+            {{infoData.distribution_type_name}} · {{infoData.freight ? '运费'+(infoData.freight)+'元' : '免邮'}}
+          </div>
+          <div v-else-if="infoData.distribution_type == 1" class="tip-right color-222 p-nowrap">
+            {{infoData.distribution_type_name}}({{infoData.take_address}})
+          </div>
+        </div>
+        <div @click="rightShow && tipToggle()" class="tip-item">
+          <div class="tip-left logistics-left">
+            说明
+          </div>
+          <div class="tip-right color-222 p-nowrap">
+            <template v-for="(item, index) in infoData.tips_arr">{{item}} {{index!=infoData.tips_arr.length-1 ? '·' : ''}} </template>
+          </div>
+          <div v-if="rightShow" class="link-icon">
+            <img class="img-100" src="@/assets/img/right.png" />
+          </div>
+        </div>
+        <div ref="tipItem" class="tip-item hide">
+          <div class="flex-center">
+            <div class="tip-left logistics-left">
+              说明
+            </div>
+            <div ref="tipTxt" class="tip-hide color-222">
+              <template v-for="(item, index) in infoData.tips_arr">{{item}} {{index!=infoData.tips_arr.length-1 ? '·' : ''}} </template>
             </div>
           </div>
-          <div class="shops-ditem">
-            <div class="shops-dtit">数量</div>
-            <div class="goods-num-count">
-              <div class="goods-btn-block">
-                <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
-                <div class="goods-num">{{skuList[typeVal].count}}</div>
-                <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
+        </div>
+      </div>
+
+      <div class="goods-cont goods-session">
+        <div class="goods-cont-tit">商品详情</div>
+        <div class="goods-detail-cont" v-html="infoData.content"></div>
+      </div>
+      </div>
+
+      <!-- <div class="fixed-empty"></div> -->
+      <div class="bottom-fixed operate-session flex-align-center">
+        <a :href="'tel: '+infoData.customerServiceHotline" class="kf-btn flex-center">
+          <img src="@/assets/img/icon_07.png" />
+        </a>
+        <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)">
+          <img src="@/assets/img/icon_06.png" />
+          <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
+        </div>
+        <template v-if="infoData.is_sell_out > 0">
+          <div class="add-btn btn-disabled">{{infoData.sell_out_text}}</div>
+        </template>
+        <template v-else>
+          <template v-if="infoData.pay_type == 0">
+            <template v-if="infoData.goods_type < 3">
+              <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
+              <div class="buy-btn" @click="showFunc('buy')">立即购买</div>
+            </template>
+            <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+            <div class="buy-btn" @click="showFunc()" data-type="buy">立即购买</div> -->
+            <!-- <div class="add-btn btn-disabled">售罄</div> -->
+            <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
+            <div class="buy-btn" @click="showFunc()" data-type="buy">开抢提醒</div> -->
+            <!-- <div class="buy-btn btn-linear" @click="showFunc()" data-type="buy">立即购买</div> -->
+            <template v-else>
+              <template v-if="infoData.ollage_info.is_start">
+                <template v-if="infoData.dq_collage_type == 1">
+                  <div class="buy-btn btn-linear" @click="showFunc('buy')">立即购买</div>
+                </template>
+                <template v-else>
+                  <template v-if="f_orderid && infoData.f_order_ollage_info && (!infoData.order_ollage_info || infoData.order_ollage_info.status!=0)">
+                    <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                        <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
+                        </template>
+                      </van-count-down>结束</div>
+                    <div @click="showFunc('collage')" class="buy-btn btn-linear">一起拼单</div>
+                  </template>
+                  <template v-else>
+                    <template v-if="my_ing_info">
+                      <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                        <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
+                        </template>
+                      </van-count-down>结束</div>
+                      <div class="buy-btn btn-linear">邀请好友</div>
+                    </template>
+                    <template v-else>
+                      <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price/100}}</div>
+                      <div class="buy-btn" @click="showFunc('collage')">发起拼单￥{{infoData.sell_price/100}}</div>
+                    </template>
+                  </template>
+                </template>
+              </template>
+              <template v-else>
+                <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
+                <!-- <div class="buy-btn" data-type="buy">开抢提醒</div> -->
+                <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()">开抢提醒</div>
+                <div v-else class="buy-btn btn-disabled">已设提醒</div>
+                <!-- <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
+                    <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
+                    </template>
+                  </van-count-down>结束</div> -->
+              </template>
+              
+            </template>
+          </template>
+          <template v-else>
+            <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
+            <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy">立即兑换</div>
+          </template>
+        </template>
+      </div>
+
+      <div v-show="isShow" class="public-mask  bottom-fixed">
+        <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
+        <div class="shops-params" v-if="skuList.length > 0">
+          <div class="params-goods-info">
+            <div class="params-goods-left">
+              <img class="img-100" @click="predivPic(typeVal,2)" :src="skuList[typeVal].specs_img" data-src="" />
+            </div>
+            <div class="params-goods-right">
+              <div>
+                <div class="goods-name p-nowrapm">{{infoData.goods_name}}</div>
+                <template v-if="infoData.goods_type<3">
+                  <div class="goods-price">
+                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                    <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div v-if="is_collage" class="goods-price">
+                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                    <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
+                  </div>
+                  <div v-else class="goods-price">
+                    <span class="font-24">￥</span>{{infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_price/100 : skuList[typeVal].s_price/100}} 
+                    <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
+                  </div>
+                </template>
+              </div>
+              <template v-if="infoData.pay_type == 1">
+                <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/10}}</div></div>
+              </template>
+              <template v-else>
+                <template v-if="infoData.goods_type<3">
+                  <div v-if="skuList[typeVal].credits!=0" class="happy-block"><div class="happy-coin">幸福币可抵￥{{skuList[typeVal].credits/100}}</div></div>
+                </template>
+                <template v-else>
+                  <div class="happy-block" v-if="(is_collage&&skuList[typeVal].p_credits!=0) || (!is_collage && infoData.ollage_info.is_start==1&&skuList[typeVal].o_credits!=0) || (infoData.ollage_info.is_start!=1&&skuList[typeVal].credits!=0)"><div class="happy-coin">幸福币可抵￥{{is_collage ? skuList[typeVal].p_credits/100 : (infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_credits/100 : skuList[typeVal].credits/100)}}</div></div>
+                </template>
+              </template>
+            </div>
+          </div>
+        
+          <div class="shops-dlist">
+            <div class="shops-ditem">
+              <div class="shops-dtit">规格</div>
+              <div class="doption-list">
+                <div v-for="(item, index) in skuList" :class="[typeVal == index ? 'active' : '','shops-doption']" @click="typeFunc(index)">{{item.specs_name}}</div>
+              </div>
+            </div>
+            <div class="shops-ditem">
+              <div class="shops-dtit">数量</div>
+              <div class="goods-num-count">
+                <div class="goods-btn-block">
+                  <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
+                  <div class="goods-num">{{skuList[typeVal].count}}</div>
+                  <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="submit-btn" @click="addCar()">{{infoData.pay_type == 1 ? '确认兑换' : '确认'}}</div>
       </div>
-      <div class="submit-btn" @click="addCar()">{{infoData.pay_type == 1 ? '确认兑换' : '确认'}}</div>
-    </div>
-    <div v-show="isShow" class="mask-bg" catchtouchmove="true" @click="showFunc()"></div>
+      <div v-show="isShow" class="mask-bg" catchtouchmove="true" @click="showFunc()"></div>
 
-    <div v-show="ensureShow" class="public-mask ensure-mask bottom-fixed">
-      <div class="public-dclose" @click="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
-      <div class="public-header">基础保障</div>
-      <div class="ensure-list">
-        <div class="ensure-item">
-          <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_03.png" />假一赔二</div>
-          <div class="ensure-cont">正品保障，假一赔二</div>
+      <div v-show="ensureShow" class="public-mask ensure-mask bottom-fixed">
+        <div class="public-dclose" @click="ensureFunc"><img class="img-100" src="@/assets/img/close.png" /></div>
+        <div class="public-header">基础保障</div>
+        <div class="ensure-list">
+          <div class="ensure-item">
+            <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_03.png" />假一赔二</div>
+            <div class="ensure-cont">正品保障，假一赔二</div>
+          </div>
+          <div class="ensure-item">
+            <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_04.png" />破损 补寄</div>
+            <div class="ensure-cont">签收48小时(食品24小时)内，商品破损/漏液并提供有效凭证的，24小时内响应补寄事宜。</div>
+          </div>
+          <div class="ensure-item">
+            <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_05.png" />15天保价</div>
+            <div class="ensure-cont">活动结束后15天内若发生降价，可举证申请差价双倍赔付。</div>
+          </div>
         </div>
-        <div class="ensure-item">
-          <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_04.png" />破损 补寄</div>
-          <div class="ensure-cont">签收48小时(食品24小时)内，商品破损/漏液并提供有效凭证的，24小时内响应补寄事宜。</div>
-        </div>
-        <div class="ensure-item">
-          <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_05.png" />15天保价</div>
-          <div class="ensure-cont">活动结束后15天内若发生降价，可举证申请差价双倍赔付。</div>
-        </div>
+        <div class="submit-btn" @click="ensureFunc">确认</div>
       </div>
-      <div class="submit-btn" @click="ensureFunc">确认</div>
+      <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
+      <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
+        <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
+        <div class="public-header">优惠限制</div>
+
+        <div class="common-list tip-list">
+          <div v-for="(item,index) in infoData.tips_arr" :class="[index == 0 ? 'common-item-first' : '' , 'common-item']">
+            <div class="common-item-left">{{item}}</div>
+          </div>
+        </div>
+        <div class="submit-btn" @click="tipToggle">确认</div>
+      </div>
+      <div v-show="tipShow" class="mask-bg" catchtouchmove="true" @click="tipToggle"></div>
+      <remind-swal 
+      :show-swal="showSwal"
+      :remind-tit="remindTit"
+      @closeSwal="closeSwal"
+      @sureSwal="sureSwal()"></remind-swal>
     </div>
-    <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
-    <remind-swal 
-    :show-swal="showSwal"
-    :remind-tit="remindTit"
-    @closeSwal="closeSwal"
-    @sureSwal="sureSwal()"></remind-swal>
 	</div>
 </template>
 
@@ -349,6 +410,7 @@ export default {
       is_sell_out: false,   //商品是否售罄
       typeVal: 0,           //当前选中的商品规格index
       ensureShow: false,    //基础保障弹窗
+      tipShow: false,       //商品提示说明弹窗
       is_collage: true,     //是否拼单(拼单专用 true拼单 false 单独购买)
       f_orderid: '',        //拼单分享 分享人订单id(f_collage_order_project_id)
       f_id: '',             //参与的拼单 id
@@ -385,6 +447,7 @@ export default {
       btn_type: 'cart',            //cart点击了加入购物 buy点击了立即购买
       current: 0,
       ableCredits: '',
+      rightShow: false,
 
       // show: false,
       swiperArr: [], //轮播图
@@ -396,6 +459,19 @@ export default {
     this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : '';
     this.getNum();
     this.getData();
+  },
+  watch: {
+    infoData (value) {
+      this.$nextTick(() => {
+        var itemWidth = this.$refs.tipItem.offsetWidth;
+        var tipWidth = this.$refs.tipTxt.offsetWidth;
+
+        if(tipWidth/itemWidth > 620/750){
+          this.rightShow = true;
+        }
+        console.log(itemWidth,tipWidth);
+      })
+    }
   },
   methods: {
     //获取购物车数量
@@ -505,6 +581,12 @@ export default {
     */
     ensureFunc: function (e) {
       this.ensureShow = !this.ensureShow;
+    },
+    /*
+    *显示/隐藏弹窗（商品提示）
+    */
+    tipToggle: function (e) {
+      this.tipShow = !this.tipShow;
     },
     /*
     *选中规格
@@ -847,8 +929,10 @@ export default {
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  -webkit-overflow-scrolling: touch;
-  /*overflow: hidden;*/
+}
+.scroll-body {
+  max-height: calc(100% - 186px);
+  overflow-y: auto;
 }
 /*轮播*/
 .banner {
@@ -878,6 +962,9 @@ export default {
 .goods-session {
   background-color: #fff;
   margin-bottom: 30px;
+}
+.scroll-body .goods-session:last-child {
+  margin-bottom: 0;
 }
 .goods-info {
   padding: 30px 30px 40px;
@@ -930,17 +1017,38 @@ export default {
   color: #8f8f94;
   font-size: 26px;
   min-height: 100px;
+  flex-wrap: wrap;
+}
+.tip-item {
+  height: 56px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.tip-hide {
+  white-space: nowrap;
+  line-height: 44px;
+}
+.hide {
+  height: 1px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
 .tip-left {
   width: 100px;
   line-height: 44px;
+  flex-shrink: 0;
 }
 .tip-left img {
   width: 28px;
   height: 28px;
 }
-.tip-right{
+.tip-right {
   line-height: 44px;
+  min-width: 605px;
+  max-width: 620px;
 }
 .logistics-left {
   padding-left: 30px;
@@ -977,16 +1085,21 @@ export default {
   color: #fff;
   font-size: 30px;
 }
+.tip-list {
+  margin-bottom: 60px;
+  border-bottom: 1px solid #f0f0f0;
+}
 
 /* 操作 start */
 .fixed-empty {
-  height: 58px;
+  height: 68px;
 }
 .operate-session {
   display: flex;
   height: 98px;
   z-index: 20;
   background-color: #fff;
+  position: absolute;
 }
 .kf-btn,.cart-btn {
   width: 100px;

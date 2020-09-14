@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+	<div class="app-body scroll-body" id="scroll-body">
     <div class="area-header" :style="{backgroundImage: 'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'}">
       <div class="order-bar bar-nobg">
         <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
@@ -37,6 +37,7 @@
 import { Image, NavBar, List } from 'vant'
 import { getAreaGoods } from '@/api/life.js'
 export default {
+  name: 'specialArea',
   components: {
     [NavBar.name]: NavBar,
     [List.name]: List
@@ -58,6 +59,11 @@ export default {
   created () {
     this.special_id = this.$route.query.id;
     this.finished = false;
+  },
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('scroll-body').scrollTop = this.scrollTop
+    }
   },
   methods: {
     onLoad() {
@@ -97,6 +103,16 @@ export default {
         break;
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    console.log(to.name);
+    if(to.name == 'life' || to.name == 'home'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    const el = document.getElementById('scroll-body')
+    this.scrollTop = (el && el.scrollTop) || 0
+    next();
   }
 }
 </script>

@@ -280,7 +280,7 @@ export default {
     }
     this.f_id = this.$route.query.f_id;
     if(typeof this.f_id!='undefined' && this.f_id){
-      this.flashParam.f_id = this.f_id;
+      this.flashParam.f_collage_order_project_id = this.f_id;
     }
 
     this.prev_page = prev_page ? prev_page : 0;
@@ -411,6 +411,7 @@ export default {
           if (res.success) {
             this.callbackData = res.order_info;
             this.order_id = res.order_info.id;
+            this.order_list = res.order_project_list;
             that.cartInit();
             this.openPaySwal();
           }else {
@@ -421,9 +422,20 @@ export default {
             // }
             // Toast(res.message);
             if(res.goods_arr.length){
-              that.backCarts = res.goods_arr;
-              that.isNew = true;
-              that.total();
+              var resGoods = res.goods_arr;
+              if(typeof res.code_type !='undefined' && (res.code_type == 1 || res.code_type == 2)){
+                Toast({
+                  'message': res.message,
+                  onClose: function(){
+                    that.$router.go(-1);
+                  }
+                })
+              }else {
+                that.backCarts = resGoods;
+                that.isNew = true;
+                that.total();
+              }
+              
             }else{
               this.$router.go(-1);
             }
@@ -453,6 +465,7 @@ export default {
           if (res.success) {
             // this.callbackData = res.order_info;
             this.order_id = res.order_id;
+            this.order_list = res.order_project_list;
             this.cartInit();
             this.openPaySwal();
           }else {
@@ -470,6 +483,7 @@ export default {
      */
     selectFunc: function (e) {
       this.is_credits = !this.is_credits;
+      this.flashParam.is_credits = this.is_credits ? 1 : 0;
     },
 
 
@@ -535,9 +549,14 @@ export default {
     },
     goDetail(){
       if(this.order_type == 1 || this.order_type == 2){ //闪购、拼单
-        this.linkFunc(13,{id: this.order_id});
+        this.linkFunc(13,{id: this.order_list[0].id});
       }else {
-        this.linkFunc(12,{id: this.order_id});
+        if(this.order_list.length > 1){
+          this.linkFunc(11);
+        }else {
+          this.linkFunc(12,{id: this.order_list[0].id});
+        }
+        
       }
     },
     //清理购物车

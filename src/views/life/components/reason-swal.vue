@@ -8,18 +8,6 @@
         <div v-for="(item,index) in swalList" :class="[index == 0 ? 'common-item-first' : '' , 'common-item']" @click.stop="sureSwal(index)">
           <div class="common-item-left">{{item.text}}</div>
         </div>
-        <!-- <div class="common-item common-item-first" @click.stop="sureSwal(0)">
-          <div class="common-item-left">拍错/不喜欢</div>
-        </div>
-        <div class="common-item" @click.stop="sureSwal(1)">
-          <div class="common-item-left">发错规格</div>
-        </div>
-        <div class="common-item" @click.stop="sureSwal(2)">
-          <div class="common-item-left">少件/破损/变形等</div>
-        </div>
-        <div class="common-item" @click.stop="sureSwal(3)">
-          <div class="common-item-left">拍错尺码/规格/型号</div>
-        </div> -->
       </div>
     </div>
     <div v-show="showSwal" class="mask-bg" @click="calcel(0)"></div>

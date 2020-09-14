@@ -15,6 +15,9 @@ export function getFlashNav (params) {
 export function getFlashGoods (params) {
   return request.post('/life/goods/flash_goods_json', params)
 }
+export function getFlashGoodsOne (params) {
+  return request.post('/life/goods/flash_goods_info', params)
+}
 export function remindSend (params) {
   return request.post('/life/goods/messages_json', params)
 }
@@ -117,6 +120,9 @@ export function payOrderUp (params) {
 //订单列表
 export function getOrderList (params) {
   return request.post('/life/my_order/my_order_list', params)
+}
+export function getOrderOne (params) {
+  return request.post('/life/my_order/my_order_info', params)
 }
 //订单详情
 export function getOrderDetail (params) {

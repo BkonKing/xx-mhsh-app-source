@@ -7,14 +7,19 @@ import {
 const whiteList = ['/login', '/agreement']
 
 router.beforeEach(async (to, from, next) => {
-  // console.log(11,to)
-  // var pageName = to.name;
-  // if(process.env.VUE_APP_IS_APP){
-  //   var txAnalysis = api.require('txAnalysis');
-  //   txAnalysis.trackPageBegin({
-  //     page: pageName
-  //   });
-  // }
+  var toPageName = to.name;
+  var fromPageName = from.name;
+  if(process.env.VUE_APP_IS_APP){
+    var txAnalysis = api.require('txAnalysis');
+    if(fromPageName){
+      txAnalysis.trackPageEnd({ 
+        page : fromPageName 
+      });
+    }
+    txAnalysis.trackPageBegin({
+      page: toPageName
+    });
+  }
 
   // Toast.loading({
   //   duration: 0, // 持续展示 toast
@@ -50,13 +55,5 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach(async (to, from, next) => {
-  console.log(22,to)
-  // var pageName = to.name;
-  // if(process.env.VUE_APP_IS_APP){
-  //   var txAnalysis = api.require('txAnalysis');
-  //   txAnalysis.trackPageBegin({
-  //     page: pageName
-  //   });
-  // }
   // Toast.clear()
 })

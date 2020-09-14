@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+	<div class="app-body" id="app-body">
 		<!-- <div class="status-box"></div> -->
 		<div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
 			<div class="life-header">
@@ -279,6 +279,9 @@ export default {
   	// this.activeIndex = 0;
   	// this.activeIndex2 = 0;
     this.getData();
+    if (this.scrollTop) {
+      document.getElementById('app-body').scrollTop = this.scrollTop
+    }
   },
   methods:{
   	onLoad() {
@@ -296,7 +299,11 @@ export default {
           this.bannerList = res.data;
         }
       });
-      this.getGoodsData();
+
+      if(this.activeIndex == 0){
+      	this.getGoodsData();
+      }
+      
     },
     getGoodsData () {
       getClassifyGoods({
@@ -480,6 +487,11 @@ export default {
     		break;
     	}
     },
+  },
+  beforeRouteLeave (to, from, next) {
+  	const el = document.getElementById('app-body')
+    this.scrollTop = (el && el.scrollTop) || 0
+    next()
   }
 }
 </script>

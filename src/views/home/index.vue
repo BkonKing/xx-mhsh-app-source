@@ -46,7 +46,7 @@
       </van-grid>
       <div class="coin-box">
         <div class="coin-box__header">
-          <div class="coin-box__title" @click="goHappiness">
+          <div ref="sign" class="coin-box__title" @click="goHappiness">
             幸福币专区
             <span v-if="userInfo.signin_today == '0'" class="sign-btn" @click.stop="sign">签到</span>
             <span class="coin-number" v-else>
@@ -167,8 +167,8 @@
     <div
       v-if="guideShow"
       @click="guideStep"
-      :class="[guideIndex > 1 ? 'end-bottom' : '', 'mask-bg']"
-      :style="{'padding-top': $store.state.paddingTop+'px'}"
+      :class="[guideIndex > 1 ? 'end-bottom' : '', guideIndex == 1 ? 'guide-sign' : '', 'mask-bg']"
+      :style="{'padding-top': $store.state.paddingTop+guideTop+'px'}"
     >
       <img :src="guideList[guideIndex]" />
     </div>
@@ -229,11 +229,12 @@ export default {
       guideIndex: 0,
       guideList: [
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_01.png',
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_02.png',
+        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_021.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_03.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
-      ]
+      ],
+      guideTop: 0,
     }
   },
   computed: {
@@ -244,6 +245,7 @@ export default {
     if (!guidetype) {
       this.guideShow = true
     }
+    
     this.$store.dispatch('getMyAccount')
   },
   activated () {
@@ -266,6 +268,7 @@ export default {
     /* 新手引导步骤 */
     guideStep () {
       this.guideIndex = this.guideIndex + 1
+      this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0;
       if (this.guideIndex > 4) {
         this.guideShow = false
         api.setPrefs({ key: 'guidetype', value: 1 })
@@ -477,6 +480,9 @@ export default {
 }
 .mask-bg.end-bottom {
   align-items: flex-end;
+}
+.guide-sign img {
+  margin-top: -280px;
 }
 .tf-bg-white {
   height: 100%;

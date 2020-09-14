@@ -10,6 +10,7 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
+    <div class="scroll-body" id="scroll-body">
 
     <div :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
@@ -95,7 +96,7 @@
               <template v-if="tapStatus > 1">
                 <template v-if="tapStatus == 2">
                   <template v-if="item.goods_num > 0 && item.is_over == 0">
-                    <div class="btn-collage" v-if="item.price_status == 1 && item.is_partake">邀请拼单</div>
+                    <div class="btn-collage" v-if="item.price_status == 2 && item.is_partake">邀请拼单</div>
                     <div class="btn-flash" v-else>马上抢</div>
                   </template>
                   <div v-else class="btn-over">已抢光</div>
@@ -105,156 +106,12 @@
                   <div v-else class="btn-remind-isset flex-center">已设提醒</div>
                 </template>
               </template>
-              <!-- <div class="btn-flash">马上抢</div> -->
-              <!-- <div class="btn-collage">邀请拼单</div> -->
-              <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-              <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-              <!-- <div class="btn-over">已抢光</div> -->
             </div>
-          </div>
-          <div v-show="false" class="flash-item item-small">
-            <div class="flash-goods-pic">
-              <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-            </div>
-            <div class="flash-goods-info">
-              <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
-              <div class="goods-tip-block">
-                <div class="goods-tip tip-pd">拼单优惠</div>
-              </div>
-              <div class="flash-goods-price">
-                <span class="goods-price-span1">￥</span>180
-                <span class="goods-price-span2">￥150</span>
-              </div>
-            </div>
-            <template v-if="tapStatus > 1">
-              <template v-if="tapStatus == 2">
-                <div v-if="item.goods_num > 0 && item.is_over == 0" class="item-btn">
-                  <div class="btn-collage" v-if="item.price_status == 1 && item.is_partake">邀请拼单</div>
-                  <div class="btn-flash" v-else>马上抢</div>
-                </div>
-                <div v-else class="item-status">已抢光</div>
-              </template>
-              <template v-else>
-                <div v-if="!item.is_set" class="item-btn">
-                  <div class="btn-remind" @click="remindFunc(index,item.goods_id)"><image src="@/assets/img/icon_01.png"></image>提醒</div>
-                </div>
-                <div v-else class="item-status">已设提醒</div>
-              </template>
-            </template>
           </div>
         </template>
       </div>
     </van-list>
-
-    <div class="flash-list">
-      <template v-if="1==2">
-        <div class="flash-item item-big">
-          <div class="flash-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-          </div>
-          <div class="flash-goods-info">
-            <div class="flash-goods-name p-nowrap">爱的诗意黑巧克力礼盒</div>
-            <div class="flash-price-tip flex-center">
-              <div class="goods-tip tip-pd flex-center">拼单优惠</div>
-              <div class="flash-goods-price">
-                <span class="goods-price-span1">￥</span>180
-                <span class="goods-price-span2">￥150</span>
-              </div>
-            </div>
-          </div>
-          <div class="item-btn">
-            <div class="btn-flash">马上抢</div>
-            <!-- <div class="btn-collage">邀请拼单</div> -->
-            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-            <!-- <div class="btn-over">已抢光</div> -->
-          </div>
-
-        </div>
-        <div class="flash-item item-small">
-          <div class="flash-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-          </div>
-          <div class="flash-goods-info">
-            <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
-            <div class="goods-tip-block">
-              <div class="goods-tip tip-pd">拼单优惠</div>
-            </div>
-            <div class="flash-goods-price">
-              <span class="goods-price-span1">￥</span>180
-              <span class="goods-price-span2">￥150</span>
-            </div>
-          </div>
-          <div class="item-btn">
-            <!-- <div class="btn-flash">马上抢</div> -->
-            <div class="btn-collage">邀请拼单</div>
-            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-            <!-- <div class="btn-over">已抢光</div> -->
-          </div>
-        </div>
-        <div class="flash-item item-small">
-          <div class="flash-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-          </div>
-          <div class="flash-goods-info">
-            <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒爱的诗意黑巧克力礼盒</div>
-            <div class="flash-goods-price">
-              <span class="goods-price-span1">￥</span>180
-              <span class="goods-price-span2">￥150</span>
-            </div>
-          </div>
-          <div class="item-btn">
-            <!-- <div class="btn-flash">马上抢</div> -->
-            <!-- <div class="btn-collage">邀请拼单</div> -->
-            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-            <div class="btn-over">已抢光</div>
-          </div>
-        </div>
-        <div class="flash-item item-small">
-          <div class="flash-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-          </div>
-          <div class="flash-goods-info">
-            <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒</div>
-            <div class="goods-tip-block">
-              <div class="goods-tip tip-pd">拼单优惠</div>
-            </div>
-            <div class="flash-goods-price">
-              <span class="goods-price-span1">￥</span>180
-              <span class="goods-price-span2">￥150</span>
-            </div>
-          </div>
-          <div class="item-btn">
-            <!-- <div class="btn-flash">马上抢</div> -->
-            <!-- <div class="btn-collage">邀请拼单</div> -->
-            <div class="btn-remind flex-center" @click.stop="remindFunc(index,10)"><img src="@/assets/img/icon_01.png" />提醒</div>
-            <!-- <div class="btn-remind-isset flex-center">已设提醒</div> -->
-            <!-- <div class="btn-over">已抢光</div> -->
-          </div>
-        </div>
-        <div class="flash-item item-small">
-          <div class="flash-goods-pic">
-            <img class="img-100" src="https://bht.liwushijian.com/library/uploads/image/20200622/20200622114458_27364.png" />
-          </div>
-          <div class="flash-goods-info">
-            <div class="flash-goods-name p-nowrapm">爱的诗意黑巧克力礼盒</div>
-            <div class="flash-goods-price">
-              <span class="goods-price-span1">￥</span>180
-              <span class="goods-price-span2">￥150</span>
-            </div>
-          </div>
-          <div class="item-btn">
-            <!-- <div class="btn-flash">马上抢</div> -->
-            <!-- <div class="btn-collage">邀请拼单</div> -->
-            <!-- <div class="btn-remind flex-center"><img src="@/assets/img/icon_01.png" />提醒</div> -->
-            <div class="btn-remind-isset flex-center">已设提醒</div>
-            <!-- <div class="btn-over">已抢光</div> -->
-          </div>
-        </div>
-      </template>
-    </div>
+  </div>
 
     <remind-swal 
     :show-swal="showSwal"
@@ -270,7 +127,7 @@ import { NavBar, CountDown, List, Toast } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './../components/remind-swal'
 import { mapGetters } from 'vuex'
-import { getFlashNav,getFlashGoods, remindSend } from '@/api/life.js'
+import { getFlashNav, getFlashGoods, getFlashGoodsOne, remindSend } from '@/api/life.js'
 export default {
   name: 'flashPurchase',
   components: {
@@ -297,6 +154,7 @@ export default {
       listData: [],          //页面数据列表
       noMoreHidden: true,    //上拉加载更多，没有更多是否隐藏
       userId: '',            //用户uid   
+      page: 1,   //页码
       pageSize: 10,  //分页条数
       isEmpty: false, //是否为空
       loading: false,
@@ -309,11 +167,37 @@ export default {
   created () {
     this.getData();
   },
+  activated () {
+    if (this.scrollLeft) {
+      document.getElementById('scroll-bar').scrollLeft = this.scrollLeft
+    }
+    if (this.scrollTop) {
+      document.getElementById('scroll-body').scrollTop = this.scrollTop
+    }
+  },
   methods: {
     onLoad() {
       // 异步更新数据
       this.getGoodsData();
       return;
+    },
+    updateOne(){
+      getFlashGoodsOne({
+        goods_id: this.tapId,
+        ollage_id: this.ollage_id
+      }).then(res => {
+        if (res.success) {
+          if(res.data.list_data && res.data.list_data.length){
+            var listOne = res.data.list_data[0];
+            for (var i=0; i < this.listData.length; i++) {
+              if(this.listData[i].goods_id == this.tapId){
+                this.listData.splice(i,1,listOne);
+                break;
+              }
+            }
+          }
+        }
+      })
     },
     getData () {
       getFlashNav().then(res => {
@@ -409,7 +293,7 @@ export default {
         Toast('该商品已开抢');
         setTimeout(() => {
           this.getData();
-          that.data.page = 1;
+          that.page = 1;
           that.getGoodsData();
         }, 1500);
       }else {
@@ -433,6 +317,7 @@ export default {
       })
     },
     linkFunc (type,obj={}) {
+      this.tapId = obj.id;
       switch (type){
         case 5:
         this.$router.push({
@@ -445,11 +330,22 @@ export default {
       }
     },
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if(from.name=='goodsDetail'){
+        vm.updateOne();
+      }
+    })
+  },
   beforeRouteLeave (to, from, next) {
     if(to.name == 'life'){
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }
+    const el = document.getElementById('scroll-bar')
+    this.scrollLeft = (el && el.scrollLeft) || 0
+    const el2 = document.getElementById('scroll-body')
+    this.scrollTop = (el2 && el2.scrollTop) || 0
     next();
   }
 }
@@ -457,6 +353,10 @@ export default {
 
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped>
+.scroll-body {
+  max-height: calc(100% - 88px);
+  overflow-y: auto;
+}
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;

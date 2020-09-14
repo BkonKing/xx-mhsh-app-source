@@ -148,38 +148,6 @@
 					</div>
 				</div>
 				<div class="common-item pic-list no-top-border">
-					<!-- <div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div> -->
-					<!-- <div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div>
-					<div class="pic-item">
-						<img class="pic-url" src="https://bht.liwushijian.com/library/barter/2020-07/21/3_15952989190.jpg" mode="aspectFill"/>
-						<div class="pic-del">
-							<div class="del-bg">
-								<div class="del-line"></div>
-							</div>
-						</div>
-					</div> -->
 					<tf-uploader v-model="images" max-count="5"></tf-uploader>
 					<!-- <div class="pic-item">
 						<div class="upload-pic">

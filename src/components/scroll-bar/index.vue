@@ -1,6 +1,7 @@
 <template>
   <div class="scrollBarWrapper" :style="scrollBarWrapperStyle">
     <div
+      id="scroll-bar"
       class="scrollBarContent"
       :class="direction === 'y' ? 'directionY' : 'directionX'"
       ref="scrollBarContent"
@@ -85,6 +86,7 @@ export default {
           const offset = activeItemLeft - (contentWidth - activeItemWidth) / 2; // 需要移动的位置
           scrollOption.left = offset;
         }
+        console.log(scrollOption);
 
         content.scrollTo(scrollOption);
       });

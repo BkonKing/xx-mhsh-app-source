@@ -85,6 +85,8 @@ export default {
     afterEnter (el) {
       if (el.className.indexOf('tf-immersion') > -1) {
         el.children[0].style.paddingTop = ''
+      }else {
+        el.style.top = ''
       }
       el.style.height = ''
     },

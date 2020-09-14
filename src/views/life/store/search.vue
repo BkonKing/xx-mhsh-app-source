@@ -117,7 +117,8 @@
                   <div v-for="(item, index) in postbarList" v-if="index < 3" @click="linkFunc(30,{id: item.id})" class="res-post-item">
                     <div class="post-item-header">
                       <div class="post-user-info flex-align-center">
-                        <img class="post-user-photo" :src="item.avatar" />
+                        <img v-if="item.avatar" class="post-user-photo" :src="item.avatar" />
+                        <img v-else class="post-user-photo" src="@/assets/imgs/touxiang.png"/>
                         <div class="flex-column-center">
                           <div class="post-user-name">{{item.nickname}}</div>
                           <div class="post-user-time">{{item.ctime}}</div>

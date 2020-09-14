@@ -33,6 +33,8 @@ export default {
   methods: {
     calcel(val) {
       this.$emit('closeSwal',val);
+      // var isShow = val==1 ? true : false;
+      // this.$emit('update:showSwal',isShow);
     },
   }
 }

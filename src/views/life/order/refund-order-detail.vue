@@ -167,21 +167,6 @@
 						
 				</div>
 			</template>
-			<!-- <div class="cont-session order-message">
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">退款总额:</div>
-					<div class="color-222 font-28 order-tip-text">￥100、幸福币500</div>
-				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">退款说明：</div>
-					<div class="order-tip-item-right color-8f8f94 font-28 order-tip-text">无</div>
-				</div>
-				<div class="order-tip-item">
-					<div class="order-tip-item-left order-tip-text color-222 font-28">寄出物流: </div>
-					<div class="color-222 font-28 order-tip-text">顺丰速运</div>
-					<div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
-				</div>
-			</div> -->
 		</div>
 		<template v-if="typeVal ==1&&infoData.order_status==0&&infoData.is_cancel_btn==1">
 			<div class="fixed-empty"></div>

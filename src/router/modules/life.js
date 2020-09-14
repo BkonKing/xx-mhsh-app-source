@@ -15,7 +15,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "goodsClassify" */
         '@/views/life/store/goods-classify'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/flash-purchase',
@@ -48,7 +51,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "specialArea" */
         '@/views/life/store/special-area'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/goods-detail',
@@ -114,7 +120,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "orderList" */
         '@/views/life/order/order-list'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/order/detail',
