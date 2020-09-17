@@ -161,16 +161,16 @@ export default {
   }
 }
 </script>
-
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped>
+.scroll-body {
+  height: calc(100% - 186px);
+  overflow-y: auto;
+  position: relative;
+}
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-}
-.scroll-body {
-  max-height: calc(100% - 186px);
-  overflow-y: auto;
 }
 
 .special-nav-box {

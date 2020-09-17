@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body scroll-body" id="scroll-body">
+	<div class="app-body scroll-body" id="special-body">
     <div class="area-header" :style="{backgroundImage: 'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'}">
       <div class="order-bar bar-nobg">
         <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
@@ -62,7 +62,7 @@ export default {
   },
   activated () {
     if (this.scrollTop) {
-      document.getElementById('scroll-body').scrollTop = this.scrollTop
+      document.getElementById('special-body').scrollTop = this.scrollTop
     }
   },
   methods: {
@@ -110,7 +110,7 @@ export default {
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }
-    const el = document.getElementById('scroll-body')
+    const el = document.getElementById('special-body')
     this.scrollTop = (el && el.scrollTop) || 0
     next();
   }

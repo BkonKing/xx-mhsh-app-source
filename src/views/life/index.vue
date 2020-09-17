@@ -1,7 +1,7 @@
 <template>
-	<div class="app-body" id="app-body">
+	<div class="app-body">
 		<!-- <div class="status-box"></div> -->
-		<div class="fixed-top" :style="{'top':$store.state.paddingTop+'px'}">
+		<div class="fixed-top" id="life-top" :style="{'top':$store.state.paddingTop+'px'}">
 			<div class="life-header">
 				<div class="header-tit flex-between">
 					<div class="font-34 font-weight">美好生活</div>
@@ -17,7 +17,7 @@
 	          class="scroll-barItem"
 	          v-for="(item, index) in navList"
 	          :key="index"
-	          @click="changeNav(item, index)"
+	          @click="navFun(index)"
 	          :class="index === activeIndex ? 'active' : null"
 	        >
 	          <div>{{item.category_name}}</div>
@@ -39,181 +39,196 @@
 	    </div>
 		</div>
 		<div :class="[activeIndex > 0 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
-		
-		<template v-if="activeIndex==0">
-			<div v-if="bannerList.length > 0" class="life-swipe">
-				<van-swipe :autoplay="3000" indicator-color="white">
-				  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
-				  	<img class="img-100" :src="item.img" />
-				  </van-swipe-item>
-				</van-swipe>
-			</div>
-			<template v-for="(item, index) in lifeData">
-				<template v-if="item.type == 2">
-					<div v-if="item.child && item.child.length > 0" class="life-session">
-						<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
-							<div class="font-34 color-fff font-weight flex-align-center">
-								<span>{{item.bargain_name}}</span>
-							</div>
-							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+
+		<div :class="[activeIndex > 0 && navList2.length ? 'scroll-body-two' : '','scroll-body']" id="life-body">
+	    <van-tabs v-model="active" swipeable swipe-threshold="1" @change="changeNav">
+	      <van-tab v-for="(item, index) in navList" :title="item.category_name">
+
+	      	<template v-if="activeIndex==0">
+						<div v-if="bannerList.length > 0" class="life-swipe">
+							<van-swipe :autoplay="3000" indicator-color="white">
+							  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
+							  	<img class="img-100" :src="item.img" />
+							  </van-swipe-item>
+							</van-swipe>
 						</div>
-						<div class="special-goods-list">
-							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
-								<div class="life-goods-pic">
-									<img class="img-100" :src="val.thumb" />
-								</div>
-								<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-								<div class="life-goods-price">￥{{val.te_price/100}} <span>￥{{val.s_price/100}}</span></div>
-							</div>
-						</div>
-					</div>
-				</template>
-				<template v-else-if="item.type == 1">
-					<div v-if="item.child && item.child.length > 0" class="life-session">
-						<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
-							<div class="font-34 color-fff font-weight flex-align-center">
-								<span>限时闪购</span>
-								<van-count-down v-if="item.ollage_info && item.ollage_info.is_start==1" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
-					        <template v-slot="timeData">
-					          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
-					          <div class="countdown-point">:</div>
-					          <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
-					          <div class="countdown-point">:</div>
-					          <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
-					        </template>
-					      </van-count-down>
-							</div>
-							<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
-						</div>
-						<div class="flash-goods-list">
-							<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item flex-between">
-								<div class="life-goods-pic">
-									<img class="img-100" :src="val.thumb" />
-								</div>
-								<div class="flash-goods-info">
-									<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-									<div class="life-goods-price">￥{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
-								</div>
-								<div class="item-btn">
-									<template v-if="item.ollage_info.is_start==1">
-	                  <template v-if="val.is_over == 0">
-	                    <div class="btn-collage" v-if="val.is_collage && val.order_project_id!=0">邀请拼单</div>
-	                    <div class="btn-flash" v-else>马上抢</div>
-	                  </template>
-	                  <div v-else class="btn-over">已抢光</div>
-	                </template>
-	                <template v-else>
-	                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
-	                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
-	                </template>
-		            </div>
-							</div>
-						</div>
-					</div>
-				</template>
-				<template v-else>
-					<template  v-if="item.special_type == 2">
-						<div v-if="item.child && item.child.length > 0" class="special-session flex-between">
-							<div class="special-list">
-								<template v-if="item.child.length < 4" v-for="(val, key) in item.child">
-									<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
-										<img class="img-100" :src="val.special_thumb" />
-										<div class="special-tip">
-											<div class="p-nowrap">{{val.special_name}}</div>
-											<div class="p-nowrap">{{val.special_text}}</div>
+						<template v-for="(item, index) in lifeData">
+							<template v-if="item.type == 2">
+								<div v-if="item.child && item.child.length > 0" class="life-session">
+									<div class="life-tit life-special-tit flex-between" @click="linkFunc(3)">
+										<div class="font-34 color-fff font-weight flex-align-center">
+											<span>{{item.bargain_name}}</span>
 										</div>
-										<div class="special-tip-bg"></div>
+										<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+									</div>
+									<div class="special-goods-list">
+										<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+											<div class="life-goods-pic">
+												<img class="img-100" :src="val.thumb" />
+											</div>
+											<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+											<div class="life-goods-price">￥{{val.te_price/100}} <span>￥{{val.s_price/100}}</span></div>
+										</div>
+									</div>
+								</div>
+							</template>
+							<template v-else-if="item.type == 1">
+								<div v-if="item.child && item.child.length > 0" class="life-session">
+									<div class="life-tit life-flash-tit flex-between" @click="linkFunc(2)">
+										<div class="font-34 color-fff font-weight flex-align-center">
+											<span>限时闪购</span>
+											<van-count-down v-if="item.ollage_info && item.ollage_info.is_start==1" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
+								        <template v-slot="timeData">
+								          <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
+								          <div class="countdown-point">:</div>
+								          <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
+								          <div class="countdown-point">:</div>
+								          <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
+								        </template>
+								      </van-count-down>
+										</div>
+										<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_02.png" /></div>
+									</div>
+									<div class="flash-goods-list">
+										<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item flex-between">
+											<div class="life-goods-pic">
+												<img class="img-100" :src="val.thumb" />
+											</div>
+											<div class="flash-goods-info">
+												<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+												<div class="life-goods-price">￥{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
+											</div>
+											<div class="item-btn">
+												<template v-if="item.ollage_info.is_start==1">
+				                  <template v-if="val.is_over == 0">
+				                    <div class="btn-collage" v-if="val.is_collage && val.order_project_id!=0">邀请拼单</div>
+				                    <div class="btn-flash" v-else>马上抢</div>
+				                  </template>
+				                  <div v-else class="btn-over">已抢光</div>
+				                </template>
+				                <template v-else>
+				                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+				                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+				                </template>
+					            </div>
+										</div>
+									</div>
+								</div>
+							</template>
+							<template v-else>
+								<template  v-if="item.special_type == 2">
+									<div v-if="item.child && item.child.length > 0" class="special-session flex-between">
+										<div class="special-list">
+											<template v-if="item.child.length < 4" v-for="(val, key) in item.child">
+												<div @click="linkFunc(4,{id: val.special_id})" class="height-345">
+													<img class="img-100" :src="val.special_thumb" />
+													<div class="special-tip">
+														<div class="p-nowrap">{{val.special_name}}</div>
+														<div class="p-nowrap">{{val.special_text}}</div>
+													</div>
+													<div class="special-tip-bg"></div>
+												</div>
+											</template>
+											<template v-else>
+												<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+													<img class="img-100" :src="val.special_thumb" />
+													<div class="special-tip">
+														<div class="p-nowrap">{{val.special_name}}</div>
+														<div class="p-nowrap">{{val.special_text}}</div>
+													</div>
+													<div class="special-tip-bg"></div>
+												</div>
+												<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+													<img class="img-100" :src="val.special_thumb" />
+													<div class="special-tip">
+														<div class="p-nowrap">{{val.special_name}}</div>
+														<div class="p-nowrap">{{val.special_text}}</div>
+													</div>
+													<div class="special-tip-bg"></div>
+												</div>
+												<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
+													<img class="img-100" :src="val.special_thumb" />
+													<div class="special-tip">
+														<div class="p-nowrap">{{val.special_name}}</div>
+														<div class="p-nowrap">{{val.special_text}}</div>
+													</div>
+													<div class="special-tip-bg"></div>
+												</div>
+												<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
+													<img class="img-100" :src="val.special_thumb" />
+													<div class="special-tip">
+														<div class="p-nowrap">{{val.special_name}}</div>
+														<div class="p-nowrap">{{val.special_text}}</div>
+													</div>
+													<div class="special-tip-bg"></div>
+												</div>
+											</template>
+										</div>
+									</div>
+								</template>
+								<template v-else-if="item.special_type == 1">
+									<div v-if="item.child && item.child.length > 0" class="life-session">
+										<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
+											<div class="font-34 font-weight flex-column-center">
+												<div class="area-text-tit">{{item.special_name}}</div>
+												<div class="area-text-detail">{{item.special_text}}</div>
+											</div>
+											<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
+										</div>
+										<div class="life-goods-list flex-align-center">
+											<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+												<div class="life-goods-pic">
+													<img class="img-100" :src="val.thumb" />
+												</div>
+												<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+												<div class="life-goods-price">￥{{val.s_price/100}} <span v-if="val.original_price && val.original_price!='0'">￥{{val.original_price/100}}</span></div>
+											</div>
+										</div>
 									</div>
 								</template>
 								<template v-else>
-									<div v-if="key==0" class="height-440" @click="linkFunc(4,{id: val.special_id})">
-										<img class="img-100" :src="val.special_thumb" />
-										<div class="special-tip">
-											<div class="p-nowrap">{{val.special_name}}</div>
-											<div class="p-nowrap">{{val.special_text}}</div>
-										</div>
-										<div class="special-tip-bg"></div>
-									</div>
-									<div v-if="key==2" class="height-345" @click="linkFunc(4,{id: val.special_id})">
-										<img class="img-100" :src="val.special_thumb" />
-										<div class="special-tip">
-											<div class="p-nowrap">{{val.special_name}}</div>
-											<div class="p-nowrap">{{val.special_text}}</div>
-										</div>
-										<div class="special-tip-bg"></div>
-									</div>
-									<div v-if="key==1" class="height-345" @click="linkFunc(4,{id: val.special_id})">
-										<img class="img-100" :src="val.special_thumb" />
-										<div class="special-tip">
-											<div class="p-nowrap">{{val.special_name}}</div>
-											<div class="p-nowrap">{{val.special_text}}</div>
-										</div>
-										<div class="special-tip-bg"></div>
-									</div>
-									<div v-if="key==3" class="height-440" @click="linkFunc(4,{id: val.special_id})">
-										<img class="img-100" :src="val.special_thumb" />
-										<div class="special-tip">
-											<div class="p-nowrap">{{val.special_name}}</div>
-											<div class="p-nowrap">{{val.special_text}}</div>
-										</div>
-										<div class="special-tip-bg"></div>
+									<div v-if="item.special_thumb" @click="linkFunc(4,{id:item.special_id})" class="banner-session">
+										<img class="img-100" :src="item.special_thumb" />
 									</div>
 								</template>
-							</div>
-						</div>
-					</template>
-					<template v-else-if="item.special_type == 1">
-						<div v-if="item.child && item.child.length > 0" class="life-session">
-							<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
-								<div class="font-34 font-weight flex-column-center">
-									<div class="area-text-tit">{{item.special_name}}</div>
-									<div class="area-text-detail">{{item.special_text}}</div>
-								</div>
-								<div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
-							</div>
-							<div class="life-goods-list flex-align-center">
-								<div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
-									<div class="life-goods-pic">
-										<img class="img-100" :src="val.thumb" />
-									</div>
-									<div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-									<div class="life-goods-price">￥{{val.s_price/100}} <span v-if="val.original_price && val.original_price!='0'">￥{{val.original_price/100}}</span></div>
-								</div>
-							</div>
-						</div>
+							</template>
+						</template>
 					</template>
 					<template v-else>
-						<div v-if="item.special_thumb" @click="linkFunc(4,{id:item.special_id})" class="banner-session">
-							<img class="img-100" :src="item.special_thumb" />
-						</div>
+						<van-list
+			          v-model="loading"
+			          :finished="finished"
+			          :class="[navList2.length ? '' : 'mt-30']"
+			          finished-text=""
+			          @load="onLoad"
+			        >
+			        <div v-if="listData.length > 0" class="life-seconds-list">
+			          <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
+			          	<div class="life-goods-pic">
+			          		<img v-if="item.sign_url" class="img-100 goods-pic-icon" :src="item.sign_url" alt="">
+										<img class="img-100" :src="item.thumb" />
+									</div>
+									<div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
+									<div class="life-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
+			          </div>
+			        </div>
+			        <div v-else class="empty-session">
+			          <img src="@/assets/img/empty_goods.png" />
+			          <div>暂无商品</div>
+			        </div>
+			      </van-list>
 					</template>
-				</template>
-			</template>
-		</template>
-		<template v-else>
-			<van-list
-          v-model="loading"
-          :finished="finished"
-          :class="[navList2.length ? '' : 'mt-30']"
-          finished-text=""
-          @load="onLoad"
-        >
-        <div v-if="listData.length > 0" class="life-seconds-list">
-          <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
-          	<div class="life-goods-pic">
-          		<img v-if="item.sign_url" class="img-100 goods-pic-icon" :src="item.sign_url" alt="">
-							<img class="img-100" :src="item.thumb" />
-						</div>
-						<div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
-						<div class="life-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
-          </div>
-        </div>
-        <div v-else class="empty-session">
-          <img src="@/assets/img/empty_goods.png" />
-          <div>暂无商品</div>
-        </div>
-      </van-list>
-		</template>
+	        <!-- <van-list
+	          v-model="loading"
+	          :finished="finished"
+	          finished-text=""
+	          @load="onLoad"
+	        >
+	      </van-list> -->
+	      </van-tab>
+	    </van-tabs>
+    </div>
+		
 		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
 		<remind-swal 
     :show-swal="showSwal"
@@ -224,7 +239,7 @@
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, CountDown, List, Toast } from 'vant'
+import { Swipe, SwipeItem, Icon, CountDown, List, Toast, Tab, Tabs } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './components/remind-swal'
 import { getLifeInfo, getBanner, getClassifyGoods, remindSend} from '@/api/life.js'
@@ -236,6 +251,8 @@ export default {
     [CountDown.name]: CountDown,
     [List.name]: List,
     [Toast.name]: Toast,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
     scrollBar,
     remindSwal
   },
@@ -243,6 +260,7 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       lifeData: [],      //生活
+      active: 0,
       activeIndex: 0,    //一级菜单选中项
       activeIndex2: 0,   //二级菜单选中项
       navList: [],       //一级菜单
@@ -280,7 +298,16 @@ export default {
   	// this.activeIndex2 = 0;
     this.getData();
     if (this.scrollTop) {
-      document.getElementById('app-body').scrollTop = this.scrollTop
+      document
+        .getElementById('life-body')
+        .getElementsByClassName(
+          'van-tabs__content'
+        )[0].scrollTop = this.scrollTop
+    }
+    if (this.scrollLeft) {
+      document.getElementById('life-top').getElementsByClassName(
+          'scrollBarContent'
+        )[0].scrollLeft = this.scrollLeft
     }
   },
   methods:{
@@ -370,9 +397,16 @@ export default {
     goLink(url){
     	this.$router.push(url);
     },
-    changeNav(item, index) {
+    navFun(index) {
+      this.active = index;
+    },
+    changeNav(index='') {
+    	console.log(123);
+    	this.active = index
       this.activeIndex = index;
+      this.activeIndex2 = 0;
       if(index > 0){
+      	this.flag = false;
       	this.category_id = this.navList[index].id;
 	      if(this.navList[index].children){
 	        this.navList2 = this.navList[index].children;
@@ -382,6 +416,11 @@ export default {
 	      }
 	      this.listInit();
       }else {
+      	document
+        .getElementById('life-body')
+        .getElementsByClassName(
+          'van-tabs__content'
+        )[0].scrollTop = 0
       	this.flag = true;
       	// this.page = 1;
       	// this.finished = true;
@@ -390,13 +429,14 @@ export default {
     changeNav2(index, id) {
       this.activeIndex2 = index;
       this.category_id = id;
+      this.flag = false;
       this.listInit();
     },
     listInit(){
+    	this.listData = [];
     	this.page = 1;
-      this.loading = false;
       this.finished = false;
-      this.listData = [];
+      this.loading = true;
       if(!this.flag){
       	this.getGoodsData();
       }
@@ -489,18 +529,32 @@ export default {
     },
   },
   beforeRouteLeave (to, from, next) {
-  	const el = document.getElementById('app-body')
-    this.scrollTop = (el && el.scrollTop) || 0
-    next()
+  	const el = document
+      .getElementById('life-body')
+      .getElementsByClassName('van-tabs__content')
+    this.scrollTop = (el.length && el[0].scrollTop) || 0
+    const el2 = document.getElementById('life-top').getElementsByClassName(
+          'scrollBarContent'
+        )
+    this.scrollLeft = (el2.length && el2[0].scrollLeft) || 0
+    next();
   }
 }
 </script>
 
 <style scoped  src="../../styles/life.css"></style>
-<style  scoped>
+<style scoped>
+.scroll-body {
+  height: calc(100% - 176px);
+  overflow-y: auto;
+  position: relative;
+}
+.scroll-body-two.scroll-body {
+	height: calc(100% - 310px);
+}
 .app-body {
   background-color: #fff;
-  font-size: 0.28rem;
+  font-size: 28px;
   color: #222;
 }
 .fixed-top {

@@ -42,7 +42,7 @@
           </div>
         </div>
         
-        <div :class="[navList.length == 0 ? '' : 'classify-right-276', 'classify-right']" id="scroll-body">
+        <div :class="[navList.length == 0 ? '' : 'classify-right-276', 'classify-right']" id="classify-body">
           <van-list
             v-model="loading"
             :finished="finished"
@@ -103,7 +103,7 @@ export default {
   },
   activated () {
     if (this.scrollTop) {
-      document.getElementById('scroll-body').scrollTop = this.scrollTop
+      document.getElementById('classify-body').scrollTop = this.scrollTop
     }
   },
   mounted () {
@@ -208,7 +208,7 @@ export default {
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }
-    const el = document.getElementById('scroll-body')
+    const el = document.getElementById('classify-body')
     this.scrollTop = (el && el.scrollTop) || 0
     next();
   }

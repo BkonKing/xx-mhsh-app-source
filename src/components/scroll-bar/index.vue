@@ -1,7 +1,6 @@
 <template>
   <div class="scrollBarWrapper" :style="scrollBarWrapperStyle">
     <div
-      id="scroll-bar"
       class="scrollBarContent"
       :class="direction === 'y' ? 'directionY' : 'directionX'"
       ref="scrollBarContent"

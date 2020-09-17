@@ -10,75 +10,75 @@
 	      @click-left="$router.go(-1)"
 	    ></van-nav-bar>
 		</div>
-		<div v-if="!navHide" class="nav-box-block">
-			<div class="nav-box">
-				<div v-for="(item, index) in navItems" :class="[typeVal == index ? 'cur' : '', 'nav-item']" @click="navFun(index)" data-typeval="1">{{item}}</div>
-			</div>
-		</div>
-		
-    <van-list
-      id="scroll-body"
-      :class="[navHide ? 'scroll-body-other' : '', 'scroll-body']"
-      v-model="loading"
-      :finished="finished"
-      finished-text=""
-      @load="onLoad"
-    >
-      <div v-if="listData.length > 0" class="order-list">
-				<div v-for="(item, index) in listData" class="order-item" @click="linkFunc(item.order_type==1 ? 12 : 13,{id: item.id})">
-					<div class="order-header">
-						<div class="order-no">订单号：{{item.order_numb}}</div>
-						<div :class="[item.order_status==3 || item.order_status==5 ? 'color-8f8f94' : 'color-eb5841','order-status']">{{item.order_status_name}}</div>
-					</div>
-					<div v-for="(goods, key) in item.order_goods_specs_list" :class="[key > 4 ? 'toggle-up' : '', item.is_toggle ? 'toggle-down' : '', 'order-goods-info']">
-						<div class="order-pic-block">
-							<img class="img-100" mode="aspectFill" :src="goods.specs_img"/>
-						</div>
-						<div class="order-info">
-							<div class="order-name-price">
-								<div class="order-name p-nowrap">{{goods.goods_name}}</div>
-								<div class="order-price">￥{{item.pay_type == 1 ? goods.happiness_price/100 : goods.pay_price/100}}</div>
-							</div>
-							<div class="order-sku-num">
-								<div class="order-sku p-nowrap">{{goods.specs_name}}</div>
-								<div v-if="goods.y_pay_price && goods.y_pay_price!='0'" class="order-num">￥{{goods.y_pay_price/100}}</div>
-							</div>
-							<div class="order-action-session">
-								<div class="order-action-text">
-									<template v-if="goods.order_status_name">
-										{{goods.order_status_name}}
-									</template>
-								</div>
-								<div class="order-buy-num">x1</div>
-							</div>
-						</div>
-					</div>
-					<div @click.stop="toggle(index)" v-show="item.order_goods_specs_list.length > 5" :class="[item.is_toggle ? 'btn-up' : '', 'toggle-btn']">
-						<img src="@/assets/img/icon_25.png" />
-					</div>
-					<div class="order-footer">
-						<div class="order-total">
-							<div class="color-8f8f94 font-24">共 {{item.goods_num}} 件</div>
-							<div class="order-price-total">
-								合计:<span>￥{{item.pay_type == 1 ? item.happiness_price/100 : item.pay_price/100}}</span>
-							</div>
-						</div>
-						<div class="order-btn-box">
-							<div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)">取消订单</div>
-							<div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-							<div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
-	            <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-	            </template>
-	          </van-count-down>)</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div v-else class="empty-session">
-        <img src="@/assets/img/empty_order.png" />
-        <div>暂无订单</div>
-      </div>
-    </van-list>
+
+    <div :class="[navHide ? 'scroll-body-other' : '', 'scroll-body tab-scroll']" id="order-list-body">
+      <van-tabs v-model="active" :swipeable="navHide ? false : true" swipe-threshold="10" @change="navFun">
+        <van-tab v-for="(item, index) in navItems" :title="item">
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text=""
+            @load="onLoad"
+          >
+            <div v-if="listData.length > 0" class="order-list">
+              <div v-for="(item, index) in listData" class="order-item" @click="linkFunc(item.order_type==1 ? 12 : 13,{id: item.id})">
+                <div class="order-header">
+                  <div class="order-no">订单号：{{item.order_numb}}</div>
+                  <div :class="[item.order_status==3 || item.order_status==5 ? 'color-8f8f94' : 'color-eb5841','order-status']">{{item.order_status_name}}</div>
+                </div>
+                <div v-for="(goods, key) in item.order_goods_specs_list" :class="[key > 4 ? 'toggle-up' : '', item.is_toggle ? 'toggle-down' : '', 'order-goods-info']">
+                  <div class="order-pic-block">
+                    <img class="img-100" mode="aspectFill" :src="goods.specs_img"/>
+                  </div>
+                  <div class="order-info">
+                    <div class="order-name-price">
+                      <div class="order-name p-nowrap">{{goods.goods_name}}</div>
+                      <div class="order-price">￥{{item.pay_type == 1 ? goods.happiness_price/100 : goods.pay_price/100}}</div>
+                    </div>
+                    <div class="order-sku-num">
+                      <div class="order-sku p-nowrap">{{goods.specs_name}}</div>
+                      <div v-if="goods.y_pay_price && goods.y_pay_price!='0'" class="order-num">￥{{goods.y_pay_price/100}}</div>
+                    </div>
+                    <div class="order-action-session">
+                      <div class="order-action-text">
+                        <template v-if="goods.order_status_name">
+                          {{goods.order_status_name}}
+                        </template>
+                      </div>
+                      <div class="order-buy-num">x1</div>
+                    </div>
+                  </div>
+                </div>
+                <div @click.stop="toggle(index)" v-show="item.order_goods_specs_list.length > 5" :class="[item.is_toggle ? 'btn-up' : '', 'toggle-btn']">
+                  <img src="@/assets/img/icon_25.png" />
+                </div>
+                <div class="order-footer">
+                  <div class="order-total">
+                    <div class="color-8f8f94 font-24">共 {{item.goods_num}} 件</div>
+                    <div class="order-price-total">
+                      合计:<span>￥{{item.pay_type == 1 ? item.happiness_price/100 : item.pay_price/100}}</span>
+                    </div>
+                  </div>
+                  <div class="order-btn-box">
+                    <div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)">取消订单</div>
+                    <div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
+                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
+                    <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
+                    </template>
+                  </van-count-down>)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else class="empty-session">
+              <img src="@/assets/img/empty_order.png" />
+              <div>暂无订单</div>
+            </div>
+          </van-list>
+        </van-tab>
+      </van-tabs>
+    </div>
+
 		<explain-swal 
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { NavBar, CountDown, List } from 'vant'
+import { NavBar, CountDown, List, Tab, Tabs } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
@@ -112,6 +112,8 @@ export default {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [List.name]: List,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
     explainSwal,
     remindSwal,
     paySwal
@@ -125,7 +127,8 @@ export default {
       showSwal: false,                           //提醒弹窗
       remindTit: '确定取消订单', //提醒标题
 
-	    typeVal: 0,          //tab切换index
+	    active: 0,
+      typeVal: 0,          //tab切换index
 	    navHide: false,
 	 
 	    time: 11 * 60 * 60 * 1000,
@@ -148,18 +151,33 @@ export default {
   	if(type&&type!='undefined'){
   		this.typeVal = type;
   		this.navHide = true;
-  	}
+  	}else {
+      api.addEventListener(
+        {
+          name: 'swiperight'
+        },
+        (ret, err) => {
+          
+        }
+      )
+    }
+    
   	// console.log(this.$store.state.paddingTop)
   },
   activated () {
     if (this.scrollTop) {
-      document.getElementById('scroll-body').scrollTop = this.scrollTop
+      document
+        .getElementById('order-list-body')
+        .getElementsByClassName(
+          'van-tabs__content'
+        )[0].scrollTop = this.scrollTop
     }
   },
   methods: {
     navFun (index) {
-      this.typeVal = index;
-      this.initFunc();
+      this.flag = false;
+      this.typeVal = this.active;
+      this.listInit();
     },
     onLoad() {
       // 异步更新数据
@@ -258,7 +276,7 @@ export default {
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
         function(ret, err) { 
           that.updateOne();
-          // that.initFunc(1);
+          // that.listInit(1);
           if(ret.code == '9000'){  //支付成功
             
           }
@@ -274,7 +292,7 @@ export default {
 	      }).then(res => {
 	        if (res.success) {
             that.updateOne();
-	        	// that.initFunc(1);
+	        	// that.listInit(1);
 	        }
 	      })
     	}else {
@@ -283,17 +301,17 @@ export default {
 	      }).then(res => {
 	        if (res.success) {
             that.updateOne();
-	        	// that.initFunc(1);
+	        	// that.listInit(1);
 	        }
 	      })
     	}
     },
     //初始化列表
-    initFunc(type=''){
+    listInit(type=''){
     	this.listData = [];
       this.page = 1;
-      this.loading = false;
       this.finished = false;
+      this.loading = true;
       if(!this.flag || type==1){
       	this.getData();
       }
@@ -414,8 +432,10 @@ export default {
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }
-    const el = document.getElementById('scroll-body')
-    this.scrollTop = (el && el.scrollTop) || 0
+    const el = document
+      .getElementById('order-list-body')
+      .getElementsByClassName('van-tabs__content')
+    this.scrollTop = (el.length && el[0].scrollTop) || 0
     next();
   }
 }
@@ -424,6 +444,11 @@ export default {
 <style scoped  src="../../../styles/order.css"></style>
 <style scoped  src="../../../styles/nav.css"></style>
 <style scoped>
+.scroll-body {
+  height: calc(100% - 88px);
+  overflow-y: auto;
+  position: relative;
+}
 .app-body {
 	background-color: #f2f2f4;
 	font-size: 28px;
@@ -438,11 +463,11 @@ export default {
   width: 0.58rem;
   margin-left: -0.29rem;
 }*/
-.scroll-body {
+/*.scroll-body {
   max-height: calc(100% - 186px);
   overflow-y: auto;
 }
 .scroll-body.scroll-body-other {
   max-height: calc(100% - 88px);
-}
+}*/
 </style>

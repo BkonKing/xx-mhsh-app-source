@@ -10,16 +10,15 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="scroll-body" id="scroll-body">
-
-    <div :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
+  
+    <div id="flash-top" :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
         <scrollBar direction="x" :activeIndex="tapIndex">
           <div
             class=""
             v-for="(item, index) in navList"
             :key="index"
-            @click="changeNav(item, index)"
+            @click="navFun(index)"
             :class="[tapIndex == index ? 'cur' : '','flash-nav']"
           >
             <div>
@@ -59,59 +58,64 @@
         </div>
       </template>
     </div>
-    <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text=""
-        @load="onLoad"
-      >
-      <div class="flash-list">
-        <template v-for="(item,index) in listData">
-          <div @click="linkFunc(5,{id:item.goods_id})" :class="[index==0 ? 'item-big' : 'item-small','flash-item']">
-            <div class="flash-goods-pic">
-              <img class="img-100" :src="item.thumb" />
-            </div>
-            <div class="flash-goods-info">
-              <div class="flash-goods-name p-nowrap">{{item.goods_name}}</div>
-              <template v-if="index==0">
-                <div class="flash-price-tip flex-center">
-                  <div v-if="item.price_status==2" class="goods-tip tip-pd flex-center">拼单优惠</div>
-                  <div class="flash-goods-price">
-                    <span class="goods-price-span1">￥</span>{{item.now_price/100}}
-                    <span class="goods-price-span2">￥{{item.y_price/100}}</span>
+    <div class="scroll-body" id="flash-body">
+      <van-tabs v-model="active" swipeable swipe-threshold="10" @change="changeNav">
+        <van-tab v-for="(item, index) in navList" :title="item.status_txt">
+          <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text=""
+              @load="onLoad"
+            >
+            <div class="flash-list">
+              <template v-for="(item,index) in listData">
+                <div @click="linkFunc(5,{id:item.goods_id})" :class="[index==0 ? 'item-big' : 'item-small','flash-item']">
+                  <div class="flash-goods-pic">
+                    <img class="img-100" :src="item.thumb" />
+                  </div>
+                  <div class="flash-goods-info">
+                    <div class="flash-goods-name p-nowrap">{{item.goods_name}}</div>
+                    <template v-if="index==0">
+                      <div class="flash-price-tip flex-center">
+                        <div v-if="item.price_status==2" class="goods-tip tip-pd flex-center">拼单优惠</div>
+                        <div class="flash-goods-price">
+                          <span class="goods-price-span1">￥</span>{{item.now_price/100}}
+                          <span class="goods-price-span2">￥{{item.y_price/100}}</span>
+                        </div>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div class="goods-tip-block">
+                        <div v-if="item.price_status==2" class="goods-tip tip-pd">拼单优惠</div>
+                      </div>
+                      <div class="flash-goods-price">
+                        <span class="goods-price-span1">￥</span>{{item.now_price/100}}
+                        <span class="goods-price-span2">￥{{item.y_price/100}}</span>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="item-btn">
+                    <template v-if="tapStatus > 1">
+                      <template v-if="tapStatus == 2">
+                        <template v-if="item.goods_num > 0 && item.is_over == 0">
+                          <div class="btn-collage" v-if="item.price_status == 2 && item.is_partake">邀请拼单</div>
+                          <div class="btn-flash" v-else>马上抢</div>
+                        </template>
+                        <div v-else class="btn-over">已抢光</div>
+                      </template>
+                      <template v-else>
+                        <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+                        <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+                      </template>
+                    </template>
                   </div>
                 </div>
               </template>
-              <template v-else>
-                <div class="goods-tip-block">
-                  <div v-if="item.price_status==2" class="goods-tip tip-pd">拼单优惠</div>
-                </div>
-                <div class="flash-goods-price">
-                  <span class="goods-price-span1">￥</span>{{item.now_price/100}}
-                  <span class="goods-price-span2">￥{{item.y_price/100}}</span>
-                </div>
-              </template>
             </div>
-            <div class="item-btn">
-              <template v-if="tapStatus > 1">
-                <template v-if="tapStatus == 2">
-                  <template v-if="item.goods_num > 0 && item.is_over == 0">
-                    <div class="btn-collage" v-if="item.price_status == 2 && item.is_partake">邀请拼单</div>
-                    <div class="btn-flash" v-else>马上抢</div>
-                  </template>
-                  <div v-else class="btn-over">已抢光</div>
-                </template>
-                <template v-else>
-                  <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
-                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
-                </template>
-              </template>
-            </div>
-          </div>
-        </template>
-      </div>
-    </van-list>
-  </div>
+          </van-list>
+        </van-tab>
+      </van-tabs>
+    </div>
 
     <remind-swal 
     :show-swal="showSwal"
@@ -123,7 +127,7 @@
 </template>
 
 <script>
-import { NavBar, CountDown, List, Toast } from 'vant'
+import { NavBar, CountDown, List, Toast, Tab, Tabs } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './../components/remind-swal'
 import { mapGetters } from 'vuex'
@@ -135,6 +139,8 @@ export default {
     [CountDown.name]: CountDown,
     [List.name]: List,
     [Toast.name]: Toast,
+    [Tab.name]: Tab,
+    [Tabs.name]: Tabs,
     scrollBar,
     remindSwal
   },
@@ -142,6 +148,7 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       time: '',
+      active: 0,
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
       model_txt: '',//通知消息提示词
@@ -166,17 +173,31 @@ export default {
   },
   created () {
     this.getData();
+    api.addEventListener(
+      {
+        name: 'swiperight'
+      },
+      (ret, err) => {
+        
+      }
+    )
   },
   activated () {
     if (this.scrollLeft) {
-      document.getElementById('scroll-bar').scrollLeft = this.scrollLeft
+      document.getElementById('flash-top').getElementsByClassName(
+          'scrollBarContent'
+        )[0].scrollLeft = this.scrollLeft
     }
     if (this.scrollTop) {
-      document.getElementById('scroll-body').scrollTop = this.scrollTop
+      document
+      .getElementById('flash-body')
+      .getElementsByClassName('van-tabs__content')[0]
+      .scrollTop = this.scrollTop
     }
   },
   methods: {
     onLoad() {
+      console.log(1234);
       // 异步更新数据
       this.getGoodsData();
       return;
@@ -203,6 +224,7 @@ export default {
       getFlashNav().then(res => {
         if (res.success) {
           this.navList = res.data.nav_list;
+          this.active = res.data.tap_index;
           this.tapIndex = res.data.tap_index;
           this.tapStatus = res.data.nav_list[res.data.tap_index].status;
           this.model_txt = res.data.model_txt;
@@ -240,10 +262,10 @@ export default {
       })
     },
     listInit(){
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
       this.listData = [];
+      this.page = 1;
+      this.finished = false;
+      this.loading = true;
       if(!this.flag){
         this.getGoodsData();
       }
@@ -262,10 +284,16 @@ export default {
       this.getGoodsData();
     },
     //菜单点击
-    changeNav(item, index) {
+    navFun(index) {
+      this.active = index;
+      console.log(1223);
+    },
+    changeNav(index) {
+      this.active = index
       this.tapIndex = index;
       this.tapStatus = this.navList[index].status;
       this.ollage_id = this.navList[index].id;
+      this.flag = false;
       this.listInit();
       let newTime = parseInt(new Date().getTime()/1000);
       let startTime = this.navList[index].start_time;
@@ -342,10 +370,15 @@ export default {
       this.$destroy();
       this.$store.commit('deleteKeepAlive',from.name);
     }
-    const el = document.getElementById('scroll-bar')
-    this.scrollLeft = (el && el.scrollLeft) || 0
-    const el2 = document.getElementById('scroll-body')
-    this.scrollTop = (el2 && el2.scrollTop) || 0
+    const el = document.getElementById('flash-top').getElementsByClassName(
+          'scrollBarContent'
+        )
+    this.scrollLeft = (el.length && el[0].scrollLeft) || 0
+    console.log(document.getElementById('flash-body'));
+    const el2 = document
+      .getElementById('flash-body')
+      .getElementsByClassName('van-tabs__content')
+    this.scrollTop = (el2.length && el2[0].scrollTop) || 0
     next();
   }
 }
@@ -354,8 +387,9 @@ export default {
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped>
 .scroll-body {
-  max-height: calc(100% - 88px);
+  height: calc(100% - 466px);
   overflow-y: auto;
+  position: relative;
 }
 .app-body {
   background-color: #f2f2f4;
@@ -518,8 +552,9 @@ export default {
 /* 列表 */
 .flash-list {
   width: 710px;
-  margin: 30px auto 0;
-  overflow: hidden;
+  margin: 0 auto;
+  min-height: 500px;
+  /*overflow: hidden;*/
 }
 .flash-item {
   border-radius: 10px;
