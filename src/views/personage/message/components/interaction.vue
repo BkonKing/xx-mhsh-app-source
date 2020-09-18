@@ -74,11 +74,8 @@ export default {
       params.remind_type = 3
       return getMessageList(params)
     },
-    jump ({ id, source_id, article_type }) {
-      this.$emit('read', id)
-      this.$router.push(
-        `/pages/neighbours/details?articleType=${article_type}&id=${source_id}`
-      )
+    jump (item) {
+      this.$emit('click', item)
     },
     readAll () {
       this.list.forEach((obj) => {

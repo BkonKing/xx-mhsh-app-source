@@ -35,7 +35,7 @@
                 size="small"
               >{{userInfo.position}}</van-tag>
             </div>
-            <div class="user-address">{{(currentProject && currentProject.fc_info)}}</div>
+            <div v-if="currentProject && currentProject.fc_info" class="user-address">{{currentProject.fc_info}}</div>
           </div>
         </div>
       </div>

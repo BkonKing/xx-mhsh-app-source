@@ -203,7 +203,7 @@ export default {
         path: '/pages/neighbours/details',
         query: {
           articleType: item.article_type,
-          id: item.article_id
+          id: item.source_id
         }
       })
     },

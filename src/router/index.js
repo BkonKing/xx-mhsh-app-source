@@ -117,6 +117,15 @@ const routes = [{
       '@/views/index/agreement.vue'
     )
 },
+{
+  path: '/openingPage',
+  name: 'openingPage',
+  component: () =>
+    import(
+      /* webpackChunkName: "openingPage" */
+      '@/views/index/openingPage.vue'
+    )
+},
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,

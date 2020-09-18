@@ -4,21 +4,21 @@ import {
   Toast
 } from 'vant'
 
-const whiteList = ['/login', '/agreement']
+const whiteList = ['/login', '/agreement', '/openingPage']
 
 router.beforeEach(async (to, from, next) => {
-  var toPageName = to.name;
-  var fromPageName = from.name;
-  if(process.env.VUE_APP_IS_APP){
-    var txAnalysis = api.require('txAnalysis');
-    if(fromPageName){
-      txAnalysis.trackPageEnd({ 
-        page : fromPageName 
-      });
+  var toPageName = to.name
+  var fromPageName = from.name
+  if (process.env.VUE_APP_IS_APP) {
+    var txAnalysis = api.require('txAnalysis')
+    if (fromPageName) {
+      txAnalysis.trackPageEnd({
+        page: fromPageName
+      })
     }
     txAnalysis.trackPageBegin({
       page: toPageName
-    });
+    })
   }
 
   // Toast.loading({
@@ -48,7 +48,15 @@ router.beforeEach(async (to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next('/login')
+      const firstStatus = api.getPrefs({
+        sync: true,
+        key: 'first-open'
+      })
+      if (!firstStatus) {
+        next('/openingPage')
+      } else {
+        next('/login')
+      }
     }
   }
   // Toast.clear()
