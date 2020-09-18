@@ -13,16 +13,14 @@
               <template v-if="item.category_type == 1">
                 <div>排队时间：{{item.stime}}</div>
                 <div class="mt10" v-if="item.status == 1">
-                  排队中：
-                  <span top="tf-text-primary">第 {{item.pd_num}} 位</span>
+                  排队中：<span class="tf-text-primary">第 {{parseInt(item.pd_num || 0) + 1}} 位</span>
                 </div>
                 <div v-else-if="item.status == 2">服务时间：{{item.etime}}</div>
               </template>
               <template v-else>
                 <div>借用时间：{{item.stime}}</div>
                 <div class="mt10" v-if="item.status == 1">
-                  归还时间：
-                  <span top="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
+                  归还时间：<span class="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
                 </div>
                 <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
               </template>

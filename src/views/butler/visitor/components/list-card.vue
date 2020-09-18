@@ -44,7 +44,7 @@ export default {
     return {
       isVisitText: {
         0: '待来访',
-        1: '已访',
+        1: '已到访',
         2: '已过期'
       }
     }

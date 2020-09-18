@@ -81,7 +81,7 @@
               </template>
               <template v-else>
                 {{item.remark}}
-                <div v-if="item.refuse_reason">取消说明：{{item.refuse_reason}}</div>
+                <div v-if="item.refuse_reason">取消原因：{{item.refuse_reason}}</div>
               </template>
             </div>
           </div>

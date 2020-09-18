@@ -974,4 +974,15 @@ export default {
     color: #222;
   }
 }
+/deep/ .van-radio__label {
+  font-size: 24px;
+}
+/deep/ .van-radio__icon {
+  height: 32px;
+
+  .van-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
 </style>
