@@ -3,7 +3,7 @@ import Vue from 'vue'
 function handleClick (binding) {
   function handle () {
     setTimeout(() => {
-      Vue.prototype.txAnalysis.trackCustom({ event: binding.value })
+      Vue.prototype.txAnalysis.trackCustom({ event: binding.value,props:{} })
     }, 0)
   }
   return handle
