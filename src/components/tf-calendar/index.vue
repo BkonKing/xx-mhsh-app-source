@@ -1,21 +1,28 @@
 <template>
   <!-- 签到start -->
-  <div v-show="value" class="mask-block sign-mask" catchtouchmove="true">
-    <div class="sign-mask-block">
-      <div class="sign-block" data-show="show" @click="toggleFunc">
+  <div v-show="value" class="calendar-mask-container sign-mask" catchtouchmove="true">
+    <div class="calendar-mask-block" @click="toggleFunc"></div>
+    <div class="sign-mask-block" style="position: relative;z-index: 1000;">
+      <div class="sign-block" data-show="show">
         <div class="mask-header">
-          <div class="mask-tit">签到</div>
+          <div class="calendar-mask-tit">签到</div>
           <div class="mask-icon mask-icon-left"></div>
           <div class="mask-icon mask-icon-right"></div>
         </div>
         <div class="sign-cont">
           <div class="mask-bar">
-            <div class="bar-btn bar-prev tf-icon  tf-icon-caret-left" @click="handlePrev" data-handle="prev">
-            </div>
+            <div
+              class="bar-btn bar-prev tf-icon tf-icon-caret-left"
+              @click.stop="handlePrev"
+              data-handle="prev"
+            ></div>
             <div class="bar-month">{{curYear}}年{{curMonth}}月</div>
             <template v-if="year!=curYear || month!=curMonth">
-              <div class="bar-btn bar-next tf-icon tf-icon-caret-right" @click="handleNext" data-handle="next">
-              </div>
+              <div
+                class="bar-btn bar-next tf-icon tf-icon-caret-right"
+                @click.stop="handleNext"
+                data-handle="next"
+              ></div>
             </template>
             <template v-else>
               <div class="bar-btn bar-next"></div>
@@ -42,7 +49,7 @@
         </div>
       </div>
       <div class="mask-close-block">
-        <span class="tf-icon tf-icon-close-circle" @click="toggleFunc"></span>
+        <span class="tf-icon tf-icon-guanbi1" @click="toggleFunc"></span>
       </div>
     </div>
   </div>
@@ -50,38 +57,42 @@
 </template>
 
 <script>
+import { signinCalendar } from '@/api/personage'
 export default {
   name: 'tf-calendar',
   props: {
     value: {
       type: Boolean,
       default: false
-    },
-    data: {
-      type: Array,
-      default: () => []
-    },
-    curYear: {
-      type: Number || String,
-      default: ''
-    },
-    curMonth: {
-      type: Number || String,
-      default: ''
     }
   },
   data () {
     return {
       year: 2020, // 当天的年份
-      month: 7 // 当天的月份
+      month: 7, // 当天的月份
+      curYear: 0,
+      curMonth: 0,
+      data: []
     }
   },
   created () {
     const date = new Date()
     this.year = date.getFullYear()
     this.month = date.getMonth() + 1
+    this.curYear = date.getFullYear()
+    this.curMonth = date.getMonth() + 1
+    this.signinCalendar()
   },
   methods: {
+    /* 签到日历数据 */
+    signinCalendar () {
+      signinCalendar({
+        year: this.curYear,
+        month: this.curMonth
+      }).then((res) => {
+        this.data = res.data.calendar
+      })
+    },
     toggleFunc () {
       this.$emit('input', !this.value)
     },
@@ -89,10 +100,22 @@ export default {
       this.$emit('input', false)
     },
     handlePrev () {
-      this.$emit('prev')
+      if (this.curMonth > 1) {
+        this.curMonth--
+      } else {
+        this.curYear--
+        this.curMonth = 12
+      }
+      this.signinCalendar()
     },
     handleNext () {
-      this.$emit('next')
+      if (this.curMonth < 12) {
+        this.curMonth++
+      } else {
+        this.curYear++
+        this.curMonth = 1
+      }
+      this.signinCalendar()
     },
     /**
      * 日历
@@ -164,7 +187,18 @@ export default {
 
 <style lang="less" scoped>
 /* 日历 start */
-.mask-block {
+.calendar-mask-container {
+  position: fixed;
+  @flex();
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.calendar-mask-block {
   position: fixed;
   @flex();
   top: 0;
@@ -174,6 +208,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.8);
   justify-content: center;
   align-items: center;
+  z-index: 999;
 }
 .mask-close-block {
   height: 120px;
@@ -181,6 +216,10 @@ export default {
   @flex();
   justify-content: center;
   align-items: center;
+  color: #fff;
+  .tf-icon {
+    font-size: 40px;
+  }
 }
 .sign-block {
   width: 624px;
@@ -193,7 +232,7 @@ export default {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
-.tf-icon-close-circle {
+.tf-icon-guanbi-circle {
   font-size: 50px;
   color: #fff;
 }
@@ -201,7 +240,7 @@ export default {
   height: 140px;
   position: relative;
 }
-.mask-tit {
+.calendar-mask-tit {
   height: 98px;
   line-height: 98px;
   font-size: 34px;
@@ -293,11 +332,11 @@ export default {
   margin: 0 23px;
 }
 .gray-month {
-  color: #999;
+  color: #222;
 }
 .days-sign {
   background-color: #ffae00;
-  color: #fff;
+  // color: #fff;
 }
 .start-sign {
   border-top-left-radius: 36px;

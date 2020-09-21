@@ -5,6 +5,7 @@
         title="幸福币"
         :fixed="true"
         :border="false"
+        placeholder
         left-arrow
         right-text="明细"
         @click-left="$router.go(-1)"
@@ -12,44 +13,66 @@
       ></van-nav-bar>
       <div class="sign-box tf-row-space-between">
         <div class="tf-row-center tf-flex-item">
-          <div class="tf-icon tf-icon-moneycollect coin-icon"></div>
-          <div class="coin-number">2333</div>
+          <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
+          <div class="coin-number">{{credits}}</div>
         </div>
-        <div class="sign-tag sign-tag--complete" @click="showCalendar = true">签到</div>
+        <div
+          class="sign-tag"
+          :class="{'sign-tag--complete': signinToday == '1'}"
+          @click="signIn()"
+        >{{signinToday == '1' ? '已签到' : '签到'}}</div>
       </div>
     </div>
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
-        <div class="function-box">
-          <div class="tf-icon tf-icon-scan function-box__icon"></div>
+        <div class="function-box" @click="goScanCode(1)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_saoyisao.png" />
           <div class="function-box__text">扫一扫</div>
         </div>
-        <div class="function-box">
-          <div class="tf-icon tf-icon-barcode function-box__icon function-box__icon--pay"></div>
+        <div class="function-box" @click="goScanCode(2)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_shoukuan.png" />
           <div class="function-box__text">付款码</div>
         </div>
-        <div class="function-box">
-          <div
-            class="tf-icon tf-icon-moneycollect function-box__icon function-box__icon--payreceipt"
-          ></div>
+        <div class="function-box" @click="goScanCode(3)">
+          <img class="function-box__icon" src="@/assets/imgs/credits_fukuan.png" />
           <div class="function-box__text">收款码</div>
         </div>
       </div>
       <div class="happiness-coin-title">幸福币任务</div>
       <div class="task-box">
-        <div class="task-item">
+        <div class="task-item" v-for="(item, i) in taskList" :key="i">
           <div class="tf-row tf-flex-item">
-            <div class="task-item__icon"></div>
+            <img class="task-item__icon" v-if="item.task_type == 1" src />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 2"
+              src="@/assets/imgs/credits_renzheng.png"
+            />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 3"
+              src="@/assets/imgs/credits_yunmenjin.png"
+            />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 4"
+              src="@/assets/imgs/credits_wenjuan.png"
+            />
+            <img
+              class="task-item__icon"
+              v-else-if="item.task_type == 5"
+              src="@/assets/imgs/credits_toupiao.png"
+            />
             <div class="tf-space-between">
-              <div class="task-item__title">完成房间认证</div>
+              <div class="task-item__title">{{item.task_name}}</div>
               <div class="tf-row">
-                <div class="task-item__remarks">开门认证成功获得</div>
-                <div class="task-item__remarks--gold">20幸福币</div>
+                <div class="task-item__remarks">获得</div>
+                <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
               </div>
             </div>
           </div>
-          <div class="task-item__number">+20</div>
-          <!-- <div class="task-item__btn">去完成</div> -->
+          <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
+          <div v-else class="task-item__btn" @click="complete(item.task_type, item.source_id)">去完成</div>
         </div>
       </div>
       <div class="sale-box">
@@ -57,42 +80,32 @@
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
       </div>
       <div class="sale-area">
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
+        <div
+          class="commodity-box"
+          v-for="(item, i) in creditsGoods"
+          :key="i"
+          @click="goCoinCommodity(item)"
+        >
+          <img class="commodity-image" :src="item.thumb" />
+          <div class="commodity-name">{{item.goods_name}}</div>
           <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
+            <div class="commodity-current-price">￥{{item.s_price}}</div>
+            <div class="commodity-original-price">￥{{item.y_price}}</div>
           </div>
-          <div class="commodity-coin">1000幸福币</div>
-        </div>
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
-          <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
-          </div>
-          <div class="commodity-coin">1000幸福币</div>
-        </div>
-        <div class="commodity-box">
-          <img class="commodity-image" src="/static/app-icon.png" />
-          <div class="commodity-name">雨前西湖龙井</div>
-          <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥240</div>
-            <div class="commodity-original-price">￥260</div>
-          </div>
-          <div class="commodity-coin">1000幸福币</div>
+          <div class="commodity-coin">{{item.credits}}幸福币</div>
         </div>
       </div>
     </div>
-    <tf-calendar v-model="showCalendar" :data="signArr" :curYear="cur_year" :curMonth="cur_month"></tf-calendar>
+    <tf-calendar v-model="showCalendar"></tf-calendar>
   </div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { NavBar, Toast, Dialog } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
+import { signin, getCreditsAccount } from '@/api/personage'
+import { getCreditsGoodsList } from '@/api/home'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -101,336 +114,116 @@ export default {
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
-      cur_year: 0, // 签到日历展示年份
-      cur_month: 0, // 签到日历展示月份
-      signArr: [] // 签到日历展示数据
+      signinToday: '1', // 今日是否签到
+      credits: 0,
+      taskList: [],
+      creditsGoods: [],
+      saleList: [
+        {
+          image: '/static/app-icon.png',
+          name: '雨前西湖龙井',
+          specialPrice: '240',
+          originalPrice: '260',
+          coin: '2400'
+        }
+      ]
     }
   },
+  computed: {
+    ...mapGetters(['userType'])
+  },
   created () {
-    let signArr = []
-    signArr = [
-      {
-        date: 28,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-      {
-        date: 29,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 30,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 1,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 2,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 3,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 4,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 5,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 6,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 7,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 8,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: 1
-      },
-
-      {
-        date: 9,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 10,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 11,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 12,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 13,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 14,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 15,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 16,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 17,
-        is_prev: '',
-        is_next: 1,
-        is_start: 1,
-        is_end: 1,
-        is_sign: 1
-      },
-
-      {
-        date: 18,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 19,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 20,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 21,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 22,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 23,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 24,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 25,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 26,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 27,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 28,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 29,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 30,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 31,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      },
-
-      {
-        date: 1,
-        is_prev: '',
-        is_next: 1,
-        is_start: '',
-        is_end: '',
-        is_sign: ''
-      }
-    ]
-    this.signArr = signArr
+    this.getCreditsAccount()
+    this.getCreditsGoodsList()
   },
   methods: {
+    /* 获取幸福币信息 */
+    getCreditsAccount () {
+      getCreditsAccount().then(({ data }) => {
+        this.signinToday = data.signin_today
+        this.taskList = data.task_list
+        this.credits = data.credits
+      })
+    },
+    /* 签到事件 */
+    signIn () {
+      // 已签到，则打开签到日历
+      if (this.signinToday == '1') {
+        this.showCalendar = true
+      } else {
+        this.signin()
+      }
+    },
+    /* 签到请求 */
+    signin () {
+      signin().then((res) => {
+        Toast({
+          message: '签到成功   幸福币+10'
+        })
+        // this.signinToday = '1'
+        this.getCreditsAccount()
+      })
+    },
+    /* 幸福币明细 */
     goCoinRecord () {
       this.$router.push('/pages/personage/happiness-coin/coin-record')
     },
+    /* 购买详情 */
     goBuyRecord () {
       this.$router.push('/pages/personage/happiness-coin/buy-record')
+    },
+    /* 扫一扫 */
+    goScanCode (current) {
+      this.$router.push({
+        name: 'scanCodeIndex',
+        query: {
+          current
+        }
+      })
+    },
+    /* 获取幸福币专区 */
+    getCreditsGoodsList () {
+      getCreditsGoodsList().then((res) => {
+        this.creditsGoods = res.data
+      })
+    },
+    /* 幸福币专区商品详情 */
+    goCoinCommodity (item) {
+      this.$router.push(`/store/goods-detail?id=${item.id}`)
+    },
+    /* 去完成页面 */
+    complete (type, id) {
+      console.log(type)
+      switch (type) {
+        case '1':
+          this.signin()
+          break
+        case '2':
+          this.$router.push(
+            '/pages/personage/house/attestation?type=1&mode=0&select=1'
+          )
+          break
+        case '3':
+          this.authentication('/pages/butler/entrance/index')
+          break
+        default:
+          this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
+          break
+      }
+    },
+    /* 认证提醒 */
+    authentication (url) {
+      if (this.userType == 0) {
+        Dialog.confirm({
+          title: '提示',
+          message: '您尚未认证房间，是否去认证？',
+          confirmButtonText: '去认证'
+        }).then((res) => {
+          this.$router.push('/pages/personage/house/attestation?type=1&mode=0&select=1')
+        })
+      } else {
+        this.$router.push(url)
+      }
     }
   }
 }
@@ -445,7 +238,6 @@ export default {
 .page-bg {
   width: 750px;
   height: 378px;
-  padding-top: 88px;
   background-color: #fbe1ca;
 }
 .nav-bar {
@@ -490,6 +282,7 @@ export default {
 .coin-main-box {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .coin-number {
   font-size: 72px;
@@ -512,21 +305,9 @@ export default {
   text-align: center;
 }
 .function-box__icon {
-  width: 98px;
-  height: 98px;
-  line-height: 98px;
-  background-image: linear-gradient(to bottom right, @orange, @orange-dark);
-  border-radius: 49px;
-  margin-bottom: 15px;
-  color: #fff;
-  text-align: center;
-  font-size: 50px;
-}
-.function-box__icon--pay {
-  background-image: linear-gradient(to bottom right, @green, @green-dark);
-}
-.function-box__icon--payreceipt {
-  background-image: linear-gradient(to bottom right, @blue, @blue-dark);
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
 }
 .happiness-coin-title {
   font-size: 34px;
@@ -548,11 +329,12 @@ export default {
   align-items: center;
   height: 90px;
 }
+.task-item + .task-item {
+  margin-top: 60px;
+}
 .task-item__icon {
   width: 90px;
   height: 90px;
-  line-height: 90px;
-  text-align: center;
   background-color: #ffdec8;
   border-radius: 45px;
   margin-right: 20px;
@@ -607,6 +389,8 @@ export default {
 .commodity-image {
   width: 330px;
   height: 330px;
+  background: #f4f4f4;
+  border-radius: 10px;
 }
 .commodity-name {
   font-size: 28px;

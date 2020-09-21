@@ -1,16 +1,20 @@
 <template>
-  <div class="tf-bg tf-screen tf-column">
+  <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
-    <page-nav-bar :status="1" name="123"></page-nav-bar>
-    <van-notice-bar class="swiper-nav" left-icon="volume-o" :scrollable="false">
+    <page-nav-bar></page-nav-bar>
+    <van-notice-bar v-if="noticeList.length" class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
-        <van-swipe-item v-for="item in noticeList" :key="item.id" @click="goNotice">{{item.content}}</van-swipe-item>
+        <van-swipe-item
+          v-for="item in noticeList"
+          :key="item.id"
+          @click="goNotice(item)"
+        >{{item.title}}</van-swipe-item>
       </van-swipe>
     </van-notice-bar>
-    <appList :list="appList"></appList>
+    <appList :list="mainAppList"></appList>
     <div class="tf-flex-center tf-flex-item">
       <div class="key-box" @click="goEntrance">
-        <span class="tf-icon">{{iconKey}}</span>
+        <span class="tf-icon tf-icon-kaisuo"></span>
       </div>
     </div>
   </div>
@@ -19,10 +23,11 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, swipe, SwipeItem } from 'vant'
-import { iconKey } from '@/const/icon.js'
-import { queryAllApp } from '@/api/butler/butler.js'
+import { NoticeBar, swipe, SwipeItem, Toast, Dialog } from 'vant'
+import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
+  name: 'butler',
   components: {
     pageNavBar,
     appList,
@@ -30,82 +35,86 @@ export default {
     [swipe.name]: swipe,
     [SwipeItem.name]: SwipeItem
   },
-  created () {
-    // queryAllApp().then(res => {
-    //   if (res.success) {
-    //     this.appList = res.data.records
-    //   }
-    // })
-  },
   data () {
     return {
-      iconKey,
-      noticeList: [
-        {
-          id: 1,
-          content: 123123123
-        },
-        {
-          id: 2,
-          content: 'ffffffffffffffffff'
-        }
-      ],
-      appList: [
-        {
-          icon_image: '/static/logo.png',
-          application: '公告通知',
-          url: '/pages/butler/notice/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '报事报修',
-          url: '/pages/butler/repairs/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '免费服务',
-          url: '/pages/butler/freeserver/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '访客邀约',
-          url: '/pages/butler/visitor/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '投诉表扬',
-          url: '/pages/butler/compraise/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '小区活动',
-          url: '/neighbours'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '问卷投票',
-          url: '/pages/butler/questionnaire/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '呼叫物业',
-          url: '/pages/butler/call-property/index'
-        },
-        {
-          icon_image: '/static/logo.png',
-          application: '便民电话',
-          url: '/pages/butler/convenience-phone/index'
-        }
-      ]
+      noticeList: [],
+      appList: []
     }
   },
+  computed: {
+    ...mapGetters(['userType']),
+    mainAppList () {
+      return this.appList.filter(obj => obj.id !== '1')
+    }
+  },
+  // created () {
+  //   this.queryAllApp()
+  //   // this.getNoticeLbList()
+  // },
+  activated () {
+    this.queryAllApp()
+    this.getNoticeLbList()
+  },
   methods: {
-    goNotice (item) {
-      const url = `/pages/butler/notice/details?id=${item.id}`
-      this.$router.push(url)
+    /* 获取管家全部应用 */
+    queryAllApp () {
+      queryAllApp().then((res) => {
+        this.appList = res.data
+      })
     },
+    /* 获取通知轮播列表 */
+    getNoticeLbList () {
+      getNoticeLbList().then(({ data }) => {
+        this.noticeList = data
+      })
+    },
+    /* 跳转公告详情页 */
+    goNotice ({ id }) {
+      this.$router.push({
+        name: 'noticeDetails',
+        query: {
+          id
+        }
+      })
+    },
+    /* 跳转云门禁 */
     goEntrance () {
+      const status = this.appList.some((obj) => {
+        return obj.id === '1'
+      })
+      if (!status) {
+        Toast('小区暂未开放此功能')
+        return
+      }
       this.$router.push('/pages/butler/entrance/index')
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const butlerList = [
+      'entranceIndex',
+      'noticeIndex',
+      'repairsIndex',
+      'freeserverIndex',
+      'visitorIndex',
+      'compraiseIndex',
+      'questionnaireIndex',
+      'propertyIndex',
+      'convenienceIndex',
+      'noticeDetails'
+    ]
+    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      Dialog.confirm({
+        title: '提示',
+        message: '您尚未认证房间，是否去认证？',
+        confirmButtonText: '去认证'
+      }).then((res) => {
+        this.$router.push(
+          '/pages/personage/house/attestation?type=1&mode=0&select=1'
+        )
+      })
+      next(false)
+    } else {
+      next()
     }
   }
 }
@@ -113,7 +122,7 @@ export default {
 
 <style lang="less" scoped>
 .header-bg {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 750px;
@@ -126,6 +135,9 @@ export default {
   border-radius: @border-radius-sm;
   background-color: #fff;
   opacity: 0.6;
+  /deep/ .van-notice-bar__content {
+    width: 100%;
+  }
 }
 .notice-swipe {
   height: 88px;

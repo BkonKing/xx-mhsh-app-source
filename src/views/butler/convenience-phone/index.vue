@@ -1,20 +1,29 @@
 <template>
-  <div class="tf-bg tf-main-container">
+  <div class="tf-bg">
     <van-nav-bar
       title="便民电话"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <phone-card v-for="(item, i) in phoneList" :key="i" :name="item.title" :info="item.remarks" :number="item.telephone"></phone-card>
+    <div class="tf-padding">
+      <phone-card
+        v-for="(item, i) in phoneList"
+        :key="i"
+        :name="item.title"
+        :info="item.remarks"
+        :number="item.telephone"
+      ></phone-card>
+    </div>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
 import phoneCard from '../components/phone-card.vue'
-import { getYellowPagesList } from '@/api/butler/butler.js'
+import { getYellowPagesList } from '@/api/butler.js'
 export default {
   components: {
     phoneCard,
@@ -22,21 +31,11 @@ export default {
   },
   data () {
     return {
-      phoneList: [
-        {
-          id: '1',
-          title: '保洁阿姨',
-          telephone: '15050505050',
-          remarks: ''
-        },
-        {
-          id: '2',
-          title: '疾病控制预防中心',
-          telephone: '15050505050',
-          remarks: '24小时   疾病控制预防'
-        }
-      ]
+      phoneList: []
     }
+  },
+  created () {
+    this.getYellowPagesList()
   },
   methods: {
     getYellowPagesList () {
@@ -51,7 +50,4 @@ export default {
 </script>
 
 <style scoped>
-.tf-main-container {
-  padding: 118px 20px 20px;
-}
 </style>

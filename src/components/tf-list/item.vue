@@ -2,8 +2,10 @@
   <div class="tf-clist-box" @click="onClick">
     <div class="tf-clist-cell" :class="{'tf-clist-border': border}">
       <div class="tf-clist-cell-left">
-      <img v-if="image" class="tf-clist-cell__image" :src="image" />
-      <div>{{ title }}</div>
+      <slot name="image">
+        <img v-if="image" class="tf-clist-cell__image" :src="image" />
+      </slot>
+      <div :class="{'required-after': required}">{{ title }}</div>
     </div>
     <div class="tf-clist-cell-right">
       <slot name="right">
@@ -38,6 +40,10 @@ export default {
     rightText: {
       type: String,
       default: ''
+    },
+    required: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

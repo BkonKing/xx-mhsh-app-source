@@ -1,7 +1,14 @@
 <template>
   <div class="radio-btn-group">
-    <div class="radio-btn__item" v-for="(item, i) in data" :key="i" :class="{'radio-btn--active': value === item.value}" @click="change(item.value)" :style="{'border-radius': `${radius}px`}">
-      <div class="radio-btn__text" :class="{'radio-btn__text--active': value === item.value}">{{item.name}}</div>
+    <div
+      class="radio-btn__item"
+      v-for="(item, i) in data"
+      :key="i"
+      :class="{'radio-btn--active': multiple ? valueChild.indexOf(item[valueKey]) !== -1 : valueChild == item[valueKey]}"
+      @click="change(item[valueKey], item[labelKey])"
+      :style="{'border-radius': `${radius}px`}"
+    >
+      <div class="radio-btn__text">{{item[labelKey]}}</div>
     </div>
   </div>
 </template>
@@ -9,6 +16,10 @@
 <script>
 export default {
   props: {
+    value: {
+      type: [String, Number, Array],
+      default: ''
+    },
     data: {
       type: Array,
       default: () => []
@@ -16,17 +27,46 @@ export default {
     radius: {
       type: Number,
       default: 6
+    },
+    labelKey: {
+      type: String,
+      default: 'name'
+    },
+    valueKey: {
+      type: String,
+      default: 'value'
+    },
+    multiple: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
-      value: ''
+      valueChild: this.value
     }
   },
   methods: {
-    change (value) {
-      this.value = value
-      this.$emit('change', value)
+    change (value, label) {
+      if (this.multiple) {
+        const index = this.valueChild.indexOf(value)
+        if (index === -1) {
+          this.valueChild.push(value)
+        } else {
+          this.valueChild.splice(index, 1)
+        }
+      } else {
+        this.valueChild = value
+      }
+      this.$emit('change', this.valueChild, label)
+    }
+  },
+  watch: {
+    valueChild (value) {
+      this.$emit('input', value)
+    },
+    value (value) {
+      this.valueChild = value
     }
   }
 }
@@ -36,10 +76,11 @@ export default {
 .radio-btn-group {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .radio-btn__item {
   height: 88px;
+  margin-right: 20px;
   padding: 0 20px;
   background-color: @background-color;
   margin-bottom: @padding-lg;
@@ -57,8 +98,8 @@ export default {
   border-style: solid;
   border-color: @red-dark;
   background-color: #fff;
-}
-.radio-btn__text--active {
-  color: @red-dark;
+  .radio-btn__text {
+    color: @red-dark;
+  }
 }
 </style>

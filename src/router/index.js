@@ -28,7 +28,11 @@ Vue.use(VueRouter)
  */
 const routes = [{
   path: '/',
+  name: 'mainIndex',
   component: Index,
+  meta: {
+    keepAlive: true
+  },
   children: [{
     path: '',
     name: 'home',
@@ -95,10 +99,38 @@ const routes = [{
       '@/views/login/index.vue'
     )
 },
+{
+  path: '/applist',
+  name: 'applist',
+  component: () =>
+    import(
+      /* webpackChunkName: "applist" */
+      '@/views/home/applist.vue'
+    )
+},
+{
+  path: '/agreement',
+  name: 'agreement',
+  component: () =>
+    import(
+      /* webpackChunkName: "agreement" */
+      '@/views/index/agreement.vue'
+    )
+},
+{
+  path: '/openingPage',
+  name: 'openingPage',
+  component: () =>
+    import(
+      /* webpackChunkName: "openingPage" */
+      '@/views/index/openingPage.vue'
+    )
+},
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,
-...personageRouter]
+...personageRouter
+]
 
 const router = new VueRouter({
   routes

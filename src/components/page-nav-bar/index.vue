@@ -1,58 +1,64 @@
 <template>
-  <van-nav-bar class="tf-nav-bar">
+  <van-nav-bar class="tf-nav-bar" placeholder>
     <template #left>
-      <div class="tf-row-vertical-center room_btn" @click="goSelect" v-if="status">
-        <span class="tf-icon">{{ iconLocation }}</span>
-        <span class="tf-text">{{ name }}</span>
-      </div>
-      <div class="tf-row-vertical-center room_btn" v-else>
-        <span class="tf-icon">{{ iconLocation }}</span>
-        <span class="tf-text underline">请认证房间号</span>
+      <div class="tf-row-vertical-center room_btn" @click="goAttestation">
+        <span class="tf-icon tf-icon-dingwei"></span>
+        <span
+          v-if="currentProject"
+          class="tf-text"
+        >{{ currentProject.project_name + currentProject.fc_info }}</span>
+        <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
-      <span class="tf-icon" @click="scan">{{ iconScan }}</span>
-      <div class="notice-box" @click="goMessage">
-        <span class="tf-icon margin-left">{{ iconMail }}</span>
-        <span v-if="status" class="van-info">2</span>
-      </div>
+      <span v-if="search" class="tf-icon tf-icon-sousuo" @click="onSearch"></span>
+      <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
+      <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
+        <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
+      </span>
     </template>
   </van-nav-bar>
 </template>
 
 <script>
 import { NavBar } from 'vant'
-import { iconLocation, iconScan, iconMail } from '@/const/icon.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar
   },
   props: {
-    status: {
-      type: Number,
-      default: 0
-    },
     name: {
       type: String,
       default: ''
+    },
+    search: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
-    return {
-      iconLocation,
-      iconScan,
-      iconMail
-    }
+    return {}
+  },
+  computed: {
+    ...mapGetters(['currentProject', 'userInfo'])
   },
   methods: {
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
-    goSelect () {
-      this.$router.push('/pages/personage/house/select-community')
+    /* 跳转房屋认证 */
+    goAttestation () {
+      const url = this.currentProject
+        ? '/pages/personage/house/select-house'
+        : '/pages/personage/house/attestation?type=1&mode=0&select=1'
+      this.$router.push(url)
     },
     scan () {
       this.$router.push('/pages/personage/scanCode/index')
+    },
+    onSearch () {
+      this.$router.push('/store/search')
     }
   }
 }
@@ -70,30 +76,30 @@ export default {
   color: #fff;
 }
 
+.tf-icon-dingwei {
+  margin-right: 5px;
+}
+
 .tf-text {
   color: #fff;
 }
 
-.notice-box {
+.tf-icon-xiaoxi {
   position: relative;
-  padding-right: 17px;
+}
+
+/deep/ .van-nav-bar__right {
+  padding-right: 0;
 }
 
 .van-info {
-  height: 24px;
-  line-height: 24px;
-  font-size: 18px;
-  top: 10px;
-  right: 10px;
   background: #fff;
   color: @red-dark;
+  top: 24px;
+  right: 22px;
 }
 
 .underline {
   text-decoration: underline;
-}
-
-.margin-left {
-  margin-left: 28px;
 }
 </style>

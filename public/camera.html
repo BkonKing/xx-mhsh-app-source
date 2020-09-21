@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>相机</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      margin: 0;
+    }
+
+    .camera-header__btn {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .camera-footer__btn {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      margin-left: -40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 80px;
+      height: 80px;
+      border: 5px solid #a0a0a0;
+      border-radius: 50%;
+      background: #000;
+      color: #fff;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+  <img class="camera-header__btn" onclick="closeCameraView()"
+    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA3FpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTM4IDc5LjE1OTgyNCwgMjAxNi8wOS8xNC0wMTowOTowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowNWJiZDZmYi0wNWZhLTc5NDktYjY2ZC0zNzYyZGJhNjhhNjUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NzM2RDg1MjRDQ0FDMTFFQTk5MDlCMDE3NUEyOENBMkYiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NzM2RDg1MjNDQ0FDMTFFQTk5MDlCMDE3NUEyOENBMkYiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOmVjNjQyZjE4LTUyZWYtODI0ZC1iN2U4LTM4NmI4YTI4YzA5MiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowNWJiZDZmYi0wNWZhLTc5NDktYjY2ZC0zNzYyZGJhNjhhNjUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6VekQpAAABUUlEQVR42pzVuUoEQRDG8ZlSMdjEzGQ9gl0VRBHB5zCQQVcMPMDEyLcxEiOPGQQvMDIxEAOvxBtBNBAfQAMD9SuogaLYnp7ehv/SPc382O294jRNI4xJ9InOo8CRJEmUZdkopnXMd2OAU1iMyP4Oug80+9G8zF8JDx9qcxoNtYjxeGfwDKXq4gwaLIH1GewQL/mEZHEnLzcfDQ/aixYMdskTUhf57LYNOuDAFtX6IMcsyOPBoLMG7THYPrArDVCTZ8DolkG7URdaUtf30LW9ud1xRo9oUzAey+jXYDfNbqSCg39Ca+gbtaEO9IM2XJgPjAT7U2uefxXdUARW0SqqqGudaAXVQsGqvAGxrPk819X+nAulEtiRnOcbynwolcAu1P6tRfFLU3OBPqwUSoGYF2VwOBArQscZHGsBc6ETJN/bZ3QaiOV/AYweoxf+aP0LMADUs2CsTxtS1AAAAABJRU5ErkJggg==">
+  <img>
+  <div class="camera-footer__btn" onclick="takePhoto()">拍照</div>
+</body>
+
+<script type="text/javascript" src="./js/api.js"></script>
+<script>
+  var FNPhotograph = null
+  apiready = function () {
+    FNPhotograph = api.require('FNPhotograph');
+  };
+
+  function closeCameraView() {
+    api.execScript({
+      name: 'root',
+      script: 'document.dispatchEvent(closeCameraView)'
+    });
+  }
+
+  function takePhoto() {
+    api.execScript({
+      name: 'root',
+      script: 'document.dispatchEvent(takePhoto)'
+    });
+  }
+</script>
+
+</html>

@@ -1,20 +1,20 @@
 <template>
-<div class="tf-bg">
-    <van-nav-bar title="我的反馈" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="onLoad">
+  <div class="tf-bg tf-body">
+    <van-nav-bar title="我的反馈" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-body-container">
+      <refreshList :list.sync="data" :load="getFeedbackList">
         <template v-slot="{item}">
           <div class="list-item--time">{{item.ctime}}</div>
-        <div class="tf-card" @click="jump(item)">
-          <div class="tf-card-header">
-            <div class="tf-card-header__title">{{item.type}}</div>
+          <div class="tf-card" @click="jump(item)">
+            <div class="tf-card-header">
+              <div class="tf-card-header__title">{{item.info_type}}</div>
+            </div>
+            <div class="tf-card-content">{{ item.content }}</div>
+            <div v-if="item.reply" class="reply-box">
+              <div class="reply-title">回复:</div>
+              <div class="reply-content">{{ item.reply }}</div>
+            </div>
           </div>
-          <div class="tf-card-content">{{ item.content }}</div>
-          <div v-if="item.reply" class="reply-box">
-            <div class="reply-title">回复:</div>
-            <div class="reply-content">{{ item.reply }}</div>
-          </div>
-        </div>
         </template>
       </refreshList>
     </div>
@@ -24,6 +24,7 @@
 <script>
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
+import { getFeedbackList } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -31,39 +32,15 @@ export default {
   },
   data () {
     return {
-      data: [
-        {
-          id: '1',
-          type: '产品建议',
-          ctime: '07-03',
-          content: '厨房下水道堵了都没有及时来处理',
-          info_type: 1,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了'
-        },
-        {
-          id: '2',
-          type: '其他',
-          ctime: '07-03',
-          content: '厨房下水道堵了都没有及时来处理2',
-          info_type: 2,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了'
-        }
-      ]
+      data: []
     }
   },
   created () {
-    // this.getComPraiseList()
+    // this.getFeedbackList()
   },
   methods: {
-    onLoad () {},
-    getComPraiseList () {
-      // getComPraiseList().then(res => {
-      //   if (res.success) {
-      //     this.data = res.data
-      //   }
-      // })
+    getFeedbackList (params) {
+      return getFeedbackList(params)
     },
     jump (item) {
       const url = `/pages/personage/feedback/details?id=${item.id}`
@@ -80,10 +57,12 @@ export default {
 .tf-card-header {
   font-size: 30px;
   color: #333;
-  font-weight:500;
+  font-weight: 500;
 }
 .tf-card-content {
+  font-size: 24px;
   color: #666;
+  padding: 20px 0;
 }
 .list-item--time {
   font-size: 24px;
@@ -110,7 +89,6 @@ export default {
   color: #666;
   font-size: 24px;
   line-height: 52px;
-  border-radius:10px;
+  border-radius: 10px;
 }
-
 </style>

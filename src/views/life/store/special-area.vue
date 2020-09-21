@@ -1,111 +1,168 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="area-header">
+	<div class="app-body scroll-body" id="special-body">
+    <div class="area-header" :style="{backgroundImage: 'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'}">
       <div class="order-bar bar-nobg">
-        <van-nav-bar title="" :border="false" fixed left-text="" left-arrow></van-nav-bar>
+        <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
       </div>
       <div class="header-session">
-        <div class="area-tit">3C爱好者专区</div>
-        <div class="area-subtit">玩转最新电子产品，体验前沿科技</div>
+        <div class="area-tit">{{infoData.special_name}}</div>
+        <div class="area-subtit">{{infoData.special_text}}</div>
       </div>
     </div>
-    <div class="special-list">
-      <div class="special-item flex-between">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
+    <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text=""
+        @load="onLoad"
+      >
+      <div class="special-list">
+        <div v-for="(item,index) in listData" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
+          <div class="special-goods-pic">
+            <img class="img-100" :src="item.thumb" />
+          </div>
+          <div class="special-goods-info">
+            <div class="special-goods-name p-nowrapm">{{item.goods_name}}</div>
+            <div class="special-goods-price">
+              <span class="special-price-span1">￥</span>{{item.s_price/100}}
+              <span v-if="item.y_price && item.y_price!='0'" class="special-price-span2">￥{{item.y_price/100}}</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="special-item flex-between">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
-          </div>
-        </div>
-      </div>
-      <div class="special-item flex-between">
-        <div class="special-goods-pic"><img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" alt=""></div>
-        <div class="special-goods-info">
-          <div class="special-goods-name p-nowrapm">creamy blue动物毛眼部化妆刷</div>
-          <div class="special-goods-price">
-            <span class="special-price-span1">￥</span>180
-            <span class="special-price-span2">￥150</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    </van-list>
 	</div>
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { Image, NavBar, List } from 'vant'
+import { getAreaGoods } from '@/api/life.js'
 export default {
+  name: 'specialArea',
+  components: {
+    [NavBar.name]: NavBar,
+    [List.name]: List
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      navList: ['全部全部全部', '9.9封顶', '19.9封顶', '29.9封顶', '1929.9封顶']
+      special_id: '', //专区id
+      listData: [],   //数据列表
+      infoData: '',   //其他信息
+      page: 1,   //页码
+      pageSize: 10,  //分页条数
+      isEmpty: false, //是否为空
+      loading: false,
+      finished: true,
+      bgImg: require("@/assets/img/area_01.png")
+    }
+  },
+  created () {
+    this.special_id = this.$route.query.id;
+    this.finished = false;
+  },
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('special-body').scrollTop = this.scrollTop
     }
   },
   methods: {
-    onSubmit: function () {
-
+    onLoad() {
+      // 异步更新数据
+      this.getGoodsData();
+      return;
+    },
+    getGoodsData () {
+      getAreaGoods({
+        page: this.page,
+        special_id: this.special_id
+      }).then(res => {
+        if (res.success) {
+          this.listData = this.page == 1 ? res.data.special_goods_list : this.listData.concat(res.data.special_goods_list);
+          this.isEmpty = this.page == 1 && res.data.special_goods_list.length ==0 ? true : false;
+          if(res.data.special_goods_list.length < res.pageSize){
+            this.finished = true;
+          }else {
+            this.page = this.page+1;
+          }
+          if(!this.infoData){
+            this.infoData = res.data.special_info;
+          }
+          this.loading = false;
+        }
+      })
+    },
+    linkFunc(type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+      }
+    },
+  },
+  beforeRouteLeave (to, from, next) {
+    console.log(to.name);
+    if(to.name == 'life' || to.name == 'home'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
     }
+    const el = document.getElementById('special-body')
+    this.scrollTop = (el && el.scrollTop) || 0
+    next();
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
-  font-size: 0.28rem;
-  overflow: hidden;
+  font-size: 28px;
 }
 
 .area-header {
-  height: 3.81rem;
-  background: url('../../../assets/img/area_01.png') center top /100% 100%;
+  background-position: center top;
+  background-size: 100% 100%;
+  height: 381px;
+  /*background: url('../../../assets/img/area_01.png') center top /100% 100%;*/
   position: relative;
   z-index: 2;
   position: relative;
 }
 .header-session {
   position: absolute;
-  left: 0.5rem;
-  bottom: 0.8rem;
-  height: 1.73rem;
+  left: 50px;
+  bottom: 80px;
+  height: 173px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: #ffffff;
 }
 .area-tit {
-  font-size: 0.38rem;
-  line-height: 0.68rem;
+  font-size: 38px;
+  line-height: 68px;
 }
 .area-subtit {
-  font-size: 0.28rem;
-  line-height: 0.58rem;
+  font-size: 28px;
+  line-height: 58px;
 }
 .special-list {
-  width: 7.1rem;
-  margin: -0.8rem auto 0;
+  width: 710px;
+  margin: -80px auto 0;
   position: relative;
   z-index: 6;
   background-color: #fff;
-  border-radius: 0.1rem;
-  padding: 0.4rem 0.3rem;
+  border-radius: 10px;
+  padding: 40px 30px;
 }
 .special-item {
-  margin-bottom: 0.3rem;
-  padding-bottom: 0.3rem;
+  margin-bottom: 30px;
+  padding-bottom: 30px;
   border-bottom: 1px solid #f0f0f0;
 }
 .special-item:last-child {
@@ -114,32 +171,32 @@ export default {
   border-bottom: none;
 }
 .special-goods-pic {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 160px;
+  height: 160px;
   display: flex;
-  border-radius: 0.04rem;
+  border-radius: 4px;
   overflow: hidden;
+  background-color: #f4f4f4;
 }
 .special-goods-info {
-  width: 4.72rem;
+  width: 472px;
+  height: 160px;
 }
 .special-goods-name {
-  font-size: 0.3rem;
+  font-size: 30px;
   color: #222;
-  line-height: 0.44rem;
-  margin-bottom: ;
-  margin-top: 0.4rem;
+  line-height: 44px;
 }
 .special-goods-price {
-  height: 0.66rem;
-  line-height: 0.66rem;
-  font-size: 0.42rem;
+  height: 66px;
+  line-height: 66px;
+  font-size: 42px;
   color: #eb5841;
   font-weight: bold;
 }
 .special-goods-price span {
   font-weight: normal;
-  font-size: 0.24rem;
+  font-size: 24px;
 }
 .special-price-span2 {
   color: #999999;

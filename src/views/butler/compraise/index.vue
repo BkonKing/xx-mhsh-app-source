@@ -1,63 +1,60 @@
 <template>
-  <div class="tf-bg tf-padding-base tf-main-container">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="投诉表扬"
       :fixed="true"
       :border="false"
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-time-circle" @click="goList"></span>
+        <span class="tf-icon tf-icon-shijian" @click="goList"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-card">
-      <div class="tf-card-header">选择类型</div>
-      <div class="tf-card-content" style="padding-bottom: 10px;">
-        <tf-radio-btn :data="items" @change="handRadioChange"></tf-radio-btn>
+    <div class="tf-padding">
+      <div class="tf-card">
+        <div class="tf-card-header">选择类型</div>
+        <div class="tf-card-content" style="padding-bottom: 0;">
+          <tf-radio-btn v-model="info_type" :data="items"></tf-radio-btn>
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">内容描述</div>
-      <div class="tf-card-content">
-        <van-field
-          class="uni-input"
-          v-model="content"
-          autosize
-          type="textarea"
-          :maxlength="300"
-          placeholder="请描述具体内容"
-          show-word-limit
-        />
+      <div class="tf-card">
+        <div class="tf-card-header">内容描述</div>
+        <div class="tf-card-content">
+          <van-field
+            class="uni-input"
+            v-model="content"
+            autosize
+            type="textarea"
+            :maxlength="300"
+            placeholder="请描述具体内容"
+            show-word-limit
+          />
+        </div>
       </div>
-    </div>
-    <div class="tf-card">
-      <div class="tf-card-header">图片上传</div>
-      <div class="tf-card-content">
-        <van-uploader :after-read="uploadSuccess" />
-        <!-- <uImg
-            ref="upimg"
-            :canUploadFile="true"
-            :limit="limitNum"
-            :uploadFileUrl="uploadFileUrl"
-            :heaer="header"
-            :fileKeyName="name"
-            :uImgList.sync="images"
-            @uploadSuccess="uploadSuccess"
-        ></uImg>-->
+      <div class="tf-card">
+        <div class="tf-card-header">图片上传</div>
+        <div class="tf-card-content">
+          <tf-uploader v-model="images" max-count="6"></tf-uploader>
+        </div>
       </div>
+      <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
     </div>
-    <van-button class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
   </div>
 </template>
 
 <script>
 import { NavBar, Field, Uploader, Button, Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
-import { addComPraise } from '@/api/butler/butler.js'
+import tfUploader from '@/components/tf-uploader/index'
+import { addComPraise } from '@/api/butler.js'
+import { validForm } from '@/utils/util'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     tfRadioBtn,
+    tfUploader,
     [NavBar.name]: NavBar,
     [Uploader.name]: Uploader,
     [Button.name]: Button,
@@ -70,11 +67,11 @@ export default {
       items: [
         {
           value: 1,
-          name: '投诉'
+          name: '我要投诉'
         },
         {
           value: 2,
-          name: '表扬'
+          name: '我要表扬'
         }
       ],
       content: '',
@@ -85,29 +82,37 @@ export default {
       header: {
         // 如果需要header，请上传
       },
-      uImgList: []
+      images: []
     }
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   methods: {
-    formSubmit (e) {
-      const { content } = e.detail.value
-      if (!this.info_type) {
-        Toast('请选择类型')
-        return
-      } else if (!this.content) {
-        Toast('请输入内容')
-        return
-      }
-      this.addComPraise({
-        content: this.content,
-        images: this.uImgList,
-        info_type: this.info_type,
-        project_id: '2',
-        house_id: '1'
+    formSubmit () {
+      const validator = [
+        {
+          value: this.info_type,
+          message: '请选择类型'
+        },
+        {
+          value: this.content,
+          message: '请输入内容'
+        }
+      ]
+      validForm(validator).then((res) => {
+        this.addComPraise()
       })
     },
-    addComPraise (params) {
-      addComPraise(params).then(res => {
+    addComPraise () {
+      addComPraise(
+        {
+          content: this.content,
+          images: this.images.join(','),
+          info_type: this.info_type
+        },
+        this.currentProject.house_id
+      ).then((res) => {
         if (res.success) {
           Dialog.alert({
             title: '提交成功'
@@ -121,17 +126,6 @@ export default {
         }
       })
     },
-    handRadioChange (value) {
-      this.info_type = value
-    },
-    uploadSuccess (result) {
-      if (result.statusCode === 200) {
-        // 上传成功的回调处理
-        Toast('上传成功')
-      } else {
-        Toast('上传失败')
-      }
-    },
     goList () {
       this.$router.push('/pages/butler/compraise/list')
     }
@@ -140,16 +134,27 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .tf-card {
-    margin-top: @padding-lg;
-  }
-  .tf-card-header {
-    font-size: @font-size-md !important;
-    font-weight: bold;
-  }
-  .uni-input {
-    flex: 1;
-    font-size: @font-size-md !important;
-    padding: 0;
-  }
+.tf-padding {
+  flex: 1;
+  overflow: auto;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
+}
+/deep/ .van-uploader__upload,
+/deep/ .van-uploader__preview {
+  width: 114px;
+  height: 114px;
+}
+.tf-card {
+  margin-bottom: @padding-lg;
+}
+.tf-card-header {
+  font-size: @font-size-md !important;
+  font-weight: bold;
+}
+.uni-input {
+  flex: 1;
+  font-size: @font-size-md !important;
+  padding: 0;
+}
 </style>

@@ -9,13 +9,28 @@ const lifeRouter = [
       )
   },
   {
+    path: '/store/goods-classify',
+    name: 'goodsClassify',
+    component: () =>
+      import(
+        /* webpackChunkName: "goodsClassify" */
+        '@/views/life/store/goods-classify'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/store/flash-purchase',
     name: 'flashPurchase',
     component: () =>
       import(
         /* webpackChunkName: "flashPurchase" */
         '@/views/life/store/flash-purchase'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/special-sale',
@@ -24,7 +39,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "specialSale" */
         '@/views/life/store/special-sale'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/special-area',
@@ -33,7 +51,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "specialArea" */
         '@/views/life/store/special-area'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/store/goods-detail',
@@ -45,7 +66,16 @@ const lifeRouter = [
       )
   },
   {
-    path: '/cart',
+    path: '/store/search',
+    name: 'search',
+    component: () =>
+      import(
+        /* webpackChunkName: "search" */
+        '@/views/life/store/search'
+      )
+  },
+  {
+    path: '/life/cart',
     name: 'cart',
     component: () =>
       import(
@@ -54,13 +84,16 @@ const lifeRouter = [
       )
   },
   {
-    path: '/settlement',
+    path: '/life/settlement',
     name: 'settlement',
     component: () =>
       import(
         /* webpackChunkName: "settlement" */
         '@/views/life/cart/settlement'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/coupon/list',
@@ -87,7 +120,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "orderList" */
         '@/views/life/order/order-list'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/order/detail',
@@ -96,7 +132,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "orderDetail" */
         '@/views/life/order/order-detail'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/order/special-detail',
@@ -117,12 +156,33 @@ const lifeRouter = [
       )
   },
   {
+    path: '/order/apply-barter',
+    name: 'applyBarter',
+    component: () =>
+      import(
+        /* webpackChunkName: "applyBarter" */
+        '@/views/life/order/apply-barter'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/order/barter-detail',
     name: 'barterDetail',
     component: () =>
       import(
         /* webpackChunkName: "barterDetail" */
         '@/views/life/order/barter-order-detail'
+      )
+  },
+  {
+    path: '/order/apply-refund',
+    name: 'applyRefund',
+    component: () =>
+      import(
+        /* webpackChunkName: "applyRefund" */
+        '@/views/life/order/apply-refund'
       )
   },
   {
@@ -135,7 +195,7 @@ const lifeRouter = [
       )
   },
   {
-    path: '/order/write-logisticsl',
+    path: '/order/write-logistics',
     name: 'writeLogisticsl',
     component: () =>
       import(
@@ -171,6 +231,15 @@ const lifeRouter = [
       )
   },
   {
+    path: '/logistics/logistics-business',
+    name: 'logisticsBusiness',
+    component: () =>
+      import(
+        /* webpackChunkName: "logisticsExpress" */
+        '@/views/life/logistics/logistics-business'
+      )
+  },
+  {
     path: '/address/list',
     name: 'addressList',
     component: () =>
@@ -186,8 +255,21 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "addressEdit" */
         '@/views/life/address/address-operate'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
+    path: '/address/map',
+    name: 'addressMap',
+    component: () =>
+      import(
+        /* webpackChunkName: "addressEdit" */
+        '@/views/life/address/address-map'
       )
   }
+
 ]
 
 export default lifeRouter

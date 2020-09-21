@@ -1,68 +1,152 @@
 <template>
-  <refreshList :list.sync="list" @load="onLoad">
-    <template v-slot="{item}">
-      <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
-      <div class="tf-list" @click="jump(item)">
-        <img
-          v-if="type !== 'system'"
-          class="tf-list-image"
-          :src="item.image"
-          :class="[`list-image__${type}`]"
-          mode="aspectFit"
-        />
-        <div class="tf-space-around">
-          <div class="tf-row-vertical-center">
-            <div class="tf-list-title" :class="{'tf-mb-base': type === 'system'}">{{item.title}}</div>
-            <div class="tf-circle-tag--warning"></div>
+  <div style="width:100%;height:100%;">
+    <refreshList :list.sync="list" :load="load" finished-text>
+      <template v-slot="{item}">
+        <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
+        <div class="tf-list" @click="jump(item)">
+          <template v-if="type == 'transaction'">
+            <div
+              v-if="item.sub_type == 6 || item.sub_type == 7"
+              class="list-icon-box tf-icon tf-icon-xingfubi"
+            ></div>
+            <img v-else class="tf-list-image" :src="item.thumb" />
+          </template>
+          <template v-else-if="type == 'butler'">
+            <div class="list-icon-box tf-icon" :class="item.sub_type | butlerIcon"></div>
+          </template>
+          <template v-else-if="type == 'activity'">
+            <div class="list-icon-box tf-icon" :class="item.sub_type | activityIcon"></div>
+          </template>
+          <template v-else-if="item.sub_type == '16'">
+            <div class="list-icon-box tf-icon" :class="item.repairs_status | repairIcon"></div>
+          </template>
+          <div class="tf-space-around">
+            <div class="tf-row-vertical-center" :class="{'tf-mb-base': type === 'system'}">
+              <div class="tf-list-title" :class="{'tf-read-after-tag': item.status}">{{item.title}}</div>
+              <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
+            </div>
+            <div class="tf-list-content" :class="{'system-content': type == 'transaction'}">{{item.content}}</div>
           </div>
-          <div class="tf-list-content">{{item.content}}</div>
         </div>
-      </div>
-    </template>
-  </refreshList>
+      </template>
+      <template v-slot:nodata>
+        <div class="empty-session">
+          <img class="empty-session__img" src="@/assets/imgs/message_xiaoxi.png" />
+          <div class="empty-session__text">暂无消息</div>
+        </div>
+      </template>
+    </refreshList>
+    <van-popup class="more-dialog" v-model="moreShowChild">
+      <div v-if="isRead == '0'" class="more-btn" @click="mark">标记已读</div>
+      <div class="more-btn tf-text-primary">删除</div>
+    </van-popup>
+  </div>
 </template>
 
 <script>
+import { Popup } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
+import longtap from '@/directive/tap/index.js'
 export default {
   components: {
-    refreshList
+    refreshList,
+    [Popup.name]: Popup
   },
   props: {
     type: {
       type: String,
       required: true
+    },
+    data: {
+      type: Array,
+      default: () => []
+    },
+    load: {
+      type: Function
     }
+  },
+  directives: {
+    longtap
   },
   data () {
     return {
-      list: [
-        {
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        }
-      ]
+      list: this.data,
+      active: null,
+      moreShowChild: false,
+      isRead: '1' // 是否已读，判断是否需要显示标记已读
     }
   },
   methods: {
-    onLoad () {}
+    operate (item) {
+      this.isRead = item.is_read
+      this.active = item
+      this.moreShowChild = true
+    },
+    jump (item) {
+      this.$emit('click', item)
+    },
+    readAll () {
+      this.list.forEach((obj) => {
+        obj.is_read = '1'
+      })
+    },
+    mark () {
+      this.$emit('mark', this.active)
+    }
+  },
+  watch: {
+    list (value) {
+      this.$emit('update:data', value)
+    },
+    data (value) {
+      this.list = value
+    }
+  },
+  filters: {
+    activityIcon (value) {
+      const icon = {
+        17: 'tf-icon-huodongbaoming',
+        18: 'tf-icon-huodongkaishi'
+      }
+      return icon[value]
+    },
+    butlerIcon (value) {
+      const icon = {
+        13: 'tf-icon-gonggao1',
+        14: 'tf-icon-guihuan',
+        15: 'tf-icon-biaoyangtousu',
+        16: 'tf-icon-baoshibaoxiu'
+      }
+      return icon[value]
+    },
+    repairIcon (value) {
+      const icon = {
+        1: 'tf-icon-daichuli',
+        2: 'tf-icon-daifenpai',
+        3: 'tf-icon-daijiean',
+        4: 'tf-icon-yijiean'
+      }
+      return icon[value]
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.list-image__butler,
-.list-image__activity,
-.list-image__work {
+.list-icon-box {
   width: 80px;
   height: 80px;
+  line-height: 80px;
+  border-radius: 10px;
+  font-size: 44px;
+  color: #fff;
+  text-align: center;
+  margin-right: 20px;
 }
-  .tf-list-title,
-  .tf-list-content {
-    line-height: 1;
-  }
+.tf-list-title,
+.tf-list-content {
+  line-height: 1;
+}
 .tf-circle-tag--warning {
   width: 14px;
   height: 14px;
@@ -70,5 +154,64 @@ export default {
 }
 .tf-list-content {
   @text-ellipsis();
+}
+.system-content {
+  line-height: 1.4;
+  white-space: initial;
+}
+/* 更多弹窗 */
+.more-dialog {
+  width: 500px;
+  padding: 0 30px;
+  border-radius: 10px;
+  .more-btn {
+    height: 120px;
+    line-height: 120px;
+    text-align: center;
+    font-size: 30px;
+  }
+  .more-btn + .more-btn {
+    border-top: 1px solid @divider-color;
+  }
+}
+.empty-session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200px;
+  &__img {
+    width: 483px;
+    height: 335px;
+  }
+  &__text {
+    font-size: 28px;
+    text-align: center;
+    line-height: 96px;
+    color: #222;
+  }
+}
+.tf-circle-tag--warning {
+  width: 14px;
+  height: 14px;
+  margin-left: 8px;
+}
+.tf-icon-daichuli,
+.tf-icon-gonggao1,
+.tf-icon-huodongbaoming,
+.tf-icon-xingfubi {
+  background: #ffa110;
+}
+.tf-icon-daifenpai,
+.tf-icon-baoshibaoxiu {
+  background: #5c76d8;
+}
+.tf-icon-yijiean,
+.tf-icon-biaoyangtousu {
+  background: #4bb192;
+}
+.tf-icon-daijiean,
+.tf-icon-tf-icon-guihuan,
+.tf-icon-huodongkaishi {
+  background: #fd7d6f;
 }
 </style>

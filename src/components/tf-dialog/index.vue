@@ -1,29 +1,39 @@
 <template>
-  <van-popup class="tf-van-popup" v-model="value">
-    <div class="tf-dialog__wrapper-box">
-      <span class="tf-icon" @click="close">&#xe781;</span>
-      <div class="tf-dialog">
-        <div v-if="title" class="tf-dialog-header">
-          <div class="tf-dialog-header__title">{{ title }}</div>
-        </div>
-        <div class="tf-dialog-content">
-          <slot></slot>
-        </div>
-        <div v-if="showFotter" class="tf-dialog-footer">
-          <div
-            v-if="!hiddenOff"
-            class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
-            style="margin-right: 30px;"
-            @click="close"
-          >取消</div>
-          <div
-            class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
-            @click="confirm"
-          >{{okText}}</div>
+  <div class="tf-dialog-container">
+    <van-popup
+      safe-area-inset-bottom
+      :get-container="getContainer"
+      class="tf-van-popup"
+      v-model="valueChild"
+      @click-overlay="close"
+      :close-on-click-overlay="false"
+      :style="{'top': top}"
+    >
+      <div class="tf-dialog__wrapper-box">
+        <span class="tf-icon tf-icon-guanbi1" @click="close"></span>
+        <div class="tf-dialog">
+          <div v-if="title" class="tf-dialog-header">
+            <div class="tf-dialog-header__title">{{ title }}</div>
+          </div>
+          <div class="tf-dialog-content">
+            <slot></slot>
+          </div>
+          <div v-if="showFotter" class="tf-dialog-footer">
+            <div
+              v-if="!hiddenOff"
+              class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
+              style="margin-right: 30px;"
+              @click="close"
+            >取消</div>
+            <div
+              class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
+              @click="confirm"
+            >{{okText}}</div>
+          </div>
         </div>
       </div>
-    </div>
-  </van-popup>
+    </van-popup>
+  </div>
 </template>
 
 <script>
@@ -56,18 +66,36 @@ export default {
     value: {
       type: Boolean,
       default: false
+    },
+    top: {
+      type: String,
+      default: '50%'
+    },
+    getContainer: {
+      type: String,
+      default: 'body'
     }
   },
   data () {
     return {
+      valueChild: this.value
     }
   },
   methods: {
     close () {
-      this.$emit('input', false)
+      this.valueChild = false
+      this.$emit('closed')
     },
     confirm () {
       this.$emit('confirm')
+    }
+  },
+  watch: {
+    value (val) {
+      this.valueChild = val
+    },
+    valueChild (val) {
+      this.$emit('input', val)
     }
   }
 }
@@ -90,8 +118,9 @@ export default {
 }
 
 .tf-dialog {
-  width: 560px;
+  width: 100%;
   padding: 0 50px;
+  border-radius: 10px;
   background-color: #fff;
 }
 
@@ -111,18 +140,17 @@ export default {
 }
 
 .tf-dialog-content {
-  padding: 20px 0;
+  padding: 60px 0;
 }
 
 .tf-dialog-footer {
   @flex();
-  padding-top: 20px;
-  padding-bottom: 40px;
+  padding-bottom: 60px;
 }
 .tf-dialog-footer__btn {
   flex: 1;
   height: 66px;
-  line-height: 66px;
+  line-height: 62px;
   border-radius: 4px;
   font-size: 30px;
   text-align: center;

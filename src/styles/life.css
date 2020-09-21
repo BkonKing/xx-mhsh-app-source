@@ -43,6 +43,9 @@
 .color-ffa110 {
 	color: #ffa110;
 }
+.color-209cff {
+	color: #209cff;
+}
 .width-146 {
 	width: 146px;
 }
@@ -72,6 +75,9 @@
 	border-radius: 10px;
 	position: relative;
 }
+div.no-top-border {
+	border-top: 0;
+}
   /* 底部按钮 */
 .fixed-submit-empty {
 	height: 168px;
@@ -83,6 +89,7 @@
 	bottom: 0;
 	height: 168px;
 	padding: 40px 20px;
+	z-index: 85;
 }
 .submit-btn {
 	border-radius: 10px;
@@ -116,11 +123,11 @@
 .common-item-right .van-icon-arrow {
 	margin-left: 10px;
 }
-/*.common-item-arrow {
+.common-item-arrow {
 	width: 16px;
 	height: 26px;
 	margin-left: 20px;
-}*/
+}
 
 .bottom-fixed {
   position: fixed;
@@ -128,6 +135,9 @@
   left: 0;
   right: 0;
   z-index: 20;
+  background-attachment: fixed;
+  /*transform: translateZ(0);
+  -webkit-transform: translateZ(0);*/
 }
 .mask-bg {
   background-color: rgba(0,0,0,0.6);
@@ -178,4 +188,61 @@
   height: 70px;
   padding: 10px;
   z-index: 5;
+}
+
+/*弹窗2*/
+.public-mask {
+  background-color: #fff;
+  border-radius: 10px 10px 0 0;
+  z-index: 102;
+  padding: 0 30px 40px;
+  color: #222;
+}
+.public-header {
+  height: 112px;
+  line-height: 112px;
+  text-align: center;
+  font-size: 34px;
+  font-weight: bold;
+  position: relative;
+}
+.public-dclose {
+  display: flex;
+  position: absolute;
+  top: -90px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  padding: 10px;
+}
+
+/*弹窗*/
+.mask-block {
+	height: 528px;
+	padding: 0 50px;
+}
+.mask-tit {
+	height: 120px;
+	border-bottom-color: #f0f0f0;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.mask-cont {
+	margin: 58px 0;
+	overflow: visible;
+}
+.mask-cont-text {
+	line-height: 46px;
+}
+.mask-btn div.mask-sure-btn {
+	align-items: center;
+	width: 100%;
+}
+
+.body-block {
+	height: 100%;
+	position: relative;
 }

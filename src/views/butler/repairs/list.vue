@@ -1,73 +1,41 @@
 <template>
-  <div class="tf-bg">
-    <van-nav-bar title="我的报事报修" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
-      <refreshList :list.sync="repairList" @load="onLoad">
-        <template v-slot="{item}">
-          <div class="list-item--time">{{item.ctime}}</div>
-          <div class="tf-card" @click="jump(item)">
-            <div class="tf-card-header">
-              <div class="tf-card-header__title">{{item.category}}</div>
-              <div
-                class="tf-card-header__status"
-                :class="{'tf-card-header__status--complete': item.status > 5}"
-              >{{statusText[item.status]}}</div>
-            </div>
-            <div class="tf-card-content">{{item.content}}</div>
-          </div>
-        </template>
-      </refreshList>
+  <div class="tf-bg tf-body">
+    <van-nav-bar title="我的报事报修" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-body-container">
+      <list id="repairs-list"></list>
     </div>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
-import refreshList from '@/components/tf-refresh-list'
-import { statusText } from '@/const/butler.js'
-import { getRepairList } from '@/api/butler/butler.js'
+import list from './components/list'
+
 export default {
+  name: 'repairsList',
   components: {
     [NavBar.name]: NavBar,
-    refreshList
+    list
   },
   data () {
     return {
-      repairList: [
-        {
-          id: '1',
-          category: '居家报修',
-          content: '厨房下水道堵了',
-          images: [
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg'
-          ],
-          status: 6,
-          ctime: '2020-06-03 16:35:26'
-        }
-      ],
-      statusText
+      scrollTop: 0
     }
   },
-  created () {
-    this.getRepairList()
-  },
-  methods: {
-    onLoad () {},
-    getRepairList () {
-      getRepairList({
-        projectId: '',
-        repairId: ''
-      }).then((res) => {
-        if (res.success) {
-          this.repairList = res.data
-        }
-      })
-    },
-    jump (item) {
-      const url = `/pages/butler/repairs/details?id=${item.id}&title=${item.category}`
-      this.$router.push(url)
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('repairs-list').scrollTop = this.scrollTop
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'repairsDetails') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    } else {
+      const el = document.getElementById('repairs-list')
+      this.scrollTop = (el && el.scrollTop) || 0
+    }
+    next()
   }
 }
 </script>

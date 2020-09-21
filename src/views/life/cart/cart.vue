@@ -1,79 +1,235 @@
 <template>
-	<div class="app-body tf-bg" :style="{ 'min-height': windowHeight+'px'}">
-    <div class="order-bar bar-white"><van-nav-bar title="购物车" :border="false" fixed left-text="" left-arrow></van-nav-bar></div>
-    <div class="bar-empty"></div>
-		<div class="cart-session">
+	<div class="app-body">
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        title="购物车"
+        fixed
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
+		<div v-if="carts.length" class="cart-session">
 			<div class="cart-list">
-	      <div class="cart-item cart-item-sg" v-for="(item,key) in carts">
-	        <div class="cart-checkbox cur" bindtap="checkboxOne" data-index="">
+	      <div :class="[item.goods_type == 2 ? 'cart-item-tm' : '','cart-item']" v-for="(item,index) in carts" @click="linkFunc(5,{id: item.goods_id})">
+	        <div :class="[item.is_checked ? 'cur' : '', 'cart-checkbox']" @click.stop="checkboxOne(index)">
 	          <div class="checkbox-session"></div>
 	        </div>
 	        <div class="cart-cont" hover-class="none">
 	          <div class="product-pic">
-	            <img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
+	            <img class="img-100" mode="aspectFill" :src="item.specs_img" />
 	          </div>
 	          <div class="product-info">
-	            <div class="product-name p-nowrap">日本索尼拍立得相机富士mini90</div>
-	            <div class="product-specs">黑色</div>
-	            <div class="flex-align-center"><div class="product-icon flex-center">限时闪购</div></div>
-	            <div class="product-price">￥<span>3800.00</span> <span>￥4000.00</span></div>
+	            <div class="product-name p-nowrap">{{item.goods_name}}</div>
+	            <div class="product-specs">{{item.specs_name}}</div>
+	            <div v-if="item.goods_type == 2" class="flex-align-center"><div class="product-icon flex-center">特卖</div></div>
+	            <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
 	          </div>
 	        </div>
 	        <div class="cart-operate">
-	          <div class="operate-btn product-sub flex-between" data-types="-1" data-index="" bindtap="countTab"></div>
+	          <div class="operate-btn product-sub flex-between" @click.stop="countTab(index,-1)"></div>
 	          <div class="shop-btn-block">
-	            <div class="shop-num">11</div>
+	            <div class="shop-num">{{item.count}}</div>
 	          </div>
-	          <div class="operate-btn product-add not-add flex-between" data-types="1" data-index="" bindtap=""></div>
+	          <div :class="[parseInt(item.count) >= parseInt(item.max_buy) ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
 	        </div>
-	        <div class="product-del" catchtap="delCarts" data-index=""><img class="width-100" mode="aspectFill" src="/resource/images/close_02.png" /></div>
+	        <div class="product-del" @click.stop="delCarts(index)" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>
 	    </div>
 		</div>
+    <div v-else class="empty-session">
+      <img src="@/assets/img/empty_cart.png" />
+      <div>暂无商品</div>
+    </div>
     <div class="cart-empty"></div>
-    <div class="cart-bottom bottom-fixed">
+    <div v-if="carts.length" class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
-        <div class="all-checkbox" catchtap="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
-        <div class="all-price"><span>合计：</span>￥55</div>
-        <div class="all-go flex-center" catchtap="payFunc">结算(2)</div>
+        <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
+        <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
+        <div class="all-go flex-center" v-txAnalysis="15" @click="payFunc">结算({{numTotal}})</div>
       </div>
     </div>
-		<!-- <div class="cart-bottom">
-			<van-submit-bar
-			  :price="3050"
-			  button-text="提交订单"
-			  @submit="onSubmit"
-			>
-			  <van-checkbox v-model="checked">全选</van-checkbox>
-			</van-submit-bar>
-		</div> -->
 	</div>
 </template>
 
 <script>
-// import '@/styles/life.css'
+import { NavBar, Toast } from 'vant'
+import { getCart } from '@/api/life.js'
 export default {
+  components: {
+    [NavBar.name]: NavBar,
+    [Toast.name]: Toast,
+  },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       checked: false,
-      carts: [1, 2, 3, 4, 5, 6]
+
+      carts: [],           //购物车
+      priceTotal: '',      //支付总额
+      numTotal: '',        //支付商品总件数
+      noneHidden: true,    //购物车是否为空
+      allSelected: true,   //全选
     }
   },
+  created(){
+    // var carts = JSON.parse(localStorage.getItem('cart'));
+    var carts = api.getPrefs({ sync: true, key: 'cart' }) || [];
+    if(carts && carts.length > 0){
+      carts = JSON.parse(carts);
+    }
+    this.carts = carts;
+    this.total();
+    // this.getData();
+  },
   methods: {
-    onSubmit: function () {
-
+    getData(){
+      console.log('cart',this.carts);
+      getCart({
+        giftbag: JSON.stringify(this.carts)
+      }).then(res => {
+        if (res.success) {
+          this.infoData = res.data;
+          this.carts = res.goods_arr;
+          api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
+        }
+      })
+    },
+    linkFunc (type,obj={}) {
+      switch (type){
+        case 5:
+        this.$router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: obj.id
+          }
+        })
+        break;
+        case 8:
+        this.$router.push({
+          path: '/life/settlement',
+          query: {
+            id: 1
+          }
+        })
+        break;
+      }
+    },
+    // 商品数量加减
+    countTab(index, types) {
+      if(types === 1 && this.carts[index].count >= this.carts[index].max_buy) return;
+      if (parseInt(this.carts[index].count) + types > 0) {
+        this.carts[index].count = parseInt(this.carts[index].count) + types;
+      } else {
+        this.delOne(index);
+      }
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
+      this.total();
+    },
+    //点击删除按钮
+    delCarts(index) {
+      this.delOne(index);
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
+      this.total();
+    },
+    // 删除购物车中的某个商品
+    delOne(index) {
+      let indexTab = index;
+      let carts_arr = this.carts;
+      carts_arr.splice(indexTab, 1);
+      this.carts = carts_arr;
+    },
+    /**
+     * 勾选/取消单个商品
+    */
+    checkboxOne(index) {
+      let indexTab = index;
+      this.carts[index].is_checked = !this.carts[indexTab].is_checked;
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
+      this.total();
+    },
+    /**
+     * 全选/全不选
+    */
+    checkboxAll() {
+      let carts_arr = this.carts;
+      let is_checked= this.allSelected;
+      for (let i = 0; i < carts_arr.length; i++) {
+        carts_arr[i].is_checked = !is_checked;
+      }
+      this.carts = carts_arr;
+      this.allSelected = !is_checked;
+      // localStorage.setItem('cart', JSON.stringify(this.carts));
+      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) });
+      this.total();
+    },
+    /**
+     * 计算商品数量/价格
+     */
+    total() {
+      let carts_arr = this.carts;
+      if(carts_arr.length < 1){
+        this.numTotal = 0;
+        this.priceTotal = '0.00';
+        this.allSelected = false;
+      }else{
+        let carts_list = [];
+        let numTotal = 0;
+        let priceTotal = 0;
+        let checked_num = 0;
+        for (var j in carts_arr) {
+          if (carts_arr[j].is_checked){
+            checked_num++;
+            numTotal += parseInt(carts_arr[j].count);
+            priceTotal += parseFloat(carts_arr[j].count * carts_arr[j].pay_price);
+          }
+        }
+        this.allSelected = checked_num === carts_arr.length ? true : false;
+        this.numTotal = numTotal;
+        this.priceTotal = 0 ? '0.00' : (priceTotal/100).toFixed(2);
+        if (numTotal > 0) {
+          this.getData();
+          return;
+        }
+      } 
+    },
+    /**
+     * 结算
+    */
+    payFunc() {
+      const that = this;
+      if(this.numTotal === 0){
+        Toast('请选择要结算的商品');
+      }else {
+        getCart({
+          giftbag: JSON.stringify(this.carts)
+        }).then(res => {
+          if (res.success) {
+            if(res.goods_arr.length && that.infoData.total_pay_price == res.data.total_pay_price){
+              that.linkFunc(8);
+            }else {
+              that.carts = res.goods_arr;
+              api.setPrefs({ key: 'cart', value: JSON.stringify(that.carts) });
+              that.total();
+            }
+          }
+        })
+        return;
+      }
     }
   }
 }
 </script>
 
+<style scoped  src="../../../styles/life.css"></style>
 <style scoped>
-@import '../../../styles/life.css';
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
-  overflow: hidden;
 }
 /* 购物车商品列表 start */
 .cart-session {
@@ -115,7 +271,7 @@ export default {
 }
 .cart-checkbox.cur .checkbox-session,.all-checkbox.cur .all-checkbox-session {
   border: none;
-  background: #eb5841 url('https://bht.liwushijian.com/library/img/xcx_img/tick2.png') no-repeat center center/100% 100%;
+  background: url('../../../assets/img/tick2.png') no-repeat center center/100% 100%;
 }
 .cart-cont {
   width: 638px;
@@ -131,6 +287,7 @@ export default {
   flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
+  background-color: #f4f4f4;
 }
 .product-info {
   width: 478px;
@@ -191,11 +348,14 @@ export default {
   z-index: 5;
   position: relative;
 }
-.product-sub {
+.product-sub::after {
   background: url('https://bht.liwushijian.com/library/img/xcx_img/sub.png') no-repeat center center/16px 16px;
 }
-.product-add {
+.product-add::after {
   background: url('https://bht.liwushijian.com/library/img/xcx_img/add.png') no-repeat center center/16px 16px;
+}
+.product-add.not-add::after {
+  background-color: #ccc;
 }
 .operate-btn::after {
   position: absolute;
@@ -204,7 +364,7 @@ export default {
   height: 44px;
   top: 20px;
   bottom: 20px;
-  border: 1px solid #aaa;
+  border: 1.3px solid #aaa;
   box-sizing: border-box;
 }
 .product-sub::after {
@@ -224,8 +384,8 @@ export default {
   font-size: 26px;
   color: #222;
   text-align: center;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-top: 1.3px solid #aaa;
+  border-bottom: 1.3px solid #aaa;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -240,15 +400,20 @@ export default {
   display: flex;
   z-index: 5;
 }
+.product-del img {
+  width: 20px;
+  height: 20px;
+}
 
 /*底部*/
 .cart-empty {
   height: 120px;
 }
 .cart-data {
-  height: 120px;
+  height: 121px;
   background-color: #fff;
   line-height: 120px;
+  border-top: 1.4px solid #E5E5E5;
 }
 .all-checkbox {
   width: 140px;

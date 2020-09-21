@@ -49,6 +49,9 @@
   flex-shrink: 0;
   height: 100%;
 }
+.coupon-price-num {
+  line-height: 190px;
+}
 .coupon-price span {
   font-size: 30px;
   font-weight: normal;
@@ -65,19 +68,20 @@
   font-size: 24px;
   width: 120px;
   height: 40px;
-  line-height: 40px;
+  /*line-height: 40px;
   text-align: center;
   background-color: #ffa110;
   color: #fff;
-  font-weight: bold;
+  font-weight: bold;*/
   margin: 0 auto;
-  border-radius: 20px 0 20px 0;
+  /*border-radius: 20px 0 20px 0;*/
+  display: flex;
 }
 .coupon-line {
   height: 76px;
   width: 0;
   flex-shrink: 0;
-  border-right: 1px dashed #aaa;
+  border-right: 1.3px dashed #aaa;
 }
 .coupon-time {
   width: 30px;
@@ -131,7 +135,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 80px;
+  width: 100%;
   height: 60px;
   z-index: 5;
 }
@@ -160,9 +164,10 @@
   font-size: 22px;
 }
 .point-bg {
+  line-height: 38px;
   white-space: pre-wrap;
   padding-left: 34px;
-  background: url('/src/assets/img/icon_08.png') repeat-y left 10px/17px 38px;
+  background: url('../../src/assets/img/icon_08.png') repeat-y left 10px/17px 38px;
 }
 
 

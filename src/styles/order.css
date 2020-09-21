@@ -1,7 +1,6 @@
 .app-body {
 	background-color: #f2f2f4;
-	font-size: 8px;
-	overflow: hidden;
+	font-size: 28px;
 }
 
 .cont-session {
@@ -41,7 +40,6 @@
 .order-status {
   text-align: right;
 	width: 170px;
-	color: #eb5841;
 }
 .order-goods-info {
   margin-bottom: 30px;
@@ -57,6 +55,7 @@
   overflow: hidden;
   border-radius: 4px;
   overflow: hidden;
+  background-color: #f4f4f4;
 }
 .order-info {
   width: 500px;
@@ -69,25 +68,36 @@
 }
 .order-name-price {
 	width: 100%;
-  height: 6px;
+  height: 46px;
   color: #222222;
 }
+.order-name-price .order-price {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	line-height: 46px;
+}
+.order-name-price .order-price img {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
 .order-sku-num {
-  height: 4px;
+  height: 40px;
   color: #8f8f94;
-	font-size: 4px;
+	font-size: 24px;
 }
 .order-action-session {
 	height: 40px;
 	line-height: 30px;
 	padding-top: 10px;
-	font-size: 4px;
+	font-size: 24px;
 	color: #eb5841;
 }
 .order-buy-num {
 	text-align: right;
 	color: #8f8f94;
-	font-size: 4px;
+	font-size: 24px;
 }
 .order-action-text {
 	display: flex;
@@ -103,39 +113,48 @@
 	width: 50px;
 	height: 50px;
 	padding: 10px;
-	margin-top: -10px;
+	/*margin-top: -10px;*/
 }
 .order-goods-btn {
 	width: 100%;
-	height: 6px;
-	margin-top: 6px;
+	height: 66px;
+	margin-top: 16px;
 	display: flex;
 	justify-content: flex-end;
 }
 
 .order-footer {
-	min-height: 2px;
+	min-height: 92px;
 	border-top: 1px solid #f0f0f0;
 }
 .order-total {
 	height: 80px;
 	text-align: right;
-	padding-top: 5px;
+	padding-top: 15px;
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
 	color: #8f8f94;
-	font-size: 4px;
+	font-size: 24px;
 }
 .order-price-total {
-	margin-left: 8px;
+	margin-left: 18px;
 	display: flex;
 	align-items: center;
 }
 .order-price-total span {
 	font-weight: bold;
 	color: #222222;
-	font-size: 4px;
+	font-size: 34px;
+	display: flex;
+	height: 100%;
+	align-items: center;
+	line-height: 80px;
+}
+.order-price-total span img {
+	width: 28px;
+  height: 28px;
+  margin: 0 8px 0 10px;
 }
 .order-btn-box {
 	padding-bottom: 30px;
@@ -143,10 +162,10 @@
 	justify-content: flex-end;
 }
 .order-border-btn {
-	height: 6px;
+	height: 66px;
 	min-width: 158px;
 	border-radius: 6px;
-	border: 1px solid #aaa;
+	border: 1.3px solid #aaa;
 	padding: 0 20px;
 	display: flex;
 	align-items: center;
@@ -157,12 +176,32 @@
 	border-width: 0;
 	background-color: #eb5841;
 	color: #fff;
-	font-size: 6px;
+	font-size: 26px;
+}
+.paid-btn .van-count-down {
+	color: #fff;
+	font-size: 26px;
 }
 	
 .toggle-btn {
-	height: 6px;
+	height: 66px;
 	margin-top: -30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.toggle-btn.btn-up img {
+	transform: rotate(180deg);
+}
+.toggle-btn img {
+	width: 22px;
+	height: 13px;
+}
+.toggle-up {
+	display: none;
+}
+.toggle-up.toggle-down {
+	display: flex;
 }
 
 
@@ -182,38 +221,54 @@
 .order-status-session {
 	height: 174px;
 	text-align: center;
-	padding-top: 6px;
+	padding-top: 26px;
 	position: relative;
 	z-index: 6;
 }
 .order-status-name {
-	line-height: 6px;
-	font-size: 8px;
+	line-height: 66px;
+	font-size: 38px;
 	font-weight: bold;
 	color: #fefefe;
 }
 .order-status-tip {
-	line-height: 6px;
-	font-size: 8px;
+	line-height: 56px;
+	font-size: 28px;
 	color: #fefefe;
+}
+.order-status-tip .van-count-down {
+	display: inline;
+	color: #fff;
+	font-size: 26px;
 }
   /* 订单价格信息 */
 .detail-price-list {
-	padding: 6px 0;
+	padding: 16px 0;
 	border-top: 1px solid #f0f0f0;
 	border-bottom: 1px solid #f0f0f0;
 }
 .detail-price-item {
 	display: flex;
 	justify-content: space-between;
-	height: 2px;
+	height: 52px;
 	align-items: center;
-	font-size: 4px;
+	font-size: 24px;
 	color: #222;
+}
+.detail-price-item > div:last-child {
+	display: flex;
+	height: 100%;
+	align-items: center;
+	line-height: 52px;
+}
+.detail-price-item > div:last-child img {
+	width: 28px;
+  height: 28px;
+  margin-right: 8px;
 }
 .flex-sart-item {
 	display: flex;
-	height: 2px;
+	height: 52px;
 	align-items: center;
 }
 .flex-sart-item-left {
@@ -233,21 +288,23 @@
 	justify-content: center;
 }
 .address-logistics {
-	padding: 6px 30px;
+	padding: 26px 30px;
 }
 .shipping-logistics {
-	margin-top: 6px;
-	padding-top: 6px;
-	border-top: 1px solid #f0f0f0;
+	margin-top: 26px;
+	padding-top: 26px;
+	border-top: 1.4px solid #f0f0f0;
 }
 .shipping-address-item,.order-remarks-item,.order-message-item {
 	display: flex;
-	height: 2px;
+	height: 52px;
 	align-items: center;
 	position: relative;
 }
-.order-remarks-item .order-remarks-text {
+.order-remarks-item .order-remarks-text,
+.order-remarks-item .order-remarks-item-left {
 	color: #222;
+	line-height: 52px;
 }
 .shipping-logistics-item {
 	display: flex;
@@ -262,27 +319,30 @@
 }
 .shipping-address-username {
 	max-width: 280px;
-	@extend .p-ellipsis;
+	margin-right: 20px;
+}
+.shipping-address-text {
+	font-size: 24px;
 }
 .shipping-address-text,.order-remarks-text {
 	max-width: 504px;
 	color: #8f8f94;
-	font-size: 4px;
 }
 .shipping-logistics-item-right {
 	position: relative;
-	padding-left: 6px;
+	padding-left: 36px;
 }
 .shipping-address-icon {
 	position: absolute;
 	right: 0;
-	top: 0;
-	width: 6px;
-	height: 6px;
+	top: 50%;
+	margin-top: -13px;
+	width: 16px;
+	height: 26px;
 }
 .shipping-logistics-point {
 	position: absolute;
-	top: 6px;
+	top: 16px;
 	left: 8px;
 	width: 8px;
 	height: 8px;
@@ -291,11 +351,11 @@
 }
 .shipping-logistics-line {
 	position: absolute;
-	top: 4px;
+	top: 34px;
 	bottom: 10px;
-	left: 1px;
+	left: 11px;
 	width: 2px;
-	height: 6px;
+	height: 36px;
 	background-color: #aaa;
 	border-radius: 4px;
 }
@@ -304,19 +364,24 @@
 	flex-wrap: wrap;
 	width: 466px;
 	color: #8f8f94;
-	font-size: 4px;
+	font-size: 24px;
 }
 .order-remarks {
-	height: 120px;
+	min-height: 120px;
+}
+.order-remarks .order-remarks-item {
+	height: auto;
+	align-items: flex-start;
+	padding: 26px 30px;
 }
    /* 订单信息 */
 .order-message {
-	padding: 6px 30px;
+	padding: 26px 30px;
 	align-items: center;
 	justify-content: center;
 }
 .order-message-item {
-	height: 6px;
+	height: 56px;
 	position: relative;
 }
 .order-tip-item {
@@ -333,13 +398,13 @@
 	width: 466px;
 }
 .order-tip-text {
-	line-height: 6px;
+	line-height: 56px;
 }
 .van-icon.tip-icon {
 	position: absolute;
 	right: 0;
 	height: 100%;
-	line-height: 6px;
+	line-height: 56px;
 }
 .copy-btn {
 	position: absolute;
@@ -348,20 +413,21 @@
 	padding: 10px;
 }
 .copy-text {
-	height: 2px;
-	line-height: 8px;
-	width: 8px;
+	height: 32px;
+	line-height: 28px;
+	width: 58px;
 	color: #ffa110;
-	font-size: 2px;
+	font-size: 22px;
 	text-align: center;
 	border: 2px solid #ffa110;
 }
   /* 底部按钮 */
 .fixed-empty {
-	height: 150px;
+	/*height: 150px;*/
+	height: 120px;
 }
 .btn-fixed-buttom {
-	position: fixed;
+	position: absolute;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -373,29 +439,24 @@
 	border-top: 1px solid #f0f0f0;
 	background-color: #fff;
 }
-
-/*弹窗*/
-.mask-block {
-	height: 528px;
-	padding: 0 50px;
+.scroll-body {
+	max-height: calc(100% - 88px);
+	overflow-y: auto;
 }
-.mask-tit {
-	height: 120px;
-	border-bottom-color: #f0f0f0;
-	border-bottom-width: 2px;
-	border-bottom-style: solid;
+.scroll-body.scroll-body-btn {
+	max-height: calc(100% - 208px);
+}
+
+
+.order-bar .van-nav-bar__right .nav-serve {
+	height: 100%;
+	width: 100%;
+	padding: 0 10px 0 20px;
 	display: flex;
 	align-items: center;
-	justify-content: center;
 }
-.mask-cont {
-	margin: 8px 0;
-	overflow: visible;
+.order-bar .van-nav-bar__right .nav-serve img {
+	width: 44px;
+	height: 44px;
 }
-.mask-cont-text {
-	line-height: 6px;
-}
-.mask-btn div.mask-sure-btn {
-	align-items: center;
-	width: 100%;
-}
+

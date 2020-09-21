@@ -1,27 +1,27 @@
 <template>
-  <div class="tf-bg">
-    <van-nav-bar title="我的投诉表扬" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
-      <refreshList :list.sync="data" @load="getComPraiseList">
+  <div class="tf-bg tf-body">
+    <van-nav-bar title="我的投诉表扬" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-body-container">
+      <refreshList :list.sync="data" :load="getComPraiseList">
         <template v-slot="{item}">
           <div class="tf-card" @click="jump(item)">
-          <div class="tf-card-header">
-            <userInfo avatar="/static/app-icon.png" :name="item.name" :time="item.ctime">
-              <template v-slot:right>
-                <div class="tf-icon">{{item.info_type}}</div>
-              </template>
-            </userInfo>
+            <div class="tf-card-header">
+              <userInfo :avatar="userInfo.avatar" :name="userInfo.nickname" :time="item.ctime">
+                <template v-slot:right>
+                  <div
+                    class="tf-icon"
+                    :class="[{'tf-text-primary': item.info_type==2}, item.info_type == '1' ? 'tf-icon-tousu' : 'tf-icon-biaoyang']"
+                  ></div>
+                </template>
+              </userInfo>
+            </div>
+            <div class="tf-card-content">{{ item.content }}</div>
+            <tf-image-list v-if="item.images" class="pb10" :data="item.images"></tf-image-list>
+            <div v-if="item.reply" class="reply-box">
+              <div class="reply-title">社区回复</div>
+              <div class="reply-content">{{ item.reply }}</div>
+            </div>
           </div>
-          <div class="tf-card-content">{{ item.content }}</div>
-          <div class="tf-image-box">
-            <img class="details-image" mode="aspectFill" v-for="(item, i) in item.images" :key="i" :src="item.src" v-if="i < 3">
-            <div class="details-image--shade" v-if="item.images.length > 3">+{{ item.images.length - 3 }}</div>
-          </div>
-          <div v-if="item.reply" class="reply-box">
-            <div class="reply-title">社区回复</div>
-            <div class="reply-content">{{ item.reply }}</div>
-          </div>
-        </div>
         </template>
       </refreshList>
     </div>
@@ -32,74 +32,30 @@
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import userInfo from '@/components/user-info/index.vue'
-import { getComPraiseList } from '@/api/butler/butler.js'
+import { getComPraiseList } from '@/api/butler.js'
+import tfImageList from '@/components/tf-image-list'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
     refreshList,
+    tfImageList,
     userInfo
   },
   data () {
     return {
-      data: [
-        {
-          id: '1',
-          content: '厨房下水道堵了都没有及时来处理',
-          info_type: 1,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了',
-          images: [
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            }
-          ]
-        },
-        {
-          id: '2',
-          content: '厨房下水道堵了都没有及时来处理2',
-          info_type: 2,
-          ctime: '2020-06-03 16:35:26',
-          reply: '已经分派相关工作人员去处理了',
-          images: [
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            },
-            {
-              src: '/static/app-icon.png'
-            }
-          ]
-        }
-      ]
+      data: []
     }
   },
-  created () {
-    this.getComPraiseList()
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   methods: {
-    getComPraiseList () {
-      getComPraiseList().then(res => {
-        if (res.success) {
-          this.data = res.data
-        }
-      })
+    getComPraiseList (params) {
+      return getComPraiseList(params)
     },
     jump (item) {
-      const url = `/pages/butler/compraise/details?id=${item.id}&type=${item.info_type}`
+      const url = `/pages/butler/compraise/details?id=${item.id}`
       this.$router.push(url)
     }
   }
@@ -133,7 +89,7 @@ export default {
   color: @gray-7;
   font-size: 24px;
   line-height: 52px;
-  border-radius:10px;
+  border-radius: 10px;
 }
 
 .tf-image-box {
@@ -143,23 +99,13 @@ export default {
   padding-bottom: 30px;
 }
 
-.details-image {
-  width: 200px;
-  height: 200px;
+.pb10 {
+  padding-bottom: 10px;
 }
 
-.details-image--shade {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  line-height: 200px;
-  z-index: 1;
-  background-color: #000000;
-  opacity: 0.6;
-  top: 0;
-  right: 0;
-  text-align: center;
-  color: #fff;
-  font-size: 54px;
+.tf-icon {
+  font-size: 36px;
+  line-height: 88px;
+  color: #383838;
 }
 </style>

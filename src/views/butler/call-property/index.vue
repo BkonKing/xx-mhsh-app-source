@@ -1,14 +1,19 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="呼叫物业" :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)">
-    </van-nav-bar>
+    <van-nav-bar
+      title="呼叫物业"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-main-container">
       <div class="introduce-box">
-        <img class="bg-image" src="@/assets/app-icon.png" mode="aspectFit" />
         <div class="logo-badge">
-          <img src="@/assets/app-icon.png" mode="aspectFit" class="logo-image" />
+          <img src="@/assets/imgs/property_logo.png" mode="aspectFit" class="logo-image" />
         </div>
-        <div class="property-title">{{ project_name }}</div>
+        <div class="property-title">{{ projectName }}</div>
         <div class="property-content">{{ remarks }}</div>
       </div>
       <div class="tf-bg tf-padding-base">
@@ -22,84 +27,42 @@
           :avatar="item.icon_images"
         ></phone-card>
       </div>
-      <div class="tf-bg-white">
-        <text class="module-title">常见问题</text>
-        <van-collapse v-model="activeNames">
-          <van-collapse-item v-for="(item, i) in eqList" :key="i" :name="i">
-            <template #title>
-              <div class="tf-van-collapse-item__title tf-row">
-                <div class="question-index-box">Q{{i + 1}}</div>
-                {{item.question}}
-              </div>
-            </template>
-            <div class="question-content">{{item.answer}}</div>
-          </van-collapse-item>
-        </van-collapse>
+      <div v-if="eqList && eqList.length > 0" class="tf-bg-white">
+        <div class="module-title">常见问题</div>
+        <FAQ :data="eqList"></FAQ>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Collapse, CollapseItem } from 'vant'
+import { NavBar } from 'vant'
+import FAQ from './components/FAQ'
 import phoneCard from '../components/phone-card.vue'
-import { getCallWYList } from '@/api/butler/butler.js'
+import { getCallWYList } from '@/api/butler.js'
 export default {
   components: {
     phoneCard,
-    [NavBar.name]: NavBar,
-    [Collapse.name]: Collapse,
-    [CollapseItem.name]: CollapseItem
+    FAQ,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
-      activeNames: [],
-      project_name: '郑州美好生活家园',
-      remarks:
-        '郑州美好生活家园郑州美好生活家园郑州美好生活家园郑州美好生活家园',
-      phoneList: [
-        {
-          id: '1',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          title: '物业热线1',
-          telephone: '15050505050',
-          remarks: '24小时在线'
-        },
-        {
-          id: '2',
-          icon_images:
-            'https://mmm.cc/libaray/upload/images/2020/05/01/ssss.jpg',
-          title: '物业热线2',
-          telephone: '15050505050',
-          remarks: '24小时在线'
-        }
-      ],
-      eqList: [
-        {
-          id: '1',
-          question: '门禁二维码打不开门？',
-          answer:
-            '智能门禁摄像头需要读到二维码信息后才能发送开幕指令给门禁，正确的使用方法是将二维码对准摄像头'
-        },
-        {
-          id: '2',
-          question: '门禁二维码打不开门？',
-          answer:
-            '智能门禁摄像头需要读到二维码信息后才能发送开幕指令给门禁，正确的使用方法是将二维码对准摄像头'
-        }
-      ]
+      projectName: '',
+      remarks: '',
+      phoneList: [],
+      eqList: []
     }
   },
   created () {
-    // this.getCallWYList()
+    this.getCallWYList()
   },
   methods: {
     getCallWYList () {
       getCallWYList().then((res) => {
         if (res.success) {
           const { project_name, remarks, records, eq } = res.data
-          this.project_name = project_name
+          this.projectName = project_name
           this.remarks = remarks
           this.phoneList = records
           this.eqList = eq
@@ -114,27 +77,36 @@ export default {
 .introduce-box {
   @relative();
   width: 100%;
-  height: 350px;
+  min-height: 350px;
   align-items: center;
-  margin-bottom: 20px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 10px;
+  z-index: 1;
+}
+
+.introduce-box::before {
+  background: url("../../../assets/imgs/property_pic.png") no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 350px;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /*-1 可以当背景*/
 }
 
 .logo-badge {
   @flex();
   justify-content: center;
   align-items: center;
-  margin: 30px auto;
-  width: 120px;
-  height: 120px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: @red-dark;
-  border-radius: 50%;
+  margin: 0 auto 30px;
 }
 
 .logo-image {
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
 }
 
@@ -157,7 +129,7 @@ export default {
 
 .bg-image {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   width: 100%;
   height: 350px;
 }
@@ -165,31 +137,14 @@ export default {
   font-size: @font-size-lg;
   font-weight: bold;
   color: @text-color;
-  padding: @padding-md;
+  padding: 40px 30px;
 }
-.question-index-box {
-  width: 72px;
-  height: 45px;
-  line-height: 45px;
-  font-size: 24px;
-  margin-right: @padding-md;
-  color: #fff;
-  background-color: @gray-8;
-  text-align: center;
+/deep/ .van-hairline--top-bottom::after,
+.van-hairline-unset--top-bottom::after {
+  border-width: 2px 0;
 }
-.question-content {
-  font-size: 26px;
-  color: #666;
-  line-height: 54px;
-  padding: 0 30px 50px;
-}
-
-/deep/ .van-collapse-item__title {
-  display: flex;
-  align-items: center;
-}
-.tf-van-collapse-item__title {
-  padding: 30px;
-  align-items: center;
+.tf-bg-white {
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
 }
 </style>

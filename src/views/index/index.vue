@@ -1,14 +1,11 @@
 <template>
-  <div class="view-container">
+  <div class="view-container tf-immersion">
     <div class="view-main-container">
-      <div class="placeholder-box" :style="{height: `${statusBarHeight}px`}"></div>
-      <div class="view-main">
-        <router-view />
-      </div>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
-    <footer>
-      <Tabbar :tabList="tabList"></Tabbar>
-    </footer>
+    <Tabbar></Tabbar>
   </div>
 </template>
 
@@ -17,44 +14,23 @@
 import Tabbar from './components/tabbar'
 
 export default {
+  name: 'mainIndex',
   components: {
     Tabbar
   },
   data () {
     return {
       codeScan: null,
-      statusBarHeight: 0,
-      tabList: [
-        {
-          title: '首页',
-          path: '/'
-        },
-        {
-          title: '生活',
-          path: '/life'
-        },
-        {
-          title: '管家',
-          path: '/butler'
-        },
-        {
-          title: '邻里',
-          path: '/neighbours'
-        },
-        {
-          title: '我的',
-          path: '/personage'
-        }
-      ]
+      statusBarHeight: 0
     }
   },
-  created () {
+  created () {},
+  activated () {
+    if (this.$route.name !== 'personage') {
+      this.$store.dispatch('getMyAccount')
+    }
   },
   methods: {
-    getStatusBarHeight () {
-      const statusBar = this.$api.require('statusBar')
-      this.statusBarHeight = statusBar.getStatusBarHeight()
-    },
     onClickRight () {}
   }
 }
@@ -77,5 +53,6 @@ export default {
 .view-main {
   flex: 1;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 </style>

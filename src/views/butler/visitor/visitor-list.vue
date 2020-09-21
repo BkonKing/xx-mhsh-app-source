@@ -1,29 +1,32 @@
 <template>
-  <div class="tf-padding-base tf-bg">
-    <van-nav-bar title="访客" :fixed="true" left-arrow @click-left="$router.go(-1)" />
-    <div class="tf-main-container">
-
-    <div v-for="(item, i) in data" :key="i" class="list-item tf-row-space-between">
-      <div class="tf-row">
-        <div class="tf-text">{{ item.realname }}</div>
-        <div class="tf-text">{{ item.gender | sex}}</div>
-        <div class="tf-text tf-text-grey">{{ item.mobile }}</div>
-        <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
+  <div class="tf-bg">
+    <van-nav-bar title="访客" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <div class="tf-padding">
+      <div
+        v-for="(item, i) in data"
+        :key="i"
+        class="list-item tf-row-space-between"
+        @click="onClick(item)"
+      >
+        <div class="tf-row">
+          <div class="tf-text">{{ item.realname }}</div>
+          <div class="tf-text">{{ item.gender | sex}}</div>
+          <div class="tf-text tf-text-grey">{{ item.mobile }}</div>
+          <div class="tf-text tf-text-grey">{{ item.car_number }}</div>
+        </div>
+        <div class="tf-row">
+          <span class="tf-icon tf-icon-bianji" @click.stop="jump(0, item)"></span>
+          <span class="tf-icon tf-icon-shanchu icon--remove" @click.stop="deleteMyVisitor(item.id)"></span>
+        </div>
       </div>
-      <div class="tf-row">
-        <span class="tf-icon tf-icon-edit-square" @click="jump(0, item)"></span>
-        <span class="tf-icon tf-icon-delete icon--remove" @click="deleteMyVisitor(item.id)"></span>
-      </div>
+      <van-button type="danger" size="large" @click="jump(1)">新增访客</van-button>
     </div>
-    <van-button type="danger" size="large" @click="jump(1)">新增访客</van-button>
-    </div>
-
   </div>
 </template>
 
 <script>
-import { NavBar, Button, Toast } from 'vant'
-import { getMyVisitorList, deleteMyVisitor } from '@/api/butler/butler.js'
+import { NavBar, Button, Toast, Dialog } from 'vant'
+import { getMyVisitorList, deleteMyVisitor } from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -31,40 +34,40 @@ export default {
   },
   data () {
     return {
-      items: ['待来访', '已过期', '已到访'],
-      current: 0,
-      data: [
-        {
-          id: '1',
-          realname: '陈小东',
-          mobile: '13699466258',
-          gender: 1,
-          car_number: '闽A88888'
-        },
-        {
-          id: '2',
-          realname: '许岩',
-          mobile: '13793636398',
-          gender: 2,
-          car_number: '闽A88866'
-        }
-      ]
+      type: undefined,
+      data: []
     }
   },
+  created () {
+    this.type = this.$route.query.type
+    this.getMyVisitorList()
+  },
   methods: {
+    onClick (item) {
+      // eslint-disable-next-line eqeqeq
+      if (this.type == '2') {
+        this.$store.commit('setVisitorList', item)
+        this.$router.go(-1)
+      }
+    },
     getMyVisitorList () {
-      getMyVisitorList().then(res => {
+      getMyVisitorList().then((res) => {
         if (res.success) {
           this.data = res.data
         }
       })
     },
-    deleteMyVisitor ({ id }) {
-      deleteMyVisitor({
-        id
-      }).then(res => {
-        Toast({
-          message: '删除成功'
+    deleteMyVisitor (id) {
+      Dialog.confirm({
+        title: '是否删除该访客信息'
+      }).then(() => {
+        deleteMyVisitor({
+          id
+        }).then((res) => {
+          Toast({
+            message: '删除成功'
+          })
+          this.getMyVisitorList()
         })
       })
     },

@@ -26,7 +26,10 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "noticeIndex" */
         '@/views/butler/notice/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/butler/notice/details',
@@ -63,6 +66,19 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "repairsList" */
         '@/views/butler/repairs/list.vue'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // 评价
+  {
+    path: '/pages/butler/repairs/evaluate',
+    name: 'repairsEvaluate',
+    component: () =>
+      import(
+        /* webpackChunkName: "repairsEvaluate" */
+        '@/views/butler/repairs/evaluate.vue'
       )
   },
   /* 免费服务 */
@@ -84,6 +100,15 @@ const butlerRouter = [
         '@/views/butler/freeserver/list.vue'
       )
   },
+  {
+    path: '/pages/butler/freeserver/confirm',
+    name: 'freeserverConfirm',
+    component: () =>
+      import(
+        /* webpackChunkName: "freeserverConfirm" */
+        '@/views/butler/freeserver/confirm.vue'
+      )
+  },
   /* 访客邀约 */
   {
     path: '/pages/butler/visitor/index',
@@ -92,7 +117,10 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "visitorIndex" */
         '@/views/butler/visitor/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/butler/visitor/invite',

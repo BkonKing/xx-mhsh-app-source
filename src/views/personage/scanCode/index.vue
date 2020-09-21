@@ -1,34 +1,51 @@
 <template>
-  <view class="tf-screen">
-    <view class="tf-bg main">
-      <text class="tf-icon" @click="goBack">&#xe89d;</text>
-      <barcode
-        v-if="current === 1"
-        class="barcode"
-        autostart="true"
-        ref="barcode"
-        background="#c0c2c4"
-        frameColor="#1C86EE"
-        scanbarColor="#1C86EE"
-        :filters="[0]"
-        @marked="success1"
-        @error="fail1"
-      ></barcode>
-    </view>
-    <view class="tabs">
-      <view class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
-        <text class="tab-text">{{ item.name }}</text>
-        <text v-if="item.value === current" class="tab-active"></text>
-      </view>
-    </view>
-  </view>
+  <div class="tf-bg">
+    <span v-if="current !== 1" class="tf-icon tf-icon-close-circle-fill" @click="goBack"></span>
+    <div class="tab-content">
+      <template v-if="current === 1"></template>
+      <div class="tab-container" v-if="current === 2">
+        <div class="tab-title">付款码</div>
+        <div class="tab-content__box">
+          <div class="qrcode-box">
+            <img class="qrcode-image" :src="paymentCodeImg" />
+          </div>
+        </div>
+      </div>
+      <div class="tab-container" v-if="current === 3">
+        <div class="tab-title">收款码</div>
+        <div class="tab-content__box">
+          <div class="qrcode-box">
+            <img class="qrcode-image" :src="collectCodeImg" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tabs" id="scan-tabs">
+      <div class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
+        <div class="tab-text">{{ item.name }}</div>
+        <div v-if="item.value === current" class="tab-active"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import {
+  paymentScan,
+  collectScan,
+  getPaymentCode,
+  getCollectCode,
+  paymentStatus,
+  collectStatus
+} from '@/api/personage'
+import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
+import { Dialog, Toast } from 'vant'
+import { hasPermission, reqPermission } from '@/utils/permission'
 export default {
-  data() {
+  data () {
     return {
-      current: 1,
+      codeId: '',
+      current: 0,
       tabs: [
         {
           value: 1,
@@ -42,67 +59,361 @@ export default {
           value: 3,
           name: '收款码'
         }
-      ]
-    };
+      ],
+      paymentCodeImg: '',
+      collectCodeImg: '',
+      FNScanner: null,
+      timer: null,
+      footerHeight: 0
+    }
   },
-  mounted() {
-    this.toStart()
+  created () {
+    this.current = parseInt(this.$route.query.current) || 1
+    // 绑定frame关闭事件
+    window.closeFrame = new CustomEvent('closeFrame')
+    document.addEventListener('closeFrame', this.goBack)
   },
-  onHide() {
-    this.tocancel();
+  mounted () {
+    // this.scanSuccess('fukuan|526|100000|2|1599105402|78d219b889cd7887fa695da9bbf8d988')
+    this.FNScanner = api.require('FNScanner')
+    this.footerHeight = document.getElementById('scan-tabs').clientHeight
   },
   methods: {
-    switchTab(value) {
-      if (value !== 1) {
-        this.tocancel();
-        this.current = value;
-        uni.redirectTo({
-          url: '/pages/personage/scanCode/qrcode?current=' + this.current
-        });
+    /* 切换tab */
+    switchTab (value) {
+      this.current = value
+    },
+    /* 获取付款码二维码 */
+    getPaymentCode () {
+      getPaymentCode().then((res) => {
+        const { url, code_id } = res.data
+        this.paymentCodeImg = url
+        this.codeId = code_id
+        this.pollingPayment()
+      })
+    },
+    /* 获取收款码二维码 */
+    getCollectCode () {
+      getCollectCode().then((res) => {
+        const { url, code_id } = res.data
+        this.collectCodeImg = url
+        this.codeId = code_id
+        this.pollingCollect()
+      })
+    },
+    /* 轮询付款码当前状态 */
+    pollingPayment () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.paymentStatus()
+      }, 3000)
+    },
+    /* 轮询收款码当前状态 */
+    pollingCollect () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.collectStatus()
+      }, 3000)
+    },
+    /* 出示付款码请求获取码当前状态 */
+    paymentStatus () {
+      paymentStatus({
+        code_id: this.codeId
+      }).then(({ data }) => {
+        const { is_pay, credits, avatar, realname, mobile, remarks } = data
+        if (is_pay != '1') {
+          if (credits && credits != '0') {
+            this.$router.push({
+              name: 'happinessCoinPayment',
+              query: {
+                type: '3',
+                value: this.codeId,
+                avatar,
+                realname,
+                mobile,
+                credits,
+                remarks
+              }
+            })
+          } else {
+            this.pollingPayment()
+          }
+        } else {
+          Dialog.alert({
+            title: '支付成功'
+          })
+        }
+      })
+    },
+    /* 出示收款码请求获取码当前状态 */
+    collectStatus () {
+      collectStatus({
+        code_id: this.codeId
+      }).then(({ data }) => {
+        if (data.is_pay != '1') {
+          this.pollingCollect()
+        } else {
+          Dialog.alert({
+            title: `获得${data.credits}幸福币`
+          }).then(() => {
+            this.getCollectCode()
+          })
+        }
+      })
+    },
+    /* 扫码成功 */
+    scanSuccess (content) {
+      const value = content
+      const values = value.split('|')
+      switch (values[0]) {
+        case 'shoukuan':
+          this.collectScan(value, values)
+          break
+        case 'fukuan':
+          this.paymentScan(value, values)
+          break
+        case 'yuyuefuwu':
+          this.serverCodeScan(value, values)
+          break
+        case 'yuyuefangke':
+          this.visitorCodeScan(value, values)
+          break
+        case 'smzt':
+          this.takeCodeScan(value, values)
+          break
+        default:
+          break
       }
     },
-    goBack() {
-      uni.navigateBack();
+    /* 付款人扫了收款码 */
+    collectScan (value, values) {
+      collectScan({
+        code_info: value
+      })
+        .then((res) => {
+          const { check_status, is_pay, avatar, realname, mobile } = res.data
+          if (check_status) {
+            this.$router.push({
+              name: 'happinessCoinPayment',
+              query: {
+                type: '1',
+                value: values[1],
+                avatar,
+                realname,
+                mobile
+              }
+            })
+          }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
     },
-    success1(e) {
-      console.log('success1:' + JSON.stringify(e));
+    /* 收款人扫了付款码 */
+    paymentScan (value, values) {
+      paymentScan({
+        code_info: value
+      })
+        .then((res) => {
+          const { check_status, is_pay, avatar, realname, mobile } = res.data
+          if (check_status) {
+            if (is_pay == 0) {
+              this.$router.push({
+                name: 'happinessCoinPayment',
+                query: {
+                  type: '2',
+                  value: values[1],
+                  avatar,
+                  realname,
+                  mobile
+                }
+              })
+            } else {
+              api.toast({
+                msg: '对方已付款'
+              })
+            }
+          } else {
+            api.toast('扫码失败，二维码可能过期')
+          }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
     },
-    fail1(e) {
-      console.log('fail1:' + JSON.stringify(e));
+    /* 扫了免费服务码 */
+    serverCodeScan (value, values) {
+      serverCodeScan({
+        code_info: value
+      })
+        .then(({ data }) => {
+          if (data.check_status == 1) {
+            this.$router.push({
+              name: 'freeserverConfirm',
+              query: {
+                info: JSON.stringify(data),
+                code_id: values[1]
+              }
+            })
+          }
+        })
+        .catch((message) => {
+          api.alert({
+            title: message
+          })
+        })
     },
-    toStart: function() {
-      this.$refs.barcode.start({
-        conserve: true,
-        filename: '_doc/barcode/'
-      });
+    /* 扫了邀约码 */
+    visitorCodeScan (value) {
+      visitorCodeScan({
+        code_info: value
+      })
+        .then((res) => {
+          api.alert({
+            title: res.message
+          })
+        })
+        .catch((err) => {
+          api.alert({
+            title: err
+          })
+        })
     },
-    tocancel: function() {
-      this.$refs.barcode.cancel();
+    /* 扫了提货码 */
+    takeCodeScan (value) {
+      takeCodeScan({
+        code_info: value
+      })
+        .then((res) => {
+          api.alert({
+            title: res.message
+          })
+        })
+        .catch((err) => {
+          api.alert({
+            title: err
+          })
+        })
     },
-    toFlash: function() {
-      this.$refs.barcode.setFlash(true);
+    /* 打开扫码frame */
+    openFrame () {
+      api.openFrame({
+        name: 'scan',
+        url: './scan.html',
+        rect: {
+          x: 0,
+          y: 0,
+          w: 'auto',
+          h: 'auto',
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 0,
+          marginBottom: this.footerHeight
+        }
+      })
+      this.scan()
     },
-    toscan: function() {
-      console.log('scan:');
-      const barcodeModule = uni.requireNativePlugin('barcodeScan');
-      barcodeModule.scan('/static/barcode1.png', e => {
-        console.log('scan_error:' + JSON.stringify(e));
-      });
+    /* 关闭扫码frame */
+    closeFrame () {
+      api.closeFrame({
+        name: 'closebtn'
+      })
+      this.FNScanner.closeView()
+      api.closeFrame({
+        name: 'scan'
+      })
+    },
+    /* 打开扫码 */
+    scan () {
+      this.FNScanner.openView(
+        {
+          fixedOn: 'scan',
+          autorotation: true
+        },
+        (ret, err) => {
+          if (ret) {
+            const { eventType, content } = ret
+            switch (eventType) {
+              case 'success':
+                this.scanSuccess(content)
+                break
+              case 'show':
+                this.showClose()
+                break
+              default:
+                break
+            }
+          } else {
+            alert(JSON.stringify(err))
+          }
+        }
+      )
+    },
+    showClose () {
+      api.openFrame({
+        name: 'closebtn',
+        url: './closebtn.html',
+        rect: {
+          x: 0,
+          y: 0,
+          w: 'auto',
+          h: 'auto',
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 0,
+          marginBottom: this.footerHeight
+        }
+      })
+    },
+    goBack () {
+      this.$router.go(-1)
     }
+  },
+  watch: {
+    current (value) {
+      const len = api.frames().length
+      if (value === 1) {
+        const perms = hasPermission('camera')
+        if (!perms[0].granted) {
+          reqPermission('camera', ({ list }) => {
+            if (list[0].granted) {
+              !len && this.openFrame()
+            }
+          })
+        } else {
+          !len && this.openFrame()
+        }
+      } else {
+        len && this.closeFrame()
+        this.timer && clearTimeout(this.timer)
+        if (value === 2) {
+          this.getPaymentCode()
+        } else if (value === 3) {
+          this.getCollectCode()
+        }
+      }
+    }
+  },
+  beforeDestroy () {
+    this.closeFrame()
+    this.timer && clearTimeout(this.timer)
+    document.removeEventListener('closeFrame', this.goBack)
+    window.closeFrame = ''
   }
-};
+}
 </script>
 
-<style lang="less">
-.main {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 98px;
-}
+<style lang="less" scoped>
 .tf-icon {
-  position: fixed;
+  position: relative;
   top: 62px;
   left: 32px;
   font-size: 44px;
@@ -112,17 +423,58 @@ export default {
   flex: 1;
   background-color: #808080;
 }
+.tab-content {
+  @flex-column();
+  align-items: center;
+}
+.tab-container {
+  width: 600px;
+  height: 760px;
+  margin-top: 142px;
+  @flex-column();
+  align-items: center;
+  background-image: url("../../../assets/imgs/fukuan_bg.png");
+  background-size: contain;
+}
+.tab-title {
+  width: 100%;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
+  color: #fff;
+  font-size: 38px;
+}
+.tab-content__box {
+  width: 100%;
+  padding: 70px 50px;
+  justify-content: center;
+  align-items: center;
+}
+.qrcode-box {
+  width: 500px;
+  height: 500px;
+  padding: 14px;
+  border: 2px solid @red-dark;
+}
+.qrcode-image {
+  width: 472px;
+  height: 472px;
+}
 .tabs {
   position: fixed;
   bottom: 0;
   width: 750px;
-  height: 98px;
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: constant(safe-area-inset-bottom);
   background-color: #383838;
-  flex-direction: row;
+  display: flex;
 }
 .tab {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   align-items: center;
+  height: 98px;
 }
 .tab-text {
   height: 76px;

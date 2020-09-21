@@ -1,13 +1,13 @@
 <template>
-  <div class="phone-box"  :class="{'have-padding': true}">
+  <div class="phone-box"  :class="{'have-padding': true}" @click="makePhoneCall(number)">
     <div class="phone-info" :class="{'phone-info__divider': info}">
       <div v-if="tag" class="phone-name-tag">
         <div class="phone-name-tag__text">{{name}}</div>
       </div>
       <div v-else class="phone-name">{{name}}</div>
-      <div class="tf-row-vertical-center" @click="makePhoneCall(number)">
+      <div class="tf-row-vertical-center">
+        <div class="tf-icon tf-icon-dianhua"></div>
         <div class="phone-number">{{number}}</div>
-        <div class="tf-icon">{{iconPhone}}</div>
       </div>
     </div>
     <div class="tf-card-content" v-if="info" :class="{'have-padding': true}">{{info}}</div>
@@ -15,9 +15,6 @@
 </template>
 
 <script>
-import {
-  iconPhone
-} from '@/const/icon.js'
 const stringProp = {
   type: String,
   default: ''
@@ -35,7 +32,7 @@ export default {
   },
   data () {
     return {
-      iconPhone
+
     }
   },
   methods: {
@@ -119,5 +116,6 @@ export default {
   }
   .tf-card-content {
     padding: 20px 0;
+    color: @gray-7;
   }
 </style>

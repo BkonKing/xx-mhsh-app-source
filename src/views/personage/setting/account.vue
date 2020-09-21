@@ -1,22 +1,34 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
-    <div class="tf-h3">切换账户登录</div>
-    <div class="account" :class="{'account-active': active}">
-      <img class="user-avatar" src="/static/app-icon.png" mode="aspectFill" />
-      <div class="tf-space-around">
-        <div class="user-name">这是一个默认昵称</div>
-        <div class="tf-text-grey">15022223333</div>
+    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <div class="page-container">
+      <div class="tf-h3">切换账户登录</div>
+      <div
+        class="account"
+        v-for="(item, i) in accountList"
+        :key="i"
+        :class="{'account-active': active.id === item.id}"
+        @click="switchAccount(item)"
+      >
+        <img v-if="item.avatar" class="user-avatar" :src="item.avatar"/>
+        <img v-else class="user-avatar" src="@/assets/imgs/touxiang.png"/>
+        <div class="tf-space-around">
+          <div class="user-name">{{item.nickname}}</div>
+          <div class="tf-text-grey">{{item.mobile}}</div>
+        </div>
+        <template v-if="active.id === item.id">
+          <div class="checked-tag"></div>
+          <div class="tf-icon tf-icon-gou"></div>
+        </template>
       </div>
-      <div v-if="active" class="checked-tag"></div>
-      <div class="tf-icon tf-icon-check"></div>
+      <van-button class="account-btn" type="danger" @click="login">换个账户登录</van-button>
     </div>
-    <van-button class="account-btn" type="danger">换个账户登录</van-button>
   </div>
 </template>
 
 <script>
-import { NavBar, Button } from 'vant'
+import { NavBar, Button, Toast } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -24,20 +36,56 @@ export default {
   },
   data () {
     return {
-      active: 1
+      active: {},
+      accountList: {}
+    }
+  },
+  created () {
+    const userList =
+      api.getPrefs({
+        key: 'user_list',
+        sync: true
+      }) || {}
+    this.accountList = typeof userList === 'string' ? JSON.parse(userList) : userList
+    this.active = this.accountList[this.userInfo.id]
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  methods: {
+    /* 切换账号 */
+    switchAccount (item) {
+      Toast.loading('正在切换')
+      let tokenList = api.getPrefs({
+        key: 'token_list',
+        sync: true
+      })
+      tokenList = typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
+      api.setPrefs({
+        key: 'access_token',
+        value: tokenList[item.id]
+      })
+      this.$store.dispatch('getMyAccount').then(async () => {
+        await this.$store.dispatch('getHouse')
+        this.$router.replace('/')
+      })
+      Toast.clear()
+    },
+    /* 账号登录 */
+    login () {
+      this.$router.push('/login?status=1')
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.tf-bg-white {
-  padding: 30px 50px;
-  height: 100%;
+.page-container {
+  padding: 0 50px;
 }
 
 .tf-h3 {
-  margin: 168px 0 80px;
+  margin: 80px 0;
 }
 
 .account {
@@ -47,6 +95,7 @@ export default {
   padding: 30px;
   border: 1px solid #aaa;
   border-radius: 10px;
+  margin-bottom: 30px;
 }
 
 .account-active {
@@ -90,12 +139,12 @@ export default {
   border-bottom-color: @red-dark;
   border-left-color: transparent;
 }
-.tf-icon-check {
+.tf-icon-gou {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 2px;
+  bottom: -4px;
   z-index: 1;
   color: #fff;
-  font-size: 43px;
+  font-size: 50px;
 }
 </style>

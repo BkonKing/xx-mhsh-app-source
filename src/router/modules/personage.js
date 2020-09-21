@@ -27,7 +27,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "informationIndex" */
         '@/views/personage/information/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 新增房产 */
   {
@@ -37,15 +40,18 @@ const personageRouter = [
       import(
         /* webpackChunkName: "houseAttestation" */
         '@/views/personage/house/attestation.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 选择小区 */
   {
     path: '/pages/personage/house/select-community',
-    name: 'houSeselectCommunity',
+    name: 'houSelectCommunity',
     component: () =>
       import(
-        /* webpackChunkName: "houSeselectCommunity" */
+        /* webpackChunkName: "houSelectCommunity" */
         '@/views/personage/house/select-community.vue'
       )
   },
@@ -135,7 +141,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "transactionIndex" */
         '@/views/personage/transaction/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/pages/personage/transaction/details',
@@ -146,7 +155,7 @@ const personageRouter = [
         '@/views/personage/transaction/details.vue'
       )
   },
-  /* 事务处理 */
+  /* 消息 */
   {
     path: '/pages/personage/message/index',
     name: 'messageIndex',
@@ -154,7 +163,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "messageIndex" */
         '@/views/personage/message/index.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 签到 */
   {
@@ -184,6 +196,89 @@ const personageRouter = [
       import(
         /* webpackChunkName: "happinessCoinBuyRecord" */
         '@/views/personage/happiness-coin/buy-record.vue'
+      )
+  },
+  /* 幸福币明细 */
+  {
+    path: '/pages/personage/happiness-coin/details',
+    name: 'happinessCoinDetails',
+    component: () =>
+      import(
+        /* webpackChunkName: "happinessCoinDetails" */
+        '@/views/personage/happiness-coin/details.vue'
+      )
+  },
+  /* 收付款 */
+  {
+    path: '/pages/personage/happiness-coin/payment',
+    name: 'happinessCoinPayment',
+    component: () =>
+      import(
+        /* webpackChunkName: "happinessCoinPayment" */
+        '@/views/personage/happiness-coin/payment.vue'
+      )
+  },
+  /* 我的互动 */
+  {
+    path: '/pages/personage/interaction/index',
+    name: 'interactionIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "interactionIndex" */
+        '@/views/personage/interaction/index.vue'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  /* 常见问题 */
+  {
+    path: '/pages/personage/question/index',
+    name: 'questionIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "questionIndex" */
+        '@/views/personage/question/index.vue'
+      )
+  },
+  /* 扫码 */
+  {
+    path: '/pages/personage/scanCode/index',
+    name: 'scanCodeIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "scanCodeIndex" */
+        '@/views/personage/scanCode/index.vue'
+      )
+  },
+  /* 协议列表 */
+  {
+    path: '/pages/personage/agreement/list',
+    name: 'agreementList',
+    component: () =>
+      import(
+        /* webpackChunkName: "agreementList" */
+        '@/views/personage/setting/agreementList.vue'
+      )
+  },
+  /* 屏蔽设置 */
+  {
+    path: '/pages/personage/setting/shield',
+    name: 'settingShield',
+    component: () =>
+      import(
+        /* webpackChunkName: "settingShield" */
+        '@/views/personage/setting/shield.vue'
+      )
+  },
+  /* 人脸收集 */
+  {
+    path: '/pages/personage/information/faceCollect',
+    name: 'faceCollect',
+    component: () =>
+      import(
+        /* webpackChunkName: "faceCollect" */
+        '@/views/personage/information/faceCollect.vue'
       )
   }
 ]

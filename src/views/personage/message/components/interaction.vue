@@ -1,71 +1,90 @@
 <template>
-  <refreshList :list.sync="list" @load="onLoad">
-    <template v-slot="{item}">
-      <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
-      <div class="tf-list" @click="jump(item)">
-        <template v-if="item.type === 0">
-          <div class="tf-row-vertical-center tf-mb-lg">
-            <div class="tf-icon tf-icon-like-fill like-icon"></div>
-            <div class="tf-text-sm">我收到了点赞</div>
-          </div>
-          <div class="tf-row-vertical-center message-box">
-            <div class="tf-icon tf-icon-like-fill tf-text-orange"></div>
-            <div class="tf-text-sm tf-text-grey like-number">233</div>
-            <div class="tf-text-sm tf-text-grey">关于美好生活家园2020年中秋佳节社区活动</div>
-          </div>
-        </template>
-        <template v-else>
-          <div class="tf-row-space-between">
-            <div class="tf-row-vertical-center">
-              <img class="tf-avatar-sm tf-mr-base" src="/static/app-icon.png" mode="aspectFit" />
-              <div class="tf-text-sm">蔡文姬</div>
-              <div class="tf-circle-tag--warning"></div>
+  <div style="width: 100%;height: 100%;">
+    <refreshList ref="messageList" :list.sync="list" :load="getMessageList">
+      <template v-slot="{item}">
+        <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
+        <div class="tf-list" @click="jump(item)">
+          <template v-if="item.sub_type == 11 || item.sub_type == 12">
+            <div class="tf-row-space-between">
+              <div class="tf-row-vertical-center">
+                <img class="tf-avatar-sm tf-mr-base" :src="item.avatar" mode="aspectFit" />
+                <div class="tf-text-sm">{{item.nickname}}</div>
+                <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
+              </div>
+              <div class="tf-row-vertical-center">
+                <div class="tf-icon tf-icon-comment reply-icon"></div>
+                <div class="tf-text-sm tf-text-grey">回复</div>
+              </div>
             </div>
-            <div class="tf-row-vertical-center">
-              <div class="tf-icon tf-icon-comment reply-icon"></div>
-              <div class="tf-text-sm tf-text-grey">回复</div>
+            <div class="content-box">{{item.pl_content}}</div>
+            <div class="tf-row message-box">
+              <div class="tf-text-sm tf-text-blue">{{item.my_nickname}}</div>
+              <div class="tf-text-sm tf-text-grey van-ellipsis">：{{item.wd_content}}</div>
             </div>
-          </div>
-          <div class="content-box">中秋佳节活动策划方案的实施需要物业的全力以赴和广大业主的支持，美好生活家园为了更好地服务于社区业区业区业区业区业</div>
-          <div class="tf-row message-box">
-            <div class="tf-text-sm tf-text-blue">233</div>
-            <div class="tf-text-sm tf-text-grey">：关于美好生活家园2020年中秋佳节社区活动</div>
-          </div>
-        </template>
-      </div>
-    </template>
-  </refreshList>
+          </template>
+          <template v-else-if="item.sub_type == 10">
+            <div class="tf-row-vertical-center tf-mb-lg">
+              <div class="tf-icon tf-icon-dianzan like-icon"></div>
+              <div class="tf-text-sm">{{item.title}}</div>
+              <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
+            </div>
+            <div class="tf-row-vertical-center message-box">
+              <div class="tf-icon tf-icon-dianzan tf-text-orange"></div>
+              <div class="tf-text-sm tf-text-grey like-number">{{item.thumbsups}}</div>
+              <div class="tf-text-sm tf-text-grey">{{item.content}}</div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </refreshList>
+    <van-popup class="more-dialog" v-model="moreShowChild">
+      <div v-if="active.is_read == '0'" class="more-btn" @click="mark">标记已读</div>
+      <div class="more-btn tf-text-primary">删除</div>
+    </van-popup>
+  </div>
 </template>
 
 <script>
 import refreshList from '@/components/tf-refresh-list'
+import { Popup } from 'vant'
+import { getMessageList } from '@/api/personage.js'
+import longtap from '@/directive/tap/index.js'
+
 export default {
   components: {
-    refreshList
+    refreshList,
+    [Popup.name]: Popup
   },
   data () {
     return {
-      list: [
-        {
-          type: 0,
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        },
-        {
-          type: 1,
-          title: '交易退款成功',
-          content: '您的订单已成功退款，点击查看详情',
-          image: '/static/app-icon.png',
-          ctime: '07-06 12:00'
-        }
-      ]
+      list: [],
+      moreShowChild: false,
+      active: {}
     }
   },
+  directives: {
+    longtap
+  },
   methods: {
-    onLoad () {
-
+    operate (item) {
+      this.active = item
+      this.moreShowChild = true
+    },
+    getMessageList (params) {
+      params.remind_type = 3
+      return getMessageList(params)
+    },
+    jump (item) {
+      this.$emit('click', item)
+    },
+    readAll () {
+      this.list.forEach((obj) => {
+        obj.is_read = '1'
+      })
+    },
+    mark () {
+      this.$emit('mark', this.active)
+      this.moreShowChild = false
     }
   }
 }
@@ -118,8 +137,22 @@ export default {
   color: @orange-dark;
   margin-right: 9px;
 }
-.tf-icon-like-fill.tf-text-orange,
+.tf-icon-dianzan.tf-text-orange,
 .tf-icon-comment {
   font-size: 34px;
+}
+.more-dialog {
+  width: 500px;
+  padding: 0 30px;
+  border-radius: 10px;
+  .more-btn {
+    height: 120px;
+    line-height: 120px;
+    text-align: center;
+    font-size: 30px;
+  }
+  .more-btn + .more-btn {
+    border-top: 1px solid @divider-color;
+  }
 }
 </style>
