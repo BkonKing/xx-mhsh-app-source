@@ -180,7 +180,7 @@ export default {
   .van-nav-bar__arrow {
     position: fixed;
     left: 20px;
-    top: 24px;
+    top: 52px;
     color: #fff;
   }
 }

@@ -54,7 +54,7 @@ export default {
   },
   methods: {
     /* 切换账号 */
-    async switchAccount (item) {
+    switchAccount (item) {
       Toast.loading('正在切换')
       let tokenList = api.getPrefs({
         key: 'token_list',
@@ -65,9 +65,10 @@ export default {
         key: 'access_token',
         value: tokenList[item.id]
       })
-      this.$store.dispatch('getMyAccount')
-      await this.$store.dispatch('getHouse')
-      this.$router.replace('/')
+      this.$store.dispatch('getMyAccount').then(async () => {
+        await this.$store.dispatch('getHouse')
+        this.$router.replace('/')
+      })
       Toast.clear()
     },
     /* 账号登录 */
