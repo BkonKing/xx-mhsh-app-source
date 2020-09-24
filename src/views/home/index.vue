@@ -168,9 +168,9 @@
       v-if="guideShow"
       @click="guideStep"
       :class="[guideIndex > 1 ? 'end-bottom' : '', guideIndex == 1 ? 'guide-sign' : '', 'mask-bg']"
-      :style="{'padding-top': $store.state.paddingTop+guideTop+'px'}"
+      :style="{'padding-top': guideIndex == 1 ? guideTop+'px' : $store.state.paddingTop+'px'}"
     >
-      <img :src="guideList[guideIndex]" />
+      <img v-show="index == guideIndex" v-for="(item,index) in guideList" :src="item" />
     </div>
   </div>
 </template>
