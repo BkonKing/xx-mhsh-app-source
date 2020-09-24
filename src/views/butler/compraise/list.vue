@@ -52,7 +52,11 @@ export default {
   },
   methods: {
     getComPraiseList (params) {
-      return getComPraiseList(params)
+      const len = this.data.length
+      const compraiseId = len && params.pages !== 1 ? this.data[len - 1].id : ''
+      return getComPraiseList({
+        compraiseId
+      })
     },
     jump (item) {
       const url = `/pages/butler/compraise/details?id=${item.id}`

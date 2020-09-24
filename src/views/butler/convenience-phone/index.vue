@@ -9,23 +9,27 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-padding">
-      <phone-card
-        v-for="(item, i) in phoneList"
-        :key="i"
-        :name="item.title"
-        :info="item.remarks"
-        :number="item.telephone"
-      ></phone-card>
+      <refreshList :list.sync="phoneList" :load="getYellowPagesList">
+        <template v-slot="{ item }">
+          <phone-card
+            :name="item.title"
+            :info="item.remarks"
+            :number="item.telephone"
+          ></phone-card>
+        </template>
+      </refreshList>
     </div>
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
 import phoneCard from '../components/phone-card.vue'
 import { getYellowPagesList } from '@/api/butler.js'
 export default {
   components: {
+    refreshList,
     phoneCard,
     [NavBar.name]: NavBar
   },
@@ -34,20 +38,16 @@ export default {
       phoneList: []
     }
   },
-  created () {
-    this.getYellowPagesList()
-  },
   methods: {
-    getYellowPagesList () {
-      getYellowPagesList().then(res => {
-        if (res.success) {
-          this.phoneList = res.data
-        }
+    getYellowPagesList (params) {
+      const len = this.phoneList.length
+      const phoneId = len && params.pages !== 1 ? this.phoneList[len - 1].id : ''
+      return getYellowPagesList({
+        phoneId
       })
     }
   }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
