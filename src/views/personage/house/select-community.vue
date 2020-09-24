@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div class="select-community-container tf-bg tf-body">
     <div style="position: relative;width: 100%;height: 100%;">
       <van-nav-bar
         :title="title"
@@ -34,7 +34,7 @@
           </tf-list>
         </transition>
         <transition tag="div" :name="transitionName">
-          <tf-list v-show="step === 2" class="tf-bg-white" key="1">
+          <tf-list v-show="step === 2" class="tf-bg-white" key="2">
             <tf-list-item
               v-for="(item, i) in houseList"
               :key="i"
@@ -81,19 +81,19 @@ export default {
     }
   },
   created () {
-    this.searchProject()
+    this.getProject()
   },
   methods: {
     select (item) {
       switch (this.step) {
         case 0:
           this.activeProject = item
-          this.searchUnit(item)
+          this.getUnit(item)
           this.nextStep()
           break
         case 1:
           this.activeBuild = item
-          this.searchHouse(item)
+          this.getHouse(item)
           this.nextStep()
           break
         case 2:
@@ -101,19 +101,22 @@ export default {
           break
       }
     },
-    searchProject () {
+    // 获取小区（项目）
+    getProject () {
       searchProject().then((res) => {
         this.projectList = res.data
       })
     },
-    searchUnit (item) {
+    // 获取小区下单元
+    getUnit (item) {
       searchUnit({
         projectId: item.id
       }).then((res) => {
         this.buildList = res.data
       })
     },
-    searchHouse (item) {
+    // 获取单元下房屋
+    getHouse (item) {
       searchHouse({
         projectId: this.activeProject.id,
         buildingId: item.building_id,
@@ -122,6 +125,7 @@ export default {
         this.houseList = res.data
       })
     },
+    // 选中房屋
     selectHouse (item) {
       const obj = {
         project_id: this.activeProject.id,
@@ -136,10 +140,12 @@ export default {
       this.$store.commit('setHouseSelected', obj)
       this.$router.go(-1)
     },
+    // 选中后下一步操作
     nextStep () {
       this.transitionName = 'slide-to-left'
       this.step++
     },
+    // 在选择小区页面就返回，否则返回上一步
     goback () {
       if (this.step === 0) {
         this.$router.go(-1)
@@ -150,6 +156,7 @@ export default {
     }
   },
   watch: {
+    // 步骤变换则改变导航栏标题
     step (value) {
       const text = ['选择小区', '选择楼栋单元', '选择房屋']
       this.title = text[value]
@@ -158,12 +165,18 @@ export default {
 }
 </script>
 
+<style>
+.select-community-container .tf-clist-cell-right {
+  flex: 0;
+}
+.select-community-container .tf-clist-cell-left div {
+  width: 100%;
+}
+</style>
+
 <style lang="less" scoped>
 /deep/ .tf-clist {
   border-radius: 0;
-}
-/deep/ .tf-clist-cell-right {
-  flex: 0;
 }
 .slide-to-right-enter-active,
 .slide-to-right-leave-active,
@@ -171,7 +184,7 @@ export default {
 .slide-to-left-leave-active {
   will-change: transform;
   transition: all 500ms;
-  position: absolute;
+  position: fixed;
   top: 208px;
   left: 0;
   right: 0;

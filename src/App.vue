@@ -85,7 +85,7 @@ export default {
     afterEnter (el) {
       if (el.className.indexOf('tf-immersion') > -1) {
         el.children[0].style.paddingTop = ''
-      }else {
+      } else {
         el.style.top = ''
       }
       el.style.height = ''
@@ -160,7 +160,7 @@ body::-webkit-scrollbar {
 .slide-left-leave-active {
   will-change: transform;
   transition: all 500ms;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;

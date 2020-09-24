@@ -158,7 +158,7 @@ export default {
     signin () {
       signin().then((res) => {
         Toast({
-          message: '签到成功   幸福币+10'
+          message: res.message
         })
         // this.signinToday = '1'
         this.getCreditsAccount()

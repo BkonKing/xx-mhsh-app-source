@@ -75,26 +75,26 @@
     </tf-dialog>
     <!-- 协商信息确认结果 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateShow" title="协商信息">
-      <div class="padding40">
-        <div class="tf-text">
-          <span class="lp112">费</span>
-          <span>用：预计</span>
-          <span>{{negotiateInfo.negotiation_costs}}</span>
-          元
-        </div>
-        <div class="tf-text">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
-        <div v-if="sub_status == 7" class="tf-text tf-row">
-          <div>
-            <span class="lp18">拒绝原</span>
-            因：
-          </div>
-          <div class="tf-flex-item">
-            {{negotiateInfo.refuse_reason}}
-            <span v-if="other_reason">({{other_reason}})</span>
-          </div>
-        </div>
-        <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
+      <!-- <div class="padding40"> -->
+      <div class="tf-text tf-mb-lg">
+        <span class="lp112">费</span>
+        <span>用：预计</span>
+        <span>{{negotiateInfo.negotiation_costs}}</span>
+        元
       </div>
+      <div class="tf-text tf-mb-lg">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
+      <div v-if="sub_status == 7" class="tf-text tf-row tf-mb-lg">
+        <div>
+          <span class="lp18">拒绝原</span>
+          因：
+        </div>
+        <div class="tf-flex-item">
+          {{negotiateInfo.refuse_reason}}
+          <span v-if="other_reason">({{other_reason}})</span>
+        </div>
+      </div>
+      <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
+      <!-- </div> -->
     </tf-dialog>
     <!-- 拒绝协商信息原因 -->
     <tf-dialog
@@ -167,8 +167,10 @@
           <div class="rate-tag-box">
             <div v-for="(item, i) in evaluateReasonList" :key="i" class="rate-tag">{{item}}</div>
           </div>
-          <div class="tf-form-label">其他补充：</div>
-          <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
+          <template v-if="evaluateInfo.evaluate_content">
+            <div class="tf-form-label">其他补充：</div>
+            <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
+          </template>
         </div>
       </template>
     </tf-dialog>

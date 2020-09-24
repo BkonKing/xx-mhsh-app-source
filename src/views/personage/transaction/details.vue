@@ -8,19 +8,26 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <van-pull-refresh class="tf-main-container" v-model="isLoading" @refresh="getRepairInfo">
+    <van-pull-refresh
+      class="tf-main-container"
+      v-model="isLoading"
+      @refresh="getRepairInfo"
+    >
       <div class="user-info-box">
         <user-info :avatar="detailInfo.avatar">
           <template #left>
             <div class="tf-space-around">
               <div class="user-info--name">
-                {{detailInfo.realname}}
+                {{ detailInfo.realname }}
                 <span
                   class="tf-text-blue"
                   @click="callPhoneNumber(detailInfo.mobile)"
-                >{{detailInfo.mobile}}</span>
+                  >{{ detailInfo.mobile }}</span
+                >
               </div>
-              <div class="user-info-time">{{detailInfo.project}} {{detailInfo.fc_info}}</div>
+              <div class="user-info-time">
+                {{ detailInfo.project }} {{ detailInfo.fc_info }}
+              </div>
             </div>
           </template>
         </user-info>
@@ -29,9 +36,11 @@
         <div class="tf-card">
           <div class="tf-card-header">
             <div class="tf-card-header__title">内容描述</div>
-            <div class="tf-text-lg" :class="{'tf-text-primary': status < 4}">{{statusText[status]}}</div>
+            <div class="tf-text-lg" :class="{ 'tf-text-primary': status < 4 }">
+              {{ statusText[status] }}
+            </div>
           </div>
-          <div class="tf-card-content">{{detailInfo.content}}</div>
+          <div class="tf-card-content">{{ detailInfo.content }}</div>
           <tf-image-list
             v-if="detailInfo.images && detailInfo.images.length"
             :data="detailInfo.images"
@@ -40,7 +49,10 @@
           ></tf-image-list>
         </div>
         <div class="time-line-box">
-          <div v-if="userInfo.role_dep != 1 && sub_status == 6" class="plan-btn-box">
+          <div
+            v-if="userInfo.id === detailInfo.designee_uid && sub_status == 6"
+            class="plan-btn-box"
+          >
             <van-button class="plan-btn" @click="addPlan">
               <span class="tf-icon tf-icon-plus"></span>
               添加任务进度
@@ -55,53 +67,77 @@
         </div>
       </div>
     </van-pull-refresh>
-    <!-- 客服人员 -->
-    <div v-if="userInfo.role_dep == 1 && status < 4" class="operation-box">
-      <div class="operation-content">
-        等待
-        <span class="tf-text-orange">{{detailInfo.designee}}</span>
-        {{sub_status | statusFilter}}
-        <span
-          v-if="detailInfo.time_limit"
-          class="tf-text-primary"
-        >({{detailInfo.time_limit}})</span>
+    <template v-if="serviceOperateStatus || disposeStatus">
+      <div class="operation-box">
+        <div class="operation-content">
+          等待
+          <span class="tf-text-orange">{{ detailInfo.designee }}</span>
+          {{ sub_status | statusFilter }}
+          <span v-if="detailInfo.time_limit" class="tf-text-primary"
+            >({{ detailInfo.time_limit }})</span
+          >
+        </div>
+        <!-- 客服人员 -->
+        <template v-if="serviceOperateStatus">
+          <div v-if="status == 1 || status == 2" class="tf-row-space-between">
+            <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
+            <div
+              v-if="status == 1"
+              class="tf-btn tf-btn-primary"
+              @click="acceptCase"
+            >
+              确认受理
+            </div>
+            <div
+              v-if="status == 2"
+              class="tf-btn tf-btn-primary"
+              @click="showAssign"
+            >
+              分派人员
+            </div>
+          </div>
+          <div v-if="status == 3" class="tf-btn" @click="toRefuseTask">
+            取消分派
+          </div>
+        </template>
+        <!-- 处理人员 -->
+        <template v-if="disposeStatus">
+          <div class="tf-row-space-between">
+            <div
+              v-if="[3, 6].includes(sub_status)"
+              class="tf-btn tf-mr-lg"
+              @click="toRefuseTask"
+            >
+              取消任务
+            </div>
+            <div
+              v-if="sub_status == 3"
+              class="tf-btn tf-btn-primary"
+              @click="acceptPlanShow = true"
+            >
+              接受任务
+            </div>
+            <div
+              v-if="sub_status == 6"
+              class="tf-btn tf-btn-primary"
+              @click="toCaseOver"
+            >
+              确认结案
+            </div>
+            <div
+              v-if="status == 4 && detailInfo.is_upload_images == 0"
+              class="tf-btn tf-btn-primary"
+              @click="
+                imageFiles = []
+                imgUploadShow = true
+              "
+            >
+              上传照片
+            </div>
+          </div>
+        </template>
       </div>
-      <div v-if="status == 1 || status == 2" class="tf-row-space-between">
-        <div class="tf-btn tf-mr-lg" @click="cancelRepair">撤销提报</div>
-        <div v-if="status == 1" class="tf-btn tf-btn-primary" @click="acceptCase">确认受理</div>
-        <div v-if="status == 2" class="tf-btn tf-btn-primary" @click="showAssign">分派人员</div>
-      </div>
-      <div v-if="status == 3" class="tf-btn" @click="toRefuseTask">取消分派</div>
-    </div>
-    <!-- 处理人员 -->
-    <div
-      v-if="userInfo.role_dep != 1 && [3, 6, 10].indexOf(sub_status) > -1 || (status == 4 && detailInfo.is_upload_images == 0)"
-      class="operation-box"
-    >
-      <div class="operation-content">
-        等待
-        <span class="tf-text-orange">{{detailInfo.designee}}</span>
-        {{sub_status | statusFilter}}
-        <span
-          v-if="detailInfo.time_limit"
-          class="tf-text-primary"
-        >({{detailInfo.time_limit}})</span>
-      </div>
-      <div class="tf-row-space-between">
-        <div v-if="[3,6].includes(sub_status)" class="tf-btn tf-mr-lg" @click="toRefuseTask">取消任务</div>
-        <div
-          v-if="sub_status == 3"
-          class="tf-btn tf-btn-primary"
-          @click="acceptPlanShow = true"
-        >接受任务</div>
-        <div v-if="sub_status == 6" class="tf-btn tf-btn-primary" @click="toCaseOver">确认结案</div>
-        <div
-          v-if="status == 4 && detailInfo.is_upload_images == 0"
-          class="tf-btn tf-btn-primary"
-          @click="imageFiles = []; imgUploadShow = true"
-        >上传照片</div>
-      </div>
-    </div>
+    </template>
     <!-- 撤销 -->
     <tf-dialog
       v-model="revocationShow"
@@ -111,7 +147,9 @@
       @confirm="revocationSubmit"
     >
       <template>
-        <div class="plan-alert tf-mt-base tf-mb-lg">撤销后将不再进行处理解决</div>
+        <div class="plan-alert tf-mt-base tf-mb-lg">
+          撤销后将不再进行处理解决
+        </div>
         <div class="tf-form-box">
           <div class="tf-form-label required">撤销原因：</div>
           <div class="tf-form-item">
@@ -123,8 +161,13 @@
               selected-key="content"
               :columns="reasonList"
             >
-              <template v-slot="{valueText}">
-                <div class="reason-text" :class="{'picker-active': refuse_reason}">{{valueText}}</div>
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': refuse_reason }"
+                >
+                  {{ valueText }}
+                </div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -164,8 +207,13 @@
               selected-key="value"
               :columns="departmentList"
             >
-              <template v-slot="{valueText}">
-                <div class="reason-text" :class="{'picker-active': departmentValue}">{{valueText}}</div>
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': departmentValue }"
+                >
+                  {{ valueText }}
+                </div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -182,8 +230,13 @@
               selected-key="uid"
               :columns="personnelList[departmentValue]"
             >
-              <template v-slot="{valueText}">
-                <div class="reason-text" :class="{'picker-active': designee_uid}">{{valueText}}</div>
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': designee_uid }"
+                >
+                  {{ valueText }}
+                </div>
               </template>
             </tf-picker>
             <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -196,10 +249,15 @@
               class="tf-form-item__input"
               v-model="limit_day"
               title="天数"
-              :columns="[0,1,2,3,4,5,6,7,8,9,10]"
+              :columns="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
             >
-              <template v-slot="{valueText}">
-                <div class="reason-text" :class="{'picker-active': limit_day}">{{valueText}}</div>
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': limit_day }"
+                >
+                  {{ valueText }}
+                </div>
               </template>
             </tf-picker>
             <span class="tf-text tf-mr-base">天</span>
@@ -207,10 +265,39 @@
               class="tf-form-item__input"
               v-model="limit_hours"
               title="小时"
-              :columns="[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]"
+              :columns="[
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]"
             >
-              <template v-slot="{valueText}">
-                <div class="reason-text" :class="{'picker-active': limit_hours}">{{valueText}}</div>
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': limit_hours }"
+                >
+                  {{ valueText }}
+                </div>
               </template>
             </tf-picker>
             <span class="tf-text">小时</span>
@@ -237,8 +324,13 @@
             selected-key="content"
             :columns="cancelReasonList"
           >
-            <template v-slot="{valueText}">
-              <div class="reason-text" :class="{'picker-active': cancelReason}">{{valueText}}</div>
+            <template v-slot="{ valueText }">
+              <div
+                class="reason-text"
+                :class="{ 'picker-active': cancelReason }"
+              >
+                {{ valueText }}
+              </div>
             </template>
           </tf-picker>
           <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
@@ -266,14 +358,19 @@
       @confirm="negotiation"
     >
       <template>
-        <div class="plan-alert tf-mb-lg">任务完成时限：{{detailInfo.time_limit}}</div>
+        <div class="plan-alert tf-mb-lg">
+          任务完成时限：{{ detailInfo.time_limit }}
+        </div>
         <div class="tf-form-box">
           <div class="tf-form-label required">
             是否收费：
             <span class="tf-text-grey">(请提前告知用户相关收费信息)</span>
           </div>
           <div class="tf-row-space-between">
-            <van-radio-group v-model="isCharge" @change="negotiation_costs = ''">
+            <van-radio-group
+              v-model="isCharge"
+              @change="negotiation_costs = ''"
+            >
               <van-radio name="1" checked-color="#EB5841">收费</van-radio>
               <van-radio name="0" checked-color="#EB5841">免费</van-radio>
             </van-radio-group>
@@ -302,7 +399,12 @@
               :min-date="new Date()"
             >
               <template>
-                <div class="tf-text text-right" :class="{'picker-active': negotiation_time}">{{negotiation_time || '选择日期时间'}}</div>
+                <div
+                  class="tf-text text-right"
+                  :class="{ 'picker-active': negotiation_time }"
+                >
+                  {{ negotiation_time || '选择日期时间' }}
+                </div>
               </template>
             </tf-date-time-picker>
             <div class="tf-icon tf-icon-shijian tf-form-item__icon"></div>
@@ -332,24 +434,32 @@
       </div>
     </tf-dialog>
     <!-- 协商信息 -->
-    <tf-dialog class="negotiate-dialog" v-model="negotiateShow" title="协商信息">
-      <div class="padding40">
-        <div class="tf-text">
+    <tf-dialog
+      class="negotiate-dialog"
+      v-model="negotiateShow"
+      title="协商信息"
+    >
+      <!-- <div class="padding40"> -->
+        <div class="tf-text tf-mb-lg">
           <span class="lp112">费</span>
           <span>用：预计</span>
-          <span>{{negotiateInfo.negotiation_costs}}</span>
+          <span>{{ negotiateInfo.negotiation_costs }}</span>
           元
         </div>
-        <div class="tf-text">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
+        <div class="tf-text tf-mb-lg">
+          预约处理时间：{{ negotiateInfo.negotiation_time }}
+        </div>
         <div v-if="sub_status == 7" class="tf-text tf-row">
           <div>
             <span class="lp18">拒绝原</span>
             因：
           </div>
-          <div class="tf-flex-item">{{negotiateInfo.refuse_reason}}</div>
+          <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
         </div>
-        <div class="confirm-btn">{{sub_status == 6 ? '已确认' : '已拒绝'}}</div>
-      </div>
+        <div class="confirm-btn">
+          {{ sub_status == 6 ? '已确认' : '已拒绝' }}
+        </div>
+      <!-- </div> -->
     </tf-dialog>
     <!-- 确认结案 -->
     <tf-dialog
@@ -371,7 +481,7 @@
           </van-radio-group>
           <tf-uploader
             v-if="upload_type == 1"
-            class="upload-img-box"
+            class="upload-img-box mb-40"
             v-model="imageFiles"
             max-count="9"
           ></tf-uploader>
@@ -397,7 +507,11 @@
       :hiddenOff="true"
       @confirm="closingPicture"
     >
-      <tf-uploader class="upload-img-box" v-model="imageFiles" max-count="9"></tf-uploader>
+      <tf-uploader
+        class="upload-img-box"
+        v-model="imageFiles"
+        max-count="9"
+      ></tf-uploader>
     </tf-dialog>
   </div>
 </template>
@@ -515,7 +629,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    serviceOperateStatus () {
+      return this.userInfo.role_dep == 1 && this.status < 4
+    },
+    disposeStatus () {
+      return (
+        this.userInfo.id === this.detailInfo.designee_uid &&
+        ([3, 6].indexOf(this.sub_status) > -1 ||
+          (this.status == 4 && this.detailInfo.is_upload_images == 0))
+      )
+    }
   },
   created () {
     const { id, type } = this.$route.query
@@ -912,17 +1036,21 @@ export default {
   color: #666;
 }
 .upload-img-box {
-  margin-top: 40px;
   /deep/ .van-uploader__upload,
   /deep/ .van-uploader__preview {
     width: 140px;
     height: 140px;
+    /deep/ .van-image {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 .tf-form-box {
   margin-top: 0;
 }
-.tf-form-box + .tf-form-box {
+.tf-form-box + .tf-form-box,
+.mb-40 {
   margin-top: 40px;
 }
 .padding40 {

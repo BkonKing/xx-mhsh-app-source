@@ -12,7 +12,7 @@
         <span
           v-if="articleType == 3"
           class="van-icon van-icon-ellipsis"
-          @click="articleOperate"
+          @click="openArticleDialog"
         ></span>
       </template>
     </van-nav-bar>
@@ -164,11 +164,12 @@ export default {
     this.getInfo()
   },
   methods: {
-    /* 下拉刷新 */
+    // 下拉刷新
     onRefresh () {
       this.getInfo()
       this.$refs.reply.reload()
     },
+    // 根据类型获取对应的详情
     getInfo () {
       switch (this.articleType) {
         case '1':
@@ -182,22 +183,62 @@ export default {
           break
       }
     },
+    /* 获取资讯详情 */
+    getArticleInfo () {
+      getArticleInfo({
+        id: this.id
+      }).then(({ data }) => {
+        if (data.is_del === 1) {
+          Dialog.alert({
+            title: '该活动已被删除'
+          }).then(() => {
+            this.$router.go(-1)
+          })
+          return
+        }
+        this.info = data
+        this.isLoading = false
+      })
+    },
     /* 获取小组帖子详情 */
     getPostBarInfo () {
       getPostBarInfo({
         id: this.id
-      }).then((res) => {
-        this.info = res.data
+      }).then(({ data }) => {
+        if (data.is_del === 1) {
+          Dialog.alert({
+            title: '该贴已被删除'
+          }).then(() => {
+            this.$router.go(-1)
+          })
+          return
+        }
+        this.info = data
         this.info.id = this.id
         this.isLoading = false
+      }).catch(({ message }) => {
+        Toast.clear()
+        Dialog.alert({
+          title: message
+        }).then(() => {
+          this.$router.go(-1)
+        })
       })
     },
     /* 获取活动详情 */
     getActivityInfo () {
       getActivityInfo({
         id: this.id
-      }).then((res) => {
-        this.info = res.data
+      }).then(({ data }) => {
+        if (data.is_del === 1) {
+          Dialog.alert({
+            title: '该活动已被删除'
+          }).then(() => {
+            this.$router.go(-1)
+          })
+          return
+        }
+        this.info = data
         this.isLoading = false
       })
     },
@@ -208,15 +249,6 @@ export default {
       }).then((res) => {
         Toast.success('活动报名成功')
         this.getInfo()
-      })
-    },
-    /* 获取资讯详情 */
-    getArticleInfo () {
-      getArticleInfo({
-        id: this.id
-      }).then((res) => {
-        this.info = res.data
-        this.isLoading = false
       })
     },
     /* 点赞 */
@@ -234,7 +266,8 @@ export default {
         item.is_thumbsup = 1
       })
     },
-    articleOperate () {
+    // 打开文章操作
+    openArticleDialog () {
       this.moreShow = true
     },
     /* 删除帖子 */

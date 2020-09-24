@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
 import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
@@ -90,7 +89,6 @@ export default {
       bindingDefault({
         binding_id: bindingId
       }).then((res) => {
-        // Toast.success('设置成功')
         const current = this.houseList.splice(index, 1)
         this.houseList.unshift(...current)
         this.$store.commit('setCurrentProject', ...current)

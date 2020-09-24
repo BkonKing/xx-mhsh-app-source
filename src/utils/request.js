@@ -55,6 +55,8 @@ service.interceptors.request.use(
       const project = store.getters.currentProject
       if (project) {
         config.headers.ProjectId = project.project_id
+      } else if (store.getters.userInfo.project_id) {
+        config.headers.ProjectId = store.getters.userInfo.project_id
       }
     }
     return config

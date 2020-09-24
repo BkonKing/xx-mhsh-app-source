@@ -1,7 +1,6 @@
 <template>
   <van-grid class="tf-bg-white" :border="false" :column-num="column" square>
-    <van-grid-item v-for="(item, index) in list"
-      :key="index" :to="item.url">
+    <van-grid-item v-for="(item, index) in list" :key="index" :to="item.url">
       <van-image class="grid-item__image" :src="item.icon_image" />
       <span class="grid-item__text">{{item.application}}</span>
     </van-grid-item>
