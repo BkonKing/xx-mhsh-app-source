@@ -184,7 +184,7 @@ export default {
 .slide-to-left-leave-active {
   will-change: transform;
   transition: all 500ms;
-  position: fixed;
+  position: absolute;
   top: 208px;
   left: 0;
   right: 0;
