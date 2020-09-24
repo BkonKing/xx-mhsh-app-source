@@ -66,10 +66,12 @@ export default {
         value: tokenList[item.id]
       })
       this.$store.dispatch('getMyAccount').then(async () => {
+        Toast.clear()
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')
+      }).catch(() => {
+        Toast.clear()
       })
-      Toast.clear()
     },
     /* 账号登录 */
     login () {
@@ -81,7 +83,7 @@ export default {
 
 <style lang="less" scoped>
 .page-container {
-  padding: 0 50px;
+  padding: 0 50px 50px;
 }
 
 .tf-h3 {

@@ -1,9 +1,9 @@
 <template>
-  <div style="width: 100%;height: 100%;">
+  <div class="container-box">
     <refreshList ref="messageList" :list.sync="list" :load="getMessageList">
       <template v-slot="{item}">
         <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
-        <div class="tf-list" @click="jump(item)">
+        <div class="tf-list" @click="handleClick(item)">
           <template v-if="item.sub_type == 11 || item.sub_type == 12">
             <div class="tf-row-space-between">
               <div class="tf-row-vertical-center">
@@ -16,7 +16,7 @@
                 <div class="tf-text-sm tf-text-grey">回复</div>
               </div>
             </div>
-            <div class="content-box">{{item.pl_content}}</div>
+            <div class="content-box van-multi-ellipsis--l2">{{item.pl_content}}</div>
             <div class="tf-row message-box">
               <div class="tf-text-sm tf-text-blue">{{item.my_nickname}}</div>
               <div class="tf-text-sm tf-text-grey van-ellipsis">：{{item.wd_content}}</div>
@@ -37,8 +37,8 @@
         </div>
       </template>
     </refreshList>
-    <van-popup class="more-dialog" v-model="moreShowChild">
-      <div v-if="active.is_read == '0'" class="more-btn" @click="mark">标记已读</div>
+    <van-popup class="more-dialog" v-model="operateDialog">
+      <div v-if="active.is_read == '0'" class="more-btn" @click="markRead">标记已读</div>
       <div class="more-btn tf-text-primary">删除</div>
     </van-popup>
   </div>
@@ -58,7 +58,7 @@ export default {
   data () {
     return {
       list: [],
-      moreShowChild: false,
+      operateDialog: false,
       active: {}
     }
   },
@@ -66,31 +66,40 @@ export default {
     longtap
   },
   methods: {
-    operate (item) {
+    // 打开操作栏
+    openOperateDialog (item) {
       this.active = item
-      this.moreShowChild = true
+      this.operateDialog = true
     },
+    // 获取互动消息
     getMessageList (params) {
       params.remind_type = 3
       return getMessageList(params)
     },
-    jump (item) {
+    // 触发当前实例点击事件
+    handleClick (item) {
       this.$emit('click', item)
     },
+    // 全部已读，手动修改为已读状态
     readAll () {
       this.list.forEach((obj) => {
         obj.is_read = '1'
       })
     },
-    mark () {
+    // 触发标记已读事件
+    markRead () {
       this.$emit('mark', this.active)
-      this.moreShowChild = false
+      this.operateDialog = false
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.container-box {
+  width: 100%;
+  height: 100%;
+}
 .tf-list {
   @flex-column();
   margin-bottom: 0;
@@ -113,10 +122,10 @@ export default {
   width: 48px;
   height: 48px;
   line-height: 48px;
-  border-radius: 50%;
   margin-right: 20px;
   font-size: 28px;
   text-align: center;
+  border-radius: 50%;
   background-color: @background-color;
   color: #aaaaaa;
 }
@@ -130,8 +139,6 @@ export default {
 .content-box {
   margin: 20px 0;
   font-size: 26px;
-  lines: 2;
-  text-overflow: ellipsis;
 }
 .reply-icon {
   color: @orange-dark;
@@ -148,8 +155,8 @@ export default {
   .more-btn {
     height: 120px;
     line-height: 120px;
-    text-align: center;
     font-size: 30px;
+    text-align: center;
   }
   .more-btn + .more-btn {
     border-top: 1px solid @divider-color;

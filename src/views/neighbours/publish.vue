@@ -125,7 +125,7 @@ export default {
           images: this.images.join(',')
         }).then((res) => {
           Dialog.alert({
-            title: '发布成功'
+            title: res.message
           }).then(res => {
             this.$router.go(-1)
           })

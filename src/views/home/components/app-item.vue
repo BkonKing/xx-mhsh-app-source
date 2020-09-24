@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant'
 export default {
   name: 'app-item',
   props: {
@@ -43,6 +44,10 @@ export default {
     url: {
       type: String,
       default: ''
+    },
+    mjStatus: {
+      type: String,
+      default: '0'
     }
   },
   methods: {
@@ -54,7 +59,11 @@ export default {
           this.add()
         }
       } else if (!this.editMode) {
-        this.$router.push(this.url)
+        if (this.url === '/pages/butler/entrance/index' && this.mjStatus == '0') {
+          Toast('小区暂未开放此功能')
+        } else {
+          this.$router.push(this.url)
+        }
       }
     },
     add () {

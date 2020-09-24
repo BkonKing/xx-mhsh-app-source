@@ -3,18 +3,27 @@
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-dingwei"></span>
+        <span v-if="currentProject" class="tf-text">{{
+          currentProject.project_name + currentProject.fc_info
+        }}</span>
         <span
-          v-if="currentProject"
+          v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
           class="tf-text"
-        >{{ currentProject.project_name + currentProject.fc_info }}</span>
+          >{{ userInfo.project_name }}</span>
         <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
-      <span v-if="search" class="tf-icon tf-icon-sousuo" @click="onSearch"></span>
+      <span
+        v-if="search"
+        class="tf-icon tf-icon-sousuo"
+        @click="onSearch"
+      ></span>
       <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
       <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-        <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
+        <span v-if="userInfo.message_mum != 0" class="van-info">{{
+          userInfo.message_mum
+        }}</span>
       </span>
     </template>
   </van-nav-bar>

@@ -9,7 +9,11 @@
       @click-left="goback"
     >
       <template #right>
-        <span v-if="mode && !editMode" class="tf-icon tf-icon-bianji" @click="goEdit"></span>
+        <span
+          v-if="mode && !editMode"
+          class="tf-icon tf-icon-bianji"
+          @click="goEdit"
+        ></span>
       </template>
     </van-nav-bar>
     <div class="tf-padding tf-flex-item tf-flex-column">
@@ -17,33 +21,48 @@
         <tf-list class="tf-mb-lg">
           <tf-list-item title="房屋" @click="goCheckHouse">
             <template v-slot:right>
-              <div v-if="mode === 1 && !editMode" class="tf-text">{{house_name}}</div>
-              <div v-else class="tf-text">{{ house_name || '请选择'}}</div>
+              <div v-if="mode === 1 && !editMode" class="tf-text">
+                {{ house_name }}
+              </div>
+              <div v-else class="tf-text">{{ house_name || '请选择' }}</div>
             </template>
           </tf-list-item>
         </tf-list>
         <div v-if="mode === 0 || editMode" class="tf-card tf-mb-lg">
-          <div class="tf-card-header" style="font-weight: normal;">认证类型</div>
+          <div class="tf-card-header" style="font-weight: normal;">
+            认证类型
+          </div>
           <div class="tf-card-content" style="padding-bottom: 10px;">
             <tf-radio-btn v-model="house_role" :data="items"></tf-radio-btn>
           </div>
         </div>
         <tf-list>
-          <tf-list-item v-if="mode === 1 && !editMode" title="认证类型" :showArrow="false">
+          <tf-list-item
+            v-if="mode === 1 && !editMode"
+            title="认证类型"
+            :showArrow="false"
+          >
             <template v-slot:right>
-              <div class="tf-text">{{userText[house_role]}}</div>
+              <div class="tf-text">{{ userText[house_role] }}</div>
             </template>
           </tf-list-item>
           <tf-list-item title="真实姓名" :showArrow="false">
             <template v-slot:right>
-              <div v-if="mode === 1 && !editMode" class="tf-text">{{realname}}</div>
+              <div v-if="mode === 1 && !editMode" class="tf-text">
+                {{ realname }}
+              </div>
               <input v-else class="tf-input" v-model="realname" />
             </template>
           </tf-list-item>
           <tf-list-item title="手机号" :showArrow="false">
             <template v-slot:right>
-              <div v-if="mode === 1 && !editMode" class="tf-text">{{mobile}}</div>
-              <input v-else type="number" class="tf-input" v-model="mobile" />
+              <input
+                v-if="type === 0 && ((mode === 1 && editMode) || mode === 0)"
+                type="number"
+                class="tf-input"
+                v-model="mobile"
+              />
+              <div v-else class="tf-text">{{ mobile }}</div>
             </template>
           </tf-list-item>
         </tf-list>
@@ -74,9 +93,12 @@
               <span
                 class="tf-text-blue"
                 @click.stop="$router.push('/agreement?type=1')"
-              >《{{otherAgreement.title}}》</span>
+                >《{{ otherAgreement.title }}》</span
+              >
             </van-checkbox>
-            <van-button type="danger" size="large" @click="submit">提交</van-button>
+            <van-button type="danger" size="large" @click="submit"
+              >提交</van-button
+            >
           </template>
           <van-button
             v-else
@@ -84,7 +106,8 @@
             type="default"
             size="large"
             @click="onDelete"
-          >删除</van-button>
+            >删除</van-button
+          >
         </div>
       </div>
     </div>

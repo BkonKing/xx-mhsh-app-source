@@ -25,8 +25,8 @@
             :class="{'tf-timeline__column-text-grey': index>active}"
           >
             <div class="tf-timeline__column-time">{{item.ctime}}</div>
-            <!-- 撤销提报 -->
             <div class="tf-timeline__column-desc">
+              <!-- 撤销提报 -->
               <template v-if="item.sub_status == 3">
                 {{item.remark}}
                 <span
@@ -34,9 +34,10 @@
                   @click="makePhoneCall(item.mobile)"
                 >{{item.mobile}}</span>
               </template>
+              <!-- 已确认协商-->
               <template v-else-if="item.sub_status == 6">
                 <div>
-                  {{item.sub_realname}}：
+                  <!-- {{item.sub_realname}}： -->
                   <span v-html="item.remark"></span>
                   <template v-if="item.mobile">
                     <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
@@ -47,6 +48,7 @@
                   </template>
                 </div>
               </template>
+              <!-- 拒绝协商 -->
               <template v-else-if="item.sub_status == 7">
                 <div v-html="item.remark"></div>
                 <div v-if="item.refuse_reason">拒绝原因：{{item.refuse_reason}}</div>
@@ -59,6 +61,7 @@
                   @click="$emit('negotiate', item)"
                 ></div>
               </template>
+              <!-- 结案 -->
               <template v-else-if="item.sub_status == 10">
                 {{item.remark}}
                 <!-- 评价信息 -->

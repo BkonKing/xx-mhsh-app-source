@@ -24,6 +24,7 @@
                 </div>
                 <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
               </template>
+              <div v-if="item.status == 3">取消时间：{{item.etime}}</div>
             </div>
           </div>
         </template>

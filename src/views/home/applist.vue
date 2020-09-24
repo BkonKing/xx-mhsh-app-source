@@ -218,6 +218,10 @@ export default {
       'noticeDetails'
     ]
     if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
+        next()
+        return
+      }
       Dialog.confirm({
         title: '提示',
         message: '您尚未认证房间，是否去认证？',
