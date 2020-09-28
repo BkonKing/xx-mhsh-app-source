@@ -156,7 +156,7 @@
       <div class="order-remarks-item">
         <div class="order-remarks-item-left color-222 font-28">订单备注:</div>
         <div class="shipping-address-item-right">
-          <input v-model="remarks" class="color-222 font-28 order-remarks-text" type="text" placeholder="备注">
+          <input v-model="remarks" class="color-222 font-28 order-remarks-text" type="text" placeholder="">
         </div>
       </div>
     </div>
@@ -423,13 +423,17 @@ export default {
             // Toast(res.message);
             if(res.goods_arr.length){
               var resGoods = res.goods_arr;
-              if(typeof res.code_type !='undefined' && (res.code_type == 1 || res.code_type == 2)){
-                Toast({
-                  'message': res.message,
-                  onClose: function(){
-                    that.$router.go(-1);
-                  }
-                })
+              if(typeof res.code_type !='undefined' && (res.code_type == 1 || res.code_type == 2 || res.code_type == 3)){
+                if(res.code_type == 3){
+                  that.$router.go(-1);
+                }else {
+                  Toast({
+                    'message': res.message,
+                    onClose: function(){
+                      that.$router.go(-1);
+                    }
+                  })
+                }
               }else {
                 that.backCarts = resGoods;
                 that.isNew = true;

@@ -11,7 +11,7 @@
           @click-left="$router.go(-1)"
         >
   	      <template #right>
-  	        <a :href="'tel: '+orderInfo.customerServiceHotline" class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></a>
+  	        <a :href="'tel: '+orderInfo.customerServiceHotline" class="nav-serve"><img src="@/assets/img/icon_23.png" /></a>
   	      </template>
   	    </van-nav-bar>
   		</div>

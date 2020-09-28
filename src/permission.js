@@ -1,5 +1,6 @@
 import router from './router'
 import store from './store'
+import Vue from 'vue'
 import {
   Toast
 } from 'vant'
@@ -10,15 +11,14 @@ router.beforeEach(async (to, from, next) => {
   var toPageName = to.name
   var fromPageName = from.name
   if (process.env.VUE_APP_IS_APP) {
-    var txAnalysis = api.require('txAnalysis')
     if (fromPageName) {
-      txAnalysis.trackPageEnd({
-        page: fromPageName
+      Vue.prototype.bdmtj.onPageEnd({
+        pageName: fromPageName
       })
     }
-    txAnalysis.trackPageBegin({
-      page: toPageName
-    })
+    Vue.prototype.bdmtj.onPageStart({
+        pageName: toPageName
+    });
   }
 
   // Toast.loading({

@@ -123,34 +123,16 @@
         </div>
       </div>
 
-      <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
+      <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
         <div class="tip-left flex-center">
           <img src="@/assets/img/icon_02.png" />
         </div>
         <div class="tip-right">
           <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
         </div>
-      </div>
+      </div> -->
 
       <div class="goods-tip goods-session flex-align-center">
-        <!-- <template v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2">
-          <div class="tip-left logistics-left">
-            <div>配送</div>
-            <div>运费</div>
-          </div>
-          <div class="tip-right color-222">
-            <div>{{infoData.distribution_type_name}}</div>
-            <div>{{infoData.freight ? (infoData.freight) : '免邮'}}</div>
-          </div>
-        </template>
-        <template v-else-if="infoData.distribution_type == 1">
-          <div class="tip-left logistics-left">
-            <div>配送</div>
-          </div>
-          <div class="tip-right color-222">
-            <div>{{infoData.distribution_type_name}}({{infoData.take_address}})</div>
-          </div>
-        </template> -->
         <div v-if="infoData.goods_type == 3" @click="ensureFunc" class="tip-item">
           <div class="tip-left logistics-left">
             保障
@@ -173,7 +155,7 @@
             {{infoData.distribution_type_name}}({{infoData.take_address}})
           </div>
         </div>
-        <div @click="rightShow && tipToggle()" class="tip-item">
+        <div v-if="infoData.tips_arr && infoData.tips_arr.length" @click="rightShow && tipToggle()" class="tip-item">
           <div class="tip-left logistics-left">
             说明
           </div>
@@ -463,13 +445,14 @@ export default {
   watch: {
     infoData (value) {
       this.$nextTick(() => {
-        var itemWidth = this.$refs.tipItem.offsetWidth;
-        var tipWidth = this.$refs.tipTxt.offsetWidth;
-
-        if(tipWidth/itemWidth > 620/750){
-          this.rightShow = true;
+        if(value.tips_arr.length > 0){
+          var itemWidth = this.$refs.tipItem.offsetWidth;
+          var tipWidth = this.$refs.tipTxt.offsetWidth;
+          if(tipWidth/itemWidth > 620/750){
+            this.rightShow = true;
+          }
         }
-        console.log(itemWidth,tipWidth);
+        
       })
     }
   },
