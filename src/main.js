@@ -48,31 +48,31 @@ if (process.env.VUE_APP_IS_APP === '1') {
         // console.log(ret.status)
       }
     })
-    //百度统计
+    // 百度统计
     Vue.prototype.bdmtj = api.require('modulebaidumtj')
-    if (api.systemType == "android") {
+    if (api.systemType == 'android') {
       // android平台的初始化
       Vue.prototype.bdmtj.startWithAppkey({
-          appkey: 'f672a40c5d',
-          appVersion: api.appVersion,
-          channelId: 'AndroidChannel',
-          enableExceptionLog: 'true',
-          enableDebugOn: 'true'
-      });
+        appkey: 'f672a40c5d',
+        appVersion: api.appVersion,
+        channelId: 'AndroidChannel',
+        enableExceptionLog: 'true',
+        enableDebugOn: 'true'
+      })
     } else {
       // iOS平台的初始化
       Vue.prototype.bdmtj.startWithAppkey({
-          appkey: 'b8c2842306',
-          appVersion: api.appVersion,
-          channelId: 'iOSChannel',
-          enableExceptionLog: 'true',
-          enableDebugOn: 'true'
-      });
+        appkey: 'b8c2842306',
+        appVersion: api.appVersion,
+        channelId: 'iOSChannel',
+        enableExceptionLog: 'true',
+        enableDebugOn: 'true'
+      })
     }
-    Vue.prototype.mtjEvent = function(params){
+    Vue.prototype.mtjEvent = function (params) {
       Vue.prototype.bdmtj.onEvent({
         eventId: params.eventId
-      });
+      })
     }
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
@@ -130,6 +130,9 @@ if (process.env.VUE_APP_IS_APP === '1') {
         document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
       }
     }
+  }
+  Vue.prototype.mtjEvent = function (params) {
+    console.log(params)
   }
   // Vue.use(Vuex)
   require('./permission')

@@ -209,9 +209,9 @@ export default {
             })
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -243,9 +243,9 @@ export default {
             api.toast('扫码失败，二维码可能过期')
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -265,9 +265,9 @@ export default {
             })
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -283,7 +283,7 @@ export default {
         })
         .catch((err) => {
           api.alert({
-            title: err
+            title: err.message
           })
         })
     },
@@ -299,7 +299,7 @@ export default {
         })
         .catch((err) => {
           api.alert({
-            title: err
+            title: err.message
           })
         })
     },
@@ -391,6 +391,9 @@ export default {
         } else {
           !len && this.openFrame()
         }
+        this.mtjEvent({
+          eventId: 6
+        })
       } else {
         len && this.closeFrame()
         this.timer && clearTimeout(this.timer)

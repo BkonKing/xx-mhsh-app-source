@@ -14,7 +14,7 @@
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
-        <span v-show="!editMode" @click="edit">编辑</span>
+        <span v-show="!editMode" @click="edit" v-txAnalysis="{eventId: 3}">编辑</span>
         <span class="comfirm-btn" v-show="editMode" @click="saveMyApp">完成</span>
       </div>
     </div>

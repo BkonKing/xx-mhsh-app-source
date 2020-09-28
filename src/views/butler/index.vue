@@ -83,6 +83,9 @@ export default {
           id
         }
       })
+      this.mtjEvent({
+        eventId: 27
+      })
     },
     /* 跳转云门禁 */
     goEntrance () {

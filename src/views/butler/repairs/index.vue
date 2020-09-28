@@ -159,6 +159,9 @@ export default {
             this.repairId = res.data.repair_id
             this.goRepairDetails()
           })
+          this.mtjEvent({
+            eventId: 29
+          })
         } else {
           Toast.fail('提交失败')
         }

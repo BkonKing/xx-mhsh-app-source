@@ -16,12 +16,12 @@
         <tf-list-item title="屏蔽设置" @click="goShieldSetting"></tf-list-item>
       </tf-list>
       <tf-list class="tf-mt-lg">
-        <tf-list-item title="检查更新" @click="openDialog" border>
+        <tf-list-item title="检查更新" @click="openDialog" v-txAnalysis="{eventId: 81}" border>
           <template v-if="updateStatus" v-slot:right>
             <div class="right-text tf-text-primary">发现更新版本</div>
           </template>
         </tf-list-item>
-        <tf-list-item title="清除缓存" @click="clearCache">
+        <tf-list-item title="清除缓存" v-txAnalysis="{eventId: 78}" @click="clearCache">
           <template v-slot:right>
             <div class="right-text">{{sizeText}}</div>
           </template>
@@ -33,8 +33,8 @@
       <button class="btn" @click="goAccount">切换账号</button>
       <button class="btn tf-text-primary" @click="outLogin">退出登录</button>
     </div>
-    <tf-dialog v-model="showDialog" title="版本更新" :showFotter="true" okText="更新">
-      <div class="dialog-content">更新能容： 1.修复了FaceID和链接收藏弹窗的兼容性问题； 2.修复了链接收藏微信文章没有标题问题。</div>
+    <tf-dialog v-model="showDialog" title="版本更新" :showFotter="true" okText="更新" @confirm="updateApp">
+      <div class="dialog-content">更新内容：{{versionDes}} </div>
     </tf-dialog>
   </div>
 </template>
@@ -56,6 +56,7 @@ export default {
       showDialog: false,
       source: '', // 版本下载地址
       updateStatus: false, // 是否有版本更新
+      versionDes: '', // 版本描述
       cacheSize: 0
     }
   },
@@ -89,9 +90,10 @@ export default {
         if (ret) {
           if (ret.status) {
             const data = ret.result
-            const { update, source } = data
+            const { update, source, versionDes } = data
             this.updateStatus = update
             this.source = source
+            this.versionDes = versionDes
           }
         } else {
           console.error(err)
@@ -135,9 +137,43 @@ export default {
         Toast('当前已是最新版本')
       }
     },
+    // 更新app
+    updateApp () {
+      if (api.systemType == 'android') {
+        api.download({
+          url: this.source,
+          report: true
+        }, (ret, err) => {
+          if (ret && ret.state == 0) { /* 下载进度 */
+            api.toast({
+              msg: '正在下载应用' + ret.percent + '%',
+              duration: 2000
+            })
+          }
+          if (ret && ret.state == 1) { /* 下载完成 */
+            var savePath = ret.savePath
+            api.installApp({
+              appUri: savePath
+            })
+          }
+        })
+      }
+      if (api.systemType == 'ios') {
+        api.installApp({
+          appUri: this.source
+        })
+      }
+      this.mtjEvent({
+        eventId: 81
+      })
+    },
     /* 退出登录 */
     outLogin () {
-      this.$store.dispatch('outLogin')
+      this.$store.dispatch('outLogin').then(() => {
+        this.mtjEvent({
+          eventId: 80
+        })
+      })
     }
   }
 }

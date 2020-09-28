@@ -1,6 +1,6 @@
 <template>
   <div class="select-community-container tf-bg tf-body">
-    <div style="position: relative;width: 100%;height: 100%;">
+    <div class="select-community-box">
       <van-nav-bar
         :title="title"
         :fixed="true"
@@ -9,48 +9,44 @@
         left-arrow
         @click-left="goback"
       ></van-nav-bar>
-      <van-search v-model="value[step]" placeholder="请输入关键字搜索" />
+      <van-search v-model="searchValue[step]" placeholder="请输入关键字搜索" />
       <div class="tf-body-container tf-overflow-auto">
-        <transition tag="div" :name="transitionName">
+        <transition-group tag="div" :name="transitionName">
           <tf-list v-show="step === 0" class="tf-bg-white" key="0">
             <tf-list-item
               v-for="(item, i) in projectList"
               :key="i"
-              v-show="item.project_name.indexOf(value[0]) !== -1"
+              v-show="item.project_name.indexOf(searchValue[0]) !== -1"
               :title="item.project_name"
-              @click="select(item)"
+              @click="handleSelect(item)"
             ></tf-list-item>
           </tf-list>
-        </transition>
-        <transition tag="div" :name="transitionName">
           <tf-list v-show="step === 1" class="tf-bg-white" key="1">
             <tf-list-item
               v-for="(item, i) in buildList"
               :key="i"
-              v-show="item.unit_name.indexOf(value[1]) !== -1"
+              v-show="item.unit_name.indexOf(searchValue[1]) !== -1"
               :title="`${item.unit_name}`"
-              @click="select(item)"
+              @click="handleSelect(item)"
             ></tf-list-item>
           </tf-list>
-        </transition>
-        <transition tag="div" :name="transitionName">
           <tf-list v-show="step === 2" class="tf-bg-white" key="2">
             <tf-list-item
               v-for="(item, i) in houseList"
               :key="i"
-              v-show="item.house_name.indexOf(value[2]) !== -1"
+              v-show="item.house_name.indexOf(searchValue[2]) !== -1"
               :title="`${activeBuild.unit_name}${item.house_name}`"
-              @click="select(item)"
+              @click="handleSelect(item)"
             ></tf-list-item>
           </tf-list>
-        </transition>
+        </transition-group>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Search } from 'vant'
+import { NavBar, Search, Toast } from 'vant'
 import tfList from '@/components/tf-list/index'
 import tfListItem from '@/components/tf-list/item.vue'
 import {
@@ -69,42 +65,57 @@ export default {
   data () {
     return {
       transitionName: '',
-      value: ['', '', ''],
+      searchValue: ['', '', ''],
       title: '选择小区',
       step: 0,
       projectList: [],
       activeProject: {},
       buildList: [],
       activeBuild: {},
-      houseList: [],
-      activeHouse: {}
+      houseList: []
     }
   },
   created () {
     this.getProject()
   },
   methods: {
-    select (item) {
+    // 触发选中事件，根据不同步骤做相应处理
+    handleSelect (item) {
       switch (this.step) {
+        // 选择小区
         case 0:
+          Toast.loading({
+            message: '加载中...'
+          })
           this.activeProject = item
           this.getUnit(item)
           this.nextStep()
           break
+        // 选择楼栋单元
         case 1:
+          Toast.loading({
+            message: '加载中...'
+          })
           this.activeBuild = item
           this.getHouse(item)
           this.nextStep()
           break
+        // 选择房屋
         case 2:
           this.selectHouse(item)
           break
       }
     },
+    // 点击选中后下一步操作
+    nextStep () {
+      this.transitionName = 'slide-to-left'
+      this.step++
+    },
     // 获取小区（项目）
     getProject () {
       searchProject().then((res) => {
         this.projectList = res.data
+        Toast.clear()
       })
     },
     // 获取小区下单元
@@ -113,6 +124,7 @@ export default {
         projectId: item.id
       }).then((res) => {
         this.buildList = res.data
+        Toast.clear()
       })
     },
     // 获取单元下房屋
@@ -123,6 +135,7 @@ export default {
         unitId: item.id
       }).then((res) => {
         this.houseList = res.data
+        Toast.clear()
       })
     },
     // 选中房屋
@@ -140,10 +153,15 @@ export default {
       this.$store.commit('setHouseSelected', obj)
       this.$router.go(-1)
     },
-    // 选中后下一步操作
-    nextStep () {
-      this.transitionName = 'slide-to-left'
-      this.step++
+    // 获取搜索房屋
+    getSearchBuilding () {
+      searchBuilding({
+        projectId: this.activeProject.id,
+        buildingId: this.activeBuild.building_id,
+        buildingName: this.searchValue[this.step]
+      }).then(({ data }) => {
+        console.log(data)
+      })
     },
     // 在选择小区页面就返回，否则返回上一步
     goback () {
@@ -175,6 +193,11 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.select-community-box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 /deep/ .tf-clist {
   border-radius: 0;
 }

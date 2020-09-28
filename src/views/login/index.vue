@@ -157,6 +157,9 @@ export default {
           this.$router.replace({
             name: 'home'
           })
+          this.mtjEvent({
+            eventId: 1
+          })
         })
     },
     /* 发送验证码 */

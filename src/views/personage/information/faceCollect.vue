@@ -160,6 +160,9 @@ export default {
       }).then((res) => {
         this.complete = true
         this.cameraOperate({ detail: { type: 'close' } })
+        this.mtjEvent({
+          eventId: 74
+        })
       }).catch((message) => {
         api.alert({
           msg: message

@@ -21,7 +21,7 @@
       <span class="tf-icon tf-icon-caret-down"></span>
     </div>
     <div class="entrance-box">
-      <div class="entrance-box__type" @click="qrOpenDoor">
+      <div class="entrance-box__type" v-txAnalysis="{eventId: 25}" @click="qrOpenDoor">
         <div class="tf-icon-box" :class="{'active': active === 1}">
           <img
             v-if="active === 1"
@@ -33,7 +33,7 @@
         <div class="entrance-box__type--name">二维码开门</div>
       </div>
       <div class="entrance-box__divider"></div>
-      <div class="entrance-box__type" @click="active = 2">
+      <div class="entrance-box__type" v-txAnalysis="{eventId: 26}" @click="active = 2">
         <div class="tf-icon-box" :class="{'active': active === 2}">
           <img
             v-if="active === 2"
@@ -142,6 +142,9 @@ export default {
         value: 1
       })
     }
+    this.mtjEvent({
+      eventId: 25
+    })
     this.getQrCode()
   },
   methods: {

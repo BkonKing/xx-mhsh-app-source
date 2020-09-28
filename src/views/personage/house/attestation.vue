@@ -287,6 +287,9 @@ export default {
           }).then(() => {
             this.$router.go(-1)
           })
+          this.mtjEvent({
+            eventId: 72
+          })
         } else {
           Toast.fail('保存失败')
         }
@@ -346,6 +349,9 @@ export default {
           setTimeout(() => {
             this.$router.go(-1)
           }, 1000)
+          this.mtjEvent({
+            eventId: 24
+          })
         } else {
           Toast.fail('提交失败')
         }
@@ -454,12 +460,16 @@ export default {
 
 /deep/ .tf-clist-cell-left {
   flex: initial;
-  width: 180px;
+  width: 150px;
 }
 
 /deep/ .tf-clist-cell-right {
   .tf-text {
-    line-height: 90px;
+    // line-height: 90px;
+    width: 100%;
+    max-width: 100%;
+    overflow: initial;
+    white-space: initial;
   }
 }
 

@@ -162,6 +162,9 @@ export default {
         })
         // this.signinToday = '1'
         this.getCreditsAccount()
+        this.mtjEvent({
+          eventId: 4
+        })
       })
     },
     /* 幸福币明细 */

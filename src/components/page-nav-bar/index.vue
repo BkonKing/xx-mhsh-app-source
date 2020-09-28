@@ -62,6 +62,11 @@ export default {
         ? '/pages/personage/house/select-house'
         : '/pages/personage/house/attestation?type=1&mode=0&select=1'
       this.$router.push(url)
+      if (!this.currentProject || this.currentProject.length === 0) {
+        this.mtjEvent({
+          eventId: 23
+        })
+      }
     },
     scan () {
       this.$router.push('/pages/personage/scanCode/index')

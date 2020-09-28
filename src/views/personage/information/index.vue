@@ -420,6 +420,9 @@ export default {
           status: this.userInfo.is_setpaypassword
         }
       })
+      this.mtjEvent({
+        eventId: 75
+      })
     },
     /* 跳转登录密码设置修改 */
     editLoginPassword () {
@@ -428,6 +431,9 @@ export default {
         query: {
           status: this.userInfo.is_setpassword
         }
+      })
+      this.mtjEvent({
+        eventId: 76
       })
     },
     // 人脸采集

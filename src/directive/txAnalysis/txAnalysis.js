@@ -4,8 +4,8 @@ function handleClick (binding) {
   function handle () {
     setTimeout(() => {
       Vue.prototype.bdmtj.onEvent({
-          eventId: binding.value
-      });
+        eventId: binding.value.eventId
+      })
     }, 0)
   }
   return handle

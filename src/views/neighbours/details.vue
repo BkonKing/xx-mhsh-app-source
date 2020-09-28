@@ -249,6 +249,9 @@ export default {
       }).then((res) => {
         Toast.success('活动报名成功')
         this.getInfo()
+        this.mtjEvent({
+          eventId: 8
+        })
       })
     },
     /* 点赞 */

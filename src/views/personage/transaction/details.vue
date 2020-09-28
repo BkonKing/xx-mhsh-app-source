@@ -60,9 +60,10 @@
           </div>
           <tfTimeline
             class="tf-bg-white tf-mt-base tf-padding-lg"
-            :evaluateBtn="false"
+            :evaluateBtn="this.userInfo.role_dep == 1"
             :options="detailInfo.records"
             @negotiate="viewNegotiate"
+            @evaluate="viewEvaluate"
           ></tfTimeline>
         </div>
       </div>
@@ -440,25 +441,25 @@
       title="协商信息"
     >
       <!-- <div class="padding40"> -->
-        <div class="tf-text tf-mb-lg">
-          <span class="lp112">费</span>
-          <span>用：预计</span>
-          <span>{{ negotiateInfo.negotiation_costs }}</span>
-          元
+      <div class="tf-text tf-mb-lg">
+        <span class="lp112">费</span>
+        <span>用：预计</span>
+        <span>{{ negotiateInfo.negotiation_costs }}</span>
+        元
+      </div>
+      <div class="tf-text tf-mb-lg">
+        预约处理时间：{{ negotiateInfo.negotiation_time }}
+      </div>
+      <div v-if="sub_status == 7" class="tf-text tf-row">
+        <div>
+          <span class="lp18">拒绝原</span>
+          因：
         </div>
-        <div class="tf-text tf-mb-lg">
-          预约处理时间：{{ negotiateInfo.negotiation_time }}
-        </div>
-        <div v-if="sub_status == 7" class="tf-text tf-row">
-          <div>
-            <span class="lp18">拒绝原</span>
-            因：
-          </div>
-          <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
-        </div>
-        <div class="confirm-btn">
-          {{ sub_status == 6 ? '已确认' : '已拒绝' }}
-        </div>
+        <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
+      </div>
+      <div class="confirm-btn">
+        {{ sub_status == 6 ? '已确认' : '已拒绝' }}
+      </div>
       <!-- </div> -->
     </tf-dialog>
     <!-- 确认结案 -->
@@ -513,6 +514,35 @@
         max-count="9"
       ></tf-uploader>
     </tf-dialog>
+    <!-- 评价信息 -->
+    <tf-dialog v-model="evaluateDialog" title="评价">
+      <template>
+        <div class="tf-form-box">
+          <div class="evaluate-title">
+            对处理人员
+            <span class="tf-text-grey">({{evaluateInfo.nickname}})</span>
+            {{rateText[evaluateInfo.evaluate_stars]}}
+          </div>
+          <div class="rate-box">
+            <van-rate
+              v-model="evaluateInfo.evaluate_stars"
+              :size="26"
+              color="#FFA110"
+              void-icon="star"
+              void-color="#aaa"
+              readonly
+            />
+          </div>
+          <div class="rate-tag-box">
+            <div v-for="(item, i) in evaluateReasonList" :key="i" class="rate-tag">{{item}}</div>
+          </div>
+          <template v-if="evaluateInfo.evaluate_content">
+            <div class="tf-form-label">其他补充：</div>
+            <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
+          </template>
+        </div>
+      </template>
+    </tf-dialog>
   </div>
 </template>
 
@@ -528,7 +558,8 @@ import {
   Uploader,
   Toast,
   Dialog,
-  PullRefresh
+  PullRefresh,
+  Rate
 } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import tfTimeline from '@/components/tf-timeline/index.vue'
@@ -551,7 +582,8 @@ import {
   caseOver,
   closingPicture,
   timeaxis,
-  queryNegotiationInfo
+  queryNegotiationInfo,
+  getEvaluateInfo
 } from '@/api/butler.js'
 import { getDesigneeList } from '@/api/personage'
 import { mapGetters } from 'vuex'
@@ -566,6 +598,7 @@ export default {
     [Radio.name]: Radio,
     [Uploader.name]: Uploader,
     [PullRefresh.name]: PullRefresh,
+    [Rate.name]: Rate,
     tfTimeline,
     tfImageList,
     tfDialog,
@@ -625,20 +658,36 @@ export default {
       negotiateInfo: {},
       upload_type: 0,
       remarks: '', // 预处理 - 补充说明
-      imageFiles: []
+      imageFiles: [],
+      evaluateDialog: false,
+      evaluateInfo: {}, // 评价信息
+      // 评分对应内容
+      rateText: {
+        1: '非常不满意，各方面都很差',
+        2: '不满意，比较差',
+        3: '一般，还需改善',
+        4: '比较满意，仍可改善',
+        5: '非常满意，无可挑剔'
+      }
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
+    // 客服人员操作状态
     serviceOperateStatus () {
       return this.userInfo.role_dep == 1 && this.status < 4
     },
+    // 处理人员操作状态
     disposeStatus () {
       return (
         this.userInfo.id === this.detailInfo.designee_uid &&
         ([3, 6].indexOf(this.sub_status) > -1 ||
           (this.status == 4 && this.detailInfo.is_upload_images == 0))
       )
+    },
+    evaluateReasonList () {
+      const { evaluate_reason } = this.evaluateInfo
+      return evaluate_reason ? evaluate_reason.split(',') : []
     }
   },
   created () {
@@ -784,6 +833,7 @@ export default {
           Dialog.alert({
             title: '已取消任务'
           }).then((res) => {
+            this.refuseTaskShow = false
             this.getRepairInfo()
           })
         })
@@ -888,6 +938,20 @@ export default {
         Toast.success('结案图片上传成功')
         this.getRepairInfo()
         this.imgUploadShow = false
+      })
+    },
+    /* 查看评价 */
+    viewEvaluate (item) {
+      this.getEvaluateInfo(item)
+      this.evaluateDialog = true
+    },
+    /* 获取评价信息 */
+    getEvaluateInfo (item) {
+      getEvaluateInfo({
+        repair_id: this.repairId,
+        evaluate_id: item.evaluate_id
+      }).then((res) => {
+        this.evaluateInfo = res.data || {}
       })
     },
     /*  */
@@ -1109,8 +1173,41 @@ export default {
   height: 32px;
 
   .van-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 32px;
     height: 32px;
+    line-height: 1;
+    font-size: 24px;
+  }
+}
+.evaluate-title {
+  text-align: center;
+  font-size: 30px;
+}
+.rate-box {
+  margin: 40px auto;
+  text-align: center;
+}
+.rate-tag-box {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
+  padding: 0 50px;
+  .rate-tag {
+    padding: 0 20px;
+    height: 60px;
+    line-height: 60px;
+    background: rgba(255, 192, 23, 0.1);
+    border-radius: 4px;
+    color: #ffa110;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .rate-tag + .rate-tag {
+    margin-left: 20px;
   }
 }
 </style>

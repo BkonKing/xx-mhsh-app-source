@@ -92,6 +92,11 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
+  created () {
+    this.mtjEvent({
+      eventId: 7
+    })
+  },
   activated () {
     this.getCountMessage()
     if (this.scrollTop) {

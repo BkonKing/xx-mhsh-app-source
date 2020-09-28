@@ -80,6 +80,9 @@ export default {
         }
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')
+        this.mtjEvent({
+          eventId: 79
+        })
       }).catch(() => {
         Toast.clear()
       })

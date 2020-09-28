@@ -308,6 +308,9 @@ export default {
           message: res.message
         })
         this.$store.dispatch('getMyAccount')
+        this.mtjEvent({
+          eventId: 4
+        })
       })
     },
     /* 获取幸福币专区 */

@@ -94,6 +94,9 @@ export default {
         this.$store.commit('setCurrentProject', ...current)
         this.$store.dispatch('getMyAccount')
         this.$router.go(-1)
+        this.mtjEvent({
+          eventId: 73
+        })
       })
     },
     manClick (item) {

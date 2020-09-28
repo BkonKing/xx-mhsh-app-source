@@ -300,6 +300,9 @@ export default {
             message: res.message
           })
           this.$store.dispatch('getMyAccount')
+          this.mtjEvent({
+            eventId: 4
+          })
         })
       } else {
         // 已签到，弹出签到日历
