@@ -7,7 +7,7 @@
 					<div class="font-34 font-weight">美好生活</div>
 					<div class="header-right flex-align-center">
 						<div class="header-link" @click="linkFunc(6)"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
-						<div class="header-link" @click="linkFunc(1)"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+						<div class="header-link" @click="linkFunc(1)" v-txAnalysis="9"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
 					</div>
 				</div>
 			</div>

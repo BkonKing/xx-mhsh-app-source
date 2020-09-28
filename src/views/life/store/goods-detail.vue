@@ -105,7 +105,7 @@
                   <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
                 </div>
                 <div v-else class="collage-item-right">
-                  <div @click="showFunc('collage',item.f_collage_order_id)" class="collage-btn pd-btn">一起拼单</div>
+                  <div @click="showFunc('collage',item.f_collage_order_project_id)" class="collage-btn pd-btn">一起拼单</div>
                   <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
                 </div>
               </div>
