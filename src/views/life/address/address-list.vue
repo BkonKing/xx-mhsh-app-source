@@ -90,6 +90,7 @@
 import { NavBar, List } from 'vant'
 import { getAddress } from '@/api/life.js'
 import eventBus from '@/api/eventbus.js';
+import { getArea } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -131,6 +132,10 @@ export default {
       }).then(res => {
         if (res.success) {
           if(res.data){
+            console.log(getArea('福建省福州市仓山区下渡街道三盛滨江国三盛滨江国'))
+            for(let i=0;i<res.data.length;i++){
+              res.data[i].address_name = getArea(res.data[i].address_detail)+res.data[i].address_name;
+            }
             this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
             this.isEmpty = this.page == 1 && res.data.length ==0 ? true : false;
             // if(res.data.length < res.pageSize){
@@ -231,7 +236,7 @@ export default {
 		max-width: 526px;
 	}
 	.default-detail-text {
-		max-width: 455px;
+		max-width: 100%;
 	}
   .address-link {
     width: 94px;

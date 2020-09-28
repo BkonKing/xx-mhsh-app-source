@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import { NavBar, Button, Toast } from 'vant'
 import { mapGetters } from 'vuex'
 export default {
@@ -66,10 +67,25 @@ export default {
         value: tokenList[item.id]
       })
       this.$store.dispatch('getMyAccount').then(async () => {
+        Toast.clear()
+        if (process.env.VUE_APP_IS_APP === '1') {
+          const ajParams = {
+            alias: this.userInfo.id
+          }
+          Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
+            if (ret && ret.statusCode) {
+              // alert(ret)
+            }
+          })
+        }
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')
+        this.mtjEvent({
+          eventId: 79
+        })
+      }).catch(() => {
+        Toast.clear()
       })
-      Toast.clear()
     },
     /* 账号登录 */
     login () {
@@ -81,7 +97,7 @@ export default {
 
 <style lang="less" scoped>
 .page-container {
-  padding: 0 50px;
+  padding: 0 50px 50px;
 }
 
 .tf-h3 {

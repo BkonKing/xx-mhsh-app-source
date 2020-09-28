@@ -146,6 +146,9 @@ export default {
           Dialog.alert({
             title: '支付成功'
           })
+          this.mtjEvent({
+            eventId: 46
+          })
         }
       })
     },
@@ -161,6 +164,9 @@ export default {
             title: `获得${data.credits}幸福币`
           }).then(() => {
             this.getCollectCode()
+            this.mtjEvent({
+              eventId: 47
+            })
           })
         }
       })
@@ -209,9 +215,9 @@ export default {
             })
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -243,9 +249,9 @@ export default {
             api.toast('扫码失败，二维码可能过期')
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -265,9 +271,9 @@ export default {
             })
           }
         })
-        .catch((message) => {
+        .catch((err) => {
           api.alert({
-            title: message
+            title: err.message
           })
         })
     },
@@ -283,7 +289,7 @@ export default {
         })
         .catch((err) => {
           api.alert({
-            title: err
+            title: err.message
           })
         })
     },
@@ -299,7 +305,7 @@ export default {
         })
         .catch((err) => {
           api.alert({
-            title: err
+            title: err.message
           })
         })
     },
@@ -391,6 +397,9 @@ export default {
         } else {
           !len && this.openFrame()
         }
+        this.mtjEvent({
+          eventId: 6
+        })
       } else {
         len && this.closeFrame()
         this.timer && clearTimeout(this.timer)

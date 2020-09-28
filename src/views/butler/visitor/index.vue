@@ -265,6 +265,9 @@ export default {
           id
         }
       })
+      this.mtjEvent({
+        eventId: 31
+      })
     },
     /* 删除访客 */
     deleteVisitor (index) {

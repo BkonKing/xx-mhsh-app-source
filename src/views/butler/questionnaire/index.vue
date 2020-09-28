@@ -34,7 +34,11 @@ export default {
   },
   methods: {
     getWjtpList (params) {
-      return getWjtpList(params)
+      const len = this.list.length
+      const wjtpId = len && params.pages !== 1 ? this.list[len - 1].id : ''
+      return getWjtpList({
+        wjtpId
+      })
     },
     goMyList () {
       this.$router.push('/pages/butler/questionnaire/my')

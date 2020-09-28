@@ -150,7 +150,7 @@ export default {
           images: this.images.join(','),
           category_id: this.category_id
         },
-        this.currentProject.house_id
+        (this.currentProject && this.currentProject.house_id) || ''
       ).then((res) => {
         if (res.success) {
           Dialog.alert({
@@ -158,6 +158,9 @@ export default {
           }).then(() => {
             this.repairId = res.data.repair_id
             this.goRepairDetails()
+          })
+          this.mtjEvent({
+            eventId: 29
           })
         } else {
           Toast.fail('提交失败')

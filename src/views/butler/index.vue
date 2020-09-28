@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
-    <page-nav-bar></page-nav-bar>
+    <page-nav-bar class="bulter-nav-bar"></page-nav-bar>
     <van-notice-bar v-if="noticeList.length" class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
         <van-swipe-item
@@ -38,13 +38,20 @@ export default {
   data () {
     return {
       noticeList: [],
-      appList: []
+      appList: [],
+      ymjObj: {}
     }
   },
   computed: {
-    ...mapGetters(['userType']),
+    ...mapGetters(['userType', 'userInfo']),
     mainAppList () {
-      return this.appList.filter(obj => obj.id !== '1')
+      return this.appList.filter(obj => {
+        if (obj.id === '1') {
+          this.ymjObj = obj
+          return false
+        }
+        return true
+      })
     }
   },
   // created () {
@@ -76,16 +83,12 @@ export default {
           id
         }
       })
+      this.mtjEvent({
+        eventId: 27
+      })
     },
     /* 跳转云门禁 */
     goEntrance () {
-      const status = this.appList.some((obj) => {
-        return obj.id === '1'
-      })
-      if (!status) {
-        Toast('小区暂未开放此功能')
-        return
-      }
       this.$router.push('/pages/butler/entrance/index')
     }
   },
@@ -103,6 +106,10 @@ export default {
       'noticeDetails'
     ]
     if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
+        next()
+        return
+      }
       Dialog.confirm({
         title: '提示',
         message: '您尚未认证房间，是否去认证？',
@@ -112,6 +119,9 @@ export default {
           '/pages/personage/house/attestation?type=1&mode=0&select=1'
         )
       })
+      next(false)
+    } else if (to.name === 'entranceIndex' && this.ymjObj.mj_status == '0') {
+      Toast('小区暂未开放此功能')
       next(false)
     } else {
       next()

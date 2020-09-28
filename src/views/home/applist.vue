@@ -14,7 +14,7 @@
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
-        <span v-show="!editMode" @click="edit">编辑</span>
+        <span v-show="!editMode" @click="edit" v-txAnalysis="{eventId: 3}">编辑</span>
         <span class="comfirm-btn" v-show="editMode" @click="saveMyApp">完成</span>
       </div>
     </div>
@@ -218,6 +218,10 @@ export default {
       'noticeDetails'
     ]
     if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
+        next()
+        return
+      }
       Dialog.confirm({
         title: '提示',
         message: '您尚未认证房间，是否去认证？',

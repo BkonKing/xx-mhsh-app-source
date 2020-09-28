@@ -269,6 +269,9 @@ export default {
             message
           })
           this.getWjtpInfo()
+          this.mtjEvent({
+            eventId: this.wjtp_info.wjtp_type == 1 ? 36 : 37
+          })
         } else {
           Toast.fail({
             message: '提交失败'

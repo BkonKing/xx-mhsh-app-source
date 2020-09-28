@@ -96,6 +96,7 @@ export default {
     }
   },
   methods: {
+    // 表单验证
     formSubmit () {
       const validator = [
         {
@@ -111,6 +112,7 @@ export default {
         this.addFeedback()
       })
     },
+    // 意见反馈提交
     addFeedback () {
       addFeedback({
         content: this.content,
@@ -122,6 +124,9 @@ export default {
             title: '感谢您的反馈'
           }).then(() => {
             this.$router.go(-1)
+          })
+          this.mtjEvent({
+            eventId: 60
           })
         } else {
           Toast.fail('提交失败')

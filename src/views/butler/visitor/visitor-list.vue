@@ -6,7 +6,7 @@
         v-for="(item, i) in data"
         :key="i"
         class="list-item tf-row-space-between"
-        @click="onClick(item)"
+        @click="handleClick(item)"
       >
         <div class="tf-row">
           <div class="tf-text">{{ item.realname }}</div>
@@ -43,13 +43,15 @@ export default {
     this.getMyVisitorList()
   },
   methods: {
-    onClick (item) {
+    // 如果是选择状态，则选中后返回
+    handleClick (item) {
       // eslint-disable-next-line eqeqeq
       if (this.type == '2') {
         this.$store.commit('setVisitorList', item)
         this.$router.go(-1)
       }
     },
+    // 获取访客列表
     getMyVisitorList () {
       getMyVisitorList().then((res) => {
         if (res.success) {
@@ -57,6 +59,7 @@ export default {
         }
       })
     },
+    // 删除访客信息
     deleteMyVisitor (id) {
       Dialog.confirm({
         title: '是否删除该访客信息'
@@ -71,6 +74,7 @@ export default {
         })
       })
     },
+    // 跳转访客信息页面，0为编辑，1为添加
     jump (type, item) {
       let url = `/pages/butler/visitor/edit?type=${type}`
       if (type === 0) {

@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <div class="tf-padding tf-body-container">
-      <house :mode="0"></house>
+      <house :mode="0" :entranceStatus="entranceStatus"></house>
     </div>
   </div>
 </template>
@@ -23,7 +23,14 @@ export default {
     house
   },
   data () {
-    return {}
+    return {
+      entranceStatus: false
+    }
+  },
+  created () {
+    if (this.$route.query.status === '1') {
+      this.entranceStatus = true
+    }
   },
   methods: {
   }

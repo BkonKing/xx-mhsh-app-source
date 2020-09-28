@@ -126,7 +126,8 @@ export default {
       uid: '',
       oneself: false,
       active: {},
-      index: undefined // 点击操作框的评论数据
+      index: undefined, // 点击操作框的评论数据
+      pages: 1
     }
   },
   created () {
@@ -195,6 +196,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     /* 删除评论 */
@@ -211,12 +215,13 @@ export default {
     getCommentList () {
       getCommentList({
         articleId: this.articleId,
-        parentId: this.parentId
+        parentId: this.parentId,
+        pages: this.pages
       }).then(({ data }) => {
-        this.loading = false
-        if (data.length > 0) {
+        if (data && data.length > 0) {
           this.list.push(...data)
-          if (data.length >= 10) {
+          if (data.length >= 5) {
+            this.pages++
             this.isEndNum = 0
           } else {
             this.isEndNum = 1
@@ -224,6 +229,7 @@ export default {
         } else {
           this.finished = true
         }
+        this.loading = false
       })
     },
     /* 评论成功回调 */
@@ -237,10 +243,14 @@ export default {
         // console.table(this.list)
       }
       Toast.success('评论成功')
+      this.mtjEvent({
+        eventId: 41
+      })
     },
     /* 刷新回复列表 */
     reload () {
       this.list = []
+      this.pages = 1
       this.parentId = ''
       this.getCommentList()
     }

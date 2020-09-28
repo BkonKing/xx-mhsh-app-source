@@ -36,10 +36,12 @@ export default {
   data () {
     return {
       FNPhotograph: null,
-      complete: false
+      complete: false,
+      status: 1
     }
   },
   created () {
+    this.complete = this.$route.query.status == 0
     this.FNPhotograph = api.require('FNPhotograph')
     window.closeCameraView = new CustomEvent('cameraOperate', {
       detail: { type: 'close' }
@@ -160,6 +162,9 @@ export default {
       }).then((res) => {
         this.complete = true
         this.cameraOperate({ detail: { type: 'close' } })
+        this.mtjEvent({
+          eventId: 74
+        })
       }).catch((message) => {
         api.alert({
           msg: message

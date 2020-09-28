@@ -35,7 +35,7 @@
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
-        <van-grid-item v-for="(item, index) in myAppList" :key="index" :to="item.url">
+        <van-grid-item v-for="(item, index) in myAppList" :key="index" @click="goApp(item)">
           <img class="app-box__image" :src="item.icon_image" v-imageCach="item.icon_image" />
           <span class="app-box__text">{{item.application}}</span>
         </van-grid-item>
@@ -168,9 +168,9 @@
       v-if="guideShow"
       @click="guideStep"
       :class="[guideIndex > 1 ? 'end-bottom' : '', guideIndex == 1 ? 'guide-sign' : '', 'mask-bg']"
-      :style="{'padding-top': $store.state.paddingTop+guideTop+'px'}"
+      :style="{'padding-top': guideIndex == 1 ? guideTop+'px' : $store.state.paddingTop+'px'}"
     >
-      <img :src="guideList[guideIndex]" />
+      <img v-show="index == guideIndex" v-for="(item,index) in guideList" :src="item" />
     </div>
   </div>
 </template>
@@ -234,7 +234,7 @@ export default {
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
       ],
-      guideTop: 0,
+      guideTop: 0
     }
   },
   computed: {
@@ -245,7 +245,6 @@ export default {
     if (!guidetype) {
       this.guideShow = true
     }
-    
     this.$store.dispatch('getMyAccount')
   },
   activated () {
@@ -268,7 +267,7 @@ export default {
     /* 新手引导步骤 */
     guideStep () {
       this.guideIndex = this.guideIndex + 1
-      this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0;
+      this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0
       if (this.guideIndex > 4) {
         this.guideShow = false
         api.setPrefs({ key: 'guidetype', value: 1 })
@@ -306,9 +305,12 @@ export default {
     sign () {
       signin().then((res) => {
         Toast({
-          message: '签到成功   幸福币+10'
+          message: res.message
         })
         this.$store.dispatch('getMyAccount')
+        this.mtjEvent({
+          eventId: 4
+        })
       })
     },
     /* 获取幸福币专区 */
@@ -402,6 +404,14 @@ export default {
         this.scrollStatus = false
         this.swipeChange(this.activeIndex)
       }
+    },
+    // 跳转到应用
+    goApp ({ url, mj_status }) {
+      if (url === '/pages/butler/entrance/index' && mj_status == '0') {
+        Toast('小区暂未开放此功能')
+      } else {
+        this.$router.push(url)
+      }
     }
   },
   filters: {
@@ -437,6 +447,10 @@ export default {
       'noticeDetails'
     ]
     if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
+      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
+        next()
+        return
+      }
       Dialog.confirm({
         title: '提示',
         message: '您尚未认证房间，是否去认证？',

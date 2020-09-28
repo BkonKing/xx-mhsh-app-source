@@ -9,6 +9,7 @@
       :name="item.application"
       :status="item.status"
       :url="item.url"
+      :mjStatus="item.mj_status"
       :editMode="editMode"
       @add="add(item)"
     ></app-item>

@@ -10,21 +10,21 @@
     />
     <van-tabs class="tf-body-container" v-model="isVisit">
       <van-tab title="待来访">
-        <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 1)">
+        <refreshList :list.sync="unvisitList" :load="(params) => getVisitorLogList(params, 1, 'unvisitList')">
           <template v-slot="{item}">
             <list-card :data="item" :key="item.id"></list-card>
           </template>
         </refreshList>
       </van-tab>
       <van-tab title="已过期">
-        <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 3)">
+        <refreshList :list.sync="expiredList" :load="(params) => getVisitorLogList(params, 3, 'expiredList')">
           <template v-slot="{item}">
             <list-card :data="item" :key="item.id"></list-card>
           </template>
         </refreshList>
       </van-tab>
       <van-tab title="已到访">
-        <refreshList :list.sync="visitedList" :load="(params) => getVisitorLogList(params, 2)">
+        <refreshList :list.sync="visitedList" :load="(params) => getVisitorLogList(params, 2, 'visitedList')">
           <template v-slot="{item}">
             <list-card :data="item" :key="item.id"></list-card>
           </template>
@@ -57,10 +57,14 @@ export default {
     }
   },
   methods: {
-    getVisitorLogList (params, isVisit) {
+    getVisitorLogList (params, isVisit, listName) {
       const active = isVisit || this.isVisit
-      params.isVisit = active
-      return getVisitorLogList(params)
+      const len = this[listName].length
+      const id = len && params.pages !== 1 ? this[listName][len - 1].id : ''
+      return getVisitorLogList({
+        logId: id,
+        isVisit: active
+      })
     }
   }
 }

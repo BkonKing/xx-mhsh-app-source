@@ -327,6 +327,7 @@ export default {
 		      }).then(res => {
 		        if (res.success) {
 		        	// Toast(res.message);
+		        	this.mtjEvent({eventId: '57'}); 
 		        	//跳转退款详情
 		        	this.$router.push({
 			          path: '/order/refund-detail',
@@ -349,6 +350,7 @@ export default {
 		      }).then(res => {
 		        if (res.success) {
 		        	// Toast(res.message);
+		        	this.mtjEvent({eventId: '56'});
 		        	//跳转退款详情
 		        	this.$router.push({
 			          path: '/order/refund-detail',

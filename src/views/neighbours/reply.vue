@@ -136,7 +136,8 @@ export default {
       active: {},
       oneself: 0,
       reply_nickname: '', // 回复人昵称
-      isMine: 0
+      isMine: 0,
+      pages: 1
     }
   },
   created () {
@@ -165,6 +166,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     /* 获取评论详情 */
@@ -199,13 +203,14 @@ export default {
     getCommentList () {
       getCommentList({
         articleId: this.articleId,
-        parentId: this.id
+        parentId: this.id,
+        pages: this.pages
       }).then(({ data }) => {
         this.isLoading = false
-        this.loading = false
-        if (data.length > 0) {
+        if (data && data.length > 0) {
           this.replyList.push(...data)
-          if (data.length >= 10) {
+          if (data.length >= 5) {
+            this.pages++
             this.isEndNum = 0
           } else {
             this.isEndNum = 1
@@ -213,10 +218,12 @@ export default {
         } else {
           this.finished = true
         }
+        this.loading = false
       })
     },
     /* 下拉刷新 */
     onRefresh () {
+      this.pages = 1
       this.replyList = []
       this.getCommentInfo()
       this.getCommentList()
@@ -248,6 +255,9 @@ export default {
         // this.replyList.unshift(data)
       }
       Toast.success('评论成功')
+      this.mtjEvent({
+        eventId: 41
+      })
     }
   },
   watch: {

@@ -34,7 +34,7 @@
 	          </div>
 	          <div :class="[parseInt(item.count) >= parseInt(item.max_buy) ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
 	        </div>
-	        <div class="product-del" @click.stop="delCarts(index)" data-index=""><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
+	        <div class="product-del" @click.stop="delCarts(index)" v-txAnalysis="{eventId: 13}"><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
 	      </div>
 	    </div>
 		</div>
@@ -47,7 +47,7 @@
       <div class="cart-data flex-align-center">
         <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
         <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
-        <div class="all-go flex-center" v-txAnalysis="15" @click="payFunc">结算({{numTotal}})</div>
+        <div class="all-go flex-center" v-txAnalysis="{eventId: 15}" @click="payFunc">结算({{numTotal}})</div>
       </div>
     </div>
 	</div>

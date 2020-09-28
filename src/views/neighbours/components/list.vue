@@ -117,6 +117,9 @@ export default {
         this.list.splice(this.activeIndex, 1)
         Toast.success('删除成功')
         this.moreShow = false
+        this.mtjEvent({
+          eventId: 44
+        })
       })
     },
     goDetails (articleType, { id, is_del }) {

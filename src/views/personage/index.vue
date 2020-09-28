@@ -4,18 +4,28 @@
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
         <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-          <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
+          <span v-if="userInfo.message_mum != 0" class="van-info">{{
+            userInfo.message_mum
+          }}</span>
         </span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container tf-overflow-auto">
       <div class="tf-bg-white">
         <div class="tf-row tf-padding-lg" @click="goInformation">
-          <img v-if="userInfo.avatar" class="personage-info__avatar" :src="userInfo.avatar" />
-          <img v-else class="personage-info__avatar" src="@/assets/imgs/touxiang.png" />
+          <img
+            v-if="userInfo.avatar"
+            class="personage-info__avatar"
+            :src="userInfo.avatar"
+          />
+          <img
+            v-else
+            class="personage-info__avatar"
+            src="@/assets/imgs/touxiang.png"
+          />
           <div class="personage-info--base">
             <div class="user-info-box">
-              <div class="user-name">{{userInfo.nickname}}</div>
+              <div class="user-name">{{ userInfo.nickname }}</div>
               <van-tag
                 v-if="userType != '0'"
                 class="user-role"
@@ -24,7 +34,8 @@
                 :text-color="userType | houseRoleColor"
                 :inverted="true"
                 size="small"
-              >{{userType | houseRoleText}}</van-tag>
+                >{{ userType | houseRoleText }}</van-tag
+              >
               <van-tag
                 v-if="userInfo.role_dep"
                 class="user-role"
@@ -33,53 +44,102 @@
                 :text-color="5 | houseRoleColor"
                 :inverted="true"
                 size="small"
-              >{{userInfo.position}}</van-tag>
+                >{{ userInfo.position }}</van-tag
+              >
             </div>
-            <div v-if="currentProject && currentProject.fc_info" class="user-address">{{currentProject.fc_info}}</div>
+            <div
+              v-if="currentProject && currentProject.fc_info"
+              class="user-address"
+            >
+              {{ currentProject.fc_info }}
+            </div>
+            <div
+              v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
+              class="user-address"
+            >
+              {{ userInfo.project_name }}
+            </div>
           </div>
         </div>
       </div>
       <div class="tf-row tf-bg-white coin-box">
         <div class="tf-flex-item tf-column" @click="goHappiness">
-          <div class="user-text--lg">{{userInfo.credits || 0}}</div>
+          <div class="user-text--lg">{{ userInfo.credits || 0 }}</div>
           <div class="user-text--grey">幸福币</div>
         </div>
-        <div class="tf-flex-item tf-column" @click="$router.push('/coupon/list')">
-          <div class="user-text--lg">{{orderData.yhq_count || 0}}</div>
+        <div
+          class="tf-flex-item tf-column"
+          @click="$router.push('/coupon/list')"
+        >
+          <div class="user-text--lg">{{ orderData.yhq_count || 0 }}</div>
           <div class="user-text--grey">优惠券</div>
         </div>
         <div class="tf-flex-item tf-column tf-flex-center">
           <button
             class="user-btn__text"
-            :class="['user-btn', userInfo.signin_today === '1' ? 'user-btn--unsign' : 'user-btn--signin']"
+            :class="[
+              'user-btn',
+              userInfo.signin_today === '1'
+                ? 'user-btn--unsign'
+                : 'user-btn--signin'
+            ]"
             @click="sign"
-          >{{userInfo.signin_today | signText}}</button>
+          >
+            {{ userInfo.signin_today | signText }}
+          </button>
         </div>
       </div>
       <div class="functional-box">
         <div v-if="userInfo.swrole == 1" class="module-box">
           <div class="module-title">事务处理</div>
           <div class="tf-padding-base">
-            <div v-if="userInfo.role_dep == 1" class="tf-row manage-border-bottom">
-              <div class="manage-box manage-border-right" @click="goTransaction(1)">
-                <img class="manage-image" src="@/assets/imgs/personage_daichuli.png" />
+            <div
+              v-if="userInfo.role_dep == 1"
+              class="tf-row manage-border-bottom"
+            >
+              <div
+                class="manage-box manage-border-right"
+                @click="goTransaction(1)"
+              >
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_daichuli.png"
+                />
                 <div class="text-sm">待处理</div>
-                <span v-if="userInfo.dcl_num" class="personage-badge">{{userInfo.dcl_num}}</span>
+                <span v-if="userInfo.dcl_num" class="personage-badge">{{
+                  userInfo.dcl_num
+                }}</span>
               </div>
               <div class="manage-box" @click="goTransaction(2)">
-                <img class="manage-image" src="@/assets/imgs/personage_daifenpai.png" />
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_daifenpai.png"
+                />
                 <div class="text-sm">待分派</div>
-                <span v-if="userInfo.dfp_num" class="personage-badge">{{userInfo.dfp_num}}</span>
+                <span v-if="userInfo.dfp_num" class="personage-badge">{{
+                  userInfo.dfp_num
+                }}</span>
               </div>
             </div>
             <div class="tf-row">
-              <div class="manage-box manage-border-right" @click="goTransaction(3)">
-                <img class="manage-image" src="@/assets/imgs/personage_daijiean.png" />
+              <div
+                class="manage-box manage-border-right"
+                @click="goTransaction(3)"
+              >
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_daijiean.png"
+                />
                 <div class="text-sm">待结案</div>
-                <span v-if="userInfo.dja_num" class="personage-badge">{{userInfo.dja_num}}</span>
+                <span v-if="userInfo.dja_num" class="personage-badge">{{
+                  userInfo.dja_num
+                }}</span>
               </div>
               <div class="manage-box" @click="goTransaction(4)">
-                <img class="manage-image" src="@/assets/imgs/personage_yijiean.png" />
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_yijiean.png"
+                />
                 <div class="text-sm">已结案</div>
               </div>
             </div>
@@ -89,39 +149,58 @@
           <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box" @click="goOrderList(1)">
-              <img class="manage-image" src="@/assets/imgs/personage_daifukuan.png" />
+              <img
+                class="manage-image"
+                src="@/assets/imgs/personage_daifukuan.png"
+              />
               <div class="text-sm">待付款</div>
               <span
                 v-if="orderData.dfk_count && orderData.dfk_count != 0"
                 class="personage-badge"
-              >{{orderData.dfk_count}}</span>
+                >{{ orderData.dfk_count }}</span
+              >
             </div>
             <div class="order-box" @click="goOrderList(2)">
-              <img class="manage-image" src="@/assets/imgs/personage_daifahuo.png" />
+              <img
+                class="manage-image"
+                src="@/assets/imgs/personage_daifahuo.png"
+              />
               <div class="text-sm">待发货</div>
               <span
                 v-if="orderData.dfk_count && orderData.dfh_count != 0"
                 class="personage-badge"
-              >{{orderData.dfh_count}}</span>
+                >{{ orderData.dfh_count }}</span
+              >
             </div>
             <div class="order-box" @click="goOrderList(3)">
-              <img class="manage-image" src="@/assets/imgs/personage_shouhuo.png" />
+              <img
+                class="manage-image"
+                src="@/assets/imgs/personage_shouhuo.png"
+              />
               <div class="text-sm">待收货</div>
               <span
                 v-if="orderData.dfk_count && orderData.dsh_count != 0"
                 class="personage-badge"
-              >{{orderData.dsh_count}}</span>
+                >{{ orderData.dsh_count }}</span
+              >
             </div>
             <div class="order-box" @click="goOrderList(4)">
-              <img class="manage-image" src="@/assets/imgs/personage_tuihuan.png" />
+              <img
+                class="manage-image"
+                src="@/assets/imgs/personage_tuihuan.png"
+              />
               <div class="text-sm">退换</div>
               <span
                 v-if="orderData.dfk_count && orderData.thz_count != 0"
                 class="personage-badge"
-              >{{orderData.thz_count}}</span>
+                >{{ orderData.thz_count }}</span
+              >
             </div>
             <div class="order-box" @click="goOrderList(undefined)">
-              <img class="manage-image" src="@/assets/imgs/personage_quanbu.png" />
+              <img
+                class="manage-image"
+                src="@/assets/imgs/personage_quanbu.png"
+              />
               <div class="text-sm">全部</div>
             </div>
           </div>
@@ -129,17 +208,26 @@
         <tf-list class="personage-list tf-mb-lg">
           <tf-list-item border title="我的订单" @click="goOrderList(undefined)">
             <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_dingdan.png" />
+              <img
+                class="tf-clist-cell__image"
+                src="@/assets/imgs/personage_dingdan.png"
+              />
             </template>
           </tf-list-item>
           <tf-list-item border title="我的互动" @click="goInteraction">
             <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_hudong.png" />
+              <img
+                class="tf-clist-cell__image"
+                src="@/assets/imgs/personage_hudong.png"
+              />
             </template>
           </tf-list-item>
           <tf-list-item border title="我的资料" @click="goInformation">
             <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_ziliao.png" />
+              <img
+                class="tf-clist-cell__image"
+                src="@/assets/imgs/personage_ziliao.png"
+              />
             </template>
           </tf-list-item>
           <!-- <tf-list-item title="幸福基金">
@@ -151,12 +239,18 @@
         <tf-list class="personage-list">
           <tf-list-item border title="常见问题" @click="goQuestion">
             <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_wenti.png" />
+              <img
+                class="tf-clist-cell__image"
+                src="@/assets/imgs/personage_wenti.png"
+              />
             </template>
           </tf-list-item>
           <tf-list-item title="意见反馈" @click="goFeedback">
             <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_fankui.png" />
+              <img
+                class="tf-clist-cell__image"
+                src="@/assets/imgs/personage_fankui.png"
+              />
             </template>
           </tf-list-item>
         </tf-list>
@@ -203,9 +297,12 @@ export default {
       if (this.userInfo.signin_today === '0') {
         signin().then((res) => {
           Toast({
-            message: '签到成功   幸福币+10'
+            message: res.message
           })
           this.$store.dispatch('getMyAccount')
+          this.mtjEvent({
+            eventId: 4
+          })
         })
       } else {
         // 已签到，弹出签到日历

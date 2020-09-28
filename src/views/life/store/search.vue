@@ -126,7 +126,8 @@
                       </div>
                       <div v-if="item.category" class="post-group">{{item.category}}</div>
                     </div>
-                    <div class="post-cont">{{item.content}}
+                    <div class="post-cont">
+                      <div>{{item.content}}</div>
                       <template v-if="item.images">
                         <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
                         <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
@@ -154,7 +155,8 @@
                       </div>
                       <div v-if="item.category" class="post-group">{{item.category}}</div>
                     </div>
-                    <div class="post-cont">{{item.content}}
+                    <div class="post-cont">
+                      <div>{{item.content}}</div>
                       <template v-if="item.images">
                         <img class="tf-mt-lg" width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
                         <tf-image-list class="tf-mt-base" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
@@ -485,6 +487,7 @@ export default {
 
     },
     goSearch: function (e) {
+      this.mtjEvent({eventId: '5'}); 
       if(this.typeVal == 0){
         this.getSearchGoods();
         this.getSearchApp();
@@ -547,7 +550,7 @@ export default {
         this.$router.push({
           path: '/pages/neighbours/details',
           query: {
-            articleType: this.articleType,
+            articleType: '3',
             id: obj.id
           }
         })

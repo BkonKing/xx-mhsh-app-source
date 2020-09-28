@@ -883,6 +883,14 @@
   .van-hairline--left::after {
     border-left-width: 0;
   }
+
+}
+
+.van-image-preview__index {
+  top: auto;
+  bottom: 30px;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
 }
 
 .van-dialog .van-button {
@@ -994,4 +1002,27 @@
   background: none;
   padding: 0;
   margin-bottom: 20px;
+}
+
+.select-community-container .tf-clist-cell-right {
+  flex: 0;
+  width: 46px;
+}
+
+.house-attestation {
+  .tf-clist-cell-left {
+    flex: initial !important;
+    width: 150px !important;
+  }
+
+  .tf-clist-cell-right {
+    .tf-text {
+      // line-height: 90px;
+      width: 100%;
+      max-width: 100%;
+      overflow: initial;
+      white-space: initial;
+      text-overflow: inherit;
+    }
+  }
 }

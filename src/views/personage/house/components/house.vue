@@ -14,7 +14,7 @@
         <div class="tf-row-space-between">
           <div class="tf-row">
             <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
-            <div class="tf-space-around">
+            <div class="tf-space-around tf-flex-item">
               <div class="house-name">{{item.project_name}}</div>
               <div class="house-address">{{item.fc_info}}</div>
             </div>
@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
 import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
@@ -46,6 +45,10 @@ export default {
     mode: {
       type: Number,
       default: 1
+    },
+    entranceStatus: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -67,6 +70,11 @@ export default {
     bindingHouse () {
       bindingHouse().then((res) => {
         this.houseList = res.data || []
+        if (this.entranceStatus) {
+          this.houseList = this.houseList.filter(obj => {
+            return obj.is_menjin
+          })
+        }
       })
     },
     goAttestation () {
@@ -90,12 +98,14 @@ export default {
       bindingDefault({
         binding_id: bindingId
       }).then((res) => {
-        // Toast.success('设置成功')
         const current = this.houseList.splice(index, 1)
         this.houseList.unshift(...current)
         this.$store.commit('setCurrentProject', ...current)
         this.$store.dispatch('getMyAccount')
         this.$router.go(-1)
+        this.mtjEvent({
+          eventId: 73
+        })
       })
     },
     manClick (item) {

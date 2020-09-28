@@ -107,6 +107,7 @@ export default {
     navFun (index) {
       this.typeVal = index;
       this.page = 1;
+      this.listData = [];
       this.loading = false;
       this.finished = false;
     },
@@ -160,4 +161,7 @@ export default {
   margin-left: -46px;
 }
 /* 导航 end */
+.coupon-list {
+  padding-bottom: 30px
+}
 </style>

@@ -3,18 +3,27 @@
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-dingwei"></span>
+        <span v-if="currentProject" class="tf-text">{{
+          currentProject.project_name + currentProject.fc_info
+        }}</span>
         <span
-          v-if="currentProject"
+          v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
           class="tf-text"
-        >{{ currentProject.project_name + currentProject.fc_info }}</span>
+          >{{ userInfo.project_name }}</span>
         <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
-      <span v-if="search" class="tf-icon tf-icon-sousuo" @click="onSearch"></span>
+      <span
+        v-if="search"
+        class="tf-icon tf-icon-sousuo"
+        @click="onSearch"
+      ></span>
       <span class="tf-icon tf-icon-saoyisao" @click="scan"></span>
       <span class="tf-icon tf-icon-xiaoxi" @click="goMessage">
-        <span v-if="userInfo.message_mum != 0" class="van-info">{{userInfo.message_mum}}</span>
+        <span v-if="userInfo.message_mum != 0" class="van-info">{{
+          userInfo.message_mum
+        }}</span>
       </span>
     </template>
   </van-nav-bar>
@@ -53,6 +62,11 @@ export default {
         ? '/pages/personage/house/select-house'
         : '/pages/personage/house/attestation?type=1&mode=0&select=1'
       this.$router.push(url)
+      if (!this.currentProject || this.currentProject.length === 0) {
+        this.mtjEvent({
+          eventId: 23
+        })
+      }
     },
     scan () {
       this.$router.push('/pages/personage/scanCode/index')
@@ -65,6 +79,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.bulter-nav-bar /deep/ .van-nav-bar__left {
+  max-width: calc(100% - 210px);
+}
+/deep/ .van-nav-bar__left {
+  max-width: calc(100% - 305px);
+  .room_btn {
+    width: 100%;
+  }
+  .tf-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 .tf-nav-bar {
   background: none;
   &:after {

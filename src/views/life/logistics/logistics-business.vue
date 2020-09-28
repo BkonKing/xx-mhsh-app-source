@@ -18,7 +18,7 @@
         </div>
         <div class="logistics-tip">
           <div>配送方式：{{infoData.name}}</div>
-          <div>联系电话：{{infoData.tel}}</div>
+          <div>联系电话：<a class="color-222" :href="'tel: '+infoData.tel">{{infoData.tel}}</a></div>
         </div>
       </div>
       <div v-if="infoData.l_status == 1" class="block-session logistics-code logistics-success">

@@ -9,7 +9,13 @@
     <img class="logo-text" src="@/assets/imgs/login_logo_text.png" />
     <div class="form">
       <div class="form-body">
-        <Field v-model="mobile" class="form-input" maxlength="11" type="tel" placeholder="请输入您的手机号"></Field>
+        <Field
+          v-model="mobile"
+          class="form-input"
+          maxlength="11"
+          type="tel"
+          placeholder="请输入您的手机号"
+        ></Field>
         <Field
           v-if="login_type === 1"
           v-model="yzm"
@@ -20,8 +26,10 @@
           placeholder="验证码"
         >
           <template #button>
-            <div class="tf-text-white" v-if="codeStatus">{{countDown}}s</div>
-            <van-button v-else class="query-btn" @click="verifCode">获取</van-button>
+            <div class="tf-text-white" v-if="codeStatus">{{ countDown }}s</div>
+            <van-button v-else class="query-btn" @click="verifCode"
+              >获取</van-button
+            >
           </template>
         </Field>
         <Field
@@ -43,15 +51,32 @@
       </div>
     </div>
     <span class="login-text" @click="login" v-txAnalysis="1">登 录</span>
-    <span v-if="login_type === 1" class="login-method__text" @click="login_type = 2">密码登录</span>
-    <span v-else-if="login_type === 2" class="login-method__text" @click="login_type = 1">验证码登录</span>
+    <span
+      v-if="login_type === 1"
+      class="login-method__text"
+      @click="login_type = 2"
+      >密码登录</span
+    >
+    <span
+      v-else-if="login_type === 2"
+      class="login-method__text"
+      @click="login_type = 1"
+      >验证码登录</span
+    >
     <div class="agreement" @click="changeRememberPasswrod">
       <div class="uni-checkbox-input">
-        <span class="tf-icon checkbox-icon" :class="{ 'tf-icon-gou': agree }"></span>
+        <span
+          class="tf-icon checkbox-icon"
+          :class="{ 'tf-icon-gou': agree }"
+        ></span>
       </div>
       <span class="agreement-text" style="color: #fff;">
         登录即表示您同意
-        <router-link style="color: #fff;text-decoration: underline;" to="/agreement">《美好生活家园用户协议》</router-link>
+        <router-link
+          style="color: #fff;text-decoration: underline;"
+          to="/agreement"
+          >《美好生活家园用户协议》</router-link
+        >
       </span>
     </div>
   </div>
@@ -128,9 +153,17 @@ export default {
           type: this.login_type,
           params
         })
-        .then(() => {
+        .then((data) => {
           this.$router.replace({
             name: 'home'
+          })
+          if (data.first_register == 1) {
+            this.mtjEvent({
+              eventId: 2
+            })
+          }
+          this.mtjEvent({
+            eventId: 1
           })
         })
     },
@@ -176,7 +209,7 @@ export default {
   flex-direction: column;
   align-items: center;
   background-color: #333;
-  background-image: url("../../assets/imgs/login_bg.png");
+  background-image: url('../../assets/imgs/login_bg.png');
   .van-nav-bar__arrow {
     position: fixed;
     left: 20px;

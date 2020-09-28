@@ -48,8 +48,33 @@ if (process.env.VUE_APP_IS_APP === '1') {
         // console.log(ret.status)
       }
     })
-    // 腾讯统计
-    Vue.prototype.txAnalysis = api.require('txAnalysis')
+    // 百度统计
+    Vue.prototype.bdmtj = api.require('modulebaidumtj')
+    if (api.systemType == 'android') {
+      // android平台的初始化
+      Vue.prototype.bdmtj.startWithAppkey({
+        appkey: 'f672a40c5d',
+        appVersion: api.appVersion,
+        channelId: 'AndroidChannel',
+        enableExceptionLog: 'true',
+        enableDebugOn: 'true'
+      })
+    } else {
+      // iOS平台的初始化
+      Vue.prototype.bdmtj.startWithAppkey({
+        appkey: 'b8c2842306',
+        appVersion: api.appVersion,
+        channelId: 'iOSChannel',
+        enableExceptionLog: 'true',
+        enableDebugOn: 'true'
+      })
+    }
+    Vue.prototype.mtjEvent = function (params) {
+      Vue.prototype.bdmtj.onEvent({
+        eventId: params.eventId,
+        eventLabel: 'event'
+      })
+    }
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
     api.addEventListener({
@@ -106,6 +131,9 @@ if (process.env.VUE_APP_IS_APP === '1') {
         document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
       }
     }
+  }
+  Vue.prototype.mtjEvent = function (params) {
+    console.log(params)
   }
   // Vue.use(Vuex)
   require('./permission')

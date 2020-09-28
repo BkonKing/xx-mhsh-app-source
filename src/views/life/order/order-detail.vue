@@ -11,7 +11,7 @@
           @click-left="$router.go(-1)"
         >
   	      <template #right>
-  	        <a :href="'tel: '+orderInfo.customerServiceHotline" class="nav-serve" @click=""><img src="@/assets/img/icon_23.png" /></a>
+  	        <a :href="'tel: '+orderInfo.customerServiceHotline" class="nav-serve" v-txAnalysis="{eventId: 53}"><img src="@/assets/img/icon_23.png" /></a>
   	      </template>
   	    </van-nav-bar>
   		</div>
@@ -171,7 +171,7 @@
   		<template v-if="orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn">
   			<div class="fixed-empty"></div>
   			<div class="btn-fixed-buttom">
-  				<div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none">取消订单</div>
+  				<div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
   				<template v-if="orderInfo.is_logistice_btn">
   					<div @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
   				</template>

@@ -71,7 +71,7 @@
               <template v-if="item.i_img">
                 <div class="coupon-icon coupon-price">
                   <div v-if="item.type == 1" class="coupon-price-num"><span>￥</span>{{item.coupon_pay/100}}</div>
-                  <div v-else class="coupon-price-num"><span>{{item.discount_num}}</span>折</div>
+                  <div v-else class="coupon-price-num">{{item.discount_num}}<span>折</span></div>
                   <div class="coupon-icon-block"><img class="img-100" :src="item.i_img" /></div>
                 </div>
               </template>
