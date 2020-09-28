@@ -105,7 +105,7 @@
                   <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
                 </div>
                 <div v-else class="collage-item-right">
-                  <div @click="showFunc('collage',item.f_collage_order_project_id)" class="collage-btn pd-btn">一起拼单</div>
+                  <div @click="showFunc('collage',item.f_collage_order_project_id)" class="collage-btn pd-btn" v-txAnalysis="{eventId: 21}">一起拼单</div>
                   <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
                 </div>
               </div>
@@ -186,10 +186,10 @@
 
       <!-- <div class="fixed-empty"></div> -->
       <div class="bottom-fixed operate-session flex-align-center">
-        <a :href="'tel: '+infoData.customerServiceHotline" class="kf-btn flex-center">
+        <a :href="'tel: '+infoData.customerServiceHotline" class="kf-btn flex-center" v-txAnalysis="{eventId: 54}">
           <img src="@/assets/img/icon_07.png" />
         </a>
-        <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)">
+        <div v-if="infoData.pay_type == 0" class="cart-btn flex-center" @click="linkFunc(7)" v-txAnalysis="{eventId: 14}">
           <img src="@/assets/img/icon_06.png" />
           <div v-if="cart_num > 0" class="cart-num">{{cart_num}}</div>
         </div>
@@ -199,8 +199,8 @@
         <template v-else>
           <template v-if="infoData.pay_type == 0">
             <template v-if="infoData.goods_type < 3">
-              <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
-              <div class="buy-btn" @click="showFunc('buy')">立即购买</div>
+              <div class="add-btn" @click="showFunc('cart')" v-txAnalysis="{eventId: 10}">加入购物车</div>
+              <div class="buy-btn" @click="showFunc('buy')" v-txAnalysis="{eventId: 11}">立即购买</div>
             </template>
             <!-- <div class="add-btn" @click="showFunc()" data-type="cart">加入购物车</div>
             <div class="buy-btn" @click="showFunc()" data-type="buy">立即购买</div> -->
@@ -211,7 +211,7 @@
             <template v-else>
               <template v-if="infoData.ollage_info.is_start">
                 <template v-if="infoData.dq_collage_type == 1">
-                  <div class="buy-btn btn-linear" @click="showFunc('buy')">立即购买</div>
+                  <div class="buy-btn btn-linear" @click="showFunc('buy')" v-txAnalysis="{eventId: 11}">立即购买</div>
                 </template>
                 <template v-else>
                   <template v-if="f_orderid && infoData.f_order_ollage_info && (!infoData.order_ollage_info || infoData.order_ollage_info.status!=0)">
@@ -219,7 +219,7 @@
                         <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                         </template>
                       </van-count-down>结束</div>
-                    <div @click="showFunc('collage')" class="buy-btn btn-linear">一起拼单</div>
+                    <div @click="showFunc('collage')" class="buy-btn btn-linear" v-txAnalysis="{eventId: 21}">一起拼单</div>
                   </template>
                   <template v-else>
                     <template v-if="my_ing_info">
@@ -237,9 +237,9 @@
                 </template>
               </template>
               <template v-else>
-                <div class="add-btn" @click="showFunc('cart')">加入购物车</div>
+                <div class="add-btn" @click="showFunc('cart')" v-txAnalysis="{eventId: 10}">加入购物车</div>
                 <!-- <div class="buy-btn" data-type="buy">开抢提醒</div> -->
-                <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()">开抢提醒</div>
+                <div v-if="!infoData.is_set" class="buy-btn" @click.stop="remindFunc()" v-txAnalysis="{eventId: 19}">开抢提醒</div>
                 <div v-else class="buy-btn btn-disabled">已设提醒</div>
                 <!-- <div class="count-time">剩余<van-count-down ref="countDown" :auto-start="true" :time="infoData.ollage_info.end_time*1000-newTime" @finish="finish">
                     <template v-slot="timeData">{{ timeData.hours }}:{{ timeData.minutes }}:{{ timeData.seconds }}
@@ -251,7 +251,7 @@
           </template>
           <template v-else>
             <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
-            <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy">立即兑换</div>
+            <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy" v-txAnalysis="{eventId: 12}">立即兑换</div>
           </template>
         </template>
       </div>

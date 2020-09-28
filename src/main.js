@@ -71,7 +71,8 @@ if (process.env.VUE_APP_IS_APP === '1') {
     }
     Vue.prototype.mtjEvent = function (params) {
       Vue.prototype.bdmtj.onEvent({
-        eventId: params.eventId
+        eventId: params.eventId,
+        eventLabel: 'event'
       })
     }
     // 自定义扫码防止黑屏配置

@@ -104,7 +104,7 @@
                         <div v-else class="btn-over">已抢光</div>
                       </template>
                       <template v-else>
-                        <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+                        <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)" v-txAnalysis="{eventId: 19}"><img src="@/assets/img/icon_01.png" />提醒</div>
                         <div v-else class="btn-remind-isset flex-center">已设提醒</div>
                       </template>
                     </template>

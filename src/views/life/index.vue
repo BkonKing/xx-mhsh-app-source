@@ -7,7 +7,7 @@
 					<div class="font-34 font-weight">美好生活</div>
 					<div class="header-right flex-align-center">
 						<div class="header-link" @click="linkFunc(6)"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
-						<div class="header-link" @click="linkFunc(1)" v-txAnalysis="9"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+						<div class="header-link" @click="linkFunc(1)" v-txAnalysis="{eventId: 9}"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
 					</div>
 				</div>
 			</div>
@@ -107,7 +107,7 @@
 				                  <div v-else class="btn-over">已抢光</div>
 				                </template>
 				                <template v-else>
-				                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)"><img src="@/assets/img/icon_01.png" />提醒</div>
+				                  <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)" v-txAnalysis="{eventId: 19}"><img src="@/assets/img/icon_01.png" />提醒</div>
 				                  <div v-else class="btn-remind-isset flex-center">已设提醒</div>
 				                </template>
 					            </div>
@@ -229,7 +229,7 @@
 	    </van-tabs>
     </div>
 		
-		<div @click="linkFunc(7)" class="cart-fixed"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
+		<div @click="linkFunc(7)" class="cart-fixed" v-txAnalysis="{eventId: 14}"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
 		<remind-swal 
     :show-swal="showSwal"
     :remind-tit="remindTit"

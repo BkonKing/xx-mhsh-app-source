@@ -170,9 +170,9 @@
           <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_24.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
         </template>
-        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc">付款</div>
+        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc" v-txAnalysis="{eventId: 16}">付款</div>
         <template v-else>
-          <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc">兑换</div>
+          <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc" v-txAnalysis="{eventId: 17}">兑换</div>
           <div v-else class="all-go flex-center btn-disabled">兑换</div>
         </template>
       </div>

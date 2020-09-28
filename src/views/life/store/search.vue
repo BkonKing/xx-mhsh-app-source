@@ -487,6 +487,7 @@ export default {
 
     },
     goSearch: function (e) {
+      this.mtjEvent({eventId: '5'}); 
       if(this.typeVal == 0){
         this.getSearchGoods();
         this.getSearchApp();

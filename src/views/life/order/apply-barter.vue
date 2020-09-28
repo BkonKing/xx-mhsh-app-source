@@ -377,6 +377,7 @@ export default {
 	      }).then(res => {
 	        if (res.success) {
 	        	// Toast(res.message);
+            this.mtjEvent({eventId: '55'}); 
 	        	//跳转换货详情
             this.$router.push({
               path: '/order/barter-detail',
