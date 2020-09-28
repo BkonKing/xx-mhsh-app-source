@@ -44,6 +44,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     goDetails () {

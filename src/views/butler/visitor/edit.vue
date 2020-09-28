@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { NavBar, Button } from 'vant'
+import { NavBar, Button, Dialog } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import visitorForm from './components/form.vue'
 import { addMyVisitor, updateMyVisitor } from '@/api/butler.js'
@@ -46,6 +46,7 @@ export default {
     }
   },
   methods: {
+    // 保存
     save () {
       const params = this.$refs.form.getData()
       params.id = this.id
@@ -67,17 +68,30 @@ export default {
         }
       })
     },
+    // 添加访客
     addMyVisitor (params) {
       addMyVisitor(params).then(res => {
         if (res.success) {
-          this.$router.go(-1)
+          Dialog.alert({
+            title: '添加成功'
+          }).then(() => {
+            this.$router.go(-1)
+            this.mtjEvent({
+              eventId: 32
+            })
+          })
         }
       })
     },
+    // 更新访客
     updateMyVisitor (params) {
       updateMyVisitor(params).then(res => {
         if (res.success) {
-          this.$router.go(-1)
+          Dialog.alert({
+            title: '更新成功'
+          }).then(() => {
+            this.$router.go(-1)
+          })
         }
       })
     }

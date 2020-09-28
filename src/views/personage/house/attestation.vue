@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div class="house-attestation tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -21,10 +21,10 @@
         <tf-list class="tf-mb-lg">
           <tf-list-item title="房屋" @click="goCheckHouse">
             <template v-slot:right>
-              <div v-if="mode === 1 && !editMode" class="tf-text">
+              <div v-if="mode === 1 && !editMode" class="house-text van-multi-ellipsis--l2">
                 {{ house_name }}
               </div>
-              <div v-else class="tf-text">{{ house_name || '请选择' }}</div>
+              <div v-else class="house-text van-multi-ellipsis--l2">{{ house_name || '请选择' }}</div>
             </template>
           </tf-list-item>
         </tf-list>
@@ -458,21 +458,6 @@ export default {
   font-weight: bold;
 }
 
-/deep/ .tf-clist-cell-left {
-  flex: initial;
-  width: 150px;
-}
-
-/deep/ .tf-clist-cell-right {
-  .tf-text {
-    // line-height: 90px;
-    width: 100%;
-    max-width: 100%;
-    overflow: initial;
-    white-space: initial;
-  }
-}
-
 .tf-input {
   text-align: right;
   font-size: @font-size-md !important;
@@ -511,5 +496,11 @@ export default {
       }
     }
   }
+}
+
+.house-text {
+  flex: 1;
+  text-align: right;
+  font-size: 28px;
 }
 </style>

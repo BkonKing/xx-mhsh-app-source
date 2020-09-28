@@ -267,6 +267,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     // 打开文章操作
@@ -282,6 +285,9 @@ export default {
           title: '删除成功'
         }).then(() => {
           this.$router.go(-1)
+          this.mtjEvent({
+            eventId: 44
+          })
         })
         this.moreShow = false
       })

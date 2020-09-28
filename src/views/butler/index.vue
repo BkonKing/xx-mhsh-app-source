@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
-    <page-nav-bar></page-nav-bar>
+    <page-nav-bar class="bulter-nav-bar"></page-nav-bar>
     <van-notice-bar v-if="noticeList.length" class="swiper-nav" left-icon="volume-o" :scrollable="false">
       <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
         <van-swipe-item

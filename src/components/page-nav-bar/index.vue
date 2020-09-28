@@ -79,6 +79,21 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.bulter-nav-bar /deep/ .van-nav-bar__left {
+  max-width: calc(100% - 210px);
+}
+/deep/ .van-nav-bar__left {
+  max-width: calc(100% - 305px);
+  .room_btn {
+    width: 100%;
+  }
+  .tf-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
 .tf-nav-bar {
   background: none;
   &:after {

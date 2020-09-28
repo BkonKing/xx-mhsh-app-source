@@ -89,6 +89,7 @@ export default {
     ...mapGetters(['currentProject'])
   },
   methods: {
+    // 表单验证
     formSubmit () {
       const validator = [
         {
@@ -104,6 +105,7 @@ export default {
         this.addComPraise()
       })
     },
+    // 投诉表扬提交
     addComPraise () {
       addComPraise(
         {
@@ -120,6 +122,9 @@ export default {
             setTimeout(() => {
               this.goList()
             }, 1500)
+          })
+          this.mtjEvent({
+            eventId: this.info_type == 1 ? 34 : 35
           })
         } else {
           Toast.fail('提交失败')

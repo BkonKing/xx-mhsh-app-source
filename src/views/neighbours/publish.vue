@@ -129,6 +129,9 @@ export default {
           }).then(res => {
             this.$router.go(-1)
           })
+          this.mtjEvent({
+            eventId: 42
+          })
         })
       })
     }

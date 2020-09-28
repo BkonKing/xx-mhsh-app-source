@@ -196,6 +196,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     /* 删除评论 */
@@ -240,6 +243,9 @@ export default {
         // console.table(this.list)
       }
       Toast.success('评论成功')
+      this.mtjEvent({
+        eventId: 41
+      })
     },
     /* 刷新回复列表 */
     reload () {

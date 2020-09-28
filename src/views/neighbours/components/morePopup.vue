@@ -223,6 +223,9 @@ export default {
           Toast.success('投诉成功')
           this.complainShow = false
           this.moreShowChild = false
+          this.mtjEvent({
+            eventId: 43
+          })
         })
       } else {
         Toast('请选择类型')

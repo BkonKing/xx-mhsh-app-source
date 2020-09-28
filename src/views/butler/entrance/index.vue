@@ -14,9 +14,9 @@
       </template>
     </van-nav-bar>
     <div class="select-house" @click="goAttestation">
-      <div class="tf-row-vertical-center">
+      <div class="tf-row-vertical-center van-ellipsis">
         <span class="tf-icon tf-icon-dingwei"></span>
-        <span>{{houseName || '请选择'}}</span>
+        <span class="van-ellipsis">{{houseName || '请选择'}}</span>
       </div>
       <span class="tf-icon tf-icon-caret-down"></span>
     </div>
@@ -225,7 +225,12 @@ export default {
       this.$router.push('/pages/butler/entrance/list')
     },
     goAttestation () {
-      this.$router.push('/pages/personage/house/select-house')
+      this.$router.push({
+        path: '/pages/personage/house/select-house',
+        query: {
+          status: '1'
+        }
+      })
     }
   },
   beforeDestroy () {

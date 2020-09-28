@@ -146,6 +146,9 @@ export default {
           Dialog.alert({
             title: '支付成功'
           })
+          this.mtjEvent({
+            eventId: 46
+          })
         }
       })
     },
@@ -161,6 +164,9 @@ export default {
             title: `获得${data.credits}幸福币`
           }).then(() => {
             this.getCollectCode()
+            this.mtjEvent({
+              eventId: 47
+            })
           })
         }
       })

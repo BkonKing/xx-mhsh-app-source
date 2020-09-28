@@ -538,7 +538,7 @@
           </div>
           <template v-if="evaluateInfo.evaluate_content">
             <div class="tf-form-label">其他补充：</div>
-            <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
+            <div class="textarea-box tf-text">{{evaluateInfo.evaluate_content}}</div>
           </template>
         </div>
       </template>
@@ -745,6 +745,9 @@ export default {
           this.getRepairInfo()
           Toast('已经撤销提报')
           this.revocationShow = false
+          this.mtjEvent({
+            eventId: 70
+          })
         })
       })
     },
@@ -758,6 +761,9 @@ export default {
       ).then((res) => {
         this.getRepairInfo()
         this.showAssign()
+        this.mtjEvent({
+          eventId: 63
+        })
       })
     },
     /* 打开分派人员 */
@@ -802,6 +808,9 @@ export default {
         this.getRepairInfo()
         Toast.success('分派人员成功')
         this.assignShow = false
+        this.mtjEvent({
+          eventId: 64
+        })
       })
     },
     /* 打开取消任务 */
@@ -835,6 +844,9 @@ export default {
           }).then((res) => {
             this.refuseTaskShow = false
             this.getRepairInfo()
+            this.mtjEvent({
+              eventId: 68
+            })
           })
         })
       })
@@ -857,6 +869,9 @@ export default {
           Toast.success('您已接受该任务')
           this.getRepairInfo()
           this.acceptPlanShow = false
+          this.mtjEvent({
+            eventId: 65
+          })
         })
       })
     },
@@ -899,6 +914,9 @@ export default {
           Toast.success('进度添加成功')
           this.getRepairInfo()
           this.planShow = false
+          this.mtjEvent({
+            eventId: 66
+          })
         })
       })
     },
@@ -924,6 +942,9 @@ export default {
         Toast.success('您已结案成功')
         this.getRepairInfo()
         this.settleShow = false
+        this.mtjEvent({
+          eventId: 67
+        })
       })
     },
     /* 上传结案图片 */
@@ -938,6 +959,9 @@ export default {
         Toast.success('结案图片上传成功')
         this.getRepairInfo()
         this.imgUploadShow = false
+        this.mtjEvent({
+          eventId: 69
+        })
       })
     },
     /* 查看评价 */

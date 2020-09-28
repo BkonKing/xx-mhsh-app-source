@@ -14,7 +14,7 @@
         <div class="tf-row-space-between">
           <div class="tf-row">
             <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
-            <div class="tf-space-around">
+            <div class="tf-space-around tf-flex-item">
               <div class="house-name">{{item.project_name}}</div>
               <div class="house-address">{{item.fc_info}}</div>
             </div>
@@ -45,6 +45,10 @@ export default {
     mode: {
       type: Number,
       default: 1
+    },
+    entranceStatus: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -66,6 +70,11 @@ export default {
     bindingHouse () {
       bindingHouse().then((res) => {
         this.houseList = res.data || []
+        if (this.entranceStatus) {
+          this.houseList = this.houseList.filter(obj => {
+            return obj.is_menjin
+          })
+        }
       })
     },
     goAttestation () {

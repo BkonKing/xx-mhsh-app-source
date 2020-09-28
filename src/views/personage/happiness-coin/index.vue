@@ -72,7 +72,7 @@
             </div>
           </div>
           <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
-          <div v-else class="task-item__btn" @click="complete(item.task_type, item.source_id)">去完成</div>
+          <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
         </div>
       </div>
       <div class="sale-box">
@@ -196,7 +196,6 @@ export default {
     },
     /* 去完成页面 */
     complete (type, id) {
-      console.log(type)
       switch (type) {
         case '1':
           this.signin()

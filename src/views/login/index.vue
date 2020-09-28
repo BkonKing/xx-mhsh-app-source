@@ -153,10 +153,15 @@ export default {
           type: this.login_type,
           params
         })
-        .then(() => {
+        .then((data) => {
           this.$router.replace({
             name: 'home'
           })
+          if (data.first_register == 1) {
+            this.mtjEvent({
+              eventId: 2
+            })
+          }
           this.mtjEvent({
             eventId: 1
           })

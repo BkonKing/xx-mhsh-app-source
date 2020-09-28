@@ -169,7 +169,7 @@
           </div>
           <template v-if="evaluateInfo.evaluate_content">
             <div class="tf-form-label">其他补充：</div>
-            <div class="textarea-box">{{evaluateInfo.evaluate_content}}</div>
+            <div class="textarea-box tf-text">{{evaluateInfo.evaluate_content}}</div>
           </template>
         </div>
       </template>

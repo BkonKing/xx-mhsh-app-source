@@ -166,6 +166,9 @@ export default {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
+        this.mtjEvent({
+          eventId: 40
+        })
       })
     },
     /* 获取评论详情 */
@@ -252,6 +255,9 @@ export default {
         // this.replyList.unshift(data)
       }
       Toast.success('评论成功')
+      this.mtjEvent({
+        eventId: 41
+      })
     }
   },
   watch: {
