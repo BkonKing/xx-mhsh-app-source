@@ -101,7 +101,7 @@
           </van-swipe-item>
         </van-swipe>
       </div>
-      <div class="community-box">
+      <div class="community-box" v-if="activityList && activityList.length">
         <div class="community-box__title" @click="goCommunity">
           社区活动
           <span class="tf-icon tf-icon-right"></span>
@@ -170,7 +170,7 @@
       :class="[guideIndex > 1 ? 'end-bottom' : '', guideIndex == 1 ? 'guide-sign' : '', 'mask-bg']"
       :style="{'padding-top': guideIndex == 1 ? guideTop+'px' : $store.state.paddingTop+'px'}"
     >
-      <img v-show="index == guideIndex" v-for="(item,index) in guideList" :src="item" />
+      <img v-show="index == guideIndex" v-for="(item,index) in guideList" :src="item" :key="index" />
     </div>
   </div>
 </template>

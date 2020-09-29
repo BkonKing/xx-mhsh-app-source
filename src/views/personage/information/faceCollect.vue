@@ -13,7 +13,7 @@
         <div class="success-tag">
           <span class="tf-icon tf-icon-gou"></span>
         </div>
-        <div class="tf-text-lg tf-mt-lg tf-mb-lg">采集成功！</div>
+        <div class="tf-text-lg tf-mt-lg tf-mb-lg">{{complete === 2 ? '您已经采集过！' : '采集成功！'}}</div>
         <div class="btn-box">
           <van-button type="danger" size="large" @click="openCamera">重新采集</van-button>
         </div>
@@ -28,6 +28,7 @@
 <script>
 import { NavBar, Button } from 'vant'
 import { cjFace } from '@/api/personage'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -36,12 +37,14 @@ export default {
   data () {
     return {
       FNPhotograph: null,
-      complete: false,
-      status: 1
+      complete: 0
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   created () {
-    this.complete = this.$route.query.status == 0
+    this.complete = this.userInfo.have_faceimg == 1 ? 2 : 0
     this.FNPhotograph = api.require('FNPhotograph')
     window.closeCameraView = new CustomEvent('cameraOperate', {
       detail: { type: 'close' }
@@ -160,7 +163,7 @@ export default {
       cjFace({
         face_url: url
       }).then((res) => {
-        this.complete = true
+        this.complete = 1
         this.cameraOperate({ detail: { type: 'close' } })
         this.mtjEvent({
           eventId: 74

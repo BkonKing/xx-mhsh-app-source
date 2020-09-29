@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg-white">
     <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
-    <div class="tf-main-container">
+    <div class="tf-body-container">
       <div class="tf-text-lg tf-center">我们已经发送了验证码到你的手机</div>
       <div class="tf-h3 tf-center">{{userInfo.mobile}}</div>
       <div class="tf-phone-input-box tf-row-space-between">
@@ -113,8 +113,11 @@ export default {
 
 <style lang="less" scoped>
 .tf-bg-white {
-  padding: 80px 50px;
+  padding: 0 50px;
   height: 100%;
+}
+.tf-body-container {
+  padding: 80px 0;
 }
 .tf-h3 {
   margin: 40px 0 74px;

@@ -273,10 +273,7 @@ export default {
     },
     openCamera () {
       this.$router.push({
-        name: 'faceCollect',
-        query: {
-          status: this.userInfo.have_faceimg
-        }
+        name: 'faceCollect'
       })
     },
     /* 图片上传 */
