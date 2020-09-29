@@ -40,7 +40,7 @@
   <!-- 百度地图 -->
 	<feature name="bMap">
 	  <param name="android_api_key" value="47KitjRYLxTg4q8KpCefbyk25y94IPgP" />
-	  <param name="ios_api_key" value="2sXGE4s8IOxySbI1wwDaujqeeXIymu9U" />
+	  <param name="ios_api_key" value="Zdxxje3lV7LRRy4WNvNjprZ3xIDoSbs1" />
 	</feature>
 
 	<!-- 腾讯统计 -->
