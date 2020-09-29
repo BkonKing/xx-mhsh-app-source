@@ -63,6 +63,40 @@ export default {
   },
   methods: {
     getData(){
+      var that = this;
+      var permission = 'location';
+      var resultList = api.hasPermission({
+          list: [permission]
+      });
+      if (resultList[0].granted) {
+          // 已授权，可以继续下一步操作
+          that.getMap();
+      } else {
+          api.confirm({
+              msg: '应用需要您的授权才能搜索地址',
+              buttons: ['取消', '去设置']
+          }, function(ret) {
+              if (ret.buttonIndex == 2) {
+                  api.requestPermission({
+                      list: [permission],
+                  }, function(res) {
+                      if (res.list[0].granted) {
+                        that.getMap();
+                          // 已授权，可以继续下一步操作
+                          // api.alert({
+                          //     msg: '已授权'
+                          // });
+                      }else {
+                        that.$router.go(-1);
+                      }
+                  });
+              }else {
+                that.$router.go(-1);
+              }
+          });
+      }
+    },
+    getMap(){
       var bMap = api.require('bMap');
       var maptop = this.$store.state.paddingTop;
       this.bMap = bMap;
@@ -200,7 +234,8 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    this.bMap.close();
+    var bMap = api.require('bMap');
+    bMap.close();
     next();
   }
 }
