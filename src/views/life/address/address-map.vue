@@ -72,24 +72,15 @@ export default {
           // 已授权，可以继续下一步操作
           that.getMap();
       } else {
-          api.confirm({
-              msg: '应用需要您的授权才能搜索地址',
-              buttons: ['取消', '去设置']
-          }, function(ret) {
-              if (ret.buttonIndex == 2) {
-                  api.requestPermission({
-                      list: [permission],
-                  }, function(res) {
-                      if (res.list[0].granted) {
-                        that.getMap();
-                          // 已授权，可以继续下一步操作
-                          // api.alert({
-                          //     msg: '已授权'
-                          // });
-                      }else {
-                        that.$router.go(-1);
-                      }
-                  });
+          api.requestPermission({
+              list: [permission],
+          }, function(res) {
+              if (res.list[0].granted) {
+                that.getMap();
+                  // 已授权，可以继续下一步操作
+                  // api.alert({
+                  //     msg: '已授权'
+                  // });
               }else {
                 that.$router.go(-1);
               }
