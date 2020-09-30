@@ -1,23 +1,26 @@
 <template>
   <div class="tf-bg">
-    <van-nav-bar title="协议及声明" :fixed="true" :border="false" left-arrow placeholder @click-left="$router.go(-1)">
+    <van-nav-bar
+      title="协议及声明"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      placeholder
+      @click-left="$router.go(-1)"
+    >
       <template #right>
         <span class="tf-icon tf-icon-time-circle"></span>
       </template>
     </van-nav-bar>
     <div class="tf-padding">
       <tf-list>
-        <tf-list-item title="美好生活家园用户协议" @click="goAgreement()" border>
-          <template v-slot:right>
-            <div class="right-text"></div>
-          </template>
-        </tf-list-item>
-        <tf-list-item title="领里使用协议" @click="goAgreement(2)" border>
-          <template v-slot:right>
-            <div class="right-text"></div>
-          </template>
-        </tf-list-item>
-        <tf-list-item title="功能使用规范" @click="goAgreement(1)">
+        <tf-list-item
+          v-for="(item, index) in agreementList"
+          :key="index"
+          :title="item.title"
+          @click="goAgreement(item.article_type)"
+          border
+        >
           <template v-slot:right>
             <div class="right-text"></div>
           </template>
@@ -31,6 +34,7 @@
 import { NavBar } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import { getAllAgreement } from '@/api/home'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -38,15 +42,29 @@ export default {
     tfListItem
   },
   data () {
-    return {}
+    return {
+      agreementList: []
+    }
+  },
+  created () {
+    this.getAllAgreement()
   },
   methods: {
-    goAgreement (type) {
-      this.$router.push(`/agreement?type=${type}`)
+    getAllAgreement () {
+      getAllAgreement().then(({ data }) => {
+        this.agreementList = data
+      })
+    },
+    goAgreement (articleType) {
+      const type = {
+        1: '',
+        2: '1',
+        3: '2'
+      }
+      this.$router.push(`/agreement?type=${type[articleType]}`)
     }
   }
 }
 </script>
 
-<style lang='less' scoped>
-</style>
+<style lang="less" scoped></style>

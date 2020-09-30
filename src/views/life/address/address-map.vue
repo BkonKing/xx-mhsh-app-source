@@ -17,7 +17,7 @@
           class="search-v"
           v-model="searchVal"
           placeholder="请输入搜索关键词"
-          @search="searchAddress"
+          @input="searchAddress"
         />
       </div>
       <div class="search-list">
@@ -27,142 +27,139 @@
         </div>
       </div>
     </div>
-    
-		
+
   </div>
 </template>
 
 <script>
 import { NavBar, Search } from 'vant'
-import eventBus from '@/api/eventbus.js';
+import eventBus from '@/api/eventbus.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    [Search.name]: Search,
+    [Search.name]: Search
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      isSelect: 0,  //0不是选择地址 1选择地址
+      isSelect: 0, // 0不是选择地址 1选择地址
       searchVal: '',
       searchList: [],
       // searchList: [{name: 'gewagaw',address:'eee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
       bMap: '',
       fixedTop: '344px',
-      fixedHeight: '300px',
+      fixedHeight: '300px'
     }
   },
   created () {
-    this.fixedTop = 344+this.$store.state.paddingTop + 'px';
-    this.fixedHeight = api.winHeight - (344+this.$store.state.paddingTop) + 'px';
+    this.fixedTop = 344 + this.$store.state.paddingTop + 'px'
+    this.fixedHeight = api.winHeight - (344 + this.$store.state.paddingTop) + 'px'
     this.getData()
   },
-  deactivated(){
+  deactivated () {
     // var bMap = api.require('bMap');
     // this.bMap.close();
   },
   methods: {
-    getData(){
-      var that = this;
-      var permission = 'location';
+    getData () {
+      var that = this
+      var permission = 'location'
       var resultList = api.hasPermission({
-          list: [permission]
-      });
+        list: [permission]
+      })
       if (resultList[0].granted) {
-          // 已授权，可以继续下一步操作
-          that.getMap();
+        // 已授权，可以继续下一步操作
+        that.getMap()
       } else {
-          api.requestPermission({
-              list: [permission],
-          }, function(res) {
-              if (res.list[0].granted) {
-                that.getMap();
-                  // 已授权，可以继续下一步操作
-                  // api.alert({
-                  //     msg: '已授权'
-                  // });
-              }else {
-                that.$router.go(-1);
-              }
-          });
+        api.requestPermission({
+          list: [permission]
+        }, function (res) {
+          if (res.list[0].granted) {
+            that.getMap()
+            // 已授权，可以继续下一步操作
+            // api.alert({
+            //     msg: '已授权'
+            // });
+          } else {
+            that.$router.go(-1)
+          }
+        })
       }
     },
-    getMap(){
-      var bMap = api.require('bMap');
-      var maptop = this.$store.state.paddingTop;
-      this.bMap = bMap;
-      var that = this;
+    getMap () {
+      var bMap = api.require('bMap')
+      var maptop = this.$store.state.paddingTop
+      this.bMap = bMap
+      var that = this
       bMap.getLocation({
-          accuracy: '100m',
-          autoStop: true,
-          filter: 1
-      }, function(ret, err) {
-          if (ret.status) {
-              let lon_val = ret.lon;
-              let lat_val = ret.lat
-              //根据定位查找地址
-              bMap.getNameFromCoords({
-                  lon: lon_val,
-                  lat: lat_val
-              }, function(ret, err) {
-                  if (ret.status) {
-                    ret.poiList.forEach((item, index) => {
-                      var obj = {name: '',address:'',lon: '',lat: '',city: ''};
-                      // alert(item.name);
-                      obj.name = item.name;
-                      obj.address = item.address;
-                      obj.lon = item.coord.lon;
-                      obj.lat = item.coord.lat;
-                      obj.city = item.city;
-                      that.searchList.push(obj);
-                    })
-                    // that.searchList = address_data;
-                    // that.searchList[0].name = ret.poiList[0].name;
+        accuracy: '100m',
+        autoStop: true,
+        filter: 1
+      }, function (ret, err) {
+        if (ret.status) {
+          const lon_val = ret.lon
+          const lat_val = ret.lat
+          // 根据定位查找地址
+          bMap.getNameFromCoords({
+            lon: lon_val,
+            lat: lat_val
+          }, function (ret, err) {
+            if (ret.status) {
+              ret.poiList.forEach((item, index) => {
+                var obj = { name: '', address: '', lon: '', lat: '', city: '' }
+                // alert(item.name);
+                obj.name = item.name
+                obj.address = item.address
+                obj.lon = item.coord.lon
+                obj.lat = item.coord.lat
+                obj.city = item.city
+                that.searchList.push(obj)
+              })
+              // that.searchList = address_data;
+              // that.searchList[0].name = ret.poiList[0].name;
 
-                    // alert(ret.poiList[0].name+ret.address)
-                    // alert(JSON.stringify(ret));
-                  }
-              });
+              // alert(ret.poiList[0].name+ret.address)
+              // alert(JSON.stringify(ret));
+            }
+          })
 
-              bMap.open({
-                  rect: {
-                      x: 0,
-                      y: 44+maptop,
-                      w: api.winWidth,
-                      h: 300
-                  },
-                  center: {
-                      lon: lon_val,
-                      lat: lat_val
-                  },
-                  zoomLevel: 15,
-                  showUserLocation: true,
-                  fixedOn: api.frameName,
-                  fixed: true
-              }, function(ret) {
-                  if (ret.status) {
-                    // bMap.searchInCity({
-                    //     city: '福州',
-                    //     keyword: val,
-                    //     pageIndex: 0,
-                    //     pageCapacity: 10
-                    // }, function(ret, err) {
-                    //     if (ret.status) {
-                    //         alert(JSON.stringify(ret.results));
-                    //         that.searchList = ret.results;
-                    //     } else {
-                    //         alert(JSON.stringify(err));
-                    //     }
-                    // });
-                  }
-              });
-          } else {
-              // alert(err.code);
-          }
-      });
+          bMap.open({
+            rect: {
+              x: 0,
+              y: 44 + maptop,
+              w: api.winWidth,
+              h: 300
+            },
+            center: {
+              lon: lon_val,
+              lat: lat_val
+            },
+            zoomLevel: 15,
+            showUserLocation: true,
+            fixedOn: api.frameName,
+            fixed: true
+          }, function (ret) {
+            if (ret.status) {
+              // bMap.searchInCity({
+              //     city: '福州',
+              //     keyword: val,
+              //     pageIndex: 0,
+              //     pageCapacity: 10
+              // }, function(ret, err) {
+              //     if (ret.status) {
+              //         alert(JSON.stringify(ret.results));
+              //         that.searchList = ret.results;
+              //     } else {
+              //         alert(JSON.stringify(err));
+              //     }
+              // });
+            }
+          })
+        } else {
+          // alert(err.code);
+        }
+      })
 
-
-      return;
       // var bMap = api.require('bMap');
       // bMap.searchInCity({
       //     city: '全国',
@@ -177,29 +174,26 @@ export default {
       //     }
       // });
     },
-    searchAddress() {
-      this.getData(this.searchVal);
-      var searchVal = this.searchVal;
-      var that = this;
+    searchAddress () {
+      this.getData(this.searchVal)
+      var searchVal = this.searchVal
+      var that = this
 
-
-      var map = api.require('bMap');
+      var map = api.require('bMap')
       map.searchInBounds({
-          keyword: searchVal,
-          lbLon: 74.546,
-          lbLat: 21.267,
-          rtLon: 136.244,
-          rtLat: 53.69
-      }, function(ret, err) {
-          if (ret.status) {
-              // alert(JSON.stringify(ret.results));
-              that.searchList = ret.results;
-          } else {
-              // alert(JSON.stringify(err));
-          }
-      });return;
-
-
+        keyword: searchVal,
+        lbLon: 74.546,
+        lbLat: 21.267,
+        rtLon: 136.244,
+        rtLat: 53.69
+      }, function (ret, err) {
+        if (ret.status) {
+          // alert(JSON.stringify(ret.results));
+          that.searchList = ret.results
+        } else {
+          // alert(JSON.stringify(err));
+        }
+      })
 
       // var bMap = api.require('bMap');
       // this.bMap.searchInCity({
@@ -216,18 +210,18 @@ export default {
       //     }
       // });
     },
-    clickItem(index){
+    clickItem (index) {
       // this.bMap.close();
-      //传递一个map，chooseAddress是key，id是value
-      eventBus.$emit('chooseMap',JSON.stringify(this.searchList[index]));
-      //调用router回退页面
-      this.$router.go(-1);
+      // 传递一个map，chooseAddress是key，id是value
+      eventBus.$emit('chooseMap', JSON.stringify(this.searchList[index]))
+      // 调用router回退页面
+      this.$router.go(-1)
     }
   },
   beforeRouteLeave (to, from, next) {
-    var bMap = api.require('bMap');
-    bMap.close();
-    next();
+    var bMap = api.require('bMap')
+    bMap.close()
+    next()
   }
 }
 </script>
