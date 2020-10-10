@@ -10,7 +10,7 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="map-bottom bottom-fixed" :style="{'top': fixedTop,'height': fixedHeight}">
+    <div class="map-bottom bottom-fixed" :style="{'top': fixedTop > 0 ? fixedTop+'px' : 'auto','height': fixedHeight+'px'}">
       <form>
         <div class="search-box">
           <van-search
@@ -28,8 +28,6 @@
         </div>
       </div>
     </div>
-    
-		
   </div>
 </template>
 
@@ -49,17 +47,67 @@ export default {
       searchList: [],
       // searchList: [{name: 'gewagaw',address:'ee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
       bMap: '',
-      fixedTop: '344px',
-      fixedHeight: '300px',
+      fixedTop: '344',
+      fixedHeight: '300',
+      defaultHeight: '0',  //默认屏幕高度
+      nowHeight:  '0',     //实时屏幕高度
     }
   },
   created () {
     this.getData()
     let that = this;
     setTimeout(()=>{
-      that.fixedTop = 344+that.$store.state.paddingTop + 'px';
-      that.fixedHeight = api.winHeight - (344+that.$store.state.paddingTop) + 'px';
+      that.fixedTop = 344+that.$store.state.paddingTop;
+      that.fixedHeight = api.winHeight - (344+that.$store.state.paddingTop);
+      that.defaultHeight = api.winHeight;
     },500)
+  },
+  mounted: function() {
+    window.onresize = () => {
+      return (() => {
+        //实时屏幕高度
+        this.nowHeight = api.winHeight;
+      })();
+    };
+
+    let that = this;
+    if(api.systemType == 'ios'){
+      api.addEventListener({
+        name:'keyboardshow'
+      },function(ret, err){
+        let middleHeight = that.defaultHeight - that.fixedTop - ret.h;
+        let bli = api.winWidth/750;
+        if(middleHeight < 122*bli && middleHeight > -100){
+          that.bMap.setRect({
+            rect: {
+                x: 0,
+                y: 44+that.$store.state.paddingTop,
+                w: api.winWidth,
+                h: 300+middleHeight-122*bli
+            },
+          });
+          // that.fixedTop = 0;
+          that.fixedTop = that.fixedTop + ret.h*bli;
+          // that.fixedTop = 344+that.$store.state.paddingTop - 122 + middleHeight;
+          that.fixedHeight = 122*bli;
+        }
+      });
+
+      api.addEventListener({
+        name:'keyboardhide'
+      },function(ret, err){
+        that.bMap.setRect({
+          rect: {
+            x: 0,
+            y: 44+that.$store.state.paddingTop,
+            w: api.winWidth,
+            h: 300
+          },
+        });
+        that.fixedTop = 344+that.$store.state.paddingTop;
+        that.fixedHeight = api.winHeight - (344+that.$store.state.paddingTop);
+      });
+    }
   },
   methods: {
     getData(){
@@ -246,6 +294,7 @@ export default {
   }
   .map-bottom {
     top: 750px;
+    overflow: hidden;
     background-color: #fff;
     border-radius: 10px 10px 0 0;
   }
