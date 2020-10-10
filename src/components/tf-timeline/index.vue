@@ -26,7 +26,7 @@
           >
             <div class="tf-timeline__column-time">{{item.ctime}}</div>
             <div class="tf-timeline__column-desc">
-              <!-- 撤销提报 -->
+              <!-- 已分派待结案 -->
               <template v-if="item.sub_status == 3">
                 {{item.remark}}
                 <span
@@ -40,7 +40,6 @@
                   <!-- {{item.sub_realname}}： -->
                   <span v-html="item.remark"></span>
                   <template v-if="item.mobile">
-                    <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.mobile}}</span>
                     <div
                       class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
                       @click="$emit('negotiate', item)"
@@ -52,10 +51,6 @@
               <template v-else-if="item.sub_status == 7">
                 <div v-html="item.remark"></div>
                 <div v-if="item.refuse_reason">拒绝原因：{{item.refuse_reason}}</div>
-                <div>
-                  处理人员：
-                  <span class="tf-text-blue" @click="makePhoneCall(item.mobile)">{{item.designee}} {{item.mobile}}</span>
-                </div>
                 <div
                   class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
                   @click="$emit('negotiate', item)"

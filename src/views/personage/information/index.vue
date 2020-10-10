@@ -162,7 +162,7 @@ import tfDialog from '@/components/tf-dialog/index.vue'
 import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
-import { getDate } from '@/utils/util'
+import { getDate, selectFileImage } from '@/utils/util'
 import eventBus from '@/api/eventbus.js'
 import {
   getMemberList,
@@ -277,12 +277,13 @@ export default {
       })
     },
     /* 图片上传 */
-    afterRead (file) {
+    async afterRead (file) {
       Toast.loading({
         message: '头像上传中'
       })
       const formData = new FormData()
-      formData.append('imgFile', file.file)
+      const newFile = await selectFileImage(file.file)
+      formData.append('imgFile', newFile)
       uImages(formData)
         .then((res) => {
           this.avatar = res.data

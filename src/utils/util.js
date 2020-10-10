@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import store from '../store'
+import EXIF from 'exif-js'
 import {
   Toast,
   ImagePreview
@@ -123,11 +124,15 @@ export function clearUserInfo () {
 }
 
 export function getArea (str) {
-  let area = { Province: '', City: '', Country: '' }
+  const area = {
+    Province: '',
+    City: '',
+    Country: ''
+  }
   let index11 = 0
-  let index1 = str.indexOf("省")
+  const index1 = str.indexOf('省')
   if (index1 == -1) {
-    index11 = str.indexOf("自治区")
+    index11 = str.indexOf('自治区')
     if (index11 != -1) {
       area.Province = str.substring(0, index11 + 3)
     } else {
@@ -137,7 +142,7 @@ export function getArea (str) {
     area.Province = str.substring(0, index1 + 1)
   }
 
-  let index2 = str.indexOf("市")
+  const index2 = str.indexOf('市')
   if (index11 == -1) {
     area.City = str.substring(index11 + 1, index2 + 1)
   } else {
@@ -148,13 +153,145 @@ export function getArea (str) {
     }
   }
 
-  let index3 = str.lastIndexOf("区")
+  let index3 = str.lastIndexOf('区')
   if (index3 == -1) {
-    index3 = str.indexOf("县")
+    index3 = str.indexOf('县')
     area.Country = str.substring(index2 + 1, index3 + 1)
   } else {
     area.Country = str.substring(index2 + 1, index3 + 1)
   }
-  return area.Province + area.City + area.Country;
+  return area.Province + area.City + area.Country
 }
 
+export async function selectFileImage (file) {
+  if (file) {
+    if (api.systemType === 'ios') {
+      // 图片方向角
+      var Orientation = null
+      var fileType = file.type
+      // var URL = URL || webkitURL;
+      // 获取照片方向角属性，用户旋转控制
+      EXIF.getData(file, function () {
+        EXIF.getAllTags(this)
+        Orientation = EXIF.getTag(this, 'Orientation')
+      })
+
+      var oReader = new FileReader()
+      var base64 = null
+      return await new Promise((resolve, reject) => {
+        oReader.onload = function (e) {
+          // var blob = URL.createObjectURL(file);
+          // _compress(blob, file, basePath);
+          var image = new Image()
+          image.src = e.target.result
+          image.onload = function () {
+            var expectWidth = this.naturalWidth
+            var expectHeight = this.naturalHeight
+
+            if (this.naturalWidth > this.naturalHeight && this.naturalWidth > 800) {
+              expectWidth = 800
+              expectHeight = expectWidth * this.naturalHeight / this.naturalWidth
+            } else if (this.naturalHeight > this.naturalWidth && this.naturalHeight > 1200) {
+              expectHeight = 1200
+              expectWidth = expectHeight * this.naturalWidth / this.naturalHeight
+            }
+            var canvas = document.createElement('canvas')
+            var ctx = canvas.getContext('2d')
+            canvas.width = expectWidth
+            canvas.height = expectHeight
+            ctx.drawImage(this, 0, 0, expectWidth, expectHeight)
+            // 如果方向角不为1，都需要进行旋转
+            if (Orientation != '' && Orientation != 1) {
+              switch (Orientation) {
+                case 6: // 需要顺时针（向左）90度旋转
+                  rotateImg(this, 'left', canvas)
+                  break
+                case 8: // 需要逆时针（向右）90度旋转
+                  rotateImg(this, 'right', canvas)
+                  break
+                case 3: // 需要180度旋转
+                  rotateImg(this, 'right', canvas) // 转两次
+                  rotateImg(this, 'right', canvas)
+                  break
+              }
+            }
+            base64 = canvas.toDataURL(fileType, 1)
+            resolve(new File([convertBase64Url(base64, fileType)], 'avatar.jpg'))
+          }
+        }
+        oReader.readAsDataURL(file)
+      })
+    } else {
+      return file
+    }
+  }
+}
+
+function convertBase64Url (urlData, fileType) {
+  var bytes = window.atob(urlData.split(',')[1]) // 去掉url的头，并转换为byte
+
+  // 处理异常,将ascii码小于0的转换为大于0
+  var ab = new ArrayBuffer(bytes.length)
+  var ia = new Uint8Array(ab)
+  for (var i = 0; i < bytes.length; i++) {
+    ia[i] = bytes.charCodeAt(i)
+  }
+
+  return new Blob([ab], {
+    type: fileType
+  })
+}
+
+// 对图片旋转处理 added by lzk
+function rotateImg (img, direction, canvas) {
+  // alert(img);
+  // 最小与最大旋转方向，图片旋转4次后回到原方向
+  var min_step = 0
+  var max_step = 3
+  // var img = document.getElementById(pid);
+  if (img == null) return
+  // img的高度和宽度不能在img元素隐藏后获取，否则会出错
+  var height = img.height
+  var width = img.width
+  // var step = img.getAttribute('step');
+  var step = 2
+  if (step == null) {
+    step = min_step
+  }
+  if (direction == 'right') {
+    step++
+    // 旋转到原位置，即超过最大值
+    step > max_step && (step = min_step)
+  } else {
+    step--
+    step < min_step && (step = max_step)
+  }
+  // 旋转角度以弧度值为参数
+  var degree = step * 90 * Math.PI / 180
+  var ctx = canvas.getContext('2d')
+  switch (step) {
+    case 0:
+      canvas.width = width
+      canvas.height = height
+      ctx.drawImage(img, 0, 0)
+      break
+    case 1:
+      canvas.width = height
+      canvas.height = width
+      ctx.rotate(degree)
+      ctx.drawImage(img, 0, -height)
+      break
+    case 2:
+      canvas.width = width
+      canvas.height = height
+      ctx.rotate(degree)
+      ctx.drawImage(img, -width, -height)
+      break
+    case 3:
+      canvas.width = height
+      canvas.height = width
+      ctx.rotate(degree)
+      ctx.drawImage(img, -width, 0)
+      break
+  }
+}

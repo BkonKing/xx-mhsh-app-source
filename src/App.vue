@@ -46,10 +46,11 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
+    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life']
     api.addEventListener({
       name: 'swiperight'
     }, (ret, err) => {
-      if (this.$route.matched.length === 1) {
+      if (this.$route.matched.length === 1 && whiteList.indexOf(this.$route.name) === -1) {
         this.$router.go(-1)
       }
     })

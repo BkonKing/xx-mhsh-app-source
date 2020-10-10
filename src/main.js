@@ -19,7 +19,6 @@ Vue.config.errorHandler = function (err, vm, info) {
   console.error(err, info)
 }
 Vue.config.productionTip = false
-const isApp = false // 手动切换
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })

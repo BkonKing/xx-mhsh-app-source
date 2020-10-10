@@ -43,6 +43,9 @@ export default {
   z-index: 1;
   border-radius: @border-radius-md;
 }
+.van-grid-item__content {
+  padding: 0;
+}
 .grid-item__image {
   width: 60px;
   height: 60px;

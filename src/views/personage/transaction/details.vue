@@ -450,9 +450,9 @@
       <div class="tf-text tf-mb-lg">
         预约处理时间：{{ negotiateInfo.negotiation_time }}
       </div>
-      <div v-if="sub_status == 7" class="tf-text tf-row">
+      <div v-if="sub_status == 7" class="tf-text tf-row tf-mb-lg">
         <div>
-          <span class="lp18">拒绝原</span>
+          <span class="lp16">拒绝原</span>
           因：
         </div>
         <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
@@ -993,6 +993,7 @@ export default {
         2: '分派',
         3: '接受任务',
         4: '分派',
+        5: '用户确认',
         6: '结案',
         7: '分派'
       }
@@ -1147,8 +1148,8 @@ export default {
 .lp112 {
   letter-spacing: 113px;
 }
-.lp18 {
-  letter-spacing: 18px;
+.lp16 {
+  letter-spacing: 16px;
 }
 .negotiate-dialog {
   .tf-text {
