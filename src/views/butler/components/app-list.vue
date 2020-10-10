@@ -1,7 +1,7 @@
 <template>
   <van-grid class="tf-bg-white" :border="false" :column-num="column" square>
     <van-grid-item v-for="(item, index) in list" :key="index" :to="item.url">
-      <van-image class="grid-item__image" :src="item.icon_image" />
+      <van-image class="grid-item__image" :src="item.icon_image" v-imageCach="item.icon_image" />
       <span class="grid-item__text">{{item.application}}</span>
     </van-grid-item>
   </van-grid>
@@ -43,7 +43,7 @@ export default {
   z-index: 1;
   border-radius: @border-radius-md;
 }
-.van-grid-item__content {
+/deep/ .van-grid-item__content {
   padding: 0;
 }
 .grid-item__image {

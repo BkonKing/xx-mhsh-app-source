@@ -4,20 +4,27 @@
       :title="title"
       :fixed="true"
       :border="false"
-       placeholder
+      placeholder
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-padding">
-      <div class="tf-bg-white">
-        <userInfo :avatar="userInfo.avatar" :name="userInfo.nickname" :time="info.ctime"></userInfo>
-        <div class="tf-auxiliary-content tf-mt-lg">{{info.content}}</div>
-        <tf-image-list v-if="info.images" :data="info.images" mode="show" class="tf-mt-base"></tf-image-list>
-      </div>
-      <div v-if="info.reply" class="tf-card tf-mt-lg">
-        <div class="tf-card-header">社区回复</div>
-        <div class="tf-card-content">{{info.reply}}</div>
-      </div>
+    <div class="tf-bg-white">
+      <userInfo
+        :avatar="userInfo.avatar"
+        :name="userInfo.nickname"
+        :time="info.ctime"
+      ></userInfo>
+      <div class="tf-auxiliary-content tf-mt-lg">{{ info.content }}</div>
+      <tf-image-list
+        v-if="info.images"
+        :data="info.images"
+        mode="show"
+        class="tf-mt-base"
+      ></tf-image-list>
+    </div>
+    <div v-if="info.reply" class="tf-card tf-mt-lg">
+      <div class="tf-card-header">社区回复</div>
+      <div class="tf-card-content">{{ info.reply }}</div>
     </div>
   </div>
 </template>
@@ -53,7 +60,7 @@ export default {
     getComPraiseInfo () {
       getComPraiseInfo({
         compraiseId: this.id
-      }).then(res => {
+      }).then((res) => {
         this.info = res.data
         this.title = this.info.info_type == 2 ? '表扬' : '投诉'
       })

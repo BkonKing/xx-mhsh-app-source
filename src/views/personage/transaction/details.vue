@@ -128,10 +128,7 @@
             <div
               v-if="status == 4 && detailInfo.is_upload_images == 0"
               class="tf-btn tf-btn-primary"
-              @click="
-                imageFiles = []
-                imgUploadShow = true
-              "
+              @click="openUploadImg"
             >
               上传照片
             </div>
@@ -520,8 +517,8 @@
         <div class="tf-form-box">
           <div class="evaluate-title">
             对处理人员
-            <span class="tf-text-grey">({{evaluateInfo.nickname}})</span>
-            {{rateText[evaluateInfo.evaluate_stars]}}
+            <span class="tf-text-grey">({{ evaluateInfo.nickname }})</span>
+            {{ rateText[evaluateInfo.evaluate_stars] }}
           </div>
           <div class="rate-box">
             <van-rate
@@ -534,11 +531,19 @@
             />
           </div>
           <div class="rate-tag-box">
-            <div v-for="(item, i) in evaluateReasonList" :key="i" class="rate-tag">{{item}}</div>
+            <div
+              v-for="(item, i) in evaluateReasonList"
+              :key="i"
+              class="rate-tag"
+            >
+              {{ item }}
+            </div>
           </div>
           <template v-if="evaluateInfo.evaluate_content">
             <div class="tf-form-label">其他补充：</div>
-            <div class="textarea-box tf-text">{{evaluateInfo.evaluate_content}}</div>
+            <div class="textarea-box tf-text">
+              {{ evaluateInfo.evaluate_content }}
+            </div>
           </template>
         </div>
       </template>
@@ -946,6 +951,11 @@ export default {
           eventId: 67
         })
       })
+    },
+    // 打开上传图片
+    openUploadImg () {
+      this.imageFiles = []
+      this.imgUploadShow = true
     },
     /* 上传结案图片 */
     closingPicture () {

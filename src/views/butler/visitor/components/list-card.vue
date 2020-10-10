@@ -3,8 +3,8 @@
     <div class="list-item" @click="onClick">
       <span
         class="tf-status-tag"
-        :class="{'tf-status-gray': data.is_visit != 0}"
-      >{{isVisitText[data.is_visit]}}</span>
+        :class="{ 'tf-status-gray': data.is_visit != 0 }"
+        >{{ isVisitText[data.is_visit] }}</span>
       <div v-if="data.dftime" class="tf-row dftime">
         <div class="tf-text-lg tf-text-grey">到访时间：</div>
         <div class="tf-text-lg">{{ data.dftime }}</div>
@@ -24,8 +24,11 @@
       <div class="tf-row tf-mb-base">
         <div class="tf-text-lg tf-text-grey">访客信息：</div>
         <div>
-          <span class="tf-text-lg">{{ data.realname }} {{ data.gender | sex }}</span>
-          <div class="tf-text-lg tf-text-grey tf-mt-base">{{ data.mobile }} {{ data.car_number }}</div>
+          <span class="tf-text-lg"
+            >{{ data.realname }} {{ data.gender | sex }}</span>
+          <div v-if="data.mobile || data.car_number" class="tf-text-lg tf-text-grey tf-mt-base">
+            {{ data.mobile }} {{ data.car_number }}
+          </div>
         </div>
       </div>
     </div>
@@ -87,12 +90,12 @@ export default {
   background-color: #fff;
   border-radius: @border-radius-md;
   margin-bottom: @padding-md;
-  padding: 30px 0;
+  padding: 30px 0 10px;
 }
 .dftime {
   padding-bottom: 20px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
 }
 .tf-status-tag {
   top: 15px;

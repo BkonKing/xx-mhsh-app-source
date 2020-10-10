@@ -81,5 +81,11 @@ export default {
       height: 100%;
     }
   }
+  /deep/ .tf-list-refresh {
+    padding-top: 30px;
+  }
+  /deep/ .tf-van-cell {
+    margin-bottom: 10px;
+  }
 }
 </style>

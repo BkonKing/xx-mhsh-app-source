@@ -387,6 +387,7 @@ export default {
 }
 .commodity-box {
   margin-bottom: 30px;
+  flex: 1;
 }
 .commodity-image {
   width: 330px;

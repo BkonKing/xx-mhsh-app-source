@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import router from './router'
 import { mapGetters } from 'vuex'
 // import api from './api/index'
 export default {
@@ -46,7 +45,7 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
-    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life']
+    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex']
     api.addEventListener({
       name: 'swiperight'
     }, (ret, err) => {
@@ -145,7 +144,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: #fff;
 }
 body::-webkit-scrollbar {
   //隐藏滚动条

@@ -51,6 +51,55 @@
         @click="goEvaluate"
       >评价</div>
     </div>
+    <!-- 撤销 -->
+    <tf-dialog
+      v-model="revocationShow"
+      title="撤销提报"
+      :showFotter="true"
+      :hiddenOff="true"
+      @confirm="revocationSubmit"
+    >
+      <template>
+        <div class="plan-alert tf-mt-base tf-mb-lg">
+          撤销后将不再进行处理解决
+        </div>
+        <div class="tf-form-box">
+          <div class="tf-form-label required">撤销原因：</div>
+          <div class="tf-form-item">
+            <tf-picker
+              class="tf-form-item__input"
+              v-model="repealRefuseReason"
+              title="撤销原因"
+              value-key="content"
+              selected-key="content"
+              :columns="reasonList"
+            >
+              <template v-slot="{ valueText }">
+                <div
+                  class="reason-text"
+                  :class="{ 'picker-active': repealRefuseReason }"
+                >
+                  {{ valueText }}
+                </div>
+              </template>
+            </tf-picker>
+            <div class="tf-icon tf-icon-caret-down tf-form-item__icon"></div>
+          </div>
+        </div>
+        <div class="tf-form-box">
+          <div class="tf-form-label">补充说明：</div>
+          <van-field
+            v-model="repealOtherReason"
+            class="tf-form-item__textarea"
+            rows="2"
+            autosize
+            type="textarea"
+            maxlength="300"
+            placeholder="请输入"
+          />
+        </div>
+      </template>
+    </tf-dialog>
     <!-- 确认协商信息 -->
     <tf-dialog class="negotiate-dialog" v-model="negotiateConfirm" title="请确认协商信息">
       <template>
@@ -199,6 +248,7 @@ import {
   caseOverAffirm,
   getRefuseReasonList,
   getNegotiationInfo,
+  getUndoReasonList,
   getEvaluateInfo
 } from '@/api/butler.js'
 import tfImageList from '@/components/tf-image-list'
@@ -244,6 +294,7 @@ export default {
       other_reason: '', // 协商拒绝说明
       refuse_reason: undefined, // 协商拒绝原因值
       refuseArray: [], // 协商拒绝原因数组
+      revocationShow: false, // 撤销提报弹窗
       // 评分对应内容
       rateText: {
         1: '非常不满意，各方面都很差',
@@ -254,7 +305,10 @@ export default {
       },
       goBackStatus: 0, // 0：从列表来 1：从新增来
       is_confirm: 0,
-      is_evaluate: 0
+      is_evaluate: 0,
+      reasonList: [], // 撤销原因数组
+      repealRefuseReason: undefined, // 撤销原因值
+      repealOtherReason: '' // 撤销补充说明
     }
   },
   created () {
@@ -309,17 +363,35 @@ export default {
         this.title = this.title ? this.title : category
       })
     },
-    /* 撤销提报 */
+    /* 获取撤消提报原因 */
+    getUndoReasonList () {
+      getUndoReasonList(this.projectId).then((res) => {
+        this.reasonList = res.data
+      })
+    },
+    // 撤销提报
     cancelRepair () {
-      Dialog.confirm({
-        title: '确定撤销吗'
-      }).then(() => {
-        cancelRepair({
-          repair_id: this.repairId
-        }).then((res) => {
-          if (res.success) {
-            this.$router.go(-1)
-          }
+      this.getUndoReasonList()
+      this.revocationShow = true
+    },
+    /* 撤销提报提交 */
+    revocationSubmit () {
+      const validator = [
+        {
+          value: this.repealRefuseReason,
+          message: '请选择撤销原因'
+        }
+      ]
+      validForm(validator).then(() => {
+        const params = {
+          repair_id: this.repairId,
+          other_reason: this.repealRefuseReason,
+          refuse_reason: this.repealOtherReason
+        }
+        cancelRepair(params, this.projectId).then((res) => {
+          this.getRepairInfo()
+          Toast('已经撤销提报')
+          this.revocationShow = false
         })
       })
     },

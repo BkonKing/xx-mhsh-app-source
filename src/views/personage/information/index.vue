@@ -566,6 +566,9 @@ export default {
 /deep/ .van-dropdown-menu__bar {
   border-radius: 33px;
 }
+/deep/ .van-dropdown-menu__item {
+  padding-right: 20px;
+}
 /deep/ .van-dropdown-menu__title:after {
   margin-top: -10px;
   border-width: 8px;

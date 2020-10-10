@@ -10,7 +10,7 @@
         <span v-show="editMode" class="font-26" @click="cancelEdit">取消</span>
       </div>
       <div v-show="!editMode" class="search-box">
-        <van-search v-model="value" placeholder="全部应用" @input="searchChange" />
+        <van-search class="app-search-box" v-model="value" placeholder="全部应用" @input="searchChange" />
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
@@ -247,6 +247,9 @@ export default {
   /deep/ input::placeholder {
     font-size: 24px;
     color: #8f8f94 !important;
+  }
+  .app-search-box {
+    padding: 0 10px;
   }
   /deep/ .van-search {
     .van-search__content {

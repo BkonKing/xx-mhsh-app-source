@@ -23,7 +23,7 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, swipe, SwipeItem, Toast, Dialog } from 'vant'
+import { NoticeBar, Swipe, SwipeItem, Toast, Dialog } from 'vant'
 import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
 import { mapGetters } from 'vuex'
 export default {
@@ -32,13 +32,13 @@ export default {
     pageNavBar,
     appList,
     [NoticeBar.name]: NoticeBar,
-    [swipe.name]: swipe,
+    [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem
   },
   data () {
     return {
       noticeList: [],
-      appList: [],
+      appList: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
       ymjObj: {}
     }
   },
@@ -54,28 +54,24 @@ export default {
       })
     }
   },
-  // created () {
-  //   this.queryAllApp()
-  //   // this.getNoticeLbList()
-  // },
   activated () {
     this.queryAllApp()
     this.getNoticeLbList()
   },
   methods: {
-    /* 获取管家全部应用 */
+    // 获取管家板块全部应用
     queryAllApp () {
       queryAllApp().then((res) => {
         this.appList = res.data
       })
     },
-    /* 获取通知轮播列表 */
+    // 获取通知轮播列表
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {
         this.noticeList = data
       })
     },
-    /* 跳转公告详情页 */
+    // 跳转公告详情页
     goNotice ({ id }) {
       this.$router.push({
         name: 'noticeDetails',
@@ -87,7 +83,7 @@ export default {
         eventId: 27
       })
     },
-    /* 跳转云门禁 */
+    // 跳转云门禁
     goEntrance () {
       this.$router.push('/pages/butler/entrance/index')
     }

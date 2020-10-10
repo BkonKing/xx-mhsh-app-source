@@ -11,15 +11,15 @@
     />
     <div class="tf-body-container" id="notice-list-container">
       <refreshList :list.sync="noticeList" :load="getNoticeList">
-        <template v-slot="{item}">
-          <div class="list-item--time">{{item.ctime}}</div>
+        <template v-slot="{ item }">
+          <div class="list-item--time">{{ item.ctime }}</div>
           <div class="tf-card" @click="jump(item)">
             <div class="tf-card-header" style="justify-content: flex-start;">
               <span v-if="item.is_readed == '0'" class="tf-readed-tag"></span>
-              <span class="tf-card-header__title">{{item.title}}</span>
+              <span class="tf-card-header__title">{{ item.title }}</span>
             </div>
             <div class="tf-card-content">
-              <div class="van-multi-ellipsis--l2">{{item.content}}</div>
+              <div class="van-multi-ellipsis--l2">{{ item.content }}</div>
             </div>
           </div>
         </template>
@@ -45,11 +45,12 @@ export default {
       scrollTop: 0
     }
   },
-  created () {
-  },
+  created () {},
   activated () {
     if (this.scrollTop) {
-      document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+      document
+        .getElementById('notice-list-container')
+        .getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
     }
   },
   methods: {
@@ -60,7 +61,7 @@ export default {
     // 设置消息全部已读
     setNoticeReaded () {
       setNoticeReaded().then((res) => {
-        this.noticeList.forEach(obj => {
+        this.noticeList.forEach((obj) => {
           obj.is_readed = 1
         })
       })
@@ -80,7 +81,9 @@ export default {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     } else {
-      const el = document.getElementById('notice-list-container').getElementsByClassName('tf-list-refresh')
+      const el = document
+        .getElementById('notice-list-container')
+        .getElementsByClassName('tf-list-refresh')
       this.scrollTop = (el[0] && el[0].scrollTop) || 0
     }
     next()
@@ -106,5 +109,11 @@ export default {
 
 .tf-card-header__title {
   flex: 1;
+}
+
+.van-multi-ellipsis--l2 {
+  font-size: 26px;
+  color: #909094;
+  line-height: 44px;
 }
 </style>

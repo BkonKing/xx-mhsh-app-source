@@ -3,6 +3,7 @@
     <div :class="size ? `user-info__left-box-${size}` : 'user-info__left-box'">
       <img
         v-if="avatar"
+        v-imageCach="avatar"
         class="tf-mr-base tf-avatar"
         :src="avatar"
         mode="aspectFit"

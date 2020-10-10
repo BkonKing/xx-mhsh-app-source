@@ -16,7 +16,7 @@
         <div class="property-title">{{ projectName }}</div>
         <div class="property-content">{{ remarks }}</div>
       </div>
-      <div class="tf-bg tf-padding-base">
+      <div class="tf-bg phone-card-box">
         <phone-card
           v-for="(item, i) in phoneList"
           :key="i"
@@ -81,7 +81,6 @@ export default {
   align-items: center;
   padding-top: 30px;
   padding-bottom: 30px;
-  margin-bottom: 10px;
   z-index: 1;
 }
 
@@ -95,6 +94,10 @@ export default {
   top: 0;
   left: 0;
   z-index: -1; /*-1 可以当背景*/
+}
+
+.phone-card-box {
+  padding: 0 20px 20px;
 }
 
 .logo-badge {
