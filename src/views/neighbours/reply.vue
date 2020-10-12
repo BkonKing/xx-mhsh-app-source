@@ -3,7 +3,6 @@
     <van-nav-bar
       :title="`${replyNum}条回复`"
       :fixed="true"
-      :border="false"
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
@@ -22,15 +21,19 @@
           size="m"
         >
           <template v-slot:right>
-            <span class="thumbsups-number">{{replyInfo.thumbsups | numberText}}</span>
+            <span class="thumbsups-number">{{
+              replyInfo.thumbsups | numberText
+            }}</span>
             <span
               class="tf-icon tf-icon-zan"
-              :class="{'like-active': replyInfo.is_thumbsup}"
+              :class="{ 'like-active': replyInfo.is_thumbsup }"
               @click.stop="thumbsUp(replyInfo)"
             ></span>
           </template>
         </userInfo>
-        <div class="reply-cell-content__text">{{replyInfo.content}}</div>
+        <div class="reply-cell-content__text">
+          {{ replyInfo.content }}
+        </div>
         <div
           v-if="replyInfo.images && replyInfo.images.length > 0"
           class="reply-cell-content__img-box"
@@ -42,10 +45,14 @@
         class="reply-list"
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
         @load="onLoad"
       >
-        <van-cell class="reply-cell" v-for="(item, i) in replyList" :key="i"  @click="operate(item, i)">
+        <van-cell
+          class="reply-cell"
+          v-for="(item, i) in replyList"
+          :key="i"
+          @click="operate(item, i)"
+        >
           <userInfo
             class="user-info"
             :avatar="item.avatar"
@@ -54,20 +61,24 @@
             size="m"
           >
             <template v-slot:right>
-              <span class="thumbsups-number">{{item.thumbsups}}</span>
+              <span class="thumbsups-number">{{ item.thumbsups }}</span>
               <span
                 class="tf-icon tf-icon-zan"
-                :class="{'like-active': item.is_thumbsup}"
+                :class="{ 'like-active': item.is_thumbsup }"
                 @click.stop="thumbsUp(item)"
               ></span>
             </template>
           </userInfo>
-          <div class="reply-cell-content__text">
+          <div
+            class="reply-cell-content__text"
+            :class="{ 'no-border-bottom': replyList.length === i + 1 }"
+          >
             <span class="tf-text" v-if="item.reply_nickname">
               回复
-              <span class="tf-text-blue">@{{item.reply_nickname}}</span>：
+              <span class="tf-text-blue">@{{ item.reply_nickname }}</span
+              >：
             </span>
-            {{item.content}}
+            {{ item.content }}
           </div>
         </van-cell>
       </van-list>
@@ -162,7 +173,7 @@ export default {
       thumbsUp({
         id: item.id,
         t_type: 2
-      }).then(res => {
+      }).then((res) => {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
@@ -175,7 +186,7 @@ export default {
     getCommentInfo () {
       getCommentInfo({
         id: this.id
-      }).then(res => {
+      }).then((res) => {
         this.replyInfo = res.data
         this.replyNum = parseInt(res.data.reply_num)
       })
@@ -192,7 +203,7 @@ export default {
     deleteComment () {
       deleteComment({
         id: this.currentId
-      }).then(res => {
+      }).then((res) => {
         this.replyList.splice(this.index, 1)
         Toast.success('删除成功')
         this.replyNum--
@@ -281,7 +292,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .tf-body-container {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -326,12 +337,16 @@ export default {
   flex: 1;
   background: #fff;
   height: auto !important;
+  padding-bottom: 100px;
   .user-info {
     padding-top: 20px;
   }
   .reply-cell-content__text {
     padding-bottom: 30px;
     border-bottom: 1px solid #f0f0f0;
+  }
+  .no-border-bottom {
+    border-bottom: none !important;
   }
 }
 .thumbsups-number {

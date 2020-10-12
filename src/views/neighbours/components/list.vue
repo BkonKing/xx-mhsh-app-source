@@ -204,14 +204,17 @@ export default {
   border-radius: 10px;
   padding: 30px 30px 0;
   .activity-image-box {
+    display: flex;
     position: relative;
     width: 100%;
-    height: 365px;
+    line-height: 1;
     margin-bottom: 10px;
   }
   .activity-image {
+    display: block;
     width: 100%;
-    height: 365px;
+    height: 100%;
+    object-fit: contain;
   }
   .activity-join {
     width: 100%;

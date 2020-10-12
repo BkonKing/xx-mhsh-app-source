@@ -3,7 +3,6 @@
     <van-nav-bar
       title="正文"
       :fixed="true"
-      :border="false"
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
@@ -57,13 +56,13 @@
         <template v-else-if="articleType == 2">
           <div class="article-title">{{info.title}}</div>
           <div class="activity-content">
-            <div class="tf-text tf-mb-base" v-html="info.content"></div>
+            <div class="tf-text tf-mb-lg" v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
             <div class="apply-box" v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
-                报名人员
+                <strong>报名人员</strong>
                 <span class="tf-text-grey">({{info.joins}}人)</span>
-                <span class="tf-status-tag">我已报名</span>
+                <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
                 <template v-for="(item, i) in info.join_uids">
@@ -327,7 +326,7 @@ export default {
   }
 }
 .activity-footer {
-  margin-top: 30px;
+  margin-top: 35px;
   @flex();
   padding: 20px 0;
   border-top: 1px solid @divider-color;
@@ -349,7 +348,7 @@ export default {
   font-size: 34px;
   font-weight: bold;
   margin-top: 10px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
 }
 .article-content {
   padding: 40px 0 10px;
@@ -381,17 +380,20 @@ export default {
       font-size: 30px;
       border-bottom: 3px solid @red;
       .tf-status-tag {
+        display: flex;
+        align-content: center;
         width: auto;
         top: 20px;
-        height: 60px;
-        line-height: 60px;
-        padding: 0 20px;
+        padding: 0 28px;
         font-size: 30px;
+        border-radius: 30px 30px 0px 30px;
+        background: linear-gradient(90deg, #F9866B, #EB5841);
       }
     }
     .apply-user {
       padding: 38px 0 50px;
-      line-height: 1;
+      display: flex;
+      align-content: center;
       &__avatar {
         width: 56px;
         height: 56px;

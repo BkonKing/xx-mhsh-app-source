@@ -684,6 +684,7 @@ export default {
       border-radius: 10px;
       /deep/ .van-image__img {
         border-radius: 10px;
+        object-fit: cover;
       }
     }
     /deep/ .activity-item__description {
