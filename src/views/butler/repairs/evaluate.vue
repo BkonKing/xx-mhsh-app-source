@@ -23,7 +23,7 @@
           placeholder="请输入"
         />
       </div>
-      <van-button type="primary" size="large" @click="submit">匿名提交</van-button>
+      <van-button v-preventReClick type="primary" size="large"  @click="submit">匿名提交</van-button>
     </div>
   </div>
 </template>

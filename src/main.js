@@ -6,6 +6,7 @@ import store from './store'
 import * as filters from './filters'
 import txAnalysis from './directive/txAnalysis'
 import imageCach from './directive/imageCach'
+import preventReClick from './directive/preventReClick'
 import './styles/base.css'
 // import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
@@ -24,6 +25,7 @@ Object.keys(filters).forEach(key => {
 })
 Vue.use(txAnalysis)
 Vue.use(imageCach)
+Vue.use(preventReClick)
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
 if (process.env.VUE_APP_IS_APP === '1') {

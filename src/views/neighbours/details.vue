@@ -25,16 +25,20 @@
         <div
           class="tf-card-header"
           style="border-bottom:none"
-          :class="{'border-none': articleType == 2 || articleType == 3}"
+          :class="{ 'border-none': articleType == 2 || articleType == 3 }"
         >
-          <userInfo :avatar="info.avatar" :name="info.nickname" :time="info.ctime">
+          <userInfo
+            :avatar="info.avatar"
+            :name="info.nickname"
+            :time="info.ctime"
+          >
             <template v-if="articleType == 3" v-slot:right>
-              <div class="group-tag">{{info.category}}</div>
+              <div class="group-tag">{{ info.category }}</div>
             </template>
           </userInfo>
         </div>
         <template v-if="articleType == 1">
-          <div class="article-title">{{info.title}}</div>
+          <div class="article-title">{{ info.title }}</div>
           <div class="article-content" v-html="info.content"></div>
           <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
@@ -47,43 +51,68 @@
             :showIcon="false"
             size="sm"
           ></tf-alert>
-          <div class="tf-card-content">{{info.content}}</div>
+          <div class="tf-card-content">{{ info.content }}</div>
           <template v-if="info.images && info.images.length">
-            <img width="33%" :src="info.images[0]" v-if="info.images.length === 1" />
-            <tf-image-list v-else :data="info.images" mode="show"></tf-image-list>
+            <img
+              width="33%"
+              :src="info.images[0]"
+              v-if="info.images.length === 1"
+            />
+            <tf-image-list
+              v-else
+              :data="info.images"
+              mode="show"
+            ></tf-image-list>
           </template>
         </template>
         <template v-else-if="articleType == 2">
-          <div class="article-title">{{info.title}}</div>
+          <div class="article-title">{{ info.title }}</div>
           <div class="activity-content">
             <div class="tf-text tf-mb-lg" v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
             <div class="apply-box" v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
                 <strong>报名人员</strong>
-                <span class="tf-text-grey">({{info.joins}}人)</span>
+                <span class="tf-text-grey">({{ info.joins }}人)</span>
                 <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
                 <template v-for="(item, i) in info.join_uids">
-                  <img v-if="item.avatar" class="apply-user__avatar" :src="item.avatar" :key="i" />
-                  <img v-else class="apply-user__avatar" src="@/assets/imgs/touxiang.png" :key="i" />
+                  <img
+                    v-if="item.avatar"
+                    class="apply-user__avatar"
+                    :src="item.avatar"
+                    :key="i"
+                  />
+                  <img
+                    v-else
+                    class="apply-user__avatar"
+                    src="@/assets/imgs/touxiang.png"
+                    :key="i"
+                  />
                 </template>
               </div>
             </div>
-            <div v-if="!info.is_join" class="apply-btn" @click="joinActivity">报名</div>
+            <div
+              v-if="!info.is_join"
+              v-preventReClick
+              class="apply-btn"
+              @click="joinActivity"
+            >
+              报名
+            </div>
           </div>
         </template>
         <div class="activity-footer">
           <div
             class="tf-icon tf-icon-zan"
-            :class="{'like-active': info.is_thumbsup}"
+            :class="{ 'like-active': info.is_thumbsup }"
             @click="thumbsUp(info)"
           >
-            <span class="tf-text-sm">{{info.thumbsups | numberText}}</span>
+            <span class="tf-text-sm">{{ info.thumbsups | numberText }}</span>
           </div>
           <div class="tf-icon tf-icon-pinglun" @click="$refs.reply.comment()">
-            <span class="tf-text-sm">{{info.comments | numberText}}</span>
+            <span class="tf-text-sm">{{ info.comments | numberText }}</span>
           </div>
         </div>
       </div>
@@ -203,26 +232,28 @@ export default {
     getPostBarInfo () {
       getPostBarInfo({
         id: this.id
-      }).then(({ data }) => {
-        if (data.is_del === 1) {
+      })
+        .then(({ data }) => {
+          if (data.is_del === 1) {
+            Dialog.alert({
+              title: '该贴已被删除'
+            }).then(() => {
+              this.$router.go(-1)
+            })
+            return
+          }
+          this.info = data
+          this.info.id = this.id
+          this.isLoading = false
+        })
+        .catch(({ message }) => {
+          Toast.clear()
           Dialog.alert({
-            title: '该贴已被删除'
+            title: message
           }).then(() => {
             this.$router.go(-1)
           })
-          return
-        }
-        this.info = data
-        this.info.id = this.id
-        this.isLoading = false
-      }).catch(({ message }) => {
-        Toast.clear()
-        Dialog.alert({
-          title: message
-        }).then(() => {
-          this.$router.go(-1)
         })
-      })
     },
     /* 获取活动详情 */
     getActivityInfo () {
@@ -306,7 +337,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .tf-body-container {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
@@ -387,7 +418,7 @@ export default {
         padding: 0 28px;
         font-size: 30px;
         border-radius: 30px 30px 0px 30px;
-        background: linear-gradient(90deg, #F9866B, #EB5841);
+        background: linear-gradient(90deg, #f9866b, #eb5841);
       }
     }
     .apply-user {

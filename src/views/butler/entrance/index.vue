@@ -60,7 +60,7 @@
       <div v-show="active === 2" class="entrance-operation">
         <div class="entrance-operation__box">
           <div class="triangle" :class="{'triangle-right': active === 2}"></div>
-          <div class="instantly-btn" @click="ycOpenDoor">立即开门</div>
+          <div v-preventReClick class="instantly-btn" @click="ycOpenDoor">立即开门</div>
         </div>
         <div class="entrance-operation__alert">{{openDoorTime ? `已开门` : '点击即可开门'}}</div>
       </div>

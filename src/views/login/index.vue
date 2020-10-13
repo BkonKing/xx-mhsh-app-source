@@ -50,7 +50,14 @@
         </Field>
       </div>
     </div>
-    <span class="login-text" @click="login" v-txAnalysis="1">登 录</span>
+    <van-button
+      v-preventReClick
+      :loading="loginLoading"
+      class="login-btn"
+      @click="login"
+      v-txAnalysis="1"
+      >登 录</van-button
+    >
     <span
       v-if="login_type === 1"
       class="login-method__text"
@@ -103,7 +110,8 @@ export default {
       codeStatus: false,
       countDown: 59,
       timer: null,
-      status: 0
+      status: 0,
+      loginLoading: false
     }
   },
   created () {
@@ -148,12 +156,14 @@ export default {
           pwd: this.pwd
         }
       }
+      this.loginLoading = true
       this.$store
         .dispatch('login', {
           type: this.login_type,
           params
         })
         .then((data) => {
+          this.loginLoading = false
           this.$router.replace({
             name: 'home'
           })
@@ -165,6 +175,8 @@ export default {
           this.mtjEvent({
             eventId: 1
           })
+        }).catch(() => {
+          this.loginLoading = false
         })
     },
     /* 发送验证码 */
@@ -323,12 +335,13 @@ export default {
   color: #fff;
   text-decoration: underline;
 }
-.login-text {
+.login-btn {
   width: 560px;
   height: 88px;
   line-height: 88px;
   background-image: linear-gradient(to right, @red, @red-dark);
   border-radius: 10px;
+  border-width: 0;
   font-size: 30px;
   color: #fff;
   text-align: center;

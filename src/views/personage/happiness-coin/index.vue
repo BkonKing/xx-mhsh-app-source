@@ -16,11 +16,13 @@
           <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
           <div class="coin-number">{{credits}}</div>
         </div>
-        <div
+        <van-button
+          v-preventReClick
+          :loading="signLoading"
           class="sign-tag"
           :class="{'sign-tag--complete': signinToday == '1'}"
           @click="signIn()"
-        >{{signinToday == '1' ? '已签到' : '签到'}}</div>
+        >{{signinToday == '1' ? '已签到' : '签到'}}</van-button>
       </div>
     </div>
     <div class="coin-main-box">
@@ -101,7 +103,7 @@
 </template>
 
 <script>
-import { NavBar, Toast, Dialog } from 'vant'
+import { NavBar, Toast, Dialog, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
@@ -109,6 +111,7 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Button.name]: Button,
     tfCalendar
   },
   data () {
@@ -126,7 +129,8 @@ export default {
           originalPrice: '260',
           coin: '2400'
         }
-      ]
+      ],
+      signLoading: false
     }
   },
   computed: {
@@ -156,7 +160,9 @@ export default {
     },
     /* 签到请求 */
     signin () {
+      this.signLoading = true
       signin().then((res) => {
+        this.signLoading = false
         Toast({
           message: res.message
         })
@@ -165,6 +171,8 @@ export default {
         this.mtjEvent({
           eventId: 4
         })
+      }).catch(() => {
+        this.signLoading = false
       })
     },
     /* 幸福币明细 */
@@ -269,6 +277,8 @@ export default {
   color: #fff;
   font-size: 30px;
   background-image: linear-gradient(to right, @red, @red-dark);
+  border-width: 0;
+  border-radius: 0;
   border-top-left-radius: 44px;
   border-bottom-left-radius: 44px;
 }

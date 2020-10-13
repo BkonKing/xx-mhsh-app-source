@@ -15,8 +15,3 @@ export const statusText = {
   6: '已结案',
   7: '已撤销'
 } */
-
-export const appPages = {
-  '/gj/mj': '',
-  '/gj/tz': '/pages/butler/notice/index'
-}

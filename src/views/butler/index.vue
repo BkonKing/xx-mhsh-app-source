@@ -23,8 +23,9 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, Swipe, SwipeItem, Toast, Dialog } from 'vant'
+import { NoticeBar, Swipe, SwipeItem } from 'vant'
 import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
+import { bulterPermission } from '@/utils/business'
 import { mapGetters } from 'vuex'
 export default {
   name: 'butler',
@@ -89,39 +90,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const butlerList = [
-      'entranceIndex',
-      'noticeIndex',
-      'repairsIndex',
-      'freeserverIndex',
-      'visitorIndex',
-      'compraiseIndex',
-      'questionnaireIndex',
-      'propertyIndex',
-      'convenienceIndex',
-      'noticeDetails'
-    ]
-    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
-      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
-        next()
-        return
-      }
-      Dialog.confirm({
-        title: '提示',
-        message: '您尚未认证房间，是否去认证？',
-        confirmButtonText: '去认证'
-      }).then((res) => {
-        this.$router.push(
-          '/pages/personage/house/attestation?type=1&mode=0&select=1'
-        )
-      })
-      next(false)
-    } else if (to.name === 'entranceIndex' && this.ymjObj.mj_status == '0') {
-      Toast('小区暂未开放此功能')
-      next(false)
-    } else {
-      next()
-    }
+    bulterPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>

@@ -35,18 +35,20 @@
     </van-pull-refresh>
     <div v-if="sub_status < 12 && (is_confirm == 0 || is_evaluate == 0)" class="operation-box">
       <!-- 不是已结案和已取消 -->
-      <div v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
+      <div v-preventReClick v-if="sub_status < 8" class="tf-btn" @click="cancelRepair">撤销提报</div>
       <!-- 待结案和发起协商 -->
-      <div v-if="sub_status == 5" class="tf-btn tf-btn-primary" @click="toNegotiateConfirm">确认协商信息</div>
+      <div v-preventReClick v-if="sub_status == 5" class="tf-btn tf-btn-primary" @click="toNegotiateConfirm">确认协商信息</div>
       <!-- 预结案 -->
       <div
         v-if="sub_status >= 8 && is_confirm == 0"
+        v-preventReClick
         class="tf-btn tf-btn-primary"
         @click="finishShow = true"
       >确认完成</div>
       <!-- 评价 -->
       <div
         v-if="sub_status >= 8 && is_confirm == 1 && is_evaluate == 0"
+        v-preventReClick
         class="tf-btn tf-btn-primary"
         @click="goEvaluate"
       >评价</div>
@@ -117,8 +119,8 @@
         </div>
         <div class="tf-text tf-mb-lg">预约处理时间：{{negotiateInfo.negotiation_time}}</div>
         <div class="dialog-footer">
-          <van-button size="small" style="width: 48%;" @click="toRefuse">拒绝</van-button>
-          <van-button size="small" type="danger" style="width: 48%;" @click="confirmNegotiate">确认</van-button>
+          <van-button v-preventReClick size="small" style="width: 48%;" @click="toRefuse">拒绝</van-button>
+          <van-button v-preventReClick size="small" type="danger" style="width: 48%;" @click="confirmNegotiate">确认</van-button>
         </div>
       </template>
     </tf-dialog>
@@ -191,7 +193,7 @@
       <div class="padding40">
         <div class="finish-title">处理人员是否处理完成？</div>
         <div class="finish-description">(若有其他问题，请联系客服)</div>
-        <van-button size="small" type="primary" style="width: 100%;" @click="caseOverAffirm">确定完成</van-button>
+        <van-button v-preventReClick size="small" type="primary" style="width: 100%;" @click="caseOverAffirm">确定完成</van-button>
       </div>
     </tf-dialog>
     <!-- 评价信息 -->

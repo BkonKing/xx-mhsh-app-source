@@ -10,55 +10,83 @@
     />
     <div class="tf-main-container">
       <div class="tf-bg-white" style="position:relative;overflow: hidden;">
-        <userInfo :avatar="wjtp_info.avatar" :name="wjtp_info.nickname" :time="wjtp_info.ptime"></userInfo>
+        <userInfo
+          :avatar="wjtp_info.avatar"
+          :name="wjtp_info.nickname"
+          :time="wjtp_info.ptime"
+        ></userInfo>
         <div class="finish-tag-box" v-if="wjtp_info.status == 3">
           <div class="finish-tag">
             <div class="finish-text">已结束</div>
           </div>
         </div>
         <div class="tf-article-title">
-          {{wjtp_info.title}}
-          <div v-if="wjtp_info.content" class="info-content">{{wjtp_info.content}}</div>
+          {{ wjtp_info.title }}
+          <div v-if="wjtp_info.content" class="info-content">
+            {{ wjtp_info.content }}
+          </div>
         </div>
         <div class="tf-row-space-between">
           <div
             class="tf-gradient-tag--warning"
             v-if="wjtp_info.virtual_coin > 0"
-          >参与得{{wjtp_info.virtual_coin}}幸福币</div>
-          <div class="people-number" :class="{'tf-text-grey': finishStatus}">{{wjtp_info.joins}}人参加</div>
+          >
+            参与得{{ wjtp_info.virtual_coin }}幸福币
+          </div>
+          <div class="people-number" :class="{ 'tf-text-grey': finishStatus }">
+            {{ wjtp_info.joins }}人参加
+          </div>
         </div>
       </div>
       <div class="vote-padding">
         <!-- 问卷 -->
         <template v-if="wjtp_info.wjtp_type == 1">
-          <div class="tf-text-grey tf-center tf-mb-lg">(共{{wjtp_info.item_num}}题)</div>
+          <div class="tf-text-grey tf-center tf-mb-lg">
+            (共{{ wjtp_info.item_num }}题)
+          </div>
           <div class="question-container">
-            <div class="question-box" v-for="(item,i) in voteList" :key="i">
+            <div class="question-box" v-for="(item, i) in voteList" :key="i">
               <div
                 class="question__text"
-                :class="{'required': item.is_required == 1}"
-              >Q{{i + 1}}：{{item.question}}</div>
+                :class="{ required: item.is_required == 1 }"
+              >
+                Q{{ i + 1 }}：{{ item.question }}
+              </div>
               <!-- 问卷-单选 -->
               <template v-if="item.item_type == 1">
-                <van-radio-group v-model="item.answer" :disabled="Boolean(finishStatus)">
-                  <van-radio v-for="(radio, i) in item.option" :key="i" :name="radio.id">
-                    {{radio.content}}
+                <van-radio-group
+                  v-model="item.answer"
+                  :disabled="Boolean(finishStatus)"
+                >
+                  <van-radio
+                    v-for="(radio, i) in item.option"
+                    :key="i"
+                    :name="radio.id"
+                  >
+                    {{ radio.content }}
                     <template #icon="props">
                       <!-- <div class="van-radio__icon van-radio__icon--round"></div> -->
-                      <div class="van-icon" :class="{'radio-checked-box' : props.checked}" />
+                      <div
+                        class="van-icon"
+                        :class="{ 'radio-checked-box': props.checked }"
+                      />
                     </template>
                   </van-radio>
                 </van-radio-group>
               </template>
               <!-- 问卷-多选 -->
               <template v-else-if="item.item_type == 2">
-                <van-checkbox-group v-model="item.answer" :disabled="Boolean(finishStatus)">
+                <van-checkbox-group
+                  v-model="item.answer"
+                  :disabled="Boolean(finishStatus)"
+                >
                   <van-checkbox
                     v-for="(checkbox, i) in item.option"
                     :key="i"
                     :name="checkbox.id"
                     shape="square"
-                  >{{checkbox.content}}</van-checkbox>
+                    >{{ checkbox.content }}</van-checkbox
+                  >
                 </van-checkbox-group>
               </template>
               <!-- 问卷-填写 -->
@@ -75,50 +103,93 @@
             </div>
           </div>
           <div v-if="!finishStatus" class="confirm-btn-placeholder">
-            <van-button class="tf-mt-lg confirm-btn" size="large" type="danger" @click="confirm">提交</van-button>
+            <van-button
+              v-preventReClick
+              :loading="submitLoading"
+              class="tf-mt-lg confirm-btn"
+              size="large"
+              type="danger"
+              @click="confirm"
+              >提交</van-button
+            >
           </div>
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
-          <div
-            class="tf-text-grey tf-center tf-mb-lg"
-          >投票选项({{wjtp_info.tp_type == 1 ? '单选' : '多选'}})</div>
+          <div class="tf-text-grey tf-center tf-mb-lg">
+            投票选项({{ wjtp_info.tp_type == 1 ? '单选' : '多选' }})
+          </div>
           <div
             class="vote-box tf-row-space-between"
             v-for="(item, i) in voteList.option"
             :key="i"
-            :class="{ 'vote-active': answer.indexOf(item.id) > -1 && wjtp_info.tp_type == 2 && !finishStatus}"
+            :class="{
+              'vote-active':
+                answer.indexOf(item.id) > -1 &&
+                wjtp_info.tp_type == 2 &&
+                !finishStatus
+            }"
           >
             <!--  投票统计进度条-->
             <div class="vote-progress-placeholder">
               <div
-                v-if="finishStatus && voteList.answer_count[i] && voteList.answer_count[i].num"
+                v-if="
+                  finishStatus &&
+                    voteList.answer_count[i] &&
+                    voteList.answer_count[i].num
+                "
                 class="vote-progress"
-                :style="{width: `${(parseInt(voteList.answer_count[i].num) / parseInt(totalNum)) * 100}%`}"
+                :style="{
+                  width: `${(parseInt(voteList.answer_count[i].num) /
+                    parseInt(totalNum)) *
+                    100}%`
+                }"
               ></div>
             </div>
             <div class="vote-title">{{ item.content }}</div>
             <!-- 已答-->
-            <div
-              class="vote-result"
-              v-if="finishStatus"
-            >{{ (voteList.answer_count[i] && voteList.answer_count[i].num) || 0 }}票</div>
+            <div class="vote-result" v-if="finishStatus">
+              {{
+                (voteList.answer_count[i] && voteList.answer_count[i].num) || 0
+              }}票
+            </div>
             <!-- 未答-->
             <template v-else>
               <!-- 单选 -->
-              <button v-if="wjtp_info.tp_type == 1" class="vote-btn" @click="changeValue(item)">
+              <button
+                v-if="wjtp_info.tp_type == 1"
+                class="vote-btn"
+                @click="changeValue(item)"
+              >
                 <span class="tf-text-white">投票</span>
               </button>
               <!-- 多选 -->
-              <button v-else class="tf-icon vote-btn vote-btn--multiple" @click="changeValue(item)">
+              <button
+                v-else
+                class="tf-icon vote-btn vote-btn--multiple"
+                @click="changeValue(item)"
+              >
                 <div
                   class="tf-text-white tf-icon"
-                  :class="{'tf-icon-gou': answer.indexOf(item.id) > -1}"
-                >{{ answer.indexOf(item.id) > -1 ? '' : '投票' }}</div>
+                  :class="{ 'tf-icon-gou': answer.indexOf(item.id) > -1 }"
+                >
+                  {{ answer.indexOf(item.id) > -1 ? '' : '投票' }}
+                </div>
               </button>
             </template>
           </div>
-          <div v-if="!finishStatus && wjtp_info.tp_type == 2" class="confirm-btn-placeholder">
-            <van-button class="confirm-btn" size="large" type="danger" @click="confirm">确定</van-button>
+          <div
+            v-if="!finishStatus && wjtp_info.tp_type == 2"
+            class="confirm-btn-placeholder"
+          >
+            <van-button
+              v-preventReClick
+              :loading="submitLoading"
+              class="confirm-btn"
+              size="large"
+              type="danger"
+              @click="confirm"
+              >确定</van-button
+            >
           </div>
         </template>
       </div>
@@ -156,7 +227,8 @@ export default {
       wjtpId: '',
       wjtp_info: {},
       voteList: [],
-      answer: []
+      answer: [],
+      submitLoading: false
     }
   },
   created () {
@@ -230,7 +302,6 @@ export default {
         const params = {}
         const status = this.voteList.every((obj) => {
           if (obj.is_required == '1' && isEmpty(obj.answer)) {
-            console.log(obj)
             Toast('请填写未回答的问题')
             return false
           }
@@ -259,12 +330,21 @@ export default {
     },
     /* 上传问卷投票 */
     addWjtp (answer) {
+      this.submitLoading = true
+      Toast.loading({
+        duration: 0,
+        overlay: true,
+        message: '提交中'
+      })
       addWjtp({
         wjtp_id: this.wjtpId,
         answer
       }).then((res) => {
+        this.submitLoading = false
+        Toast.clear()
         if (res.success) {
-          const message = this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
+          const message =
+            this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
           Toast.success({
             message
           })
@@ -277,6 +357,9 @@ export default {
             message: '提交失败'
           })
         }
+      }).catch(() => {
+        Toast.clear()
+        this.submitLoading = false
       })
     }
   }
@@ -402,7 +485,7 @@ export default {
     }
     .radio-checked-box {
       &::before {
-        content: "";
+        content: '';
         width: 14px;
         height: 14px;
         background: @red-dark;

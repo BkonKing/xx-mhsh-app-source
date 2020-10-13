@@ -74,12 +74,13 @@
 </template>
 
 <script>
-import { NavBar, Divider, Search, Toast, Dialog } from 'vant'
+import { NavBar, Divider, Search, Toast } from 'vant'
 import appContainer from './components/app-container'
 import appItem from './components/app-item'
 import draggable from 'vuedraggable'
 import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
 import { mapGetters } from 'vuex'
+import { bulterPermission } from '@/utils/business'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -205,36 +206,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const butlerList = [
-      'entranceIndex',
-      'noticeIndex',
-      'repairsIndex',
-      'freeserverIndex',
-      'visitorIndex',
-      'compraiseIndex',
-      'questionnaireIndex',
-      'propertyIndex',
-      'convenienceIndex',
-      'noticeDetails'
-    ]
-    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
-      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
-        next()
-        return
-      }
-      Dialog.confirm({
-        title: '提示',
-        message: '您尚未认证房间，是否去认证？',
-        confirmButtonText: '去认证'
-      }).then((res) => {
-        this.$router.push(
-          '/pages/personage/house/attestation?type=1&mode=0&select=1'
-        )
-      })
-      next(false)
-    } else {
-      next()
-    }
+    bulterPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>
