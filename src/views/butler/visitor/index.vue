@@ -94,7 +94,7 @@
           @click.stop="$router.push('/agreement?type=1')"
         >《{{otherAgreement.title}}》</span>
       </van-checkbox>
-      <van-button class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
+      <van-button v-preventReClick class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
     </div>
   </div>
 </template>

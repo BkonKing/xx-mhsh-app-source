@@ -49,7 +49,7 @@ export default {
 <style lang="less" scoped>
   .phone-box {
     margin-bottom: 30px;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: #fff;
   }
 
@@ -68,17 +68,15 @@ export default {
   }
 
   .phone-info {
-    @flex();
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 10px 20px 0;
+    padding: 20px 0;
     line-height: 80px;
   }
 
   .phone-info__divider {
-    border-bottom-width: 2px;
-    border-bottom-style: solid;
-    border-bottom-color: @divider-color;
+    border-bottom: 2px solid @divider-color;
   }
 
   .phone-name {
@@ -90,7 +88,7 @@ export default {
     font-size: 38px;
     line-height: 80px;
     color: @text-color;
-    margin-right: @padding-md;
+    margin-left: 10px;
   }
 
   .phone-name-tag {

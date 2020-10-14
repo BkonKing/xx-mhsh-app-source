@@ -85,19 +85,19 @@ export default {
 }
 
 .introduce-box::before {
-  background: url("../../../assets/imgs/property_pic.png") no-repeat;
-  background-size: cover;
-  width: 100%;
-  height: 350px;
   content: "";
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -1; /*-1 可以当背景*/
+  background: url("../../../assets/imgs/property_pic.png") no-repeat;
+  background-size: cover;
 }
 
 .phone-card-box {
-  padding: 0 20px 20px;
+  padding: 30px 20px 20px;
 }
 
 .logo-badge {

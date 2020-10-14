@@ -10,7 +10,9 @@
       <!-- <div v-if="share" class="more-btn" @click="clickShare">分享</div> -->
       <div v-if="shield" class="more-btn" @click="clickShield">屏蔽</div>
       <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
-      <div v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">删除</div>
+      <div v-preventReClick v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">
+        删除
+      </div>
     </van-popup>
     <van-popup
       class="complain-dialog"
@@ -28,18 +30,42 @@
       <div class="complain-title">投诉</div>
       <div class="complain-content van-multi-ellipsis--l2">
         投诉
-        <span class="tf-text-blue">@{{complainInfo.nickname}}</span>
-        ：{{complainInfo.content}}
+        <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
+        ：{{ complainInfo.content }}
       </div>
-      <tf-radio-btn class="complain-radio" v-model="com_type" :data="types" :radius="2"></tf-radio-btn>
-      <div class="complain-footer" :class="{'primary-btn': com_type}" @click="submitComplain">提交</div>
+      <tf-radio-btn
+        class="complain-radio"
+        v-model="com_type"
+        :data="types"
+        :radius="2"
+      ></tf-radio-btn>
+      <div
+        v-preventReClick
+        class="complain-footer"
+        :class="{ 'primary-btn': com_type }"
+        @click="submitComplain"
+      >
+        提交
+      </div>
     </van-popup>
-    <van-popup safe-area-inset-bottom get-container="body" class="more-dialog" v-model="shieldShow">
+    <van-popup
+      v-model="shieldShow"
+      safe-area-inset-bottom
+      get-container="body"
+      class="more-dialog"
+    >
       <div
         class="more-btn van-ellipsis"
         @click="shieldShow = false;userShieldDialog = true"
-      >屏蔽 @{{complainInfo.nickname}}</div>
-      <div class="more-btn" @click="shieldShow = false;contentShieldDialog = true">屏蔽 此条内容</div>
+      >
+        屏蔽 @{{ complainInfo.nickname }}
+      </div>
+      <div
+        class="more-btn"
+        @click="shieldShow = false;contentShieldDialog = true"
+      >
+        屏蔽 此条内容
+      </div>
     </van-popup>
     <van-popup
       safe-area-inset-bottom
@@ -47,7 +73,7 @@
       class="shield-confirm"
       v-model="userShieldDialog"
     >
-      <div class="shield-confirm-title">@{{complainInfo.nickname}}</div>
+      <div class="shield-confirm-title">@{{ complainInfo.nickname }}</div>
       <div class="shield-confirm-content">
         <div class="tf-text">不看他的动态</div>
         <div class="tf-text tf-text-grey">信息流里不在显示他的动态</div>
@@ -59,13 +85,16 @@
           class="shield-confirm-footer__btn"
           size="small"
           @click="shieldShow = false;userShieldDialog = false"
-        >暂不屏蔽</van-button>
+          >暂不屏蔽</van-button
+        >
         <van-button
+          v-preventReClick
           class="shield-confirm-footer__btn"
           size="small"
           type="danger"
           @click="shieldUser"
-        >确定</van-button>
+          >确定</van-button
+        >
       </div>
     </van-popup>
     <van-popup
@@ -75,24 +104,31 @@
       v-model="contentShieldDialog"
     >
       <div class="tf-text">
-        <span class="tf-text-blue">@{{complainInfo.nickname}}</span>
-        ：{{complainInfo.content}}
+        <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
+        ：{{ complainInfo.content }}
       </div>
       <div class="shield-confirm-footer">
         <van-button
           class="shield-confirm-footer__btn"
           size="small"
           @click="shieldShow = false;contentShieldDialog = false"
-        >取消</van-button>
+          >取消</van-button
+        >
         <van-button
+          v-preventReClick
           class="shield-confirm-footer__btn"
           size="small"
           type="danger"
           @click="shieldContent"
-        >确定</van-button>
+          >确定</van-button
+        >
       </div>
     </van-popup>
-    <van-share-sheet v-model="showShare" :options="options" @select="onSelect" />
+    <van-share-sheet
+      v-model="showShare"
+      :options="options"
+      @select="onSelect"
+    />
   </div>
 </template>
 

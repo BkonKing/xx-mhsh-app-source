@@ -41,7 +41,14 @@
       </div>
     </div>
     <div class="fixed-placeholder">
-      <van-button v-preventReClick class="fixed-btn" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+      <van-button
+        v-preventReClick
+        class="fixed-btn"
+        color="#EB5841"
+        size="large"
+        @click="formSubmit"
+        >提交</van-button
+      >
       <div class="fixed-bg"></div>
     </div>
   </div>

@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <div class="tf-bg-white" style="position:relative;overflow: hidden;">
+      <div class="tf-bg-white">
         <userInfo
           :avatar="wjtp_info.avatar"
           :name="wjtp_info.nickname"
@@ -155,13 +155,15 @@
             <!-- 未答-->
             <template v-else>
               <!-- 单选 -->
-              <button
+              <van-button
                 v-if="wjtp_info.tp_type == 1"
+                v-preventReClick
+                :loading="submitLoading"
                 class="vote-btn"
                 @click="changeValue(item)"
               >
                 <span class="tf-text-white">投票</span>
-              </button>
+              </van-button>
               <!-- 多选 -->
               <button
                 v-else
@@ -277,6 +279,7 @@ export default {
     },
     /* 投票选中 */
     changeValue ({ id: value }) {
+      // 是否为单选
       if (this.wjtp_info.tp_type == 1) {
         this.addWjtp({
           [this.voteList.item_id]: value
@@ -331,36 +334,31 @@ export default {
     /* 上传问卷投票 */
     addWjtp (answer) {
       this.submitLoading = true
-      Toast.loading({
-        duration: 0,
-        overlay: true,
-        message: '提交中'
-      })
       addWjtp({
         wjtp_id: this.wjtpId,
         answer
-      }).then((res) => {
-        this.submitLoading = false
-        Toast.clear()
-        if (res.success) {
-          const message =
-            this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
-          Toast.success({
-            message
-          })
-          this.getWjtpInfo()
-          this.mtjEvent({
-            eventId: this.wjtp_info.wjtp_type == 1 ? 36 : 37
-          })
-        } else {
-          Toast.fail({
-            message: '提交失败'
-          })
-        }
-      }).catch(() => {
-        Toast.clear()
-        this.submitLoading = false
       })
+        .then((res) => {
+          this.submitLoading = false
+          if (res.success) {
+            const message =
+              this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
+            Toast.success({
+              message
+            })
+            this.getWjtpInfo()
+            this.mtjEvent({
+              eventId: this.wjtp_info.wjtp_type == 1 ? 36 : 37
+            })
+          } else {
+            Toast.fail({
+              message: '提交失败'
+            })
+          }
+        })
+        .catch(() => {
+          this.submitLoading = false
+        })
     }
   }
 }
@@ -368,7 +366,9 @@ export default {
 
 <style lang="less" scoped>
 .tf-bg-white {
+  position:relative;
   padding: 30px;
+  overflow: hidden;
 }
 
 .tf-article-title {
@@ -407,15 +407,15 @@ export default {
 .vote-progress-placeholder {
   width: calc(100% - 20px);
   position: absolute;
-  top: 0.13333rem;
-  bottom: 0.13333rem;
+  top: 10px;
+  bottom: 10px;
   z-index: 0;
 }
 
 .vote-progress {
   position: absolute;
-  top: 10px;
-  bottom: 10px;
+  top: 0;
+  bottom: 0;
   z-index: 0;
   // height: 120px;
   background-color: @red;
@@ -448,6 +448,7 @@ export default {
   bottom: 0;
   right: 0;
   width: 120px;
+  height: auto;
   justify-content: center;
   text-align: center;
   margin: 0;
@@ -456,6 +457,12 @@ export default {
   font-size: 30px;
   color: #fff;
   background-image: linear-gradient(to bottom right, @red, @red-dark);
+  .tf-text-white {
+    font-size: 28px;
+  }
+  .tf-icon-gou {
+    font-size: 44px;
+  }
 }
 
 .vote-btn--multiple {
@@ -534,6 +541,23 @@ export default {
         font-size: 24px;
         margin-left: 20px;
       }
+    }
+    /deep/ .van-checkbox__icon--disabled .van-icon,
+    /deep/ .van-radio__icon--disabled .van-icon {
+      background-color: #fff;
+    }
+    /deep/
+      .van-checkbox
+      .van-checkbox__icon--disabled.van-checkbox__icon--checked
+      .van-icon {
+      color: #fff;
+      background-color: #c8c7cc;
+    }
+    /deep/
+      .van-radio
+      .van-radio__icon--disabled.van-radio__icon--checked
+      .van-icon::before {
+      background: #c8c7cc;
     }
   }
 }
