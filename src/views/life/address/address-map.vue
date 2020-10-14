@@ -217,57 +217,76 @@ export default {
       var that = this;
 
       var map = api.require('bMap');
-      map.searchInBounds({
+
+      map.searchInCity({
+          city: that.nowCity,
           keyword: searchVal,
-          lbLon: 74.546,
-          lbLat: 21.267,
-          rtLon: 136.244,
-          rtLat: 53.69,
-          pageCapacity: 20,
+          pageIndex: 0,
+          pageCapacity: 20
       }, function(ret, err) {
           if (ret.status) {
-            // alert(JSON.stringify(ret.results));
-            let searchRes = ret.results;
-            if(searchRes[0].address&&searchRes[0].address!='(null)'){
-              that.searchList = searchRes;
-            }else {
-              map.searchInCity({
-                  city: that.nowCity,
+              // alert(JSON.stringify(ret.results));
+              let res1 = ret.results;
+              let dataArr = [];
+              if(res1[0].address&&res1[0].address!='(null)'){
+                for(let k=0;k<res1.length;k++){
+                  if(res1[k].name.indexOf(searchVal)>-1){
+                    dataArr.push(res1[k]);
+                  }
+                }
+                that.searchList = dataArr;
+              }else {
+                that.searchList = [];
+              }
+
+              map.searchInBounds({
                   keyword: searchVal,
-                  pageIndex: 0,
-                  pageCapacity: 20
+                  lbLon: 74.546,
+                  lbLat: 21.267,
+                  rtLon: 136.244,
+                  rtLat: 53.69,
+                  pageCapacity: 20,
               }, function(ret, err) {
                   if (ret.status) {
-                      // alert(JSON.stringify(ret.results));
-                      if(ret.results[0].address&&ret.results[0].address!='(null)'){
-                        that.searchList = ret.results;
-                      }else {
-                        that.searchList = [];
+                    // alert(JSON.stringify(ret.results));
+                    let searchRes = ret.results;
+                    let dataArr2 = [];
+                    if(searchRes[0].address&&searchRes[0].address!='(null)'){
+                      for(let x=0;x<searchRes.length;x++){
+                        if(searchRes[x].city.indexOf(that.nowCity) < 0){
+                          dataArr2.push(searchRes[x]);
+                        }
                       }
+                      that.searchList = that.searchList.concat(dataArr2);
+                    }else {
+                      for(let j=0;j<searchRes.length;j++){
+                        if(searchRes[j].name.indexOf(that.nowCity) < 0){
+                          map.searchInCity({
+                              city: searchRes[j].name,
+                              keyword: searchVal,
+                              pageIndex: 0,
+                              pageCapacity: 20
+                          }, function(ret, err) {
+                              if (ret.status) {
+                                  // alert(JSON.stringify(ret.results));
+                                  that.searchList = that.searchList.concat(ret.results);
+                              }
+                          });
+                        }
+                      }
+                    }
+                    // alert(JSON.stringify(ret.results));
+                      
                   } else {
                       // alert(JSON.stringify(err));
                   }
-                  for(let j=0;j<searchRes.length;j++){
-                    map.searchInCity({
-                        city: searchRes[j].name,
-                        keyword: searchVal,
-                        pageIndex: 0,
-                        pageCapacity: 20
-                    }, function(ret, err) {
-                        if (ret.status) {
-                            // alert(JSON.stringify(ret.results));
-                            that.searchList = that.searchList.concat(ret.results);
-                        }
-                    });
-                  }
               });
-            }
-            // alert(JSON.stringify(ret.results));
-              
+
           } else {
               // alert(JSON.stringify(err));
           }
-      });return;
+      });
+       
     },
     clickItem(index){
       // this.bMap.close();
