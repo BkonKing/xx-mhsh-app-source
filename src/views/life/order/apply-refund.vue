@@ -46,37 +46,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="apply-goods">
-						<div class="cart-checkbox flex-center cur" @click="checkboxOne" data-index="">
-		          <div class="checkbox-session"></div>
-		        </div>
-						<div class="order-goods-info">
-							<div class="order-pic-block">
-								<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg">
-							</div>
-							<div class="order-info">
-								<div class="order-name-price">
-									<div class="order-name order-name-text p-nowrap">yeah jewelry U形项链</div>
-									<div class="order-price">￥20000.00</div>
-								</div>
-								<div class="order-sku-num">
-									<div class="order-sku order-sku-text p-nowrap">规格：银色</div>
-									<div class="order-buy-num">x1</div>
-								</div>
-								<div class="order-action-session">
-									<div class="order-action-text">换货中</div>
-								</div>
-							</div>
-							<div class="apply-select flex-between">
-								<div class="select-left">
-									<div>退款原因：商品质量问题</div>
-								</div>
-								<div class="select-right">
-									<img class="img-100" src="@/assets/img/right.png" />
-								</div>
-							</div>
-						</div>
-					</div> -->
 				</div>
 				<div v-if="unableList.length > 0" class="not-apply">
 					<div @click="toggle" :class="[toggleDown ? 'cur' : '', 'apply-toggle']">部分商品不支持换货({{unableList.length}})</div>
@@ -107,24 +76,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="order-goods-info">
-						<div class="order-pic-block">
-							<img class="img-100" mode="aspectFill" src="http://192.168.1.158/library/uploads/image/20181220/20181220142322_65224.jpg" />
-						</div>
-						<div class="order-info">
-							<div class="order-name-price">
-								<div class="order-name p-nowrap">yeah jewelry U形项链</div>
-								<div class="order-price">￥20000.00</div>
-							</div>
-							<div class="order-sku-num">
-								<div class="order-sku p-nowrap">规格：银色</div>
-								<div class="order-buy-num">x1</div>
-							</div>
-							<div class="order-action-session">
-								<div class="order-action-text">退货中</div>
-							</div>
-						</div>
-					</div> -->
 				</div>
 			</div>
 			<div class="cont-session common-list common-list-pic">
@@ -163,7 +114,7 @@
 		</div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
-			<div class="submit-btn" @click="submitAjax">
+			<div class="submit-btn" v-preventReClick @click="submitAjax">
 				<div class="color-fff font-30">提交</div>
 			</div>
 		</div>

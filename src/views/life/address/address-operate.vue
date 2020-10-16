@@ -80,7 +80,7 @@
     <div class="del-btn flex-center" v-if="addrId" @click="delAddress"><div class="color-eb5841 font-30">删除地址</div></div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
-			<div @click="onSubmit" :class="['submit-btn', btnDisabled ? 'submit-btn-unable' : '']">
+			<div @click="onSubmit" v-preventReClick :class="['submit-btn', btnDisabled ? 'submit-btn-unable' : '']">
 				<div class="color-fff font-30">保存</div>
 			</div>
 		</div>
