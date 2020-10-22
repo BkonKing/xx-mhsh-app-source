@@ -20,6 +20,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import eventBus from '@/api/eventbus'
 // import api from './api/index'
 export default {
   name: 'App',
@@ -51,6 +52,8 @@ export default {
     }, (ret, err) => {
       if (this.$route.matched.length === 1 && whiteList.indexOf(this.$route.name) === -1) {
         this.$router.go(-1)
+      } else {
+        eventBus.$emit('swiperight', ret, err)
       }
     })
     this.paddingTop = api.safeArea.top

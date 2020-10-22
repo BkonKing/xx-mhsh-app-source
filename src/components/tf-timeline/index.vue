@@ -39,7 +39,7 @@
                 <div>
                   <!-- {{item.sub_realname}}： -->
                   <span v-html="item.remark"></span>
-                  <template v-if="item.mobile">
+                  <template v-if="item.mobile && item.negotiation_id != '0'">
                     <div
                       class="tf-icon tf-icon-xiangmuwancheng transaction-btn"
                       @click="$emit('negotiate', item)"

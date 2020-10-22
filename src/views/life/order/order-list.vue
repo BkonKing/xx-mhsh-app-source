@@ -79,19 +79,19 @@
       </van-tabs>
     </div>
 
-		<explain-swal 
+		<explain-swal
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
     ></explain-swal>
-    <pay-swal 
+    <pay-swal
     :show-swal="showPaySwal"
     :pay-money="payMoney"
     :down-time="downTime"
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     ></pay-swal>
-    <remind-swal 
+    <remind-swal
     :show-swal="showSwal"
     :remind-tit="remindTit"
     @closeSwal="closeSwal"
@@ -130,7 +130,7 @@ export default {
 	    active: 0,
       typeVal: 0,          //tab切换index
 	    navHide: false,
-	 
+
 	    time: 11 * 60 * 60 * 1000,
 	    newTime: '',       //当前时间
 
@@ -151,17 +151,17 @@ export default {
   	if(type&&type!='undefined'){
   		this.typeVal = type;
   		this.navHide = true;
-  	}else {
+  	}/* else {
       api.addEventListener(
         {
           name: 'swiperight'
         },
         (ret, err) => {
-          
+
         }
       )
-    }
-    
+    } */
+
   	// console.log(this.$store.state.paddingTop)
   },
   activated () {
@@ -272,13 +272,13 @@ export default {
     //支付宝支付
     aliPayUp(){
       let that = this;
-      var aliPayPlus = api.require('aliPayPlus'); 
-      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, 
-        function(ret, err) { 
+      var aliPayPlus = api.require('aliPayPlus');
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
+        function(ret, err) {
           that.updateOne();
           // that.listInit(1);
           if(ret.code == '9000'){  //支付成功
-            
+
           }
         }
       );

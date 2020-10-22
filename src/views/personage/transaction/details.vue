@@ -201,9 +201,10 @@
               class="tf-form-item__input"
               v-model="departmentValue"
               title="处理部门"
-              value-key="label"
+              value-key="text"
               selected-key="value"
               :columns="departmentList"
+              @confirm="departmentChange"
             >
               <template v-slot="{ valueText }">
                 <div
@@ -634,22 +635,9 @@ export default {
       refuse_reason: undefined, // 撤销原因值
       other_reason: '', // 撤销补充说明
       // 部门列表
-      departmentList: [
-        {
-          label: '工程部',
-          value: 'gcb'
-        },
-        {
-          label: '安保部',
-          value: 'abb'
-        },
-        {
-          label: '保洁部',
-          value: 'bjb'
-        }
-      ],
+      departmentList: [],
       departmentValue: '', // 部门选中的值
-      personnelList: {}, // 三个处理人员的列表
+      personnelList: {}, // 处理人员的列表
       designee_uid: '', // 处理人员id
       limit_day: '', // 分派人员完成时限天数
       limit_hours: '', // 分派人员完成时限小时数
@@ -782,7 +770,8 @@ export default {
     },
     /* 获取事务处理人员列表 */
     getDesigneeList () {
-      getDesigneeList(this.projectId).then(({ data }) => {
+      getDesigneeList(this.projectId).then(({ data, bm }) => {
+        this.departmentList = bm
         const newData = {}
         // 格式转换 姓名-电话号码-工作日期-擅长
         Object.keys(data).forEach((key) => {
@@ -798,6 +787,10 @@ export default {
         })
         this.personnelList = newData
       })
+    },
+    // 处理部门变更
+    departmentChange () {
+      this.designee_uid = ''
     },
     /* 分派人员 */
     assignTasks () {

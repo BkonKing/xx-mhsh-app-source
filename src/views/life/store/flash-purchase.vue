@@ -10,7 +10,7 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-  
+
     <div id="flash-top" :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
       <div class="flash-scroll">
         <scrollBar direction="x" :activeIndex="tapIndex">
@@ -40,7 +40,7 @@
         <div class="count-rectangle"></div>
         <div class="count-circular"></div>
       </div>
-      
+
       <template v-if="navList.length > 0">
         <div v-show="navList[tapIndex].status == 1" class="flash-time-text">本场已结束</div>
         <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
@@ -117,7 +117,7 @@
       </van-tabs>
     </div>
 
-    <remind-swal 
+    <remind-swal
     :show-swal="showSwal"
     :remind-tit="remindTit"
     @closeSwal="closeSwal"
@@ -160,7 +160,7 @@ export default {
       navList: [],           //菜单列表
       listData: [],          //页面数据列表
       noMoreHidden: true,    //上拉加载更多，没有更多是否隐藏
-      userId: '',            //用户uid   
+      userId: '',            //用户uid
       page: 1,   //页码
       pageSize: 10,  //分页条数
       isEmpty: false, //是否为空
@@ -173,14 +173,6 @@ export default {
   },
   created () {
     this.getData();
-    api.addEventListener(
-      {
-        name: 'swiperight'
-      },
-      (ret, err) => {
-        
-      }
-    )
   },
   activated () {
     if (this.scrollLeft) {
