@@ -179,6 +179,14 @@ export default {
       const text = ['选择小区', '选择楼栋单元', '选择房屋']
       this.title = text[value]
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.projectList = []
+    this.buildList = []
+    this.houseList = []
+    this.$nextTick(() => {
+      next()
+    })
   }
 }
 </script>

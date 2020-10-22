@@ -333,6 +333,12 @@ export default {
       }
       return text
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.info = {}
+    this.$nextTick(() => {
+      next()
+    })
   }
 }
 </script>
