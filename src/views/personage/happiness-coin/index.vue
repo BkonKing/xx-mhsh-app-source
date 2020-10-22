@@ -40,43 +40,45 @@
           <div class="function-box__text">收款码</div>
         </div>
       </div>
-      <div class="happiness-coin-title">幸福币任务</div>
-      <div class="task-box">
-        <div class="task-item" v-for="(item, i) in taskList" :key="i">
-          <div class="tf-row tf-flex-item">
-            <img class="task-item__icon" v-if="item.task_type == 1" src />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 2"
-              src="@/assets/imgs/credits_renzheng.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 3"
-              src="@/assets/imgs/credits_yunmenjin.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 4"
-              src="@/assets/imgs/credits_wenjuan.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 5"
-              src="@/assets/imgs/credits_toupiao.png"
-            />
-            <div class="tf-space-between">
-              <div class="task-item__title">{{item.task_name}}</div>
-              <div class="tf-row">
-                <div class="task-item__remarks">获得</div>
-                <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
+      <template v-if="taskList && taskList.length">
+        <div class="happiness-coin-title">幸福币任务</div>
+        <div class="task-box">
+          <div class="task-item" v-for="(item, i) in taskList" :key="i">
+            <div class="tf-row tf-flex-item">
+              <img class="task-item__icon" v-if="item.task_type == 1" src />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 2"
+                src="@/assets/imgs/credits_renzheng.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 3"
+                src="@/assets/imgs/credits_yunmenjin.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 4"
+                src="@/assets/imgs/credits_wenjuan.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 5"
+                src="@/assets/imgs/credits_toupiao.png"
+              />
+              <div class="tf-space-between">
+                <div class="task-item__title">{{item.task_name}}</div>
+                <div class="tf-row">
+                  <div class="task-item__remarks">获得</div>
+                  <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
+                </div>
               </div>
             </div>
+            <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
+            <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
           </div>
-          <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
-          <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
         </div>
-      </div>
+      </template>
       <div class="sale-box">
         <div class="happiness-coin-title">幸福币特卖区</div>
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
@@ -118,19 +120,10 @@ export default {
     return {
       showCalendar: false, // 签到日历是否隐藏
       signinToday: '1', // 今日是否签到
-      credits: 0,
-      taskList: [],
-      creditsGoods: [],
-      saleList: [
-        {
-          image: '/static/app-icon.png',
-          name: '雨前西湖龙井',
-          specialPrice: '240',
-          originalPrice: '260',
-          coin: '2400'
-        }
-      ],
-      signLoading: false
+      credits: 0, // 当前幸福币
+      taskList: [], // 任务列表
+      creditsGoods: [], // 幸福币商品列表
+      signLoading: false // 签到按钮loading
     }
   },
   computed: {
@@ -166,7 +159,6 @@ export default {
         Toast({
           message: res.message
         })
-        // this.signinToday = '1'
         this.getCreditsAccount()
         this.mtjEvent({
           eventId: 4
@@ -177,11 +169,11 @@ export default {
     },
     /* 幸福币明细 */
     goCoinRecord () {
-      this.$router.push('/pages/personage/happiness-coin/coin-record')
+      this.$router.push({ name: 'happinessCoinRecord' })
     },
     /* 购买详情 */
     goBuyRecord () {
-      this.$router.push('/pages/personage/happiness-coin/buy-record')
+      this.$router.push({ name: 'happinessCoinBuyRecord' })
     },
     /* 扫一扫 */
     goScanCode (current) {
@@ -202,7 +194,7 @@ export default {
     goCoinCommodity (item) {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
-    /* 去完成页面 */
+    /* 幸福币任务去完成跳转 */
     complete (type, id) {
       switch (type) {
         case '1':
@@ -391,7 +383,7 @@ export default {
 }
 .sale-area {
   @flex();
-  padding: 0 30px;
+  padding-left: 30px;
   justify-content: space-between;
   flex-wrap: wrap;
 }

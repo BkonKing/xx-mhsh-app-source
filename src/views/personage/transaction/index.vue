@@ -108,22 +108,25 @@ export default {
     this.type = parseInt(this.$route.query.type)
   },
   mounted () {
-    if (this.userInfo.role_dep == 1) {
-      this.$refs.list1.reload()
-      this.$refs.list2.reload()
-    }
-    this.$refs.list3.reload()
-    this.$refs.list4.reload()
+    this.reloadAllList()
     this.container = this.$refs.container
   },
   activated () {
     if (this.backStatus) {
-      this.$refs[`list${this.type}`].reload()
+      this.reloadAllList()
     }
   },
   methods: {
     scrollSticky ({ target }) {
       this.isFixed = target.scrollTop > 0
+    },
+    reloadAllList () {
+      if (this.userInfo.role_dep == 1) {
+        this.$refs.list1.reload()
+        this.$refs.list2.reload()
+      }
+      this.$refs.list3.reload()
+      this.$refs.list4.reload()
     },
     listLoad (params, status) {
       params.status = status
