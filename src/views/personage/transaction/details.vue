@@ -74,9 +74,12 @@
           等待
           <span class="tf-text-orange">{{ detailInfo.designee }}</span>
           {{ sub_status | statusFilter }}
-          <span v-if="detailInfo.time_limit" class="tf-text-primary"
-            >({{ detailInfo.time_limit }})</span
-          >
+          <template v-if="status == 4 && detailInfo.is_upload_images == 0">上传照片</template>
+          <span
+            v-if="detailInfo.time_limit"
+            class="tf-text-primary">
+            ({{ detailInfo.time_limit }})
+          </span>
         </div>
         <!-- 客服人员 -->
         <template v-if="serviceOperateStatus">

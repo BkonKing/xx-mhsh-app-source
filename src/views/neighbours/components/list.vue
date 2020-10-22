@@ -73,7 +73,7 @@
           v-else-if="item.article_type == 1 || article_type == 1"
         >
           <div @click="goDetails('1', item)">
-            <img class="activity-image" :src="item.thumbnail" v-imageCach="item.thumbnail" />
+            <img class="activity-image tf-mb-sm" :src="item.thumbnail" v-imageCach="item.thumbnail" />
             <div class="tf-status-tag">资讯</div>
             <div class="activity-title">{{ item.title }}</div>
           </div>
@@ -215,6 +215,9 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+  .tf-mb-sm {
+    margin-bottom: 10px;
   }
   .activity-join {
     width: 100%;
