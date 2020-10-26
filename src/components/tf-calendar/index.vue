@@ -81,11 +81,11 @@ export default {
     this.month = date.getMonth() + 1
     this.curYear = date.getFullYear()
     this.curMonth = date.getMonth() + 1
-    this.signinCalendar()
+    // this.getSigninCalendar()
   },
   methods: {
     /* 签到日历数据 */
-    signinCalendar () {
+    getSigninCalendar () {
       signinCalendar({
         year: this.curYear,
         month: this.curMonth
@@ -106,7 +106,7 @@ export default {
         this.curYear--
         this.curMonth = 12
       }
-      this.signinCalendar()
+      this.getSigninCalendar()
     },
     handleNext () {
       if (this.curMonth < 12) {
@@ -115,7 +115,7 @@ export default {
         this.curYear++
         this.curMonth = 1
       }
-      this.signinCalendar()
+      this.getSigninCalendar()
     },
     /**
      * 日历
@@ -180,6 +180,11 @@ export default {
       this.setData({
         sign_arr: dys_array
       })
+    }
+  },
+  watch: {
+    value (val) {
+      val && this.getSigninCalendar()
     }
   }
 }
