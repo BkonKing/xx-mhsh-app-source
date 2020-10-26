@@ -17,8 +17,8 @@ router.beforeEach(async (to, from, next) => {
       })
     }
     Vue.prototype.bdmtj.onPageStart({
-        pageName: toPageName
-    });
+      pageName: toPageName
+    })
   }
 
   // Toast.loading({

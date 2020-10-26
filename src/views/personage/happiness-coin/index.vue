@@ -16,11 +16,13 @@
           <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
           <div class="coin-number">{{credits}}</div>
         </div>
-        <div
+        <van-button
+          v-preventReClick
+          :loading="signLoading"
           class="sign-tag"
           :class="{'sign-tag--complete': signinToday == '1'}"
           @click="signIn()"
-        >{{signinToday == '1' ? '已签到' : '签到'}}</div>
+        >{{signinToday == '1' ? '已签到' : '签到'}}</van-button>
       </div>
     </div>
     <div class="coin-main-box">
@@ -38,43 +40,45 @@
           <div class="function-box__text">收款码</div>
         </div>
       </div>
-      <div class="happiness-coin-title">幸福币任务</div>
-      <div class="task-box">
-        <div class="task-item" v-for="(item, i) in taskList" :key="i">
-          <div class="tf-row tf-flex-item">
-            <img class="task-item__icon" v-if="item.task_type == 1" src />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 2"
-              src="@/assets/imgs/credits_renzheng.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 3"
-              src="@/assets/imgs/credits_yunmenjin.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 4"
-              src="@/assets/imgs/credits_wenjuan.png"
-            />
-            <img
-              class="task-item__icon"
-              v-else-if="item.task_type == 5"
-              src="@/assets/imgs/credits_toupiao.png"
-            />
-            <div class="tf-space-between">
-              <div class="task-item__title">{{item.task_name}}</div>
-              <div class="tf-row">
-                <div class="task-item__remarks">获得</div>
-                <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
+      <template v-if="taskList && taskList.length">
+        <div class="happiness-coin-title">幸福币任务</div>
+        <div class="task-box">
+          <div class="task-item" v-for="(item, i) in taskList" :key="i">
+            <div class="tf-row tf-flex-item">
+              <img class="task-item__icon" v-if="item.task_type == 1" src />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 2"
+                src="@/assets/imgs/credits_renzheng.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 3"
+                src="@/assets/imgs/credits_yunmenjin.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 4"
+                src="@/assets/imgs/credits_wenjuan.png"
+              />
+              <img
+                class="task-item__icon"
+                v-else-if="item.task_type == 5"
+                src="@/assets/imgs/credits_toupiao.png"
+              />
+              <div class="tf-space-between">
+                <div class="task-item__title">{{item.task_name}}</div>
+                <div class="tf-row">
+                  <div class="task-item__remarks">获得</div>
+                  <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
+                </div>
               </div>
             </div>
+            <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
+            <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
           </div>
-          <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
-          <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
         </div>
-      </div>
+      </template>
       <div class="sale-box">
         <div class="happiness-coin-title">幸福币特卖区</div>
         <div class="purchase-history" @click="goBuyRecord">购买记录</div>
@@ -101,7 +105,7 @@
 </template>
 
 <script>
-import { NavBar, Toast, Dialog } from 'vant'
+import { NavBar, Toast, Dialog, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
@@ -109,24 +113,17 @@ import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [Button.name]: Button,
     tfCalendar
   },
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
       signinToday: '1', // 今日是否签到
-      credits: 0,
-      taskList: [],
-      creditsGoods: [],
-      saleList: [
-        {
-          image: '/static/app-icon.png',
-          name: '雨前西湖龙井',
-          specialPrice: '240',
-          originalPrice: '260',
-          coin: '2400'
-        }
-      ]
+      credits: 0, // 当前幸福币
+      taskList: [], // 任务列表
+      creditsGoods: [], // 幸福币商品列表
+      signLoading: false // 签到按钮loading
     }
   },
   computed: {
@@ -156,24 +153,27 @@ export default {
     },
     /* 签到请求 */
     signin () {
+      this.signLoading = true
       signin().then((res) => {
+        this.signLoading = false
         Toast({
           message: res.message
         })
-        // this.signinToday = '1'
         this.getCreditsAccount()
         this.mtjEvent({
           eventId: 4
         })
+      }).catch(() => {
+        this.signLoading = false
       })
     },
     /* 幸福币明细 */
     goCoinRecord () {
-      this.$router.push('/pages/personage/happiness-coin/coin-record')
+      this.$router.push({ name: 'happinessCoinRecord' })
     },
     /* 购买详情 */
     goBuyRecord () {
-      this.$router.push('/pages/personage/happiness-coin/buy-record')
+      this.$router.push({ name: 'happinessCoinBuyRecord' })
     },
     /* 扫一扫 */
     goScanCode (current) {
@@ -194,7 +194,7 @@ export default {
     goCoinCommodity (item) {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
-    /* 去完成页面 */
+    /* 幸福币任务去完成跳转 */
     complete (type, id) {
       switch (type) {
         case '1':
@@ -269,6 +269,8 @@ export default {
   color: #fff;
   font-size: 30px;
   background-image: linear-gradient(to right, @red, @red-dark);
+  border-width: 0;
+  border-radius: 0;
   border-top-left-radius: 44px;
   border-bottom-left-radius: 44px;
 }
@@ -381,12 +383,13 @@ export default {
 }
 .sale-area {
   @flex();
-  padding: 0 30px;
+  padding-left: 30px;
   justify-content: space-between;
   flex-wrap: wrap;
 }
 .commodity-box {
   margin-bottom: 30px;
+  flex: 1;
 }
 .commodity-image {
   width: 330px;

@@ -23,8 +23,9 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, swipe, SwipeItem, Toast, Dialog } from 'vant'
+import { NoticeBar, Swipe, SwipeItem } from 'vant'
 import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
+import { bulterPermission } from '@/utils/business'
 import { mapGetters } from 'vuex'
 export default {
   name: 'butler',
@@ -32,13 +33,13 @@ export default {
     pageNavBar,
     appList,
     [NoticeBar.name]: NoticeBar,
-    [swipe.name]: swipe,
+    [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem
   },
   data () {
     return {
       noticeList: [],
-      appList: [],
+      appList: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
       ymjObj: {}
     }
   },
@@ -54,28 +55,24 @@ export default {
       })
     }
   },
-  // created () {
-  //   this.queryAllApp()
-  //   // this.getNoticeLbList()
-  // },
   activated () {
     this.queryAllApp()
     this.getNoticeLbList()
   },
   methods: {
-    /* 获取管家全部应用 */
+    // 获取管家板块全部应用
     queryAllApp () {
       queryAllApp().then((res) => {
         this.appList = res.data
       })
     },
-    /* 获取通知轮播列表 */
+    // 获取通知轮播列表
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {
         this.noticeList = data
       })
     },
-    /* 跳转公告详情页 */
+    // 跳转公告详情页
     goNotice ({ id }) {
       this.$router.push({
         name: 'noticeDetails',
@@ -87,45 +84,13 @@ export default {
         eventId: 27
       })
     },
-    /* 跳转云门禁 */
+    // 跳转云门禁
     goEntrance () {
       this.$router.push('/pages/butler/entrance/index')
     }
   },
   beforeRouteLeave (to, from, next) {
-    const butlerList = [
-      'entranceIndex',
-      'noticeIndex',
-      'repairsIndex',
-      'freeserverIndex',
-      'visitorIndex',
-      'compraiseIndex',
-      'questionnaireIndex',
-      'propertyIndex',
-      'convenienceIndex',
-      'noticeDetails'
-    ]
-    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
-      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
-        next()
-        return
-      }
-      Dialog.confirm({
-        title: '提示',
-        message: '您尚未认证房间，是否去认证？',
-        confirmButtonText: '去认证'
-      }).then((res) => {
-        this.$router.push(
-          '/pages/personage/house/attestation?type=1&mode=0&select=1'
-        )
-      })
-      next(false)
-    } else if (to.name === 'entranceIndex' && this.ymjObj.mj_status == '0') {
-      Toast('小区暂未开放此功能')
-      next(false)
-    } else {
-      next()
-    }
+    bulterPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>

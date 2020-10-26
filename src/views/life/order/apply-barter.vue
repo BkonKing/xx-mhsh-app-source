@@ -139,7 +139,7 @@
 		</div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
-			<div @click="submitAjax" class="submit-btn">
+			<div @click="submitAjax" v-preventReClick class="submit-btn">
 				<div class="color-fff font-30">提交</div>
 			</div>
 		</div>

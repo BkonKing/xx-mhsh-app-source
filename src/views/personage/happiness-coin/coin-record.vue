@@ -71,7 +71,7 @@ export default {
 .coin-list {
   width: 710px !important;
   // padding: 0 10px;
-  margin: 30px 20px;
+  // margin: 30px 20px;
   background-color: #fff;
   border-radius: 10px;
 }
@@ -81,10 +81,10 @@ export default {
     flex: 1;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    // .van-tab__pane {
-    //   height: 100%;
-    //   padding: 30px 0;
-    // }
+    .van-tab__pane {
+      height: 100%;
+      padding: 30px 20px;
+    }
   }
 }
 </style>

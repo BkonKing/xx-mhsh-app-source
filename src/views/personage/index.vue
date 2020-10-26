@@ -75,7 +75,8 @@
           <div class="user-text--grey">优惠券</div>
         </div>
         <div class="tf-flex-item tf-column tf-flex-center">
-          <button
+          <van-button
+            v-preventReClick
             class="user-btn__text"
             :class="[
               'user-btn',
@@ -83,10 +84,11 @@
                 ? 'user-btn--unsign'
                 : 'user-btn--signin'
             ]"
+            :loading="signLoading"
             @click="sign"
           >
             {{ userInfo.signin_today | signText }}
-          </button>
+          </van-button>
         </div>
       </div>
       <div class="functional-box">
@@ -261,7 +263,7 @@
 </template>
 
 <script>
-import { NavBar, Tag, Toast } from 'vant'
+import { NavBar, Tag, Toast, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
@@ -272,6 +274,7 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [Tag.name]: Tag,
+    [Button.name]: Button,
     tfList,
     tfListItem,
     tfCalendar
@@ -280,7 +283,8 @@ export default {
     return {
       signStatus: true,
       showCalendar: false, // 签到日历是否隐藏
-      orderData: {}
+      orderData: {},
+      signLoading: false // 签到loading
     }
   },
   computed: {
@@ -295,7 +299,9 @@ export default {
     /* 签到 */
     sign () {
       if (this.userInfo.signin_today === '0') {
+        this.signLoading = true
         signin().then((res) => {
+          this.signLoading = false
           Toast({
             message: res.message
           })
@@ -303,6 +309,8 @@ export default {
           this.mtjEvent({
             eventId: 4
           })
+        }).catch(() => {
+          this.signLoading = false
         })
       } else {
         // 已签到，弹出签到日历

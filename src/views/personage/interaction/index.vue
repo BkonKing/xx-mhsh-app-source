@@ -39,6 +39,7 @@ import {
   getMyJoinActivityList
 } from '@/api/personage.js'
 import { getMyWjtpList } from '@/api/butler.js'
+import eventBus from '@/api/eventbus'
 export default {
   name: 'interactionIndex',
   components: {
@@ -59,16 +60,13 @@ export default {
     }
   },
   created () {
-    api.addEventListener(
-      {
-        name: 'swiperight'
-      },
-      (ret, err) => {
-        if (this.active !== 0) {
-          this.active--
-        }
+    eventBus.$on('swiperight', (ret, err) => {
+      if (this.active !== 0) {
+        this.active--
+      } else {
+        this.$router.go(-1)
       }
-    )
+    })
     api.addEventListener(
       {
         name: 'swipeleft'
@@ -127,6 +125,15 @@ export default {
     .van-tab__pane {
       height: 100%;
     }
+  }
+  /deep/ .tf-van-cell {
+    margin-bottom: 30px;
+  }
+  /deep/ .tf-list-refresh {
+    padding-top: 30px;
+  }
+  /deep/ .reply-cell-content {
+    margin-bottom: 0;
   }
 }
 </style>

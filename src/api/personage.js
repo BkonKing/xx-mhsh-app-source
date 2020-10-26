@@ -135,6 +135,15 @@ export function getDbRepairList (params, ProjectId) {
   })
 }
 
+/* 报事报修统计事务处理 */
+export function getRepairCount (params, ProjectId) {
+  return request.get('/my/account/count_work', {
+    headers: {
+      ProjectId
+    }
+  })
+}
+
 /* 事务处理人员列表 */
 export function getDesigneeList (ProjectId) {
   return request.get('/my/account/getDesigneeList', {

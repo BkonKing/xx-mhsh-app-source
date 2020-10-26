@@ -5,7 +5,7 @@
       <tf-list>
         <visitor-form ref="form" :formData="formData"></visitor-form>
       </tf-list>
-      <van-button class="tf-mt-lg" size="large" type="danger" @click="save">保存</van-button>
+      <van-button v-preventReClick class="tf-mt-lg" size="large" type="danger" @click="save">保存</van-button>
     </div>
   </div>
 </template>

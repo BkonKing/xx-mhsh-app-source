@@ -1,12 +1,22 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
-    <div class="tf-h3">{{status ? '修改' : '设置'}}登录密码</div>
+    <van-nav-bar
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
+    <div class="tf-h3">{{ updateStatus ? '修改' : '设置' }}登录密码</div>
     <div class="mb140">
-      <template v-if="status">
+      <template v-if="updateStatus">
         <div class="tf-phone-input-box">
           <div class="tf-phone-input-label">原密码</div>
-          <input v-model="old_password" class="tf-phone-input width400" type="password" />
+          <input
+            v-model="old_password"
+            class="tf-phone-input width400"
+            type="password"
+          />
         </div>
         <div class="tf-phone-input-box">
           <div class="tf-phone-input-label">新密码</div>
@@ -22,7 +32,12 @@
       <template v-else>
         <div class="tf-phone-input-box">
           <div class="tf-phone-input-label">密 码</div>
-          <input v-model="password" class="tf-phone-input" type="password" placeholder="填写密码" />
+          <input
+            v-model="password"
+            class="tf-phone-input"
+            type="password"
+            placeholder="填写密码"
+          />
         </div>
       </template>
       <div class="tf-phone-input-box">
@@ -34,8 +49,12 @@
           placeholder="再次填写确认"
         />
       </div>
-      <div class="text-hint">密码必须是8-16位的数字、字符组合(不能是纯数字)</div>
-      <div class="forget-btn" v-if="status" @click="jumpForget">忘记原登录密码</div>
+      <div class="text-hint">
+        密码必须是8-16位的数字、字符组合(不能是纯数字)
+      </div>
+      <div class="forget-btn" v-if="updateStatus" @click="goForget">
+        忘记原登录密码
+      </div>
     </div>
     <van-button type="danger" size="large" @click="submit">完成</van-button>
   </div>
@@ -52,58 +71,60 @@ export default {
   },
   data () {
     return {
-      status: undefined,
+      updateStatus: undefined,
       steps: 0,
-      forget: 0,
+      forgetStatus: 0,
       password: '',
       repassword: '',
       old_password: ''
     }
   },
   created () {
-    this.status = parseInt(this.$route.query.status)
-    this.forget = parseInt(this.$route.query.forget)
+    this.updateStatus = parseInt(this.$route.query.status)
+    this.forgetStatus = parseInt(this.$route.query.forget)
     this.steps = parseInt(this.$route.query.steps)
   },
   methods: {
     submit () {
-      if (this.status || this.forget) {
+      if (this.updateStatus || this.forgetStatus) {
         this.updatePassword()
       } else {
         this.setPassword()
       }
     },
-    /* 修改登录密码 */
+    // 修改登录密码
     updatePassword () {
       updatePassword({
         old_password: this.old_password,
         password: this.password,
         repassword: this.repassword
       }).then((res) => {
-        this.setSuccess('登录密码修改成功')
+        this.successCallback('登录密码修改成功')
       })
     },
-    /* 设置登录密码 */
+    // 设置登录密码
     setPassword () {
       setPassword({
         password: this.password,
         repassword: this.repassword
       }).then((res) => {
-        this.setSuccess('登录密码设置成功')
+        this.successCallback('登录密码设置成功')
       })
     },
-    setSuccess (title) {
+    // 操作成功后回调
+    successCallback (title) {
       Dialog.alert({
         title
       }).then(() => {
-        if (this.steps === 2) {
-          this.$router.replace('/pages/personage/information/index')
+        if (this.steps === 2 && this.forgetStatus) {
+          this.$router.go(-3)
         } else {
           this.$router.go(-1)
         }
       })
     },
-    jumpForget () {
+    // 跳转到忘记密码
+    goForget () {
       this.$router.push({
         path: '/pages/personage/information/forget-payment-code',
         query: {
@@ -122,7 +143,7 @@ export default {
 }
 
 .tf-h3 {
-  margin: 148px 0 60px;
+  margin: 80px 0 60px;
 }
 
 .tf-phone-input-label {

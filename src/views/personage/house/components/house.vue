@@ -190,9 +190,7 @@ export default {
 }
 .house-people-box {
   padding: 0 40px;
-  border-left-width: 1px;
-  border-left-style: dashed;
-  border-left-color: #aaa;
+  border-left: 2px dashed #aaa;
 }
 .house-people-number {
   font-size: 30px;
@@ -204,5 +202,8 @@ export default {
 }
 .tf-icon-renshu {
   font-size: 36px;
+}
+.tf-space-around {
+  padding-right: 10px;
 }
 </style>

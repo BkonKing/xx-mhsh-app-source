@@ -10,7 +10,7 @@
         <span v-show="editMode" class="font-26" @click="cancelEdit">取消</span>
       </div>
       <div v-show="!editMode" class="search-box">
-        <van-search v-model="value" placeholder="全部应用" @input="searchChange" />
+        <van-search class="app-search-box" v-model="value" placeholder="全部应用" @input="searchChange" />
       </div>
       <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
       <div class="van-nav-bar__right">
@@ -74,12 +74,13 @@
 </template>
 
 <script>
-import { NavBar, Divider, Search, Toast, Dialog } from 'vant'
+import { NavBar, Divider, Search, Toast } from 'vant'
 import appContainer from './components/app-container'
 import appItem from './components/app-item'
 import draggable from 'vuedraggable'
 import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
 import { mapGetters } from 'vuex'
+import { bulterPermission } from '@/utils/business'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -205,36 +206,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const butlerList = [
-      'entranceIndex',
-      'noticeIndex',
-      'repairsIndex',
-      'freeserverIndex',
-      'visitorIndex',
-      'compraiseIndex',
-      'questionnaireIndex',
-      'propertyIndex',
-      'convenienceIndex',
-      'noticeDetails'
-    ]
-    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
-      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
-        next()
-        return
-      }
-      Dialog.confirm({
-        title: '提示',
-        message: '您尚未认证房间，是否去认证？',
-        confirmButtonText: '去认证'
-      }).then((res) => {
-        this.$router.push(
-          '/pages/personage/house/attestation?type=1&mode=0&select=1'
-        )
-      })
-      next(false)
-    } else {
-      next()
-    }
+    bulterPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>
@@ -247,6 +219,9 @@ export default {
   /deep/ input::placeholder {
     font-size: 24px;
     color: #8f8f94 !important;
+  }
+  .app-search-box {
+    padding: 0 10px;
   }
   /deep/ .van-search {
     .van-search__content {

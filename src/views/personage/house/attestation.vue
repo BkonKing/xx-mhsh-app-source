@@ -21,10 +21,15 @@
         <tf-list class="tf-mb-lg">
           <tf-list-item title="房屋" @click="goCheckHouse">
             <template v-slot:right>
-              <div v-if="mode === 1 && !editMode" class="house-text van-multi-ellipsis--l2">
+              <div
+                v-if="mode === 1 && !editMode"
+                class="house-text van-multi-ellipsis--l2"
+              >
                 {{ house_name }}
               </div>
-              <div v-else class="house-text van-multi-ellipsis--l2">{{ house_name || '请选择' }}</div>
+              <div v-else class="house-text van-multi-ellipsis--l2">
+                {{ house_name || '请选择' }}
+              </div>
             </template>
           </tf-list-item>
         </tf-list>
@@ -67,7 +72,11 @@
           </tf-list-item>
         </tf-list>
         <tf-list v-if="type === 1 && mode === 1 && !editMode">
-          <tf-list-item title="设置当前房屋" :showArrow="false">
+          <tf-list-item
+            class="default-house-item"
+            title="设置当前房屋"
+            :showArrow="false"
+          >
             <template v-slot:right>
               <van-switch
                 v-model="checked"
@@ -96,7 +105,12 @@
                 >《{{ otherAgreement.title }}》</span
               >
             </van-checkbox>
-            <van-button type="danger" size="large" @click="submit"
+            <van-button
+              v-preventReClick
+              :loading="submitLoad"
+              type="danger"
+              size="large"
+              @click="submit"
               >提交</van-button
             >
           </template>
@@ -181,7 +195,8 @@ export default {
           name: '租户成员'
         }
       ],
-      userText
+      userText,
+      submitLoad: false
     }
   },
   computed: {
@@ -326,6 +341,7 @@ export default {
     },
     /* 房屋认证 */
     roomAttest () {
+      this.submitLoad = true
       const params = {
         house_id: this.house_id,
         project_id: this.project_id,
@@ -338,6 +354,7 @@ export default {
         is_default: this.checked ? 1 : 0
       }
       roomAttest(params).then((res) => {
+        this.submitLoad = false
         if (res.success) {
           Toast.success('审核成功')
           if (this.userInfo.user_type == 0) {
@@ -355,6 +372,8 @@ export default {
         } else {
           Toast.fail('提交失败')
         }
+      }).catch(() => {
+        this.submitLoad = false
       })
     },
     /* 获取认证房间详情 */
@@ -502,5 +521,9 @@ export default {
   flex: 1;
   text-align: right;
   font-size: 28px;
+}
+
+.default-house-item /deep/ .tf-clist-cell-left {
+  width: auto !important;
 }
 </style>

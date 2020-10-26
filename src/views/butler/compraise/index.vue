@@ -39,7 +39,7 @@
           <tf-uploader v-model="images" max-count="6"></tf-uploader>
         </div>
       </div>
-      <van-button color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+      <van-button v-preventReClick color="#EB5841" size="large" @click="formSubmit">提交</van-button>
     </div>
   </div>
 </template>

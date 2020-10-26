@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-screen tf-flex-column tf-bg">
     <van-nav-bar
       title="便民电话"
       :fixed="true"
@@ -8,17 +8,15 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <div class="tf-padding">
-      <refreshList :list.sync="phoneList" :load="getYellowPagesList">
-        <template v-slot="{ item }">
-          <phone-card
-            :name="item.title"
-            :info="item.remarks"
-            :number="item.telephone"
-          ></phone-card>
-        </template>
-      </refreshList>
-    </div>
+    <refreshList :list.sync="phoneList" :load="getYellowPagesList">
+      <template v-slot="{ item }">
+        <phone-card
+          :name="item.title"
+          :info="item.remarks"
+          :number="item.telephone"
+        ></phone-card>
+      </template>
+    </refreshList>
   </div>
 </template>
 
@@ -41,7 +39,8 @@ export default {
   methods: {
     getYellowPagesList (params) {
       const len = this.phoneList.length
-      const phoneId = len && params.pages !== 1 ? this.phoneList[len - 1].id : ''
+      const phoneId =
+        len && params.pages !== 1 ? this.phoneList[len - 1].id : ''
       return getYellowPagesList({
         phoneId
       })
@@ -50,4 +49,12 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="less" scoped>
+/deep/ .tf-list-refresh {
+  margin: 10px 0;
+  flex: 1;
+}
+/deep/ .tf-van-cell {
+  margin-bottom: 0;
+}
+</style>

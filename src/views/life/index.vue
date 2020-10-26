@@ -168,7 +168,7 @@
 								</template>
 								<template v-else-if="item.special_type == 1">
 									<div v-if="item.child && item.child.length > 0" class="life-session">
-										<div class="life-tit life-area-tit flex-between" @click="linkFunc(4,{id:item.special_id})">
+										<div :class="[item.special_text ? '' : 'life-area-tit-small', 'life-tit life-area-tit flex-between']" @click="linkFunc(4,{id:item.special_id})">
 											<div class="font-34 font-weight flex-column-center">
 												<div class="area-text-tit">{{item.special_name}}</div>
 												<div class="area-text-detail">{{item.special_text}}</div>
@@ -895,10 +895,13 @@ export default {
 	height: 138px;
 	padding: 0 30px 0 10px;
 }
+.life-area-tit-small.life-area-tit {
+	height: 100px;
+}
 .life-area-tit .life-arrow-right {
-	margin-top: 52px;
+	/*margin-top: 52px;
 	height: 86px;
-	padding: 30px 0;
+	padding: 30px 0;*/
 }
 .area-text-tit {
 	line-height: 52px;

@@ -74,9 +74,12 @@
           等待
           <span class="tf-text-orange">{{ detailInfo.designee }}</span>
           {{ sub_status | statusFilter }}
-          <span v-if="detailInfo.time_limit" class="tf-text-primary"
-            >({{ detailInfo.time_limit }})</span
-          >
+          <template v-if="status == 4 && detailInfo.is_upload_images == 0">上传照片</template>
+          <span
+            v-if="detailInfo.time_limit"
+            class="tf-text-primary">
+            ({{ detailInfo.time_limit }})
+          </span>
         </div>
         <!-- 客服人员 -->
         <template v-if="serviceOperateStatus">
@@ -128,10 +131,7 @@
             <div
               v-if="status == 4 && detailInfo.is_upload_images == 0"
               class="tf-btn tf-btn-primary"
-              @click="
-                imageFiles = []
-                imgUploadShow = true
-              "
+              @click="openUploadImg"
             >
               上传照片
             </div>
@@ -204,9 +204,10 @@
               class="tf-form-item__input"
               v-model="departmentValue"
               title="处理部门"
-              value-key="label"
+              value-key="text"
               selected-key="value"
               :columns="departmentList"
+              @confirm="departmentChange"
             >
               <template v-slot="{ valueText }">
                 <div
@@ -450,9 +451,9 @@
       <div class="tf-text tf-mb-lg">
         预约处理时间：{{ negotiateInfo.negotiation_time }}
       </div>
-      <div v-if="sub_status == 7" class="tf-text tf-row">
+      <div v-if="sub_status == 7" class="tf-text tf-row tf-mb-lg">
         <div>
-          <span class="lp18">拒绝原</span>
+          <span class="lp16">拒绝原</span>
           因：
         </div>
         <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
@@ -520,8 +521,8 @@
         <div class="tf-form-box">
           <div class="evaluate-title">
             对处理人员
-            <span class="tf-text-grey">({{evaluateInfo.nickname}})</span>
-            {{rateText[evaluateInfo.evaluate_stars]}}
+            <span class="tf-text-grey">({{ evaluateInfo.nickname }})</span>
+            {{ rateText[evaluateInfo.evaluate_stars] }}
           </div>
           <div class="rate-box">
             <van-rate
@@ -534,11 +535,19 @@
             />
           </div>
           <div class="rate-tag-box">
-            <div v-for="(item, i) in evaluateReasonList" :key="i" class="rate-tag">{{item}}</div>
+            <div
+              v-for="(item, i) in evaluateReasonList"
+              :key="i"
+              class="rate-tag"
+            >
+              {{ item }}
+            </div>
           </div>
           <template v-if="evaluateInfo.evaluate_content">
             <div class="tf-form-label">其他补充：</div>
-            <div class="textarea-box tf-text">{{evaluateInfo.evaluate_content}}</div>
+            <div class="textarea-box tf-text">
+              {{ evaluateInfo.evaluate_content }}
+            </div>
           </template>
         </div>
       </template>
@@ -629,22 +638,9 @@ export default {
       refuse_reason: undefined, // 撤销原因值
       other_reason: '', // 撤销补充说明
       // 部门列表
-      departmentList: [
-        {
-          label: '工程部',
-          value: 'gcb'
-        },
-        {
-          label: '安保部',
-          value: 'abb'
-        },
-        {
-          label: '保洁部',
-          value: 'bjb'
-        }
-      ],
+      departmentList: [],
       departmentValue: '', // 部门选中的值
-      personnelList: {}, // 三个处理人员的列表
+      personnelList: {}, // 处理人员的列表
       designee_uid: '', // 处理人员id
       limit_day: '', // 分派人员完成时限天数
       limit_hours: '', // 分派人员完成时限小时数
@@ -777,7 +773,8 @@ export default {
     },
     /* 获取事务处理人员列表 */
     getDesigneeList () {
-      getDesigneeList(this.projectId).then(({ data }) => {
+      getDesigneeList(this.projectId).then(({ data, bm }) => {
+        this.departmentList = bm
         const newData = {}
         // 格式转换 姓名-电话号码-工作日期-擅长
         Object.keys(data).forEach((key) => {
@@ -793,6 +790,10 @@ export default {
         })
         this.personnelList = newData
       })
+    },
+    // 处理部门变更
+    departmentChange () {
+      this.designee_uid = ''
     },
     /* 分派人员 */
     assignTasks () {
@@ -947,6 +948,11 @@ export default {
         })
       })
     },
+    // 打开上传图片
+    openUploadImg () {
+      this.imageFiles = []
+      this.imgUploadShow = true
+    },
     /* 上传结案图片 */
     closingPicture () {
       closingPicture(
@@ -993,6 +999,7 @@ export default {
         2: '分派',
         3: '接受任务',
         4: '分派',
+        5: '用户确认',
         6: '结案',
         7: '分派'
       }
@@ -1147,8 +1154,8 @@ export default {
 .lp112 {
   letter-spacing: 113px;
 }
-.lp18 {
-  letter-spacing: 18px;
+.lp16 {
+  letter-spacing: 16px;
 }
 .negotiate-dialog {
   .tf-text {

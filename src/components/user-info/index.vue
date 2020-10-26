@@ -3,6 +3,7 @@
     <div :class="size ? `user-info__left-box-${size}` : 'user-info__left-box'">
       <img
         v-if="avatar"
+        v-imageCach="avatar"
         class="tf-mr-base tf-avatar"
         :src="avatar"
         mode="aspectFit"
@@ -16,7 +17,7 @@
       <slot name="left">
         <div class="tf-space-around">
           <div class="user-info--name">{{name || '暂无昵称'}}</div>
-          <div class="user-info-time">{{time}}</div>
+          <div v-if="time" class="user-info-time">{{time}}</div>
         </div>
       </slot>
     </div>

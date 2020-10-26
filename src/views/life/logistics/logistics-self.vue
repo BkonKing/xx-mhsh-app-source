@@ -49,12 +49,17 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       infoData: '',
+      timer: ''
     }
   },
   created(){
     this.order_id = this.$route.query.id;
     this.index = this.$route.query.index ? this.$route.query.index : 0;
     this.getData();
+    let that = this;
+    this.timer = setInterval(()=>{
+      that.getData();
+    },2000)
   },
   methods: {
     getData () {
@@ -66,7 +71,11 @@ export default {
         }
       })
     },
-  }
+  },
+  beforeDestroy() {
+    //清除定时器
+    clearInterval(this.timer);
+  },
 }
 </script>
 

@@ -1,49 +1,87 @@
 <template>
   <div style="height: 100%;">
     <refreshList ref="list" :list.sync="list" :load="load">
-      <template v-slot="{item, index}">
-        <div v-if="item.article_type == 2 || article_type == 2" class="activity-cell">
+      <template v-slot="{ item, index }">
+        <div
+          v-if="item.article_type == 2 || article_type == 2"
+          class="activity-cell"
+        >
           <div @click="goDetails('2', item)">
             <div class="activity-image-box">
-              <img class="activity-image" :src="item.thumbnail" />
-              <div class="activity-join">{{item.joins || 0}}人已报名</div>
+              <img class="activity-image" :src="item.thumbnail" v-imageCach="item.thumbnail" />
+              <div class="activity-join">{{ item.joins || 0 }}人已报名</div>
             </div>
             <div class="tf-status-tag">活动</div>
-            <div class="activity-title">{{item.title}}</div>
-            <div class="activity-time">{{item.ctime}}</div>
+            <div class="activity-title">{{ item.title }}</div>
+            <div class="activity-time">{{ item.ctime }}</div>
           </div>
-          <operation :item="item" :article-type="item.article_type || article_type" :key="item.id"></operation>
+          <operation
+            :item="item"
+            :article-type="item.article_type || article_type"
+            :key="item.id"
+          ></operation>
         </div>
         <div v-else-if="item.article_type == 3 || article_type == 3">
           <div class="tf-card">
             <div class="tf-card-header" @click="goDetails('3', item)">
-              <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
+              <userInfo
+                :avatar="item.avatar"
+                :name="item.nickname"
+                :time="item.ctime"
+              >
                 <template v-slot:right>
-                  <div class="group-tag">{{item.category}}</div>
+                  <div class="group-tag">{{ item.category }}</div>
                 </template>
               </userInfo>
             </div>
-            <div v-if="item.content" class="tf-card-content" @click="goDetails('3', item)">{{ item.content }}</div>
+            <div
+              v-if="item.content"
+              class="tf-card-content"
+              @click="goDetails('3', item)"
+            >
+              {{ item.content }}
+            </div>
             <template v-if="item.images">
-              <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" @click.stop="preview(item.images[0])" />
-              <tf-image-list class="tf-mt-base" mode="shadeShow" v-else-if="item.images.length > 1" :data="item.images"></tf-image-list>
+              <img
+                width="33%"
+                :src="item.images[0]"
+                v-if="item.images.length === 1"
+                v-imageCach="item.images[0]"
+                @click.stop="preview(item.images[0])"
+              />
+              <tf-image-list
+                class="tf-mt-base"
+                mode="shadeShow"
+                v-else-if="item.images.length > 1"
+                :data="item.images"
+              ></tf-image-list>
             </template>
             <operation
               :item="item"
               :article-type="item.article_type || article_type"
               :key="item.id"
             >
-              <div class="van-icon van-icon-ellipsis" @click.stop="onOperation(item, index)"></div>
+              <div
+                class="van-icon van-icon-ellipsis"
+                @click.stop="onOperation(item, index)"
+              ></div>
             </operation>
           </div>
         </div>
-        <div class="activity-cell" v-else-if="item.article_type == 1 || article_type == 1">
+        <div
+          class="activity-cell"
+          v-else-if="item.article_type == 1 || article_type == 1"
+        >
           <div @click="goDetails('1', item)">
-            <img class="activity-image" :src="item.thumbnail" />
+            <img class="activity-image tf-mb-sm" :src="item.thumbnail" v-imageCach="item.thumbnail" />
             <div class="tf-status-tag">资讯</div>
-            <div class="activity-title">{{item.title}}</div>
+            <div class="activity-title">{{ item.title }}</div>
           </div>
-          <operation :item="item" :article-type="item.article_type || article_type" :key="item.id"></operation>
+          <operation
+            :item="item"
+            :article-type="item.article_type || article_type"
+            :key="item.id"
+          ></operation>
         </div>
       </template>
     </refreshList>
@@ -113,7 +151,7 @@ export default {
     deleteArticle () {
       deleteArticle({
         id: this.active.id
-      }).then(res => {
+      }).then((res) => {
         this.list.splice(this.activeIndex, 1)
         Toast.success('删除成功')
         this.moreShow = false
@@ -166,14 +204,21 @@ export default {
   border-radius: 10px;
   padding: 30px 30px 0;
   .activity-image-box {
+    display: flex;
     position: relative;
     width: 100%;
     height: 365px;
+    line-height: 1;
     margin-bottom: 10px;
   }
   .activity-image {
+    display: block;
     width: 100%;
     height: 365px;
+    object-fit: cover;
+  }
+  .tf-mb-sm {
+    margin-bottom: 10px;
   }
   .activity-join {
     width: 100%;

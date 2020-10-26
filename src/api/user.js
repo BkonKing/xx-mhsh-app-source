@@ -47,3 +47,8 @@ export function uImages (data) {
     }
   })
 }
+
+/* 统计下载次数信息 */
+export function sendSaveDownload (data) {
+  return request.post('/download/install/save_download', data)
+}

@@ -137,13 +137,14 @@ const store = {
       params
     }) {
       return new Promise((resolve, reject) => {
-        Toast.loading({
+        Toast.allowMultiple()
+        const loadingToast = Toast.loading({
           duration: 0,
           message: '正在登录中'
         })
         const loginUrl = type === 1 ? yzmLogin : pwdLogin
         loginUrl(params).then(async (res) => {
-          Toast.clear()
+          loadingToast.clear()
           if (res.success) {
             const {
               data
@@ -184,6 +185,9 @@ const store = {
           } else {
             reject(res.message)
           }
+        }).catch((error) => {
+          loadingToast.clear()
+          reject(error.message)
         })
       })
     },

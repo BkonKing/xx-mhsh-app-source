@@ -10,16 +10,17 @@
         @click-left="$router.go(-1)"
       ></van-nav-bar>
     </div>
-    <div class="map-bottom bottom-fixed" :style="{'top': fixedTop,'height': fixedHeight}">
-      <div class="search-box">
-        <!-- <input type="text" placeholder="搜索地点" v-model="searchVal" @search="searchAddress" /> -->
-        <van-search
-          class="search-v"
-          v-model="searchVal"
-          placeholder="请输入搜索关键词"
-          @search="searchAddress"
-        />
-      </div>
+    <div class="map-bottom bottom-fixed" :style="{'top': fixedTop > 0 ? fixedTop+'px' : 'auto','height': fixedHeight+'px'}">
+      <form>
+        <div class="search-box">
+          <van-search
+            class="search-v"
+            v-model="searchVal"
+            placeholder="请输入搜索关键词"
+            @input="searchAddress"
+          />
+        </div>
+      </form>
       <div class="search-list">
         <div v-for="(item, index) in searchList" @click="clickItem(index)" class="search-item flex-column-center">
           <div class="search-name">{{item.name}}</div>
@@ -27,8 +28,6 @@
         </div>
       </div>
     </div>
-    
-		
   </div>
 </template>
 
@@ -46,23 +45,97 @@ export default {
       isSelect: 0,  //0不是选择地址 1选择地址
       searchVal: '',
       searchList: [],
-      // searchList: [{name: 'gewagaw',address:'eee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
+      // searchList: [{name: 'gewagaw',address:'ee',lon: '111',lat: '22',city: 'dd'},{name: '个娃发个挖',address:'eee',lon: '111',lat: '22',city: 'dd'}],
       bMap: '',
-      fixedTop: '344px',
-      fixedHeight: '300px',
+      fixedTop: '344',
+      fixedHeight: '300',
+      defaultHeight: '0',  //默认屏幕高度
+      nowHeight:  '0',     //实时屏幕高度
     }
   },
   created () {
-    this.fixedTop = 344+this.$store.state.paddingTop + 'px';
-    this.fixedHeight = api.winHeight - (344+this.$store.state.paddingTop) + 'px';
     this.getData()
+    let that = this;
+    setTimeout(()=>{
+      that.fixedTop = 344+that.$store.state.paddingTop;
+      that.fixedHeight = api.winHeight - (344+that.$store.state.paddingTop);
+      that.defaultHeight = api.winHeight;
+    },500)
   },
-  deactivated(){
-    // var bMap = api.require('bMap');
-    // this.bMap.close();
+  mounted: function() {
+    window.onresize = () => {
+      return (() => {
+        //实时屏幕高度
+        this.nowHeight = api.winHeight;
+      })();
+    };
+
+    let that = this;
+    if(api.systemType == 'ios'){
+      api.addEventListener({
+        name:'keyboardshow'
+      },function(ret, err){
+        let middleHeight = that.defaultHeight - that.fixedTop - ret.h;
+        let bli = api.winWidth/750;
+        if(middleHeight < 122*bli && middleHeight > -100){
+          that.bMap.setRect({
+            rect: {
+                x: 0,
+                y: 44+that.$store.state.paddingTop,
+                w: api.winWidth,
+                h: 300+middleHeight-122*bli
+            },
+          });
+          // that.fixedTop = 0;
+          that.fixedTop = that.fixedTop + ret.h*bli;
+          // that.fixedTop = 344+that.$store.state.paddingTop - 122 + middleHeight;
+          that.fixedHeight = 122*bli;
+        }
+      });
+
+      api.addEventListener({
+        name:'keyboardhide'
+      },function(ret, err){
+        that.bMap.setRect({
+          rect: {
+            x: 0,
+            y: 44+that.$store.state.paddingTop,
+            w: api.winWidth,
+            h: 300
+          },
+        });
+        that.fixedTop = 344+that.$store.state.paddingTop;
+        that.fixedHeight = api.winHeight - (344+that.$store.state.paddingTop);
+      });
+    }
   },
   methods: {
     getData(){
+      var that = this;
+      var permission = 'location';
+      var resultList = api.hasPermission({
+          list: [permission]
+      });
+      if (resultList[0].granted) {
+          // 已授权，可以继续下一步操作
+          that.getMap();
+      } else {
+          api.requestPermission({
+              list: [permission],
+          }, function(res) {
+              if (res.list[0].granted) {
+                that.getMap();
+                  // 已授权，可以继续下一步操作
+                  // api.alert({
+                  //     msg: '已授权'
+                  // });
+              }else {
+                that.$router.go(-1);
+              }
+          });
+      }
+    },
+    getMap(){
       var bMap = api.require('bMap');
       var maptop = this.$store.state.paddingTop;
       this.bMap = bMap;
@@ -81,6 +154,7 @@ export default {
                   lat: lat_val
               }, function(ret, err) {
                   if (ret.status) {
+                    that.nowCity = ret.city;
                     ret.poiList.forEach((item, index) => {
                       var obj = {name: '',address:'',lon: '',lat: '',city: ''};
                       // alert(item.name);
@@ -135,61 +209,84 @@ export default {
               // alert(err.code);
           }
       });
-
-
       return;
-      // var bMap = api.require('bMap');
-      // bMap.searchInCity({
-      //     city: '全国',
-      //     keyword: '三盛滨江',
-      //     pageIndex: 0,
-      //     pageCapacity: 4
-      // }, function(ret, err) {
-      //     if (ret.status) {
-      //         alert(JSON.stringify(ret));
-      //     } else {
-      //         alert(JSON.stringify(err));
-      //     }
-      // });
     },
     searchAddress() {
-      this.getData(this.searchVal);
+      // this.getData(this.searchVal);
       var searchVal = this.searchVal;
       var that = this;
 
-
       var map = api.require('bMap');
-      map.searchInBounds({
+
+      map.searchInCity({
+          city: that.nowCity,
           keyword: searchVal,
-          lbLon: 74.546,
-          lbLat: 21.267,
-          rtLon: 136.244,
-          rtLat: 53.69
+          pageIndex: 0,
+          pageCapacity: 20
       }, function(ret, err) {
           if (ret.status) {
               // alert(JSON.stringify(ret.results));
-              that.searchList = ret.results;
+              let res1 = ret.results;
+              let dataArr = [];
+              if(res1[0].address&&res1[0].address!='(null)'){
+                for(let k=0;k<res1.length;k++){
+                  if(res1[k].name.indexOf(searchVal)>-1){
+                    dataArr.push(res1[k]);
+                  }
+                }
+                that.searchList = dataArr;
+              }else {
+                that.searchList = [];
+              }
+
+              map.searchInBounds({
+                  keyword: searchVal,
+                  lbLon: 74.546,
+                  lbLat: 21.267,
+                  rtLon: 136.244,
+                  rtLat: 53.69,
+                  pageCapacity: 20,
+              }, function(ret, err) {
+                  if (ret.status) {
+                    // alert(JSON.stringify(ret.results));
+                    let searchRes = ret.results;
+                    let dataArr2 = [];
+                    if(searchRes[0].address&&searchRes[0].address!='(null)'){
+                      for(let x=0;x<searchRes.length;x++){
+                        if(searchRes[x].city.indexOf(that.nowCity) < 0){
+                          dataArr2.push(searchRes[x]);
+                        }
+                      }
+                      that.searchList = that.searchList.concat(dataArr2);
+                    }else {
+                      for(let j=0;j<searchRes.length;j++){
+                        if(searchRes[j].name.indexOf(that.nowCity) < 0){
+                          map.searchInCity({
+                              city: searchRes[j].name,
+                              keyword: searchVal,
+                              pageIndex: 0,
+                              pageCapacity: 20
+                          }, function(ret, err) {
+                              if (ret.status) {
+                                  // alert(JSON.stringify(ret.results));
+                                  that.searchList = that.searchList.concat(ret.results);
+                              }
+                          });
+                        }
+                      }
+                    }
+                    // alert(JSON.stringify(ret.results));
+                      
+                  } else {
+                      // alert(JSON.stringify(err));
+                  }
+              });
+
           } else {
               // alert(JSON.stringify(err));
           }
-      });return;
-
-
-
-      // var bMap = api.require('bMap');
-      // this.bMap.searchInCity({
-      //     city: '全国',
-      //     keyword: searchVal,
-      //     pageIndex: 0,
-      //     pageCapacity: 10
-      // }, function(ret, err) {
-      //     if (ret.status) {
-      //         alert(JSON.stringify(ret.results));
-      //         that.searchList = ret.results;
-      //     } else {
-      //         alert(JSON.stringify(err));
-      //     }
-      // });
+      });
+       
     },
     clickItem(index){
       // this.bMap.close();
@@ -200,7 +297,8 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    this.bMap.close();
+    var bMap = api.require('bMap');
+    bMap.close();
     next();
   }
 }
@@ -209,12 +307,13 @@ export default {
 <style scoped>
 @import '../../../styles/life.css';
   .app-body {
-    background-color: #f2f2f4;
+    background-color: #fff;
     font-size: 28px;
     overflow: hidden;
   }
   .map-bottom {
     top: 750px;
+    overflow: hidden;
     background-color: #fff;
     border-radius: 10px 10px 0 0;
   }
@@ -248,13 +347,13 @@ export default {
     overflow-y: auto;
   }
   .search-item {
-    height: 126px;
+    min-height: 126px;
     flex-wrap: wrap;
     border-bottom: 1px solid #f0f0f0;
   }
   .search-item div {
     width: 100%;
-    height: 44px;
+    min-height: 44px;
     line-height: 44px;
     color: #222;
   }

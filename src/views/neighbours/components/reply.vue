@@ -1,20 +1,40 @@
 <template>
-  <div class="tf-bg-white reply-container" :class="{'gray': grayTheme}">
-    <van-list class="reply-list" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell class="reply-cell" v-for="(cell, i) in list" :key="cell.id" @click.stop="operate(cell, i)">
-        <userInfo :avatar="cell.avatar" :name="cell.nickname" :time="cell.ctime" size="m">
+  <div class="reply-container" :class="{ gray: grayTheme }">
+    <van-list
+      class="reply-list"
+      v-model="loading"
+      :finished="finished"
+      @load="onLoad"
+    >
+      <van-cell
+        class="reply-cell"
+        v-for="(cell, i) in list"
+        :key="cell.id"
+        @click.stop="operate(cell, i)"
+      >
+        <userInfo
+          :avatar="cell.avatar"
+          :name="cell.nickname"
+          :time="cell.ctime"
+          size="m"
+        >
           <template v-if="!grayTheme" v-slot:right>
-            <span class="thumbsups-number">{{cell.thumbsups | numberText}}</span>
+            <span class="thumbsups-number">{{
+              cell.thumbsups | numberText
+            }}</span>
             <span
               class="tf-icon tf-icon-zan"
-              :class="{'like-active': cell.is_thumbsup}"
+              :class="{ 'like-active': cell.is_thumbsup }"
               @click.stop="thumbsUp(cell)"
             ></span>
           </template>
         </userInfo>
-        <div class="reply-cell-content">
-          <div class="reply-cell-content__text">{{cell.content}}</div>
-          <div v-if="cell.images && cell.images.length > 0" class="reply-cell-content__img-box">
+        <div class="reply-cell-content" :class="{'no-border-bottom': list.length === i + 1}">
+          <div class="reply-cell-content__text">{{ cell.content }}</div>
+          <div
+            v-if="cell.images && cell.images.length > 0"
+            class="reply-cell-content__img-box"
+          >
             <img class="reply-cell-content__img" :src="cell.images[0]" />
           </div>
           <div
@@ -28,9 +48,10 @@
               :key="item.id"
               v-show="i < 2"
             >
-              <span style="color: #222;">{{item.nickname}}</span>：
+              <span style="color: #222;">{{ item.nickname }}</span
+              >：
               <span>
-                {{item.content}}
+                {{ item.content }}
                 <span
                   class="tf-text-blue"
                   v-if="item.images"
@@ -41,13 +62,14 @@
               </span>
             </div>
             <div v-if="parseInt(cell.reply_num) > 2" class="more-btn">
-              共{{cell.reply_num}}条回复
+              共{{ cell.reply_num }}条回复
               <span class="tf-icon tf-icon-right"></span>
             </div>
           </div>
         </div>
       </van-cell>
     </van-list>
+    <div class="no-comments" v-if="list.length === 0 && finished">暂无评论</div>
     <more-popup
       :moreShow.sync="moreShow"
       :comment="true"
@@ -205,7 +227,7 @@ export default {
     deleteComment () {
       deleteComment({
         id: this.parentId
-      }).then(res => {
+      }).then((res) => {
         this.list.splice(this.index, 1)
         Toast.success('删除成功')
         this.moreShow = false
@@ -283,7 +305,7 @@ export default {
 
 <style lang="less" scoped>
 .reply-container {
-  padding: 0 30px;
+  padding-bottom: 100px;
   .thumbsups-number {
     font-size: 24px;
     color: @gray-7;
@@ -297,7 +319,7 @@ export default {
     color: @orange-dark;
   }
   .reply-cell {
-    padding: 30px 0;
+    padding: 30px;
     .reply-cell-content {
       padding-bottom: 30px;
       margin-left: 84px;
@@ -326,6 +348,9 @@ export default {
           line-height: 1.8;
         }
       }
+    }
+    .no-border-bottom {
+      border-bottom: none !important;
     }
   }
   /deep/ .van-list__finished-text {
@@ -370,5 +395,11 @@ export default {
       height: 48px;
     }
   }
+}
+.no-comments {
+  font-size: 26px;
+  color: #8f8f94;
+  text-align: center;
+  margin: 10px 0 30px;
 }
 </style>

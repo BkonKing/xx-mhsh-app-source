@@ -49,7 +49,7 @@
       <div v-show="active === 1" class="entrance-operation">
         <div class="entrance-operation__box">
           <div class="triangle" :class="{'triangle-left': active === 1}"></div>
-          <img :src="qrImg" class="qrcode-image" @click="getQrCode" />
+          <img :src="qrImg" class="qrcode-image" @click="setPermission" />
           <!-- <canvas id="qrcode" canvas-id="qrcode" class="qrcode-image" /> -->
         </div>
         <div class="entrance-operation__alert tf-row-center">
@@ -60,7 +60,7 @@
       <div v-show="active === 2" class="entrance-operation">
         <div class="entrance-operation__box">
           <div class="triangle" :class="{'triangle-right': active === 2}"></div>
-          <div class="instantly-btn" @click="ycOpenDoor">立即开门</div>
+          <div v-preventReClick class="instantly-btn" @click="ycOpenDoor">立即开门</div>
         </div>
         <div class="entrance-operation__alert">{{openDoorTime ? `已开门` : '点击即可开门'}}</div>
       </div>
@@ -89,6 +89,7 @@ import { NavBar, Toast } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
 import { getQrCode, ycOpenDoor } from '@/api/butler.js'
+import { hasPermission, reqPermission } from '@/utils/permission'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -145,13 +146,25 @@ export default {
     this.mtjEvent({
       eventId: 25
     })
-    this.getQrCode()
+    this.setPermission()
   },
   methods: {
     // 二维码开门
     qrOpenDoor () {
       this.active = 1
-      this.getQrCode()
+      this.setPermission()
+    },
+    setPermission () {
+      const perms = hasPermission('storage')
+      if (!perms[0].granted) {
+        reqPermission('storage', ({ list }) => {
+          if (list[0].granted) {
+            this.getQrCode()
+          }
+        })
+      } else {
+        this.getQrCode()
+      }
     },
     // 获取二维码开门数据
     getQrCode () {

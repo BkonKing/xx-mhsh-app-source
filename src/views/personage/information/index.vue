@@ -162,7 +162,7 @@ import tfDialog from '@/components/tf-dialog/index.vue'
 import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
-import { getDate } from '@/utils/util'
+import { getDate, selectFileImage } from '@/utils/util'
 import eventBus from '@/api/eventbus.js'
 import {
   getMemberList,
@@ -273,23 +273,20 @@ export default {
     },
     openCamera () {
       this.$router.push({
-        name: 'faceCollect',
-        query: {
-          status: this.userInfo.have_faceimg
-        }
+        name: 'faceCollect'
       })
     },
     /* 图片上传 */
-    afterRead (file) {
+    async afterRead (file) {
       Toast.loading({
         message: '头像上传中'
       })
       const formData = new FormData()
-      formData.append('imgFile', file.file)
+      const newFile = await selectFileImage(file.file)
+      formData.append('imgFile', newFile)
       uImages(formData)
         .then((res) => {
-          this.avatar = res.data
-          this.editAvatar()
+          this.editAvatar(res.data)
         })
         .catch((message) => {
           Toast.clear()
@@ -297,13 +294,14 @@ export default {
         })
     },
     /* 头像上传 */
-    editAvatar () {
+    editAvatar (avatar) {
       editAvatar({
-        avatar: this.avatar
+        avatar
       })
         .then((res) => {
-          Toast.clear()
+          // Toast.clear()
           Toast.success('头像上传成功')
+          this.avatar = avatar
         })
         .catch(() => {
           Toast.clear()
@@ -567,6 +565,9 @@ export default {
 
 /deep/ .van-dropdown-menu__bar {
   border-radius: 33px;
+}
+/deep/ .van-dropdown-menu__item {
+  padding-right: 20px;
 }
 /deep/ .van-dropdown-menu__title:after {
   margin-top: -10px;

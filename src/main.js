@@ -6,6 +6,8 @@ import store from './store'
 import * as filters from './filters'
 import txAnalysis from './directive/txAnalysis'
 import imageCach from './directive/imageCach'
+import preventReClick from './directive/preventReClick'
+import eventBus from '@/api/eventbus'
 import './styles/base.css'
 // import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
@@ -19,12 +21,12 @@ Vue.config.errorHandler = function (err, vm, info) {
   console.error(err, info)
 }
 Vue.config.productionTip = false
-const isApp = false // 手动切换
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
 Vue.use(txAnalysis)
 Vue.use(imageCach)
+Vue.use(preventReClick)
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
 if (process.env.VUE_APP_IS_APP === '1') {
@@ -81,11 +83,13 @@ if (process.env.VUE_APP_IS_APP === '1') {
       name: 'resume'
     }, function (ret, err) {
       FNScanner.onResume()
+      eventBus.$emit('resume', ret, err)
     })
     api.addEventListener({
       name: 'pause'
     }, function (ret, err) {
       FNScanner.onPause()
+      eventBus.$emit('pause', ret, err)
     })
     // 将API链接Vue原型，后续通过this.$APICLOUD代替window.api
     Vue.prototype.$api = window.api

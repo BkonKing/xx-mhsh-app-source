@@ -2,24 +2,44 @@
   <div class="tf-bg-white tf-body">
     <div
       class="home-header"
-      :style="[{'background': headerColor}, {'padding-top': `${$store.state.paddingTop}px`}]"
+      :style="[
+        { background: headerColor },
+        { 'padding-top': `${$store.state.paddingTop}px` }
+      ]"
     >
-      <page-nav-bar :class="{'black-page-nav': scrollStatus}" search></page-nav-bar>
+      <page-nav-bar
+        :class="{ 'black-page-nav': scrollStatus }"
+        search
+      ></page-nav-bar>
     </div>
-    <div class="tf-body-container" id="home-body-container" @scroll.passive="onScroll">
+    <div
+      class="tf-body-container"
+      id="home-body-container"
+      @scroll.passive="onScroll"
+    >
       <div
         v-if="noticeList.length"
         class="home-notice-box"
         id="home-notice-box"
-        :style="{'background': headerColor}"
+        :style="{ background: headerColor }"
       >
-        <van-notice-bar class="home-notice" left-icon="volume-o" :scrollable="false">
-          <van-swipe class="notice-swipe" vertical :autoplay="3000" :show-indicators="false">
+        <van-notice-bar
+          class="home-notice"
+          left-icon="volume-o"
+          :scrollable="false"
+        >
+          <van-swipe
+            class="notice-swipe"
+            vertical
+            :autoplay="3000"
+            :show-indicators="false"
+          >
             <van-swipe-item
               v-for="item in noticeList"
               :key="item.id"
               @click="goNotice(item)"
-            >{{item.title}}</van-swipe-item>
+              >{{ item.title }}</van-swipe-item
+            >
           </van-swipe>
         </van-notice-bar>
       </div>
@@ -30,14 +50,30 @@
         indicator-color="#fff"
         @change="swipeChange"
       >
-        <van-swipe-item v-for="(item, i) in swipeImages" :key="i" @click="$router.push(item.url)">
-          <van-image class="swipe-item__image" :src="item.img" v-imageCach="item.img" />
+        <van-swipe-item
+          v-for="(item, i) in swipeImages"
+          :key="i"
+          @click="$router.push(item.url)"
+        >
+          <van-image
+            class="swipe-item__image"
+            :src="item.img"
+            v-imageCach="item.img"
+          />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
-        <van-grid-item v-for="(item, index) in myAppList" :key="index" @click="goApp(item)">
-          <img class="app-box__image" :src="item.icon_image" v-imageCach="item.icon_image" />
-          <span class="app-box__text">{{item.application}}</span>
+        <van-grid-item
+          v-for="(item, index) in myAppList"
+          :key="index"
+          @click="goApp(item)"
+        >
+          <img
+            class="app-box__image"
+            :src="item.icon_image"
+            v-imageCach="item.icon_image"
+          />
+          <span class="app-box__text">{{ item.application }}</span>
         </van-grid-item>
         <van-grid-item key="all" to="/applist">
           <img class="app-box__image" src="@/assets/imgs/home_all.png" />
@@ -48,10 +84,17 @@
         <div class="coin-box__header">
           <div ref="sign" class="coin-box__title" @click="goHappiness">
             幸福币专区
-            <span v-if="userInfo.signin_today == '0'" class="sign-btn" @click.stop="sign">签到</span>
+            <van-button
+              v-if="userInfo.signin_today == '0'"
+              v-preventReClick
+              :loading="signLoading"
+              class="sign-btn"
+              @click.stop="sign"
+              >签到</van-button
+            >
             <span class="coin-number" v-else>
               <span class="tf-icon tf-icon-xingfubi mr10"></span>
-              <span>{{userInfo.credits}}</span>
+              <span>{{ userInfo.credits }}</span>
             </span>
           </div>
         </div>
@@ -67,7 +110,7 @@
             >
               <div class="coin-tag">
                 <span class="tf-icon tf-icon-xingfubi"></span>
-                <span>{{item.credits}}</span>
+                <span>{{ item.credits }}</span>
               </div>
             </van-image>
           </div>
@@ -80,8 +123,17 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
         <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
-          <van-swipe-item v-for="(item, i) in bargainList" :lazy-render="true" :key="i">
-            <tf-image-list :data="item" :column="3" srcKey="thumb" @click="clickSpecialSale"></tf-image-list>
+          <van-swipe-item
+            v-for="(item, i) in bargainList"
+            :lazy-render="true"
+            :key="i"
+          >
+            <tf-image-list
+              :data="item"
+              :column="3"
+              srcKey="thumb"
+              @click="clickSpecialSale"
+            ></tf-image-list>
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -91,17 +143,27 @@
           惊喜折扣限时抢
           <span class="tf-icon tf-icon-right"></span>
         </div>
-        <van-swipe class="my-swipe" :autoplay="3000" :lazy-render="true" :show-indicators="false">
+        <van-swipe
+          class="my-swipe"
+          :autoplay="3000"
+          :lazy-render="true"
+          :show-indicators="false"
+        >
           <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
-            <tf-image-list :data="item" :column="2" srcKey="thumb" @click="clickTimeLimit">
-              <template v-slot:tag="{img}">
-                <div class="price-tag">￥{{img.s_price}}</div>
+            <tf-image-list
+              :data="item"
+              :column="2"
+              srcKey="thumb"
+              @click="clickTimeLimit"
+            >
+              <template v-slot:tag="{ img }">
+                <div class="price-tag">￥{{ img.s_price }}</div>
               </template>
             </tf-image-list>
           </van-swipe-item>
         </van-swipe>
       </div>
-      <div class="community-box">
+      <div class="community-box" v-if="activityList && activityList.length">
         <div class="community-box__title" @click="goCommunity">
           社区活动
           <span class="tf-icon tf-icon-right"></span>
@@ -119,19 +181,25 @@
               v-imageCach="item.thumbnail"
             >
               <template v-slot>
-                <div class="activity-item__description">{{item.joins}}人已报名</div>
+                <div class="activity-item__description">
+                  {{ item.joins }}人已报名
+                </div>
               </template>
             </van-image>
             <div class="activity-info">
               <div class="activity-info__day">
-                <span class="tf-text">{{new Date(item.stime.replace(/-/g, '/')).getDate()}}</span>
-                <span
-                  class="font20"
-                >{{new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText}}</span>
+                <span class="tf-text">{{
+                  new Date(item.stime.replace(/-/g, '/')).getDate()
+                }}</span>
+                <span class="font20">{{
+                  new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText
+                }}</span>
               </div>
               <div class="activity-info__right">
-                <div class="activity-info__title">{{item.title}}</div>
-                <div class="activity-info__time">报名截止：{{item.jtime}}</div>
+                <div class="activity-info__title">{{ item.title }}</div>
+                <div class="activity-info__time">
+                  报名截止：{{ item.jtime }}
+                </div>
               </div>
             </div>
           </div>
@@ -157,7 +225,9 @@
               <div
                 class="front-page__text van-multi-ellipsis--l2"
                 @click="clickFront(item)"
-              >{{item.title}}</div>
+              >
+                {{ item.title }}
+              </div>
             </van-swipe-item>
           </van-swipe>
         </van-notice-bar>
@@ -167,10 +237,22 @@
     <div
       v-if="guideShow"
       @click="guideStep"
-      :class="[guideIndex > 1 ? 'end-bottom' : '', guideIndex == 1 ? 'guide-sign' : '', 'mask-bg']"
-      :style="{'padding-top': guideIndex == 1 ? guideTop+'px' : $store.state.paddingTop+'px'}"
+      :class="[
+        guideIndex > 1 ? 'end-bottom' : '',
+        guideIndex == 1 ? 'guide-sign' : '',
+        'mask-bg'
+      ]"
+      :style="{
+        'padding-top':
+          guideIndex == 1 ? guideTop + 'px' : $store.state.paddingTop + 'px'
+      }"
     >
-      <img v-show="index == guideIndex" v-for="(item,index) in guideList" :src="item" />
+      <img
+        v-show="index == guideIndex"
+        v-for="(item, index) in guideList"
+        :src="item"
+        :key="index"
+      />
     </div>
   </div>
 </template>
@@ -184,7 +266,7 @@ import {
   Image,
   NoticeBar,
   Toast,
-  Dialog
+  Button
 } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
@@ -200,6 +282,7 @@ import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
+import { bulterPermission } from '@/utils/business'
 export default {
   name: 'home',
   components: {
@@ -209,6 +292,7 @@ export default {
     [GridItem.name]: GridItem,
     [Image.name]: Image,
     [NoticeBar.name]: NoticeBar,
+    [Button.name]: Button,
     pageNavBar,
     tfImageList
   },
@@ -225,6 +309,7 @@ export default {
       creditsGoods: [], // 幸福币商品
       frontList: [],
       activityList: [],
+      signLoading: false,
       guideShow: false, // 是否显示新手引导图
       guideIndex: 0,
       guideList: [
@@ -303,7 +388,9 @@ export default {
     },
     /* 签到 */
     sign () {
+      this.signLoading = true
       signin().then((res) => {
+        this.signLoading = false
         Toast({
           message: res.message
         })
@@ -311,6 +398,8 @@ export default {
         this.mtjEvent({
           eventId: 4
         })
+      }).catch(() => {
+        this.signLoading = false
       })
     },
     /* 获取幸福币专区 */
@@ -434,34 +523,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const butlerList = [
-      'entranceIndex',
-      'noticeIndex',
-      'repairsIndex',
-      'freeserverIndex',
-      'visitorIndex',
-      'compraiseIndex',
-      'questionnaireIndex',
-      'propertyIndex',
-      'convenienceIndex',
-      'noticeDetails'
-    ]
-    if (this.userType == 0 && butlerList.indexOf(to.name) !== -1) {
-      if (this.userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {
-        next()
-        return
-      }
-      Dialog.confirm({
-        title: '提示',
-        message: '您尚未认证房间，是否去认证？',
-        confirmButtonText: '去认证'
-      }).then((res) => {
-        this.$router.push(
-          '/pages/personage/house/attestation?type=1&mode=0&select=1'
-        )
-      })
-      next(false)
-    } else {
+    bulterPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
         next(false)
@@ -470,12 +532,12 @@ export default {
         this.scrollTop = (el && el.scrollTop) || 0
         next()
       }
-    }
+    })
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .mask-bg {
   position: fixed;
   top: 0;
@@ -593,6 +655,7 @@ export default {
       height: 44px;
       background: linear-gradient(90deg, @red, @red-dark);
       border-radius: 22px;
+      border-width: 0;
       font-size: 24px;
       color: #fff;
       display: flex;
@@ -684,6 +747,7 @@ export default {
       border-radius: 10px;
       /deep/ .van-image__img {
         border-radius: 10px;
+        object-fit: cover;
       }
     }
     /deep/ .activity-item__description {
@@ -740,7 +804,7 @@ export default {
 .front-page {
   padding: 24px 30px 30px;
   height: 142px;
-  background: url("../../assets/imgs/toutiao_bg.png") no-repeat;
+  background: url('../../assets/imgs/toutiao_bg.png') no-repeat;
   background-size: contain;
   border-radius: 10px;
   .notice-swipe {
@@ -843,7 +907,7 @@ export default {
     display: flex;
     align-items: center;
     &::before {
-      content: "";
+      content: '';
       display: block;
       width: 8px;
       height: 8px;

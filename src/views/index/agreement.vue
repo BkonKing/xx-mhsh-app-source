@@ -6,8 +6,8 @@
     :border="false"
     placeholder
     left-arrow
-    @click-left='$router.go(-1)'
-  />
+    @click-left="goback"
+  ></van-nav-bar>
   <div class='tf-padding'>
     <div class="tf-text" v-html="content"></div>
   </div>
@@ -58,7 +58,16 @@ export default {
         this.title = title
         this.content = content
       })
+    },
+    goback () {
+      this.$router.go(-1)
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.content = ''
+    this.$nextTick(() => {
+      next()
+    })
   }
 }
 </script>

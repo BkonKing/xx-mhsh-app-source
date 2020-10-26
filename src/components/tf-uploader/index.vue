@@ -12,6 +12,7 @@
 <script>
 import { Uploader } from 'vant'
 import { uImages } from '@/api/user'
+import { selectFileImage } from '@/utils/util'
 export default {
   name: 'tf-uploader',
   components: {
@@ -43,9 +44,10 @@ export default {
       }
     },
     // 上传图片
-    uImages (file) {
+    async uImages (file) {
       const formData = new FormData()
-      formData.append('imgFile', file.file)
+      const newFile = await selectFileImage(file.file)
+      formData.append('imgFile', newFile)
       uImages(formData)
         .then(res => {
           file.status = 'done'

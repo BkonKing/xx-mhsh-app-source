@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import router from './router'
 import { mapGetters } from 'vuex'
+import eventBus from '@/api/eventbus'
 // import api from './api/index'
 export default {
   name: 'App',
@@ -46,11 +46,14 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
+    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex']
     api.addEventListener({
       name: 'swiperight'
     }, (ret, err) => {
-      if (this.$route.matched.length === 1) {
+      if (this.$route.matched.length === 1 && whiteList.indexOf(this.$route.name) === -1) {
         this.$router.go(-1)
+      } else {
+        eventBus.$emit('swiperight', ret, err)
       }
     })
     this.paddingTop = api.safeArea.top
@@ -144,7 +147,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: #fff;
 }
 body::-webkit-scrollbar {
   //隐藏滚动条
