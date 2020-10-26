@@ -286,8 +286,7 @@ export default {
       formData.append('imgFile', newFile)
       uImages(formData)
         .then((res) => {
-          this.avatar = res.data
-          this.editAvatar()
+          this.editAvatar(res.data)
         })
         .catch((message) => {
           Toast.clear()
@@ -295,13 +294,14 @@ export default {
         })
     },
     /* 头像上传 */
-    editAvatar () {
+    editAvatar (avatar) {
       editAvatar({
-        avatar: this.avatar
+        avatar
       })
         .then((res) => {
           // Toast.clear()
           Toast.success('头像上传成功')
+          this.avatar = avatar
         })
         .catch(() => {
           Toast.clear()
