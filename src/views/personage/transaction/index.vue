@@ -21,23 +21,30 @@
           class="transaction-tab"
           :class="{'transaction-tab--active': type === 1 }"
           @click="type = 1"
-        >待处理({{list1.length}})</div>
+        >待处理({{countObj.dcl_num}})</div>
         <div
           class="transaction-tab"
           :class="{'transaction-tab--active': type === 2 }"
           @click="type = 2"
-        >待分派({{list2.length}})</div>
+        >待分派({{countObj.dfp_num}})</div>
       </template>
       <div
         class="transaction-tab"
         :class="{'transaction-tab--active': type === 3 }"
         @click="type = 3"
-      >待结案({{list3.length}})</div>
+      >待结案({{countObj.dja_num}})</div>
       <div
         class="transaction-tab"
         :class="{'transaction-tab--active': type === 4 }"
         @click="type = 4"
-      >已结案({{list4.length}})</div>
+      >已结案({{countObj.yja_num}})</div>
+      <template v-if="userInfo.role_dep == 1">
+        <div
+          class="transaction-tab"
+          :class="{'transaction-tab--active': type === 5 }"
+          @click="type = 5"
+        >已取消({{countObj.yqx_num}})</div>
+      </template>
     </div>
     <div class="tf-body-container" @scroll.passive="scrollSticky">
       <div class="transaction-list">
@@ -71,6 +78,13 @@
           :data.sync="list4"
           :load="(params) => listLoad(params, 4)"
         ></list>
+        <list
+          v-show="type === 5"
+          ref="list5"
+          key="5"
+          :data.sync="list5"
+          :load="(params) => listLoad(params, 5)"
+        ></list>
       </div>
     </div>
   </div>
@@ -79,7 +93,7 @@
 <script>
 import { NavBar, Sticky } from 'vant'
 import list from './components/list'
-import { getDbRepairList } from '@/api/personage'
+import { getDbRepairList, getRepairCount } from '@/api/personage'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -96,6 +110,8 @@ export default {
       list2: [],
       list3: [],
       list4: [],
+      list5: [],
+      countObj: {}, // 事务统计对象
       isFixed: false,
       container: null,
       backStatus: false
@@ -112,6 +128,7 @@ export default {
     this.container = this.$refs.container
   },
   activated () {
+    this.getRepairCount()
     if (this.backStatus) {
       this.reloadAllList()
     }
@@ -120,31 +137,44 @@ export default {
     scrollSticky ({ target }) {
       this.isFixed = target.scrollTop > 0
     },
+    // 刷新所有列表
     reloadAllList () {
       if (this.userInfo.role_dep == 1) {
         this.$refs.list1.reload()
         this.$refs.list2.reload()
+        this.$refs.list5.reload()
       }
       this.$refs.list3.reload()
       this.$refs.list4.reload()
     },
+    // 列表请求数据
     listLoad (params, status) {
       params.status = status
       return getDbRepairList(params, this.userInfo.xm_project_id)
     },
+    // 报事报修待办列表
     getDbRepairList (status) {
       getDbRepairList(
         {
           status
         },
-        this.userInfo.xm_project_id
+        this.userInfo.xm_project_id // 服务人员的服务项目id
       ).then((res) => {
         this[`list${status}`] = res.data
+      })
+    },
+    // 报事报修统计事务处理
+    getRepairCount (status) {
+      getRepairCount(
+        this.userInfo.xm_project_id // 服务人员的服务项目id
+      ).then(({ data }) => {
+        this.countObj = data
       })
     }
   },
   beforeRouteEnter (to, from, next) {
     next((vm) => {
+      // 看是否从详情页返回
       vm.backStatus = from.name === 'transactionDetails'
     })
   },
@@ -185,9 +215,11 @@ export default {
 .transaction-tab-box {
   @flex();
   justify-content: space-between;
+  overflow-x: auto;
   padding: 30px;
 }
 .transaction-tab {
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -199,6 +231,9 @@ export default {
   border-width: 2px;
   border-style: solid;
   border-color: #aaa;
+}
+.transaction-tab + .transaction-tab  {
+  margin-left: 20px;
 }
 .transaction-tab--active {
   color: #fff;
@@ -232,9 +267,6 @@ export default {
 }
 .flex-start {
   justify-content: flex-start !important;
-  .transaction-tab {
-    margin-right: 20px;
-  }
 }
 .padding63 {
   padding-top: 126px;

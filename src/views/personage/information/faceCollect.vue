@@ -15,11 +15,11 @@
         </div>
         <div class="tf-text-lg tf-mt-lg tf-mb-lg">{{complete === 2 ? '您已经采集过！' : '采集成功！'}}</div>
         <div class="btn-box">
-          <van-button type="danger" size="large" @click="openCamera">重新采集</van-button>
+          <van-button type="danger" size="large" @click="getCameraPermission">重新采集</van-button>
         </div>
       </template>
       <div v-else class="btn-box">
-        <van-button type="danger" size="large" @click="openCamera">开始采集本人人脸</van-button>
+        <van-button type="danger" size="large" @click="getCameraPermission">开始采集本人人脸</van-button>
       </div>
     </div>
   </div>
@@ -29,6 +29,8 @@
 import { NavBar, Button } from 'vant'
 import { cjFace } from '@/api/personage'
 import { mapGetters } from 'vuex'
+import eventBus from '@/api/eventbus'
+import { hasPermission, reqPermission } from '@/utils/permission'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -56,8 +58,31 @@ export default {
       detail: { type: 'takePhoto' }
     })
     document.addEventListener('cameraOperate', this.cameraOperate)
+    eventBus.$on('resume', () => {
+      this.openCamera()
+    })
+    eventBus.$on('pause', () => {
+      this.cameraOperate({
+        detail: {
+          type: 'close'
+        }
+      })
+    })
   },
   methods: {
+    // 获取摄像头权限
+    getCameraPermission () {
+      const perms = hasPermission('camera')
+      if (!perms[0].granted) {
+        reqPermission('camera', ({ list }) => {
+          if (list[0].granted) {
+            this.openCamera()
+          }
+        })
+      } else {
+        this.openCamera()
+      }
+    },
     /* 打开摄像头 */
     openCamera () {
       this.FNPhotograph.openCameraView(

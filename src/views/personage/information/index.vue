@@ -300,7 +300,7 @@ export default {
         avatar: this.avatar
       })
         .then((res) => {
-          Toast.clear()
+          // Toast.clear()
           Toast.success('头像上传成功')
         })
         .catch(() => {

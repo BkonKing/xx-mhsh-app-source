@@ -207,14 +207,15 @@ export default {
     display: flex;
     position: relative;
     width: 100%;
+    height: 365px;
     line-height: 1;
     margin-bottom: 10px;
   }
   .activity-image {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: 365px;
+    object-fit: cover;
   }
   .tf-mb-sm {
     margin-bottom: 10px;

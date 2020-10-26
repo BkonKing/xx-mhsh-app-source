@@ -7,6 +7,7 @@ import * as filters from './filters'
 import txAnalysis from './directive/txAnalysis'
 import imageCach from './directive/imageCach'
 import preventReClick from './directive/preventReClick'
+import eventBus from '@/api/eventbus'
 import './styles/base.css'
 // import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
@@ -82,11 +83,13 @@ if (process.env.VUE_APP_IS_APP === '1') {
       name: 'resume'
     }, function (ret, err) {
       FNScanner.onResume()
+      eventBus.$emit('resume', ret, err)
     })
     api.addEventListener({
       name: 'pause'
     }, function (ret, err) {
       FNScanner.onPause()
+      eventBus.$emit('pause', ret, err)
     })
     // 将API链接Vue原型，后续通过this.$APICLOUD代替window.api
     Vue.prototype.$api = window.api
