@@ -11,6 +11,7 @@
 
 <script>
 import { Swipe, SwipeItem } from 'vant'
+import { sendSaveDownload } from '@/api/user'
 export default {
   components: {
     [Swipe.name]: Swipe,
@@ -43,9 +44,20 @@ export default {
     }
   },
   created () {
-    // api.addEventListener({
-    //   name: 'swiperight'
-    // }, (ret, err) => {})
+    const status = api.getPrefs({
+      sync: true,
+      key: 'downloadCountStatus'
+    })
+    if (!status) {
+      sendSaveDownload({
+        mobile_type: api.systemType,
+        app_system: api.systemVersion
+      }).then(() => {}).catch(() => {})
+    }
+    api.setPrefs({
+      key: 'downloadCountStatus',
+      value: 1
+    })
   },
   mounted () {
     const screenWidth = api.winWidth
