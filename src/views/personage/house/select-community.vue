@@ -12,33 +12,48 @@
       <van-search v-model="searchValue[step]" placeholder="请输入关键字搜索" />
       <div class="tf-body-container tf-overflow-auto">
         <transition-group tag="div" :name="transitionName">
-          <tf-list v-show="step === 0" class="tf-bg-white" key="0">
-            <tf-list-item
+          <div v-show="step === 0" class="tf-clist" key="0">
+            <div
+              class="tf-clist-box"
               v-for="(item, i) in projectList"
-              :key="i"
               v-show="item.project_name.indexOf(searchValue[0]) !== -1"
-              :title="item.project_name"
               @click="handleSelect(item)"
-            ></tf-list-item>
-          </tf-list>
-          <tf-list v-show="step === 1" class="tf-bg-white" key="1">
-            <tf-list-item
+              :key="i"
+            >
+              <div class="tf-clist-cell-left">
+                {{ item.project_name }}
+              </div>
+              <div class="tf-icon tf-icon-right"></div>
+            </div>
+          </div>
+          <div v-show="step === 1" class="tf-clist" key="1">
+            <div
+              class="tf-clist-box"
               v-for="(item, i) in buildList"
-              :key="i"
               v-show="item.unit_name.indexOf(searchValue[1]) !== -1"
-              :title="`${item.unit_name}`"
               @click="handleSelect(item)"
-            ></tf-list-item>
-          </tf-list>
-          <tf-list v-show="step === 2" class="tf-bg-white" key="2">
-            <tf-list-item
-              v-for="(item, i) in houseList"
               :key="i"
+            >
+              <div class="tf-clist-cell-left">
+                {{ item.unit_name }}
+              </div>
+              <div class="tf-icon tf-icon-right"></div>
+            </div>
+          </div>
+          <div v-show="step === 2" class="tf-clist" key="2">
+            <div
+              class="tf-clist-box"
+              v-for="(item, i) in houseList"
               v-show="item.house_name.indexOf(searchValue[2]) !== -1"
-              :title="`${activeBuild.unit_name}${item.house_name}`"
               @click="handleSelect(item)"
-            ></tf-list-item>
-          </tf-list>
+              :key="i"
+            >
+              <div class="tf-clist-cell-left">
+                {{ `${activeBuild.unit_name}${item.house_name}` }}
+              </div>
+              <div class="tf-icon tf-icon-right"></div>
+            </div>
+          </div>
         </transition-group>
       </div>
     </div>
@@ -191,16 +206,32 @@ export default {
 }
 </script>
 
-<style>
-.select-community-container .tf-clist-cell-right {
-  flex: 0;
-}
-.select-community-container .tf-clist-cell-left div {
-  width: 100%;
-}
-</style>
-
 <style lang="less" scoped>
+.tf-clist {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 0;
+  .tf-clist-box {
+    width: 100%;
+    height: 90px;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .tf-clist-cell-left {
+      display: flex;
+      align-items: center;
+      font-size: 28px;
+      flex: 1;
+    }
+    .tf-icon-right {
+      width: 26px;
+      font-size: 26px;
+      color: #aaa;
+      margin-left: 10px;
+    }
+  }
+}
 .select-community-box {
   width: 100%;
   height: 100%;

@@ -93,7 +93,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "informationForgetPaymentCode" */
         '@/views/personage/information/forget-payment-code.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 登录密码 */
   {

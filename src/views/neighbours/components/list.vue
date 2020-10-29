@@ -194,6 +194,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .user-info__left-box {
+  .tf-space-around {
+    flex: 1;
+    width: 0;
+    .user-info--name {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
 .tf-card-header {
   border-bottom: none;
   padding-bottom: 0;

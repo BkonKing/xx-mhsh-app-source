@@ -302,6 +302,7 @@ export default {
           // Toast.clear()
           Toast.success('头像上传成功')
           this.avatar = avatar
+          this.$store.dispatch('getMyAccount')
         })
         .catch(() => {
           Toast.clear()

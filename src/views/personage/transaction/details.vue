@@ -907,14 +907,19 @@ export default {
         }
       ]
       validForm(validator).then(() => {
+        Toast.loading({
+          duration: 0,
+          forbidClick: true,
+          message: '提交中...'
+        })
         const params = {
           repair_id: this.repairId,
           content: this.planContent
         }
         timeaxis(params, this.projectId).then((res) => {
-          Toast.success('进度添加成功')
           this.getRepairInfo()
           this.planShow = false
+          Toast.success('进度添加成功')
           this.mtjEvent({
             eventId: 66
           })
