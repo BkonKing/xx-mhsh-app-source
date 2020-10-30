@@ -466,10 +466,16 @@ export default {
     },
     /* 确认结案 */
     caseOverAffirm () {
+      Toast.loading({
+        duration: 0,
+        forbidClick: true,
+        message: '确认中...'
+      })
       caseOverAffirm({
         repair_id: this.repairId
       }).then((res) => {
         this.goEvaluate()
+        Toast.clear()
       })
     },
     /* 跳转评价 */
