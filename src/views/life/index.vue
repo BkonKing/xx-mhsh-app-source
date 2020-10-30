@@ -4,7 +4,7 @@
 		<div class="fixed-top" id="life-top" :style="{'top':$store.state.paddingTop+'px'}">
 			<div class="life-header">
 				<div class="header-tit flex-between">
-					<div class="font-34 font-weight">美好生活</div>
+					<div class="font-34 font-weight">美好优选</div>
 					<div class="header-right flex-align-center">
 						<div class="header-link" @click="linkFunc(6)"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
 						<div class="header-link" @click="linkFunc(1)" v-txAnalysis="{eventId: 9}"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
@@ -228,9 +228,9 @@
 	      </van-tab>
 	    </van-tabs>
     </div>
-		
+
 		<div @click="linkFunc(7)" class="cart-fixed" v-txAnalysis="{eventId: 14}"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
-		<remind-swal 
+		<remind-swal
     :show-swal="showSwal"
     :remind-tit="remindTit"
     @closeSwal="closeSwal"
@@ -278,7 +278,7 @@ export default {
     }
   },
   created () {
-  	
+
   },
   activated () {
     var cartList = api.getPrefs({sync: true, key: 'cart' }) || [];
@@ -330,7 +330,7 @@ export default {
       if(this.activeIndex == 0){
       	this.getGoodsData();
       }
-      
+
     },
     getGoodsData () {
       getClassifyGoods({
