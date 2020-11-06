@@ -23,7 +23,7 @@
 <script>
 import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
-import { NoticeBar, Swipe, SwipeItem } from 'vant'
+import { NoticeBar, Swipe, SwipeItem, Toast } from 'vant'
 import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
 import { bulterPermission } from '@/utils/business'
 import { mapGetters } from 'vuex'
@@ -86,7 +86,11 @@ export default {
     },
     // 跳转云门禁
     goEntrance () {
-      this.$router.push('/pages/butler/entrance/index')
+      if (this.ymjObj.mj_status == '0') {
+        Toast('小区暂未开放此功能')
+      } else {
+        this.$router.push('/pages/butler/entrance/index')
+      }
     }
   },
   beforeRouteLeave (to, from, next) {

@@ -101,7 +101,7 @@
               :loading="signLoading && item.task_type == 1"
               class="task-item__btn"
               v-txAnalysis="{ eventId: 48 }"
-              @click="complete(item.task_type, item.source_id)"
+              @click="complete(item)"
               >去完成</van-button
             >
           </div>
@@ -151,7 +151,8 @@ export default {
       credits: 0, // 当前幸福币
       taskList: [], // 任务列表
       creditsGoods: [], // 幸福币商品列表
-      signLoading: false // 签到按钮loading
+      signLoading: false, // 签到按钮loading
+      mj_status: true // 是否有门禁
     }
   },
   computed: {
@@ -168,6 +169,7 @@ export default {
         this.signinToday = data.signin_today
         this.taskList = data.task_list
         this.credits = data.credits
+        this.mj_status = data.mj_status
       })
     },
     /* 签到事件 */
@@ -225,7 +227,7 @@ export default {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
     /* 幸福币任务去完成跳转 */
-    complete (type, id) {
+    complete ({ task_type: type, source_id: id }) {
       switch (type) {
         case '1':
           this.signin()
@@ -236,7 +238,11 @@ export default {
           )
           break
         case '3':
-          this.authentication('/pages/butler/entrance/index')
+          if (this.mj_status == '0') {
+            Toast('小区暂未开放此功能')
+          } else {
+            this.authentication('/pages/butler/entrance/index')
+          }
           break
         default:
           this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
