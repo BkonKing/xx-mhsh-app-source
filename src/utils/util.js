@@ -291,3 +291,50 @@ function rotateImg (img, direction, canvas) {
       break
   }
 }
+
+// 百度地图获取当前地址信息
+export function bMapGetLocationInfo () {
+  return new Promise((resolve, reject) => {
+    const bMap = api.require('bMap')
+    // 初始化
+    bMap.initMapSDK((ret, err) => {
+      if (ret.status) {
+        // 获取当前是否打开定位
+        bMap.getLocationServices((ret, err) => {
+          if (ret.enable) {
+            // 获取当前地址信息（经纬度等）
+            bMap.getLocation({
+              accuracy: '100m'
+            }, (ret, err) => {
+              if (ret.status) {
+                const {
+                  lon,
+                  lat
+                } = ret
+                // 根据经纬度获取详细地址信息（省市县等）
+                bMap.getNameFromCoords({
+                  lon,
+                  lat
+                }, (ret, err) => {
+                  if (ret.status) {
+                    resolve(ret)
+                  } else {
+                    reject(err)
+                  }
+                })
+              } else {
+                reject(err)
+                console.log(err.code)
+              }
+            })
+          } else {
+            reject(err)
+            console.log('未开启定位功能！')
+          }
+        })
+      } else {
+        reject(err)
+      }
+    })
+  })
+}

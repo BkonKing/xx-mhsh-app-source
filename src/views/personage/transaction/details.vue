@@ -361,7 +361,7 @@
     >
       <template>
         <div class="plan-alert tf-mb-lg">
-          任务完成时限：{{ detailInfo.time_limit }}
+          任务完成时限：{{ detailInfo.time_rwlimit }}
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label required">

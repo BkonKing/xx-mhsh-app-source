@@ -50,7 +50,11 @@
 	</feature>
 
 	<!-- window.navigation.userAgent追加标识,识别环境。 -->
+
+	<preference name="urlScheme" value="mhshjyScheme" />
+
 	<preference name="userAgent" value="APICloud" />
+
 	<preference name="pageBounce" value="false"/>
 
 	<preference name="appBackground" value="rgba(0,0,0,0.0)"/>

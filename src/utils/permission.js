@@ -40,11 +40,9 @@ export function hasPermission (perms) {
   } else if (Array.isArray(perms)) {
     arr = perms
   }
-  console.log(JSON.stringify(arr))
   const rets = api.hasPermission({
     list: arr
   })
-  console.log(rets)
   if (!perms) {
     console.log('判断结果：' + JSON.stringify(rets))
     return

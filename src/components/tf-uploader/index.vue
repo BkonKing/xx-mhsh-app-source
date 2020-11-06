@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { Uploader } from 'vant'
+import { Uploader, Toast } from 'vant'
 import { uImages } from '@/api/user'
 import { selectFileImage } from '@/utils/util'
 export default {
@@ -56,6 +56,8 @@ export default {
         .catch(() => {
           file.status = 'failed'
           file.message = '上传失败'
+          Toast.fail('上传失败')
+          this.fileList.pop()
         })
     },
     // 删除上传图片
