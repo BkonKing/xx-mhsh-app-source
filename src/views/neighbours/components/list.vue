@@ -25,6 +25,7 @@
           <div class="tf-card">
             <div class="tf-card-header" @click="goDetails('3', item)">
               <userInfo
+                :ellipsis="true"
                 :avatar="item.avatar"
                 :name="item.nickname"
                 :time="item.ctime"
@@ -194,18 +195,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .user-info__left-box {
-  .tf-space-around {
-    flex: 1;
-    width: 0;
-    .user-info--name {
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-}
 .tf-card-header {
   border-bottom: none;
   padding-bottom: 0;
