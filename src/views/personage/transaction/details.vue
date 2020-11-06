@@ -74,10 +74,10 @@
           等待
           <span class="tf-text-orange">{{ detailInfo.designee }}</span>
           {{ sub_status | statusFilter }}
-          <template v-if="status == 4 && detailInfo.is_upload_images == 0">上传照片</template>
-          <span
-            v-if="detailInfo.time_limit"
-            class="tf-text-primary">
+          <template v-if="status == 4 && detailInfo.is_upload_images == 0"
+            >上传照片</template
+          >
+          <span v-if="detailInfo.time_limit" class="tf-text-primary">
             ({{ detailInfo.time_limit }})
           </span>
         </div>
@@ -917,10 +917,14 @@ export default {
           content: this.planContent
         }
         timeaxis(params, this.projectId).then((res) => {
-          Toast.clear()
-          this.getRepairInfo()
           this.planShow = false
-          Toast.success('进度添加成功')
+          this.getRepairInfo()
+          this.$nextTick(() => {
+            setTimeout(() => {
+              Toast.clear()
+              Toast.success('进度添加成功')
+            }, 500)
+          })
           this.mtjEvent({
             eventId: 66
           })
@@ -1091,6 +1095,7 @@ export default {
     height: 66px;
     background: #383838;
     color: #fff;
+    border: none;
   }
 }
 .tf-row-space-between /deep/ .van-radio + .van-radio {
