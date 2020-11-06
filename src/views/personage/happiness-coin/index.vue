@@ -45,7 +45,7 @@
         <div class="task-box">
           <div class="task-item" v-for="(item, i) in taskList" :key="i">
             <div class="tf-row tf-flex-item">
-              <img class="task-item__icon" v-if="item.task_type == 1" src />
+              <img class="task-item__icon" v-if="item.task_type == 1" src="@/assets/imgs/credits_sign.png" />
               <img
                 class="task-item__icon"
                 v-else-if="item.task_type == 2"

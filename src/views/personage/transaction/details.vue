@@ -917,6 +917,7 @@ export default {
           content: this.planContent
         }
         timeaxis(params, this.projectId).then((res) => {
+          Toast.clear()
           this.getRepairInfo()
           this.planShow = false
           Toast.success('进度添加成功')
