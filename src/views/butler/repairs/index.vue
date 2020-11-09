@@ -53,7 +53,13 @@
           <tf-uploader v-model="images" max-count="6"></tf-uploader>
         </div>
       </div>
-      <van-button v-preventReClick class="tf-mt-lg" color="#EB5841" size="large" @click="formSubmit">提交</van-button>
+      <van-button
+        v-preventReClick
+        class="tf-mt-lg"
+        color="#EB5841"
+        size="large"
+        @click="formSubmit"
+        >提交</van-button>
     </div>
   </div>
 </template>
@@ -70,7 +76,6 @@ import {
   swipe,
   SwipeItem
 } from 'vant'
-import tfAlert from '@/components/tf-alert/index.vue'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 import tfUploader from '@/components/tf-uploader/index'
 import { addRepair, getRepairCategoryList } from '@/api/butler.js'
@@ -78,7 +83,6 @@ import { validForm } from '@/utils/util'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    tfAlert,
     tfRadioBtn,
     tfUploader,
     [NavBar.name]: NavBar,
@@ -111,12 +115,41 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['currentProject'])
+    ...mapGetters(['currentProject', 'userInfo'])
   },
   created () {
     this.getRepairCategoryList()
   },
+  mounted () {
+    this.repairAlert()
+  },
   methods: {
+    // 当用户进入报事报修时，弹出提醒，一天一次
+    repairAlert () {
+      let statusObj =
+        api.getPrefs({
+          sync: true,
+          key: 'repairsAlert'
+        }) || {}
+      const { id } = this.userInfo
+      if (!statusObj[id] || !this.isSameDate(statusObj[id])) {
+        Dialog.alert({
+          title: '提醒',
+          message: '一天一次'
+        })
+        statusObj =
+          typeof statusObj === 'string' ? JSON.parse(statusObj) : statusObj
+        statusObj[id] = new Date().getTime()
+        api.setPrefs({
+          key: 'repairsAlert',
+          value: statusObj
+        })
+      }
+    },
+    // 是否是同一天
+    isSameDate (lastTime) {
+      return new Date(lastTime).toDateString() === new Date().toDateString()
+    },
     /* 获取报事报修类型 */
     getRepairCategoryList () {
       getRepairCategoryList().then(({ data }) => {
@@ -226,7 +259,7 @@ export default {
     font-size: 24px !important;
     &::before {
       font-family: tficonfont;
-      content: "\e85d";
+      content: '\e85d';
     }
   }
 }
