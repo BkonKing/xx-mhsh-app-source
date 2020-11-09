@@ -90,9 +90,10 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Toast } from 'vant'
+import { NavBar, Field, Button, Toast, Dialog } from 'vant'
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
+import { hasPermission, reqPermission } from '@/utils/permission'
 export default {
   components: {
     Field,
@@ -117,7 +118,26 @@ export default {
   created () {
     this.status = this.$route.query.status
   },
+  mounted () {
+    const perms = hasPermission('location')
+    if (!perms[0].granted) {
+      Dialog.confirm({
+        title: '提示',
+        message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？',
+        confirmButtonText: '去开启'
+      }).then((res) => {
+        reqPermission('location', ({ list }) => {
+          if (!list[0].granted) {
+          }
+        })
+      }).catch(() => {})
+    }
+  },
   methods: {
+    // 定位未开启提醒
+    warnLoacation () {
+      Toast('没有开启定位，可能会影响部分功能哦！')
+    },
     changeRememberPasswrod () {
       this.agree = !this.agree
     },

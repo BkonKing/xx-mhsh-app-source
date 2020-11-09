@@ -72,7 +72,10 @@ const lifeRouter = [
       import(
         /* webpackChunkName: "search" */
         '@/views/life/store/search'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   {
     path: '/life/cart',

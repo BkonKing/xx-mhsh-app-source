@@ -25,6 +25,7 @@
           <div class="tf-card">
             <div class="tf-card-header" @click="goDetails('3', item)">
               <userInfo
+                :ellipsis="true"
                 :avatar="item.avatar"
                 :name="item.nickname"
                 :time="item.ctime"

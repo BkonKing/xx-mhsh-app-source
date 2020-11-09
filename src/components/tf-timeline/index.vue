@@ -222,7 +222,7 @@ export default {
   font-size: 30px;
   text-align: left;
   color: @text-color;
-  line-height: 1;
+  // line-height: 1;
   > span {
     line-height: 1;
   }

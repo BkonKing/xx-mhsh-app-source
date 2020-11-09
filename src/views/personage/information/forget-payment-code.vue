@@ -20,11 +20,12 @@
 
 <script>
 import { NavBar, Button, Field } from 'vant'
-import { verifCode } from '@/api/user'
+import { verifCode, getMyAccount } from '@/api/user'
 import { resetPayPassword, resetPassword } from '@/api/personage.js'
 import { mapGetters } from 'vuex'
 
 export default {
+  name: 'informationForgetPaymentCode',
   components: {
     [NavBar.name]: NavBar,
     Field,
@@ -34,8 +35,10 @@ export default {
     return {
       code: '',
       codeStatus: false,
-      countDown: 59,
+      countDown: 60,
+      countCopy: 60,
       timer: null,
+      codeTime: 0,
       type: 0 // 0：登录密码 1：支付密码
     }
   },
@@ -43,16 +46,36 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created () {
-    this.verifCode()
     this.type = parseInt(this.$route.query.type)
   },
+  activated () {
+    this.isCountDown()
+  },
   methods: {
+    // 判断是否存在倒计时
+    isCountDown () {
+      getMyAccount().then((res) => {
+        if (this.codeTime) {
+          const time = this.countCopy - Math.ceil((res.timestamp - this.codeTime) / 1000)
+          if (time >= 0) {
+            this.codeTime = res.timestamp
+            this.countCopy = time
+            this.countDown = time
+            this.codeStatus = true
+            this.count()
+            return
+          }
+        }
+        this.verifCode()
+      })
+    },
     /* 获取验证码 */
     verifCode () {
       this.timer && clearTimeout(this.timer)
       verifCode({
         mobile: this.userInfo.mobile
       }).then((res) => {
+        this.codeTime = new Date(res.headers.date).getTime()
         this.codeStatus = true
         this.count()
       })
@@ -93,10 +116,12 @@ export default {
     },
     /* 验证码倒计时 */
     count () {
-      if (this.countDown === 0) {
+      if (this.countDown <= 0) {
         clearTimeout(this.timer)
-        this.countDown = 59
+        this.countDown = 60
+        this.countCopy = 60
         this.codeStatus = false
+        this.codeTime = 0
         return
       }
       this.timer = setTimeout(() => {
@@ -105,8 +130,9 @@ export default {
       }, 1000)
     }
   },
-  beforeDestroy () {
+  beforeRouteLeave (to, from, next) {
     this.timer && clearTimeout(this.timer)
+    next()
   }
 }
 </script>

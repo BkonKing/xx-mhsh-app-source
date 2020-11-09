@@ -74,10 +74,10 @@
           等待
           <span class="tf-text-orange">{{ detailInfo.designee }}</span>
           {{ sub_status | statusFilter }}
-          <template v-if="status == 4 && detailInfo.is_upload_images == 0">上传照片</template>
-          <span
-            v-if="detailInfo.time_limit"
-            class="tf-text-primary">
+          <template v-if="status == 4 && detailInfo.is_upload_images == 0"
+            >上传照片</template
+          >
+          <span v-if="detailInfo.time_limit" class="tf-text-primary">
             ({{ detailInfo.time_limit }})
           </span>
         </div>
@@ -361,7 +361,7 @@
     >
       <template>
         <div class="plan-alert tf-mb-lg">
-          任务完成时限：{{ detailInfo.time_limit }}
+          任务完成时限：{{ detailInfo.time_rwlimit }}
         </div>
         <div class="tf-form-box">
           <div class="tf-form-label required">
@@ -907,14 +907,24 @@ export default {
         }
       ]
       validForm(validator).then(() => {
+        Toast.loading({
+          duration: 0,
+          forbidClick: true,
+          message: '提交中...'
+        })
         const params = {
           repair_id: this.repairId,
           content: this.planContent
         }
         timeaxis(params, this.projectId).then((res) => {
-          Toast.success('进度添加成功')
-          this.getRepairInfo()
           this.planShow = false
+          this.getRepairInfo()
+          this.$nextTick(() => {
+            setTimeout(() => {
+              Toast.clear()
+              Toast.success('进度添加成功')
+            }, 500)
+          })
           this.mtjEvent({
             eventId: 66
           })
@@ -1085,6 +1095,7 @@ export default {
     height: 66px;
     background: #383838;
     color: #fff;
+    border: none;
   }
 }
 .tf-row-space-between /deep/ .van-radio + .van-radio {

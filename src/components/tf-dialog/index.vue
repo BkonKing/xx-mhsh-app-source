@@ -26,6 +26,7 @@
               @click="close"
             >取消</div>
             <div
+              v-preventReClick
               class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
               @click="confirm"
             >{{okText}}</div>

@@ -6,7 +6,9 @@ import {
   Toast,
   Dialog
 } from 'vant'
-import { clearUserInfo } from '@/utils/util'
+import {
+  clearUserInfo
+} from '@/utils/util'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -43,7 +45,7 @@ service.interceptors.request.use(
       sync: true,
       key: 'access_token'
     })
-
+    // 转换参数格式
     if (config.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
       config.data = qs.stringify(config.data)
     }
@@ -72,14 +74,13 @@ service.interceptors.response.use(
   async response => {
     const {
       status,
-      data: res,
+      data,
       config
     } = response
     const {
-      code
-    } = res
-
-    // if the custom code is not 20000, it is judged as an error.
+      code,
+      message
+    } = data
     if (status == 401 || code == 401) {
       Dialog.alert({
         title: '提示',
@@ -89,11 +90,11 @@ service.interceptors.response.use(
         router.push('/login')
       })
       return Promise.reject(code)
-    } else if (code != '200') {
-      Toast(res.message || codeMessage[code])
-      return Promise.reject(res || 'Error')
+    } else if (code != 200) {
+      Toast(message || codeMessage[code])
+      return Promise.reject(data || 'Error')
     } else {
-      return res
+      return config.headers.completeData ? response : data
     }
   }
 )

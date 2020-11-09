@@ -7,7 +7,11 @@ export function yzmLogin (data) {
 
 /* 发送手机验证码 */
 export function verifCode (data) {
-  return request.post('/ulogin/login/verifCode', data)
+  return request.post('/ulogin/login/verifCode', data, {
+    headers: {
+      completeData: true
+    }
+  })
 }
 
 /* 手机密码登录 */

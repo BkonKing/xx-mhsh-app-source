@@ -193,9 +193,9 @@ export default {
         this.mtjEvent({
           eventId: 74
         })
-      }).catch((message) => {
+      }).catch((err) => {
         api.alert({
-          msg: message
+          msg: err.message
         })
       })
     }

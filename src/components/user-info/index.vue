@@ -1,6 +1,11 @@
 <template>
   <div class="tf-row-space-between tf-flex-item">
-    <div :class="size ? `user-info__left-box-${size}` : 'user-info__left-box'">
+    <div
+      :class="[
+        size ? `user-info__left-box-${size}` : 'user-info__left-box',
+        { 'user-info__ellipsis': ellipsis }
+      ]"
+    >
       <img
         v-if="avatar"
         v-imageCach="avatar"
@@ -16,8 +21,8 @@
       />
       <slot name="left">
         <div class="tf-space-around">
-          <div class="user-info--name">{{name || '暂无昵称'}}</div>
-          <div v-if="time" class="user-info-time">{{time}}</div>
+          <div class="user-info--name">{{ name || '暂无昵称' }}</div>
+          <div v-if="time" class="user-info-time">{{ time }}</div>
         </div>
       </slot>
     </div>
@@ -40,12 +45,28 @@ export default {
     size: {
       type: String,
       default: ''
+    },
+    ellipsis: {
+      type: Boolean,
+      default: false
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.user-info__ellipsis.user-info__left-box {
+  .tf-space-around {
+    flex: 1;
+    width: 1px;
+    .user-info--name {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
 .user-info--name {
   font-size: 30px;
   font-weight: 500;

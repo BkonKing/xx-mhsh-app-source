@@ -14,29 +14,39 @@
       <div class="sign-box tf-row-space-between">
         <div class="tf-row-center tf-flex-item">
           <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
-          <div class="coin-number">{{credits}}</div>
+          <div class="coin-number">{{ credits }}</div>
         </div>
         <van-button
           v-preventReClick
           :loading="signLoading"
           class="sign-tag"
-          :class="{'sign-tag--complete': signinToday == '1'}"
+          :class="{ 'sign-tag--complete': signinToday == '1' }"
           @click="signIn()"
-        >{{signinToday == '1' ? '已签到' : '签到'}}</van-button>
+          >{{ signinToday == '1' ? '已签到' : '签到' }}</van-button
+        >
       </div>
     </div>
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
         <div class="function-box" @click="goScanCode(1)">
-          <img class="function-box__icon" src="@/assets/imgs/credits_saoyisao.png" />
+          <img
+            class="function-box__icon"
+            src="@/assets/imgs/credits_saoyisao.png"
+          />
           <div class="function-box__text">扫一扫</div>
         </div>
         <div class="function-box" @click="goScanCode(2)">
-          <img class="function-box__icon" src="@/assets/imgs/credits_shoukuan.png" />
+          <img
+            class="function-box__icon"
+            src="@/assets/imgs/credits_shoukuan.png"
+          />
           <div class="function-box__text">付款码</div>
         </div>
         <div class="function-box" @click="goScanCode(3)">
-          <img class="function-box__icon" src="@/assets/imgs/credits_fukuan.png" />
+          <img
+            class="function-box__icon"
+            src="@/assets/imgs/credits_fukuan.png"
+          />
           <div class="function-box__text">收款码</div>
         </div>
       </div>
@@ -45,7 +55,11 @@
         <div class="task-box">
           <div class="task-item" v-for="(item, i) in taskList" :key="i">
             <div class="tf-row tf-flex-item">
-              <img class="task-item__icon" v-if="item.task_type == 1" src />
+              <img
+                class="task-item__icon"
+                v-if="item.task_type == 1"
+                src="@/assets/imgs/credits_sign.png"
+              />
               <img
                 class="task-item__icon"
                 v-else-if="item.task_type == 2"
@@ -67,15 +81,29 @@
                 src="@/assets/imgs/credits_toupiao.png"
               />
               <div class="tf-space-between">
-                <div class="task-item__title">{{item.task_name}}</div>
+                <div class="task-item__title">{{ item.task_name }}</div>
                 <div class="tf-row">
-                  <div class="task-item__remarks">获得</div>
-                  <div class="task-item__remarks--gold">{{item.credits}}幸福币</div>
+                  <div class="task-item__remarks">
+                    {{ item.task_type | taskText }}获得
+                  </div>
+                  <div class="task-item__remarks--gold">
+                    {{ item.credits }}幸福币
+                  </div>
                 </div>
               </div>
             </div>
-            <div v-if="item.complete" class="task-item__number">+{{item.credits}}</div>
-            <div v-else class="task-item__btn" v-txAnalysis="{eventId: 48}" @click="complete(item.task_type, item.source_id)">去完成</div>
+            <div v-if="item.complete" class="task-item__number">
+              +{{ item.credits }}
+            </div>
+            <van-button
+              v-else
+              v-preventReClick
+              :loading="signLoading && item.task_type == 1"
+              class="task-item__btn"
+              v-txAnalysis="{ eventId: 48 }"
+              @click="complete(item)"
+              >去完成</van-button
+            >
           </div>
         </div>
       </template>
@@ -91,12 +119,12 @@
           @click="goCoinCommodity(item)"
         >
           <img class="commodity-image" :src="item.thumb" />
-          <div class="commodity-name">{{item.goods_name}}</div>
+          <div class="commodity-name">{{ item.goods_name }}</div>
           <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥{{item.s_price}}</div>
-            <div class="commodity-original-price">￥{{item.y_price}}</div>
+            <div class="commodity-current-price">￥{{ item.s_price }}</div>
+            <div class="commodity-original-price">￥{{ item.y_price }}</div>
           </div>
-          <div class="commodity-coin">{{item.credits}}幸福币</div>
+          <div class="commodity-coin">{{ item.credits }}幸福币</div>
         </div>
       </div>
     </div>
@@ -123,7 +151,8 @@ export default {
       credits: 0, // 当前幸福币
       taskList: [], // 任务列表
       creditsGoods: [], // 幸福币商品列表
-      signLoading: false // 签到按钮loading
+      signLoading: false, // 签到按钮loading
+      mj_status: true // 是否有门禁
     }
   },
   computed: {
@@ -140,6 +169,7 @@ export default {
         this.signinToday = data.signin_today
         this.taskList = data.task_list
         this.credits = data.credits
+        this.mj_status = data.mj_status
       })
     },
     /* 签到事件 */
@@ -154,18 +184,20 @@ export default {
     /* 签到请求 */
     signin () {
       this.signLoading = true
-      signin().then((res) => {
-        this.signLoading = false
-        Toast({
-          message: res.message
+      signin()
+        .then((res) => {
+          this.signLoading = false
+          Toast({
+            message: res.message
+          })
+          this.getCreditsAccount()
+          this.mtjEvent({
+            eventId: 4
+          })
         })
-        this.getCreditsAccount()
-        this.mtjEvent({
-          eventId: 4
+        .catch(() => {
+          this.signLoading = false
         })
-      }).catch(() => {
-        this.signLoading = false
-      })
     },
     /* 幸福币明细 */
     goCoinRecord () {
@@ -195,7 +227,7 @@ export default {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
     /* 幸福币任务去完成跳转 */
-    complete (type, id) {
+    complete ({ task_type: type, source_id: id }) {
       switch (type) {
         case '1':
           this.signin()
@@ -206,7 +238,11 @@ export default {
           )
           break
         case '3':
-          this.authentication('/pages/butler/entrance/index')
+          if (this.mj_status == '0') {
+            Toast('小区暂未开放此功能')
+          } else {
+            this.authentication('/pages/butler/entrance/index')
+          }
           break
         default:
           this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
@@ -221,11 +257,30 @@ export default {
           message: '您尚未认证房间，是否去认证？',
           confirmButtonText: '去认证'
         }).then((res) => {
-          this.$router.push('/pages/personage/house/attestation?type=1&mode=0&select=1')
+          this.$router.push(
+            '/pages/personage/house/attestation?type=1&mode=0&select=1'
+          )
         })
       } else {
         this.$router.push(url)
       }
+    }
+  },
+  filters: {
+    taskText (value) {
+      let text = '参与'
+      switch (parseInt(value)) {
+        case 1:
+          text = '每日签到'
+          break
+        case 2:
+          text = '认证成功'
+          break
+        case 3:
+          text = '首次开门'
+          break
+      }
+      return text
     }
   }
 }
@@ -372,6 +427,7 @@ export default {
   border-radius: 23px;
   font-size: 24px;
   color: #fff;
+  border: none;
 }
 .purchase-history {
   position: absolute;

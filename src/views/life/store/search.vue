@@ -1,5 +1,5 @@
 <template>
-	<div :class="[isFocus ? 'white-bg' : '','app-body']">
+	<div :class="[isFocus ? 'white-bg' : '','app-body']" id="scroll-body">
     <form>
     <div class="search-header">
       <div class="search-input-block flex-between">
@@ -34,13 +34,13 @@
       </div>
     </template>
     <template v-else>
-      <div v-if="typeVal==0" :style="{'top':$store.state.paddingTop+'px'}" class="public-nav">
+      <div v-if="typeVal==0"  class="public-nav">
         <van-tabs class="pt88" v-model="tapIndex" @click="onClickItem()">
           <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
         </van-tabs>
       </div>
       <template v-else>
-        <div class="result-more-box" :style="{'top':$store.state.paddingTop+'px'}">
+        <div class="result-more-box" >
           <div v-if="typeVal == 1" class="result-more-tit"><span class="color-222">商品</span>（{{goods_count2}}）</div>
           <div v-else-if="typeVal == 2" class="result-more-tit"><span class="color-222">帖子</span>（{{postbar_count2}}）</div>
           <!-- <div v-else class="result-more-tit"><span class="color-222">应用</span>（4）</div> -->
@@ -193,6 +193,7 @@ import tfImageList from '@/components/tf-image-list'
 import { thumbsUp } from '@/api/neighbours'
 import { getHotWords, getSearchGoods, getSearchApp, getSearchPostbar } from '@/api/life.js'
 export default {
+  name: 'search',
   components: {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
@@ -251,6 +252,11 @@ export default {
       },500)
       
     })
+  },
+  activated () {
+    if (this.scrollTop) {
+      document.getElementById('scroll-body').scrollTop = this.scrollTop
+    }
   },
   methods: {
     onLoad() {
@@ -559,6 +565,16 @@ export default {
         break;
       }
     },
+  },
+  beforeRouteLeave (to, from, next) {
+    if(to.name == 'life' || to.name == 'home'){
+      this.$destroy();
+      this.$store.commit('deleteKeepAlive',from.name);
+    }
+    const el = document.getElementById('scroll-body')
+    this.scrollTop = (el && el.scrollTop) || 0
+    console.log(this.scrollTop)
+    next();
   }
 }
 </script>
@@ -681,7 +697,7 @@ export default {
   position: fixed;
   left: 0;
   right: 0;
-  margin-top: 88px;
+  /*margin-top: 88px;*/
   z-index: 20;
 }
 .nav-empty {

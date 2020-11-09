@@ -1,6 +1,11 @@
 <template>
   <div class="tf-bg">
-    <span v-if="current !== 1" class="tf-icon tf-icon-close-circle-fill" @click="goBack"></span>
+    <span
+      v-if="current !== 1"
+      class="tf-icon tf-icon-close-circle-fill"
+      style="top: 31px;left: 16px;"
+      @click="goBack"
+    ></span>
     <div class="tab-content">
       <template v-if="current === 1"></template>
       <div class="tab-container" v-if="current === 2">
@@ -21,7 +26,12 @@
       </div>
     </div>
     <div class="tabs" id="scan-tabs">
-      <div class="tab" v-for="(item, i) in tabs" :key="i" @click="switchTab(item.value)">
+      <div
+        class="tab"
+        v-for="(item, i) in tabs"
+        :key="i"
+        @click="switchTab(item.value)"
+      >
         <div class="tab-text">{{ item.name }}</div>
         <div v-if="item.value === current" class="tab-active"></div>
       </div>
@@ -363,6 +373,7 @@ export default {
         }
       )
     },
+    // 嵌入相机页面的关闭按钮
     showClose () {
       api.openFrame({
         name: 'closebtn',
@@ -374,7 +385,7 @@ export default {
           h: 'auto',
           marginLeft: 0,
           marginRight: 0,
-          marginTop: 0,
+          marginTop: api.safeArea.top,
           marginBottom: this.footerHeight
         }
       })
@@ -423,8 +434,6 @@ export default {
 <style lang="less" scoped>
 .tf-icon {
   position: relative;
-  top: 62px;
-  left: 32px;
   font-size: 44px;
 }
 .barcode {
@@ -442,7 +451,7 @@ export default {
   margin-top: 142px;
   @flex-column();
   align-items: center;
-  background-image: url("../../../assets/imgs/fukuan_bg.png");
+  background-image: url('../../../assets/imgs/fukuan_bg.png');
   background-size: contain;
 }
 .tab-title {

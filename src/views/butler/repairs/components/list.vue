@@ -12,13 +12,13 @@
         <div class="repair-list__content" @click="goDetails(item)">{{item.content}}</div>
         <div class="repair-list__footer">
           <van-button
-            v-if="item.sub_status == 9"
+            v-if="(item.sub_status == 9 || item.sub_status == 11) && !item.is_evaluate"
             class="repair-list__btn"
             size="small"
             @click="goEvaluate(item.id)"
           >评价</van-button>
           <van-button
-            v-else-if="item.sub_status == 8"
+            v-else-if="(item.sub_status == 8 || item.sub_status == 11) && !item.is_confirm"
             class="repair-list__btn"
             size="small"
             type="danger"
