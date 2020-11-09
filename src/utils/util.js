@@ -1,10 +1,10 @@
-import Vue from 'vue'
 import store from '../store'
 import EXIF from 'exif-js'
 import {
   Toast,
   ImagePreview
 } from 'vant'
+import { bindAliasAndTags } from '@/utils/ajpush'
 
 export function getDate (time) {
   const date = time || new Date()
@@ -75,14 +75,7 @@ export function imagePreview (options) {
 
 export function clearUserInfo () {
   if (process.env.VUE_APP_IS_APP === '1') {
-    const ajParams = {
-      alias: 0
-    }
-    Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-      if (ret && ret.statusCode) {
-        // alert(ret)
-      }
-    })
+    bindAliasAndTags(0)
   }
   const userId = store.getters.userInfo.id
   if (userId) {

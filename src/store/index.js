@@ -22,6 +22,7 @@ import {
   clearUserInfo,
   bMapGetLocationInfo
 } from '@/utils/util'
+import { bindAliasAndTags } from '@/utils/ajpush'
 
 Vue.use(Vuex)
 
@@ -167,14 +168,7 @@ const store = {
                 data
               } = res
               if (process.env.VUE_APP_IS_APP === '1') {
-                const ajParams = {
-                  alias: data.id
-                }
-                Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-                  if (ret && ret.statusCode) {
-                    // alert(ret)
-                  }
-                })
+                bindAliasAndTags(data.id)
               }
               api.setPrefs({
                 key: 'access_token',
