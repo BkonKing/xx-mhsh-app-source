@@ -24,7 +24,7 @@
               class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
               style="margin-right: 30px;"
               @click="close"
-            >取消</div>
+            >{{cancleText}}</div>
             <div
               v-preventReClick
               class="tf-dialog-footer__btn tf-dialog-footer__btn--orange"
@@ -55,6 +55,10 @@ export default {
     okText: {
       type: String,
       default: '确定'
+    },
+    cancleText: {
+      type: String,
+      default: '取消'
     },
     showFotter: {
       type: Boolean,
