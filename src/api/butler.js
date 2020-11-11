@@ -84,6 +84,11 @@ export function addRepair (data, HouseId) {
   })
 }
 
+// 获取报事报修温馨提示
+export function getTipsInfo () {
+  return request.get('/butler/repair/getTipsInfo')
+}
+
 // 报事报修类型
 export function getRepairCategoryList (params) {
   return request.get('/butler/repair/getRepairCategoryList', {

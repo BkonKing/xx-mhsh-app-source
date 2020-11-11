@@ -21,7 +21,8 @@
         background="rgba(249,134,107,0.2)"
         :scrollable="false"
         @click="goProgress()"
-      >您有正在进行的报事报修，点击查看进度</van-notice-bar>
+        >您有正在进行的报事报修，点击查看进度</van-notice-bar
+      >
       <div class="tf-card">
         <div class="tf-card-header">选择类型</div>
         <div class="tf-card-content" style="padding-bottom: 10px;">
@@ -59,8 +60,20 @@
         color="#EB5841"
         size="large"
         @click="formSubmit"
-        >提交</van-button>
+        >提交</van-button
+      >
     </div>
+    <tfDialog
+      v-model="dialog"
+      title="温馨提示"
+      okText="知道了"
+      cancleText="联系物业"
+      :showFotter="true"
+      @confirm="dialog = false"
+      @closed="$router.push('/pages/butler/call-property/index')"
+    >
+      <div class="tf-text" v-html="tip.replace(/\r\n/g, '<br/>')"></div>
+    </tfDialog>
   </div>
 </template>
 
@@ -76,15 +89,17 @@ import {
   swipe,
   SwipeItem
 } from 'vant'
-import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
+import tfRadioBtn from '@/components/tf-radio-btn/index'
 import tfUploader from '@/components/tf-uploader/index'
-import { addRepair, getRepairCategoryList } from '@/api/butler.js'
+import tfDialog from '@/components/tf-dialog/index'
+import { addRepair, getRepairCategoryList, getTipsInfo } from '@/api/butler.js'
 import { validForm } from '@/utils/util'
 import { mapGetters } from 'vuex'
 export default {
   components: {
     tfRadioBtn,
     tfUploader,
+    tfDialog,
     [NavBar.name]: NavBar,
     [Uploader.name]: Uploader,
     [Button.name]: Button,
@@ -107,11 +122,13 @@ export default {
       length: 140,
       placeholder: '欢迎反馈任何意见和问题,您的反馈也是我们产品的动力哦',
       limitNum: 6,
+      dialog: false,
       uploadFileUrl: '', // 替换成你的后端接收文件地址
       name: '', // 上传的名字
       header: {
         // 如果需要header，请上传
-      }
+      },
+      tip: ''
     }
   },
   computed: {
@@ -119,8 +136,6 @@ export default {
   },
   created () {
     this.getRepairCategoryList()
-  },
-  mounted () {
     this.repairAlert()
   },
   methods: {
@@ -133,10 +148,7 @@ export default {
         }) || {}
       const { id } = this.userInfo
       if (!statusObj[id] || !this.isSameDate(statusObj[id])) {
-        Dialog.alert({
-          title: '提醒',
-          message: '一天一次'
-        })
+        this.getTipsInfo()
         statusObj =
           typeof statusObj === 'string' ? JSON.parse(statusObj) : statusObj
         statusObj[id] = new Date().getTime()
@@ -149,6 +161,13 @@ export default {
     // 是否是同一天
     isSameDate (lastTime) {
       return new Date(lastTime).toDateString() === new Date().toDateString()
+    },
+    // 获取报事报修温馨提示
+    getTipsInfo () {
+      getTipsInfo().then(({ data }) => {
+        this.tip = data
+        this.dialog = true
+      })
     },
     /* 获取报事报修类型 */
     getRepairCategoryList () {
