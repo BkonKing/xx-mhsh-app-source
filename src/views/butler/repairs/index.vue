@@ -143,17 +143,17 @@ export default {
     repairAlert () {
       let statusObj =
         api.getPrefs({
-          sync: true,
-          key: 'repairsAlert'
+          key: 'repairs_alert',
+          sync: true
         }) || {}
+      statusObj =
+        typeof statusObj === 'string' ? JSON.parse(statusObj) : statusObj
       const { id } = this.userInfo
       if (!statusObj[id] || !this.isSameDate(statusObj[id])) {
         this.getTipsInfo()
-        statusObj =
-          typeof statusObj === 'string' ? JSON.parse(statusObj) : statusObj
         statusObj[id] = new Date().getTime()
         api.setPrefs({
-          key: 'repairsAlert',
+          key: 'repairs_alert',
           value: statusObj
         })
       }
