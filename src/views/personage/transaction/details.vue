@@ -139,7 +139,7 @@
         </template>
       </div>
     </template>
-    <template v-else-if="userInfo.department_id == '6'">
+    <template v-else-if="this.status < 4 && userInfo.department_id == '6'">
       <div class="operation-box brand-department">
         <div class="operation-content">
           等待
