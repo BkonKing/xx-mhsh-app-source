@@ -19,7 +19,7 @@
               </template>
             </tf-list-item>
           </van-uploader>
-          <tf-list-item border title="昵称" :showArrow="false">
+          <tf-list-item border title="昵称" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="nickname" class="tf-input" @change="setNickname" maxlength="15" />
             </template>
@@ -59,7 +59,7 @@
           </tf-list-item>
         </tf-list>
         <tf-list class="basics-list">
-          <tf-list-item border title="姓名" :showArrow="false">
+          <tf-list-item border title="姓名" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="realname" class="tf-input" @change="setRealname" />
             </template>

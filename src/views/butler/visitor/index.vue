@@ -56,12 +56,12 @@
               </tf-picker>
             </template>
           </tf-list-item>
-          <tf-list-item border title="同行人数" :showArrow="false">
+          <tf-list-item border title="同行人数" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="form.num" type="number" class="tf-input" />
             </template>
           </tf-list-item>
-          <tf-list-item title="来访目的" :showArrow="false">
+          <tf-list-item title="来访目的" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="form.remark" class="tf-input" />
             </template>

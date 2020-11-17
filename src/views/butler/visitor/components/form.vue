@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tf-list-item border title="访客姓名" :showArrow="false" :required="true">
+    <tf-list-item border title="访客姓名" :showArrow="false" :required="true" :IFocusStatus="true">
       <template v-slot:right>
         <input v-model="realname" class="tf-input" />
       </template>
@@ -20,12 +20,12 @@
         </tf-picker>
       </template>
     </tf-list-item>
-    <tf-list-item border title="手机号" :showArrow="false">
+    <tf-list-item border title="手机号" :showArrow="false" :IFocusStatus="true">
       <template v-slot:right>
         <input v-model="mobile" type="number" class="tf-input" />
       </template>
     </tf-list-item>
-    <tf-list-item title="车牌号" :showArrow="false">
+    <tf-list-item title="车牌号" :showArrow="false" :IFocusStatus="true">
       <template v-slot:right>
         <input v-model="car_number" class="tf-input" />
       </template>
