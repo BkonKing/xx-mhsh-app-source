@@ -35,48 +35,6 @@
         <div>暂无地址</div>
       </div>
     </van-list>
-    <div v-show="false" class="address-list">
-      <div class="address-item" @click="selectFunc(5)">
-        <div class="address-label flex-center">
-          <!-- <div class="font-24 color-fff">家</div> -->
-          <!-- <van-icon class="van-icon" name="location-o" size="36px" color="#fff" /> -->
-          <img class="label-icon" src="https://bht.liwushijian.com/library/img/xcx_img/address_05.png" />
-        </div>
-        <div class="address-info">
-          <div class="address-user flex-align-center">
-            <div class="address-name"><div class="color-222 font-30 p-nowrap">旅途旅途旅途旅途旅途旅途</div></div>
-            <div class="address-tel"><div class="color-222 font-30">15860069682</div></div>
-          </div>
-          <div class="address-detail flex-align-center">
-            <div class="address-default">默认</div>
-            <div class="default-detail-text color-8f8f94 font-24 p-nowrap">福建省福州市仓山区下渡街道三盛滨江国三盛滨江国</div>
-          </div>
-        </div>
-        <div class="address-link flex-align-center" data-eventid="10" data-url="">
-          <img class="address-edit-icon" src="@/assets/img/edit_01.png" />
-        </div>
-        <div class="address-line"></div>
-      </div>
-			<div class="address-item">
-			  <div class="address-label flex-center">
-			    <div class="font-24 color-fff">公司</div>
-			    <!-- <img class="label-icon" src="https://bht.liwushijian.com/library/img/xcx_img/address_05.png" /> -->
-			  </div>
-			  <div class="address-info">
-			    <div class="address-user flex-align-center">
-			      <div class="address-name"><div class="color-222 font-30 p-nowrap">旅途</div></div>
-			      <div class="address-tel"><div class="color-222 font-30">15860069682</div></div>
-			    </div>
-			    <div class="address-detail flex-align-center">
-			      <div class="address-detail-text color-8f8f94 font-24 p-nowrap">福建省福州市仓山区下渡街道三盛滨江国三盛滨江国</div>
-			    </div>
-			  </div>
-			  <div class="address-link flex-align-center" @click="linkFunc(24,{id:2})">
-			    <img class="address-edit-icon" src="@/assets/img/edit_01.png" />
-			  </div>
-			  <div class="address-line"></div>
-			</div>
-    </div>
 		<div class="fixed-submit-empty"></div>
 		<div class="submit-fixed-buttom">
 			<div class="submit-btn" @click="linkFunc(23)">
@@ -132,7 +90,7 @@ export default {
       }).then(res => {
         if (res.success) {
           if(res.data){
-            console.log(getArea('福建省福州市仓山区下渡街道三盛滨江国三盛滨江国'))
+            console.log(getArea('新疆维吾尔自治区和田地区和田县'))
             for(let i=0;i<res.data.length;i++){
               res.data[i].address_name = getArea(res.data[i].address_detail)+res.data[i].address_name;
             }
