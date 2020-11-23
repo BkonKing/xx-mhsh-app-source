@@ -140,19 +140,44 @@ export function getArea (str) {
     area.City = str.substring(index11 + 1, index2 + 1)
   } else {
     if (index11 == 0) {
-      area.City = str.substring(index1 + 1, index2 + 1)
+      if (index2 > index11) {
+        area.City = str.substring(index1 + 1, index2 + 1)
+      }
     } else {
-      area.City = str.substring(index11 + 3, index2 + 1)
+      if (index2 > index11) {
+        area.City = str.substring(index11 + 3, index2 + 1)
+      }
     }
   }
 
   let index3 = str.lastIndexOf('区')
   if (index3 == -1) {
     index3 = str.indexOf('县')
-    area.Country = str.substring(index2 + 1, index3 + 1)
+    if (index3 > 0) {
+      if (index2 > index1 && index2 > index11) {
+        area.Country = str.substring(index2 + 1, index3 + 1)
+      } else {
+        if (index11) {
+          area.Country = str.substring(index11 + 3, index3 + 1)
+        } else {
+          area.Country = str.substring(index1 + 1, index3 + 1)
+        }
+      }
+    }
   } else {
-    area.Country = str.substring(index2 + 1, index3 + 1)
+    if (index3 > index2 && index3 > index11 + 2 && index11 !== -1) {
+      if (index2 > index11 && index2 > index1) {
+        area.Country = str.substring(index2 + 1, index3 + 1)
+      } else {
+        if (index2 <= index11) {
+          area.Country = str.substring(index11 + 3, index3 + 1)
+        }else {
+          area.Country = str.substring(index1 + 1, index3 + 1)
+        }
+      }
+    }
   }
+  console.log(area.Province, area.City, area.Country)
   return area.Province + area.City + area.Country
 }
 
