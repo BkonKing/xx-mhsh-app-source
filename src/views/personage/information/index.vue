@@ -402,12 +402,7 @@ export default {
     },
     /* 跳转收货地址 */
     goAddress () {
-      this.$router.push({
-        path: '/address/list',
-        query: {
-          isSelect: 1
-        }
-      })
+      this.$router.push('/address/list')
       // this.$router.push('/pages/personage/information/address')
     },
     /* 跳转手机验证 */
