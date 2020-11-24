@@ -288,11 +288,9 @@ export default {
       });
        
     },
-    clickItem(index){
-      // this.bMap.close();
-      //传递一个map，chooseAddress是key，id是value
-      eventBus.$emit('chooseMap',JSON.stringify(this.searchList[index]));
-      //调用router回退页面
+    clickItem (index) {
+      this.$store.commit('setMap_info', this.searchList[index])
+      // 调用router回退页面
       this.$router.go(-1);
     }
   },

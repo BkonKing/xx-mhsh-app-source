@@ -42,7 +42,9 @@ const store = {
     paddingTop: 0,
     paddingBottom: 0,
     otherAgreement: null,
-    temporaryType: undefined
+    temporaryType: undefined,
+    mobile_info: '',
+    map_info: ''
   },
   mutations: {
     setUser_info (state, value) {
@@ -107,6 +109,12 @@ const store = {
     },
     setTemporaryType (state, value) {
       state.temporaryType = value
+    },
+    setMobile_info (state, value) {
+      state.mobile_info = value
+    },
+    setMap_info (state, value) {
+      state.map_info = value
     }
   },
   getters: {
@@ -156,6 +164,10 @@ const store = {
             streetName: ret.streetName// 字符串类型；街道名
           }
           const newParams = { ...locationInfo, ...params }
+          api.setPrefs({
+            key: 'location_info',
+            value: locationInfo
+          })
           toLogin(newParams)
         }).catch(() => {
           toLogin(params)

@@ -163,7 +163,8 @@ export default {
       ulongitude: '', // 纬度
       key_word: '附近',
       qqmapkey: '',
-      markHidden: true
+      markHidden: true,
+      mapVal: ''
     }
   },
   // onLoad(options) {
@@ -172,57 +173,56 @@ export default {
   // 		this.addrId = options.addrId;
   // 	}
   // },
-  created() {
+  created () {
     this.addrId = this.$route.query.id
+    this.mapVal = api.require('bMap')
     if (this.addrId) {
       this.titName = "编辑地址"
       this.getData()
     } else {
       this.titName = "添加地址"
     }
-    eventBus.$off('chooseMap')
   },
-  mounted () {
-    var that = this
-    // 根据key名获取传递回来的参数，data就是map
-    eventBus.$on('chooseMap', function (data) {
-      var addressData = JSON.parse(data)
-      var map = api.require('bMap')
-      map.getNameFromCoords({
-        lon: addressData.lon,
-        lat: addressData.lat
-      }, function (ret, err) {
-        if (ret.status) {
-          const qzAddress = getArea(addressData.address)
-          const cityArr = ['北京市', '天津市', '上海市', '重庆市']
-          let flag = 0
-          cityArr.forEach(item => {
-            if (qzAddress.indexOf(item) !== -1) {
-              flag = 1
-            }
-          })
-          if (!qzAddress) {
-            addressData.address = (ret.province === ret.city ? ret.province + addressData.address : ret.province + ret.city + addressData.address)
-          } else {
-            if (qzAddress.indexOf('自治区') === -1 && qzAddress.indexOf('省') === -1) {
-              if (flag === 0) {
-                addressData.address = ret.province + addressData.address
-              }
-            }
-          }
-          // alert(JSON.stringify(ret))
-        }
-        that.address_name = addressData.name
-        that.address_detail = addressData.address
-        that.lng = addressData.lon
-        that.lat = addressData.lat
-        this.isAble()
-      })
-      // this.city = addressData.city;
-      // alert(data);
-    }.bind(this))
+  activated () {
+    this.getMap()
   },
   methods: {
+    getMap () {
+      const that = this
+      const addressData = that.$store.state.map_info || ''
+      if (addressData) {
+        that.mapVal.getNameFromCoords({
+          lon: addressData.lon,
+          lat: addressData.lat
+        }, function (ret, err) {
+          if (ret.status) {
+            const qzAddress = getArea(addressData.address)
+            const cityArr = ['北京市', '天津市', '上海市', '重庆市']
+            let flag = 0
+            cityArr.forEach(item => {
+              if (qzAddress.indexOf(item) !== -1) {
+                flag = 1
+              }
+            })
+            if (!qzAddress) {
+              addressData.address = (ret.province === ret.city ? ret.province + addressData.address : ret.province + ret.city + addressData.address)
+            } else {
+              if (qzAddress.indexOf('自治区') === -1 && qzAddress.indexOf('省') === -1) {
+                if (flag === 0) {
+                  addressData.address = ret.province + addressData.address
+                }
+              }
+            }
+            // alert(JSON.stringify(ret))
+          }
+          that.address_name = addressData.name
+          that.address_detail = addressData.address
+          that.lng = addressData.lon
+          that.lat = addressData.lat
+          that.isAble()
+        })
+      }
+    },
     /**
 		 * 获取姓名
 		*/
@@ -447,11 +447,12 @@ export default {
   beforeRouteLeave (to, from, next) {
     // eventBus.$off('chooseMap');
     // console.log(this.$route);
-    if(to.name == 'addressList'){
-      this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+    if (to.name == 'addressList') {
+      this.$store.commit('setMap_info', '')
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
     }
-    next();
+    next()
   }
 }
 </script>
