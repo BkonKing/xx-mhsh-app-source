@@ -44,6 +44,7 @@ import { NavBar, Toast } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import tfDialog from '@/components/tf-dialog/index.vue'
+import { updateStatisticsData } from '@/utils/analysis.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -173,6 +174,7 @@ export default {
         this.mtjEvent({
           eventId: 80
         })
+        updateStatisticsData(4)
       })
     }
   }

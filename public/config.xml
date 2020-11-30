@@ -18,12 +18,20 @@
 
 	<access origin="*" />
 
+	<!-- wxPlus -->
+	<feature name="wxPlus">
+		<param name="urlScheme" value="wx7245d2cb43a093db"/>
+		<param name="apiKey" value="wx7245d2cb43a093db"/>
+		<param name="apiSecret" value="AppSecret:4dabc3fd50b31a55129a7437248f5343"/>
+		<param name="universalLink" value="https://live.tosolomo.com"/>
+	</feature>
+
 	<!-- wxPayPlus -->
 	<feature name="wxPayPlus">
-		<param name="urlScheme" value="wxd0d84bbf23b4a0e4"/>
-		<param name="apiKey" value="wxd0d84bbf23b4a0e4"/>
-		<param name="apiSecret" value="a354f72aa1b4c2b8eaad137ac81434cd"/>
-		<param name="universalLink" value="https://bjtest.apicloud.com"/>
+		<param name="urlScheme" value="wx7245d2cb43a093db"/>
+		<param name="apiKey" value="wx7245d2cb43a093db"/>
+		<param name="apiSecret" value="AppSecret:4dabc3fd50b31a55129a7437248f5343"/>
+		<param name="universalLink" value="https://live.tosolomo.com"/>
 	</feature>
 
 	<!-- 支付宝支付 -->
@@ -51,7 +59,7 @@
 
 	<!-- window.navigation.userAgent追加标识,识别环境。 -->
 
-	<preference name="urlScheme" value="mhshjyScheme" />
+	<preference name="urlScheme" value="mhshjyscheme" />
 
 	<preference name="userAgent" value="APICloud" />
 

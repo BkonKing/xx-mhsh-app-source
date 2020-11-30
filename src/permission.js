@@ -4,6 +4,8 @@ import Vue from 'vue'
 import {
   Toast
 } from 'vant'
+import { pagesArr } from './const/pages.js'
+import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
 
 const whiteList = ['/login', '/agreement', '/openingPage']
 
@@ -15,10 +17,19 @@ router.beforeEach(async (to, from, next) => {
       Vue.prototype.bdmtj.onPageEnd({
         pageName: fromPageName
       })
+      // 页面统计-离开更新
+      updateStatisticsData(2, {'page_id': pagesArr[fromPageName]})
+    } else {
+      // 应用启动新增
+      setStatisticsData(6, {'type': 1, 'page_id': pagesArr[toPageName]})
+      // 启动数据录入
+      setStatisticsData(1)
     }
     Vue.prototype.bdmtj.onPageStart({
       pageName: toPageName
     })
+    // 页面统计-进入新增
+    setStatisticsData(2, {'page_id': pagesArr[toPageName]})
   }
 
   // Toast.loading({

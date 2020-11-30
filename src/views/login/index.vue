@@ -94,6 +94,7 @@ import { NavBar, Field, Button, Toast, Dialog } from 'vant'
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
 import { hasPermission, reqPermission } from '@/utils/permission'
+import { setStatisticsData } from '@/utils/analysis.js'
 export default {
   components: {
     Field,
@@ -195,6 +196,8 @@ export default {
           this.mtjEvent({
             eventId: 1
           })
+          // 登入新增
+          setStatisticsData(4, {'mobile': this.mobile})
         }).catch(() => {
           this.loginLoading = false
         })

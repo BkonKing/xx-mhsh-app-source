@@ -21,6 +21,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import eventBus from '@/api/eventbus'
+import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
+import { pagesArr } from './const/pages.js'
 // import api from './api/index'
 export default {
   name: 'App',
@@ -30,7 +32,8 @@ export default {
       keepAlive: [],
       historyList: [],
       paddingTop: 0,
-      paddingBottom: 0
+      paddingBottom: 0,
+      mobile_info: {}
     }
   },
   computed: {
@@ -62,6 +65,18 @@ export default {
     this.$store.commit('setPaddingBottom', this.paddingBottom)
     // 递归路由设置KeepAlive  ***** 注意路由name必须和组件内的name一致 *****
     // this.setRouteKeepAlive(router.options.routes)
+    // 应用升级
+    setStatisticsData(5)
+    // 应用从后台回到前台事件/进入应用
+    eventBus.$on('resume', () => {
+      setStatisticsData(1)
+      setStatisticsData(6, {'type': 1, 'page_id': pagesArr[this.$route.name]})
+    })
+    // 应用进入后台事件/离开应用
+    eventBus.$on('pause', () => {
+      updateStatisticsData(1)
+      setStatisticsData(6, {'type': 2, 'page_id': pagesArr[this.$route.name]})
+    })
   },
   methods: {
     setRouteKeepAlive (routes) {
