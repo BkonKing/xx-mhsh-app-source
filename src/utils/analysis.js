@@ -30,7 +30,7 @@ export function setStatisticsData (type_val, params = '') {
 	  }
 	  let data_obj15 = {
 	    'equipment_number': mobile_info.deviceModel,
-	    'brand': mobile_info.deviceName,
+	    'brand': mobile_info.systemType === 'ios' ? 'iphone' : mobile_info.deviceName,
 			'os': mobile_info.systemType + mobile_info.systemVersion,
 			'networking_mode': mobile_info.connectionType,
 			'ip': '0.0.0.0',
