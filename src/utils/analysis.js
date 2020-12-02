@@ -32,7 +32,7 @@ export function setStatisticsData (type_val, params = '') {
 	    'equipment_number': mobile_info.deviceModel,
 	    'brand': mobile_info.systemType === 'ios' ? 'iphone' : mobile_info.deviceName,
 			'os': mobile_info.systemType + mobile_info.systemVersion,
-			'networking_mode': mobile_info.connectionType,
+			'networking_mode': mobile_info.connectionType.toLowerCase(),
 			'ip': '0.0.0.0',
 			'channel': mobile_info.systemType === 'android' ? 'AndroidChannel' : 'iOSChannel',
 			'resolving_power': mobile_info.screenWidth + '*' + mobile_info.screenHeight,
