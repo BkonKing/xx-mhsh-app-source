@@ -105,7 +105,7 @@
               >
                 <img
                   class="manage-image"
-                  src="@/assets/imgs/personage_daichuli.png"
+                  src="@/assets/imgs/personage_daichuli.svg"
                 />
                 <div class="text-sm">待处理</div>
                 <span v-if="userInfo.dcl_num" class="personage-badge">{{
@@ -115,7 +115,7 @@
               <div class="manage-box" @click="goTransaction(2)">
                 <img
                   class="manage-image"
-                  src="@/assets/imgs/personage_daifenpai.png"
+                  src="@/assets/imgs/personage_daifenpai.svg"
                 />
                 <div class="text-sm">待分派</div>
                 <span v-if="userInfo.dfp_num" class="personage-badge">{{
@@ -130,7 +130,7 @@
               >
                 <img
                   class="manage-image"
-                  src="@/assets/imgs/personage_daijiean.png"
+                  src="@/assets/imgs/personage_daijiean.svg"
                 />
                 <div class="text-sm">待结案</div>
                 <span v-if="userInfo.dja_num" class="personage-badge">{{
@@ -140,7 +140,7 @@
               <div class="manage-box" @click="goTransaction(4)">
                 <img
                   class="manage-image"
-                  src="@/assets/imgs/personage_yijiean.png"
+                  src="@/assets/imgs/personage_yijiean.svg"
                 />
                 <div class="text-sm">已结案</div>
               </div>
