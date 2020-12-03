@@ -134,7 +134,7 @@ module.exports = {
         }
       },
       '/api': {
-        target: 'https://live.tosolomo.com/app/api/v1',
+        target: 'https://test.tosolomo.com/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }
