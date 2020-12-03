@@ -26,7 +26,15 @@
           placeholder="验证码"
         >
           <template #button>
-            <div class="tf-text-white" v-if="codeStatus">{{ countDown }}s</div>
+            <van-count-down
+              v-if="codeStatus"
+              :time="countDownTime"
+              @finish="countFinish"
+            >
+              <template #default="timeData">
+                <span class="tf-text-white">{{ timeData.seconds }}s</span>
+              </template>
+            </van-count-down>
             <van-button v-else class="query-btn" @click="verifCode"
               >获取</van-button
             >
@@ -55,7 +63,6 @@
       :loading="loginLoading"
       class="login-btn"
       @click="login"
-      v-txAnalysis="1"
       >登 录</van-button
     >
     <span
@@ -90,7 +97,7 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Toast, Dialog } from 'vant'
+import { NavBar, Field, Button, Toast, Dialog, CountDown } from 'vant'
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
 import { hasPermission, reqPermission } from '@/utils/permission'
@@ -99,6 +106,7 @@ export default {
   components: {
     Field,
     [Button.name]: Button,
+    [CountDown.name]: CountDown,
     [NavBar.name]: NavBar
   },
   data () {
@@ -110,8 +118,7 @@ export default {
       agree: true, // 同意协议
       showPassword: false,
       codeStatus: false,
-      countDown: 59,
-      timer: null,
+      countDownTime: 60000,
       status: 0,
       loginLoading: false
     }
@@ -126,12 +133,14 @@ export default {
         title: '提示',
         message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？',
         confirmButtonText: '去开启'
-      }).then((res) => {
-        reqPermission('location', ({ list }) => {
-          if (!list[0].granted) {
-          }
+      })
+        .then(res => {
+          reqPermission('location', ({ list }) => {
+            if (!list[0].granted) {
+            }
+          })
         })
-      }).catch(() => {})
+        .catch(() => {})
     }
   },
   methods: {
@@ -183,7 +192,7 @@ export default {
           type: this.login_type,
           params
         })
-        .then((data) => {
+        .then(data => {
           this.loginLoading = false
           this.$router.replace({
             name: 'home'
@@ -197,8 +206,9 @@ export default {
             eventId: 1
           })
           // 登入新增
-          setStatisticsData(4, {'mobile': this.mobile})
-        }).catch(() => {
+          setStatisticsData(4, { mobile: this.mobile })
+        })
+        .catch(() => {
           this.loginLoading = false
         })
     },
@@ -206,24 +216,15 @@ export default {
     verifCode () {
       verifCode({
         mobile: this.mobile
-      }).then((res) => {
+      }).then(res => {
         Toast.success('验证码发送成功，请注意查收')
         this.codeStatus = true
-        this.count()
       })
     },
-    /* 验证码倒计时 */
-    count () {
-      if (this.countDown === 0) {
-        clearTimeout(this.timer)
-        this.countDown = 59
-        this.codeStatus = false
-        return
-      }
-      this.timer = setTimeout(() => {
-        this.countDown--
-        this.count()
-      }, 1000)
+    /* 倒计时结束 */
+    countFinish () {
+      this.countDownTime = 60000
+      this.codeStatus = false
     }
   }
 }
@@ -244,7 +245,7 @@ export default {
   flex-direction: column;
   align-items: center;
   background-color: #333;
-  background-image: url('../../assets/imgs/login_bg.png');
+  background-image: url("../../assets/imgs/login_bg.png");
   .van-nav-bar__arrow {
     position: fixed;
     left: 20px;

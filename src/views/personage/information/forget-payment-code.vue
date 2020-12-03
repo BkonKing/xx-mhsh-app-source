@@ -1,15 +1,31 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-body-container">
       <div class="tf-text-lg tf-center">我们已经发送了验证码到你的手机</div>
-      <div class="tf-h3 tf-center">{{userInfo.mobile}}</div>
+      <div class="tf-h3 tf-center">{{ userInfo.mobile }}</div>
       <div class="tf-phone-input-box tf-row-space-between">
         <div class="tf-phone-input-label">验证码</div>
         <Field v-model="code" class="form-input width300" type="digit">
           <template #button>
-            <div class="tf-phone-code-btn" v-if="codeStatus">{{countDown}}s</div>
-            <button v-else class="tf-phone-code-btn" @click="verifCode">获取验证码</button>
+            <van-count-down
+              v-if="codeStatus"
+              :time="countDownTime"
+              @finish="countFinish"
+            >
+              <template #default="timeData">
+                <div class="tf-phone-code-btn">{{ timeData.seconds }}s</div>
+              </template>
+            </van-count-down>
+            <button v-else class="tf-phone-code-btn" @click="verifCode">
+              获取验证码
+            </button>
           </template>
         </Field>
       </div>
@@ -19,7 +35,7 @@
 </template>
 
 <script>
-import { NavBar, Button, Field } from 'vant'
+import { NavBar, Button, Field, CountDown } from 'vant'
 import { verifCode, getMyAccount } from '@/api/user'
 import { resetPayPassword, resetPassword } from '@/api/personage.js'
 import { mapGetters } from 'vuex'
@@ -27,6 +43,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'informationForgetPaymentCode',
   components: {
+    [CountDown.name]: CountDown,
     [NavBar.name]: NavBar,
     Field,
     [Button.name]: Button
@@ -35,9 +52,8 @@ export default {
     return {
       code: '',
       codeStatus: false,
-      countDown: 60,
+      countDownTime: 60000,
       countCopy: 60,
-      timer: null,
       codeTime: 0,
       type: 0 // 0：登录密码 1：支付密码
     }
@@ -54,15 +70,15 @@ export default {
   methods: {
     // 判断是否存在倒计时
     isCountDown () {
-      getMyAccount().then((res) => {
+      getMyAccount().then(res => {
         if (this.codeTime) {
-          const time = this.countCopy - Math.ceil((res.timestamp - this.codeTime) / 1000)
+          const time =
+            this.countCopy - Math.ceil((res.timestamp - this.codeTime) / 1000)
           if (time >= 0) {
             this.codeTime = res.timestamp
             this.countCopy = time
-            this.countDown = time
+            this.countDownTime = time * 1000
             this.codeStatus = true
-            this.count()
             return
           }
         }
@@ -71,13 +87,11 @@ export default {
     },
     /* 获取验证码 */
     verifCode () {
-      this.timer && clearTimeout(this.timer)
       verifCode({
         mobile: this.userInfo.mobile
-      }).then((res) => {
+      }).then(res => {
         this.codeTime = new Date(res.headers.date).getTime()
         this.codeStatus = true
-        this.count()
       })
     },
     /* 下一步验证 */
@@ -89,7 +103,7 @@ export default {
       resetPayPassword({
         mobile: this.userInfo.mobile,
         yzm: this.code
-      }).then((res) => {
+      }).then(res => {
         this.$router.push({
           path: '/pages/personage/information/payment-code',
           query: {
@@ -104,7 +118,7 @@ export default {
       resetPassword({
         mobile: this.userInfo.mobile,
         yzm: this.code
-      }).then((res) => {
+      }).then(res => {
         this.$router.push({
           path: '/pages/personage/information/login-password',
           query: {
@@ -114,24 +128,13 @@ export default {
         })
       })
     },
-    /* 验证码倒计时 */
-    count () {
-      if (this.countDown <= 0) {
-        clearTimeout(this.timer)
-        this.countDown = 60
-        this.countCopy = 60
-        this.codeStatus = false
-        this.codeTime = 0
-        return
-      }
-      this.timer = setTimeout(() => {
-        this.countDown--
-        this.count()
-      }, 1000)
+    /* 倒计时结束 */
+    countFinish () {
+      this.countDownTime = 60000
+      this.codeStatus = false
     }
   },
   beforeRouteLeave (to, from, next) {
-    this.timer && clearTimeout(this.timer)
     next()
   }
 }
