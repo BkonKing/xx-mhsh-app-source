@@ -65,11 +65,11 @@
 
 	<preference name="pageBounce" value="false"/>
 
-	<preference name="appBackground" value="rgba(0,0,0,0.0)"/>
+	<preference name="appBackground" value="#ffffff"/>
 
-	<preference name="windowBackground" value="rgba(0,0,0,0.0)"/>
+	<preference name="windowBackground" value="#ffffff"/>
 
-	<preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>
+	<preference name="frameBackgroundColor" value="#ffffff"/>
 
 	<preference name="hScrollBarEnabled" value="false"/>
 
@@ -104,6 +104,10 @@
 	<permission name="hardware" />
 
 	<preference name="softInputMode" value="resize"/>  
+
+	<preference name="useWKWebView" value="true"/>
+
+	<preference name="WKWebViewRecoveryMode" value="rebootApp"/>
 
 </widget>
 
