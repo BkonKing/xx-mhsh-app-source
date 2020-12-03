@@ -19,6 +19,16 @@ const personageRouter = [
         '@/views/personage/setting/account.vue'
       )
   },
+  /* 关于我们 */
+  {
+    path: '/pages/personage/setting/about',
+    name: 'settingAbout',
+    component: () =>
+      import(
+        /* webpackChunkName: "settingAbout" */
+        '@/views/personage/setting/about.vue'
+      )
+  },
   /* 个人资料 */
   {
     path: '/pages/personage/information/index',
