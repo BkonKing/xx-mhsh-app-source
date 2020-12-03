@@ -29,7 +29,22 @@
           </div>
         </template>
       </tf-date-time-picker>
-      <div class="pay-list"></div>
+      <div class="pay-list">
+        <div class="pay-item" @click="goPayDetail">
+          <div class="pay-item-left">
+            <div class="pay-item-title">水费</div>
+            <div class="pay-item-time">2020-06-06 12:12:12</div>
+          </div>
+          <div class="pay-item-right">-100</div>
+        </div>
+        <div class="pay-item">
+          <div class="pay-item-left">
+            <div class="pay-item-title">水费</div>
+            <div class="pay-item-time">2020-06-06 12:12:12</div>
+          </div>
+          <div class="pay-item-right">-100</div>
+        </div>
+      </div>
     </div>
     <!-- </template>
     </refreshList> -->
@@ -59,6 +74,12 @@ export default {
       const len = this.repairList.length
       const id = len && params.pages !== 1 ? this.repairList[len - 1].id : ''
       return id
+    },
+    // 跳转缴费详情页
+    goPayDetail () {
+      this.$router.push({
+        name: ''
+      })
     }
   }
 }
@@ -72,8 +93,11 @@ export default {
     font-size: 34px;
     color: #222;
     font-weight: 600;
+    margin-left: 16px;
   }
   .record-paynum {
+    display: flex;
+    align-items: center;
     font-size: 24px;
     color: #8f8f94;
   }
@@ -81,5 +105,28 @@ export default {
 .pay-list {
   background: #ffffff;
   border-radius: 10px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  .pay-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 145px;
+    padding: 0 30px;
+    &-title {
+      font-size: 30px;
+    }
+    &-time {
+      font-size: 24px;
+      color: @gray-7;
+      margin-top: 10px;
+    }
+    &-right {
+      font-size: 38px;
+    }
+  }
+  .pay-item + .pay-item {
+    border-top: 1px solid @divider-color;
+  }
 }
 </style>
