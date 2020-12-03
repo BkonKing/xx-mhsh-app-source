@@ -78,7 +78,7 @@ export default {
     // 跳转缴费详情页
     goPayDetail () {
       this.$router.push({
-        name: ''
+        name: 'livePayRecordDetail'
       })
     }
   }
