@@ -273,6 +273,16 @@ const butlerRouter = [
         /* webpackChunkName: "livePayRecordDetail" */
         '@/views/butler/live-pay/record-detail.vue'
       )
+  },
+  /* 费用详情 */
+  {
+    path: '/pages/butler/live-pay/cost-detail',
+    name: 'livePayCostDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayCostDetail" */
+        '@/views/butler/live-pay/cost-detail.vue'
+      )
   }
 ]
 

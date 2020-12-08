@@ -40,7 +40,7 @@
         >
           <template>
             <div class="selected-date">
-              {{ date || "选择日期时间" }}
+              {{ date || "选择日期" }}
               <span class="tf-icon tf-icon-caret-down"></span>
             </div>
             <div class="pay-info">
@@ -49,7 +49,7 @@
           </template>
         </tf-date-time-picker>
         <ul class="pay-list-container">
-          <li class="pay-list-item">
+          <li class="pay-list-item" @click="goCostDetail">
             <div class="pay-list-item-left">
               <span class="pay-type-icon tf-icon"></span>
               <span class="pay-title">水费</span>
@@ -127,7 +127,17 @@ export default {
       })
     },
     // 跳转生活缴费列表页
-    goLivePayList () {},
+    goLivePayList () {
+      this.$router.push({
+        name: 'livePayRecord'
+      })
+    },
+    // 跳转费用详情
+    goCostDetail () {
+      this.$router.push({
+        name: 'livePayCostDetail'
+      })
+    },
     // 跳转缴费页面
     goPay () {
       this.$router.push({

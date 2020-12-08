@@ -22,7 +22,7 @@
         <div class="month-text">十一月</div>
         <div class="unpay-number">待缴费￥88.3</div>
         <ul class="pay-list-container">
-          <li class="pay-list-item">
+          <li class="pay-list-item" @click="goCostDetail">
             <van-checkbox
               class="pay-checkbox"
               checked-color="#EB5841"
@@ -71,7 +71,14 @@ export default {
       checked: false
     }
   },
-  methods: {}
+  methods: {
+    // 跳转费用详情
+    goCostDetail () {
+      this.$router.push({
+        name: 'livePayCostDetail'
+      })
+    }
+  }
 }
 </script>
 

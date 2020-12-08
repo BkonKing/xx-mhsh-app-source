@@ -92,42 +92,42 @@
         </div>
       </div>
       <div class="functional-box">
-        <div v-if="userInfo.swrole == 1" class="module-box">
-          <div class="module-title">事务处理</div>
-          <div class="tf-padding-base">
-            <div
-              v-if="userInfo.role_dep == 1"
-              class="tf-row manage-border-bottom"
-            >
-              <div
-                class="manage-box manage-border-right"
-                @click="goTransaction(1)"
-              >
-                <img
-                  class="manage-image"
-                  src="@/assets/imgs/personage_daichuli.svg"
-                />
-                <div class="text-sm">待处理</div>
-                <span v-if="userInfo.dcl_num" class="personage-badge">{{
-                  userInfo.dcl_num
-                }}</span>
-              </div>
-              <div class="manage-box" @click="goTransaction(2)">
-                <img
-                  class="manage-image"
-                  src="@/assets/imgs/personage_daifenpai.svg"
-                />
-                <div class="text-sm">待分派</div>
-                <span v-if="userInfo.dfp_num" class="personage-badge">{{
-                  userInfo.dfp_num
-                }}</span>
-              </div>
-            </div>
-            <div class="tf-row">
-              <div
-                class="manage-box manage-border-right"
-                @click="goTransaction(3)"
-              >
+        <div v-if="userInfo.swrole == 1" class="tansaction-box">
+          <div class="tansaction-header">
+            <div class="tansaction-title">报事报修</div>
+            <div class="tansaction-btn">事务处理 ></div>
+          </div>
+          <div
+            class="tf-row"
+            :style="{
+              'justify-content':
+                userInfo.role_dep == 1 ? 'space-between' : 'space-around'
+            }"
+          >
+            <template v-if="1">
+              <template v-if="userInfo.role_dep == 1">
+                <div class="manage-box" @click="goTransaction(1)">
+                  <img
+                    class="manage-image"
+                    src="@/assets/imgs/personage_daichuli.svg"
+                  />
+                  <div class="text-sm">待处理</div>
+                  <span v-if="userInfo.dcl_num" class="personage-badge">{{
+                    userInfo.dcl_num
+                  }}</span>
+                </div>
+                <div class="manage-box" @click="goTransaction(2)">
+                  <img
+                    class="manage-image"
+                    src="@/assets/imgs/personage_daifenpai.svg"
+                  />
+                  <div class="text-sm">待分派</div>
+                  <span v-if="userInfo.dfp_num" class="personage-badge">{{
+                    userInfo.dfp_num
+                  }}</span>
+                </div>
+              </template>
+              <div class="manage-box" @click="goTransaction(3)">
                 <img
                   class="manage-image"
                   src="@/assets/imgs/personage_daijiean.svg"
@@ -144,7 +144,26 @@
                 />
                 <div class="text-sm">已结案</div>
               </div>
-            </div>
+            </template>
+            <template v-if="false">
+              <div class="manage-box" @click="goTransaction(6)">
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_weichaodianbiao.svg"
+                />
+                <div class="text-sm">未抄电表</div>
+              </div>
+              <div class="manage-box" @click="goTransaction(5)">
+                <img
+                  class="manage-image"
+                  src="@/assets/imgs/personage_weichaoshuibiao.svg"
+                />
+                <div class="text-sm">未抄水表</div>
+                <span v-if="userInfo.dja_num" class="personage-badge">{{
+                  userInfo.dja_num
+                }}</span>
+              </div>
+            </template>
           </div>
         </div>
         <div class="module-box">
@@ -300,18 +319,20 @@ export default {
     sign () {
       if (this.userInfo.signin_today === '0') {
         this.signLoading = true
-        signin().then((res) => {
-          this.signLoading = false
-          Toast({
-            message: res.message
+        signin()
+          .then(res => {
+            this.signLoading = false
+            Toast({
+              message: res.message
+            })
+            this.$store.dispatch('getMyAccount')
+            this.mtjEvent({
+              eventId: 4
+            })
           })
-          this.$store.dispatch('getMyAccount')
-          this.mtjEvent({
-            eventId: 4
+          .catch(() => {
+            this.signLoading = false
           })
-        }).catch(() => {
-          this.signLoading = false
-        })
       } else {
         // 已签到，弹出签到日历
         this.showCalendar = true
@@ -476,14 +497,6 @@ export default {
   background-color: #f2f2f4;
   color: #8f8f94;
 }
-.manage-box {
-  position: relative;
-  flex: 1;
-  height: 144px;
-  @flex-column();
-  justify-content: center;
-  align-items: center;
-}
 .personage-list {
   width: 710px;
   background-color: #fff;
@@ -559,5 +572,50 @@ export default {
 .van-info {
   top: 24px;
   right: 22px;
+}
+.tansaction-box {
+  padding: 30px 30px 40px;
+  margin-bottom: 30px;
+  background: #ffdfac;
+  border-radius: 10px;
+  .tansaction-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .tansaction-title {
+    font-size: 30px;
+    font-weight: 600;
+    color: #021214;
+  }
+  .tansaction-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    border: 1px solid #ff5240;
+    border-radius: 20px;
+    font-size: 24px;
+    color: #ff5240;
+  }
+  .tf-row {
+    margin-top: 30px;
+    .manage-box {
+      position: relative;
+      width: 138px;
+      height: 144px;
+      @flex-column();
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      border-radius: 8px;
+    }
+    .personage-badge {
+      top: -10px;
+      right: -10px;
+      background: #eb5841;
+      color: #fff;
+    }
+  }
 }
 </style>
