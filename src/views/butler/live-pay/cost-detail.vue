@@ -13,60 +13,60 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container pay-cost-detail">
-      <div class="tf-icon"></div>
-      <div class="pay-title">水费</div>
+      <div class="tf-icon" :class="payInfo.type | payTypeIcon"></div>
+      <div class="pay-title">{{payInfo.type | payTypeText}}</div>
       <div class="pay-detail">
         <div class="pay-header">
           <div class="pay-number-box">
             <div class="pay-number-label">应交金额</div>
-            <div class="pay-number">100.00</div>
+            <div class="pay-number">￥{{payInfo.unPayNum}}</div>
           </div>
-          <div class="penal-sum">(含违约金10.00元)</div>
+          <div v-if="payInfo.penalSum" class="penal-sum">(含违约金{{payInfo.penalSum}}元)</div>
         </div>
         <div class="pay-info-container">
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费小区
             </div>
-            <div class="pay-info-content">x美好生活家园 5栋1单元1001</div>
+            <div class="pay-info-content">{{payInfo.community}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费户号
             </div>
-            <div class="pay-info-content">123456789(*小华)</div>
+            <div class="pay-info-content">{{payInfo.buildingNum}}</div>
           </div>
         </div>
       </div>
       <div class="pay-detail pay-padding">
-        <div class="pay-info-box">
+        <div class="pay-info-box" v-if="payInfo.biaohao">
           <div class="pay-info-label">
             表号
           </div>
-          <div class="pay-info-content">987654321000</div>
+          <div class="pay-info-content">{{payInfo.biaohao}}</div>
         </div>
         <div class="pay-info-box">
           <div class="pay-info-label">
             属期
           </div>
-          <div class="pay-info-content">2020-10-01 ~ 2020-10-31</div>
+          <div class="pay-info-content">{{payInfo.shuqi}}</div>
         </div>
-        <div class="pay-info-box">
+        <div class="pay-info-box" v-if="payInfo.shiyong">
           <div class="pay-info-label">
             使用
           </div>
-          <div class="pay-info-content">150(单位)</div>
+          <div class="pay-info-content">{{payInfo.shiyong}}</div>
         </div>
         <tf-image-list
-          v-if="images.length"
+          v-if="payInfo.images && payInfo.images.length"
           class="pay-images"
-          :data="images"
+          :data="payInfo.images"
           :column="5"
           mode="show"
         ></tf-image-list>
       </div>
     </div>
-    <div class="tf-padding">
+    <div v-if="payInfo.unPayNum > 0" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="goPay"
         >缴费</van-button
       >
@@ -76,6 +76,7 @@
 
 <script>
 import { NavBar, Button } from 'vant'
+import filters from './filters'
 import tfImageList from '@/components/tf-image-list'
 export default {
   name: 'livePayCostDetail',
@@ -86,19 +87,46 @@ export default {
   },
   data () {
     return {
-      images: [
-        'https://test.tosolomo.com/upload/image/20200822/thumb_300_600_20200822135602_56310.png'
-      ]
+      houseId: '',
+      id: '',
+      payInfo: {
+        type: 0,
+        unPayNum: 100,
+        penalSum: 10,
+        community: 'xx美好生活家园  5栋1单元1001',
+        buildingNum: '123456789(*小华)',
+        biaohao: '987654321000',
+        shuqi: '2020-10-01 ~ 2020-10-31',
+        shiyong: '150(单位)',
+        images: [
+          'https://test.tosolomo.com/upload/image/20200822/thumb_300_600_20200822135602_56310.png'
+        ]
+      }
     }
   },
+  created () {
+    this.id = this.$route.query.id
+    this.houseId = this.$route.query.houseId
+  },
   methods: {
+    // 跳转缴费页面
+    goPay () {
+      this.$router.push({
+        name: 'livePayPay',
+        query: {
+          houseId: this.houseId,
+          id: this.id
+        }
+      })
+    },
     // 跳转生活缴费列表页
     goLivePayList () {
       this.$router.push({
         name: 'livePayRecord'
       })
     }
-  }
+  },
+  filters
 }
 </script>
 
@@ -108,11 +136,10 @@ export default {
   align-items: center;
   padding: 50px 20px 0;
   .tf-icon {
-    font-size: 98px;
+    font-size: 90px;
   }
   .pay-title {
     font-size: 30px;
-    margin-top: 9px;
   }
   .pay-info-container {
     padding: 30px 0;

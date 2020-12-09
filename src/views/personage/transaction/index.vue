@@ -422,4 +422,7 @@ export default {
     display: none;
   }
 }
+/deep/ .van-sticky--fixed {
+  top: 85px;
+}
 </style>

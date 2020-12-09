@@ -248,6 +248,9 @@ const butlerRouter = [
   {
     path: '/pages/butler/live-pay/pay',
     name: 'livePayPay',
+    meta: {
+      keepAlive: true
+    },
     component: () =>
       import(
         /* webpackChunkName: "livePayPay" */

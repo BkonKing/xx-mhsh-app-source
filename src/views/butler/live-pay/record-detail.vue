@@ -10,8 +10,8 @@
     >
     </van-nav-bar>
     <div class="pay-record-detail">
-      <div class="tf-icon"></div>
-      <div class="pay-title">水费</div>
+      <div class="tf-icon" :class="payInfo.type | payTypeIcon"></div>
+      <div class="pay-title">{{payInfo.type | payTypeText}}</div>
       <div class="pay-detail">
         <div class="pay-number">-￥100</div>
         <div class="pay-info-container">
@@ -19,37 +19,37 @@
             <div class="pay-info-label">
               缴费小区
             </div>
-            <div class="pay-info-content">x美好生活家园 5栋1单元1001</div>
+            <div class="pay-info-content">{{payInfo.community}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费户号
             </div>
-            <div class="pay-info-content">123456789(*小华)</div>
+            <div class="pay-info-content">{{payInfo.buildingNum}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               账单月份
             </div>
-            <div class="pay-info-content">2020-10</div>
+            <div class="pay-info-content">{{payInfo.yuefen}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费属期
             </div>
-            <div class="pay-info-content">2020-10-01 ~ 2020-10-31</div>
+            <div class="pay-info-content">{{payInfo.community}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费单号
             </div>
-            <div class="pay-info-content">54304165401320303</div>
+            <div class="pay-info-content">{{payInfo.danhao}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费时间
             </div>
-            <div class="pay-info-content">2020-00-00 00:00:00</div>
+            <div class="pay-info-content">{{payInfo.shijian}}</div>
           </div>
         </div>
       </div>
@@ -59,15 +59,38 @@
 
 <script>
 import { NavBar } from 'vant'
+import filters from './filters'
 export default {
   name: 'livePayRecordDetail',
   components: {
     [NavBar.name]: NavBar
   },
   data () {
-    return {}
+    return {
+      id: '',
+      payInfo: {
+        type: 0,
+        unPayNum: 100,
+        penalSum: 10,
+        community: 'xx美好生活家园  5栋1单元1001',
+        buildingNum: '123456789(*小华)',
+        biaohao: '987654321000',
+        shuqi: '2020-10-01 ~ 2020-10-31',
+        shiyong: '150(单位)',
+        yuefen: '2020-10',
+        danhao: '54304165401320303',
+        shijian: '2020-00-00 00:00:00',
+        images: [
+          'https://test.tosolomo.com/upload/image/20200822/thumb_300_600_20200822135602_56310.png'
+        ]
+      }
+    }
   },
-  methods: {}
+  created () {
+    this.id = this.$route.query.id
+  },
+  methods: {},
+  filters
 }
 </script>
 

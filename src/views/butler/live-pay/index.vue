@@ -14,7 +14,7 @@
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="house-dropdown">
-        <van-dropdown-menu @change="handleChange">
+        <van-dropdown-menu @change="houseChange">
           <van-dropdown-item
             v-model="selectedHouse"
             :disabled="houseList.length < 2"
@@ -23,56 +23,68 @@
         </van-dropdown-menu>
       </div>
       <van-notice-bar
+        v-if="payInfo.total > 0"
         class="swiper-nav"
         left-icon="warning"
         mode="link"
         background="rgba(249,134,107,0.2)"
         :scrollable="false"
-        >还需缴费￥300（本月￥200，往月￥100)</van-notice-bar
+        @click="goPay"
+      >
+        还需缴费￥{{ payInfo.total }}（
+        {{ payInfo.current ? `&nbsp;本月￥${payInfo.current}` : "" }}
+        {{ payInfo.last ? `&nbsp;往月￥${payInfo.last}` : "" }}
+        ）</van-notice-bar
       >
       <div class="pay-container">
-        <tf-date-time-picker
-          class="date-time-box"
-          type="year-month"
-          v-model="date"
-          title="选择时间"
-          :max-date="new Date()"
-        >
-          <template>
-            <div class="selected-date">
-              {{ date || "选择日期" }}
-              <span class="tf-icon tf-icon-caret-down"></span>
-            </div>
-            <div class="pay-info">
-              费用共￥300 已缴费￥200 待缴费￥200
-            </div>
-          </template>
-        </tf-date-time-picker>
-        <ul class="pay-list-container">
-          <li class="pay-list-item" @click="goCostDetail">
-            <div class="pay-list-item-left">
-              <span class="pay-type-icon tf-icon"></span>
-              <span class="pay-title">水费</span>
-            </div>
-            <div class="pay-list-item-right">
-              <div class="pay-number">￥200</div>
-              <div class="pay-status">已缴费</div>
-            </div>
-          </li>
-          <li class="pay-list-item">
-            <div class="pay-list-item-left">
-              <span class="pay-type-icon tf-icon"></span>
-              <span class="pay-title">水费</span>
-            </div>
-            <div class="pay-list-item-right">
-              <div class="pay-number">￥200</div>
-              <div class="pay-status">已缴费</div>
-            </div>
-          </li>
-        </ul>
+        <template v-for="(item, index) in payList">
+          <tf-date-time-picker
+            class="date-time-box"
+            type="year-month"
+            v-model="item.date"
+            title="选择时间"
+            :key="index"
+            :max-date="new Date()"
+            :formatter="formatterDate"
+          >
+            <template>
+              <div class="selected-date">
+                {{ item.date | dateText }}
+                <span class="tf-icon tf-icon-caret-down"></span>
+              </div>
+              <div class="pay-info">
+                费用共￥{{ item.total }}
+                {{ item.payNum ? `&nbsp;已缴费￥${item.payNum}` : "" }}
+                {{ item.unPayNum ? `&nbsp;待缴费￥${item.unPayNum}` : "" }}
+              </div>
+            </template>
+          </tf-date-time-picker>
+          <ul class="pay-list-container" :key="`ul${index}`">
+            <li
+              v-for="(li, index) in item.list"
+              class="pay-list-item"
+              @click="goCostDetail(li)"
+              :key="index"
+            >
+              <div class="pay-list-item-left">
+                <span
+                  class="pay-type-icon tf-icon"
+                  :class="li.type | payTypeIcon"
+                ></span>
+                <span class="pay-title">{{ li.type | payTypeText }}</span>
+              </div>
+              <div class="pay-list-item-right">
+                <div class="pay-number" :style="{color: li.payStatus ? '#222' : '#EB5841'}">￥{{ li.number }}</div>
+                <div class="pay-status">
+                  {{ li.payStatus ? "已缴费" : "待缴费" }}
+                </div>
+              </div>
+            </li>
+          </ul>
+        </template>
       </div>
     </div>
-    <div class="tf-padding">
+    <div v-if="payInfo.total > 0" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="goPay"
         >缴费</van-button
       >
@@ -84,6 +96,7 @@
 import { NavBar, DropdownMenu, DropdownItem, NoticeBar, Button } from 'vant'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import { yzHouse } from '@/api/personage'
+import filters from './filters'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
@@ -99,7 +112,8 @@ export default {
     return {
       selectedHouse: 0,
       houseList: [],
-      date: ''
+      payInfo: {},
+      payList: [] // 待缴费列表
     }
   },
   computed: {
@@ -107,45 +121,113 @@ export default {
   },
   created () {
     this.getHouseList()
-    const date = new Date()
-    this.date = `${date.getFullYear()}年${date.getMonth() + 1}月`
   },
   methods: {
-    /* 获取业主房产信息 */
+    // 获取业主房产信息,默认选中当前房屋
     getHouseList () {
       yzHouse().then(res => {
         let data = res.data || []
         data = data.map(obj => {
           const { project_name, fc_info, house_id } = obj
           return {
-            text: `${project_name}${fc_info}`,
+            text: `${project_name} ${fc_info}`,
             value: house_id
           }
         })
         this.houseList = data
         this.selectedHouse = this.currentProject.house_id
+        this.getPayInfo()
       })
     },
-    // 跳转生活缴费列表页
+    houseChange () {
+      this.getPayInfo()
+    },
+    // 获取当前房屋下的缴费信息
+    getPayInfo () {
+      this.payInfo = {
+        total: 1000,
+        current: 200,
+        last: 300
+      }
+      this.payList = [
+        {
+          date: 1606780800000,
+          total: 500,
+          payNum: 200,
+          unPayNum: 300,
+          list: [
+            {
+              id: 0,
+              type: 0,
+              payStatus: 1,
+              number: 200
+            },
+            {
+              id: 1,
+              type: 1,
+              payStatus: 0,
+              number: 300
+            }
+          ]
+        },
+        {
+          date: 1604188800000,
+          total: 500,
+          payNum: 200,
+          unPayNum: 300,
+          list: [
+            {
+              id: 2,
+              type: 0,
+              payStatus: 1,
+              number: 200
+            },
+            {
+              id: 3,
+              type: 1,
+              payStatus: 0,
+              number: 300
+            }
+          ]
+        }
+      ]
+    },
+    // 日期选择formatter
+    formatterDate (type, val) {
+      if (type === 'month') {
+        return `${val}月`
+      } else if (type === 'year') {
+        return `${val}年`
+      }
+      return val
+    },
+    // 跳转生活缴费记录页面
     goLivePayList () {
       this.$router.push({
         name: 'livePayRecord'
       })
     },
     // 跳转费用详情
-    goCostDetail () {
+    goCostDetail ({ id }) {
       this.$router.push({
-        name: 'livePayCostDetail'
+        name: 'livePayCostDetail',
+        query: {
+          id,
+          houseId: this.selectedHouse
+        }
       })
     },
     // 跳转缴费页面
     goPay () {
       this.$router.push({
-        name: 'livePayPay'
+        name: 'livePayPay',
+        query: {
+          houseId: this.selectedHouse
+        }
       })
-    },
-    handleChange () {}
-  }
+    }
+  },
+  filters: filters
 }
 </script>
 
@@ -159,13 +241,14 @@ export default {
 }
 .swiper-nav {
   height: 66px;
-  margin: 40px 20px 0;
+  margin: 30px 20px 0;
   border-radius: 10px;
   /deep/ .van-notice-bar__left-icon {
     margin-right: 10px;
   }
   /deep/ .van-notice-bar__content {
     color: #eb5841;
+    font-size: 24px;
   }
   .notice-swipe {
     height: 66px;
@@ -175,7 +258,7 @@ export default {
   }
   /deep/ .van-icon-arrow {
     font-size: 24px !important;
-    margin-right: 10px;
+    margin-right: 0;
     &::before {
       font-family: tficonfont;
       content: "\e85d";
@@ -197,7 +280,7 @@ export default {
       &:after {
         margin-top: -10px;
         border-width: 8px;
-        border-color: transparent transparent #aaa #aaa;
+        border-color: transparent transparent #383838 #383838;
       }
     }
     .van-dropdown-item__option {
@@ -219,7 +302,8 @@ export default {
   .pay-list-container {
     width: 100%;
     padding: 10px 30px;
-    margin-top: 38px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     background: #ffffff;
     border-radius: 10px;
     .pay-list-item {
