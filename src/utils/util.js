@@ -378,7 +378,7 @@ export function downloadPic (picUrl, name) {
   return new Promise((resolve, reject) => {
     api.download({
       url: picUrl,
-      savePath: 'fs://' + name + '.jpg',
+      savePath: 'fs://' + name + '.png',
       report: false,
       cache: true,
       allowResume: false

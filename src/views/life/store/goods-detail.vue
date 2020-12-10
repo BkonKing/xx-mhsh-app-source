@@ -108,7 +108,7 @@
                   </div>
                 </div>
                 <div v-if="item.is_pay" class="collage-item-right">
-                  <div class="collage-btn yq-btn">邀请好友</div>
+                  <div @click="shareShow=true" class="collage-btn yq-btn">邀请好友</div>
                   <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
                 </div>
                 <div v-else class="collage-item-right">
@@ -469,6 +469,13 @@ export default {
         }
         
       })
+    },
+    // 监听 this.$route.query
+    '$route.query': function (newVal, oldVal) {
+      this.goodsId = newVal.id
+      this.f_orderid = newVal.f_id || ''
+      this.getNum()
+      this.getData()
     }
   },
   methods: {
@@ -509,7 +516,7 @@ export default {
         title: title,
         description: description,
         pyqTitle: pyqTitle,
-        thumb: data ? 'fs://' + data + '.jpg' : '',
+        thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl: contentUrl
       }
     },
@@ -589,18 +596,6 @@ export default {
       this.is_collage = type && type == 'collage' ? true : false;
       this.btn_type = type && (type == 'buy'||type == 'collage'||type == 'flash') ? 'buy' : 'cart';
       this.f_id = f_orderid ? f_orderid : '';
-      // if(this.infoData.goods_type == 3){
-      //   this.goods.s_price = this.skuList[this.typeVal].o_price;
-      //   this.goods.pay_price = this.skuList[this.typeVal].o_price;
-      //   if(this.is_collage){
-      //     if(this.infoData.ollage_info.is_start == 1){
-      //       this.goods.s_price = this.skuList[this.typeVal].p_price;
-      //       this.goods.pay_price = this.skuList[this.typeVal].p_price;
-      //       this.goods.credits = this.skuList[this.typeVal].p_credits;
-      //     }
-      //   }
-      // }
-
       if(this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 1){
         if(this.is_collage){
            this.goods.s_price = this.skuList[this.typeVal].p_price;

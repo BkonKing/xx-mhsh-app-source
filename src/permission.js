@@ -82,10 +82,6 @@ router.beforeEach(async (to, from, next) => {
   }
   // Toast.clear()
   if (process.env.VUE_APP_IS_APP) {
-    // var wxPlus = api.require('wxPlus')
-    // wxPlus.addJumpFromWxListener(function (ret) {
-    //   api.alert({msg:JSON.stringify(ret)})
-    // })
     // 浏览器打开app
     api.addEventListener({
       name: 'appintent'
@@ -96,7 +92,6 @@ router.beforeEach(async (to, from, next) => {
       } else {
         isClear = true
       }
-      alert(JSON.stringify(ret))
       if (typeof ret.appParam.wx_arguments != 'undefined' && ret.appParam.wx_arguments) {
         // 安卓微信跳转app
         const appParams = JSON.parse(ret.appParam.wx_arguments).app_params
@@ -110,8 +105,8 @@ router.beforeEach(async (to, from, next) => {
           params = getParams(ret.message.messageExt)
         })
       }
-      alert(JSON.stringify(params))
-      alert(params.page_type)
+      // alert(JSON.stringify(params))
+      // alert(params.page_type)
       if (params.page_type == 1) {
         router.push({
           path: '/store/goods-detail',

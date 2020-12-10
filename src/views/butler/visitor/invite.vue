@@ -84,7 +84,7 @@ export default {
         title: '[访客通行证]' + this.currentProject.project_name,
         description: '有效日期：' + this.info.yxtime,
         pyqTitle: '[访客通行证]' + this.currentProject.project_name,
-        thumb: data ? 'fs://' + data + '.jpg' : '',
+        thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl: 'http://live.tosolomo.com/wap/#/invite?uid=' + user_info.id + '&project_id=' + this.currentProject.project_id + '&id=' + this.id
       }
     },

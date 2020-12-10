@@ -231,7 +231,7 @@ export default {
         title: this.articleType == 3 ? this.info.content : this.info.title,
         description: this.articleType == 3 ? this.info.content : this.info.title,
         pyqTitle: this.articleType == 3 ? this.info.content : this.info.title,
-        thumb: data ? 'fs://' + data + '.jpg' : '',
+        thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + this.articleType + '&id=' + this.id
       }
     },
@@ -359,6 +359,14 @@ export default {
         text = `${Math.floor(value / 10000)}万+`
       }
       return text
+    }
+  },
+  watch: {
+    // 监听 this.$route.query
+    '$route.query': function (newVal, oldVal) {
+      this.articleType = newVal.articleType
+      this.id = newVal.id
+      this.getInfo()
     }
   },
   beforeRouteLeave (to, from, next) {
