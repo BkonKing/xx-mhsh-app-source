@@ -49,7 +49,7 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
-    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex']
+    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex', 'waterElectricityMeter']
     api.addEventListener({
       name: 'swiperight'
     }, (ret, err) => {
@@ -70,12 +70,12 @@ export default {
     // 应用从后台回到前台事件/进入应用
     eventBus.$on('resume', () => {
       setStatisticsData(1)
-      setStatisticsData(6, {'type': 1, 'page_id': pagesArr[this.$route.name]})
+      setStatisticsData(6, { type: 1, page_id: pagesArr[this.$route.name] })
     })
     // 应用进入后台事件/离开应用
     eventBus.$on('pause', () => {
       updateStatisticsData(1)
-      setStatisticsData(6, {'type': 2, 'page_id': pagesArr[this.$route.name]})
+      setStatisticsData(6, { type: 2, page_id: pagesArr[this.$route.name] })
     })
   },
   methods: {

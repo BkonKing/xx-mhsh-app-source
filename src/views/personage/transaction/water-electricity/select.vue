@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -11,35 +11,52 @@
     </van-nav-bar>
 
     <div class="select-header">
-      <van-dropdown-menu @change="handleChange">
-        <van-dropdown-item v-model="selectStatus" :options="statusList" />
+      <van-dropdown-menu>
+        <van-dropdown-item
+          v-model="selectStatus"
+          @change="handleChange"
+          :options="statusList"
+        />
       </van-dropdown-menu>
-      <van-dropdown-menu class="unit-dropdown" @change="handleChange">
-        <van-dropdown-item v-model="selectedUnit" :options="unitList" />
+      <van-dropdown-menu class="unit-dropdown">
+        <van-dropdown-item
+          v-model="selectedUnit"
+          @change="handleChange"
+          :options="unitList"
+        />
       </van-dropdown-menu>
-      <van-field v-model="houseString" placeholder="房间" />
+      <van-field
+        v-model="houseString"
+        @change="handleChange"
+        placeholder="房间"
+      />
     </div>
-    <!-- <refreshList :list.sync="houseList" :load="getHouseList">
-      <template v-slot="{ item }"> -->
-    <div class="house-list">
-      <div class="house-item" @click="goMeterReading">
-        <div class="house-text">1单元-1001</div>
-        <div class="house-water">
-          <span class="tf-icon tf-icon-shuibiao"></span>100
+    <refreshList
+      ref="list"
+      class="house-list tf-flex-item"
+      :list.sync="houseList"
+      :load="getHouseList"
+    >
+      <template v-slot="{ item }">
+        <div class="house-item" @click="goMeterReading(item)">
+          <div class="house-text">{{ item.name }}</div>
+          <div
+            class="house-water"
+            :class="{ 'tf-text-primary': item.water > item.accord }"
+          >
+            <span class="tf-icon tf-icon-shuibiao"></span
+            >{{ item.water === undefined ? "-" : item.water }}
+          </div>
+          <div
+            class="house-electricity"
+            :class="{ 'tf-text-primary': item.dian > item.accord }"
+          >
+            <span class="tf-icon tf-icon-dianbiao"></span
+            >{{ item.dian === undefined ? "-" : item.dian }}
+          </div>
         </div>
-        <div class="house-electricity">
-          <span class="tf-icon tf-icon-dianbiao"></span>200
-        </div>
-      </div>
-      <div class="house-item">
-        <div class="house-text">1单元-1001</div>
-        <div class="house-water">100</div>
-        <div class="house-electricity">200</div>
-      </div>
-    </div>
-
-    <!-- </template>
-    </refreshList> -->
+      </template>
+    </refreshList>
   </div>
 </template>
 
@@ -57,6 +74,7 @@ export default {
   },
   data () {
     return {
+      id: 0,
       title: 'A区2栋',
       selectStatus: 0,
       statusList: [
@@ -82,11 +100,20 @@ export default {
         }
       ],
       selectedUnit: 0,
-      unitList: [
-        {
-          text: '全部',
-          value: 0
-        },
+      unitList: [],
+      houseString: '',
+      houseList: []
+    }
+  },
+  created () {
+    this.id = this.$route.query.id
+    this.title = this.$route.query.name
+    this.getUnitList()
+  },
+  methods: {
+    // 获取单元列表
+    getUnitList () {
+      const data = [
         {
           text: '1单元',
           value: 1
@@ -103,17 +130,64 @@ export default {
           text: '4单元',
           value: 4
         }
-      ],
-      houseString: '',
-      houseList: []
-    }
-  },
-  methods: {
-    handleChange () {},
-    getHouseList () {},
-    goMeterReading () {
+      ]
+      const unitList = [
+        {
+          text: '全部',
+          value: 0
+        }
+      ]
+      this.unitList = unitList.concat(data)
+    },
+    handleChange () {
+      this.$refs.list.reload()
+    },
+    getHouseList (params) {
+      const newParams = {
+        ...params,
+        ...{
+          search: this.houseString,
+          selectStatus: this.selectStatus,
+          selectedUnit: this.selectedUnit
+        }
+      }
+      console.log(newParams)
+      return new Promise((resolve, reject) => {
+        resolve({
+          data: [
+            {
+              id: 0,
+              name: '1单元-1001',
+              water: '',
+              dian: 2000,
+              accord: 100
+            },
+            {
+              id: 1,
+              name: '1单元-1002',
+              water: 1000,
+              dian: 100,
+              accord: 100
+            },
+            {
+              id: 2,
+              name: '1单元-1003',
+              water: undefined,
+              dian: 200,
+              accord: 100
+            }
+          ]
+        })
+      })
+    },
+    goMeterReading ({ id, water, dian }) {
+      const type = water && !dian ? 1 : 0
       this.$router.push({
-        name: 'waterElectricityMeter'
+        name: 'waterElectricityMeter',
+        query: {
+          id,
+          type
+        }
       })
     }
   }
@@ -157,15 +231,26 @@ export default {
   }
 }
 .house-list {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 0 30px;
-  margin: 0 20px;
+  padding: 0 20px;
+  /deep/ .tf-van-cell {
+    padding: 0 30px;
+    margin-bottom: 0;
+    background: #ffffff;
+    &:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    &:nth-last-child(2) {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
   .house-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 120px;
+    border-top: 1px solid #f0f0f0;
     .house-text,
     .house-water,
     .house-electricity {
@@ -173,7 +258,7 @@ export default {
       font-size: 28px;
     }
   }
-  .house-item + .house-item {
+  .tf-van-cell + .tf-van-cell .house-item {
     border-top: 1px solid #f0f0f0;
   }
   .tf-icon-shuibiao {

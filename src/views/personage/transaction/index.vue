@@ -9,7 +9,12 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-body-container">
-      <van-tabs v-model="active" sticky @rendered="reloadAllList">
+      <van-tabs
+        v-model="active"
+        sticky
+        :lazy-render="false"
+        @click="reloadAllList"
+      >
         <van-tab title="报事报修" name="0">
           <div
             class="transaction-tab-box"
@@ -106,22 +111,23 @@
               v-model="date"
               title="选择时间"
               :max-date="new Date()"
+              @change="handleChange"
             >
               <template>
                 <div class="selected-date">
-                  {{ date || "选择年月" }}
+                  {{ date | dateText }}
                   <span class="tf-icon tf-icon-caret-down"></span>
                 </div>
               </template>
             </tf-date-time-picker>
-            <van-dropdown-menu @change="handleChange">
-              <van-dropdown-item v-model="selectStatus" :options="statusList" />
+            <van-dropdown-menu>
+              <van-dropdown-item v-model="selectStatus"  @change="handleChange" :options="statusList" />
             </van-dropdown-menu>
           </div>
           <building-list
             ref="buildList"
             :data.sync="list1"
-            :load="params => listLoad(params, 1)"
+            :load="getMeterBuilding"
           ></building-list>
         </van-tab>
       </van-tabs>
@@ -185,7 +191,7 @@ export default {
           value: 4
         }
       ],
-      date: '',
+      date: new Date(),
       buildList: [],
       backStatus: false
     }
@@ -194,10 +200,20 @@ export default {
     ...mapGetters(['userInfo'])
   },
   created () {
-    this.type = parseInt(this.$route.query.type)
+    const type = parseInt(this.$route.query.type)
+    this.active = type < 6 ? '0' : '1'
+    switch (type) {
+      case 6:
+        this.selectStatus = 4
+        break
+      case 7:
+        this.selectStatus = 3
+        break
+    }
+    this.type = type
   },
   mounted () {
-    // this.reloadAllList()
+    this.reloadAllList()
     this.container = this.$refs.container
   },
   activated () {
@@ -212,13 +228,20 @@ export default {
     },
     // 刷新所有列表
     reloadAllList () {
-      if (this.userInfo.role_dep == 1) {
-        this.$refs.list1.reload()
-        this.$refs.list2.reload()
-        this.$refs.list5.reload()
+      if (this.active === '0') {
+        if (this.type > 5) {
+          this.type = this.userInfo.role_dep == 1 ? 1 : 3
+        }
+        if (this.userInfo.role_dep == 1) {
+          this.$refs.list1.reload()
+          this.$refs.list2.reload()
+          this.$refs.list5.reload()
+        }
+        this.$refs.list3.reload()
+        this.$refs.list4.reload()
+      } else {
+        this.$refs.buildList.reload()
       }
-      this.$refs.list3.reload()
-      this.$refs.list4.reload()
     },
     // 列表请求数据
     listLoad (params, status) {
@@ -244,7 +267,48 @@ export default {
         this.countObj = data
       })
     },
-    handleChange () {}
+    // 获取水电表楼栋
+    getMeterBuilding (params) {
+      return new Promise((resolve, reject) => {
+        resolve({
+          data: [
+            {
+              id: 0,
+              name: '1楼',
+              number: 2223,
+              water: false,
+              dian: true
+            }
+          ]
+        })
+      })
+      const date = new Date(this.date)
+      const newParams = {
+        ...params,
+        ...{
+          date: `${date.getFullYear()}-${date.getMonth() + 1}`,
+          selectStatus: this.selectStatus
+        }
+      }
+      console.log(newParams)
+      return getDbRepairList(newParams, this.userInfo.xm_project_id)
+    },
+    handleChange () {
+      this.$refs.buildList.reload()
+    }
+  },
+  filters: {
+    dateText (val) {
+      const date = new Date(val || new Date())
+      const year = date.getFullYear()
+      const currentYear = new Date().getFullYear()
+      const month = date.getMonth() + 1
+      const currentMonth = new Date().getMonth() + 1
+      if (currentYear === year && currentMonth === month) {
+        return '本月'
+      }
+      return `${date.getFullYear()}年${date.getMonth() + 1}月`
+    }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {

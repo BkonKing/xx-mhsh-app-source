@@ -48,6 +48,7 @@ export default {
         value = formatDateTime(time.getTime())
       }
       this.$emit('input', value)
+      this.$emit('change', value)
       this.$emit('confirm', value)
       this.showDatePicker = false
     }

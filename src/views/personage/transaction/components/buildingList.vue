@@ -1,6 +1,7 @@
 <template>
   <refreshList
     class="building-list"
+    :class="{ 'build-loading': load }"
     ref="list"
     :list.sync="list"
     :load="load"
@@ -9,14 +10,14 @@
     <template v-slot="{ item }">
       <div class="build-item" @click="jump(item)">
         <div class="build-left">
-          <div class="build-name">{{ item.id }}</div>
-          <div class="build-number">{{ item.id }}</div>
+          <div class="build-name">{{ item.name }}</div>
+          <div class="build-number">{{ item.number }}户</div>
         </div>
         <div class="build-right">
-          <div class="build-water">
+          <div class="build-water" :class="{'active': item.water}">
             <span class="tf-icon tf-icon-shuibiao"></span>
           </div>
-          <div class="build-electricity">
+          <div class="build-electricity" :class="{'active': item.dian}">
             <span class="tf-icon tf-icon-dianbiao"></span>
           </div>
         </div>
@@ -46,11 +47,12 @@ export default {
     }
   },
   methods: {
-    jump (item) {
+    jump ({ id, name }) {
       this.$router.push({
         name: 'waterElectricitySelect',
         query: {
-          id: item.repairs_id
+          id,
+          name
         }
       })
     },
@@ -71,12 +73,6 @@ export default {
 
 <style lang="less" scoped>
 .building-list {
-  /deep/ .van-list {
-    width: calc(100% + 20px);
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -10px;
-  }
   /deep/ .van-cell {
     width: 50%;
     margin-bottom: 20px;
@@ -117,16 +113,26 @@ export default {
         width: 36px;
         height: 36px;
         border-radius: 6px;
+        background: #aaaaaa33;
+        color: #aaa;
       }
-      .build-water {
-        background: #599EED33;
-        color: #599EED;
+      .build-water.active {
+        background: #599eed33;
+        color: #599eed;
       }
-      .build-electricity {
-        background: #FFB91533;
-        color: #FFB915;
+      .build-electricity.active {
+        background: #ffb91533;
+        color: #ffb915;
       }
     }
+  }
+}
+.building-list:not(.build-loading) {
+  /deep/ .van-list {
+    width: calc(100% + 20px);
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div class="tf-bg tf-body" :class="{ 'theme-body': userInfo.swrole == 1 }">
     <van-nav-bar :fixed="true" :border="false" placeholder>
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
@@ -11,84 +11,88 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container tf-overflow-auto">
-      <div class="tf-bg-white">
-        <div class="tf-row tf-padding-lg" @click="goInformation">
-          <img
-            v-if="userInfo.avatar"
-            class="personage-info__avatar"
-            :src="userInfo.avatar"
-          />
-          <img
-            v-else
-            class="personage-info__avatar"
-            src="@/assets/imgs/touxiang.png"
-          />
-          <div class="personage-info--base">
-            <div class="user-info-box">
-              <div class="user-name">{{ userInfo.nickname }}</div>
-              <van-tag
-                v-if="userType != '0'"
-                class="user-role"
-                plain
-                :color="userType | houseRoleColor"
-                :text-color="userType | houseRoleColor"
-                :inverted="true"
-                size="small"
-                >{{ userType | houseRoleText }}</van-tag
+      <div :class="{ 'theme-header': userInfo.swrole == 1 }">
+        <div class="tf-bg-white">
+          <div class="tf-row tf-padding-lg" @click="goInformation">
+            <img
+              v-if="userInfo.avatar"
+              class="personage-info__avatar"
+              :src="userInfo.avatar"
+            />
+            <img
+              v-else
+              class="personage-info__avatar"
+              src="@/assets/imgs/touxiang.png"
+            />
+            <div class="personage-info--base">
+              <div class="user-info-box">
+                <div class="user-name">{{ userInfo.nickname }}</div>
+                <van-tag
+                  v-if="userType != '0'"
+                  class="user-role"
+                  plain
+                  :color="userType | houseRoleColor"
+                  :text-color="userType | houseRoleColor"
+                  :inverted="true"
+                  size="small"
+                  >{{ userType | houseRoleText }}</van-tag
+                >
+                <van-tag
+                  v-if="userInfo.role_dep"
+                  class="user-role"
+                  plain
+                  :color="5 | houseRoleColor"
+                  :text-color="5 | houseRoleColor"
+                  :inverted="true"
+                  size="small"
+                  >{{ userInfo.position }}</van-tag
+                >
+              </div>
+              <div
+                v-if="currentProject && currentProject.fc_info"
+                class="user-address"
               >
-              <van-tag
-                v-if="userInfo.role_dep"
-                class="user-role"
-                plain
-                :color="5 | houseRoleColor"
-                :text-color="5 | houseRoleColor"
-                :inverted="true"
-                size="small"
-                >{{ userInfo.position }}</van-tag
+                {{ currentProject.fc_info }}
+              </div>
+              <div
+                v-else-if="
+                  userInfo.bsbx_allots === '1' && userInfo.project_name
+                "
+                class="user-address"
               >
-            </div>
-            <div
-              v-if="currentProject && currentProject.fc_info"
-              class="user-address"
-            >
-              {{ currentProject.fc_info }}
-            </div>
-            <div
-              v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
-              class="user-address"
-            >
-              {{ userInfo.project_name }}
+                {{ userInfo.project_name }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="tf-row tf-bg-white coin-box">
-        <div class="tf-flex-item tf-column" @click="goHappiness">
-          <div class="user-text--lg">{{ userInfo.credits || 0 }}</div>
-          <div class="user-text--grey">幸福币</div>
-        </div>
-        <div
-          class="tf-flex-item tf-column"
-          @click="$router.push('/coupon/list')"
-        >
-          <div class="user-text--lg">{{ orderData.yhq_count || 0 }}</div>
-          <div class="user-text--grey">优惠券</div>
-        </div>
-        <div class="tf-flex-item tf-column tf-flex-center">
-          <van-button
-            v-preventReClick
-            class="user-btn__text"
-            :class="[
-              'user-btn',
-              userInfo.signin_today === '1'
-                ? 'user-btn--unsign'
-                : 'user-btn--signin'
-            ]"
-            :loading="signLoading"
-            @click="sign"
+        <div class="tf-row tf-bg-white coin-box">
+          <div class="tf-flex-item tf-column" @click="goHappiness">
+            <div class="user-text--lg">{{ userInfo.credits || 0 }}</div>
+            <div class="user-text--grey">幸福币</div>
+          </div>
+          <div
+            class="tf-flex-item tf-column"
+            @click="$router.push('/coupon/list')"
           >
-            {{ userInfo.signin_today | signText }}
-          </van-button>
+            <div class="user-text--lg">{{ orderData.yhq_count || 0 }}</div>
+            <div class="user-text--grey">优惠券</div>
+          </div>
+          <div class="tf-flex-item tf-column tf-flex-center">
+            <van-button
+              v-preventReClick
+              class="user-btn__text"
+              :class="[
+                'user-btn',
+                userInfo.signin_today === '1'
+                  ? 'user-btn--unsign'
+                  : 'user-btn--signin'
+              ]"
+              :loading="signLoading"
+              @click="sign"
+            >
+              {{ userInfo.signin_today | signText }}
+            </van-button>
+          </div>
         </div>
       </div>
       <div class="functional-box">
@@ -153,7 +157,7 @@
                 />
                 <div class="text-sm">未抄电表</div>
               </div>
-              <div class="manage-box" @click="goTransaction(5)">
+              <div class="manage-box" @click="goTransaction(7)">
                 <img
                   class="manage-image"
                   src="@/assets/imgs/personage_weichaoshuibiao.svg"
@@ -396,6 +400,41 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.theme-body {
+  background-image: linear-gradient(to bottom, @red, @red-dark);
+  background-size: 100% 260px;
+  background-repeat: no-repeat;
+  .functional-box {
+    background: #f2f2f4;
+  }
+  .coin-box {
+    .tf-column:first-child {
+      border-right: 1px solid #f0f0f0;
+    }
+    .user-btn--signin {
+      height: 84px;
+      border-radius: 8px;
+    }
+  }
+  /deep/ .van-nav-bar {
+    background: initial;
+    .tf-icon {
+      color: #fff;
+    }
+    .van-info {
+      background: #fff;
+      color: #eb5841;
+    }
+  }
+}
+.theme-header {
+  position: relative;
+  z-index: 9;
+  margin: 0 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 .tf-icon {
   width: 44px;
   font-size: 44px;
