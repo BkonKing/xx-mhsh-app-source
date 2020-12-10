@@ -11,6 +11,7 @@ import { getParams } from '@/utils/util.js'
 const whiteList = ['/login', '/agreement', '/openingPage']
 var flag = 0
 var params = ''
+var isClear = true
 
 router.beforeEach(async (to, from, next) => {
   var toPageName = to.name
@@ -90,8 +91,10 @@ router.beforeEach(async (to, from, next) => {
       name: 'appintent'
     }, function (ret, err) {
       flag = 1
-      if (!params) {
+      if (isClear) {
         params = ret.appParam
+      } else {
+        isClear = true
       }
       alert(JSON.stringify(ret))
       if (typeof ret.appParam.wx_arguments != 'undefined' && ret.appParam.wx_arguments) {
@@ -103,6 +106,7 @@ router.beforeEach(async (to, from, next) => {
         // ios微信跳转app
         const wxPlus = api.require('wxPlus')
         wxPlus.addJumpFromWxListener(function (ret) {
+          isClear = false
           params = getParams(ret.message.messageExt)
         })
       }

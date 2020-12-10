@@ -89,5 +89,6 @@ export const pagesArr = {
   settingShield: 88,
   openingPage: 89,
   faceCollect: 90,
-  settingAbout: 91
+  settingAbout: 91,
+  orderVerification: 92
 }
