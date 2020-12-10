@@ -11,13 +11,13 @@
             </van-count-down>)</div>
       </div>
       <div class="common-list">
-        <!-- <div class="common-item-first common-item" @click.stop="selectSwal(0)">
+        <div class="common-item-first common-item" @click.stop="selectSwal(0)">
           <div class="common-item-left">
             <div bindtap="checkboxOne" :class="[tapIndex == 0 ? 'cur' : '','cart-checkbox flex-center']">
               <div class="checkbox-session"></div>
             </div><img src="@/assets/img/icon_21.png" />微信支付
           </div>
-        </div> -->
+        </div>
         <div class="common-item" @click.stop="selectSwal(1)">
           <div class="common-item-left">
             <div bindtap="checkboxOne" :class="[tapIndex == 1 ? 'cur' : '','cart-checkbox flex-center']">

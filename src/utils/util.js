@@ -177,7 +177,6 @@ export function getArea (str) {
       }
     }
   }
-  console.log(area.Province, area.City, area.Country)
   return area.Province + area.City + area.Country
 }
 
@@ -362,5 +361,33 @@ export function bMapGetLocationInfo () {
         }
       })
     }
+  })
+}
+
+export function getParams (params) {
+  const vars = params.split('&')
+  let paramsObj = new Object()
+  for (let i = 0; i < vars.length; i++) {
+    let pair = vars[i].split('=')
+    paramsObj[pair[0]] = pair[1]
+  }
+  return paramsObj
+}
+
+export function downloadPic (picUrl, name) {
+  return new Promise((resolve, reject) => {
+    api.download({
+      url: picUrl,
+      savePath: 'fs://' + name + '.jpg',
+      report: false,
+      cache: true,
+      allowResume: false
+    }, function (ret, err) {
+      if (ret.state == 1) {
+        resolve(name)
+      } else {
+        reject()
+      }
+    })
   })
 }

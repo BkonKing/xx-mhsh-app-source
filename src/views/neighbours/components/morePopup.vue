@@ -7,7 +7,7 @@
       v-model="moreShowChild"
     >
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
-      <!-- <div v-if="share" class="more-btn" @click="clickShare">分享</div> -->
+      <div v-if="!share" class="more-btn" @click="clickShare">分享</div>
       <div v-if="shield" class="more-btn" @click="clickShield">屏蔽</div>
       <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
       <div v-preventReClick v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">
@@ -124,26 +124,31 @@
         >
       </div>
     </van-popup>
-    <van-share-sheet
+    <!-- <van-share-sheet
       v-model="showShare"
       :options="options"
       @select="onSelect"
-    />
+    /> -->
+    <tf-share
+      :share-show="showShare"
+      :share-obj="shareObj"
+      @closeSwal="onSelect"></tf-share >
   </div>
 </template>
 
 <script>
-import { Popup, ShareSheet, Toast, Dialog, Button } from 'vant'
+import { Popup, Toast, Dialog, Button } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index.vue'
 import { addComplaint, addShielding } from '@/api/neighbours'
-
+import tfShare from '@/components/tf-share'
 export default {
   components: {
     [Popup.name]: Popup,
     [Button.name]: Button,
     [Dialog.name]: Dialog,
-    [ShareSheet.name]: ShareSheet,
-    tfRadioBtn
+    // [ShareSheet.name]: ShareSheet,
+    tfRadioBtn,
+    tfShare
   },
   props: {
     moreShow: {
@@ -177,6 +182,16 @@ export default {
     shield: {
       type: [Boolean, Number],
       default: false
+    },
+    shareObj: {
+      type: Object,
+      default: () => ({
+        title: '',
+        description: '',
+        pyqTitle: '',
+        thumb: '',
+        contentUrl: ''
+      })
     }
   },
   data () {
@@ -232,8 +247,8 @@ export default {
     clickShare () {
       this.showShare = true
     },
-    onSelect (option) {
-      this.showShare = false
+    onSelect (data) {
+      this.showShare = data == 1 ? true : false;
     },
     clickComment () {
       this.moreShowChild = false

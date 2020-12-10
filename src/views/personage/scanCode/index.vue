@@ -309,9 +309,15 @@ export default {
         code_info: value
       })
         .then((res) => {
-          api.alert({
-            title: res.message
+          this.$router.push({
+            name: 'orderVerification',
+            query: {
+              code_info: value
+            }
           })
+          // api.alert({
+          //   title: res.message
+          // })
         })
         .catch((err) => {
           api.alert({

@@ -194,9 +194,31 @@ export default {
         })
         .then(data => {
           this.loginLoading = false
-          this.$router.replace({
-            name: 'home'
-          })
+          const share_params = this.$store.state.share_params || ''
+          if (share_params) {
+            this.$store.commit('setShare_params', '')
+            if (share_params.page_type == 1) {
+              this.$router.replace({
+                path: '/store/goods-detail',
+                query: {
+                  id: share_params.id,
+                  f_id: share_params.f_id
+                }
+              })
+            } else if (share_params.page_type == 2) {
+              this.$router.replace({
+                path: '/pages/neighbours/details',
+                query: {
+                  articleType: share_params.articleType,
+                  id: share_params.id
+                }
+              })
+            }
+          } else {
+            this.$router.replace({
+              name: 'home'
+            })
+          }
           if (data.first_register == 1) {
             this.mtjEvent({
               eventId: 2
@@ -226,6 +248,10 @@ export default {
       this.countDownTime = 60000
       this.codeStatus = false
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit('setShare_params', '')
+    next()
   }
 }
 </script>

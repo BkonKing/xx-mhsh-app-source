@@ -271,8 +271,16 @@ const lifeRouter = [
         /* webpackChunkName: "addressEdit" */
         '@/views/life/address/address-map'
       )
+  },
+  {
+    path: '/order/verification',
+    name: 'orderVerification',
+    component: () =>
+      import(
+        /* webpackChunkName: "addressEdit" */
+        '@/views/life/order/order-verification'
+      )
   }
-
 ]
 
 export default lifeRouter

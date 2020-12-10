@@ -6,8 +6,11 @@ import {
 } from 'vant'
 import { pagesArr } from './const/pages.js'
 import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
+import { getParams } from '@/utils/util.js'
 
 const whiteList = ['/login', '/agreement', '/openingPage']
+var flag = 0
+var params = ''
 
 router.beforeEach(async (to, from, next) => {
   var toPageName = to.name
@@ -66,11 +69,64 @@ router.beforeEach(async (to, from, next) => {
       if (!firstStatus) {
         next('/openingPage')
       } else {
-        next('/login')
+        if (flag == 1) {
+          flag = 0
+          store.commit('setShare_params', params)
+          next('/login')
+        } else {
+          next('/login')
+        }
       }
     }
   }
   // Toast.clear()
+  if (process.env.VUE_APP_IS_APP) {
+    // var wxPlus = api.require('wxPlus')
+    // wxPlus.addJumpFromWxListener(function (ret) {
+    //   api.alert({msg:JSON.stringify(ret)})
+    // })
+    // 浏览器打开app
+    api.addEventListener({
+      name: 'appintent'
+    }, function (ret, err) {
+      flag = 1
+      if (!params) {
+        params = ret.appParam
+      }
+      alert(JSON.stringify(ret))
+      if (typeof ret.appParam.wx_arguments != 'undefined' && ret.appParam.wx_arguments) {
+        // 安卓微信跳转app
+        const appParams = JSON.parse(ret.appParam.wx_arguments).app_params
+        params = getParams(appParams)
+      }
+      if (typeof ret.iosUrl != 'undefined' && api.systemType == 'ios') {
+        // ios微信跳转app
+        const wxPlus = api.require('wxPlus')
+        wxPlus.addJumpFromWxListener(function (ret) {
+          params = getParams(ret.message.messageExt)
+        })
+      }
+      alert(JSON.stringify(params))
+      alert(params.page_type)
+      if (params.page_type == 1) {
+        router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: params.id,
+            f_id: params.f_id
+          }
+        })
+      } else if (params.page_type == 2) {
+        router.push({
+          path: '/pages/neighbours/details',
+          query: {
+            articleType: params.articleType,
+            id: params.id
+          }
+        })
+      }
+    })
+  }
 })
 
 router.afterEach(async (to, from, next) => {

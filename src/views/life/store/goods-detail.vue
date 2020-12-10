@@ -9,7 +9,14 @@
           placeholder
           left-arrow
           @click-left="$router.go(-1)"
-        ></van-nav-bar>
+        >
+        <template #right>
+          <span
+            class="tf-icon tf-icon-zhuanfa"
+            @click="shareShow=true"
+          ></span>
+        </template>
+      </van-nav-bar>
       </div>
       <div class="scroll-body">
       <div class="banner">
@@ -227,7 +234,7 @@
                         <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                         </template>
                       </van-count-down>结束</div>
-                      <div class="buy-btn btn-linear">邀请好友</div>
+                      <div class="buy-btn btn-linear" @click="shareShow=true">邀请好友</div>
                     </template>
                     <template v-else>
                       <div class="add-btn" @click="showFunc('flash')">单独购买￥{{infoData.flash_price/100}}</div>
@@ -357,6 +364,10 @@
       :remind-tit="remindTit"
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()"></remind-swal>
+      <tf-share 
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare"></tf-share >
     </div>
 	</div>
 </template>
@@ -364,7 +375,9 @@
 <script>
 import { Swipe, SwipeItem, Icon, ImagePreview, NavBar, CountDown, Toast } from 'vant'
 import remindSwal from './../components/remind-swal'
+import tfShare from '@/components/tf-share'
 import { getGoodsDetail, remindSend } from '@/api/life.js'
+import { downloadPic } from '@/utils/util.js'
 export default {
   components: {
     [Swipe.name]: Swipe,
@@ -374,16 +387,18 @@ export default {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [Toast.name]: Toast,
-    remindSwal
+    remindSwal,
+    tfShare
   },
   data () {
     return {
+      shareShow: false,
+      shareObj: {},
       windowHeight: document.documentElement.clientHeight,
       time: 11 * 60 * 60 * 1000,
       newTime: '',
       showSwal: false,       //提醒弹窗
       remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
-
 
       shop_id: '',          //商品id
       skuList: [],          //商品规格
@@ -457,6 +472,47 @@ export default {
     }
   },
   methods: {
+    /* 保存分享图片 */
+    downloadSharePic () {
+      const that = this
+      const urlName = 'goods_' + this.infoData.id
+      downloadPic(this.infoData.share_img, urlName)
+        .then((data) => {
+          that.sendShareParam(data)
+        })
+        .catch(() => {
+          that.sendShareParam('')
+        })
+    },
+    sendShareParam (data) {
+      let title = ''
+      let description = ''
+      let pyqTitle = ''
+      let contentUrl = ''
+      let user_info = api.getPrefs({
+        key: 'user_info',
+        sync: true
+      }) || ''
+      user_info = user_info ? JSON.parse(user_info) : ''
+      if (this.infoData.goods_type == 3 && this.infoData.dq_collage_type == 2) {
+        title = '【拼团￥' + this.infoData.sell_price/100 + '】我发现一件好货，一起拼优惠！'
+        description = '[原价￥' + this.infoData.original_price/100 + ']' + this.infoData.goods_name
+        pyqTitle = this.infoData.goods_name
+        contentUrl = 'http://live.tosolomo.com/wap/#/goodsDetail?f_id=' + user_info.id + '&id=' + this.infoData.id
+      } else {
+        title = this.infoData.goods_name
+        description = '好货分享给你！'
+        pyqTitle = this.infoData.goods_name
+        contentUrl = 'http://live.tosolomo.com/wap/#/goodsDetail?id=' + this.infoData.id
+      }
+      this.shareObj = {
+        title: title,
+        description: description,
+        pyqTitle: pyqTitle,
+        thumb: data ? 'fs://' + data + '.jpg' : '',
+        contentUrl: contentUrl
+      }
+    },
     //获取购物车数量
     getNum(){
       var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
@@ -506,6 +562,7 @@ export default {
           //   this.goods.pay_price = this.skuList[index].o_price;
           // }
           this.typeFunc(0);
+          this.downloadSharePic()
         }
       })
     },
@@ -899,6 +956,9 @@ export default {
         }
       })
     },
+    closeShare(data){
+      this.shareShow = data == 1 ? true : false;
+    }
   },
   beforeRouteLeave (to, from, next) {
     
