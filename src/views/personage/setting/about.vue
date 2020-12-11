@@ -26,7 +26,8 @@
       <tf-list-item title="协议及声明" @click="goAgreementList"></tf-list-item>
     </tf-list>
     <div class="copyright-box">
-      copyright ©2020 河南美好生活家园运营服务集团有限公司 All Rights Reserved
+      copyright ©2020 河南美好生活家园运营服务集团有限公司<br />
+      All Rights Reserved
     </div>
     <tf-dialog
       v-model="showDialog"
@@ -136,6 +137,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .tf-clist {
+  border-radius: 0;
+}
 .right-text {
   font-size: 24px;
   text-align: right;
@@ -157,10 +161,11 @@ export default {
   }
 }
 .copyright-box {
+  width: 100%;
   text-align: center;
   position: absolute;
   bottom: 60px;
-  font-size: 28px;
+  font-size: 24px;
   color: #999;
 }
 </style>
