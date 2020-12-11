@@ -9,7 +9,6 @@
     >
       <template #right>
         <span
-          v-if="articleType == 3"
           class="van-icon van-icon-ellipsis"
           @click="openArticleDialog"
         ></span>
@@ -135,6 +134,7 @@
       :shield="!info.is_mine && articleType == 3"
       :deleteProp="info.is_mine"
       @delete="deleteArticle"
+      :share-obj="shareObj"
     ></more-popup>
   </div>
 </template>
@@ -146,6 +146,7 @@ import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
 import morePopup from './components/morePopup'
 import tfImageList from '@/components/tf-image-list'
+import { downloadPic } from '@/utils/util.js'
 import {
   getActivityInfo,
   joinActivity,
@@ -180,9 +181,11 @@ export default {
         avatar: '',
         thumbsups: '',
         comments: '',
-        ctime: ''
+        ctime: '',
+        share_img: ''
       },
-      isLoading: false
+      isLoading: false,
+      shareObj: {}
     }
   },
   created () {
@@ -211,6 +214,27 @@ export default {
           break
       }
     },
+    /* 保存分享图片 */
+    downloadSharePic () {
+      const that = this
+      const urlName = 'detail_' + this.articleType + '_' + this.id
+      downloadPic(this.info.share_img, urlName)
+        .then((data) => {
+          that.sendShareParam(data)
+        })
+        .catch(() => {
+          that.sendShareParam('')
+        })
+    },
+    sendShareParam (data) {
+      this.shareObj = {
+        title: this.articleType == 3 ? this.info.content : this.info.title,
+        description: this.articleType == 3 ? this.info.content : this.info.title,
+        pyqTitle: this.articleType == 3 ? this.info.content : this.info.title,
+        thumb: data ? 'fs://' + data + '.png' : '',
+        contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + this.articleType + '&id=' + this.id
+      }
+    },
     /* 获取资讯详情 */
     getArticleInfo () {
       getArticleInfo({
@@ -226,6 +250,7 @@ export default {
         }
         this.info = data
         this.isLoading = false
+        this.downloadSharePic()
       })
     },
     /* 获取小组帖子详情 */
@@ -245,11 +270,12 @@ export default {
           this.info = data
           this.info.id = this.id
           this.isLoading = false
+          this.downloadSharePic()
         })
         .catch(({ message }) => {
           Toast.clear()
           Dialog.alert({
-            title: message
+            title: message || '该贴不存在'
           }).then(() => {
             this.$router.go(-1)
           })
@@ -270,6 +296,7 @@ export default {
         }
         this.info = data
         this.isLoading = false
+        this.downloadSharePic()
       })
     },
     /* 加入活动 */
@@ -332,6 +359,14 @@ export default {
         text = `${Math.floor(value / 10000)}万+`
       }
       return text
+    }
+  },
+  watch: {
+    // 监听 this.$route.query
+    '$route.query': function (newVal, oldVal) {
+      this.articleType = newVal.articleType
+      this.id = newVal.id
+      this.getInfo()
     }
   },
   beforeRouteLeave (to, from, next) {

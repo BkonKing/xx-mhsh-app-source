@@ -320,9 +320,13 @@ export default {
         pay_type: data == 0 ? 1 : 2
       }).then(res => {
         if (res.success) {
-          if(res.data){
-            this.payOrderInfo = res.data;
-            this.aliPayUp();
+          if (res.data) {
+            this.payOrderInfo = res.data
+            if (data == 0) {
+              this.wxPayUp()
+            } else {
+              this.aliPayUp()
+            }
           }
         }
       })
@@ -336,6 +340,22 @@ export default {
           that.getData();
         }
       );
+    },
+    // 微信支付
+    wxPayUp () {
+      const that = this
+      const wxPayPlus = api.require('wxPayPlus')
+      wxPayPlus.payOrder({
+        apiKey: that.payOrderInfo.appid,
+        mchId: that.payOrderInfo.partnerid,
+        orderId: that.payOrderInfo.prepayid,
+        nonceStr: that.payOrderInfo.noncestr,
+        timeStamp: that.payOrderInfo.timestamp,
+        package: that.payOrderInfo.package,
+        sign: that.payOrderInfo.paySign
+      }, function (ret, err) {
+        that.getData()
+      })
     },
     // 取消订单
     cancelOrder(){

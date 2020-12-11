@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { NavBar, Button, Toast } from 'vant'
 import { mapGetters } from 'vuex'
+import { bindAliasAndTags } from '@/utils/ajpush'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -69,14 +69,7 @@ export default {
       this.$store.dispatch('getMyAccount').then(async () => {
         Toast.clear()
         if (process.env.VUE_APP_IS_APP === '1') {
-          const ajParams = {
-            alias: this.userInfo.id
-          }
-          Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-            if (ret && ret.statusCode) {
-              // alert(ret)
-            }
-          })
+          bindAliasAndTags(this.userInfo.id)
         }
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')

@@ -1,6 +1,12 @@
 <template>
   <div class="tf-bg-white">
-    <van-nav-bar :fixed="true" :border="false" placeholder left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    ></van-nav-bar>
     <div class="tf-h3">验证手机号</div>
     <div class="mb140">
       <div class="tf-phone-input-box">
@@ -12,8 +18,18 @@
           <div class="tf-phone-input-label">验证码</div>
           <Field v-model="yzm" class="form-input" type="digit">
             <template #button>
-              <div class="tf-phone-code-btn" v-if="codeStatus">{{countDown}}s</div>
-              <button v-else class="tf-phone-code-btn" @click="verifCode">获取验证码</button>
+              <van-count-down
+                v-if="codeStatus"
+                :time="countDownTime"
+                @finish="countFinish"
+              >
+                <template #default="timeData">
+                  <div class="tf-phone-code-btn">{{ timeData.seconds }}s</div>
+                </template>
+              </van-count-down>
+              <button v-else class="tf-phone-code-btn" @click="verifCode">
+                获取验证码
+              </button>
             </template>
           </Field>
         </div>
@@ -24,7 +40,7 @@
 </template>
 
 <script>
-import { NavBar, Button, Field, Toast } from 'vant'
+import { NavBar, Button, Field, Toast, CountDown } from 'vant'
 import { updateMobile } from '@/api/personage'
 import { verifCode } from '@/api/user'
 import { validForm } from '@/utils/util'
@@ -32,6 +48,7 @@ import { validForm } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [CountDown.name]: CountDown,
     Field,
     [Button.name]: Button
   },
@@ -40,19 +57,16 @@ export default {
       mobile: '',
       yzm: '',
       codeStatus: false,
-      countDown: 59,
-      timer: null
+      countDownTime: 60000
     }
   },
   methods: {
     /* 获取验证码 */
     verifCode () {
-      this.timer && clearTimeout(this.timer)
       verifCode({
         mobile: this.mobile
-      }).then((res) => {
+      }).then(res => {
         this.codeStatus = true
-        this.count()
       })
     },
     /* 确定更改 */
@@ -81,22 +95,11 @@ export default {
         })
       })
     },
-    /* 验证码倒计时 */
-    count () {
-      if (this.countDown === 0) {
-        clearTimeout(this.timer)
-        this.countDown = 59
-        this.codeStatus = false
-        return
-      }
-      this.timer = setTimeout(() => {
-        this.countDown--
-        this.count()
-      }, 1000)
+    /* 倒计时结束 */
+    countFinish () {
+      this.countDownTime = 60000
+      this.codeStatus = false
     }
-  },
-  beforeDestroy () {
-    this.timer && clearTimeout(this.timer)
   }
 }
 </script>

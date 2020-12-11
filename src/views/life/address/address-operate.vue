@@ -124,7 +124,8 @@
 <script>
 import { NavBar, Toast, Dialog } from 'vant'
 import { getAddressInfo, addAddress, updateAddress, deleteAddress } from '@/api/life.js'
-import eventBus from '@/api/eventbus.js';
+import eventBus from '@/api/eventbus.js'
+import { getArea } from '@/utils/util'
 export default {
   name: 'addressEdit',
   components: {
@@ -162,7 +163,8 @@ export default {
       ulongitude: '', // 纬度
       key_word: '附近',
       qqmapkey: '',
-      markHidden: true
+      markHidden: true,
+      mapVal: ''
     }
   },
   // onLoad(options) {
@@ -171,41 +173,65 @@ export default {
   // 		this.addrId = options.addrId;
   // 	}
   // },
-  created(){
-    this.addrId = this.$route.query.id;
-    if(this.addrId){
-      this.titName = "编辑地址";
-      this.getData();
-    }else {
-      this.titName = "添加地址";
+  created () {
+    this.addrId = this.$route.query.id
+    this.mapVal = api.require('bMap')
+    if (this.addrId) {
+      this.titName = "编辑地址"
+      this.getData()
+    } else {
+      this.titName = "添加地址"
     }
-    eventBus.$off('chooseMap');
   },
-  mounted(){
-    var that = this;
-    //根据key名获取传递回来的参数，data就是map
-    eventBus.$on('chooseMap', function(data){
-      var addressData = JSON.parse(data);
-      
-      that.address_name = addressData.name;
-      that.address_detail = addressData.address;
-      that.lng = addressData.lon;
-      that.lat = addressData.lat;
-      this.isAble()
-      // this.city = addressData.city;
-      // alert(data);
-    }.bind(this));
+  activated () {
+    this.getMap()
   },
   methods: {
+    getMap () {
+      const that = this
+      const addressData = that.$store.state.map_info || ''
+      if (addressData) {
+        that.mapVal.getNameFromCoords({
+          lon: addressData.lon,
+          lat: addressData.lat
+        }, function (ret, err) {
+          if (ret.status) {
+            const qzAddress = getArea(addressData.address)
+            const cityArr = ['北京市', '天津市', '上海市', '重庆市']
+            let flag = 0
+            cityArr.forEach(item => {
+              if (qzAddress.indexOf(item) !== -1) {
+                flag = 1
+              }
+            })
+            if (!qzAddress) {
+              addressData.address = (ret.province === ret.city ? ret.province + addressData.address : ret.province + ret.city + addressData.address)
+            } else {
+              if (qzAddress.indexOf('自治区') === -1 && qzAddress.indexOf('省') === -1) {
+                if (flag === 0) {
+                  addressData.address = ret.province + addressData.address
+                }
+              }
+            }
+            // alert(JSON.stringify(ret))
+          }
+          that.address_name = addressData.name
+          that.address_detail = addressData.address
+          that.lng = addressData.lon
+          that.lat = addressData.lat
+          that.isAble()
+        })
+      }
+    },
     /**
-			 * 获取姓名
-			*/
+		 * 获取姓名
+		*/
     nameFunc: function (e) {
       this.isAble()
     },
     /**
-			 * 获取电话号码
-			*/
+		 * 获取电话号码
+		*/
     telFunc: function (e) {
       this.isAble()
     },
@@ -250,44 +276,6 @@ export default {
           }
         })
       }
-
-      
-      return;
-      app.util.request({
-        url: '/xcx/wxjson/edit_address',
-        cachetime: '0',
-        data: {
-          add_id: that.addrId,
-          realname: that.realname,
-          mobile: that.mobile,
-          address_name: that.address_name,
-          address_detail: that.address_detail,
-          address_house: that.address_house,
-          label_id: that.labelValPost ? that.labelIndex : '',
-          label: that.labelValPost,
-          is_default: that.switchChecked ? 1 : 0,
-          lat: that.lat,
-          lng: that.lng,
-          uid: that.userId
-        },
-        success (res) {
-          that.btnDisabled = false
-          var status = res.data.code
-          if (status == '0000') {
-            wx.showToast({
-              title: '保存成功！',
-              duration: 2000
-            })
-            wx.navigateBack()
-          } else {
-            wx.showToast({
-              title: res.data.msg,
-              icon: 'none',
-              duration: 2000
-            })
-          }
-        }
-      })
     },
     /**
 		 * 获取修改地址信息
@@ -297,26 +285,26 @@ export default {
         address_id: this.addrId
       }).then(res => {
         if (res.success) {
-          if(res.data){
-            let info = res.data;
-            this.btnDisabled = false;
-            this.realname = info.realname;
-            this.mobile = info.mobile;
-            this.address_name = info.address_name;
-            this.address_detail = info.address_detail;
-            this.address_house = info.address_house;
-            this.labelIndex = info.label_id;
-            this.swalIndex = info.label_id;
-            this.switchChecked = info.is_default==1 ? true : false;
-            this.labelVal = info.label;
-            this.labelValPost = info.label;
-            this.lat = info.lat;
-            this.lng = info.lng;
-            if (info.label_id === 0){
-              this.customVal = info.label;
+          if(res.data) {
+            let info = res.data
+            this.btnDisabled = false
+            this.realname = info.realname
+            this.mobile = info.mobile
+            this.address_name = info.address_name
+            this.address_detail = info.address_detail
+            this.address_house = info.address_house
+            this.labelIndex = info.label_id
+            this.swalIndex = info.label_id
+            this.switchChecked = info.is_default==1 ? true : false
+            this.labelVal = info.label
+            this.labelValPost = info.label
+            this.lat = info.lat
+            this.lng = info.lng
+            if (info.label_id === 0) {
+              this.customVal = info.label
             }
-            if (info.label_id !== "" && info.label !== ""){
-              this.isLabel = 1;
+            if (info.label_id !== "" && info.label !== "") {
+              this.isLabel = 1
             }
           }
         }
@@ -459,11 +447,12 @@ export default {
   beforeRouteLeave (to, from, next) {
     // eventBus.$off('chooseMap');
     // console.log(this.$route);
-    if(to.name == 'addressList'){
-      this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+    if (to.name == 'addressList') {
+      this.$store.commit('setMap_info', '')
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
     }
-    next();
+    next()
   }
 }
 </script>

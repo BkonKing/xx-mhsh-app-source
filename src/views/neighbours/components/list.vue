@@ -8,7 +8,11 @@
         >
           <div @click="goDetails('2', item)">
             <div class="activity-image-box">
-              <img class="activity-image" :src="item.thumbnail" v-imageCach="item.thumbnail" />
+              <img
+                class="activity-image"
+                :src="item.thumbnail"
+                v-imageCach="item.thumbnail"
+              />
               <div class="activity-join">{{ item.joins || 0 }}人已报名</div>
             </div>
             <div class="tf-status-tag">活动</div>
@@ -19,7 +23,12 @@
             :item="item"
             :article-type="item.article_type || article_type"
             :key="item.id"
-          ></operation>
+          >
+            <div
+              class="van-icon van-icon-ellipsis"
+              @click.stop="onOperation(item, index)"
+            ></div>
+          </operation>
         </div>
         <div v-else-if="item.article_type == 3 || article_type == 3">
           <div class="tf-card">
@@ -64,7 +73,7 @@
             >
               <div
                 class="van-icon van-icon-ellipsis"
-                @click.stop="onOperation(item, index)"
+                @click.stop="onPostOperation(item, index)"
               ></div>
             </operation>
           </div>
@@ -74,7 +83,11 @@
           v-else-if="item.article_type == 1 || article_type == 1"
         >
           <div @click="goDetails('1', item)">
-            <img class="activity-image tf-mb-sm" :src="item.thumbnail" v-imageCach="item.thumbnail" />
+            <img
+              class="activity-image tf-mb-sm"
+              :src="item.thumbnail"
+              v-imageCach="item.thumbnail"
+            />
             <div class="tf-status-tag">资讯</div>
             <div class="activity-title">{{ item.title }}</div>
           </div>
@@ -82,18 +95,30 @@
             :item="item"
             :article-type="item.article_type || article_type"
             :key="item.id"
-          ></operation>
+          >
+            <div
+              class="van-icon van-icon-ellipsis"
+              @click.stop="onOperation(item, index)"
+            ></div>
+          </operation>
         </div>
       </template>
     </refreshList>
     <more-popup
-      :moreShow.sync="moreShow"
+      :moreShow.sync="postMoreShow"
       :deleteProp="status"
       :complain="!status"
       :shield="!status"
       :complainInfo="active"
       :complainType="1"
+      :shareObj="shareObj"
       @delete="deleteArticle"
+    ></more-popup>
+    <more-popup
+      :class="{'ios-share': systemType === 'ios' && article_type != 3}"
+      :moreShow.sync="moreShow"
+      :complain="false"
+      :shareObj="shareObj"
     ></more-popup>
   </div>
 </template>
@@ -107,7 +132,7 @@ import operation from './operation'
 import { deleteComment, deleteArticle, addComplaint } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
 import { Toast } from 'vant'
-import { imagePreview } from '@/utils/util'
+import { imagePreview, downloadPic } from '@/utils/util'
 
 export default {
   components: {
@@ -130,32 +155,64 @@ export default {
   },
   data () {
     return {
+      postMoreShow: false,
       moreShow: false,
       list: this.data,
       active: {},
       activeIndex: undefined,
-      status: true // 是否是本人发的帖
+      status: true, // 是否是本人发的帖
+      shareObj: {},
+      systemType: api.systemType || ''
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    /* 操作 */
+    /* 保存分享图片 */
+    downloadSharePic (item) {
+      const { article_type, id, share_img } = item
+      const urlName = 'detail_' + article_type + '_' + id
+      downloadPic(share_img, urlName)
+        .then((data) => {
+          this.sendShareParam(item, data)
+        })
+        .catch(() => {
+          this.sendShareParam(item, '')
+        })
+    },
+    sendShareParam (data, img) {
+      const content = data.article_type == 3 || this.article_type == 3 ? data.content : data.title
+      this.shareObj = {
+        title: content,
+        description: content,
+        pyqTitle: content,
+        thumb: data ? 'fs://' + img + '.png' : '',
+        contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + data.article_type + '&id=' + data.id
+      }
+    },
+    /* 资讯活动操作 */
     onOperation (item, index) {
-      this.moreShow = true
-      this.status = item.is_mine
-      this.active = item
+      this.downloadSharePic(item)
       this.activeIndex = index
+      this.status = true
+      this.moreShow = true
+    },
+    /* 帖子操作 */
+    onPostOperation (item, index) {
+      this.downloadSharePic(item)
+      this.status = item.is_mine
+      this.activeIndex = index
+      this.postMoreShow = true
     },
     /* 删除帖子 */
     deleteArticle () {
       deleteArticle({
         id: this.active.id
-      }).then((res) => {
+      }).then(res => {
         this.list.splice(this.activeIndex, 1)
         Toast.success('删除成功')
-        this.moreShow = false
+        this.postMoreShow = false
         this.mtjEvent({
           eventId: 44
         })
@@ -265,5 +322,8 @@ export default {
   border-radius: 10px 0px 10px 10px;
   color: @orange-dark;
   font-size: 22px;
+}
+.ios-share /deep/ .mask-block {
+  bottom: 98px;
 }
 </style>

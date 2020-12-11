@@ -25,42 +25,87 @@
           <template v-if="info.visitor_num">({{info.visitor_num}}人)</template> {{info.gender | sexText}} {{info.mobile}}
         </div>
       </div>
-      <!-- <button class="share-btn" type="warn">分享给访客</button> -->
+      <button @click="shareShow=true" class="share-btn" type="warn">分享给访客</button>
     </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare">
+    </tf-share >
   </div>
 </template>
 
 <script>
 import { NavBar } from 'vant'
 import { visitorCode } from '@/api/butler'
+import tfShare from '@/components/tf-share'
+import { downloadPic } from '@/utils/util.js'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    tfShare
   },
   data () {
     return {
       id: '',
-      info: {}
+      info: {},
+      shareObj: {},
+      shareShow: false
     }
   },
   created () {
     this.id = this.$route.query.id
     this.visitorCode()
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   methods: {
+    /* 保存分享图片 */
+    downloadSharePic () {
+      const that = this
+      const urlName = 'invite_1'
+      downloadPic('https://live.tosolomo.com/library/img/app_img/wx_code.png', urlName)
+        .then((data) => {
+          that.sendShareParam(data)
+        })
+        .catch(() => {
+          that.sendShareParam('')
+        })
+    },
+    sendShareParam (data) {
+      let user_info = api.getPrefs({
+        key: 'user_info',
+        sync: true
+      }) || ''
+      user_info = user_info ? JSON.parse(user_info) : ''
+      this.shareObj = {
+        title: '[访客通行证]' + this.currentProject.project_name,
+        description: '有效日期：' + this.info.yxtime,
+        pyqTitle: '[访客通行证]' + this.currentProject.project_name,
+        thumb: data ? 'fs://' + data + '.png' : '',
+        contentUrl: 'http://live.tosolomo.com/wap/#/invite?uid=' + user_info.id + '&project_id=' + this.currentProject.project_id + '&id=' + this.id,
+        pyqHide: true
+      }
+    },
     // 获取邀约信息
     visitorCode () {
       visitorCode({
         yy_id: this.id
       }).then((res) => {
         this.info = res.data
+        this.downloadSharePic()
       })
     },
     goList () {
       this.$router.replace({
         name: 'visitorInviteList'
       })
+    },
+    closeShare (data) {
+      this.shareShow = data == 1 ? true : false
     }
   }
 }

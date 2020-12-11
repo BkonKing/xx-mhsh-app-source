@@ -51,7 +51,7 @@
               <div class="tf-text">{{ userText[house_role] }}</div>
             </template>
           </tf-list-item>
-          <tf-list-item title="真实姓名" :showArrow="false">
+          <tf-list-item title="真实姓名" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <div v-if="mode === 1 && !editMode" class="tf-text">
                 {{ realname }}
@@ -59,7 +59,7 @@
               <input v-else class="tf-input" v-model="realname" />
             </template>
           </tf-list-item>
-          <tf-list-item title="手机号" :showArrow="false">
+          <tf-list-item title="手机号" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input
                 v-if="type === 0 && ((mode === 1 && editMode) || mode === 0)"
@@ -458,7 +458,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name !== 'houSelectCommunity') {
+    if (to.name !== 'houSelectCommunity' && to.name !== 'agreement') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

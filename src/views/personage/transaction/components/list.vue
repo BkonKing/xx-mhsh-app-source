@@ -28,13 +28,15 @@
               >({{item.sy_time}})</span>
             </template>
           </div>
-          <van-button v-if="item.status == 1" type="warning">去处理</van-button>
-          <van-button v-else-if="item.status == 2" type="danger">去分派</van-button>
-          <van-button v-else-if="item.sub_status == 3 && item.uid === userInfo.id">接受任务</van-button>
-          <van-button
-            v-else-if="item.sub_status == 6 && item.uid === userInfo.id"
-            type="danger"
-          >确认结案</van-button>
+          <template v-if="userInfo.department_id != '6'">
+            <van-button v-if="item.status == 1" type="warning">去处理</van-button>
+            <van-button v-else-if="item.status == 2" type="danger">去分派</van-button>
+            <van-button v-else-if="item.sub_status == 3 && item.uid === userInfo.id">接受任务</van-button>
+            <van-button
+              v-else-if="item.sub_status == 6 && item.uid === userInfo.id"
+              type="danger"
+            >确认结案</van-button>
+          </template>
         </div>
         <!-- <div
               class="tf-card-header__status"

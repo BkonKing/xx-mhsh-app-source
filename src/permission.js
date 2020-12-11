@@ -4,8 +4,14 @@ import Vue from 'vue'
 import {
   Toast
 } from 'vant'
+import { pagesArr } from './const/pages.js'
+import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
+import { getParams } from '@/utils/util.js'
 
 const whiteList = ['/login', '/agreement', '/openingPage']
+var flag = 0
+var params = ''
+var isClear = true
 
 router.beforeEach(async (to, from, next) => {
   var toPageName = to.name
@@ -15,10 +21,19 @@ router.beforeEach(async (to, from, next) => {
       Vue.prototype.bdmtj.onPageEnd({
         pageName: fromPageName
       })
+      // 页面统计-离开更新
+      updateStatisticsData(2, {'page_id': pagesArr[fromPageName]})
+    } else {
+      // 应用启动新增
+      setStatisticsData(6, {'type': 1, 'page_id': pagesArr[toPageName]})
+      // 启动数据录入
+      setStatisticsData(1)
     }
     Vue.prototype.bdmtj.onPageStart({
       pageName: toPageName
     })
+    // 页面统计-进入新增
+    setStatisticsData(2, {'page_id': pagesArr[toPageName]})
   }
 
   // Toast.loading({
@@ -55,11 +70,62 @@ router.beforeEach(async (to, from, next) => {
       if (!firstStatus) {
         next('/openingPage')
       } else {
-        next('/login')
+        if (flag == 1) {
+          flag = 0
+          store.commit('setShare_params', params)
+          next('/login')
+        } else {
+          next('/login')
+        }
       }
     }
   }
   // Toast.clear()
+  if (process.env.VUE_APP_IS_APP) {
+    // 浏览器打开app
+    api.addEventListener({
+      name: 'appintent'
+    }, function (ret, err) {
+      flag = 1
+      if (isClear) {
+        params = ret.appParam
+      } else {
+        isClear = true
+      }
+      if (typeof ret.appParam.wx_arguments != 'undefined' && ret.appParam.wx_arguments) {
+        // 安卓微信跳转app
+        const appParams = JSON.parse(ret.appParam.wx_arguments).app_params
+        params = getParams(appParams)
+      }
+      if (typeof ret.iosUrl != 'undefined' && api.systemType == 'ios') {
+        // ios微信跳转app
+        const wxPlus = api.require('wxPlus')
+        wxPlus.addJumpFromWxListener(function (ret) {
+          isClear = false
+          params = getParams(ret.message.messageExt)
+        })
+      }
+      // alert(JSON.stringify(params))
+      // alert(params.page_type)
+      if (params.page_type == 1) {
+        router.push({
+          path: '/store/goods-detail',
+          query: {
+            id: params.id,
+            f_id: params.f_id
+          }
+        })
+      } else if (params.page_type == 2) {
+        router.push({
+          path: '/pages/neighbours/details',
+          query: {
+            articleType: params.articleType,
+            id: params.id
+          }
+        })
+      }
+    })
+  }
 })
 
 router.afterEach(async (to, from, next) => {

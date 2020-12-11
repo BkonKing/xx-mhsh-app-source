@@ -1,10 +1,10 @@
-import Vue from 'vue'
 import store from '../store'
 import EXIF from 'exif-js'
 import {
   Toast,
   ImagePreview
 } from 'vant'
+import { bindAliasAndTags } from '@/utils/ajpush'
 
 export function getDate (time) {
   const date = time || new Date()
@@ -75,14 +75,7 @@ export function imagePreview (options) {
 
 export function clearUserInfo () {
   if (process.env.VUE_APP_IS_APP === '1') {
-    const ajParams = {
-      alias: 0
-    }
-    Vue.prototype.ajpush.bindAliasAndTags(ajParams, (ret) => {
-      if (ret && ret.statusCode) {
-        // alert(ret)
-      }
-    })
+    bindAliasAndTags(0)
   }
   const userId = store.getters.userInfo.id
   if (userId) {
@@ -147,18 +140,42 @@ export function getArea (str) {
     area.City = str.substring(index11 + 1, index2 + 1)
   } else {
     if (index11 == 0) {
-      area.City = str.substring(index1 + 1, index2 + 1)
+      if (index2 > index11) {
+        area.City = str.substring(index1 + 1, index2 + 1)
+      }
     } else {
-      area.City = str.substring(index11 + 3, index2 + 1)
+      if (index2 > index11) {
+        area.City = str.substring(index11 + 3, index2 + 1)
+      }
     }
   }
 
   let index3 = str.lastIndexOf('区')
   if (index3 == -1) {
     index3 = str.indexOf('县')
-    area.Country = str.substring(index2 + 1, index3 + 1)
+    if (index3 > 0) {
+      if (index2 > index1 && index2 > index11) {
+        area.Country = str.substring(index2 + 1, index3 + 1)
+      } else {
+        if (index11) {
+          area.Country = str.substring(index11 + 3, index3 + 1)
+        } else {
+          area.Country = str.substring(index1 + 1, index3 + 1)
+        }
+      }
+    }
   } else {
-    area.Country = str.substring(index2 + 1, index3 + 1)
+    if (index3 > index2 && index3 > index11 + 2 && index11 !== -1) {
+      if (index2 > index11 && index2 > index1) {
+        area.Country = str.substring(index2 + 1, index3 + 1)
+      } else {
+        if (index2 <= index11) {
+          area.Country = str.substring(index11 + 3, index3 + 1)
+        }else {
+          area.Country = str.substring(index1 + 1, index3 + 1)
+        }
+      }
+    }
   }
   return area.Province + area.City + area.Country
 }
@@ -344,5 +361,33 @@ export function bMapGetLocationInfo () {
         }
       })
     }
+  })
+}
+
+export function getParams (params) {
+  const vars = params.split('&')
+  let paramsObj = new Object()
+  for (let i = 0; i < vars.length; i++) {
+    let pair = vars[i].split('=')
+    paramsObj[pair[0]] = pair[1]
+  }
+  return paramsObj
+}
+
+export function downloadPic (picUrl, name) {
+  return new Promise((resolve, reject) => {
+    api.download({
+      url: picUrl,
+      savePath: 'fs://' + name + '.png',
+      report: false,
+      cache: true,
+      allowResume: false
+    }, function (ret, err) {
+      if (ret.state == 1) {
+        resolve(name)
+      } else {
+        reject()
+      }
+    })
   })
 }

@@ -1,5 +1,5 @@
 <template>
-<div class='tf-bg'>
+<div class='tf-bg tf-body'>
   <van-nav-bar
     :title='title'
     :fixed='true'
@@ -12,7 +12,7 @@
       <span class='tf-icon tf-icon-bianxie' @click="goEdit"></span>
     </template>
   </van-nav-bar>
-  <div class='tf-main-container'>
+  <div class='tf-main-container tf-body-container'>
     <list :data.sync="postBarList" :load="getPostBarList" article_type="3"></list>
   </div>
 </div>
@@ -59,6 +59,12 @@ export default {
         is_all: this.isAll
       }, params))
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.postBarList = []
+    this.$nextTick(() => {
+      next()
+    })
   }
 }
 </script>

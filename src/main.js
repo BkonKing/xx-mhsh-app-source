@@ -16,6 +16,8 @@ import './styles/common.less'
 import './styles/components.less'
 import './styles/iconfont.css'
 import 'amfe-flexible'
+import { setStatisticsData } from '@/utils/analysis.js'
+import { ajpushInit } from '@/utils/ajpush'
 
 Vue.config.errorHandler = function (err, vm, info) {
   console.error(err, info)
@@ -43,13 +45,7 @@ if (process.env.VUE_APP_IS_APP === '1') {
       // }
     })
     // 极光推送
-    Vue.prototype.ajpush = api.require('ajpush')
-
-    Vue.prototype.ajpush.init((ret) => {
-      if (ret && ret.status) {
-        // console.log(ret.status)
-      }
-    })
+    ajpushInit()
     // 百度统计
     Vue.prototype.bdmtj = api.require('modulebaidumtj')
     if (api.systemType == 'android') {
@@ -76,7 +72,9 @@ if (process.env.VUE_APP_IS_APP === '1') {
         eventId: params.eventId,
         eventLabel: 'event'
       })
+      setStatisticsData(3, { 'event_id': params.eventId})
     }
+
     // 自定义扫码防止黑屏配置
     const FNScanner = api.require('FNScanner')
     api.addEventListener({

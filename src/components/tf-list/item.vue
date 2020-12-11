@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-clist-box" @click="onClick">
+  <div class="tf-clist-box" @click="onClick" v-inputFocus="IFocusStatus">
     <div class="tf-clist-cell" :class="{'tf-clist-border': border}">
       <div class="tf-clist-cell-left">
       <slot name="image">
@@ -44,6 +44,23 @@ export default {
     required: {
       type: Boolean,
       default: false
+    },
+    IFocusStatus: {
+      type: Boolean,
+      default: false
+    }
+  },
+  directives: {
+    inputFocus: {
+      bind (el, binding) {
+        const { value } = binding
+        if (value) {
+          el.addEventListener('click', function (event) {
+            const input = el.getElementsByTagName('input')
+            input.length && input[0].focus()
+          }, false)
+        }
+      }
     }
   },
   methods: {

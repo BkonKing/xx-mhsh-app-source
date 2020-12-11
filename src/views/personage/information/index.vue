@@ -19,7 +19,7 @@
               </template>
             </tf-list-item>
           </van-uploader>
-          <tf-list-item border title="昵称" :showArrow="false">
+          <tf-list-item border title="昵称" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="nickname" class="tf-input" @change="setNickname" maxlength="15" />
             </template>
@@ -59,7 +59,7 @@
           </tf-list-item>
         </tf-list>
         <tf-list class="basics-list">
-          <tf-list-item border title="姓名" :showArrow="false">
+          <tf-list-item border title="姓名" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="realname" class="tf-input" @change="setRealname" />
             </template>
@@ -97,7 +97,7 @@
           @change="(bindingId) => goAttestation(1,1,bindingId)"
         ></house>
       </van-tab>
-      <van-tab v-if="userType != 0 && currentProject" title="成员信息">
+      <van-tab v-if="userType == 1 && currentProject" title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
           <van-dropdown-item v-model="value" :options="list" />
         </van-dropdown-menu>
@@ -402,12 +402,7 @@ export default {
     },
     /* 跳转收货地址 */
     goAddress () {
-      this.$router.push({
-        path: '/address/list',
-        query: {
-          isSelect: 1
-        }
-      })
+      this.$router.push('/address/list')
       // this.$router.push('/pages/personage/information/address')
     },
     /* 跳转手机验证 */

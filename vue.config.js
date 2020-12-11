@@ -127,11 +127,14 @@ module.exports = {
     open: true,
     proxy: {
       /** 解决本地测试跨域问题 */
+      '/api/xwtj': {
+        target: 'http://tj.mhshjy.com/api/v1',
+        pathRewrite: {
+          '^/api/xwtj': ''
+        }
+      },
       '/api': {
         target: 'https://test.tosolomo.com/app/api/v1',
-        // target: 'http://192.168.1.158/app/api/v1',
-        // target: 'https://test.mhshjy.com/app/api/v1',
-        // target: 'https://www.fastmock.site/mock/c30751817f92f0a4855537591d860a97/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }

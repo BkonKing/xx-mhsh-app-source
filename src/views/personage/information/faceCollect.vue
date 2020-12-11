@@ -100,6 +100,8 @@ export default {
             api.openFrame({
               name: 'camera',
               url: './camera.html',
+              useWKWebView: true,
+              bgColor: 'rgba(0, 0, 0, 0)',
               rect: {
                 x: 0,
                 y: 0,

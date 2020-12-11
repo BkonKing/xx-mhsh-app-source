@@ -139,6 +139,18 @@
         </template>
       </div>
     </template>
+    <template v-else-if="this.status < 4 && userInfo.department_id == '6'">
+      <div class="operation-box brand-department">
+        <div class="operation-content">
+          等待
+          <span class="tf-text-orange">{{ detailInfo.designee }}</span>
+          {{ sub_status | statusFilter }}
+          <span v-if="detailInfo.time_limit" class="tf-text-primary">
+            ({{ detailInfo.time_limit }})
+          </span>
+        </div>
+      </div>
+    </template>
     <!-- 撤销 -->
     <tf-dialog
       v-model="revocationShow"
@@ -405,7 +417,7 @@
                   class="tf-text text-right"
                   :class="{ 'picker-active': negotiation_time }"
                 >
-                  {{ negotiation_time || '选择日期时间' }}
+                  {{ negotiation_time || "选择日期时间" }}
                 </div>
               </template>
             </tf-date-time-picker>
@@ -459,7 +471,7 @@
         <div class="tf-flex-item">{{ negotiateInfo.refuse_reason }}</div>
       </div>
       <div class="confirm-btn">
-        {{ sub_status == 6 ? '已确认' : '已拒绝' }}
+        {{ sub_status == 6 ? "已确认" : "已拒绝" }}
       </div>
       <!-- </div> -->
     </tf-dialog>
@@ -671,7 +683,11 @@ export default {
     ...mapGetters(['userInfo']),
     // 客服人员操作状态
     serviceOperateStatus () {
-      return this.userInfo.role_dep == 1 && this.status < 4
+      return (
+        this.userInfo.role_dep == 1 &&
+        this.userInfo.department_id != '6' &&
+        this.status < 4
+      )
     },
     // 处理人员操作状态
     disposeStatus () {
@@ -703,7 +719,7 @@ export default {
           repairId: this.repairId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.isLoading = false
         const { status, sub_status, category } = res.data
         this.title = category
@@ -714,7 +730,7 @@ export default {
     },
     /* 获取撤消提报原因 */
     getUndoReasonList () {
-      getUndoReasonList(this.projectId).then((res) => {
+      getUndoReasonList(this.projectId).then(res => {
         this.reasonList = res.data
       })
     },
@@ -737,7 +753,7 @@ export default {
           other_reason: this.other_reason,
           refuse_reason: this.refuse_reason
         }
-        cancelRepair(params, this.projectId).then((res) => {
+        cancelRepair(params, this.projectId).then(res => {
           this.getRepairInfo()
           Toast('已经撤销提报')
           this.revocationShow = false
@@ -754,7 +770,7 @@ export default {
           repair_id: this.repairId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.getRepairInfo()
         this.showAssign()
         this.mtjEvent({
@@ -777,9 +793,9 @@ export default {
         this.departmentList = bm
         const newData = {}
         // 格式转换 姓名-电话号码-工作日期-擅长
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           if (data[key].length) {
-            newData[key] = data[key].map((obj) => {
+            newData[key] = data[key].map(obj => {
               const { realname, mobile, weeks, skill, uid } = obj
               return {
                 label: `${realname} ${mobile} ${weeks} ${skill}`,
@@ -805,7 +821,7 @@ export default {
           limit_hours: this.limit_hours
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.getRepairInfo()
         Toast.success('分派人员成功')
         this.assignShow = false
@@ -821,7 +837,7 @@ export default {
     },
     /* 获取取消任务原因 */
     getCancelReasonList () {
-      getCancelReasonList(this.projectId).then((res) => {
+      getCancelReasonList(this.projectId).then(res => {
         this.cancelReasonList = res.data
       })
     },
@@ -839,10 +855,10 @@ export default {
           other_reason: this.cancelExplain,
           refuse_reason: this.cancelReason
         }
-        refuseTasks(params, this.projectId).then((res) => {
+        refuseTasks(params, this.projectId).then(res => {
           Dialog.alert({
             title: '已取消任务'
-          }).then((res) => {
+          }).then(res => {
             this.refuseTaskShow = false
             this.getRepairInfo()
             this.mtjEvent({
@@ -866,7 +882,7 @@ export default {
           negotiation_costs: this.isCharge == 1 ? this.negotiation_costs : '',
           negotiation_time: this.negotiation_time
         }
-        negotiation(params, this.projectId).then((res) => {
+        negotiation(params, this.projectId).then(res => {
           Toast.success('您已接受该任务')
           this.getRepairInfo()
           this.acceptPlanShow = false
@@ -889,7 +905,7 @@ export default {
           negotiationId
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         this.negotiateInfo = res.data || {}
       })
     },
@@ -908,7 +924,7 @@ export default {
       ]
       validForm(validator).then(() => {
         Toast.loading({
-          duration: 0,
+          duration: 29500,
           forbidClick: true,
           message: '提交中...'
         })
@@ -916,7 +932,7 @@ export default {
           repair_id: this.repairId,
           content: this.planContent
         }
-        timeaxis(params, this.projectId).then((res) => {
+        timeaxis(params, this.projectId).then(res => {
           this.planShow = false
           this.getRepairInfo()
           this.$nextTick(() => {
@@ -949,7 +965,7 @@ export default {
         }
         params.images = this.imageFiles.join(',')
       }
-      caseOver(params, this.projectId).then((res) => {
+      caseOver(params, this.projectId).then(res => {
         Toast.success('您已结案成功')
         this.getRepairInfo()
         this.settleShow = false
@@ -971,7 +987,7 @@ export default {
           images: this.imageFiles.join(',')
         },
         this.projectId
-      ).then((res) => {
+      ).then(res => {
         Toast.success('结案图片上传成功')
         this.getRepairInfo()
         this.imgUploadShow = false
@@ -990,7 +1006,7 @@ export default {
       getEvaluateInfo({
         repair_id: this.repairId,
         evaluate_id: item.evaluate_id
-      }).then((res) => {
+      }).then(res => {
         this.evaluateInfo = res.data || {}
       })
     },
@@ -1042,6 +1058,12 @@ export default {
   font-size: 30px;
   margin-bottom: 30px;
   color: #222;
+}
+.brand-department {
+  padding-bottom: 20px;
+  .operation-content {
+    margin-bottom: 0;
+  }
 }
 .alert-text {
   font-size: 28px;

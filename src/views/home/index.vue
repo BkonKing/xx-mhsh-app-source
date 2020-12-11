@@ -76,7 +76,7 @@
           <span class="app-box__text">{{ item.application }}</span>
         </van-grid-item>
         <van-grid-item key="all" to="/applist">
-          <img class="app-box__image" src="@/assets/imgs/home_all.png" />
+          <img class="app-box__image" src="@/assets/imgs/home_all.svg" />
           <span class="app-box__text">全部</span>
         </van-grid-item>
       </van-grid>
