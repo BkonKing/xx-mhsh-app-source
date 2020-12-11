@@ -227,7 +227,6 @@ const store = {
           duration: 0
         })
         outLogin().then((res) => {
-          Toast.clear()
           if (res.success) {
             clearUserInfo()
             router.push('/login')
@@ -235,6 +234,8 @@ const store = {
           } else {
             reject()
           }
+        }).finally(() => {
+          Toast.clear()
         })
       })
     },

@@ -22,7 +22,7 @@
           class="sign-tag"
           :class="{ 'sign-tag--complete': signinToday == '1' }"
           @click="signIn()"
-          >{{ signinToday == '1' ? '已签到' : '签到' }}</van-button
+          >{{ signinToday == "1" ? "已签到" : "签到" }}</van-button
         >
       </div>
     </div>
@@ -185,7 +185,7 @@ export default {
     signin () {
       this.signLoading = true
       signin()
-        .then((res) => {
+        .then(res => {
           this.signLoading = false
           Toast({
             message: res.message
@@ -218,7 +218,7 @@ export default {
     },
     /* 获取幸福币专区 */
     getCreditsGoodsList () {
-      getCreditsGoodsList().then((res) => {
+      getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
@@ -256,7 +256,7 @@ export default {
           title: '提示',
           message: '您尚未认证房间，是否去认证？',
           confirmButtonText: '去认证'
-        }).then((res) => {
+        }).then(res => {
           this.$router.push(
             '/pages/personage/house/attestation?type=1&mode=0&select=1'
           )
@@ -295,7 +295,8 @@ export default {
 .page-bg {
   width: 750px;
   height: 378px;
-  background-color: #fbe1ca;
+  background: url("../../../assets/imgs/credits_header.png") no-repeat;
+  background-size: cover;
 }
 .nav-bar {
   flex-direction: row;

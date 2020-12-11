@@ -35,7 +35,7 @@
                 <span class="tf-text-white">{{ timeData.seconds }}s</span>
               </template>
             </van-count-down>
-            <van-button v-else class="query-btn" @click="verifCode"
+            <van-button v-else class="query-btn" :loading="codeLoading" @click="verifCode"
               >获取</van-button
             >
           </template>
@@ -117,6 +117,7 @@ export default {
       login_type: 1, // 1:验证码登录 2：密码登陆
       agree: true, // 同意协议
       showPassword: false,
+      codeLoading: false,
       codeStatus: false,
       countDownTime: 60000,
       status: 0,
@@ -236,11 +237,15 @@ export default {
     },
     /* 发送验证码 */
     verifCode () {
+      this.codeLoading = true
       verifCode({
         mobile: this.mobile
       }).then(res => {
         Toast.success('验证码发送成功，请注意查收')
+        this.codeLoading = false
         this.codeStatus = true
+      }).catch(() => {
+        this.codeLoading = false
       })
     },
     /* 倒计时结束 */

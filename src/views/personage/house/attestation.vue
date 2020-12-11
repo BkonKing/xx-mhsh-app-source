@@ -458,7 +458,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name !== 'houSelectCommunity') {
+    if (to.name !== 'houSelectCommunity' && to.name !== 'agreement') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

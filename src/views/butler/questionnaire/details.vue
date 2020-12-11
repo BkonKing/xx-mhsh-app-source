@@ -116,7 +116,7 @@
         </template>
         <template v-else-if="wjtp_info.wjtp_type == 2">
           <div class="tf-text-grey tf-center tf-mb-lg">
-            投票选项({{ wjtp_info.tp_type == 1 ? '单选' : '多选' }})
+            投票选项({{ wjtp_info.tp_type == 1 ? "单选" : "多选" }})
           </div>
           <div
             class="vote-box tf-row-space-between"
@@ -133,24 +133,23 @@
             <div class="vote-progress-placeholder">
               <div
                 v-if="
-                  finishStatus &&
-                    voteList.answer_count[i] &&
-                    voteList.answer_count[i].num
+                  finishStatus && answerCountList && answerCountList[item.id]
                 "
                 class="vote-progress"
                 :style="{
-                  width: `${(parseInt(voteList.answer_count[i].num) /
+                  width: `${(parseInt(answerCountList[item.id]) /
                     parseInt(totalNum)) *
                     100}%`
                 }"
               ></div>
             </div>
-            <div class="vote-title">{{ item.content }}</div>
+            <div class="vote-title">
+              {{ item.content }}
+              <span v-if="voteList.answer && voteList.answer.indexOf(item.id) > -1" class="tf-text-sm">（已投）</span>
+            </div>
             <!-- 已答-->
             <div class="vote-result" v-if="finishStatus">
-              {{
-                (voteList.answer_count[i] && voteList.answer_count[i].num) || 0
-              }}票
+              {{ (answerCountList && answerCountList[item.id]) || 0 }}票
             </div>
             <!-- 未答-->
             <template v-else>
@@ -174,7 +173,7 @@
                   class="tf-text-white tf-icon"
                   :class="{ 'tf-icon-gou': answer.indexOf(item.id) > -1 }"
                 >
-                  {{ answer.indexOf(item.id) > -1 ? '' : '投票' }}
+                  {{ answer.indexOf(item.id) > -1 ? "" : "投票" }}
                 </div>
               </button>
             </template>
@@ -243,12 +242,19 @@ export default {
       return this.wjtp_info.is_answer || this.wjtp_info.status == 3
     },
     totalNum () {
-      const list = this.voteList
       let num = 0
-      list.answer_count.forEach((obj) => {
+      this.voteList.answer_count.forEach(obj => {
         num += parseInt(obj.num) || 0
       })
       return num
+    },
+    // 返回的票数数据格式更改
+    answerCountList () {
+      const countObj = {}
+      this.voteList.answer_count.forEach(obj => {
+        countObj[obj.answer] = obj.num
+      })
+      return countObj
     }
   },
   methods: {
@@ -256,12 +262,12 @@ export default {
     getWjtpInfo () {
       getWjtpInfo({
         wjtpId: this.wjtpId
-      }).then((res) => {
+      }).then(res => {
         const { wjtp_info, item } = res.data
         this.wjtp_info = wjtp_info
         this.title = this.wjtp_info.wjtp_type == '1' ? '问卷' : '投票'
         // 遍历将答案为''转为[]
-        this.voteList = item.map((obj) => {
+        this.voteList = item.map(obj => {
           if (obj.item_type == 2) {
             obj.answer = obj.answer ? obj.answer : []
           } else {
@@ -295,7 +301,7 @@ export default {
     },
     /* 投票提交 */
     confirm () {
-      const isEmpty = (val) =>
+      const isEmpty = val =>
         typeof val === 'undefined' ||
         val === null ||
         val === '' ||
@@ -303,7 +309,7 @@ export default {
       // 问卷调查，判断必填项是否已经填写，填写完则提交
       if (this.wjtp_info.wjtp_type == 1) {
         const params = {}
-        const status = this.voteList.every((obj) => {
+        const status = this.voteList.every(obj => {
           if (obj.is_required == '1' && isEmpty(obj.answer)) {
             Toast('请填写未回答的问题')
             return false
@@ -338,7 +344,7 @@ export default {
         wjtp_id: this.wjtpId,
         answer
       })
-        .then((res) => {
+        .then(res => {
           this.submitLoading = false
           if (res.success) {
             const message =
@@ -366,7 +372,7 @@ export default {
 
 <style lang="less" scoped>
 .tf-bg-white {
-  position:relative;
+  position: relative;
   padding: 30px;
   overflow: hidden;
 }
@@ -492,7 +498,7 @@ export default {
     }
     .radio-checked-box {
       &::before {
-        content: '';
+        content: "";
         width: 14px;
         height: 14px;
         background: @red-dark;

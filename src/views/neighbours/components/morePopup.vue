@@ -245,10 +245,11 @@ export default {
   },
   methods: {
     clickShare () {
+      this.moreShowChild = false
       this.showShare = true
     },
     onSelect (data) {
-      this.showShare = data == 1 ? true : false;
+      this.showShare = data == 1
     },
     clickComment () {
       this.moreShowChild = false

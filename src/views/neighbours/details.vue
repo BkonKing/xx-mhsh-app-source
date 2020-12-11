@@ -275,7 +275,7 @@ export default {
         .catch(({ message }) => {
           Toast.clear()
           Dialog.alert({
-            title: message
+            title: message || '该贴不存在'
           }).then(() => {
             this.$router.go(-1)
           })
