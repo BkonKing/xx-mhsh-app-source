@@ -223,19 +223,19 @@ const store = {
       commit
     }) {
       return await new Promise((resolve, reject) => {
-        Toast.loading({
-          duration: 0
+        const loadingToast = Toast.loading({
+          duration: 3000
         })
         outLogin().then((res) => {
+          loadingToast.clear()
           if (res.success) {
             clearUserInfo()
-            router.push('/login')
             resolve()
           } else {
-            reject()
+            reject(res)
           }
-        }).finally(() => {
-          Toast.clear()
+        }).catch(() => {
+          loadingToast.clear()
         })
       })
     },

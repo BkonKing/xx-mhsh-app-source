@@ -244,7 +244,10 @@ export default {
         Toast.success('验证码发送成功，请注意查收')
         this.codeLoading = false
         this.codeStatus = true
-      }).catch(() => {
+      }).catch((err) => {
+        if (!err) {
+          Toast.fail('获取失败，请重试')
+        }
         this.codeLoading = false
       })
     },

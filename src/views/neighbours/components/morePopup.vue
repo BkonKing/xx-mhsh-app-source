@@ -441,4 +441,8 @@ export default {
     }
   }
 }
+
+/deep/ .mask-close {
+  top: -90px;
+}
 </style>
