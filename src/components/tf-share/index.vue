@@ -106,6 +106,9 @@ export default {
   width: 120px;
   height: 120px;
 }
+.mask-close {
+  display: flex;
+}
 // .mask-btn div.mask-sure-btn {
 //   width: 215px;
 // }
