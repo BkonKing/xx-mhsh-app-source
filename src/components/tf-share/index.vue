@@ -9,7 +9,7 @@
           <img src="@/assets/img/share_1.png" />
           <div>微信</div>
         </div>
-        <div @click.stop="shareFunc(2)" class="share-btn">
+        <div v-if="!shareObj.pyqHide" @click.stop="shareFunc(2)" class="share-btn">
           <img src="@/assets/img/share_2.png" />
           <div>朋友圈</div>
         </div>

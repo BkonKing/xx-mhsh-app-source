@@ -27,10 +27,11 @@
       </div>
       <button @click="shareShow=true" class="share-btn" type="warn">分享给访客</button>
     </div>
-    <tf-share 
+    <tf-share
       :share-show="shareShow"
       :share-obj="shareObj"
-      @closeSwal="closeShare"></tf-share >
+      @closeSwal="closeShare">
+    </tf-share >
   </div>
 </template>
 
@@ -85,7 +86,8 @@ export default {
         description: '有效日期：' + this.info.yxtime,
         pyqTitle: '[访客通行证]' + this.currentProject.project_name,
         thumb: data ? 'fs://' + data + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/invite?uid=' + user_info.id + '&project_id=' + this.currentProject.project_id + '&id=' + this.id
+        contentUrl: 'http://live.tosolomo.com/wap/#/invite?uid=' + user_info.id + '&project_id=' + this.currentProject.project_id + '&id=' + this.id,
+        pyqHide: true
       }
     },
     // 获取邀约信息
