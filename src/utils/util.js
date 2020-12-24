@@ -2,9 +2,14 @@ import store from '../store'
 import EXIF from 'exif-js'
 import {
   Toast,
-  ImagePreview
+  ImagePreview,
+  Dialog
 } from 'vant'
 import { bindAliasAndTags } from '@/utils/ajpush'
+import {
+  hasPermission,
+  reqPermission
+} from '@/utils/permission'
 
 export function getDate (time) {
   const date = time || new Date()
@@ -376,18 +381,54 @@ export function getParams (params) {
 
 export function downloadPic (picUrl, name) {
   return new Promise((resolve, reject) => {
-    api.download({
-      url: picUrl,
-      savePath: 'fs://' + name + '.png',
-      report: false,
-      cache: true,
-      allowResume: false
-    }, function (ret, err) {
-      if (ret.state == 1) {
-        resolve(name)
-      } else {
-        reject()
-      }
+    setStoragePermission().then(() => {
+      api.download({
+        url: picUrl,
+        savePath: 'fs://' + name + '.png',
+        report: false,
+        cache: true,
+        allowResume: false
+      }, function (ret, err) {
+        if (ret.state == 1) {
+          resolve(name)
+        } else {
+          reject()
+        }
+      })
+    }).catch(() => {
+      reject()
     })
+  })
+}
+
+// 获取保存数据权限
+export function setStoragePermission () {
+  return new Promise((resolve, reject) => {
+    const perms = hasPermission('storage')
+    if (!perms[0].granted) {
+      Dialog.confirm({
+        title: '提示',
+        message: '没有开启数据存储权限，可能会影响部分功能哦，是否前往开启权限？',
+        confirmButtonText: '去开启',
+        className: 'top-index-dialog',
+        overlayStyle: {
+          'z-index': 9998
+        }
+      })
+        .then(res => {
+          reqPermission('storage', ({ list }) => {
+            if (list[0].granted) {
+              resolve()
+            } else {
+              reject()
+            }
+          })
+        })
+        .catch(() => {
+          reject()
+        })
+    } else {
+      resolve()
+    }
   })
 }

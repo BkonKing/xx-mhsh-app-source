@@ -105,6 +105,7 @@
       </template>
     </refreshList>
     <more-popup
+      :class="{'ios-share': systemType === 'ios' && article_type != 3}"
       :moreShow.sync="postMoreShow"
       :deleteProp="status"
       :complain="!status"
@@ -187,7 +188,7 @@ export default {
         title: content,
         description: content,
         pyqTitle: content,
-        thumb: data ? 'fs://' + img + '.png' : '',
+        thumb: img ? 'fs://' + img + '.png' : '',
         contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + data.article_type + '&id=' + data.id
       }
     },
