@@ -53,7 +53,7 @@
         <div class="attes">
           <van-cell class="nameCell" is-link center>
             <template #title>
-              <div class="title" @click="toCertification()">
+              <div class="title" @click="toPersonInfo">
                 <div class="txt">实名认证</div>
                 <div class="name">
                   鲁班
@@ -367,10 +367,14 @@ export default {
   },
   methods: {
     // 实名认证
-    toCertification() {
-      if (!this.userInfo.realname) {
-        this.$router.push("/pages/personage/information/certification");
-      }
+    // toCertification() {
+    //   if (!this.userInfo.realname) {
+    //     this.$router.push("/pages/personage/information/certification");
+    //   }
+    // },
+    //  个人信息
+    toPersonInfo() {
+      this.$router.push("/pages/personage/information/realNameInfo");
     },
     /* 获取用户信息 */
     async getMyAccount() {

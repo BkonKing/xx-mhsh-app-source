@@ -20,6 +20,7 @@ import 'amfe-flexible'
 import { setStatisticsData } from '@/utils/analysis.js'
 import { ajpushInit } from '@/utils/ajpush'
 
+
 Vue.config.errorHandler = function (err, vm, info) {
   console.error(err, info)
 }
