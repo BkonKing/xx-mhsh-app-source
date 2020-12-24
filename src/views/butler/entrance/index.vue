@@ -85,14 +85,12 @@
 </template>
 
 <script>
-import { NavBar, Toast } from 'vant'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import { mapGetters } from 'vuex'
 import { getQrCode, ycOpenDoor } from '@/api/butler.js'
-import { hasPermission, reqPermission } from '@/utils/permission'
+import { handlePermission } from '@/utils/permission'
 export default {
   components: {
-    [NavBar.name]: NavBar,
     tfDialog
   },
   data () {
@@ -155,16 +153,11 @@ export default {
       this.setPermission()
     },
     setPermission () {
-      const perms = hasPermission('storage')
-      if (!perms[0].granted) {
-        reqPermission('storage', ({ list }) => {
-          if (list[0].granted) {
-            this.getQrCode()
-          }
-        })
-      } else {
+      handlePermission({
+        name: 'storage'
+      }).then(() => {
         this.getQrCode()
-      }
+      })
     },
     // 获取二维码开门数据
     getQrCode () {

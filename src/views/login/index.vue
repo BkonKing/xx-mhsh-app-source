@@ -9,14 +9,14 @@
     <img class="logo-text" src="@/assets/imgs/login_logo_text.png" />
     <div class="form">
       <div class="form-body">
-        <Field
+        <van-field
           v-model="mobile"
           class="form-input"
           maxlength="11"
           type="tel"
           placeholder="请输入您的手机号"
-        ></Field>
-        <Field
+        ></van-field>
+        <van-field
           v-if="login_type === 1"
           v-model="yzm"
           key="code"
@@ -39,8 +39,8 @@
               >获取</van-button
             >
           </template>
-        </Field>
-        <Field
+        </van-field>
+        <van-field
           v-if="login_type === 2"
           v-model="pwd"
           class="form-input"
@@ -55,7 +55,7 @@
               @click="changePassword"
             ></span>
           </template>
-        </Field>
+        </van-field>
       </div>
     </div>
     <van-button
@@ -97,18 +97,11 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Toast, Dialog, CountDown } from 'vant'
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
-import { hasPermission, reqPermission } from '@/utils/permission'
+import { handlePermission } from '@/utils/permission'
 import { setStatisticsData } from '@/utils/analysis.js'
 export default {
-  components: {
-    Field,
-    [Button.name]: Button,
-    [CountDown.name]: CountDown,
-    [NavBar.name]: NavBar
-  },
   data () {
     return {
       mobile: undefined,
@@ -128,26 +121,15 @@ export default {
     this.status = this.$route.query.status
   },
   mounted () {
-    const perms = hasPermission('location')
-    if (!perms[0].granted) {
-      Dialog.confirm({
-        title: '提示',
-        message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？',
-        confirmButtonText: '去开启'
-      })
-        .then(res => {
-          reqPermission('location', ({ list }) => {
-            if (!list[0].granted) {
-            }
-          })
-        })
-        .catch(() => {})
-    }
+    handlePermission({
+      name: 'location',
+      message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？'
+    })
   },
   methods: {
     // 定位未开启提醒
     warnLoacation () {
-      Toast('没有开启定位，可能会影响部分功能哦！')
+      this.$toast('没有开启定位，可能会影响部分功能哦！')
     },
     changeRememberPasswrod () {
       this.agree = !this.agree
@@ -158,7 +140,7 @@ export default {
     /* 登录 */
     login () {
       if (!this.agree) {
-        Toast('请阅读并同意用户协议')
+        this.$toast('请阅读并同意用户协议')
         return
       }
       let params = {}
@@ -241,12 +223,12 @@ export default {
       verifCode({
         mobile: this.mobile
       }).then(res => {
-        Toast.success('验证码发送成功，请注意查收')
+        this.$toast.success('验证码发送成功，请注意查收')
         this.codeLoading = false
         this.codeStatus = true
       }).catch((err) => {
         if (!err) {
-          Toast.fail('获取失败，请重试')
+          this.$toast.fail('获取失败，请重试')
         }
         this.codeLoading = false
       })

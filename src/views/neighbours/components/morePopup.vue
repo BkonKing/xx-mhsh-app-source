@@ -146,7 +146,6 @@ export default {
     [Popup.name]: Popup,
     [Button.name]: Button,
     [Dialog.name]: Dialog,
-    // [ShareSheet.name]: ShareSheet,
     tfRadioBtn,
     tfShare
   },

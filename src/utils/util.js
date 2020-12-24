@@ -7,8 +7,7 @@ import {
 } from 'vant'
 import { bindAliasAndTags } from '@/utils/ajpush'
 import {
-  hasPermission,
-  reqPermission
+  handlePermission
 } from '@/utils/permission'
 
 export function getDate (time) {
@@ -176,7 +175,7 @@ export function getArea (str) {
       } else {
         if (index2 <= index11) {
           area.Country = str.substring(index11 + 3, index3 + 1)
-        }else {
+        } else {
           area.Country = str.substring(index1 + 1, index3 + 1)
         }
       }
@@ -371,9 +370,9 @@ export function bMapGetLocationInfo () {
 
 export function getParams (params) {
   const vars = params.split('&')
-  let paramsObj = new Object()
+  const paramsObj = {}
   for (let i = 0; i < vars.length; i++) {
-    let pair = vars[i].split('=')
+    const pair = vars[i].split('=')
     paramsObj[pair[0]] = pair[1]
   }
   return paramsObj
@@ -381,7 +380,14 @@ export function getParams (params) {
 
 export function downloadPic (picUrl, name) {
   return new Promise((resolve, reject) => {
-    setStoragePermission().then(() => {
+    handlePermission({
+      name: 'storage',
+      message: '没有开启数据存储权限，可能会影响部分功能哦，是否前往开启权限？',
+      className: 'top-index-dialog',
+      overlayStyle: {
+        'z-index': 9998
+      }
+    }).then(() => {
       api.download({
         url: picUrl,
         savePath: 'fs://' + name + '.png',
@@ -392,43 +398,11 @@ export function downloadPic (picUrl, name) {
         if (ret.state == 1) {
           resolve(name)
         } else {
-          reject()
+          reject(new Error(false))
         }
       })
     }).catch(() => {
-      reject()
+      reject(new Error(false))
     })
-  })
-}
-
-// 获取保存数据权限
-export function setStoragePermission () {
-  return new Promise((resolve, reject) => {
-    const perms = hasPermission('storage')
-    if (!perms[0].granted) {
-      Dialog.confirm({
-        title: '提示',
-        message: '没有开启数据存储权限，可能会影响部分功能哦，是否前往开启权限？',
-        confirmButtonText: '去开启',
-        className: 'top-index-dialog',
-        overlayStyle: {
-          'z-index': 9998
-        }
-      })
-        .then(res => {
-          reqPermission('storage', ({ list }) => {
-            if (list[0].granted) {
-              resolve()
-            } else {
-              reject()
-            }
-          })
-        })
-        .catch(() => {
-          reject()
-        })
-    } else {
-      resolve()
-    }
   })
 }

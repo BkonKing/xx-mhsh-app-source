@@ -1,3 +1,6 @@
+import {
+  Dialog
+} from 'vant'
 // camera               //相机/拍照/录像
 // contacts             //联系人读取/写入
 // contacts-r           //仅联系人读取
@@ -22,6 +25,61 @@
 // storage              //读取/写入|相册|多媒体|本地存储空间。只支持Android
 // storage-r            //仅写入|相册|多媒体|文件|本地存储空间
 // storage-w            //仅读取|相册|多媒体|文件|本地存储空间
+
+/**
+ * 判断是否有权限并发起提醒，没有权限的情况下请求权限
+ * @param {Object} perm
+ * @return {Promise} 返回成功或失败结果
+ * {
+ *    name:     //权限名
+ *    message:  //提醒语
+ *    className: dialog自定义类名
+ *    overlayStyle: dialog自定义遮罩样式
+ * }
+ */
+export function handlePermission ({
+  name,
+  message,
+  className,
+  overlayStyle
+}) {
+  return new Promise((resolve, reject) => {
+    const perms = hasPermission(name)
+    if (!perms[0].granted) {
+      if (message) {
+        Dialog.confirm({
+          title: '提示',
+          message: message,
+          confirmButtonText: '去开启',
+          className,
+          overlayStyle
+        })
+          .then(res => {
+            reqPermission(name, ({ list }) => {
+              if (list[0].granted) {
+                resolve()
+              } else {
+                reject(new Error(false))
+              }
+            })
+          })
+          .catch(() => {
+            reject(new Error(false))
+          })
+      } else {
+        reqPermission(name, ({ list }) => {
+          if (list[0].granted) {
+            resolve()
+          } else {
+            reject(new Error(false))
+          }
+        })
+      }
+    } else {
+      resolve()
+    }
+  })
+}
 
 /**
  * 判断是否有权限

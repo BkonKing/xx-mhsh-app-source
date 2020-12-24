@@ -49,8 +49,7 @@ import {
   collectStatus
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
-import { Dialog, Toast } from 'vant'
-import { hasPermission, reqPermission } from '@/utils/permission'
+import { handlePermission } from '@/utils/permission'
 export default {
   data () {
     return {
@@ -153,7 +152,7 @@ export default {
             this.pollingPayment()
           }
         } else {
-          Dialog.alert({
+          this.$dialog.alert({
             title: '支付成功'
           })
           this.mtjEvent({
@@ -170,7 +169,7 @@ export default {
         if (data.is_pay != '1') {
           this.pollingCollect()
         } else {
-          Dialog.alert({
+          this.$dialog.alert({
             title: `获得${data.credits}幸福币`
           }).then(() => {
             this.getCollectCode()
@@ -408,16 +407,11 @@ export default {
     current (value) {
       const len = api.frames().length
       if (value === 1) {
-        const perms = hasPermission('camera')
-        if (!perms[0].granted) {
-          reqPermission('camera', ({ list }) => {
-            if (list[0].granted) {
-              !len && this.openFrame()
-            }
-          })
-        } else {
+        handlePermission({
+          name: 'camera'
+        }).then(() => {
           !len && this.openFrame()
-        }
+        })
         this.mtjEvent({
           eventId: 6
         })
