@@ -10,18 +10,97 @@
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
       <van-tab title="基础信息">
-        <tf-list class="basics-list">
-          <van-uploader :after-read="afterRead" style="width: 100%;">
-            <tf-list-item border title="头像">
-              <template v-slot:right>
-                <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
-                <img v-else class="tf-avatar-m" src="@/assets/imgs/touxiang.png" />
-              </template>
-            </tf-list-item>
-          </van-uploader>
-          <tf-list-item border title="昵称" :showArrow="false" :IFocusStatus="true">
+        <van-uploader :after-read="afterRead" style="width: 100%;">
+          <!-- <tf-list-item class="title" border title="头像">
+            <template #right>
+              <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
+              <img
+                v-else
+                class="tf-avatar-m"
+                src="@/assets/imgs/touxiang.png"
+              />
+            </template>
+          </tf-list-item> -->
+          <van-cell is-link class="cell" center>
+            <template #title>
+              <div class="title">
+                <div class="left">
+                  <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
+                  <img
+                    v-else
+                    class="tf-avatar-m"
+                    src="@/assets/imgs/touxiang.png"
+                  />
+                </div>
+                <div class="right">
+                  <div class="t1">{{ userInfo.nickname }}</div>
+                  <div class="t2">
+                    <i
+                      v-if="userInfo.gender == 2"
+                      class="font_family icon-xingbie i1"
+                    ></i>
+                    <i
+                      v-if="userInfo.gender == 1"
+                      class="font_family icon-xingbie1 i1"
+                    ></i>
+                    {{ userInfo.birthday }}
+                  </div>
+                </div>
+              </div>
+            </template>
+          </van-cell>
+        </van-uploader>
+        <div class="attes">
+          <van-cell class="nameCell" is-link center>
+            <template #title>
+              <div class="title" @click="toCertification()">
+                <div class="txt">实名认证</div>
+                <div class="name">
+                  鲁班
+                  <i
+                    v-if="userInfo.realname"
+                    class="font_family icon-yishiming n1"
+                  >
+                  </i>
+                  <i v-else class="font_family icon-weishiming n1"></i>
+                </div>
+              </div>
+            </template>
+          </van-cell>
+          <van-cell class="nameCell" is-link center>
+            <template #title>
+              <div class="title">
+                <div class="txt">手机号</div>
+                <div class="name">
+                  15033330505
+                </div>
+              </div>
+            </template>
+          </van-cell>
+          <van-cell class="nameCell" is-link center>
+            <template #title>
+              <div class="title">
+                <div class="txt">银行卡</div>
+                <div class="name"></div>
+              </div>
+            </template>
+          </van-cell>
+        </div>
+        <!-- <tf-list class="basics-list">
+     
+          <tf-list-item
+            border
+            title="昵称"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
-              <input v-model="nickname" class="tf-input" @change="setNickname" maxlength="15" />
+              <input
+                v-model="nickname"
+                class="tf-input"
+                @change="setNickname"
+                maxlength="15"
+              />
             </template>
           </tf-list-item>
           <tf-list-item border title="性别">
@@ -34,8 +113,8 @@
                 :columns="sexArray"
                 @confirm="setSex"
               >
-                <template v-slot="{valueText}">
-                  <div class="tf-text">{{valueText}}</div>
+                <template v-slot="{ valueText }">
+                  <div class="tf-text">{{ valueText }}</div>
                 </template>
               </tf-picker>
             </template>
@@ -52,19 +131,36 @@
                 @confirm="setBirthday"
               >
                 <template>
-                  <div class="tf-text text-right">{{birthday || '选择日期'}}</div>
+                  <div class="tf-text text-right">
+                    {{ birthday || "选择日期" }}
+                  </div>
                 </template>
               </tf-date-time-picker>
             </template>
           </tf-list-item>
-        </tf-list>
+      
+       </tf-list> -->
         <tf-list class="basics-list">
-          <tf-list-item border title="姓名" :showArrow="false" :IFocusStatus="true">
+          <!-- <tf-list-item
+            border
+            title="姓名"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
-              <input v-model="realname" class="tf-input" @change="setRealname" />
+              <input
+                v-model="realname"
+                class="tf-input"
+                @change="setRealname"
+              />
             </template>
           </tf-list-item>
-          <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
+          <tf-list-item
+            border
+            title="手机号"
+            :rightText="mobile"
+            @click="jumpPhone"
+          ></tf-list-item> -->
           <tf-list-item
             title="收货地址"
             :rightText="userInfo.address_name"
@@ -90,14 +186,16 @@
           ></tf-list-item>
         </tf-list>
       </van-tab>
-      <van-tab v-if="userType != 0 && currentProject" title="房产信息">
+      <!-- <van-tab v-if="userType != 0 && currentProject" title="房产信息"> -->
+      <van-tab title="房产信息">
         <house
           ref="house"
           @manClick="toHouseMember"
-          @change="(bindingId) => goAttestation(1,1,bindingId)"
+          @change="bindingId => goAttestation(1, 1, bindingId)"
         ></house>
       </van-tab>
-      <van-tab v-if="userType == 1 && currentProject" title="成员信息">
+      <!-- <van-tab v-if="userType == 1 && currentProject" title="成员信息"> -->
+      <van-tab title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
           <van-dropdown-item v-model="value" :options="list" />
         </van-dropdown-menu>
@@ -107,7 +205,9 @@
           :key="i"
           @click="goAttestation(0, 1, item.id, item)"
         >
-          <div class="tf-card-header">{{item.project_name}} {{item.fc_info}}</div>
+          <div class="tf-card-header">
+            {{ item.project_name }} {{ item.fc_info }}
+          </div>
           <div class="tf-card-content">
             <van-tag
               class="user-role tf-mr-lg"
@@ -115,24 +215,33 @@
               :type="houseRoleColor[item.house_role]"
               :inverted="true"
               size="small"
-            >{{item.house_role | houseRoleText}}</van-tag>
+              >{{ item.house_role | houseRoleText }}</van-tag
+            >
             <div class="tf-mr-lg">
-              {{item.realname}}
+              {{ item.realname }}
               <span
                 v-if="item.house_role === '1'"
                 class="tf-text-grey tf-text-sm"
-              >(本人)</span>
+                >(本人)</span
+              >
             </div>
-            <div class="tf-mr-lg">{{gender | sexText}}</div>
-            <div>{{item.mobile}}</div>
+            <div class="tf-mr-lg">{{ gender | sexText }}</div>
+            <div>{{ item.mobile }}</div>
           </div>
         </div>
         <div class="btn-placeholder">
-          <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
+          <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">
+            新增成员
+          </button>
         </div>
       </van-tab>
     </van-tabs>
-    <tf-dialog class="explain-dialog" v-model="faceDialog" title="请上传一张清晰的人脸照片" :showFotter="false">
+    <tf-dialog
+      class="explain-dialog"
+      v-model="faceDialog"
+      title="请上传一张清晰的人脸照片"
+      :showFotter="false"
+    >
       <van-uploader :after-read="cjFace" style="width: 100%;">
         <van-button type="danger" style="width: 100%;">确定</van-button>
       </van-uploader>
@@ -152,18 +261,20 @@ import {
   Toast,
   uploader,
   Field,
-  Button
-} from 'vant'
-import tfList from '@/components/tf-list/index.vue'
-import tfListItem from '@/components/tf-list/item.vue'
-import tfPicker from '@/components/tf-picker/index'
-import tfDateTimePicker from '@/components/tf-date-time-picker/index'
-import tfDialog from '@/components/tf-dialog/index.vue'
-import house from '../house/components/house'
-import { uImages } from '@/api/user'
-import { mapGetters } from 'vuex'
-import { getDate, selectFileImage } from '@/utils/util'
-import eventBus from '@/api/eventbus.js'
+  Button,
+  Cell,
+  CellGroup
+} from "vant";
+import tfList from "@/components/tf-list/index.vue";
+import tfListItem from "@/components/tf-list/item.vue";
+import tfPicker from "@/components/tf-picker/index";
+import tfDateTimePicker from "@/components/tf-date-time-picker/index";
+import tfDialog from "@/components/tf-dialog/index.vue";
+import house from "../house/components/house";
+import { uImages } from "@/api/user";
+import { mapGetters } from "vuex";
+import { getDate, selectFileImage } from "@/utils/util";
+import eventBus from "@/api/eventbus.js";
 import {
   getMemberList,
   yzHouse,
@@ -173,9 +284,9 @@ import {
   editBirthday,
   editRealname,
   cjFace
-} from '@/api/personage'
+} from "@/api/personage";
 export default {
-  name: 'informationIndex',
+  name: "informationIndex",
   components: {
     [NavBar.name]: NavBar,
     [Tab.name]: Tab,
@@ -191,71 +302,79 @@ export default {
     tfListItem,
     tfPicker,
     house,
-    tfDialog
+    tfDialog,
+    [Cell.name]: Cell
   },
-  data () {
+  data() {
     return {
       current: 0,
       value: 0,
       list: [],
-      realname: '',
-      gender: '',
-      avatar: '',
-      mobile: '',
-      nickname: '',
-      birthday: '',
+      realname: "",
+      gender: "",
+      avatar: "",
+      mobile: "",
+      nickname: "",
+      birthday: "",
       faceDialog: false,
       maxDate: new Date(getDate()),
-      minDate: new Date('1900/1/1'),
+      minDate: new Date("1900/1/1"),
       memberList: [], // 成员列表
       houseRoleColor: {
-        1: 'danger',
-        2: 'warning',
-        3: 'primary',
-        4: 'primary'
+        1: "danger",
+        2: "warning",
+        3: "primary",
+        4: "primary"
       },
       sexArray: [
         {
-          label: '男',
-          value: '1'
+          label: "男",
+          value: "1"
         },
         {
-          label: '女',
-          value: '2'
+          label: "女",
+          value: "2"
         }
       ]
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType', 'currentProject'])
+    ...mapGetters(["userInfo", "userType", "currentProject"])
   },
-  mounted () {
+  mounted() {
     eventBus.$on(
-      'chooseAddress',
-      function (data) {
-        this.addressInfo = JSON.parse(data)
-        this.address_id = this.addressInfo.id
+      "chooseAddress",
+      function(data) {
+        this.addressInfo = JSON.parse(data);
+        this.address_id = this.addressInfo.id;
         // console.log(this.addressInfo)
       }.bind(this)
-    )
+    );
   },
-  created () {
-    eventBus.$off('chooseAddress')
+  created() {
+    eventBus.$off("chooseAddress");
+    console.log("用户信息", this.userInfo);
   },
-  activated () {
+  activated() {
     if (this.current === 0) {
-      this.getMyAccount()
+      this.getMyAccount();
     } else if (this.current === 1) {
-      this.$refs.house.reload()
+      this.$refs.house.reload();
     } else if (this.current === 2) {
-      this.yzHouse(1)
-      this.getMemberList()
+      this.yzHouse(1);
+      this.getMemberList();
     }
   },
   methods: {
+    // 实名认证
+    toCertification() {
+      if (!this.userInfo.realname) {
+        this.$router.push("/pages/personage/information/certification");
+      }
+    },
     /* 获取用户信息 */
-    async getMyAccount () {
-      await this.$store.dispatch('getMyAccount')
+    async getMyAccount() {
+      await this.$store.dispatch("getMyAccount");
       const {
         realname,
         gender,
@@ -263,123 +382,123 @@ export default {
         mobile,
         nickname,
         birthday
-      } = this.userInfo
-      this.realname = realname
-      this.nickname = nickname
-      this.gender = gender
-      this.avatar = avatar
-      this.mobile = mobile
-      this.birthday = birthday || ''
+      } = this.userInfo;
+      this.realname = realname;
+      this.nickname = nickname;
+      this.gender = gender;
+      this.avatar = avatar;
+      this.mobile = mobile;
+      this.birthday = birthday || "";
     },
-    openCamera () {
+    openCamera() {
       this.$router.push({
-        name: 'faceCollect'
-      })
+        name: "faceCollect"
+      });
     },
     /* 图片上传 */
-    async afterRead (file) {
+    async afterRead(file) {
       Toast.loading({
-        message: '头像上传中'
-      })
-      const formData = new FormData()
-      const newFile = await selectFileImage(file.file)
-      formData.append('imgFile', newFile)
+        message: "头像上传中"
+      });
+      const formData = new FormData();
+      const newFile = await selectFileImage(file.file);
+      formData.append("imgFile", newFile);
       uImages(formData)
-        .then((res) => {
-          this.editAvatar(res.data)
+        .then(res => {
+          this.editAvatar(res.data);
         })
-        .catch((message) => {
-          Toast.clear()
-          Toast.fail(message)
-        })
+        .catch(message => {
+          Toast.clear();
+          Toast.fail(message);
+        });
     },
     /* 头像上传 */
-    editAvatar (avatar) {
+    editAvatar(avatar) {
       editAvatar({
         avatar
       })
-        .then((res) => {
+        .then(res => {
           // Toast.clear()
-          Toast.success('头像上传成功')
-          this.avatar = avatar
-          this.$store.dispatch('getMyAccount')
+          Toast.success("头像上传成功");
+          this.avatar = avatar;
+          this.$store.dispatch("getMyAccount");
         })
         .catch(() => {
-          Toast.clear()
-        })
+          Toast.clear();
+        });
     },
     /* 设置昵称 */
-    setNickname () {
+    setNickname() {
       editNickname({
         nickname: this.nickname
-      }).then((res) => {
-        Toast.success('昵称设置成功')
-      })
+      }).then(res => {
+        Toast.success("昵称设置成功");
+      });
     },
     /* 设置性别 */
-    setSex () {
+    setSex() {
       editGender({
         gender: this.gender
-      }).then((res) => {
-        Toast.success('性别设置成功')
-      })
+      }).then(res => {
+        Toast.success("性别设置成功");
+      });
     },
     /* 设置生日 */
-    setBirthday () {
+    setBirthday() {
       editBirthday({
         birthday: this.birthday
-      }).then((res) => {
-        Toast.success('生日设置成功')
-      })
+      }).then(res => {
+        Toast.success("生日设置成功");
+      });
     },
     /* 设置姓名 */
-    setRealname () {
+    setRealname() {
       editRealname({
         realname: this.realname
-      }).then((res) => {
-        Toast.success('姓名设置成功')
-      })
+      }).then(res => {
+        Toast.success("姓名设置成功");
+      });
     },
     /* 获取业主房产信息 */
-    yzHouse (type) {
+    yzHouse(type) {
       // type: 0 - 默认选中第一个， 1 - 保持当前状态
-      yzHouse().then((res) => {
+      yzHouse().then(res => {
         const allItem = {
-          text: '全部',
+          text: "全部",
           value: undefined
-        }
-        let data = res.data || []
-        data = data.map((obj) => {
-          const { project_name, fc_info, members, house_id } = obj
+        };
+        let data = res.data || [];
+        data = data.map(obj => {
+          const { project_name, fc_info, members, house_id } = obj;
           return {
             text: `${project_name}${fc_info}(${members})`,
             value: house_id
-          }
-        })
-        data.unshift(allItem)
-        this.list = data
+          };
+        });
+        data.unshift(allItem);
+        this.list = data;
         if (!type) {
-          this.value = res.data[0].house_id
+          this.value = res.data[0].house_id;
         }
-      })
+      });
     },
     /* 获取成员列表 */
-    getMemberList () {
+    getMemberList() {
       getMemberList({
         house_id: this.value
-      }).then((res) => {
-        this.memberList = res.data
-      })
+      }).then(res => {
+        this.memberList = res.data;
+      });
     },
     /* 添加成员 */
-    addMember () {
+    addMember() {
       if (this.memberList.length >= 10) {
-        Toast('一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加')
+        Toast("一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加");
         // Dialog.alert({
         //   title: '一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加'
         // })
       } else {
-        this.goAttestation(0, 0)
+        this.goAttestation(0, 0);
       }
     },
     /**
@@ -389,108 +508,135 @@ export default {
      * @param {string} id 当前选中房屋或成员id
      * @param {object} info 当前选中房屋或成员所有信息
      */
-    goAttestation (type, mode, id, info) {
+    goAttestation(type, mode, id, info) {
       this.$router.push({
-        path: '/pages/personage/house/attestation',
+        path: "/pages/personage/house/attestation",
         query: {
           type,
           mode,
           id,
           info: JSON.stringify(info)
         }
-      })
+      });
     },
     /* 跳转收货地址 */
-    goAddress () {
-      this.$router.push('/address/list')
+    goAddress() {
+      this.$router.push("/address/list");
       // this.$router.push('/pages/personage/information/address')
     },
     /* 跳转手机验证 */
-    jumpPhone () {
-      this.$router.push('/pages/personage/information/phone')
+    jumpPhone() {
+      this.$router.push("/pages/personage/information/phone");
     },
     /* 跳转支付密码设置修改  */
-    editPaymentCode () {
+    editPaymentCode() {
       this.$router.push({
-        path: '/pages/personage/information/payment-code',
+        path: "/pages/personage/information/payment-code",
         query: {
           status: this.userInfo.is_setpaypassword
         }
-      })
+      });
       this.mtjEvent({
         eventId: 75
-      })
+      });
     },
     /* 跳转登录密码设置修改 */
-    editLoginPassword () {
+    editLoginPassword() {
       this.$router.push({
-        path: '/pages/personage/information/login-password',
+        path: "/pages/personage/information/login-password",
         query: {
           status: this.userInfo.is_setpassword
         }
-      })
+      });
       this.mtjEvent({
         eventId: 76
-      })
+      });
     },
     // 人脸采集
-    cjFace (file) {
+    cjFace(file) {
       Toast.loading({
-        message: '人脸图片上传中'
-      })
-      const formData = new FormData()
-      formData.append('imgFile', file.file)
+        message: "人脸图片上传中"
+      });
+      const formData = new FormData();
+      formData.append("imgFile", file.file);
       uImages(formData)
-        .then((res) => {
+        .then(res => {
           cjFace({
             face_url: res.data
-          }).then((res) => {
-            Toast.clear()
-            Toast.success(res.message)
-            this.faceDialog = false
-          }).catch((message) => {
-            Toast.clear()
-            Toast.fail(message)
           })
+            .then(res => {
+              Toast.clear();
+              Toast.success(res.message);
+              this.faceDialog = false;
+            })
+            .catch(message => {
+              Toast.clear();
+              Toast.fail(message);
+            });
         })
-        .catch((message) => {
-          Toast.clear()
-          Toast.fail(message)
-        })
+        .catch(message => {
+          Toast.clear();
+          Toast.fail(message);
+        });
     },
     /* 跳转房产成员信息 */
-    toHouseMember (info) {
-      this.value = info.house_id
-      this.current = 2
+    toHouseMember(info) {
+      this.value = info.house_id;
+      this.current = 2;
     },
-    goback () {
-      this.$router.go(-1)
+    goback() {
+      this.$router.go(-1);
       // this.$router.replace('/personage')
     }
   },
   watch: {
-    value (value) {
-      this.getMemberList()
+    value(value) {
+      this.getMemberList();
     },
-    current (val) {
+    current(val) {
       if (val === 2) {
-        !this.list.length && this.yzHouse()
+        !this.list.length && this.yzHouse();
       }
     }
   },
-  beforeRouteLeave (to, from, next) {
-    const names = ['settingIndex', 'personage']
+  beforeRouteLeave(to, from, next) {
+    const names = ["settingIndex", "personage"];
     if (names.includes(to.name)) {
-      this.$destroy()
-      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy();
+      this.$store.commit("deleteKeepAlive", from.name);
     }
-    next()
+    next();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
 .tf-body-container {
+  .cell {
+    background-color: #fff;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    .title {
+      display: flex;
+      align-items: center;
+      .left {
+        margin-right: 36px;
+      }
+      .right {
+        .t1 {
+          font-size: 24px;
+          font-weight: 600;
+        }
+        .t2 {
+          font-size: 20px;
+          color: #8f8f94;
+          .i1 {
+            color: #e45487;
+          }
+        }
+      }
+    }
+  }
   @flex-column();
   /deep/ .van-tabs__content {
     flex: 1;
@@ -514,6 +660,42 @@ export default {
 .basics-list {
   background-color: #fff;
   border-radius: 8px;
+}
+.attes {
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 0 30px;
+  border-radius: 8px;
+  .van-cell {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .nameCell {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 20px 0;
+    &:last-child {
+      border: none;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      .txt {
+        width: 120px;
+        margin-right: 68px;
+      }
+      .name {
+        color: #666666;
+        display: flex;
+        align-items: center;
+        .n1 {
+          margin-left: 10px;
+          vertical-align: middle;
+          font-size: 33px;
+          color: #f77e64;
+        }
+      }
+    }
+  }
 }
 
 .btn-placeholder {

@@ -189,10 +189,10 @@
             <div class="activity-info">
               <div class="activity-info__day">
                 <span class="tf-text">{{
-                  new Date(item.stime.replace(/-/g, '/')).getDate()
+                  new Date(item.stime.replace(/-/g, "/")).getDate()
                 }}</span>
                 <span class="font20">{{
-                  new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText
+                  new Date(item.stime.replace(/-/g, "/")).getMonth() | monthText
                 }}</span>
               </div>
               <div class="activity-info__right">
@@ -267,9 +267,9 @@ import {
   NoticeBar,
   Toast,
   Button
-} from 'vant'
-import pageNavBar from '@/components/page-nav-bar/index'
-import tfImageList from '@/components/tf-image-list'
+} from "vant";
+import pageNavBar from "@/components/page-nav-bar/index";
+import tfImageList from "@/components/tf-image-list";
 import {
   getMyApp,
   getBannerIndex,
@@ -277,14 +277,14 @@ import {
   getOllageGoods,
   getCreditsGoodsList,
   getMhttList
-} from '@/api/home'
-import { getNoticeLbList } from '@/api/butler.js'
-import { getActivityList } from '@/api/neighbours'
-import { signin } from '@/api/personage'
-import { mapGetters } from 'vuex'
-import { bulterPermission } from '@/utils/business'
+} from "@/api/home";
+import { getNoticeLbList } from "@/api/butler.js";
+import { getActivityList } from "@/api/neighbours";
+import { signin } from "@/api/personage";
+import { mapGetters } from "vuex";
+import { bulterPermission } from "@/utils/business";
 export default {
-  name: 'home',
+  name: "home",
   components: {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem,
@@ -296,11 +296,11 @@ export default {
     pageNavBar,
     tfImageList
   },
-  data () {
+  data() {
     return {
       activeIndex: undefined,
       scrollStatus: false,
-      headerColor: '#fff', // 头部颜色
+      headerColor: "#fff", // 头部颜色
       swipeImages: [], // 轮播图
       myAppList: [], // 我的应用
       noticeList: [], // 通知列表
@@ -313,228 +313,230 @@ export default {
       guideShow: false, // 是否显示新手引导图
       guideIndex: 0,
       guideList: [
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_01.png',
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_021.png',
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_03.png',
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
-        process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
+        process.env.VUE_APP_DOMAIN_NAME + "/library/img/app_img/guide_01.png",
+        process.env.VUE_APP_DOMAIN_NAME + "/library/img/app_img/guide_021.png",
+        process.env.VUE_APP_DOMAIN_NAME + "/library/img/app_img/guide_03.png",
+        process.env.VUE_APP_DOMAIN_NAME + "/library/img/app_img/guide_04.png",
+        process.env.VUE_APP_DOMAIN_NAME + "/library/img/app_img/guide_05.png"
       ],
       guideTop: 0
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userType', 'userInfo'])
+    ...mapGetters(["userType", "userInfo"])
   },
-  created () {
-    var guidetype = api.getPrefs({ sync: true, key: 'guidetype' })
+  created() {
+    var guidetype = api.getPrefs({ sync: true, key: "guidetype" });
     if (!guidetype) {
-      this.guideShow = true
+      this.guideShow = true;
     }
-    this.$store.dispatch('getMyAccount')
+    this.$store.dispatch("getMyAccount");
   },
-  activated () {
+  activated() {
     if (this.scrollTop) {
-      document.getElementById('home-body-container').scrollTop = this.scrollTop
+      document.getElementById("home-body-container").scrollTop = this.scrollTop;
     } else {
-      this.scrollStatus = false
+      this.scrollStatus = false;
     }
-    this.getMyApp()
-    this.getBannerIndex()
-    this.getNoticeLbList()
-    this.getCreditsGoodsList()
-    this.getBargainGoods()
-    this.getActivityList()
-    this.getOllageGoods()
-    this.getMhttList()
-    this.swipeChange(0)
+    this.getMyApp();
+    this.getBannerIndex();
+    this.getNoticeLbList();
+    this.getCreditsGoodsList();
+    this.getBargainGoods();
+    this.getActivityList();
+    this.getOllageGoods();
+    this.getMhttList();
+    this.swipeChange(0);
   },
   methods: {
     /* 新手引导步骤 */
-    guideStep () {
-      this.guideIndex = this.guideIndex + 1
-      this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0
+    guideStep() {
+      this.guideIndex = this.guideIndex + 1;
+      this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0;
       if (this.guideIndex > 4) {
-        this.guideShow = false
-        api.setPrefs({ key: 'guidetype', value: 1 })
+        this.guideShow = false;
+        api.setPrefs({ key: "guidetype", value: 1 });
       }
     },
     /* 获取通知轮播列表 */
-    getNoticeLbList () {
+    getNoticeLbList() {
       getNoticeLbList().then(({ data }) => {
-        this.noticeList = data
-      })
+        this.noticeList = data;
+      });
     },
     /* 获取轮播图 */
-    getBannerIndex () {
-      getBannerIndex().then((res) => {
-        this.swipeImages = res.data
-        this.swipeChange(0)
-      })
+    getBannerIndex() {
+      getBannerIndex().then(res => {
+        this.swipeImages = res.data;
+        this.swipeChange(0);
+      });
     },
     /* 获取我的app列表，并手动打入一个全部 */
-    getMyApp () {
-      getMyApp().then((res) => {
-        this.myAppList = res.data
-      })
+    getMyApp() {
+      getMyApp().then(res => {
+        this.myAppList = res.data;
+      });
     },
     /* 轮播图change事件 */
-    swipeChange (index) {
-      this.activeIndex = index
+    swipeChange(index) {
+      this.activeIndex = index;
       if (!this.scrollStatus) {
         this.headerColor =
           (this.swipeImages[index] && this.swipeImages[index].color_value) ||
-          '#eb5841'
+          "#eb5841";
       }
     },
     /* 签到 */
-    sign () {
-      this.signLoading = true
-      signin().then((res) => {
-        this.signLoading = false
-        Toast({
-          message: res.message
+    sign() {
+      this.signLoading = true;
+      signin()
+        .then(res => {
+          this.signLoading = false;
+          Toast({
+            message: res.message
+          });
+          this.$store.dispatch("getMyAccount");
+          this.mtjEvent({
+            eventId: 4
+          });
         })
-        this.$store.dispatch('getMyAccount')
-        this.mtjEvent({
-          eventId: 4
-        })
-      }).catch(() => {
-        this.signLoading = false
-      })
+        .catch(() => {
+          this.signLoading = false;
+        });
     },
     /* 获取幸福币专区 */
-    getCreditsGoodsList () {
-      getCreditsGoodsList().then((res) => {
-        this.creditsGoods = res.data
-      })
+    getCreditsGoodsList() {
+      getCreditsGoodsList().then(res => {
+        this.creditsGoods = res.data;
+      });
     },
     /* 跳转幸福币 */
-    goHappiness () {
-      this.$router.push('/pages/personage/happiness-coin/index')
+    goHappiness() {
+      this.$router.push("/pages/personage/happiness-coin/index");
     },
     /* 幸福币专区商品详情 */
-    goCoinCommodity (item) {
-      this.$router.push(`/store/goods-detail?id=${item.id}`)
+    goCoinCommodity(item) {
+      this.$router.push(`/store/goods-detail?id=${item.id}`);
     },
     /* 获取9.9特卖区 */
-    getBargainGoods () {
-      getBargainGoods().then((res) => {
-        this.bargainList = res.data
-      })
+    getBargainGoods() {
+      getBargainGoods().then(res => {
+        this.bargainList = res.data;
+      });
     },
     /* 跳转9.9特卖专区 */
-    goSpecialSale () {
-      this.$router.push('/store/special-sale')
+    goSpecialSale() {
+      this.$router.push("/store/special-sale");
     },
     /* 9.9特卖专区图片点击 */
-    clickSpecialSale ({ goods_id }) {
-      this.$router.push(`/store/goods-detail?id=${goods_id}`)
+    clickSpecialSale({ goods_id }) {
+      this.$router.push(`/store/goods-detail?id=${goods_id}`);
     },
     /* 获取闪购专区 */
-    getOllageGoods () {
-      getOllageGoods().then((res) => {
-        this.ollageGoods = res.data
-      })
+    getOllageGoods() {
+      getOllageGoods().then(res => {
+        this.ollageGoods = res.data;
+      });
     },
     /* 跳转限时闪购列表 */
-    goTimeLimit () {
-      this.$router.push('/store/flash-purchase')
+    goTimeLimit() {
+      this.$router.push("/store/flash-purchase");
     },
     /* 跳转限时闪购详情 */
-    clickTimeLimit ({ goods_id }) {
-      this.$router.push(`/store/goods-detail?id=${goods_id}`)
+    clickTimeLimit({ goods_id }) {
+      this.$router.push(`/store/goods-detail?id=${goods_id}`);
     },
     /* 获取活动列表 */
-    getActivityList () {
-      getActivityList().then((res) => {
-        this.activityList = res.data
-      })
+    getActivityList() {
+      getActivityList().then(res => {
+        this.activityList = res.data;
+      });
     },
     /* 跳转活动详情 */
-    goActivity ({ id }) {
-      this.$router.push(`/pages/neighbours/details?articleType=2&id=${id}`)
+    goActivity({ id }) {
+      this.$router.push(`/pages/neighbours/details?articleType=2&id=${id}`);
     },
     /* 跳转社区活动 */
-    goCommunity () {
+    goCommunity() {
       this.$router.push({
-        path: '/neighbours',
+        path: "/neighbours",
         query: {
           active: 2
         }
-      })
+      });
     },
     /* 跳转公告详情页 */
-    goNotice ({ id }) {
+    goNotice({ id }) {
       this.$router.push({
-        name: 'noticeDetails',
+        name: "noticeDetails",
         query: {
           id
         }
-      })
+      });
     },
     /* 点击头条跳转相应内容 */
-    clickFront ({ id }) {
-      this.$router.push(`/pages/neighbours/details?articleType=1&id=${id}`)
+    clickFront({ id }) {
+      this.$router.push(`/pages/neighbours/details?articleType=1&id=${id}`);
     },
     /* 获取美好头条 */
-    getMhttList () {
-      getMhttList().then((res) => {
-        this.frontList = res.data || []
-      })
+    getMhttList() {
+      getMhttList().then(res => {
+        this.frontList = res.data || [];
+      });
     },
     /* 滚动行为 */
-    onScroll ({ target }) {
-      const el = document.getElementById('home-notice-box')
-      const height = (el && el.clientHeight) || 0
+    onScroll({ target }) {
+      const el = document.getElementById("home-notice-box");
+      const height = (el && el.clientHeight) || 0;
       if (target.scrollTop > height + 15) {
-        this.scrollStatus = true
-        this.headerColor = '#fff'
+        this.scrollStatus = true;
+        this.headerColor = "#fff";
       } else if (this.scrollStatus) {
-        this.scrollStatus = false
-        this.swipeChange(this.activeIndex)
+        this.scrollStatus = false;
+        this.swipeChange(this.activeIndex);
       }
     },
     // 跳转到应用
-    goApp ({ url, mj_status }) {
-      if (url === '/pages/butler/entrance/index' && mj_status == '0') {
-        Toast('小区暂未开放此功能')
+    goApp({ url, mj_status }) {
+      if (url === "/pages/butler/entrance/index" && mj_status == "0") {
+        Toast("小区暂未开放此功能");
       } else {
-        this.$router.push(url)
+        this.$router.push(url);
       }
     }
   },
   filters: {
-    monthText (value) {
+    monthText(value) {
       const numText = [
-        '一月',
-        '二月',
-        '三月',
-        '四月',
-        '五月',
-        '六月',
-        '七月',
-        '八月',
-        '九月',
-        '十月',
-        '十一',
-        '十二'
-      ]
-      return numText[value]
+        "一月",
+        "二月",
+        "三月",
+        "四月",
+        "五月",
+        "六月",
+        "七月",
+        "八月",
+        "九月",
+        "十月",
+        "十一",
+        "十二"
+      ];
+      return numText[value];
     }
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     bulterPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
-        next(false)
+        next(false);
       } else {
-        const el = document.getElementById('home-body-container')
-        this.scrollTop = (el && el.scrollTop) || 0
-        next()
+        const el = document.getElementById("home-body-container");
+        this.scrollTop = (el && el.scrollTop) || 0;
+        next();
       }
-    })
+    });
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
@@ -804,7 +806,7 @@ export default {
 .front-page {
   padding: 24px 30px 30px;
   height: 142px;
-  background: url('../../assets/imgs/toutiao_bg.png') no-repeat;
+  background: url("../../assets/imgs/toutiao_bg.png") no-repeat;
   background-size: contain;
   border-radius: 10px;
   .notice-swipe {
@@ -907,7 +909,7 @@ export default {
     display: flex;
     align-items: center;
     &::before {
-      content: '';
+      content: "";
       display: block;
       width: 8px;
       height: 8px;

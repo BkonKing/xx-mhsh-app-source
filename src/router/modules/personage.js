@@ -293,6 +293,15 @@ const personageRouter = [
         /* webpackChunkName: "faceCollect" */
         '@/views/personage/information/faceCollect.vue'
       )
+  },
+  {
+    path: '/pages/personage/information/certification',
+    name: 'certification',
+    component: () =>
+      import(
+        /* webpackChunkName: "certification" */
+        '@/views/personage/information/certification.vue'
+      )
   }
 ]
 

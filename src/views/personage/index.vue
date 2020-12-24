@@ -263,14 +263,14 @@
 </template>
 
 <script>
-import { NavBar, Tag, Toast, Button } from 'vant'
-import tfCalendar from '@/components/tf-calendar'
-import tfList from '@/components/tf-list/index.vue'
-import tfListItem from '@/components/tf-list/item.vue'
-import { signin } from '@/api/personage'
-import { mapGetters } from 'vuex'
+import { NavBar, Tag, Toast, Button } from "vant";
+import tfCalendar from "@/components/tf-calendar";
+import tfList from "@/components/tf-list/index.vue";
+import tfListItem from "@/components/tf-list/item.vue";
+import { signin } from "@/api/personage";
+import { mapGetters } from "vuex";
 export default {
-  name: 'personage',
+  name: "personage",
   components: {
     [NavBar.name]: NavBar,
     [Tag.name]: Tag,
@@ -279,99 +279,101 @@ export default {
     tfListItem,
     tfCalendar
   },
-  data () {
+  data() {
     return {
       signStatus: true,
       showCalendar: false, // 签到日历是否隐藏
       orderData: {},
       signLoading: false // 签到loading
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType', 'currentProject'])
+    ...mapGetters(["userInfo", "userType", "currentProject"])
   },
-  activated () {
-    this.$store.dispatch('getMyAccount').then(({ order_data }) => {
-      this.orderData = order_data
-    })
+  activated() {
+    this.$store.dispatch("getMyAccount").then(({ order_data }) => {
+      this.orderData = order_data;
+    });
   },
   methods: {
     /* 签到 */
-    sign () {
-      if (this.userInfo.signin_today === '0') {
-        this.signLoading = true
-        signin().then((res) => {
-          this.signLoading = false
-          Toast({
-            message: res.message
+    sign() {
+      if (this.userInfo.signin_today === "0") {
+        this.signLoading = true;
+        signin()
+          .then(res => {
+            this.signLoading = false;
+            Toast({
+              message: res.message
+            });
+            this.$store.dispatch("getMyAccount");
+            this.mtjEvent({
+              eventId: 4
+            });
           })
-          this.$store.dispatch('getMyAccount')
-          this.mtjEvent({
-            eventId: 4
-          })
-        }).catch(() => {
-          this.signLoading = false
-        })
+          .catch(() => {
+            this.signLoading = false;
+          });
       } else {
         // 已签到，弹出签到日历
-        this.showCalendar = true
+        this.showCalendar = true;
       }
     },
     /* 设置 */
-    goSetting () {
-      this.$router.push('/pages/personage/setting/index')
+    goSetting() {
+      this.$router.push("/pages/personage/setting/index");
     },
     /* 消息 */
-    goMessage () {
-      this.$router.push('/pages/personage/message/index')
+    goMessage() {
+      this.$router.push("/pages/personage/message/index");
     },
     /* 我的资料 */
-    goInformation () {
-      this.$router.push('/pages/personage/information/index')
+    goInformation() {
+      this.$router.push("/pages/personage/information/index");
     },
     /**
      * 事务处理
      * @param type {number} 1: 待处理 2:：待分派 3：待结案 4：已结案
      */
-    goTransaction (type) {
-      const url = `/pages/personage/transaction/index?type=${type}`
-      this.$router.push(url)
+    goTransaction(type) {
+      const url = `/pages/personage/transaction/index?type=${type}`;
+      this.$router.push(url);
     },
     /**
      * 我的订单
      * @param type {number} 无全部 1待付款 2待发货 3待收货 4退换
      */
-    goOrderList (type) {
+    goOrderList(type) {
       this.$router.push({
-        path: '/order/list',
+        path: "/order/list",
         query: {
           type
         }
-      })
+      });
     },
     /* 意见反馈 */
-    goFeedback () {
-      this.$router.push('/pages/personage/feedback/index')
+    goFeedback() {
+      this.$router.push("/pages/personage/feedback/index");
     },
     /* 幸福币 */
-    goHappiness () {
-      this.$router.push('/pages/personage/happiness-coin/index')
+    goHappiness() {
+      this.$router.push("/pages/personage/happiness-coin/index");
     },
     /* 我的互动 */
-    goInteraction () {
-      this.$router.push('/pages/personage/interaction/index')
+    goInteraction() {
+      this.$router.push("/pages/personage/interaction/index");
     },
     /* 常见问题 */
-    goQuestion () {
-      this.$router.push('/pages/personage/question/index')
+    goQuestion() {
+      this.$router.push("/pages/personage/question/index");
     }
   },
   filters: {
-    signText (value) {
-      return value === '1' ? '已签到' : '签到'
+    signText(value) {
+      return value === "1" ? "已签到" : "签到";
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="order-bar bar-flash">
       <van-nav-bar
         title="限时闪购"
@@ -11,7 +11,10 @@
       ></van-nav-bar>
     </div>
 
-    <div id="flash-top" :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']">
+    <div
+      id="flash-top"
+      :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']"
+    >
       <div class="flash-scroll">
         <scrollBar direction="x" :activeIndex="tapIndex">
           <div
@@ -19,12 +22,12 @@
             v-for="(item, index) in navList"
             :key="index"
             @click="navFun(index)"
-            :class="[tapIndex == index ? 'cur' : '','flash-nav']"
+            :class="[tapIndex == index ? 'cur' : '', 'flash-nav']"
           >
             <div>
               <div class="nav-time" v-html="item.start_time_val"></div>
               <div class="nav-line"></div>
-              <div class="nav-status">{{item.status_txt}}</div>
+              <div class="nav-status">{{ item.status_txt }}</div>
             </div>
           </div>
         </scrollBar>
@@ -42,15 +45,32 @@
       </div>
 
       <template v-if="navList.length > 0">
-        <div v-show="navList[tapIndex].status == 1" class="flash-time-text">本场已结束</div>
-        <div v-show="navList[tapIndex].status == 2" class="flash-time-text">本场还剩</div>
-        <van-count-down v-show="navList[tapIndex].status == 2" class="count-time" ref="countDown" :auto-start="false" :time="time" @finish="finish">
+        <div v-show="navList[tapIndex].status == 1" class="flash-time-text">
+          本场已结束
+        </div>
+        <div v-show="navList[tapIndex].status == 2" class="flash-time-text">
+          本场还剩
+        </div>
+        <van-count-down
+          v-show="navList[tapIndex].status == 2"
+          class="count-time"
+          ref="countDown"
+          :auto-start="false"
+          :time="time"
+          @finish="finish"
+        >
           <template v-slot="timeData">
-            <span class="count-num">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
+            <span class="count-num">{{
+              timeData.hours < 10 ? "0" + timeData.hours : timeData.hours
+            }}</span>
             <div class="count-colon"></div>
-            <span class="count-num">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
+            <span class="count-num">{{
+              timeData.minutes < 10 ? "0" + timeData.minutes : timeData.minutes
+            }}</span>
             <div class="count-colon"></div>
-            <span class="count-num">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
+            <span class="count-num">{{
+              timeData.seconds < 10 ? "0" + timeData.seconds : timeData.seconds
+            }}</span>
           </template>
         </van-count-down>
         <div v-show="navList[tapIndex].status == 3">
@@ -59,53 +79,98 @@
       </template>
     </div>
     <div class="scroll-body" id="flash-body">
-      <van-tabs v-model="active" swipeable swipe-threshold="10" @change="changeNav">
+      <van-tabs
+        v-model="active"
+        swipeable
+        swipe-threshold="10"
+        @change="changeNav"
+      >
         <van-tab v-for="(item, index) in navList" :title="item.status_txt">
           <van-list
-              v-model="loading"
-              :finished="finished"
-              finished-text=""
-              @load="onLoad"
-            >
+            v-model="loading"
+            :finished="finished"
+            finished-text=""
+            @load="onLoad"
+          >
             <div class="flash-list">
-              <template v-for="(item,index) in listData">
-                <div @click="linkFunc(5,{id:item.goods_id})" :class="[index==0 ? 'item-big' : 'item-small','flash-item']">
+              <template v-for="(item, index) in listData">
+                <div
+                  @click="linkFunc(5, { id: item.goods_id })"
+                  :class="[
+                    index == 0 ? 'item-big' : 'item-small',
+                    'flash-item'
+                  ]"
+                >
                   <div class="flash-goods-pic">
                     <img class="img-100" :src="item.thumb" />
                   </div>
                   <div class="flash-goods-info">
-                    <div class="flash-goods-name p-nowrap">{{item.goods_name}}</div>
-                    <template v-if="index==0">
+                    <div class="flash-goods-name p-nowrap">
+                      {{ item.goods_name }}
+                    </div>
+                    <template v-if="index == 0">
                       <div class="flash-price-tip flex-center">
-                        <div v-if="item.price_status==2" class="goods-tip tip-pd flex-center">拼单优惠</div>
+                        <div
+                          v-if="item.price_status == 2"
+                          class="goods-tip tip-pd flex-center"
+                        >
+                          拼单优惠
+                        </div>
                         <div class="flash-goods-price">
-                          <span class="goods-price-span1">￥</span>{{item.now_price/100}}
-                          <span class="goods-price-span2">￥{{item.y_price/100}}</span>
+                          <span class="goods-price-span1">￥</span
+                          >{{ item.now_price / 100 }}
+                          <span class="goods-price-span2"
+                            >￥{{ item.y_price / 100 }}</span
+                          >
                         </div>
                       </div>
                     </template>
                     <template v-else>
                       <div class="goods-tip-block">
-                        <div v-if="item.price_status==2" class="goods-tip tip-pd">拼单优惠</div>
+                        <div
+                          v-if="item.price_status == 2"
+                          class="goods-tip tip-pd"
+                        >
+                          拼单优惠
+                        </div>
                       </div>
                       <div class="flash-goods-price">
-                        <span class="goods-price-span1">￥</span>{{item.now_price/100}}
-                        <span class="goods-price-span2">￥{{item.y_price/100}}</span>
+                        <span class="goods-price-span1">￥</span
+                        >{{ item.now_price / 100 }}
+                        <span class="goods-price-span2"
+                          >￥{{ item.y_price / 100 }}</span
+                        >
                       </div>
                     </template>
                   </div>
                   <div class="item-btn">
                     <template v-if="tapStatus > 1">
                       <template v-if="tapStatus == 2">
-                        <template v-if="item.goods_num > 0 && item.is_over == 0">
-                          <div class="btn-collage" v-if="item.price_status == 2 && item.is_partake">邀请拼单</div>
+                        <template
+                          v-if="item.goods_num > 0 && item.is_over == 0"
+                        >
+                          <div
+                            class="btn-collage"
+                            v-if="item.price_status == 2 && item.is_partake"
+                          >
+                            邀请拼单
+                          </div>
                           <div class="btn-flash" v-else>马上抢</div>
                         </template>
                         <div v-else class="btn-over">已抢光</div>
                       </template>
                       <template v-else>
-                        <div v-if="!item.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,item.goods_id)" v-txAnalysis="{eventId: 19}"><img src="@/assets/img/icon_01.png" />提醒</div>
-                        <div v-else class="btn-remind-isset flex-center">已设提醒</div>
+                        <div
+                          v-if="!item.is_set"
+                          class="btn-remind flex-center"
+                          @click.stop="remindFunc(index, item.goods_id)"
+                          v-txAnalysis="{ eventId: 19 }"
+                        >
+                          <img src="@/assets/img/icon_01.png" />提醒
+                        </div>
+                        <div v-else class="btn-remind-isset flex-center">
+                          已设提醒
+                        </div>
                       </template>
                     </template>
                   </div>
@@ -118,22 +183,28 @@
     </div>
 
     <remind-swal
-    :show-swal="showSwal"
-    :remind-tit="remindTit"
-    @closeSwal="closeSwal"
-    @sureSwal="sureSwal()">
+      :show-swal="showSwal"
+      :remind-tit="remindTit"
+      @closeSwal="closeSwal"
+      @sureSwal="sureSwal()"
+    >
     </remind-swal>
-	</div>
+  </div>
 </template>
 
 <script>
-import { NavBar, CountDown, List, Toast, Tab, Tabs } from 'vant'
-import scrollBar from '@/components/scroll-bar'
-import remindSwal from './../components/remind-swal'
-import { mapGetters } from 'vuex'
-import { getFlashNav, getFlashGoods, getFlashGoodsOne, remindSend } from '@/api/life.js'
+import { NavBar, CountDown, List, Toast, Tab, Tabs } from "vant";
+import scrollBar from "@/components/scroll-bar";
+import remindSwal from "./../components/remind-swal";
+import { mapGetters } from "vuex";
+import {
+  getFlashNav,
+  getFlashGoods,
+  getFlashGoodsOne,
+  remindSend
+} from "@/api/life.js";
 export default {
-  name: 'flashPurchase',
+  name: "flashPurchase",
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
@@ -144,47 +215,50 @@ export default {
     scrollBar,
     remindSwal
   },
-  data () {
+  data() {
     return {
       windowHeight: document.documentElement.clientHeight,
-      time: '',
+      time: "",
       active: 0,
       tapIndex: 0, // 菜单选中项
       tapStatus: 0, // 菜单选中项状态 1已结束 2进行中 3即将开始
-      model_txt: '',//通知消息提示词
-      showSwal: false,       //提醒弹窗
-      remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
-      set_id: '',            //提醒的商品id
-      set_index: '',         //点击提醒的商品index
-      ollage_id: '',         //当前选中的闪购id
-      navList: [],           //菜单列表
-      listData: [],          //页面数据列表
-      noMoreHidden: true,    //上拉加载更多，没有更多是否隐藏
-      userId: '',            //用户uid
-      page: 1,   //页码
-      pageSize: 10,  //分页条数
+      model_txt: "", //通知消息提示词
+      showSwal: false, //提醒弹窗
+      remindTit: "提醒消息将在活动开始时通知您", //提醒标题
+      set_id: "", //提醒的商品id
+      set_index: "", //点击提醒的商品index
+      ollage_id: "", //当前选中的闪购id
+      navList: [], //菜单列表
+      listData: [], //页面数据列表
+      noMoreHidden: true, //上拉加载更多，没有更多是否隐藏
+      userId: "", //用户uid
+      page: 1, //页码
+      pageSize: 10, //分页条数
       isEmpty: false, //是否为空
       loading: false,
       finished: true
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(["userInfo"])
   },
-  created () {
+  created() {
     this.getData();
   },
-  activated () {
+  activated() {
     if (this.scrollLeft) {
-      document.getElementById('flash-top').getElementsByClassName(
-          'scrollBarContent'
-        )[0].scrollLeft = this.scrollLeft
+      document
+        .getElementById("flash-top")
+        .getElementsByClassName(
+          "scrollBarContent"
+        )[0].scrollLeft = this.scrollLeft;
     }
     if (this.scrollTop) {
       document
-      .getElementById('flash-body')
-      .getElementsByClassName('van-tabs__content')[0]
-      .scrollTop = this.scrollTop
+        .getElementById("flash-body")
+        .getElementsByClassName(
+          "van-tabs__content"
+        )[0].scrollTop = this.scrollTop;
     }
   },
   methods: {
@@ -194,25 +268,25 @@ export default {
       this.getGoodsData();
       return;
     },
-    updateOne(){
+    updateOne() {
       getFlashGoodsOne({
         goods_id: this.tapId,
         ollage_id: this.ollage_id
       }).then(res => {
         if (res.success) {
-          if(res.data.list_data && res.data.list_data.length){
+          if (res.data.list_data && res.data.list_data.length) {
             var listOne = res.data.list_data[0];
-            for (var i=0; i < this.listData.length; i++) {
-              if(this.listData[i].goods_id == this.tapId){
-                this.listData.splice(i,1,listOne);
+            for (var i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].goods_id == this.tapId) {
+                this.listData.splice(i, 1, listOne);
                 break;
               }
             }
           }
         }
-      })
+      });
     },
-    getData () {
+    getData() {
       getFlashNav().then(res => {
         if (res.success) {
           this.navList = res.data.nav_list;
@@ -222,43 +296,48 @@ export default {
           this.model_txt = res.data.model_txt;
           this.ollage_id = res.data.nav_list[res.data.tap_index].id;
           this.finished = false;
-          if(this.tapStatus == 2){
+          if (this.tapStatus == 2) {
             let newTime = parseInt(new Date().getTime());
-            console.log(newTime)
-            this.time = res.data.nav_list[res.data.tap_index].end_time*1000-newTime;
+            console.log(newTime);
+            this.time =
+              res.data.nav_list[res.data.tap_index].end_time * 1000 - newTime;
             this.$nextTick(() => {
               this.start();
             });
           }
         }
-      })
+      });
     },
-    getGoodsData () {
+    getGoodsData() {
       getFlashGoods({
         page: this.page,
         ollage_id: this.ollage_id
       }).then(res => {
         if (res.success) {
           this.flag = true;
-          this.listData = this.page == 1 ? res.data.list_data : this.listData.concat(res.data.list_data);
-          this.isEmpty = this.page == 1 && res.data.list_data.length ==0 ? true : false;
-          if(res.data.list_data.length < res.pageSize){
+          this.listData =
+            this.page == 1
+              ? res.data.list_data
+              : this.listData.concat(res.data.list_data);
+          this.isEmpty =
+            this.page == 1 && res.data.list_data.length == 0 ? true : false;
+          if (res.data.list_data.length < res.pageSize) {
             this.finished = true;
             this.flag = true;
-          }else {
-            this.page = this.page+1;
+          } else {
+            this.page = this.page + 1;
             this.flag = false;
           }
           this.loading = false;
         }
-      })
+      });
     },
-    listInit(){
+    listInit() {
       this.listData = [];
       this.page = 1;
       this.finished = false;
       this.loading = true;
-      if(!this.flag){
+      if (!this.flag) {
         this.getGoodsData();
       }
     },
@@ -281,49 +360,51 @@ export default {
       console.log(1223);
     },
     changeNav(index) {
-      this.active = index
+      this.active = index;
       this.tapIndex = index;
       this.tapStatus = this.navList[index].status;
       this.ollage_id = this.navList[index].id;
       this.flag = false;
       this.listInit();
-      let newTime = parseInt(new Date().getTime()/1000);
+      let newTime = parseInt(new Date().getTime() / 1000);
       let startTime = this.navList[index].start_time;
-      if(newTime >=startTime && this.tapStatus == 3){
-        if(newTime >=startTime){   //当前时间大于等于活动开始时间
+      if (newTime >= startTime && this.tapStatus == 3) {
+        if (newTime >= startTime) {
+          //当前时间大于等于活动开始时间
           this.getData();
         }
       }
     },
-    closeSwal(data){
-      console.log(data)
+    closeSwal(data) {
+      console.log(data);
       this.showSwal = data == 1 ? true : false;
     },
 
     /**
      * 提醒
-    */
+     */
     remindFunc(index, id) {
       const that = this;
       this.set_id = id;
       this.set_index = index;
-      let newTime = parseInt(new Date().getTime()/1000);
+      let newTime = parseInt(new Date().getTime() / 1000);
       let overTime = this.navList[this.tapIndex].start_time;
-      if(newTime >=overTime){   //当前时间大于等于活动开始时间
-        Toast('该商品已开抢');
+      if (newTime >= overTime) {
+        //当前时间大于等于活动开始时间
+        Toast("该商品已开抢");
         setTimeout(() => {
           this.getData();
           that.page = 1;
           that.getGoodsData();
         }, 1500);
-      }else {
+      } else {
         this.showSwal = true;
       }
     },
     /**
      * 提醒回调
-    */
-    sureSwal: function (e) {
+     */
+    sureSwal: function(e) {
       const that = this;
       this.closeSwal(0);
       remindSend({
@@ -334,49 +415,49 @@ export default {
           Toast(res.message);
           this.listData[this.set_index].is_set = true;
         }
-      })
+      });
     },
-    linkFunc (type,obj={}) {
+    linkFunc(type, obj = {}) {
       this.tapId = obj.id;
-      switch (type){
+      switch (type) {
         case 5:
-        this.$router.push({
-          path: '/store/goods-detail',
-          query: {
-            id: obj.id
-          }
-        })
-        break;
+          this.$router.push({
+            path: "/store/goods-detail",
+            query: {
+              id: obj.id
+            }
+          });
+          break;
       }
-    },
+    }
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
-      if(from.name=='goodsDetail'){
+      if (from.name == "goodsDetail") {
         vm.updateOne();
       }
-    })
+    });
   },
-  beforeRouteLeave (to, from, next) {
-    if(to.name == 'life'){
+  beforeRouteLeave(to, from, next) {
+    if (to.name == "life") {
       this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+      this.$store.commit("deleteKeepAlive", from.name);
     }
-    const el = document.getElementById('flash-top').getElementsByClassName(
-          'scrollBarContent'
-        )
-    this.scrollLeft = (el.length && el[0].scrollLeft) || 0
-    console.log(document.getElementById('flash-body'));
+    const el = document
+      .getElementById("flash-top")
+      .getElementsByClassName("scrollBarContent");
+    this.scrollLeft = (el.length && el[0].scrollLeft) || 0;
+    console.log(document.getElementById("flash-body"));
     const el2 = document
-      .getElementById('flash-body')
-      .getElementsByClassName('van-tabs__content')
-    this.scrollTop = (el2.length && el2[0].scrollTop) || 0
+      .getElementById("flash-body")
+      .getElementsByClassName("van-tabs__content");
+    this.scrollTop = (el2.length && el2[0].scrollTop) || 0;
     next();
   }
-}
+};
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/life.css"></style>
 <style scoped>
 .scroll-body {
   height: calc(100% - 466px);
@@ -469,7 +550,7 @@ export default {
   justify-content: center;
   align-items: center;
   position: relative;
-  box-shadow: 4px 0 9px rgba(0,0,0,0.1)
+  box-shadow: 4px 0 9px rgba(0, 0, 0, 0.1);
 }
 .count-icon {
   position: absolute;
@@ -499,7 +580,7 @@ export default {
   width: 28px;
   height: 28px;
   background-image: radial-gradient(#f2f2f4, #e2e2e4);
-  border-radius:50%;
+  border-radius: 50%;
   z-index: 3;
 }
 /*.flash-time-over {
@@ -526,8 +607,9 @@ export default {
   width: 30px;
   position: relative;
 }
-.count-colon::before,.count-colon::after {
-  content: '';
+.count-colon::before,
+.count-colon::after {
+  content: "";
   position: absolute;
   width: 6px;
   height: 6px;
@@ -627,7 +709,7 @@ export default {
   background: #2da0fb;
 }
 .btn-collage {
-  background: linear-gradient(to right, #eb5842 , #f9856a);
+  background: linear-gradient(to right, #eb5842, #f9856a);
 }
 .item-btn .btn-remind {
   border: 2px solid #2da0fb;

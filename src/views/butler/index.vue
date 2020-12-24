@@ -2,13 +2,24 @@
   <div class="tf-bg tf-column tf-screen">
     <div class="header-bg"></div>
     <page-nav-bar class="bulter-nav-bar"></page-nav-bar>
-    <van-notice-bar v-if="noticeList.length" class="swiper-nav" left-icon="volume-o" :scrollable="false">
-      <van-swipe vertical class="notice-swipe" :autoplay="3000" :show-indicators="false">
+    <van-notice-bar
+      v-if="noticeList.length"
+      class="swiper-nav"
+      left-icon="volume-o"
+      :scrollable="false"
+    >
+      <van-swipe
+        vertical
+        class="notice-swipe"
+        :autoplay="3000"
+        :show-indicators="false"
+      >
         <van-swipe-item
           v-for="item in noticeList"
           :key="item.id"
           @click="goNotice(item)"
-        >{{item.title}}</van-swipe-item>
+          >{{ item.title }}</van-swipe-item
+        >
       </van-swipe>
     </van-notice-bar>
     <appList :list="mainAppList"></appList>
@@ -21,14 +32,14 @@
 </template>
 
 <script>
-import pageNavBar from '@/components/page-nav-bar/index.vue'
-import appList from './components/app-list.vue'
-import { NoticeBar, Swipe, SwipeItem, Toast } from 'vant'
-import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
-import { bulterPermission } from '@/utils/business'
-import { mapGetters } from 'vuex'
+import pageNavBar from "@/components/page-nav-bar/index.vue";
+import appList from "./components/app-list.vue";
+import { NoticeBar, Swipe, SwipeItem, Toast } from "vant";
+import { queryAllApp, getNoticeLbList } from "@/api/butler.js";
+import { bulterPermission } from "@/utils/business";
+import { mapGetters } from "vuex";
 export default {
-  name: 'butler',
+  name: "butler",
   components: {
     pageNavBar,
     appList,
@@ -36,67 +47,67 @@ export default {
     [Swipe.name]: Swipe,
     [SwipeItem.name]: SwipeItem
   },
-  data () {
+  data() {
     return {
       noticeList: [],
       appList: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
       ymjObj: {}
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userType', 'userInfo']),
-    mainAppList () {
+    ...mapGetters(["userType", "userInfo"]),
+    mainAppList() {
       return this.appList.filter(obj => {
-        if (obj.id === '1') {
-          this.ymjObj = obj
-          return false
+        if (obj.id === "1") {
+          this.ymjObj = obj;
+          return false;
         }
-        return true
-      })
+        return true;
+      });
     }
   },
-  activated () {
-    this.queryAllApp()
-    this.getNoticeLbList()
+  activated() {
+    this.queryAllApp();
+    this.getNoticeLbList();
   },
   methods: {
     // 获取管家板块全部应用
-    queryAllApp () {
-      queryAllApp().then((res) => {
-        this.appList = res.data
-      })
+    queryAllApp() {
+      queryAllApp().then(res => {
+        this.appList = res.data;
+      });
     },
     // 获取通知轮播列表
-    getNoticeLbList () {
+    getNoticeLbList() {
       getNoticeLbList().then(({ data }) => {
-        this.noticeList = data
-      })
+        this.noticeList = data;
+      });
     },
     // 跳转公告详情页
-    goNotice ({ id }) {
+    goNotice({ id }) {
       this.$router.push({
-        name: 'noticeDetails',
+        name: "noticeDetails",
         query: {
           id
         }
-      })
+      });
       this.mtjEvent({
         eventId: 27
-      })
+      });
     },
     // 跳转云门禁
-    goEntrance () {
-      if (this.ymjObj.mj_status == '0') {
-        Toast('小区暂未开放此功能')
+    goEntrance() {
+      if (this.ymjObj.mj_status == "0") {
+        Toast("小区暂未开放此功能");
       } else {
-        this.$router.push('/pages/butler/entrance/index')
+        this.$router.push("/pages/butler/entrance/index");
       }
     }
   },
-  beforeRouteLeave (to, from, next) {
-    bulterPermission(to, from, next, this.userType, this.userInfo)
+  beforeRouteLeave(to, from, next) {
+    bulterPermission(to, from, next, this.userType, this.userInfo);
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
