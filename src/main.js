@@ -18,6 +18,7 @@ import './styles/iconfont.css'
 import 'amfe-flexible'
 import { setStatisticsData } from '@/utils/analysis.js'
 import { ajpushInit } from '@/utils/ajpush'
+import './utils/lazy_use'
 
 Vue.config.errorHandler = function (err, vm, info) {
   console.error(err, info)
@@ -72,7 +73,7 @@ if (process.env.VUE_APP_IS_APP === '1') {
         eventId: params.eventId,
         eventLabel: 'event'
       })
-      setStatisticsData(3, { 'event_id': params.eventId})
+      setStatisticsData(3, { event_id: params.eventId })
     }
 
     // 自定义扫码防止黑屏配置
