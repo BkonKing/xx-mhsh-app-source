@@ -320,6 +320,15 @@ const personageRouter = [
         /* webpackChunkName: "realNameInfo" */
         '@/views/personage/information/realNameInfo.vue'
       )
+  },
+  {
+    path: '/pages/personage/information/editInfo',
+    name: 'editInfo',
+    component: () =>
+      import(
+        /* webpackChunkName: "editInfo" */
+        '@/views/personage/information/editInfo.vue'
+      )
   }
 ]
 

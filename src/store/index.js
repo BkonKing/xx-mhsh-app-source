@@ -285,6 +285,7 @@ const store = {
         console.log(err)
       })
     },
+    // 刷新用户信息
     getMyAccount ({
       commit
     }) {

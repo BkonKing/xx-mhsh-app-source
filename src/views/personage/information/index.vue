@@ -87,7 +87,6 @@
           </van-cell>
         </div>
         <!-- <tf-list class="basics-list">
-     
           <tf-list-item
             border
             title="昵称"
@@ -138,10 +137,9 @@
               </tf-date-time-picker>
             </template>
           </tf-list-item>
-      
-       </tf-list> -->
-        <tf-list class="basics-list">
-          <!-- <tf-list-item
+        </tf-list> -->
+        <!-- <tf-list class="basics-list">
+          <tf-list-item
             border
             title="姓名"
             :showArrow="false"
@@ -160,14 +158,14 @@
             title="手机号"
             :rightText="mobile"
             @click="jumpPhone"
-          ></tf-list-item> -->
+          ></tf-list-item>
           <tf-list-item
             title="收货地址"
             :rightText="userInfo.address_name"
             rightWidth="460px"
             @click="goAddress"
           ></tf-list-item>
-        </tf-list>
+        </tf-list> -->
         <tf-list class="basics-list">
           <!-- <van-uploader :after-read="cjFace" style="width: 100%;"> -->
           <!-- <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item> -->
