@@ -49,7 +49,7 @@ export function handlePermission ({
       if (message) {
         Dialog.confirm({
           title: '提示',
-          message: message,
+          message,
           confirmButtonText: '去开启',
           className,
           overlayStyle

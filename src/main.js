@@ -9,14 +9,14 @@ import imageCach from './directive/imageCach'
 import preventReClick from './directive/preventReClick'
 import eventBus from '@/api/eventbus'
 import './styles/base.css'
-// import './utils/rem.js' // 引入rem自适应
 // vconsole 悬浮console
-import VConsole from 'vconsole'
+// import VConsole from 'vconsole'
 import './styles/common.less'
 import './styles/components.less'
 import './styles/iconfont.css'
 import 'amfe-flexible'
 import { setStatisticsData } from '@/utils/analysis.js'
+import { checkUpdate } from '@/utils/apicloud_util'
 import { ajpushInit } from '@/utils/ajpush'
 import './utils/lazy_use'
 
@@ -35,16 +35,9 @@ Vue.use(preventReClick)
 if (process.env.VUE_APP_IS_APP === '1') {
   window.apiready = () => {
     require('./permission')
-    process.env.NODE_ENV === 'development' && new VConsole()
-    // 静默更新
-    const mam = api.require('mam')
-    mam.startSmartUpdate(function (ret, err) {
-      // if (ret) {
-      //   alert(JSON.stringify(ret))
-      // } else {
-      //   alert(JSON.stringify(err))
-      // }
-    })
+    // process.env.NODE_ENV === 'development' && new VConsole()
+    // 检查更新
+    checkUpdate()
     // 极光推送
     ajpushInit()
     // 百度统计
@@ -140,7 +133,7 @@ if (process.env.VUE_APP_IS_APP === '1') {
   }
   // Vue.use(Vuex)
   require('./permission')
-  process.env.NODE_ENV === 'development' && new VConsole()
+  // process.env.NODE_ENV === 'development' && new VConsole()
   new Vue({
     router,
     store: store,
