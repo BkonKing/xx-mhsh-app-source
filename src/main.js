@@ -132,6 +132,7 @@ if (process.env.VUE_APP_IS_APP === '1') {
     console.log(params)
   }
   // Vue.use(Vuex)
+  require('./mock')
   require('./permission')
   // process.env.NODE_ENV === 'development' && new VConsole()
   new Vue({
