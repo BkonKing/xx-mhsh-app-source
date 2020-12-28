@@ -67,7 +67,7 @@
               </div>
             </template>
           </van-cell>
-          <van-cell class="nameCell" is-link center>
+          <!-- <van-cell class="nameCell" is-link center>
             <template #title>
               <div class="title">
                 <div class="txt">手机号</div>
@@ -76,12 +76,24 @@
                 </div>
               </div>
             </template>
-          </van-cell>
-          <van-cell class="nameCell" is-link center>
+          </van-cell> -->
+          <tf-list-item
+            border
+            title="手机号"
+            :rightText="mobile"
+            @click="jumpPhone"
+          >
+          </tf-list-item>
+          <van-cell
+            class="nameCell"
+            is-link
+            center
+            @click="$router.push('/pages/personage/information/addBankCard')"
+          >
             <template #title>
               <div class="title">
                 <div class="txt">银行卡</div>
-                <div class="name"></div>
+                <div class="name">0000000000000000</div>
               </div>
             </template>
           </van-cell>
@@ -668,6 +680,11 @@ export default {
   background-color: #fff;
   padding: 0 30px;
   border-radius: 8px;
+  /deep/ .tf-text {
+    text-align: left !important;
+    margin-left: -50px !important;
+    color: #666666;
+  }
   .van-cell {
     padding-left: 0px;
     padding-right: 0px;
@@ -697,6 +714,10 @@ export default {
         }
       }
     }
+  }
+  /deep/ .tf-clist-box {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 

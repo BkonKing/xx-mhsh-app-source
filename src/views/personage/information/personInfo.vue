@@ -16,16 +16,23 @@
         <van-uploader :after-read="afterRead" style="width: 100%;">
           <mycell class="cell" title="头像" value="头像" type="img"></mycell>
         </van-uploader>
-        <mycell
-          class="cell"
+
+        <tf-list-item
+          border
           title="昵称"
-          value="这是一个默认昵称"
-          @click.native="
-            $router.push('/pages/personage/information/editInfo?type=nickname')
-          "
-          :isShow="false"
-        ></mycell>
-        <mycell
+          :showArrow="false"
+          :IFocusStatus="true"
+        >
+          <template v-slot:right>
+            <input
+              v-model="nickname"
+              class="tf-input"
+              @change="setNickname"
+              maxlength="15"
+            />
+          </template>
+        </tf-list-item>
+        <!-- <mycell
           class="cell"
           @click.native="
             $router.push('/pages/personage/information/editInfo?type=realname')
@@ -33,7 +40,17 @@
           title="姓名"
           value="鲁班"
           :isShow="false"
-        ></mycell>
+        ></mycell> -->
+        <tf-list-item
+          border
+          title="姓名"
+          :showArrow="false"
+          :IFocusStatus="true"
+        >
+          <template v-slot:right>
+            <input v-model="realname" class="tf-input" @change="setRealname" />
+          </template>
+        </tf-list-item>
         <mycell
           @click.native="genderShow = true"
           class="cell"
@@ -41,12 +58,6 @@
           value="男"
           type="iconfont"
         ></mycell>
-        <!-- <mycell
-          class="cell"
-          @click.native="ShowBirthday"
-          title="生日"
-          :value="birthday"
-        ></mycell> -->
         <tf-list-item title="生日">
           <template v-slot:right>
             <tf-date-time-picker
@@ -95,7 +106,13 @@ import {
   uploader
 } from "vant";
 import mycell from "./mycell";
-import { editGender, editBirthday } from "@/api/personage.js";
+import {
+  editGender,
+  editBirthday,
+  editAvatar,
+  editNickname,
+  editRealname
+} from "@/api/personage.js";
 import { mapGetters } from "vuex";
 import { getDate, selectFileImage } from "@/utils/util";
 import tfListItem from "@/components/tf-list/item.vue";
@@ -125,13 +142,31 @@ export default {
       maxDate: new Date(getDate()),
       minDate: new Date("1900/1/1"),
       birthday: "",
-      birthdayShow: false
+      birthdayShow: false,
+      nickname: "",
+      realname: ""
     };
   },
   computed: {
     ...mapGetters(["userInfo"])
   },
   methods: {
+    /* 设置姓名 */
+    setRealname() {
+      editRealname({
+        realname: this.realname
+      }).then(res => {
+        Toast.success("姓名设置成功");
+      });
+    },
+    /* 设置昵称 */
+    setNickname() {
+      editNickname({
+        nickname: this.nickname
+      }).then(res => {
+        Toast.success("昵称设置成功");
+      });
+    },
     /* 图片上传 */
     async afterRead(file) {
       Toast.loading({
@@ -198,6 +233,8 @@ export default {
   created() {
     this.$store.dispatch("getMyAccount").then(() => {
       this.birthday = this.userInfo.birthday;
+      this.nickname = this.userInfo.nickname;
+      this.realname = this.userInfo.realname;
     });
   },
   mounted() {}
@@ -237,6 +274,18 @@ export default {
         width: 100% !important;
       }
     }
+  }
+  .tf-input {
+    flex: 1;
+    font-size: 30px;
+    text-align: right;
+  }
+  .tf-clist-box {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /deep/ .tf-clist-cell {
+    padding: 0 20px;
   }
 }
 </style>

@@ -34,7 +34,7 @@
           </template>
           <template>
             <div class="value">
-              未完善
+              {{ isPerfect ? "完善" : "未完善" }}
             </div>
           </template>
         </van-cell>
@@ -45,6 +45,7 @@
 
 <script>
 import { NavBar, Field, Button, Popup, Cell, CellGroup } from "vant";
+import { mapGetters } from "vuex";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -52,6 +53,18 @@ export default {
     [Button.name]: Button,
     [Popup.name]: Popup,
     [Cell.name]: Cell
+  },
+  computed: {
+    ...mapGetters(["userInfo"]),
+    isPerfect() {
+      return (
+        this.userInfo.avatar &&
+        this.userInfo.nickname &&
+        this.userInfo.realname &&
+        this.userInfo.gender &&
+        this.userInfo.birthday
+      );
+    }
   },
   methods: {
     // 回退
