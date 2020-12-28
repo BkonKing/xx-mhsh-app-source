@@ -283,6 +283,7 @@ import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
+import { getLocationPermission } from '@/utils/location'
 export default {
   name: 'home',
   components: {
@@ -388,18 +389,20 @@ export default {
     },
     /* 签到 */
     sign () {
-      this.signLoading = true
-      signin().then((res) => {
-        this.signLoading = false
-        Toast({
-          message: res.message
+      getLocationPermission().then(() => {
+        this.signLoading = true
+        signin().then((res) => {
+          this.signLoading = false
+          Toast({
+            message: res.message
+          })
+          this.$store.dispatch('getMyAccount')
+          this.mtjEvent({
+            eventId: 4
+          })
+        }).catch(() => {
+          this.signLoading = false
         })
-        this.$store.dispatch('getMyAccount')
-        this.mtjEvent({
-          eventId: 4
-        })
-      }).catch(() => {
-        this.signLoading = false
       })
     },
     /* 获取幸福币专区 */

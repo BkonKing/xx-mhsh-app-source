@@ -137,6 +137,7 @@ import { NavBar, Toast, Dialog, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
+import { getLocationPermission } from '@/utils/location'
 import { mapGetters } from 'vuex'
 export default {
   components: {
@@ -178,7 +179,9 @@ export default {
       if (this.signinToday == '1') {
         this.showCalendar = true
       } else {
-        this.signin()
+        getLocationPermission().then(() => {
+          this.signin()
+        })
       }
     },
     /* 签到请求 */
