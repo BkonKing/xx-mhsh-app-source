@@ -49,8 +49,7 @@ import {
   collectStatus
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
-import { Dialog, Toast } from 'vant'
-import { hasPermission, reqPermission } from '@/utils/permission'
+import { handlePermission } from '@/utils/permission'
 export default {
   data () {
     return {
@@ -95,7 +94,7 @@ export default {
     },
     /* 获取付款码二维码 */
     getPaymentCode () {
-      getPaymentCode().then((res) => {
+      getPaymentCode().then(res => {
         const { url, code_id } = res.data
         this.paymentCodeImg = url
         this.codeId = code_id
@@ -104,7 +103,7 @@ export default {
     },
     /* 获取收款码二维码 */
     getCollectCode () {
-      getCollectCode().then((res) => {
+      getCollectCode().then(res => {
         const { url, code_id } = res.data
         this.collectCodeImg = url
         this.codeId = code_id
@@ -153,7 +152,7 @@ export default {
             this.pollingPayment()
           }
         } else {
-          Dialog.alert({
+          this.$dialog.alert({
             title: '支付成功'
           })
           this.mtjEvent({
@@ -170,7 +169,7 @@ export default {
         if (data.is_pay != '1') {
           this.pollingCollect()
         } else {
-          Dialog.alert({
+          this.$dialog.alert({
             title: `获得${data.credits}幸福币`
           }).then(() => {
             this.getCollectCode()
@@ -210,7 +209,7 @@ export default {
       collectScan({
         code_info: value
       })
-        .then((res) => {
+        .then(res => {
           const { check_status, is_pay, avatar, realname, mobile } = res.data
           if (check_status) {
             this.$router.push({
@@ -225,7 +224,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           api.alert({
             title: err.message
           })
@@ -236,7 +235,7 @@ export default {
       paymentScan({
         code_info: value
       })
-        .then((res) => {
+        .then(res => {
           const { check_status, is_pay, avatar, realname, mobile } = res.data
           if (check_status) {
             if (is_pay == 0) {
@@ -259,7 +258,7 @@ export default {
             api.toast('扫码失败，二维码可能过期')
           }
         })
-        .catch((err) => {
+        .catch(err => {
           api.alert({
             title: err.message
           })
@@ -281,7 +280,7 @@ export default {
             })
           }
         })
-        .catch((err) => {
+        .catch(err => {
           api.alert({
             title: err.message
           })
@@ -292,12 +291,12 @@ export default {
       visitorCodeScan({
         code_info: value
       })
-        .then((res) => {
+        .then(res => {
           api.alert({
             title: res.message
           })
         })
-        .catch((err) => {
+        .catch(err => {
           api.alert({
             title: err.message
           })
@@ -308,12 +307,18 @@ export default {
       takeCodeScan({
         code_info: value
       })
-        .then((res) => {
-          api.alert({
-            title: res.message
+        .then(res => {
+          this.$router.push({
+            name: 'orderVerification',
+            query: {
+              code_info: value
+            }
           })
+          // api.alert({
+          //   title: res.message
+          // })
         })
-        .catch((err) => {
+        .catch(err => {
           api.alert({
             title: err.message
           })
@@ -324,6 +329,8 @@ export default {
       api.openFrame({
         name: 'scan',
         url: './scan.html',
+        useWKWebView: true,
+        bgColor: 'rgba(0, 0, 0, 0)',
         rect: {
           x: 0,
           y: 0,
@@ -378,6 +385,8 @@ export default {
       api.openFrame({
         name: 'closebtn',
         url: './closebtn.html',
+        useWKWebView: true,
+        bgColor: 'rgba(0, 0, 0, 0)',
         rect: {
           x: 0,
           y: 0,
@@ -398,16 +407,11 @@ export default {
     current (value) {
       const len = api.frames().length
       if (value === 1) {
-        const perms = hasPermission('camera')
-        if (!perms[0].granted) {
-          reqPermission('camera', ({ list }) => {
-            if (list[0].granted) {
-              !len && this.openFrame()
-            }
-          })
-        } else {
+        handlePermission({
+          name: 'camera'
+        }).then(() => {
           !len && this.openFrame()
-        }
+        })
         this.mtjEvent({
           eventId: 6
         })
@@ -451,7 +455,7 @@ export default {
   margin-top: 142px;
   @flex-column();
   align-items: center;
-  background-image: url('../../../assets/imgs/fukuan_bg.png');
+  background-image: url("../../../assets/imgs/fukuan_bg.png");
   background-size: contain;
 }
 .tab-title {

@@ -105,6 +105,7 @@ export default {
           eventId: 80
         })
         updateStatisticsData(4)
+        this.$router.push('/login')
       })
     }
   }

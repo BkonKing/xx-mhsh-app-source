@@ -22,7 +22,7 @@
           class="sign-tag"
           :class="{ 'sign-tag--complete': signinToday == '1' }"
           @click="signIn()"
-          >{{ signinToday == '1' ? '已签到' : '签到' }}</van-button
+          >{{ signinToday == "1" ? "已签到" : "签到" }}</van-button
         >
       </div>
     </div>
@@ -133,15 +133,12 @@
 </template>
 
 <script>
-import { NavBar, Toast, Dialog, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    [NavBar.name]: NavBar,
-    [Button.name]: Button,
     tfCalendar
   },
   data () {
@@ -185,9 +182,9 @@ export default {
     signin () {
       this.signLoading = true
       signin()
-        .then((res) => {
+        .then(res => {
           this.signLoading = false
-          Toast({
+          this.$toast({
             message: res.message
           })
           this.getCreditsAccount()
@@ -218,7 +215,7 @@ export default {
     },
     /* 获取幸福币专区 */
     getCreditsGoodsList () {
-      getCreditsGoodsList().then((res) => {
+      getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
@@ -239,7 +236,7 @@ export default {
           break
         case '3':
           if (this.mj_status == '0') {
-            Toast('小区暂未开放此功能')
+            this.$toast('小区暂未开放此功能')
           } else {
             this.authentication('/pages/butler/entrance/index')
           }
@@ -252,11 +249,11 @@ export default {
     /* 认证提醒 */
     authentication (url) {
       if (this.userType == 0) {
-        Dialog.confirm({
+        this.$dialog.confirm({
           title: '提示',
           message: '您尚未认证房间，是否去认证？',
           confirmButtonText: '去认证'
-        }).then((res) => {
+        }).then(res => {
           this.$router.push(
             '/pages/personage/house/attestation?type=1&mode=0&select=1'
           )
@@ -295,7 +292,8 @@ export default {
 .page-bg {
   width: 750px;
   height: 378px;
-  background-color: #fbe1ca;
+  background: url("../../../assets/imgs/credits_header.png") no-repeat;
+  background-size: cover;
 }
 .nav-bar {
   flex-direction: row;

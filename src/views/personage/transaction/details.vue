@@ -924,7 +924,7 @@ export default {
       ]
       validForm(validator).then(() => {
         Toast.loading({
-          duration: 0,
+          duration: 29500,
           forbidClick: true,
           message: '提交中...'
         })

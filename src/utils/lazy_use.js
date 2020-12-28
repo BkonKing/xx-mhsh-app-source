@@ -1,0 +1,104 @@
+import Vue from 'vue'
+import {
+  Button,
+  Cell,
+  CellGroup,
+  Icon,
+  Image as VanImage,
+  Col,
+  Row,
+  Popup,
+  Toast,
+  Checkbox,
+  CheckboxGroup,
+  DatetimePicker,
+  Field,
+  Form,
+  NumberKeyboard,
+  PasswordInput,
+  Picker,
+  RadioGroup,
+  Radio,
+  Rate,
+  Search,
+  Switch,
+  Uploader,
+  Dialog,
+  DropdownMenu,
+  DropdownItem,
+  Loading,
+  PullRefresh,
+  // Badge,
+  Collapse,
+  CollapseItem,
+  CountDown,
+  Divider,
+  Empty,
+  ImagePreview,
+  Lazyload,
+  List,
+  NoticeBar,
+  Sticky,
+  Swipe,
+  SwipeItem,
+  Tag,
+  Grid,
+  GridItem,
+  NavBar,
+  Tab,
+  Tabs,
+  Tabbar,
+  TabbarItem,
+  TreeSelect
+} from 'vant'
+
+Vue.use(Button)
+Vue.use(Cell)
+Vue.use(CellGroup)
+Vue.use(Icon)
+Vue.use(VanImage)
+Vue.use(Col)
+Vue.use(Row)
+Vue.use(Popup)
+Vue.use(Toast)
+Vue.use(Checkbox)
+Vue.use(CheckboxGroup)
+Vue.use(DatetimePicker)
+Vue.use(Field)
+Vue.use(Form)
+Vue.use(NumberKeyboard)
+Vue.use(PasswordInput)
+Vue.use(Picker)
+Vue.use(Radio)
+Vue.use(RadioGroup)
+Vue.use(Rate)
+Vue.use(Search)
+Vue.use(Switch)
+Vue.use(Uploader)
+Vue.use(Dialog)
+Vue.use(DropdownMenu)
+Vue.use(DropdownItem)
+Vue.use(Loading)
+Vue.use(PullRefresh)
+// Vue.use(Badge)
+Vue.use(Collapse)
+Vue.use(CollapseItem)
+Vue.use(CountDown)
+Vue.use(Divider)
+Vue.use(Empty)
+Vue.use(ImagePreview)
+Vue.use(Lazyload)
+Vue.use(List)
+Vue.use(NoticeBar)
+Vue.use(Sticky)
+Vue.use(Swipe)
+Vue.use(SwipeItem)
+Vue.use(Tag)
+Vue.use(Grid)
+Vue.use(GridItem)
+Vue.use(NavBar)
+Vue.use(Tab)
+Vue.use(Tabs)
+Vue.use(Tabbar)
+Vue.use(TabbarItem)
+Vue.use(TreeSelect)

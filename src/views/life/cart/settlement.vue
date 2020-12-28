@@ -526,8 +526,12 @@ export default {
       }).then(res => {
         if (res.success) {
           if(res.data){
-            this.payOrderInfo = res.data;
-            this.aliPayUp();
+            this.payOrderInfo = res.data
+            if (data == 0) {
+              this.wxPayUp()
+            } else {
+              this.aliPayUp()
+            }
           }
         }
       })
@@ -550,6 +554,27 @@ export default {
           // api.alert({ title: '支付结果', msg: ret.code, buttons: ['确定'] }); 
         }
       );
+    },
+    // 微信支付
+    wxPayUp () {
+      const that = this
+      const wxPayPlus = api.require('wxPayPlus')
+      wxPayPlus.payOrder({
+        apiKey: that.payOrderInfo.appid,
+        mchId: that.payOrderInfo.partnerid,
+        orderId: that.payOrderInfo.prepayid,
+        nonceStr: that.payOrderInfo.noncestr,
+        timeStamp: that.payOrderInfo.timestamp,
+        package: that.payOrderInfo.package,
+        sign: that.payOrderInfo.paySign
+      }, function(ret, err) {
+        that.goDetail()
+        // if (ret.status) {
+        //   that.goDetail()
+        // } else {
+        //   that.$router.go(-1)
+        // }
+      })
     },
     goDetail(){
       if(this.order_type == 1 || this.order_type == 2){ //闪购、拼单

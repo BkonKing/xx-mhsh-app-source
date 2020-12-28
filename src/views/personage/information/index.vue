@@ -97,7 +97,7 @@
           @change="(bindingId) => goAttestation(1,1,bindingId)"
         ></house>
       </van-tab>
-      <van-tab v-if="userType != 0 && currentProject" title="成员信息">
+      <van-tab v-if="userType == 1 && currentProject" title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
           <van-dropdown-item v-model="value" :options="list" />
         </van-dropdown-menu>

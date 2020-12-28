@@ -30,7 +30,7 @@ import { NavBar, Button } from 'vant'
 import { cjFace } from '@/api/personage'
 import { mapGetters } from 'vuex'
 import eventBus from '@/api/eventbus'
-import { hasPermission, reqPermission } from '@/utils/permission'
+import { handlePermission } from '@/utils/permission'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -72,16 +72,11 @@ export default {
   methods: {
     // 获取摄像头权限
     getCameraPermission () {
-      const perms = hasPermission('camera')
-      if (!perms[0].granted) {
-        reqPermission('camera', ({ list }) => {
-          if (list[0].granted) {
-            this.openCamera()
-          }
-        })
-      } else {
+      handlePermission({
+        name: 'camera'
+      }).then(() => {
         this.openCamera()
-      }
+      })
     },
     /* 打开摄像头 */
     openCamera () {
@@ -100,6 +95,8 @@ export default {
             api.openFrame({
               name: 'camera',
               url: './camera.html',
+              useWKWebView: true,
+              bgColor: 'rgba(0, 0, 0, 0)',
               rect: {
                 x: 0,
                 y: 0,

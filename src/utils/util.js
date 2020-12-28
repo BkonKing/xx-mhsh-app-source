@@ -2,9 +2,13 @@ import store from '../store'
 import EXIF from 'exif-js'
 import {
   Toast,
-  ImagePreview
+  ImagePreview,
+  Dialog
 } from 'vant'
 import { bindAliasAndTags } from '@/utils/ajpush'
+import {
+  handlePermission
+} from '@/utils/permission'
 
 export function getDate (time) {
   const date = time || new Date()
@@ -171,13 +175,12 @@ export function getArea (str) {
       } else {
         if (index2 <= index11) {
           area.Country = str.substring(index11 + 3, index3 + 1)
-        }else {
+        } else {
           area.Country = str.substring(index1 + 1, index3 + 1)
         }
       }
     }
   }
-  console.log(area.Province, area.City, area.Country)
   return area.Province + area.City + area.Country
 }
 
@@ -362,5 +365,44 @@ export function bMapGetLocationInfo () {
         }
       })
     }
+  })
+}
+
+export function getParams (params) {
+  const vars = params.split('&')
+  const paramsObj = {}
+  for (let i = 0; i < vars.length; i++) {
+    const pair = vars[i].split('=')
+    paramsObj[pair[0]] = pair[1]
+  }
+  return paramsObj
+}
+
+export function downloadPic (picUrl, name) {
+  return new Promise((resolve, reject) => {
+    handlePermission({
+      name: 'storage',
+      message: '没有开启数据存储权限，可能会影响部分功能哦，是否前往开启权限？',
+      className: 'top-index-dialog',
+      overlayStyle: {
+        'z-index': 9998
+      }
+    }).then(() => {
+      api.download({
+        url: picUrl,
+        savePath: 'fs://' + name + '.png',
+        report: false,
+        cache: true,
+        allowResume: false
+      }, function (ret, err) {
+        if (ret.state == 1) {
+          resolve(name)
+        } else {
+          reject(new Error(false))
+        }
+      })
+    }).catch(() => {
+      reject(new Error(false))
+    })
   })
 }
