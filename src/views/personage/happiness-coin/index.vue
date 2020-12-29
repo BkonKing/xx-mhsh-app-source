@@ -179,28 +179,28 @@ export default {
       if (this.signinToday == '1') {
         this.showCalendar = true
       } else {
-        getLocationPermission().then(() => {
-          this.signin()
-        })
+        this.signin()
       }
     },
     /* 签到请求 */
     signin () {
-      this.signLoading = true
-      signin()
-        .then(res => {
-          this.signLoading = false
-          Toast({
-            message: res.message
+      getLocationPermission().then(() => {
+        this.signLoading = true
+        signin()
+          .then(res => {
+            this.signLoading = false
+            Toast({
+              message: res.message
+            })
+            this.getCreditsAccount()
+            this.mtjEvent({
+              eventId: 4
+            })
           })
-          this.getCreditsAccount()
-          this.mtjEvent({
-            eventId: 4
+          .catch(() => {
+            this.signLoading = false
           })
-        })
-        .catch(() => {
-          this.signLoading = false
-        })
+      })
     },
     /* 幸福币明细 */
     goCoinRecord () {
