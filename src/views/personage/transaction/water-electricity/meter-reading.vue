@@ -1,7 +1,7 @@
 <template>
   <div
     class="tf-white-bg tf-body"
-    :class="[meterActive ? 'electricity-active' : 'water-active']"
+    :class="[meterActive == 2 ? 'electricity-active' : 'water-active']"
   >
     <van-nav-bar
       title="水电抄表"
@@ -14,18 +14,18 @@
     </van-nav-bar>
     <div class="house-switch">
       <div class="tf-icon tf-icon-doubleleft" @click="prevHouse"></div>
-      <div class="house-selected">5栋-1单元-1001</div>
+      <div class="house-selected">{{houseName}}</div>
       <div class="tf-icon tf-icon-doubleright" @click="nextHouse"></div>
     </div>
     <div class="tf-body-container">
       <div class="meter-switch">
-        <div class="meter-item water-meter" @click="meterActive = 0">
+        <div class="meter-item water-meter" @click="meterActive = 1">
           <span class="tf-icon tf-icon-shuibiao"></span>水表
         </div>
         <div
           class="meter-item electricity-meter"
-          :class="{ 'meter-active': meterActive }"
-          @click="meterActive = 1"
+          :class="{ 'meter-active': meterActive == 2 }"
+          @click="meterActive = 2"
         >
           <span class="tf-icon tf-icon-dianbiao"></span>电表
         </div>
@@ -35,37 +35,33 @@
         ref="water"
         v-bind="waterInfo"
         @save="saveWater"
-        v-show="meterActive === 0"
+        v-show="meterActive == 1"
       ></meter-form>
       <meter-form
         key="1"
         ref="electricity"
         v-bind="electricityInfo"
         @save="saveElectricity"
-        v-show="meterActive === 1"
-      ></meter-form
-      >
+        v-show="meterActive == 2"
+      ></meter-form>
     </div>
   </div>
 </template>
 
 <script>
+import { getMonthRecord, editRecord } from '@/api/personage'
 import eventBus from '@/api/eventbus'
-import { NavBar, PasswordInput, NumberKeyboard, Button, Toast } from 'vant'
 import meterForm from './form'
 export default {
   name: 'waterElectricityMeter',
   components: {
-    [NavBar.name]: NavBar,
-    [PasswordInput.name]: PasswordInput,
-    [NumberKeyboard.name]: NumberKeyboard,
-    [Button.name]: Button,
     meterForm
   },
   data () {
     return {
       id: '',
-      meterActive: 0,
+      meterActive: 1,
+      houseName: '',
       waterInfo: {},
       electricityInfo: {}
     }
@@ -88,57 +84,58 @@ export default {
   },
   methods: {
     // 上一个房间
-    prevHouse () {
-
-    },
+    prevHouse () {},
     // 下一个房间
-    nextHouse () {
-
-    },
+    nextHouse () {},
     // 获取房屋水电信息
     getMeterInfo () {
-      this.waterInfo = {
-        status: 0,
-        errorScope: 100,
-        lastInfo: {
-          time: '11-11',
-          number: '00001200'
-        },
-        data: {
-          time: '11-11',
-          number: '00001888'
+      getMonthRecord({
+        month_record_id: this.id,
+        type: this.meterActive
+      }).then(({ data }) => {
+        this.houseName = data.house_property_name
+        if (this.meterActive == 1) {
+          this.waterInfo = data
+        } else {
+          this.electricityInfo = data
         }
-      }
-      this.electricityInfo = {
-        status: 1,
-        errorScope: 500,
-        lastInfo: {
-          time: '11-11',
-          number: '00001888'
-        },
-        data: {
-          time: '11-11',
-          number: '00001888',
-          images: ['https://test.tosolomo.com/upload/image/20200928/thumb_750_750_20200928152215_55984.png']
-        }
-      }
+      })
     },
     // 抄水表保存
     saveWater (params) {
-      if (!params.meterNum) {
-        Toast('请输入表读数')
-        return
-      }
-      Toast.success('保存成功')
-      this.waterInfo.status = 1
-      this.$refs.water.switchEdit(false)
+      this.editRecord(params).then(() => {
+        this.waterInfo.status = 1
+        this.$refs.water.switchEdit(false)
+      })
     },
     // 抄电表保存
     saveElectricity (params) {
-      Toast.success('保存成功')
-      this.electricityInfo.status = 1
-      this.$refs.electricity.switchEdit(false)
-      // Toast.fail('保存失败')
+      this.editRecord(params).then(() => {
+        this.electricityInfo.status = 1
+        this.$refs.electricity.switchEdit(false)
+      })
+    },
+    // 电表保存请求
+    editRecord ({ record, pic_url }) {
+      if (!parseInt(record)) {
+        this.$toast('请输入表读数')
+        return Promise.reject(new Error(false))
+      }
+      return editRecord({
+        record,
+        pic_url,
+        month_record_id: this.id,
+        type: this.meterActive
+      }).then(({ data }) => {
+        this.$toast.success('保存成功')
+      }).catch(() => {
+        this.$toast.fail('保存失败')
+      })
+    }
+  },
+  watch: {
+    meterActive () {
+      this.getMeterInfo()
     }
   }
 }

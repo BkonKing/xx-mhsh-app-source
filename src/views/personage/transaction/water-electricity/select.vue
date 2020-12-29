@@ -35,24 +35,24 @@
       ref="list"
       class="house-list tf-flex-item"
       :list.sync="houseList"
-      :load="getHouseList"
+      :load="getLiveHouseList"
     >
       <template v-slot="{ item }">
         <div class="house-item" @click="goMeterReading(item)">
-          <div class="house-text">{{ item.name }}</div>
+          <div class="house-text">{{ item.unit_house_name }}</div>
           <div
             class="house-water"
             :class="{ 'tf-text-primary': item.water > item.accord }"
           >
-            <span class="tf-icon tf-icon-shuibiao"></span
-            >{{ item.water === undefined ? "-" : item.water }}
+            <img :src="item.w_icon" class="tf-icon">
+            {{ item.is_water_fee  == '0' ? "-" : item.disparity_water }}
           </div>
           <div
             class="house-electricity"
             :class="{ 'tf-text-primary': item.dian > item.accord }"
           >
-            <span class="tf-icon tf-icon-dianbiao"></span
-            >{{ item.dian === undefined ? "-" : item.dian }}
+            <img :src="item.e_icon" class="tf-icon">
+            {{ item.is_electric_fee == '0' ? "-" : item.disparity_electric }}
           </div>
         </div>
       </template>
@@ -61,44 +61,20 @@
 </template>
 
 <script>
-import { NavBar, DropdownMenu, DropdownItem, Field } from 'vant'
+import { getLiveHouseList } from '@/api/personage'
 import refreshList from '@/components/tf-refresh-list'
 export default {
   name: 'waterElectricitySelect',
   components: {
-    [NavBar.name]: NavBar,
-    [DropdownMenu.name]: DropdownMenu,
-    [DropdownItem.name]: DropdownItem,
-    [Field.name]: Field,
     refreshList
   },
   data () {
     return {
       id: 0,
-      title: 'A区2栋',
-      selectStatus: 0,
-      statusList: [
-        {
-          text: '全部',
-          value: 0
-        },
-        {
-          text: '已完成',
-          value: 1
-        },
-        {
-          text: '未完成',
-          value: 2
-        },
-        {
-          text: '未抄水表',
-          value: 3
-        },
-        {
-          text: '未抄电表',
-          value: 4
-        }
-      ],
+      monthId: '',
+      title: '',
+      selectStatus: '全部',
+      statusList: [],
       selectedUnit: 0,
       unitList: [],
       houseString: '',
@@ -107,81 +83,35 @@ export default {
   },
   created () {
     this.id = this.$route.query.id
+    this.monthId = this.$route.query.monthId
     this.title = this.$route.query.name
-    this.getUnitList()
   },
   methods: {
-    // 获取单元列表
-    getUnitList () {
-      const data = [
-        {
-          text: '1单元',
-          value: 1
-        },
-        {
-          text: '2单元',
-          value: 2
-        },
-        {
-          text: '3单元',
-          value: 3
-        },
-        {
-          text: '4单元',
-          value: 4
+    getLiveHouseList () {
+      const params = {
+        building_id: this.id,
+        month_id: this.monthId,
+        house_name: this.houseString,
+        record_state: this.selectStatus,
+        unit_id: this.selectedUnit
+        // list_order: 0 // 0 正序 1倒序
+      }
+      return getLiveHouseList(params).then(
+        ({ month_record_list, month_list, record_state, unit_data }) => {
+          this.unitList = unit_data
+          this.statusList = record_state
+          return Promise.resolve({
+            data: month_record_list
+          })
         }
-      ]
-      const unitList = [
-        {
-          text: '全部',
-          value: 0
-        }
-      ]
-      this.unitList = unitList.concat(data)
+      )
     },
     handleChange () {
       this.$refs.list.reload()
     },
-    getHouseList (params) {
-      const newParams = {
-        ...params,
-        ...{
-          search: this.houseString,
-          selectStatus: this.selectStatus,
-          selectedUnit: this.selectedUnit
-        }
-      }
-      console.log(newParams)
-      return new Promise((resolve, reject) => {
-        resolve({
-          data: [
-            {
-              id: 0,
-              name: '1单元-1001',
-              water: '',
-              dian: 2000,
-              accord: 100
-            },
-            {
-              id: 1,
-              name: '1单元-1002',
-              water: 1000,
-              dian: 100,
-              accord: 100
-            },
-            {
-              id: 2,
-              name: '1单元-1003',
-              water: undefined,
-              dian: 200,
-              accord: 100
-            }
-          ]
-        })
-      })
-    },
-    goMeterReading ({ id, water, dian }) {
-      const type = water && !dian ? 1 : 0
+    // 跳转到抄表
+    goMeterReading ({ id, disparity_water, disparity_electric }) {
+      const type = disparity_water && !disparity_electric ? 2 : 1
       this.$router.push({
         name: 'waterElectricityMeter',
         query: {

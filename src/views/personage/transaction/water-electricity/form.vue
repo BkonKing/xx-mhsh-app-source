@@ -3,11 +3,11 @@
     <div class="meter-number-container">
       <div class="meter-number-text">
         <span class="meter-text-point"></span>
-        上次表读数（{{ lastInfo.time }}）
+        上次表读数（{{ old_record_time }}）
       </div>
       <div class="meter-number-input">
         <van-password-input
-          :value="lastInfo.number"
+          :value="old_record"
           :length="meterLength"
           :mask="false"
         />
@@ -91,39 +91,44 @@ export default {
       type: [Boolean, Number],
       default: 1
     },
-    errorScope: {
+    errors_digit: {
       type: Number,
       default: 100
     },
-    lastInfo: {
-      type: Object,
-      default: () => ({})
+    old_record_time: {
+      type: String,
+      default: ''
     },
-    data: {
-      type: Object,
-      default: () => ({
-        time: '11-11',
-        number: ''
-      })
+    old_record: {
+      type: String,
+      default: ''
+    },
+    record: {
+      type: String,
+      default: ''
+    },
+    pic: {
+      type: [Array, String],
+      default: ''
     },
     meterLength: {
       type: Number,
-      default: 8
+      default: 6
     }
   },
   data () {
     return {
       showKeyboard: false,
       editStatus: !this.status,
-      meterNum: this.data.number || '',
-      images: this.data.images || []
+      meterNum: this.record || '',
+      images: this.pic || []
     }
   },
   computed: {
     meterError () {
       return (
-        parseInt(this.meterNum) - parseInt(this.lastInfo.number) >
-        this.errorScope
+        parseInt(this.meterNum) - parseInt(this.old_record) >
+        parseInt(this.errors_digit)
       )
     }
   },
@@ -178,10 +183,9 @@ export default {
       }
     },
     emitSave () {
-      console.log(this.images)
       this.$emit('save', {
-        meterNum: this.meterNum,
-        images: this.images
+        record: this.meterNum,
+        pic_url: this.images
       })
     },
     switchEdit (status) {
@@ -189,9 +193,11 @@ export default {
     }
   },
   watch: {
-    data (val) {
-      this.meterNum = val.number
-      this.images = val.images
+    record (val) {
+      this.meterNum = val
+    },
+    pic (val) {
+      this.images = val
     },
     status (val) {
       this.editStatus = !val

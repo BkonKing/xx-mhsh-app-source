@@ -10,16 +10,12 @@
     <template v-slot="{ item }">
       <div class="build-item" @click="jump(item)">
         <div class="build-left">
-          <div class="build-name">{{ item.name }}</div>
-          <div class="build-number">{{ item.number }}户</div>
+          <div class="build-name">{{ item.building_name }}</div>
+          <div class="build-number">{{ item.count }}户</div>
         </div>
         <div class="build-right">
-          <div class="build-water" :class="{'active': item.water}">
-            <span class="tf-icon tf-icon-shuibiao"></span>
-          </div>
-          <div class="build-electricity" :class="{'active': item.dian}">
-            <span class="tf-icon tf-icon-dianbiao"></span>
-          </div>
+          <img class="build-water" :src="item.w_icon">
+          <img class="build-electricity" :src="item.e_icon">
         </div>
       </div>
     </template>
@@ -27,11 +23,9 @@
 </template>
 
 <script>
-import { Button } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 export default {
   components: {
-    [Button.name]: Button,
     refreshList
   },
   props: {
@@ -47,12 +41,13 @@ export default {
     }
   },
   methods: {
-    jump ({ id, name }) {
+    jump ({ building_id, building_name, project_month_id }) {
       this.$router.push({
         name: 'waterElectricitySelect',
         query: {
-          id,
-          name
+          id: building_id,
+          monthId: project_month_id,
+          name: building_name
         }
       })
     },

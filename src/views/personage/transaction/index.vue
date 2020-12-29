@@ -18,10 +18,7 @@
         <van-tab title="报事报修" name="0">
           <div
             class="transaction-tab-box"
-            :class="[
-              { 'tf-bg-white': isFixed },
-              { 'flex-start': userInfo.role_dep != 1 }
-            ]"
+            :class="[{ 'flex-start': userInfo.role_dep != 1 }]"
           >
             <template v-if="userInfo.role_dep == 1">
               <div
@@ -105,23 +102,25 @@
         </van-tab>
         <van-tab title="水电抄表" name="1">
           <div class="select-header">
-            <tf-date-time-picker
+            <tf-picker
               class="date-time-box"
-              type="year-month"
               v-model="date"
               title="选择时间"
-              :max-date="new Date()"
-              @change="handleChange"
+              value-key="days_time_name"
+              selected-key="id"
+              :columns="monthList"
+              @confirm="handleChange"
             >
-              <template>
-                <div class="selected-date">
-                  {{ date | dateText }}
-                  <span class="tf-icon tf-icon-caret-down"></span>
-                </div>
+              <template v-slot="{ valueText }">
+                <div class="tf-text">{{ valueText }}</div>
               </template>
-            </tf-date-time-picker>
+            </tf-picker>
             <van-dropdown-menu>
-              <van-dropdown-item v-model="selectStatus"  @change="handleChange" :options="statusList" />
+              <van-dropdown-item
+                v-model="selectStatus"
+                @change="handleChange"
+                :options="statusList"
+              />
             </van-dropdown-menu>
           </div>
           <building-list
@@ -136,24 +135,21 @@
 </template>
 
 <script>
-import { NavBar, Sticky, DropdownMenu, DropdownItem, Tab, Tabs } from 'vant'
 import list from './components/list'
 import buildingList from './components/buildingList'
-import tfDateTimePicker from '@/components/tf-date-time-picker/index'
-import { getDbRepairList, getRepairCount } from '@/api/personage'
+import tfPicker from '@/components/tf-picker/index'
+import {
+  getDbRepairList,
+  getRepairCount,
+  getHydropowerList
+} from '@/api/personage'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'transactionIndex',
   components: {
-    [NavBar.name]: NavBar,
-    [Sticky.name]: Sticky,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
-    [DropdownMenu.name]: DropdownMenu,
-    [DropdownItem.name]: DropdownItem,
     list,
-    tfDateTimePicker,
+    tfPicker,
     buildingList
   },
   data () {
@@ -166,34 +162,13 @@ export default {
       list4: [],
       list5: [],
       countObj: {}, // 事务统计对象
-      isFixed: false,
       container: null,
-      selectStatus: 0,
-      statusList: [
-        {
-          text: '全部',
-          value: 0
-        },
-        {
-          text: '已完成',
-          value: 1
-        },
-        {
-          text: '未完成',
-          value: 2
-        },
-        {
-          text: '未抄水表',
-          value: 3
-        },
-        {
-          text: '未抄电表',
-          value: 4
-        }
-      ],
-      date: new Date(),
+      selectStatus: '全部',
+      statusList: [],
+      date: '2020-12',
       buildList: [],
-      backStatus: false
+      backStatus: false,
+      monthList: []
     }
   },
   computed: {
@@ -223,9 +198,6 @@ export default {
     }
   },
   methods: {
-    scrollSticky ({ target }) {
-      this.isFixed = target.scrollTop > 0
-    },
     // 刷新所有列表
     reloadAllList () {
       if (this.active === '0') {
@@ -268,46 +240,23 @@ export default {
       })
     },
     // 获取水电表楼栋
-    getMeterBuilding (params) {
-      return new Promise((resolve, reject) => {
-        resolve({
-          data: [
-            {
-              id: 0,
-              name: '1楼',
-              number: 2223,
-              water: false,
-              dian: true
-            }
-          ]
-        })
-      })
-      const date = new Date(this.date)
-      const newParams = {
-        ...params,
-        ...{
-          date: `${date.getFullYear()}-${date.getMonth() + 1}`,
-          selectStatus: this.selectStatus
-        }
+    getMeterBuilding () {
+      const params = {
+        month_id: this.date,
+        record_state: this.selectStatus
       }
-      console.log(newParams)
-      return getDbRepairList(newParams, this.userInfo.xm_project_id)
+      return getHydropowerList(params).then(
+        ({ month_record_list, month_list, record_state }) => {
+          this.monthList = month_list
+          this.statusList = record_state
+          return Promise.resolve({
+            data: month_record_list
+          })
+        }
+      )
     },
     handleChange () {
       this.$refs.buildList.reload()
-    }
-  },
-  filters: {
-    dateText (val) {
-      const date = new Date(val || new Date())
-      const year = date.getFullYear()
-      const currentYear = new Date().getFullYear()
-      const month = date.getMonth() + 1
-      const currentMonth = new Date().getMonth() + 1
-      if (currentYear === year && currentMonth === month) {
-        return '本月'
-      }
-      return `${date.getFullYear()}年${date.getMonth() + 1}月`
     }
   },
   beforeRouteEnter (to, from, next) {
