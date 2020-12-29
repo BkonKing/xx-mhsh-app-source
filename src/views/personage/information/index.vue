@@ -33,15 +33,15 @@
                   />
                 </div>
                 <div class="right">
-                  <div class="t1">{{ userInfo.nickname }}</div>
+                  <div class="t1">{{ userInfo.mobile }}</div>
                   <div class="t2">
                     <i
                       v-if="userInfo.gender == 2"
-                      class="font_family icon-xingbie i1"
+                      class="font_family icon-xingbie nv"
                     ></i>
                     <i
                       v-if="userInfo.gender == 1"
-                      class="font_family icon-xingbie1 i1"
+                      class="font_family icon-xingbie1 nan"
                     ></i>
                     {{ userInfo.birthday }}
                   </div>
@@ -56,13 +56,13 @@
               <div class="title" @click="toPersonInfo">
                 <div class="txt">实名认证</div>
                 <div class="name">
-                  鲁班
+                  {{ userInfo.realname }}
                   <i
                     v-if="userInfo.realname"
                     class="font_family icon-yishiming n1"
                   >
                   </i>
-                  <i v-else class="font_family icon-weishiming n1"></i>
+                  <i v-else class="font_family icon-weishiming n2"></i>
                 </div>
               </div>
             </template>
@@ -363,7 +363,6 @@ export default {
   },
   created() {
     eventBus.$off("chooseAddress");
-    console.log("用户信息", this.userInfo);
   },
   activated() {
     if (this.current === 0) {
@@ -644,8 +643,11 @@ export default {
         .t2 {
           font-size: 20px;
           color: #8f8f94;
-          .i1 {
+          .nv {
             color: #e45487;
+          }
+          .nan {
+            color: #448fe4;
           }
         }
       }
@@ -711,6 +713,12 @@ export default {
           vertical-align: middle;
           font-size: 33px;
           color: #f77e64;
+        }
+        .n2 {
+          margin-left: 10px;
+          vertical-align: middle;
+          font-size: 33px;
+          color: gray;
         }
       }
     }

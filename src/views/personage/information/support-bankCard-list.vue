@@ -16,8 +16,8 @@
     <div class="txt">
       储蓄卡
     </div>
-    <div class="content">
-      <div class="item" v-for="(item, index) in 10" :key="index">
+    <div class="conBox">
+      <div class="item" v-for="(item, index) in 20" :key="index">
         <img src="@/assets/img/gsyh.png" alt="" />
         <div class="txt">中国工商银行</div>
       </div>
@@ -60,8 +60,8 @@ export default {
 <style lang="less" scoped>
 .support-bankCard-list {
   height: 100%;
+  overflow: auto;
   background-color: #f2f2f4;
-
   .title {
     font-size: 34px;
     font-family: PingFang SC;
@@ -78,12 +78,12 @@ export default {
     color: #222222;
     line-height: 90px;
   }
-  .content {
+  .conBox {
     height: 100%;
     background-color: #fff;
-    padding: 0 30px;
-
     .item {
+      padding: 0 30px;
+      background-color: #fff;
       display: flex;
       align-items: center;
       height: 128px;

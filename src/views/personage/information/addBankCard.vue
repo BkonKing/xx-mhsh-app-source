@@ -40,14 +40,14 @@
             <i class="font_family icon-xiangji right"></i>
           </template>
         </van-field>
-        <van-field class="field" v-model="value3">
+        <van-field class="field" v-model="value3" placeholder="银行卡号">
           <template #label>
             <div class="label2">
               卡类型
             </div>
           </template>
         </van-field>
-        <van-field class="field" v-model="phone">
+        <van-field class="field" v-model="phone" placeholder="银行预留手机号">
           <template #label>
             <div class="label2">
               手机号
@@ -63,7 +63,6 @@
       >
         支持的银行>
       </div>
-
       <div class="btn1">
         <div class="agree">
           <van-checkbox
@@ -118,10 +117,10 @@
     <div class="close" v-if="isShow" @click="isShow = false">
       <i class="font_family icon-guanbi1 guanbi"></i>
     </div>
+
     <div class="txt-support">
       本服务由富友支付提供
     </div>
-    
   </div>
 </template>
 
@@ -157,7 +156,8 @@ export default {
       value2: "",
       value3: "",
       phone: "",
-      checked: true
+      checked: true,
+      showPhone: false
     };
   },
   computed: {
@@ -178,7 +178,6 @@ export default {
   },
   created() {
     this.personName = this.userInfo.realname;
-    // str.substr(0, 3) + "****" + str.substr(7);
     this.phone =
       this.userInfo.mobile.substr(0, 3) +
       "****" +
@@ -190,6 +189,7 @@ export default {
 <style lang="less" scoped>
 .addBankCard {
   height: 100%;
+  overflow: auto;
   background-color: #f2f2f4;
   /deep/ .van-nav-bar {
     background-color: #f2f2f4 !important;
@@ -326,6 +326,7 @@ export default {
       color: white;
     }
   }
+
   .txt-support {
     position: fixed;
     bottom: 40px;

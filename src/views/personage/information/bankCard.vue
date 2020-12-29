@@ -14,7 +14,7 @@
       </template>
     </van-nav-bar>
     <div class="content">
-      <div class="item" v-for="(item, index) in 4" :key="index">
+      <div class="item" v-for="(item, index) in 10" :key="index">
         <div class="top">
           <img src="@/assets/img/zgyh.png" alt="" />
           <div class="right">
@@ -28,6 +28,7 @@
         </div>
       </div>
     </div>
+    
   </div>
 </template>
 
@@ -48,6 +49,8 @@ export default {
 
 <style lang="less" scoped>
 .bankCard {
+  height: 100%;
+  overflow: auto;
   .title {
     font-size: 34px;
     font-family: PingFang SC;
