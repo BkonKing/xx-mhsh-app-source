@@ -41,7 +41,7 @@
               @finish="countFinish"
             >
               <template #default="timeData">
-                <span>{{ timeData.seconds }}s</span>
+                <span>重发({{ timeData.seconds }}s)</span>
               </template>
             </van-count-down>
             <span v-else>获取验证码</span>
@@ -66,7 +66,7 @@
       </van-field>
       <van-button
         v-preventReClick
-        :loading="loginLoading"
+        :disabled="loginLoading"
         class="login-btn"
         @click="submitLogin"
         >登 录</van-button
@@ -129,9 +129,9 @@ export default {
     const perms = hasPermission('location')
     if (!perms[0].granted) {
       Dialog.confirm({
-        title: '提示',
-        message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？',
-        confirmButtonText: '去开启'
+        title: '定位服务未开启',
+        message: '为了提供更好服务，需要您开启定位',
+        confirmButtonText: '开启'
       })
         .then(res => {
           reqPermission('location', ({ list }) => {
@@ -363,7 +363,7 @@ export default {
     text-align: center;
   }
   .login-method__text {
-    font-size: 24px;
+    font-size: 26px;
     color: #8f8f94;
     text-decoration: underline;
   }
@@ -393,7 +393,6 @@ export default {
     color: #8f8f94;
     .agreement-link {
       color: #8f8f94;
-      text-decoration: underline;
     }
   }
 }

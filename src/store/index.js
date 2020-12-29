@@ -178,7 +178,6 @@ const store = {
         })
         function toLogin (newParams) {
           loginUrl(newParams).then(async (res) => {
-            loadingToast.clear()
             if (res.success) {
               const {
                 data
@@ -212,6 +211,7 @@ const store = {
             } else {
               reject(res.message)
             }
+            loadingToast.clear()
           }).catch((error) => {
             loadingToast.clear()
             reject(error.message)

@@ -10,9 +10,9 @@ export function getLocationPermission () {
     const perms = hasPermission('location')
     if (!perms[0].granted) {
       Dialog.confirm({
-        title: '提示',
-        message: '没有开启定位权限，将无法使用签到功能，是否前往开启权限？',
-        confirmButtonText: '去开启'
+        title: '定位服务未开启',
+        message: '为了提供更好服务，需要您开启定位',
+        confirmButtonText: '开启'
       })
         .then(res => {
           reqPermission('location', ({ list }) => {
