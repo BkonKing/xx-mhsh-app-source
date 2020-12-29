@@ -14,32 +14,32 @@
         <tf-date-time-picker
           class="date-time-box"
           type="year-month"
-          v-model="item.date"
+          v-model="item.month_name"
           title="选择时间"
           :max-date="new Date()"
         >
           <template>
             <div class="pay-base-info">
               <div class="record-date">
-                {{ item.date | dateText }}
+                {{ item.month_name | dateText }}
                 <span class="tf-icon tf-icon-caret-down"></span>
               </div>
-              <div class="record-paynum">缴费 ￥{{ item.total }}</div>
+              <div class="record-paynum">缴费 ￥{{ item.already_money }}</div>
             </div>
           </template>
         </tf-date-time-picker>
         <div class="pay-list">
           <div
             class="pay-item"
-            v-for="(li, i) in item.list"
+            v-for="(li, i) in item.child"
             :key="i"
             @click="goPayDetail(li)"
           >
             <div class="pay-item-left">
-              <div class="pay-item-title">{{ li.type | payTypeText }}</div>
-              <div class="pay-item-time">2020-06-06 12:12:12</div>
+              <div class="pay-item-title">{{ li.genre_name }}</div>
+              <div class="pay-item-time">{{ li.pay_time }}</div>
             </div>
-            <div class="pay-item-right">-{{ li.number }}</div>
+            <div class="pay-item-right">-{{ li.money }}</div>
           </div>
         </div>
       </template>
@@ -48,14 +48,13 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { getPayRecord } from '@/api/butler'
 import filters from './filters'
 import refreshList from '@/components/tf-refresh-list'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 export default {
   name: 'livePayRecord',
   components: {
-    [NavBar.name]: NavBar,
     refreshList,
     tfDateTimePicker
   },
@@ -68,56 +67,7 @@ export default {
   methods: {
     // 获取缴费记录列表
     getRecordList (params) {
-      return new Promise((resolve, reject) => {
-        resolve({
-          data: [
-            {
-              date: 1606780800000,
-              total: 500,
-              payNum: 200,
-              unPayNum: 300,
-              list: [
-                {
-                  id: 0,
-                  type: 0,
-                  payStatus: 1,
-                  date: '2020-06-06 12:12:12',
-                  number: 200
-                },
-                {
-                  id: 1,
-                  type: 1,
-                  payStatus: 0,
-                  date: '2020-06-06 12:12:12',
-                  number: 300
-                }
-              ]
-            },
-            {
-              date: 1604188800000,
-              total: 500,
-              payNum: 200,
-              unPayNum: 300,
-              list: [
-                {
-                  id: 2,
-                  type: 0,
-                  payStatus: 1,
-                  date: '2020-06-06 12:12:12',
-                  number: 200
-                },
-                {
-                  id: 3,
-                  type: 1,
-                  payStatus: 0,
-                  date: '2020-06-06 12:12:12',
-                  number: 300
-                }
-              ]
-            }
-          ]
-        })
-      })
+      return getPayRecord()
       // const len = this.repairList.length
       // const id = len && params.pages !== 1 ? this.repairList[len - 1].id : ''
       // return id

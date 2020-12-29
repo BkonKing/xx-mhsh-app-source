@@ -2,12 +2,16 @@ import request from '../utils/request.js'
 
 /* 常见问题列表 */
 export function getEqList (params) {
-  return request.get('/my/server/getEqList', { params })
+  return request.get('/my/server/getEqList', {
+    params
+  })
 }
 
 /* 意见反馈列表 */
 export function getFeedbackList (params) {
-  return request.get('/my/server/getFeedbackList', { params })
+  return request.get('/my/server/getFeedbackList', {
+    params
+  })
 }
 
 /* 添加意见反馈 */
@@ -17,7 +21,9 @@ export function addFeedback (data) {
 
 /* 意见反馈详情 */
 export function getFeedbackInfo (params) {
-  return request.get('/my/server/getFeedbackInfo', { params })
+  return request.get('/my/server/getFeedbackInfo', {
+    params
+  })
 }
 
 /* 设置支付密码 */
@@ -57,7 +63,9 @@ export function updatePassword (data) {
 
 /* 成员列表 */
 export function getMemberList (params) {
-  return request.get('/room/binding/memberList', { params })
+  return request.get('/room/binding/memberList', {
+    params
+  })
 }
 
 /* 新增报备成员 */
@@ -77,12 +85,16 @@ export function deleteMember (data) {
 
 /* 房产信息 */
 export function bindingHouse (params) {
-  return request.get('/room/binding/bindingHouse', { params })
+  return request.get('/room/binding/bindingHouse', {
+    params
+  })
 }
 
 /* 业主房产信息接口 */
 export function yzHouse (params) {
-  return request.get('/room/binding/yzHouse', { params })
+  return request.get('/room/binding/yzHouse', {
+    params
+  })
 }
 
 /* 房间认证 */
@@ -92,7 +104,9 @@ export function roomAttest (data) {
 
 /* 认证房间详情 */
 export function bindingRoomInfo (params) {
-  return request.get('/room/binding/bindingRoomInfo', { params })
+  return request.get('/room/binding/bindingRoomInfo', {
+    params
+  })
 }
 
 /* 设置当前房间 */
@@ -107,25 +121,34 @@ export function unBinding (data) {
 
 /* 检索小区 */
 export function searchProject (params) {
-  return request.get('/room/binding/searchProject', { params })
+  return request.get('/room/binding/searchProject', {
+    params
+  })
 }
 
 /* 检索楼栋 */
 export function searchBuilding (params) {
-  return request.get('/room/binding/searchBuilding', { params })
+  return request.get('/room/binding/searchBuilding', {
+    params
+  })
 }
 
 /* 检索单元 */
 export function searchUnit (params) {
-  return request.get('/room/binding/searchUnit', { params })
+  return request.get('/room/binding/searchUnit', {
+    params
+  })
 }
 
 /* 检索房屋 */
 export function searchHouse (params) {
-  return request.get('/room/binding/searchHouse', { params })
+  return request.get('/room/binding/searchHouse', {
+    params
+  })
 }
 
-/* 报事报修待办列表 */
+/* 事务处理 start */
+// 报事报修待办列表
 export function getDbRepairList (params, ProjectId) {
   return request.get('/my/account/getDbRepairList', {
     params,
@@ -135,7 +158,7 @@ export function getDbRepairList (params, ProjectId) {
   })
 }
 
-/* 报事报修统计事务处理 */
+// 报事报修统计事务处理
 export function getRepairCount (params, ProjectId) {
   return request.get('/my/account/count_work', {
     headers: {
@@ -144,7 +167,7 @@ export function getRepairCount (params, ProjectId) {
   })
 }
 
-/* 事务处理人员列表 */
+// 事务处理人员列表
 export function getDesigneeList (ProjectId) {
   return request.get('/my/account/getDesigneeList', {
     headers: {
@@ -152,16 +175,31 @@ export function getDesigneeList (ProjectId) {
     }
   })
 }
+/* 事务处理 end */
+
+/* 水电抄表 start */
+export function getHydropowerList (ProjectId) {
+  return request.get('/live/thing/hydropower_list', {
+    headers: {
+      ProjectId
+    }
+  })
+}
+/* 水电抄表 end */
 
 /* 幸福币 start */
 
 // 获取付款码二维码
 export function getPaymentCode (params) {
-  return request.get('/credits/qrcode/paymentCode', { params })
+  return request.get('/credits/qrcode/paymentCode', {
+    params
+  })
 }
 // 获取收款码二维码
 export function getCollectCode (params) {
-  return request.get('/credits/qrcode/collectCode', { params })
+  return request.get('/credits/qrcode/collectCode', {
+    params
+  })
 }
 // 付款码扫码请求
 export function paymentScan (data) {
@@ -205,11 +243,15 @@ export function getCreditsAccount (data) {
 }
 // 幸福币明细
 export function getCreditsLog (params) {
-  return request.get('/credits/account/credits_log', { params })
+  return request.get('/credits/account/credits_log', {
+    params
+  })
 }
 // 幸福币交易详情
 export function getCreditsInfo (params) {
-  return request.get('/credits/account/credits_info', { params })
+  return request.get('/credits/account/credits_info', {
+    params
+  })
 }
 // 签到日历数据
 export function getCreditsOrderList (data) {
@@ -222,22 +264,30 @@ export function getCreditsOrderList (data) {
 
 // 我发布的接口
 export function getMyArticleList (params) {
-  return request.get('/my/interaction/getMyArticleList', { params })
+  return request.get('/my/interaction/getMyArticleList', {
+    params
+  })
 }
 
 // 我评论的
 export function getMyCommentList (params) {
-  return request.get('/my/interaction/getMyCommentList', { params })
+  return request.get('/my/interaction/getMyCommentList', {
+    params
+  })
 }
 
 // 我点赞的
 export function getMythumbsupList (params) {
-  return request.get('/my/interaction/getMythumbsupList', { params })
+  return request.get('/my/interaction/getMythumbsupList', {
+    params
+  })
 }
 
 // 我参与的活动列表
 export function getMyJoinActivityList (params) {
-  return request.get('/my/interaction/getMyJoinActivityList', { params })
+  return request.get('/my/interaction/getMyJoinActivityList', {
+    params
+  })
 }
 
 /* 我的互动 end */
@@ -246,11 +296,15 @@ export function getMyJoinActivityList (params) {
 
 // 获取消息列表
 export function getMessageList (params) {
-  return request.get('/my/message/getMessageList', { params })
+  return request.get('/my/message/getMessageList', {
+    params
+  })
 }
 // 统计未读消息
 export function getCountMessage (params) {
-  return request.get('/my/message/countMessage', { params })
+  return request.get('/my/message/countMessage', {
+    params
+  })
 }
 // 消息已读
 export function messageRead (data) {

@@ -137,6 +137,56 @@ const feeDetails = () => {
   }
 }
 
+const lifePayRecord = () => {
+  return {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: [
+      {
+        already_money: 201,
+        child: [
+          {
+            id: '36',
+            project_genre_id: '3',
+            genre_id: '3',
+            genre_name: '物业费',
+            genre_icon: 'http://meihaoshenghuo.com//upload/image/20201203/20201203151548_94644.png',
+            money: 201,
+            pay_time: '1970-01-01 08:00:00',
+            order_status: '2',
+            order_status_name: '已缴费'
+          }
+        ],
+        month_name: '2020-12'
+      }
+    ]
+  }
+}
+
+const paymentDetails = () => {
+  return {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: {
+      id: '36',
+      genre_id: '3',
+      genre_name: '物业费',
+      icon: 'http://meihaoshenghuo.com//upload/image/20201203/20201203151548_94644.png',
+      house_property_name: '五凤兰庭 1号楼-1单元-201室',
+      account_numb: null,
+      realname: '郑先生',
+      days_time: '2020-12',
+      time: '2020-11-15~2020-12-15',
+      order_numb: '132012231423450102049',
+      pay_time: '2020-12-25 08:00:00'
+    }
+  }
+}
+
 Mock.mock(/\/live\/live\/lifepay_list/, 'post', lifePayList)
 Mock.mock(/\/live\/live\/choice_lifepay_list/, 'post', choiceLifePayList)
 Mock.mock(/\/live\/live\/fee_details/, 'post', feeDetails)
+Mock.mock(/\/live\/live\/lifepay_record_list/, 'post', lifePayRecord)
+Mock.mock(/\/live\/live\/payment_details/, 'post', paymentDetails)

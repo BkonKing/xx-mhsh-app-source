@@ -427,4 +427,12 @@ export function createPay (data) {
 export function getFeeDetails (data) {
   return request.post('/live/live/fee_details', data)
 }
+// 缴费记录页面数据
+export function getPayRecord (data) {
+  return request.post('/live/live/lifepay_record_list', data)
+}
+// 缴费详情
+export function getPayDetails (data) {
+  return request.post('/live/live/payment_details', data)
+}
 /* 生活缴费 end */

@@ -10,8 +10,8 @@
     >
     </van-nav-bar>
     <div class="pay-record-detail">
-      <div class="tf-icon" :class="payInfo.type | payTypeIcon"></div>
-      <div class="pay-title">{{payInfo.type | payTypeText}}</div>
+      <img class="tf-icon" :src="payInfo.icon">
+      <div class="pay-title">{{payInfo.genre_name}}</div>
       <div class="pay-detail">
         <div class="pay-number">-￥100</div>
         <div class="pay-info-container">
@@ -19,37 +19,37 @@
             <div class="pay-info-label">
               缴费小区
             </div>
-            <div class="pay-info-content">{{payInfo.community}}</div>
+            <div class="pay-info-content">{{payInfo.house_property_name}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费户号
             </div>
-            <div class="pay-info-content">{{payInfo.buildingNum}}</div>
+            <div class="pay-info-content">{{payInfo.account_numb}}({{payInfo.realname}})</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               账单月份
             </div>
-            <div class="pay-info-content">{{payInfo.yuefen}}</div>
+            <div class="pay-info-content">{{payInfo.days_time}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费属期
             </div>
-            <div class="pay-info-content">{{payInfo.community}}</div>
+            <div class="pay-info-content">{{payInfo.time}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费单号
             </div>
-            <div class="pay-info-content">{{payInfo.danhao}}</div>
+            <div class="pay-info-content">{{payInfo.order_numb}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费时间
             </div>
-            <div class="pay-info-content">{{payInfo.shijian}}</div>
+            <div class="pay-info-content">{{payInfo.pay_time}}</div>
           </div>
         </div>
       </div>
@@ -58,13 +58,10 @@
 </template>
 
 <script>
-import { NavBar } from 'vant'
+import { getPayDetails } from '@/api/butler'
 import filters from './filters'
 export default {
   name: 'livePayRecordDetail',
-  components: {
-    [NavBar.name]: NavBar
-  },
   data () {
     return {
       id: '',
@@ -88,8 +85,17 @@ export default {
   },
   created () {
     this.id = this.$route.query.id
+    this.getPayDetails()
   },
-  methods: {},
+  methods: {
+    getPayDetails () {
+      getPayDetails({
+        order_id: this.id
+      }).then(({ data }) => {
+        this.payInfo = data
+      })
+    }
+  },
   filters
 }
 </script>

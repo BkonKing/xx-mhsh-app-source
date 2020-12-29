@@ -40,6 +40,10 @@ export default {
     },
     load: {
       type: Function
+    },
+    dataKey: {
+      type: String,
+      default: 'data'
     }
   },
   data () {
@@ -67,7 +71,8 @@ export default {
         await this.load({
           pages: this.pageNum
         })
-          .then(({ data }) => {
+          .then((res) => {
+            const data = res[this.dataKey]
             if (data && data.length > 0) {
               this.listChild.push(...data)
               this.$emit('update:list', this.listChild)

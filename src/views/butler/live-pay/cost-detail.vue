@@ -101,7 +101,6 @@ export default {
       getFeeDetails({
         order_id: this.orderId
       }).then(({ data }) => {
-        console.log(data)
         this.payInfo = data
       })
     },
