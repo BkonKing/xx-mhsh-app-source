@@ -11,43 +11,36 @@
     </van-nav-bar>
     <div class="tf-body-container">
       <van-notice-bar
-        v-if="payInfo.total > 0"
         class="swiper-nav"
         left-icon="warning"
         background="rgba(249,134,107,0.2)"
         :scrollable="false"
       >
-        还需缴费￥{{ payInfo.total }}（
-        {{ payInfo.current ? `&nbsp;本月￥${payInfo.current}` : "" }}
-        {{ payInfo.last ? `&nbsp;往月￥${payInfo.last}` : "" }}
-        ）</van-notice-bar
-      >
+        {{ payInfo }}
+      </van-notice-bar>
       <van-checkbox-group
         v-model="result"
         ref="checkboxGroup"
         @change="handleChange"
       >
         <div class="month-bill" v-for="(item, index) in payList" :key="index">
-          <div class="month-text">{{ item.date | dateText }}</div>
-          <div class="unpay-number">待缴费￥{{ item.total }}</div>
+          <div class="month-text">{{ item.month_name }}</div>
+          <div class="unpay-number">待缴费￥{{ item.stay_money }}</div>
           <ul class="pay-list-container">
-            <li v-for="(li, i) in item.list" :key="i" class="pay-list-item">
+            <li v-for="(li, i) in item.child" :key="i" class="pay-list-item">
               <van-checkbox
                 class="pay-checkbox"
                 checked-color="#EB5841"
-                :name="`${li.id}-${li.number}`"
-                :disabled="Boolean(li.coerceStatus)"
+                :name="`${li.id}-${li.money}`"
+                :disabled="li.is_force == 1"
               ></van-checkbox>
               <div class="pay-info" @click="goCostDetail(li)">
                 <div class="pay-info-left">
-                  <span
-                    class="pay-type-icon tf-icon"
-                    :class="li.type | payTypeIcon"
-                  ></span>
-                  <span class="pay-title">{{ li.type | payTypeText }}</span>
+                  <img class="pay-type-icon" :src="li.genre_icon" />
+                  <span class="pay-title">{{ li.genre_name}}</span>
                 </div>
                 <div class="pay-info-right">
-                  <div class="pay-number">￥{{ li.number }}</div>
+                  <div class="pay-number">￥{{ li.money }}</div>
                 </div>
               </div>
             </li>
@@ -75,103 +68,69 @@
 </template>
 
 <script>
-import { NavBar, NoticeBar, CheckboxGroup, Checkbox, Button } from 'vant'
+import { getChoicePayList, createPay } from '@/api/butler'
 import filters from './filters'
 export default {
   name: 'livePayPay',
-  components: {
-    [NavBar.name]: NavBar,
-    [NoticeBar.name]: NoticeBar,
-    [Button.name]: Button,
-    [CheckboxGroup.name]: CheckboxGroup,
-    [Checkbox.name]: Checkbox
-  },
   data () {
     return {
-      checked: false,
-      houseId: '',
-      result: [],
-      coerceResult: [],
-      payBranches: 0,
-      payTotal: 0,
-      payInfo: {},
+      checked: false, // 是否全部选中
+      expensesHouseId: '',
+      projectId: '',
+      result: [], // 选中缴费项数组
+      payTotal: 0, // 选中的缴费金额
+      coerceResult: [], // 强制缴费项数组
+      payBranches: 0, // 所需缴费的所有项数量
+      payInfo: '', // 缴费信息
       payList: [] // 待缴费列表
     }
   },
   created () {
-    this.houseId = this.$route.query.houseId
-    this.getPayInfo()
+    this.expensesHouseId = this.$route.query.id
+    this.projectId = this.$route.query.projectId
   },
   mounted () {
-    this.checked = true
+    this.getPayInfo()
   },
   methods: {
     // 获取缴费信息
     getPayInfo () {
-      this.payInfo = {
-        total: 1000,
-        current: 200,
-        last: 300
-      }
-      this.payList = [
-        {
-          date: 1606780800000,
-          total: 500,
-          payNum: 200,
-          unPayNum: 300,
-          list: [
-            {
-              id: 0,
-              type: 0,
-              coerceStatus: 1,
-              number: 200
-            },
-            {
-              id: 1,
-              type: 1,
-              coerceStatus: 0,
-              number: 300
-            }
-          ]
-        },
-        {
-          date: 1604188800000,
-          total: 500,
-          payNum: 200,
-          unPayNum: 300,
-          list: [
-            {
-              id: 2,
-              type: 0,
-              coerceStatus: 1,
-              number: 200
-            },
-            {
-              id: 3,
-              type: 1,
-              coerceStatus: 0,
-              number: 300
-            }
-          ]
-        }
-      ]
-      let num = 0; const result = []
+      getChoicePayList({
+        expenses_house_id: this.expensesHouseId,
+        project_id: this.projectId
+      }).then(({ table_data: data, month_name_text }) => {
+        this.payInfo = month_name_text
+        this.payList = data
+        this.handlePaymentTerm()
+        // 默认全部选中
+        this.$nextTick(() => {
+          this.checked = true
+        })
+      })
+    },
+    // 处理所有强制缴费项，并计算所有缴费项
+    handlePaymentTerm () {
+      let num = 0
+      const coerceResult = []
       this.payList.forEach(obj => {
-        num += obj.list.length
-        obj.list.forEach(li => {
-          if (li.coerceStatus) {
-            result.push(`${li.id}-${li.number}`)
+        num += obj.child.length
+        obj.child.forEach(li => {
+          if (li.is_force == 1) {
+            coerceResult.push(`${li.id}-${li.number}`)
           }
         })
       })
       this.payBranches = num
-      this.coerceResult = result
+      this.coerceResult = coerceResult
     },
+    // 缴费项复选框改变事件
     handleChange (result) {
+      // 计算所选总缴费金额
       let sum = 0
       result.forEach(obj => {
         sum += parseFloat(obj.split('-')[1])
       })
+      // 实时判断是否为全选状态切换选中展示，当选中缴费项等于总缴费项数时
       if (result.length === this.payBranches) {
         !this.checked && (this.checked = true)
       } else {
@@ -179,10 +138,18 @@ export default {
       }
       this.payTotal = sum
     },
-    // 缴费
+    // 发起缴费
     handlePay () {
-      const id = this.result.map(obj => obj.split('-')[0])
-      console.log(id)
+      const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
+      createPay({
+        order_ids,
+        expenses_house_id: this.expensesHouseId,
+        project_id: this.projectId,
+        z_money: this.payTotal,
+        pay_type: 1 // 支付方式 1微信 2支付宝
+      }).then(() => {
+
+      })
     },
     // 全选
     checkAll (type) {
@@ -193,8 +160,7 @@ export default {
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          id,
-          houseId: this.houseId
+          orderId: id
         }
       })
     }
@@ -271,7 +237,9 @@ export default {
         display: flex;
         align-items: center;
         .pay-type-icon {
-          font-size: 66px;
+          // font-size: 66px;
+          width: 66px;
+          height: 66px;
           line-height: 1;
         }
         .pay-title {

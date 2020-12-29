@@ -1,4 +1,8 @@
 export default {
+  orderStatusText (status) {
+    const text = ['待缴费', '超时未缴', '已缴费']
+    return text[status]
+  },
   payTypeText (type) {
     const text = ['水费', '电费', '燃气费', '水电公摊费']
     return text[type]

@@ -14,16 +14,17 @@
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="house-dropdown">
-        <van-dropdown-menu @change="houseChange">
+        <van-dropdown-menu>
           <van-dropdown-item
             v-model="selectedHouse"
             :disabled="houseList.length < 2"
             :options="houseList"
+            @change="houseChange"
           />
         </van-dropdown-menu>
       </div>
       <van-notice-bar
-        v-if="payInfo.total > 0"
+        v-if="payInfo"
         class="swiper-nav"
         left-icon="warning"
         mode="link"
@@ -31,52 +32,56 @@
         :scrollable="false"
         @click="goPay"
       >
-        还需缴费￥{{ payInfo.total }}（
-        {{ payInfo.current ? `&nbsp;本月￥${payInfo.current}` : "" }}
-        {{ payInfo.last ? `&nbsp;往月￥${payInfo.last}` : "" }}
-        ）</van-notice-bar
-      >
+        {{ payInfo }}
+      </van-notice-bar>
       <div class="pay-container">
         <template v-for="(item, index) in payList">
           <tf-date-time-picker
             class="date-time-box"
             type="year-month"
-            v-model="item.date"
+            v-model="item.month_name"
             title="选择时间"
             :key="index"
             :max-date="new Date()"
             :formatter="formatterDate"
+            @change="queryMonthPay"
           >
             <template>
               <div class="selected-date">
-                {{ item.date | dateText }}
+                {{ item.month_name }}
                 <span class="tf-icon tf-icon-caret-down"></span>
               </div>
               <div class="pay-info">
-                费用共￥{{ item.total }}
-                {{ item.payNum ? `&nbsp;已缴费￥${item.payNum}` : "" }}
-                {{ item.unPayNum ? `&nbsp;待缴费￥${item.unPayNum}` : "" }}
+                费用共￥{{ item.common_money }}
+                {{
+                  item.already_money
+                    ? `&nbsp;已缴费￥${item.already_money}`
+                    : ""
+                }}
+                {{ item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : "" }}
               </div>
             </template>
           </tf-date-time-picker>
           <ul class="pay-list-container" :key="`ul${index}`">
             <li
-              v-for="(li, index) in item.list"
+              v-for="(li, i) in item.child"
               class="pay-list-item"
               @click="goCostDetail(li)"
-              :key="index"
+              :key="i"
             >
               <div class="pay-list-item-left">
-                <span
-                  class="pay-type-icon tf-icon"
-                  :class="li.type | payTypeIcon"
-                ></span>
-                <span class="pay-title">{{ li.type | payTypeText }}</span>
+                <img class="pay-type-icon" :src="li.genre_icon" />
+                <span class="pay-title">{{ li.genre_name }}</span>
               </div>
               <div class="pay-list-item-right">
-                <div class="pay-number" :style="{color: li.payStatus ? '#222' : '#EB5841'}">￥{{ li.number }}</div>
+                <div
+                  class="pay-number"
+                  :style="{ color: li.order_status == '2' ? '#222' : '#EB5841' }"
+                >
+                  ￥{{ li.money }}
+                </div>
                 <div class="pay-status">
-                  {{ li.payStatus ? "已缴费" : "待缴费" }}
+                  {{ li.order_status | orderStatusText }}
                 </div>
               </div>
             </li>
@@ -84,7 +89,7 @@
         </template>
       </div>
     </div>
-    <div v-if="payInfo.total > 0" class="tf-padding">
+    <div v-if="payInfo" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="goPay"
         >缴费</van-button
       >
@@ -93,26 +98,20 @@
 </template>
 
 <script>
-import { NavBar, DropdownMenu, DropdownItem, NoticeBar, Button } from 'vant'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
-import { yzHouse } from '@/api/personage'
+import { getLifePayList } from '@/api/butler'
 import filters from './filters'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
   components: {
-    [NavBar.name]: NavBar,
-    [DropdownMenu.name]: DropdownMenu,
-    [DropdownItem.name]: DropdownItem,
-    [NoticeBar.name]: NoticeBar,
-    [Button.name]: Button,
     tfDateTimePicker
   },
   data () {
     return {
-      selectedHouse: 0,
+      selectedHouse: '',
       houseList: [],
-      payInfo: {},
+      payInfo: '', // 缴费信息
       payList: [] // 待缴费列表
     }
   },
@@ -120,77 +119,50 @@ export default {
     ...mapGetters(['userInfo', 'currentProject'])
   },
   created () {
-    this.getHouseList()
+    this.getLifePayList()
   },
   methods: {
-    // 获取业主房产信息,默认选中当前房屋
-    getHouseList () {
-      yzHouse().then(res => {
-        let data = res.data || []
-        data = data.map(obj => {
-          const { project_name, fc_info, house_id } = obj
-          return {
-            text: `${project_name} ${fc_info}`,
-            value: house_id
-          }
-        })
-        this.houseList = data
-        this.selectedHouse = this.currentProject.house_id
-        this.getPayInfo()
+    // 房屋切换
+    houseChange () {
+      this.searchLifePayList()
+    },
+    // 查询时间缴费
+    queryMonthPay (value) {
+      this.searchLifePayList(value)
+    },
+    // 条件搜索生活缴费列表
+    searchLifePayList (date) {
+      const [project_id, expenses_house_id] = this.selectedHouse.split('-')
+      this.getLifePayList({
+        expenses_house_id,
+        project_id,
+        setmeal_days: date
       })
     },
-    houseChange () {
-      this.getPayInfo()
-    },
-    // 获取当前房屋下的缴费信息
-    getPayInfo () {
-      this.payInfo = {
-        total: 1000,
-        current: 200,
-        last: 300
-      }
-      this.payList = [
-        {
-          date: 1606780800000,
-          total: 500,
-          payNum: 200,
-          unPayNum: 300,
-          list: [
-            {
-              id: 0,
-              type: 0,
-              payStatus: 1,
-              number: 200
-            },
-            {
-              id: 1,
-              type: 1,
-              payStatus: 0,
-              number: 300
-            }
-          ]
-        },
-        {
-          date: 1604188800000,
-          total: 500,
-          payNum: 200,
-          unPayNum: 300,
-          list: [
-            {
-              id: 2,
-              type: 0,
-              payStatus: 1,
-              number: 200
-            },
-            {
-              id: 3,
-              type: 1,
-              payStatus: 0,
-              number: 300
-            }
-          ]
-        }
-      ]
+    // 获取当前房屋下的生活缴费列表
+    getLifePayList (params) {
+      getLifePayList(params).then(({ data, table_data, month_name_text }) => {
+        const houseId = this.currentProject.house_id
+        this.houseList = data.map(obj => {
+          const {
+            project_name,
+            fc_info,
+            house_id,
+            expenses_house_id,
+            project_id
+          } = obj
+          const value = `${project_id}-${expenses_house_id}`
+          if (houseId === house_id) {
+            this.selectedHouse = value
+          }
+          return {
+            text: `${project_name} ${fc_info}`,
+            value
+          }
+        })
+        this.payInfo = month_name_text
+        this.payList = table_data
+      })
     },
     // 日期选择formatter
     formatterDate (type, val) {
@@ -212,17 +184,18 @@ export default {
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          id,
-          houseId: this.selectedHouse
+          orderId: id
         }
       })
     },
     // 跳转缴费页面
     goPay () {
+      const [projectId, id] = this.selectedHouse.split('-')
       this.$router.push({
         name: 'livePayPay',
         query: {
-          houseId: this.selectedHouse
+          id,
+          projectId
         }
       })
     }
@@ -314,7 +287,8 @@ export default {
         display: flex;
         align-items: center;
         .pay-type-icon {
-          font-size: 66px;
+          width: 66px;
+          height: 66px;
           line-height: 1;
         }
         .pay-title {

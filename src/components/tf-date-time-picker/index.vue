@@ -3,7 +3,12 @@
     <div style="height: 100%;" @click="showDatePicker = true">
       <slot :valueText="valueText"></slot>
     </div>
-    <van-popup v-model="showDatePicker" round position="bottom" get-container="body">
+    <van-popup
+      v-model="showDatePicker"
+      round
+      position="bottom"
+      get-container="body"
+    >
       <van-datetime-picker
         v-bind="$attrs"
         v-model="dateValue"
@@ -36,9 +41,6 @@ export default {
       dateValue: new Date()
     }
   },
-  created () {
-
-  },
   methods: {
     confirm (time) {
       let value
@@ -54,14 +56,16 @@ export default {
     }
   },
   watch: {
-    value (val) {
-      if (val) {
-        this.dateValue = new Date(val.replace(/-/g, '/'))
-      }
+    value: {
+      handler (val) {
+        if (val) {
+          this.dateValue = new Date(val.replace(/-/g, '/'))
+        }
+      },
+      immediate: true
     }
   }
 }
 </script>
 
-<style>
-</style>
+<style></style>

@@ -13,60 +13,62 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container pay-cost-detail">
-      <div class="tf-icon" :class="payInfo.type | payTypeIcon"></div>
-      <div class="pay-title">{{payInfo.type | payTypeText}}</div>
+      <img class="tf-icon" :src="payInfo.icon">
+      <div class="pay-title">{{ payInfo.genre_name }}</div>
       <div class="pay-detail">
         <div class="pay-header">
           <div class="pay-number-box">
             <div class="pay-number-label">应交金额</div>
-            <div class="pay-number">￥{{payInfo.unPayNum}}</div>
+            <div class="pay-number">￥{{ payInfo.money }}</div>
           </div>
-          <div v-if="payInfo.penalSum" class="penal-sum">(含违约金{{payInfo.penalSum}}元)</div>
+          <div v-if="payInfo.violations_money" class="penal-sum">
+            (含违约金{{ payInfo.violations_money }}元)
+          </div>
         </div>
         <div class="pay-info-container">
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费小区
             </div>
-            <div class="pay-info-content">{{payInfo.community}}</div>
+            <div class="pay-info-content">{{ payInfo.house_property_name }}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               缴费户号
             </div>
-            <div class="pay-info-content">{{payInfo.buildingNum}}</div>
+            <div class="pay-info-content">{{ payInfo.account_numb }}</div>
           </div>
         </div>
       </div>
       <div class="pay-detail pay-padding">
-        <div class="pay-info-box" v-if="payInfo.biaohao">
+        <div class="pay-info-box" v-if="payInfo.surface">
           <div class="pay-info-label">
             表号
           </div>
-          <div class="pay-info-content">{{payInfo.biaohao}}</div>
+          <div class="pay-info-content">{{ payInfo.surface }}</div>
         </div>
         <div class="pay-info-box">
           <div class="pay-info-label">
             属期
           </div>
-          <div class="pay-info-content">{{payInfo.shuqi}}</div>
+          <div class="pay-info-content">{{ payInfo.time }}</div>
         </div>
-        <div class="pay-info-box" v-if="payInfo.shiyong">
+        <div class="pay-info-box" v-if="payInfo.disparity">
           <div class="pay-info-label">
             使用
           </div>
-          <div class="pay-info-content">{{payInfo.shiyong}}</div>
+          <div class="pay-info-content">{{ payInfo.disparity }}</div>
         </div>
         <tf-image-list
-          v-if="payInfo.images && payInfo.images.length"
+          v-if="payInfo.pic && payInfo.pic.length"
           class="pay-images"
-          :data="payInfo.images"
+          :data="payInfo.pic"
           :column="5"
           mode="show"
         ></tf-image-list>
       </div>
     </div>
-    <div v-if="payInfo.unPayNum > 0" class="tf-padding">
+    <div v-if="payInfo.order_status != 2" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="goPay"
         >缴费</van-button
       >
@@ -75,40 +77,34 @@
 </template>
 
 <script>
-import { NavBar, Button } from 'vant'
+import { getFeeDetails } from '@/api/butler'
 import filters from './filters'
 import tfImageList from '@/components/tf-image-list'
 export default {
   name: 'livePayCostDetail',
   components: {
-    [NavBar.name]: NavBar,
-    [Button.name]: Button,
     tfImageList
   },
   data () {
     return {
-      houseId: '',
-      id: '',
-      payInfo: {
-        type: 0,
-        unPayNum: 100,
-        penalSum: 10,
-        community: 'xx美好生活家园  5栋1单元1001',
-        buildingNum: '123456789(*小华)',
-        biaohao: '987654321000',
-        shuqi: '2020-10-01 ~ 2020-10-31',
-        shiyong: '150(单位)',
-        images: [
-          'https://test.tosolomo.com/upload/image/20200822/thumb_300_600_20200822135602_56310.png'
-        ]
-      }
+      orderId: '',
+      payInfo: {}
     }
   },
   created () {
-    this.id = this.$route.query.id
-    this.houseId = this.$route.query.houseId
+    this.orderId = this.$route.query.orderId
+    this.getFeeDetails()
   },
   methods: {
+    // 获取费用详情接口
+    getFeeDetails () {
+      getFeeDetails({
+        order_id: this.orderId
+      }).then(({ data }) => {
+        console.log(data)
+        this.payInfo = data
+      })
+    },
     // 跳转缴费页面
     goPay () {
       this.$router.push({
