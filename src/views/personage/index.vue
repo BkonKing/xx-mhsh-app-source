@@ -97,7 +97,7 @@
       </div>
       <div class="functional-box">
         <div v-if="userInfo.swrole == 1" class="tansaction-box">
-          <div class="tansaction-header">
+          <div class="tansaction-header" @click="goTransaction(userInfo.role_dep == 1 ? 1 : 3)">
             <div class="tansaction-title">报事报修</div>
             <div class="tansaction-btn">事务处理 ></div>
           </div>

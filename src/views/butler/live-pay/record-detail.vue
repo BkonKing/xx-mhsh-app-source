@@ -10,10 +10,10 @@
     >
     </van-nav-bar>
     <div class="pay-record-detail">
-      <img class="tf-icon" :src="payInfo.icon">
+      <img class="pay-type-icon" :src="payInfo.icon">
       <div class="pay-title">{{payInfo.genre_name}}</div>
       <div class="pay-detail">
-        <div class="pay-number">-￥100</div>
+        <div class="pay-number">-￥{{payInfo.money}}</div>
         <div class="pay-info-container">
           <div class="pay-info-box">
             <div class="pay-info-label">
@@ -105,8 +105,10 @@ export default {
   @flex-column();
   align-items: center;
   padding: 50px 20px 0;
-  .tf-icon {
-    font-size: 98px;
+  .pay-type-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
   }
   .pay-title {
     font-size: 30px;

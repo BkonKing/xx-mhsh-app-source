@@ -9,25 +9,25 @@
       @click-left="$router.go(-1)"
     >
     </van-nav-bar>
-    <refreshList :list.sync="recordList" :load="getRecordList">
+    <refreshList ref="buildList" :list.sync="recordList" :load="getRecordList">
       <template v-slot="{ item }">
-        <tf-date-time-picker
+        <tf-picker
           class="date-time-box"
-          type="year-month"
           v-model="item.month_name"
           title="选择时间"
-          :max-date="new Date()"
+          :columns="monthList"
+          @confirm="handleChange"
         >
-          <template>
+          <template v-slot="{ valueText }">
             <div class="pay-base-info">
               <div class="record-date">
-                {{ item.month_name | dateText }}
+                {{ valueText | dateText }}
                 <span class="tf-icon tf-icon-caret-down"></span>
               </div>
               <div class="record-paynum">缴费 ￥{{ item.already_money }}</div>
             </div>
           </template>
-        </tf-date-time-picker>
+        </tf-picker>
         <div class="pay-list">
           <div
             class="pay-item"
@@ -51,26 +51,38 @@
 import { getPayRecord } from '@/api/butler'
 import filters from './filters'
 import refreshList from '@/components/tf-refresh-list'
-import tfDateTimePicker from '@/components/tf-date-time-picker/index'
+import tfPicker from '@/components/tf-picker/index'
 export default {
   name: 'livePayRecord',
   components: {
     refreshList,
-    tfDateTimePicker
+    tfPicker
   },
   data () {
     return {
       recordList: [],
-      date: ''
+      date: '',
+      changeDate: '', // 暂存改变的月份
+      monthList: [] // 缴费月份列表
     }
   },
   methods: {
     // 获取缴费记录列表
     getRecordList (params) {
-      return getPayRecord()
-      // const len = this.repairList.length
-      // const id = len && params.pages !== 1 ? this.repairList[len - 1].id : ''
-      // return id
+      return getPayRecord({
+        setmeal_days: this.changeDate
+      }).then(
+        ({ data, month_data }) => {
+          this.monthList = month_data
+          return Promise.resolve({
+            data
+          })
+        }
+      )
+    },
+    handleChange (value) {
+      this.changeDate = value
+      this.$refs.buildList.reload()
     },
     // 跳转缴费详情页
     goPayDetail ({ id }) {
@@ -82,7 +94,14 @@ export default {
       })
     }
   },
-  filters
+  filters,
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'livePayCostDetail') {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
+    }
+    next()
+  }
 }
 </script>
 

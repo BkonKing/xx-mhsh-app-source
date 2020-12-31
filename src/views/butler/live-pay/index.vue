@@ -35,57 +35,64 @@
         {{ payInfo }}
       </van-notice-bar>
       <div class="pay-container">
-        <template v-for="(item, index) in payList">
-          <tf-date-time-picker
-            class="date-time-box"
-            type="year-month"
-            v-model="item.month_name"
-            title="选择时间"
-            :key="index"
-            :max-date="new Date()"
-            :formatter="formatterDate"
-            @change="queryMonthPay"
-          >
-            <template>
-              <div class="selected-date">
-                {{ item.month_name }}
-                <span class="tf-icon tf-icon-caret-down"></span>
-              </div>
-              <div class="pay-info">
-                费用共￥{{ item.common_money }}
-                {{
-                  item.already_money
-                    ? `&nbsp;已缴费￥${item.already_money}`
-                    : ""
-                }}
-                {{ item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : "" }}
-              </div>
-            </template>
-          </tf-date-time-picker>
-          <ul class="pay-list-container" :key="`ul${index}`">
-            <li
-              v-for="(li, i) in item.child"
-              class="pay-list-item"
-              @click="goCostDetail(li)"
-              :key="i"
+        <template v-if="payList && payList.length > 0">
+          <template v-for="(item, index) in payList">
+            <tf-picker
+              class="date-time-box"
+              v-model="item.month_name"
+              title="选择时间"
+              :key="index"
+              :columns="monthList"
+              @confirm="queryMonthPay"
             >
-              <div class="pay-list-item-left">
-                <img class="pay-type-icon" :src="li.genre_icon" />
-                <span class="pay-title">{{ li.genre_name }}</span>
-              </div>
-              <div class="pay-list-item-right">
-                <div
-                  class="pay-number"
-                  :style="{ color: li.order_status == '2' ? '#222' : '#EB5841' }"
-                >
-                  ￥{{ li.money }}
+              <template v-slot="{ valueText }">
+                <div class="tf-text selected-date">
+                  {{ valueText }}<span class="tf-icon tf-icon-caret-down"></span>
                 </div>
-                <div class="pay-status">
-                  {{ li.order_status | orderStatusText }}
+                <div class="pay-info">
+                  费用共￥{{ item.common_money }}
+                  {{
+                    item.already_money
+                      ? `&nbsp;已缴费￥${item.already_money}`
+                      : ""
+                  }}
+                  {{ item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : "" }}
                 </div>
-              </div>
-            </li>
-          </ul>
+              </template>
+            </tf-picker>
+            <ul class="pay-list-container" :key="`ul${index}`">
+              <li
+                v-for="(li, i) in item.child"
+                class="pay-list-item"
+                @click="goCostDetail(li)"
+                :key="i"
+              >
+                <div class="pay-list-item-left">
+                  <img class="pay-type-icon" :src="li.genre_icon" />
+                  <span class="pay-title">{{ li.genre_name }}</span>
+                </div>
+                <div class="pay-list-item-right">
+                  <div
+                    class="pay-number"
+                    :style="{
+                      color: li.order_status == '2' ? '#222' : '#EB5841'
+                    }"
+                  >
+                    ￥{{ li.money }}
+                  </div>
+                  <div class="pay-status">
+                    {{ li.order_status | orderStatusText }}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </template>
+        </template>
+        <template v-else>
+          <div class="pay-detail-container">
+            <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png">
+            <div class="pay-detail-text">暂无待缴费用</div>
+          </div>
         </template>
       </div>
     </div>
@@ -98,21 +105,22 @@
 </template>
 
 <script>
-import tfDateTimePicker from '@/components/tf-date-time-picker/index'
+import tfPicker from '@/components/tf-picker/index'
 import { getLifePayList } from '@/api/butler'
 import filters from './filters'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
   components: {
-    tfDateTimePicker
+    tfPicker
   },
   data () {
     return {
       selectedHouse: '',
       houseList: [],
       payInfo: '', // 缴费信息
-      payList: [] // 待缴费列表
+      payList: [], // 待缴费列表
+      monthList: [] // 缴费月份列表
     }
   },
   computed: {
@@ -141,37 +149,31 @@ export default {
     },
     // 获取当前房屋下的生活缴费列表
     getLifePayList (params) {
-      getLifePayList(params).then(({ data, table_data, month_name_text }) => {
-        const houseId = this.currentProject.house_id
-        this.houseList = data.map(obj => {
-          const {
-            project_name,
-            fc_info,
-            house_id,
-            expenses_house_id,
-            project_id
-          } = obj
-          const value = `${project_id}-${expenses_house_id}`
-          if (houseId === house_id) {
-            this.selectedHouse = value
-          }
-          return {
-            text: `${project_name} ${fc_info}`,
-            value
-          }
-        })
-        this.payInfo = month_name_text
-        this.payList = table_data
-      })
-    },
-    // 日期选择formatter
-    formatterDate (type, val) {
-      if (type === 'month') {
-        return `${val}月`
-      } else if (type === 'year') {
-        return `${val}年`
-      }
-      return val
+      getLifePayList(params).then(
+        ({ house_data, table_data, month_data, month_name_text }) => {
+          const houseId = this.currentProject.house_id
+          this.houseList = house_data.map(obj => {
+            const {
+              project_name,
+              fc_info,
+              house_id,
+              expenses_house_id,
+              project_id
+            } = obj
+            const value = `${project_id}-${expenses_house_id}`
+            if (houseId === house_id) {
+              this.selectedHouse = value
+            }
+            return {
+              text: `${project_name} ${fc_info}`,
+              value
+            }
+          })
+          this.monthList = month_data || []
+          this.payInfo = month_name_text
+          this.payList = table_data
+        }
+      )
     },
     // 跳转生活缴费记录页面
     goLivePayList () {
@@ -180,11 +182,14 @@ export default {
       })
     },
     // 跳转费用详情
-    goCostDetail ({ id }) {
+    goCostDetail ({ id: orderId }) {
+      const [projectId, id] = this.selectedHouse.split('-')
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          orderId: id
+          orderId,
+          projectId,
+          id
         }
       })
     },
@@ -313,6 +318,19 @@ export default {
     }
     .pay-list-item + .pay-list-item {
       border-top: 1px solid #f0f0f0;
+    }
+  }
+  .pay-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .pay-detail-img {
+      width: 483px;
+      margin-top: 170px;
+      margin-bottom: 120px;
+    }
+    .pay-detail-text {
+      font-size: 28px;
     }
   }
 }

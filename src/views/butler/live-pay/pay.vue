@@ -37,7 +37,7 @@
               <div class="pay-info" @click="goCostDetail(li)">
                 <div class="pay-info-left">
                   <img class="pay-type-icon" :src="li.genre_icon" />
-                  <span class="pay-title">{{ li.genre_name}}</span>
+                  <span class="pay-title">{{ li.genre_name }}</span>
                 </div>
                 <div class="pay-info-right">
                   <div class="pay-number">￥{{ li.money }}</div>
@@ -64,14 +64,25 @@
         >
       </div>
     </div>
+    <pay-swal
+      :show-swal="showPaySwal"
+      :pay-money="payTotal"
+      :down-time="600000"
+      @closeSwal="closePaySwal"
+      @sureSwal="surePaySwal"
+    ></pay-swal>
   </div>
 </template>
 
 <script>
 import { getChoicePayList, createPay } from '@/api/butler'
+import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
 export default {
   name: 'livePayPay',
+  components: {
+    paySwal
+  },
   data () {
     return {
       checked: false, // 是否全部选中
@@ -82,7 +93,9 @@ export default {
       coerceResult: [], // 强制缴费项数组
       payBranches: 0, // 所需缴费的所有项数量
       payInfo: '', // 缴费信息
-      payList: [] // 待缴费列表
+      payList: [], // 待缴费列表
+      showPaySwal: false,
+      payOrderInfo: null // 支付参数
     }
   },
   created () {
@@ -140,16 +153,7 @@ export default {
     },
     // 发起缴费
     handlePay () {
-      const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
-      createPay({
-        order_ids,
-        expenses_house_id: this.expensesHouseId,
-        project_id: this.projectId,
-        z_money: this.payTotal,
-        pay_type: 1 // 支付方式 1微信 2支付宝
-      }).then(() => {
-
-      })
+      this.showPaySwal = true
     },
     // 全选
     checkAll (type) {
@@ -162,6 +166,56 @@ export default {
         query: {
           orderId: id
         }
+      })
+    },
+    // 关闭支付选择弹窗
+    closePaySwal (data) {
+      this.showPaySwal = data == 1
+    },
+    surePaySwal (data) {
+      this.showPaySwal = false
+      const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
+      createPay({
+        order_ids,
+        expenses_house_id: this.expensesHouseId,
+        project_id: this.projectId,
+        z_money: this.payTotal,
+        pay_type: data == 0 ? 1 : 2// 支付方式 1微信 2支付宝
+      }).then(res => {
+        if (res.success) {
+          if (res.data) {
+            this.payOrderInfo = res.data
+            if (data == 0) {
+              this.wxPayUp()
+            } else {
+              this.aliPayUp()
+            }
+          }
+        }
+      })
+    },
+    // 支付宝支付
+    aliPayUp () {
+      var aliPayPlus = api.require('aliPayPlus')
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
+        (ret, err) => {
+          this.getPayInfo()
+        }
+      )
+    },
+    // 微信支付
+    wxPayUp () {
+      const wxPayPlus = api.require('wxPayPlus')
+      wxPayPlus.payOrder({
+        apiKey: this.payOrderInfo.appid,
+        mchId: this.payOrderInfo.partnerid,
+        orderId: this.payOrderInfo.prepayid,
+        nonceStr: this.payOrderInfo.noncestr,
+        timeStamp: this.payOrderInfo.timestamp,
+        package: this.payOrderInfo.package,
+        sign: this.payOrderInfo.paySign
+      }, (ret, err) => {
+        this.getPayInfo()
       })
     }
   },

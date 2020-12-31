@@ -13,7 +13,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container pay-cost-detail">
-      <img class="tf-icon" :src="payInfo.icon">
+      <img class="pay-type-icon" :src="payInfo.icon">
       <div class="pay-title">{{ payInfo.genre_name }}</div>
       <div class="pay-detail">
         <div class="pay-header">
@@ -36,7 +36,7 @@
             <div class="pay-info-label">
               缴费户号
             </div>
-            <div class="pay-info-content">{{ payInfo.account_numb }}</div>
+            <div class="pay-info-content">{{ payInfo.account_numb || '-' }}</div>
           </div>
         </div>
       </div>
@@ -87,12 +87,17 @@ export default {
   },
   data () {
     return {
+      id: '',
+      projectId: '',
       orderId: '',
+      isChoicePay: false, // 是否从缴费页面进入
       payInfo: {}
     }
   },
   created () {
     this.orderId = this.$route.query.orderId
+    this.id = this.$route.query.id
+    this.projectId = this.$route.query.projectId
     this.getFeeDetails()
   },
   methods: {
@@ -106,10 +111,14 @@ export default {
     },
     // 跳转缴费页面
     goPay () {
-      this.$router.push({
+      if (this.isChoicePay) {
+        this.$router.go(-1)
+        return
+      }
+      this.$router.replace({
         name: 'livePayPay',
         query: {
-          houseId: this.houseId,
+          projectId: this.projectId,
           id: this.id
         }
       })
@@ -121,6 +130,12 @@ export default {
       })
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 看是否从详情页返回
+      vm.isChoicePay = from.name === 'livePayPay'
+    })
+  },
   filters
 }
 </script>
@@ -130,8 +145,10 @@ export default {
   @flex-column();
   align-items: center;
   padding: 50px 20px 0;
-  .tf-icon {
-    font-size: 90px;
+  .pay-type-icon {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
   }
   .pay-title {
     font-size: 30px;

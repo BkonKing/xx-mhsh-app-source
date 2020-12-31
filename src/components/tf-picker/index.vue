@@ -7,6 +7,7 @@
       <van-picker
         show-toolbar
         :columns="columns"
+        :default-index="index"
         v-bind="$attrs"
         @cancel="showPicker = false"
         @confirm="confirm"
@@ -16,13 +17,8 @@
 </template>
 
 <script>
-import { Picker, Popup } from 'vant'
 export default {
   name: 'tf-picker',
-  components: {
-    [Picker.name]: Picker,
-    [Popup.name]: Popup
-  },
   props: {
     value: {
       type: [String, Number],
