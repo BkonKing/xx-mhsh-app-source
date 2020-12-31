@@ -3,9 +3,9 @@
     <div v-show="showSwal" class="public-mask pay-mask bottom-fixed">
       <div class="public-dclose" @click="calcel(0)"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="public-header">付款</div>
-      <div class="settlement-price">
+      <div :class="[downTime ? '' : 'no-time','settlement-price']">
         <div>￥{{payMoney}}</div>
-        <div>(<van-count-down ref="countDown" :auto-start="false" :time="downTime" @finish="finish">
+        <div v-if="downTime">(<van-count-down ref="countDown" :auto-start="false" :time="downTime" @finish="finish">
               <template v-slot="timeData">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
               </template>
             </van-count-down>)</div>
@@ -103,6 +103,9 @@ export default {
   align-items: center;
   height: 147px;
 }
+.no-time.settlement-price {
+  height: 90px;
+}
 .settlement-price > div:nth-child(1) {
   font-size: 58px;
   color: #222222;
@@ -117,6 +120,9 @@ export default {
   display: inline;
   color: #8f8f94;
   font-size: 30px;
+}
+.pay-mask {
+  font-size: 28px;
 }
 .pay-mask .common-list {
   padding: 0;
