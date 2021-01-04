@@ -5,10 +5,10 @@
         v-for="(item, i) in houseList"
         :key="i"
         class="house-box"
-        :class="{'house-owner': i === 0}"
-        @click="change(item.binding_id, i)"
+        :class="{'house-owner': i === 0 && mode !== 2, 'house-select': mode === 2 && selectId === item.house_id}"
+        @click="handlechange(item, i)"
       >
-        <div v-if="i === 0" class="tf-row-center">
+        <div v-if="i === 0 && mode !== 2" class="tf-row-center">
           <div class="house-owner-current">当前房产</div>
         </div>
         <div class="tf-row-space-between">
@@ -30,7 +30,7 @@
         </div>
       </div>
     </div>
-    <div class="btn-placeholder">
+    <div v-if="addStatus" class="btn-placeholder">
       <button class="tf-btn tf-btn-primary" type="warn" @click="goAttestation">新增房产</button>
     </div>
   </div>
@@ -41,14 +41,23 @@ import { bindingDefault, bindingHouse } from '@/api/personage'
 export default {
   name: 'houseContainer',
   props: {
-    // 1:选择房屋 0：房屋信息
+    // 2:选择房屋，不显示当前房屋，显示选中房屋  1:选择房屋，显示当前房屋 0：显示房屋信息，设置当前房屋
     mode: {
       type: Number,
       default: 1
     },
+    // 是否过滤门禁房屋
     entranceStatus: {
       type: Boolean,
       default: false
+    },
+    addStatus: {
+      type: Boolean,
+      default: true
+    },
+    selectId: {
+      type: [String, Number],
+      default: ''
     }
   },
   data () {
@@ -66,7 +75,7 @@ export default {
     this.bindingHouse()
   },
   methods: {
-    /* 获取房产信息 */
+    // 获取房产信息
     bindingHouse () {
       bindingHouse().then((res) => {
         this.houseList = res.data || []
@@ -77,6 +86,7 @@ export default {
         }
       })
     },
+    // 新增房产
     goAttestation () {
       this.$router.push({
         path: '/pages/personage/house/attestation',
@@ -86,14 +96,17 @@ export default {
         }
       })
     },
-    change (bindingId, index) {
+    // 房屋点击切换
+    handlechange (item, index) {
+      const { binding_id: bindingId } = item
+      // mode=1选择房屋触发change事件，mode=0设置当前房屋
       if (this.mode) {
-        this.$emit('change', bindingId)
+        this.$emit('change', bindingId, item)
       } else {
         this.bindingDefault(bindingId, index)
       }
     },
-    /* 设置当前 */
+    // 设置当前房屋
     bindingDefault (bindingId, index) {
       bindingDefault({
         binding_id: bindingId
@@ -108,6 +121,7 @@ export default {
         })
       })
     },
+    // 右边人员模块点击
     manClick (item) {
       this.$emit('manClick', item)
     },
@@ -130,9 +144,7 @@ export default {
 }
 
 .house-owner {
-  border-width: 3px;
-  border-style: solid;
-  border-color: @red-dark;
+  border: 3px solid @red-dark;
   padding-top: 0 !important;
 }
 
@@ -141,11 +153,16 @@ export default {
   width: 194px;
   height: 40px;
   line-height: 40px;
-  background: @red-dark;
+  background: url('~@/assets/imgs/current-house-tag.png');
+  background-size: cover;
   font-size: 20px;
   color: #fff;
   text-align: center;
   margin-bottom: @padding-md;
+}
+
+.house-select {
+  border: 3px solid @red-dark;
 }
 
 .house-user {

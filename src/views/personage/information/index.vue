@@ -105,7 +105,7 @@
           class="tf-card tf-mb-lg"
           v-for="(item, i) in memberList"
           :key="i"
-          @click="goAttestation(0, 1, item.id, item)"
+          @click="goAttestation(item.house_role === '1' ? 1 : 0, 1, item.id, item)"
         >
           <div class="tf-card-header">{{item.project_name}} {{item.fc_info}}</div>
           <div class="tf-card-content">
@@ -123,7 +123,7 @@
                 class="tf-text-grey tf-text-sm"
               >(本人)</span>
             </div>
-            <div class="tf-mr-lg">{{gender | sexText}}</div>
+            <div class="tf-mr-lg">{{item.gender | sexText}}</div>
             <div>{{item.mobile}}</div>
           </div>
         </div>
@@ -476,6 +476,16 @@ export default {
       if (val === 2) {
         !this.list.length && this.yzHouse()
       }
+    }
+  },
+  filters: {
+    sexText (value) {
+      const text = {
+        0: '-',
+        1: '男',
+        2: '女'
+      }
+      return text[value]
     }
   },
   beforeRouteLeave (to, from, next) {
