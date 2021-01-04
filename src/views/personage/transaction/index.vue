@@ -168,7 +168,8 @@ export default {
       date: '',
       buildList: [],
       backStatus: false,
-      monthList: []
+      monthList: [],
+      monthStatus: true // 水电抄表参数是否赋值
     }
   },
   computed: {
@@ -212,6 +213,7 @@ export default {
         this.$refs.list3.reload()
         this.$refs.list4.reload()
       } else {
+        this.monthStatus = true
         this.$refs.buildList.reload()
       }
     },
@@ -247,8 +249,11 @@ export default {
       }
       return getHydropowerList(params).then(
         ({ month_record_list, month_list, record_state }) => {
-          this.monthList = month_list
-          this.date = this.monthList[0].id || ''
+          if (this.monthStatus) {
+            this.monthStatus = false
+            this.monthList = month_list
+            this.date = this.monthList[0].id || ''
+          }
           this.statusList = record_state
           return Promise.resolve({
             data: month_record_list

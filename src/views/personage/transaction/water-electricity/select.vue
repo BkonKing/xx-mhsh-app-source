@@ -42,14 +42,14 @@
           <div class="house-text">{{ item.unit_house_name }}</div>
           <div
             class="house-water"
-            :class="{ 'tf-text-primary': item.water > item.accord }"
+            :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit }"
           >
             <img :src="item.w_icon" class="tf-icon">
             {{ item.is_water_fee  == '0' ? "-" : item.disparity_water }}
           </div>
           <div
             class="house-electricity"
-            :class="{ 'tf-text-primary': item.dian > item.accord }"
+            :class="{ 'tf-text-primary': item.disparity_electric > eErrorsDigit }"
           >
             <img :src="item.e_icon" class="tf-icon">
             {{ item.is_electric_fee == '0' ? "-" : item.disparity_electric }}
@@ -78,7 +78,9 @@ export default {
       selectedUnit: 0,
       unitList: [],
       houseString: '',
-      houseList: []
+      houseList: [],
+      wErrorsDigit: 0,
+      eErrorsDigit: 0
     }
   },
   created () {
@@ -87,6 +89,7 @@ export default {
     this.title = this.$route.query.name
   },
   methods: {
+    // 获取房屋
     getLiveHouseList () {
       const params = {
         building_id: this.id,
@@ -97,9 +100,11 @@ export default {
         // list_order: 0 // 0 正序 1倒序
       }
       return getLiveHouseList(params).then(
-        ({ month_record_list, month_list, record_state, unit_data }) => {
+        ({ month_record_list, month_list, record_state, unit_data, w_errors_digit, e_errors_digit }) => {
           this.unitList = unit_data
           this.statusList = record_state
+          this.wErrorsDigit = w_errors_digit
+          this.eErrorsDigit = e_errors_digit
           return Promise.resolve({
             data: month_record_list
           })

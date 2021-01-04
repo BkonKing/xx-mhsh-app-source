@@ -98,6 +98,7 @@ export default {
     this.orderId = this.$route.query.orderId
     this.id = this.$route.query.id
     this.projectId = this.$route.query.projectId
+    this.isChoicePay = this.$route.query.isChoicePay
     this.getFeeDetails()
   },
   methods: {
@@ -129,12 +130,6 @@ export default {
         name: 'livePayRecord'
       })
     }
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      // 看是否从详情页返回
-      vm.isChoicePay = from.name === 'livePayPay'
-    })
   },
   filters
 }

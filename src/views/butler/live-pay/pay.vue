@@ -163,7 +163,8 @@ export default {
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          orderId: id
+          orderId: id,
+          isChoicePay: 1
         }
       })
     },
