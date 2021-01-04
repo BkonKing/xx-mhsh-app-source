@@ -110,13 +110,15 @@ export default {
       this.$refs.list.reload()
     },
     // 跳转到抄表
-    goMeterReading ({ id, disparity_water, disparity_electric }) {
+    goMeterReading ({ id, disparity_water, disparity_electric, is_electric_fee, is_water_fee }) {
       const type = disparity_water && !disparity_electric ? 2 : 1
       this.$router.push({
         name: 'waterElectricityMeter',
         query: {
           id,
-          type
+          type,
+          water: is_water_fee,
+          electric: is_electric_fee
         }
       })
     }

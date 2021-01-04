@@ -19,18 +19,19 @@
     </div>
     <div class="tf-body-container">
       <div class="meter-switch">
-        <div class="meter-item water-meter" @click="meterActive = 1">
+        <div class="meter-item water-meter" @click="switchMeter(1)">
           <span class="tf-icon tf-icon-shuibiao"></span>水表
         </div>
         <div
           class="meter-item electricity-meter"
           :class="{ 'meter-active': meterActive == 2 }"
-          @click="meterActive = 2"
+          @click="switchMeter(2)"
         >
           <span class="tf-icon tf-icon-dianbiao"></span>电表
         </div>
       </div>
       <meter-form
+        v-if="water == 1"
         key="0"
         ref="water"
         v-bind="waterInfo"
@@ -38,6 +39,7 @@
         v-show="meterActive == 1"
       ></meter-form>
       <meter-form
+        v-if="electric == 1"
         key="1"
         ref="electricity"
         v-bind="electricityInfo"
@@ -63,11 +65,15 @@ export default {
       meterActive: 1,
       houseName: '',
       waterInfo: {},
-      electricityInfo: {}
+      electricityInfo: {},
+      water: '',
+      electric: ''
     }
   },
   created () {
     this.id = this.$route.query.id
+    this.water = this.$route.query.water
+    this.electric = this.$route.query.electric
     this.meterActive = parseInt(this.$route.query.type)
     eventBus.$on('swiperight', (ret, err) => {
       this.meterActive && (this.meterActive = 0)
@@ -87,6 +93,18 @@ export default {
     prevHouse () {},
     // 下一个房间
     nextHouse () {},
+    // 切换电水表
+    switchMeter (type) {
+      if (this.electric == 0 && type == 2) {
+        this.$toast('该房间没有开启电表')
+        return
+      }
+      if (this.water == 0 && type == 1) {
+        this.$toast('该房间没有开启水表')
+        return
+      }
+      this.meterActive = type
+    },
     // 获取房屋水电信息
     getMeterInfo () {
       getMonthRecord({

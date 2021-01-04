@@ -96,8 +96,8 @@
         </div>
       </div>
       <div class="functional-box">
-        <div v-if="userInfo.swrole == 1" class="tansaction-box">
-          <div class="tansaction-header" @click="goTransaction(userInfo.role_dep == 1 ? 1 : 3)">
+        <div v-if="userInfo.swrole == 1 || userInfo.sdcbrole == 1" class="tansaction-box">
+          <div class="tansaction-header" @click="handleTransaction">
             <div class="tansaction-title">报事报修</div>
             <div class="tansaction-btn">事务处理 ></div>
           </div>
@@ -108,7 +108,7 @@
                 userInfo.role_dep == 1 ? 'space-between' : 'space-around'
             }"
           >
-            <template v-if="1">
+            <template v-if="userInfo.swrole == 1">
               <template v-if="userInfo.role_dep == 1">
                 <div class="manage-box" @click="goTransaction(1)">
                   <img
@@ -149,7 +149,7 @@
                 <div class="text-sm">已结案</div>
               </div>
             </template>
-            <template v-if="false">
+            <template v-else-if="userInfo.sdcbrole == 1">
               <div class="manage-box" @click="goTransaction(6)">
                 <img
                   class="manage-image"
@@ -353,6 +353,16 @@ export default {
     /* 我的资料 */
     goInformation () {
       this.$router.push('/pages/personage/information/index')
+    },
+    /* 点击事务处理 */
+    handleTransaction () {
+      let type
+      if (this.userInfo.swrole == 1) {
+        type = this.userInfo.role_dep == 1 ? 1 : 3
+      } else if (this.userInfo.sdcbrole == 1) {
+        type = 6
+      }
+      type && this.goTransaction(type)
     },
     /**
      * 事务处理
@@ -615,7 +625,8 @@ export default {
 .tansaction-box {
   padding: 30px 30px 40px;
   margin-bottom: 30px;
-  background: #ffdfac;
+  background: url('~@/assets/imgs/transaction-bg.png');
+  background-size: cover;
   border-radius: 10px;
   .tansaction-header {
     display: flex;
@@ -648,6 +659,7 @@ export default {
       align-items: center;
       background: #fff;
       border-radius: 8px;
+      box-shadow: 0 8px 8px #ffc97499;
     }
     .personage-badge {
       top: -10px;

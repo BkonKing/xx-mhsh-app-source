@@ -67,7 +67,6 @@
     <pay-swal
       :show-swal="showPaySwal"
       :pay-money="payTotal"
-      :down-time="600000"
       @closeSwal="closePaySwal"
       @sureSwal="surePaySwal"
     ></pay-swal>

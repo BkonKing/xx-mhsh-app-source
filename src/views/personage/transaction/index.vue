@@ -15,7 +15,7 @@
         :lazy-render="false"
         @click="reloadAllList"
       >
-        <van-tab title="报事报修" name="0">
+        <van-tab title="报事报修" v-if="userInfo.swrole == 1" name="0">
           <div
             class="transaction-tab-box"
             :class="[{ 'flex-start': userInfo.role_dep != 1 }]"
@@ -100,7 +100,7 @@
             ></list>
           </div>
         </van-tab>
-        <van-tab title="水电抄表" name="1">
+        <van-tab title="水电抄表" v-if="userInfo.sdcbrole == 1" name="1">
           <div class="select-header">
             <tf-picker
               class="date-time-box"
@@ -165,7 +165,7 @@ export default {
       container: null,
       selectStatus: '全部',
       statusList: [],
-      date: '2020-12',
+      date: '',
       buildList: [],
       backStatus: false,
       monthList: []
@@ -179,10 +179,10 @@ export default {
     this.active = type < 6 ? '0' : '1'
     switch (type) {
       case 6:
-        this.selectStatus = 4
+        this.selectStatus = '未抄电表'
         break
       case 7:
-        this.selectStatus = 3
+        this.selectStatus = '未抄水表'
         break
     }
     this.type = type
@@ -198,7 +198,7 @@ export default {
     }
   },
   methods: {
-    // 刷新所有列表
+    // 刷新报事报修所有列表
     reloadAllList () {
       if (this.active === '0') {
         if (this.type > 5) {
@@ -248,6 +248,7 @@ export default {
       return getHydropowerList(params).then(
         ({ month_record_list, month_list, record_state }) => {
           this.monthList = month_list
+          this.date = this.monthList[0].id || ''
           this.statusList = record_state
           return Promise.resolve({
             data: month_record_list
