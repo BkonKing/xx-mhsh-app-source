@@ -177,7 +177,6 @@ export default {
       formData.append("imgFile", newFile);
       uImages(formData)
         .then(res => {
-          console.log("上传图片", res);
           // Toast.success("上传成功");
           this.editAvatar(res.data);
           this.$store.dispatch("getMyAccount");

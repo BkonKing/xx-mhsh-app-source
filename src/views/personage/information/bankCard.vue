@@ -14,7 +14,13 @@
       </template>
     </van-nav-bar>
     <div class="content">
-      <div class="item" v-for="(item, index) in 10" :key="index">
+      <div
+        class="item"
+        v-for="(item, index) in arr"
+        :key="index"
+        @touchstart.prevent="touchinUk(index)"
+        @touchend.prevent="cleartime(index)"
+      >
         <div class="top">
           <img src="@/assets/img/zgyh.png" alt="" />
           <div class="right">
@@ -26,22 +32,53 @@
           ****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;
           0505
         </div>
+        <!-- <div v-if="isShow" class="box"></div> -->
       </div>
     </div>
-    
   </div>
 </template>
 
 <script>
-import { NavBar } from "vant";
+import { NavBar, Dialog } from "vant";
 export default {
   components: {
-    [NavBar.name]: NavBar
+    [NavBar.name]: NavBar,
+    [Dialog.name]: Dialog
+  },
+  data() {
+    return {
+      arr: [0, 1, 2, 3],
+      isShow: false
+    };
   },
   methods: {
     // 回退
     goback() {
       this.$router.go(-1);
+    },
+    touchinUk(index) {
+      console.log(index);
+      clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
+      this.Loop = setTimeout(
+        function() {
+          Dialog.confirm({
+            message: "是否删除该银行卡"
+          })
+            .then(() => {
+              console.log("删除");
+              this.arr.splice(index, 1);
+            })
+            .catch(() => {
+              // on cancel
+              console.log("不删");
+            });
+        }.bind(this),
+        1000
+      );
+    },
+    cleartime(index) {
+      // 这个方法主要是用来将每次手指移出之后将计时器清零
+      clearInterval(this.Loop);
     }
   }
 };
@@ -62,6 +99,7 @@ export default {
     padding: 20px;
 
     .item {
+      position: relative;
       width: 710px;
       height: 232px;
       background: url(~@/assets/imgs/zgyhdb.png);
@@ -103,6 +141,16 @@ export default {
         font-weight: 500;
         color: #ffffff;
         line-height: 38px;
+      }
+      .box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 710px;
+        height: 232px;
+        background: #000000;
+        opacity: 0.5;
+        border-radius: 10px;
       }
     }
   }

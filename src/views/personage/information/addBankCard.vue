@@ -74,8 +74,8 @@
           同意
           <span
             @click="$router.push('/pages/personage/information/pay-agreeMent')"
-            >《支付协议》</span
-          >
+            >《支付协议》
+          </span>
         </div>
         <van-button
           class="btn"
@@ -84,8 +84,8 @@
           :disabled="!bol"
           @click="toVerifyPhone"
         >
-          下一步</van-button
-        >
+          下一步
+        </van-button>
       </div>
     </div>
     <!-- 持卡人说明弹窗 -->
@@ -109,8 +109,8 @@
       </div>
       <div class="btnBox">
         <van-button block color="#eb5841" class="btn" @click="isShow = false"
-          >知道了</van-button
-        >
+          >知道了
+        </van-button>
       </div>
     </van-popup>
     <!-- 关闭弹窗按钮 -->

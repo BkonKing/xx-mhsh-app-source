@@ -14,15 +14,17 @@
     <div class="content">
       <div class="info">
         <div class="left">
-          <img src="@/assets/imgs/touxiang.png" alt="" />
+          <img v-if="userInfo.avatar" :src="userInfo.avatar" alt="" />
+          <img v-else src="@/assets/imgs/touxiang.png" alt="" />
         </div>
         <div class="right">
           <div class="t1">姓名</div>
           <div class="t2">
-            蔡文姬 <img src="@/assets/imgs/realname.png" alt="" />
+            {{ userInfo.realname }}
+            <img src="@/assets/imgs/realname.png" alt="" />
           </div>
           <div class="t3">证件号</div>
-          <div class="t4">3*********************0</div>
+          <div class="t4">{{ str }}</div>
         </div>
       </div>
       <div class="personInfo" @click="toPersonInfo">
@@ -54,6 +56,11 @@ export default {
     [Popup.name]: Popup,
     [Cell.name]: Cell
   },
+  data() {
+    return {
+      str: ""
+    };
+  },
   computed: {
     ...mapGetters(["userInfo"]),
     isPerfect() {
@@ -75,6 +82,11 @@ export default {
     toPersonInfo() {
       this.$router.push("/pages/personage/information/personInfo");
     }
+  },
+  created() {
+    this.$store.dispatch("getMyAccount");
+    let idCard = "350102199003072616";
+    this.str = idCard.replace(/^(.{1})(?:\d+)(.{1})$/, "$1**************$2");
   }
 };
 </script>
@@ -111,6 +123,7 @@ export default {
         img {
           width: 88px;
           height: 88px;
+          border-radius: 50%;
         }
       }
       .right {

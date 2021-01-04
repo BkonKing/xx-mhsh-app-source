@@ -35,7 +35,11 @@
                 <span class="tf-text-white">{{ timeData.seconds }}s</span>
               </template>
             </van-count-down>
-            <van-button v-else class="query-btn" :loading="codeLoading" @click="verifCode"
+            <van-button
+              v-else
+              class="query-btn"
+              :loading="codeLoading"
+              @click="verifCode"
               >获取</van-button
             >
           </template>
@@ -97,11 +101,11 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Toast, Dialog, CountDown } from 'vant'
-import { verifCode } from '@/api/user'
-import { validEmpty } from '@/utils/util'
-import { hasPermission, reqPermission } from '@/utils/permission'
-import { setStatisticsData } from '@/utils/analysis.js'
+import { NavBar, Field, Button, Toast, Dialog, CountDown } from "vant";
+import { verifCode } from "@/api/user";
+import { validEmpty } from "@/utils/util";
+import { hasPermission, reqPermission } from "@/utils/permission";
+import { setStatisticsData } from "@/utils/analysis.js";
 export default {
   components: {
     Field,
@@ -109,7 +113,7 @@ export default {
     [CountDown.name]: CountDown,
     [NavBar.name]: NavBar
   },
-  data () {
+  data() {
     return {
       mobile: undefined,
       yzm: undefined,
@@ -122,146 +126,148 @@ export default {
       countDownTime: 60000,
       status: 0,
       loginLoading: false
-    }
+    };
   },
-  created () {
-    this.status = this.$route.query.status
+  created() {
+    this.status = this.$route.query.status;
   },
-  mounted () {
-    const perms = hasPermission('location')
+  mounted() {
+    const perms = hasPermission("location");
     if (!perms[0].granted) {
       Dialog.confirm({
-        title: '提示',
-        message: '没有开启定位，可能会影响部分功能哦，是否前往开启权限？',
-        confirmButtonText: '去开启'
+        title: "提示",
+        message: "没有开启定位，可能会影响部分功能哦，是否前往开启权限？",
+        confirmButtonText: "去开启"
       })
         .then(res => {
-          reqPermission('location', ({ list }) => {
+          reqPermission("location", ({ list }) => {
             if (!list[0].granted) {
             }
-          })
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     }
   },
   methods: {
     // 定位未开启提醒
-    warnLoacation () {
-      Toast('没有开启定位，可能会影响部分功能哦！')
+    warnLoacation() {
+      Toast("没有开启定位，可能会影响部分功能哦！");
     },
-    changeRememberPasswrod () {
-      this.agree = !this.agree
+    changeRememberPasswrod() {
+      this.agree = !this.agree;
     },
-    changePassword () {
-      this.showPassword = !this.showPassword
+    changePassword() {
+      this.showPassword = !this.showPassword;
     },
     /* 登录 */
-    login () {
+    login() {
       if (!this.agree) {
-        Toast('请阅读并同意用户协议')
-        return
+        Toast("请阅读并同意用户协议");
+        return;
       }
-      let params = {}
+      let params = {};
       /* 验证码登录 */
       if (this.login_type === 1) {
         if (
-          validEmpty(this.mobile, '请输入手机号码') ||
-          validEmpty(this.yzm, '请输入验证码')
+          validEmpty(this.mobile, "请输入手机号码") ||
+          validEmpty(this.yzm, "请输入验证码")
         ) {
-          return
+          return;
         }
         params = {
           mobile: this.mobile,
           yzm: this.yzm
-        }
+        };
       } else if (this.login_type === 2) {
         /* 密码登录 */
         if (
-          validEmpty(this.mobile, '请输入手机号码') ||
-          validEmpty(this.pwd, '请输入密码')
+          validEmpty(this.mobile, "请输入手机号码") ||
+          validEmpty(this.pwd, "请输入密码")
         ) {
-          return
+          return;
         }
         params = {
           mobile: this.mobile,
           pwd: this.pwd
-        }
+        };
       }
-      this.loginLoading = true
+      this.loginLoading = true;
       this.$store
-        .dispatch('login', {
+        .dispatch("login", {
           type: this.login_type,
           params
         })
         .then(data => {
-          this.loginLoading = false
-          const share_params = this.$store.state.share_params || ''
+          this.loginLoading = false;
+          const share_params = this.$store.state.share_params || "";
           if (share_params) {
-            this.$store.commit('setShare_params', '')
+            this.$store.commit("setShare_params", "");
             if (share_params.page_type == 1) {
               this.$router.replace({
-                path: '/store/goods-detail',
+                path: "/store/goods-detail",
                 query: {
                   id: share_params.id,
                   f_id: share_params.f_id
                 }
-              })
+              });
             } else if (share_params.page_type == 2) {
               this.$router.replace({
-                path: '/pages/neighbours/details',
+                path: "/pages/neighbours/details",
                 query: {
                   articleType: share_params.articleType,
                   id: share_params.id
                 }
-              })
+              });
             }
           } else {
             this.$router.replace({
-              name: 'home'
-            })
+              name: "home"
+            });
           }
           if (data.first_register == 1) {
             this.mtjEvent({
               eventId: 2
-            })
+            });
           }
           this.mtjEvent({
             eventId: 1
-          })
+          });
           // 登入新增
-          setStatisticsData(4, { mobile: this.mobile })
+          setStatisticsData(4, { mobile: this.mobile });
         })
         .catch(() => {
-          this.loginLoading = false
-        })
+          this.loginLoading = false;
+        });
     },
     /* 发送验证码 */
-    verifCode () {
-      this.codeLoading = true
+    verifCode() {
+      this.codeLoading = true;
       verifCode({
         mobile: this.mobile
-      }).then(res => {
-        Toast.success('验证码发送成功，请注意查收')
-        this.codeLoading = false
-        this.codeStatus = true
-      }).catch((err) => {
-        if (!err) {
-          Toast.fail('获取失败，请重试')
-        }
-        this.codeLoading = false
       })
+        .then(res => {
+          Toast.success("验证码发送成功，请注意查收");
+          this.codeLoading = false;
+          this.codeStatus = true;
+        })
+        .catch(err => {
+          if (!err) {
+            Toast.fail("获取失败，请重试");
+          }
+          this.codeLoading = false;
+        });
     },
     /* 倒计时结束 */
-    countFinish () {
-      this.countDownTime = 60000
-      this.codeStatus = false
+    countFinish() {
+      this.countDownTime = 60000;
+      this.codeStatus = false;
     }
   },
-  beforeRouteLeave (to, from, next) {
-    this.$store.commit('setShare_params', '')
-    next()
+  beforeRouteLeave(to, from, next) {
+    this.$store.commit("setShare_params", "");
+    next();
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

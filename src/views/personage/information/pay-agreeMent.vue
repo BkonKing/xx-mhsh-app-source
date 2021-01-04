@@ -13,6 +13,7 @@
         </div>
       </template>
     </van-nav-bar>
+  
     
   </div>
 </template>
