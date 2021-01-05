@@ -99,7 +99,7 @@
       </van-tab>
       <van-tab v-if="userType == 1 && currentProject" title="成员信息">
         <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
-          <van-dropdown-item v-model="value" :options="list" />
+          <van-dropdown-item v-model="selectedHouseId" :options="houselist" />
         </van-dropdown-menu>
         <div
           class="tf-card tf-mb-lg"
@@ -196,8 +196,8 @@ export default {
   data () {
     return {
       current: 0,
-      value: 0,
-      list: [],
+      selectedHouseId: 0,
+      houselist: [], // 成员tab，房屋列表
       realname: '',
       gender: '',
       avatar: '',
@@ -240,6 +240,7 @@ export default {
     )
   },
   created () {
+    this.userType == 1 && this.yzHouse(0)
     eventBus.$off('chooseAddress')
   },
   activated () {
@@ -344,29 +345,30 @@ export default {
     yzHouse (type) {
       // type: 0 - 默认选中第一个， 1 - 保持当前状态
       yzHouse().then((res) => {
-        const allItem = {
-          text: '全部',
-          value: undefined
-        }
         let data = res.data || []
+        let num = 0
         data = data.map((obj) => {
           const { project_name, fc_info, members, house_id } = obj
+          num += parseInt(members)
           return {
             text: `${project_name}${fc_info}(${members})`,
             value: house_id
           }
         })
-        data.unshift(allItem)
-        this.list = data
+        data.unshift({
+          text: `全部(${num})`,
+          value: ''
+        })
+        this.houselist = data
         if (!type) {
-          this.value = res.data[0].house_id
+          this.selectedHouseId = ''
         }
       })
     },
     /* 获取成员列表 */
     getMemberList () {
       getMemberList({
-        house_id: this.value
+        house_id: this.selectedHouseId
       }).then((res) => {
         this.memberList = res.data
       })
@@ -460,7 +462,7 @@ export default {
     },
     /* 跳转房产成员信息 */
     toHouseMember (info) {
-      this.value = info.house_id
+      this.selectedHouseId = info.house_id
       this.current = 2
     },
     goback () {
@@ -469,12 +471,12 @@ export default {
     }
   },
   watch: {
-    value (value) {
+    selectedHouseId (value) {
       this.getMemberList()
     },
     current (val) {
       if (val === 2) {
-        !this.list.length && this.yzHouse()
+        !this.houselist.length && this.yzHouse()
       }
     }
   },
