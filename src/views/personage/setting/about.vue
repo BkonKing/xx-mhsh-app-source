@@ -10,7 +10,7 @@
     ></van-nav-bar>
     <div class="logo-container">
       <img class="logo-img" src="@/assets/imgs/logo.png" />
-      <div class="tf-text tf-mt-base">版本号：{{ appVersion }}</div>
+      <div class="tf-text">版本号：{{ appVersion }}</div>
     </div>
     <tf-list>
       <tf-list-item
@@ -20,7 +20,7 @@
         border
       >
         <template v-if="updateStatus" v-slot:right>
-          <div class="right-text tf-text-primary">发现更新版本</div>
+          <div class="right-text tf-text-primary">发现新版本</div>
         </template>
       </tf-list-item>
       <tf-list-item title="协议及声明" @click="goAgreementList"></tf-list-item>
@@ -79,7 +79,8 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .tf-clist {
-  border-radius: 0;
+  width: 710px;
+  margin: 0 20px;
 }
 .right-text {
   font-size: 24px;
@@ -95,18 +96,22 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 60px 0;
+  padding-top: 96px;
   .logo-img {
-    width: 200px;
-    height: 200px;
+    width: 228px;
+    height: 228px;
+  }
+  .tf-text {
+    margin-bottom: 80px;
   }
 }
 .copyright-box {
   width: 100%;
   text-align: center;
   position: absolute;
-  bottom: 60px;
+  bottom: 26px;
   font-size: 24px;
-  color: #999;
+  line-height: 42px;
+  color: #8F8F94;
 }
 </style>
