@@ -67,16 +67,7 @@
               </div>
             </template>
           </van-cell>
-          <!-- <van-cell class="nameCell" is-link center>
-            <template #title>
-              <div class="title">
-                <div class="txt">手机号</div>
-                <div class="name">
-                  15033330505
-                </div>
-              </div>
-            </template>
-          </van-cell> -->
+
           <tf-list-item
             border
             title="手机号"

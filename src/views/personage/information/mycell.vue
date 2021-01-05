@@ -82,6 +82,7 @@ export default {
   img {
     width: 64px;
     height: 64px;
+    border-radius: 50%;
   }
   .nan {
     color: #448fe4;

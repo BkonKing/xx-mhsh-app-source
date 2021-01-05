@@ -32,7 +32,6 @@
           ****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;
           0505
         </div>
-        <!-- <div v-if="isShow" class="box"></div> -->
       </div>
     </div>
   </div>

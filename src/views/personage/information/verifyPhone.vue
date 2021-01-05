@@ -86,6 +86,7 @@ export default {
   methods: {
     // 跳转银行卡
     toBankCard() {
+      Toast.success("添加成功");
       this.$router.push("/pages/personage/information/bankCard");
     },
     // 回退

@@ -27,15 +27,22 @@
             ></i>
           </template>
         </van-field>
-        <van-field class="field" v-model="value2" placeholder="银行卡号">
+        <van-field
+          @change="getCardName"
+          class="field"
+          v-model="bankCardNum"
+          placeholder="银行卡号"
+          ref="cardInput"
+          @input="formatCardNumber(bankCardNum)"
+        >
           <template #label>
             <div class="label">卡号</div>
           </template>
           <template #right-icon>
             <i
               class="font_family icon-close-circle-fill clear"
-              v-if="value2 != ''"
-              @click="value2 = ''"
+              v-if="bankCardNum != ''"
+              @click="bankCardNum = ''"
             ></i>
             <i class="font_family icon-xiangji right"></i>
           </template>
@@ -55,13 +62,13 @@
           </template>
         </van-field>
       </div>
-      <div
-        class="other"
-        @click="
-          $router.push('/pages/personage/information/support-bankCard-list')
-        "
-      >
-        支持的银行>
+      <div class="other">
+        <span
+          @click="
+            $router.push('/pages/personage/information/support-bankCard-list')
+          "
+          >支持的银行></span
+        >
       </div>
       <div class="btn1">
         <div class="agree">
@@ -137,6 +144,7 @@ import {
   Checkbox
 } from "vant";
 import { mapGetters } from "vuex";
+import { getBankInfo } from "@/api/personage.js";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -153,7 +161,7 @@ export default {
     return {
       isShow: false,
       personName: "",
-      value2: "",
+      bankCardNum: "",
       value3: "",
       phone: "",
       checked: true,
@@ -162,11 +170,46 @@ export default {
   },
   computed: {
     bol() {
-      return true || this.value1 || this.value2;
+      return true || this.personName || this.bankCardNum;
     },
     ...mapGetters(["userInfo"])
   },
   methods: {
+    // 格式化银行卡号
+    formatCardNumber(cardNum) {
+      // 获取input的dom对象，这里因为用的是vant ui的input，所以需要这样拿到
+      const input = this.$refs.cardInput.$el.getElementsByTagName("input")[0];
+      // 获取当前光标的位置
+      const cursorIndex = input.selectionStart;
+      // 字符串中光标之前-的个数
+      const lineNumOfCursorLeft = (
+        cardNum.slice(0, cursorIndex).match(/ /g) || []
+      ).length;
+      // 去掉所有-的字符串
+      const noLine = cardNum.replace(/ /g, "");
+      // 去除格式不对的字符并重新插入-的字符串
+      const newCardNum = noLine
+        .replace(/\D+/g, "")
+        .replace(/(\d{4})/g, "$1 ")
+        .replace(/ $/, "");
+      // 改后字符串中原光标之前-的个数
+      const newLineNumOfCursorLeft = (
+        newCardNum.slice(0, cursorIndex).match(/ /g) || []
+      ).length;
+      // 光标在改后字符串中应在的位置
+      const newCursorIndex =
+        cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft;
+      // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
+      this.$nextTick(() => {
+        this.bankCardNum = newCardNum;
+        // 修正光标位置，nextTick保证在渲染新值后定位光标
+        this.$nextTick(() => {
+          // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
+          input.selectionStart = newCursorIndex;
+          input.selectionEnd = newCursorIndex;
+        });
+      });
+    },
     // 跳转预留手机号
     toVerifyPhone() {
       this.$router.push("/pages/personage/information/verifyPhone");
@@ -174,6 +217,17 @@ export default {
     // 回退
     goback() {
       this.$router.go(-1);
+    },
+    // 获取银行卡所属银行名称
+    getCardName() {
+      // getBankInfo({ bank_card: this.bankCardNum })
+      //   .then(res => {
+      //     console.log("银行名称", res);
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   });
+      console.log(this.bankCardNum);
     }
   },
   created() {
@@ -246,7 +300,7 @@ export default {
         color: #383838;
       }
       .clear {
-        margin-right: 68px;
+        margin-right: 20px;
         font-size: 32px;
         color: #aaaaaa;
       }
