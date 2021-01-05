@@ -1,8 +1,8 @@
-import Mock from 'mockjs'
-
 // 获取缴费列表
-const lifePayList = () => {
-  return {
+export const lifePayList = [
+  /\/live\/live\/lifepay_list/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -59,10 +59,12 @@ const lifePayList = () => {
     }
     ]
   }
-}
+]
 
-const choiceLifePayList = () => {
-  return {
+export const choiceLifePayList = [
+  /\/live\/live\/fee_details/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -101,10 +103,12 @@ const choiceLifePayList = () => {
     }
     ]
   }
-}
+]
 
-const feeDetails = () => {
-  return {
+export const feeDetails = [
+  /\/live\/live\/fee_details/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -124,10 +128,12 @@ const feeDetails = () => {
       order_status: '0'
     }
   }
-}
+]
 
-const lifePayRecord = () => {
-  return {
+export const lifePayRecord = [
+  /\/live\/live\/lifepay_record_list/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -147,10 +153,12 @@ const lifePayRecord = () => {
       month_name: '2020-12'
     }]
   }
-}
+]
 
-const paymentDetails = () => {
-  return {
+export const paymentDetails = [
+  /\/live\/live\/payment_details/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -168,10 +176,12 @@ const paymentDetails = () => {
       pay_time: '2020-12-25 08:00:00'
     }
   }
-}
+]
 
-const hydropowerList = () => {
-  return {
+export const hydropowerList = [
+  /\/live\/thing\/hydropower_list/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
@@ -226,22 +236,23 @@ const hydropowerList = () => {
     }
     ]
   }
-}
+]
 
-const houseList = () => {
-  return {
+export const houseList = [
+  /\/live\/thing\/choose_house_list/,
+  'post',
+  {
     code: '200',
     success: true,
     message: 'OK',
-    unit_data: [
-      {
-        text: '全部（3）',
-        value: 0
-      },
-      {
-        text: '7单元（3）',
-        value: '8'
-      }
+    unit_data: [{
+      text: '全部（3）',
+      value: 0
+    },
+    {
+      text: '7单元（3）',
+      value: '8'
+    }
     ],
     month_record_list: [{
       id: '16',
@@ -277,10 +288,12 @@ const houseList = () => {
     }
     ]
   }
-}
+]
 
-const monthRecordJson = () => {
-  return {
+export const monthRecordJson = [
+  /\/live\/thing\/getMonthRecordJson/,
+  'post',
+  {
     code: '200',
     success: true,
     message: '成功！',
@@ -295,22 +308,14 @@ const monthRecordJson = () => {
       pic: ''
     }
   }
-}
+]
 
-const editRecord = () => {
-  return {
+export const editRecord = [
+  /\/live\/thing\/editRecord/,
+  'post',
+  {
     code: '200',
     success: true,
     message: '成功'
   }
-}
-
-Mock.mock(/\/live\/live\/lifepay_list/, 'post', lifePayList)
-Mock.mock(/\/live\/live\/choice_lifepay_list/, 'post', choiceLifePayList)
-Mock.mock(/\/live\/live\/fee_details/, 'post', feeDetails)
-Mock.mock(/\/live\/live\/lifepay_record_list/, 'post', lifePayRecord)
-Mock.mock(/\/live\/live\/payment_details/, 'post', paymentDetails)
-Mock.mock(/\/live\/thing\/hydropower_list/, 'post', hydropowerList)
-Mock.mock(/\/live\/thing\/choose_house_list/, 'post', houseList)
-Mock.mock(/\/live\/thing\/getMonthRecordJson/, 'post', monthRecordJson)
-Mock.mock(/\/live\/thing\/editRecord/, 'post', editRecord)
+]
