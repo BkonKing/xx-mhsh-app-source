@@ -148,7 +148,6 @@ import {
   DropdownMenu,
   DropdownItem,
   Tag,
-  Dialog,
   Toast,
   uploader,
   Field,
@@ -251,6 +250,7 @@ export default {
     } else if (this.current === 2) {
       this.yzHouse(1)
       this.getMemberList()
+      this.$refs.house && this.$refs.house.reload()
     }
   },
   methods: {

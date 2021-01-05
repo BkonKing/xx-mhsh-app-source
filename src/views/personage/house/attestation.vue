@@ -78,7 +78,7 @@
         <tf-list v-if="type === 1 && mode === 1 && !editMode">
           <tf-list-item
             class="default-house-item"
-            title="设置当前房屋"
+            title="设为当前房屋"
             :showArrow="false"
           >
             <template v-slot:right>
