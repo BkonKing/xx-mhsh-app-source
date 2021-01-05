@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div class="tf-white-bg tf-body">
     <van-nav-bar
       title="人脸采集"
       :fixed="true"
@@ -9,33 +9,30 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-body-container">
-      <template v-if="complete">
-        <div class="success-tag">
-          <span class="tf-icon tf-icon-gou"></span>
-        </div>
-        <div class="tf-text-lg tf-mt-lg tf-mb-lg">{{complete === 2 ? '您已经采集过！' : '采集成功！'}}</div>
-        <div class="btn-box">
-          <van-button type="danger" size="large" @click="getCameraPermission">重新采集</van-button>
-        </div>
-      </template>
-      <div v-else class="btn-box">
-        <van-button type="danger" size="large" @click="getCameraPermission">开始采集本人人脸</van-button>
+      <div v-if="complete" class="success-tag">
+        <span class="tf-icon tf-icon-gou"></span>
+      </div>
+      <img v-else class="face-img" src="@/assets/imgs/faceCollect.png" />
+      <div class="tf-text-lg">
+        {{
+          complete === 2
+            ? "采集成功！"
+            : "拍摄您本人人脸，请保证正对手机，光线充足"
+        }}
+      </div>
+      <div class="btn-box">
+        <van-button type="info" size="large" @click="getCameraPermission">{{
+          complete === 2 ? "重新采集" : "开始采集本人人脸"
+        }}</van-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Button } from 'vant'
-import { cjFace } from '@/api/personage'
 import { mapGetters } from 'vuex'
-import eventBus from '@/api/eventbus'
 import { handlePermission } from '@/utils/permission'
 export default {
-  components: {
-    [NavBar.name]: NavBar,
-    [Button.name]: Button
-  },
   data () {
     return {
       FNPhotograph: null,
@@ -47,184 +44,60 @@ export default {
   },
   created () {
     this.complete = this.userInfo.have_faceimg == 1 ? 2 : 0
-    this.FNPhotograph = api.require('FNPhotograph')
-    window.closeCameraView = new CustomEvent('cameraOperate', {
-      detail: { type: 'close' }
-    })
-    window.changeCamera = new CustomEvent('cameraOperate', {
-      detail: { type: 'change' }
-    })
-    window.takePhoto = new CustomEvent('cameraOperate', {
-      detail: { type: 'takePhoto' }
-    })
-    document.addEventListener('cameraOperate', this.cameraOperate)
-    eventBus.$on('resume', () => {
-      this.openCamera()
-    })
-    eventBus.$on('pause', () => {
-      this.cameraOperate({
-        detail: {
-          type: 'close'
-        }
-      })
-    })
   },
   methods: {
     // 获取摄像头权限
     getCameraPermission () {
+      this.$router.push({
+        name: 'faceCollectCamera'
+      })
       handlePermission({
         name: 'camera'
       }).then(() => {
-        this.openCamera()
-      })
-    },
-    /* 打开摄像头 */
-    openCamera () {
-      this.FNPhotograph.openCameraView(
-        {
-          rect: {
-            x: 0,
-            y: 0,
-            w: 'auto',
-            h: 'auto'
-          },
-          useFrontCamera: true
-        },
-        (ret) => {
-          if (ret.status) {
-            api.openFrame({
-              name: 'camera',
-              url: './camera.html',
-              useWKWebView: true,
-              bgColor: 'rgba(0, 0, 0, 0)',
-              rect: {
-                x: 0,
-                y: 0,
-                w: 'auto',
-                h: 'auto'
-              }
-            })
-          }
-        }
-      )
-    },
-    /* 摄像头相关操作 */
-    cameraOperate ({ detail }) {
-      switch (detail.type) {
-        // 关闭
-        case 'close':
-          api.closeFrame({
-            name: 'camera'
-          })
-          this.FNPhotograph.closeCameraView(function (ret) {
-            if (ret) {
-              // alert(JSON.stringify(ret))
-            }
-          })
-          break
-        // 切换摄像头
-        case 'change':
-          this.FNPhotograph.getCamera((ret) => {
-            if (ret.status) {
-              const camera = ret.camera === 'front' ? 'back' : 'front'
-              this.FNPhotograph.setCamera({
-                camera: camera
-              })
-            }
-          })
-          break
-        // 拍照
-        case 'takePhoto':
-          this.FNPhotograph.takePhoto(
-            {
-              quality: 'medium',
-              path: 'fs://mhjy/renlian.png',
-              album: false
-            },
-            (ret) => {
-              this.uploadImage({ file: ret.imagePath })
-            }
-          )
-          break
-        default:
-          break
-      }
-    },
-    /* 上传图片到服务器 */
-    uploadImage (file) {
-      api.ajax(
-        {
-          url: process.env.VUE_APP_BASE_API + '/upload/uploads/uImages',
-          method: 'post',
-          headers: {
-            Authorization: api.getPrefs({
-              sync: true,
-              key: 'access_token'
-            })
-          },
-          data: {
-            files: {
-              imgFile: file.file
-            }
-          }
-        },
-        (ret, err) => {
-          if (ret) {
-            this.cjFace(ret.data)
-          } else {
-            api.alert({
-              msg: err
-            })
-            console.log(JSON.stringify(err))
-          }
-        }
-      )
-    },
-    /* 人脸采集上传 */
-    cjFace (url) {
-      cjFace({
-        face_url: url
-      }).then((res) => {
-        this.complete = 1
-        this.cameraOperate({ detail: { type: 'close' } })
-        this.mtjEvent({
-          eventId: 74
+        this.$router.push({
+          name: 'faceCollectCamera'
         })
-      }).catch((err) => {
-        api.alert({
-          msg: err.message
-        })
+        // this.openCamera()
       })
     }
-  },
-  beforeRouteLeave (to, from, next) {
-    document.removeEventListener('cameraOperate', this.cameraOperate)
-    next()
   }
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .tf-body-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   .btn-box {
     width: 100%;
-    padding: 0 10%;
+    padding: 0 50px;
+    position: fixed;
+    bottom: 311px;
   }
+  .tf-text-lg {
+    margin-top: 56px;
+  }
+}
+/deep/ .van-button--info {
+  background: #448fe4;
 }
 .success-tag {
   width: 240px;
   height: 240px;
+  margin-top: 137px;
+  background: linear-gradient(-45deg, @red-dark, @red);
   text-align: center;
-  background: @red-dark;
   color: #fff;
   border-radius: 50%;
   .tf-icon-gou {
     font-size: 240px;
     line-height: 240px;
   }
+}
+.face-img {
+  width: 650px;
+  height: 480px;
+  margin: 80px 50px 134px;
 }
 </style>

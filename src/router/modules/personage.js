@@ -293,6 +293,16 @@ const personageRouter = [
         /* webpackChunkName: "faceCollect" */
         '@/views/personage/information/faceCollect.vue'
       )
+  },
+  /* 人脸收集拍照 */
+  {
+    path: '/pages/personage/information/faceCollectCamera',
+    name: 'faceCollectCamera',
+    component: () =>
+      import(
+        /* webpackChunkName: "faceCollectCamera" */
+        '@/views/personage/information/faceCollectCamera.vue'
+      )
   }
 ]
 
