@@ -80,10 +80,14 @@
           <span class="app-box__text">全部</span>
         </van-grid-item>
       </van-grid>
+      <!-- 幸福币专区 -->
       <div class="coin-box">
         <div class="coin-box__header">
           <div ref="sign" class="coin-box__title" @click="goHappiness">
-            幸福币专区
+            <img
+              class="coin-box__header-logo"
+              src="@/assets/imgs/home-credits.png"
+            />
             <van-button
               v-if="userInfo.signin_today == '0'"
               v-preventReClick
@@ -92,10 +96,9 @@
               @click.stop="sign"
               >签到</van-button
             >
-            <span class="coin-number" v-else>
-              <span class="tf-icon tf-icon-xingfubi mr10"></span>
-              <span>{{ userInfo.credits }}</span>
-            </span>
+            <div class="coin-number-box" v-else>
+              <div class="coin-number">{{ userInfo.credits }}</div>
+            </div>
           </div>
         </div>
         <div class="coin-box__content">
@@ -116,95 +119,69 @@
           </div>
         </div>
       </div>
-      <div class="life-box" v-if="bargainList && bargainList.length">
-        <div class="life-box__title" @click="goSpecialSale">9.9特卖</div>
-        <div class="life-box__description" @click="goSpecialSale">
-          省钱好机会
-          <span class="tf-icon tf-icon-right"></span>
-        </div>
-        <van-swipe class="my-swipe" :autoplay="3000" :show-indicators="false">
-          <van-swipe-item
-            v-for="(item, i) in bargainList"
-            :lazy-render="true"
-            :key="i"
-          >
-            <tf-image-list
-              :data="item"
-              :column="3"
-              srcKey="thumb"
-              @click="clickSpecialSale"
-            ></tf-image-list>
-          </van-swipe-item>
-        </van-swipe>
-      </div>
-      <div class="life-box tf-mt-base" v-if="ollageGoods && ollageGoods.length">
-        <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
-        <div class="life-box__description" @click="goTimeLimit">
-          惊喜折扣限时抢
-          <span class="tf-icon tf-icon-right"></span>
-        </div>
-        <van-swipe
-          class="my-swipe"
-          :autoplay="3000"
-          :lazy-render="true"
-          :show-indicators="false"
-        >
-          <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
-            <tf-image-list
-              :data="item"
-              :column="2"
-              srcKey="thumb"
-              @click="clickTimeLimit"
-            >
-              <template v-slot:tag="{ img }">
-                <div class="price-tag">￥{{ img.s_price }}</div>
-              </template>
-            </tf-image-list>
-          </van-swipe-item>
-        </van-swipe>
-      </div>
-      <div class="community-box" v-if="activityList && activityList.length">
-        <div class="community-box__title" @click="goCommunity">
-          社区活动
-          <span class="tf-icon tf-icon-right"></span>
-        </div>
-        <div class="activity-list">
-          <div
-            v-for="(item, i) in activityList"
-            :key="i"
-            class="activity-item"
-            @click="goActivity(item)"
-          >
-            <van-image
-              class="activity-item__image"
-              :src="item.thumbnail"
-              v-imageCach="item.thumbnail"
-            >
-              <template v-slot>
-                <div class="activity-item__description">
-                  {{ item.joins }}人已报名
-                </div>
-              </template>
-            </van-image>
-            <div class="activity-info">
-              <div class="activity-info__day">
-                <span class="tf-text">{{
-                  new Date(item.stime.replace(/-/g, '/')).getDate()
-                }}</span>
-                <span class="font20">{{
-                  new Date(item.stime.replace(/-/g, '/')).getMonth() | monthText
-                }}</span>
-              </div>
-              <div class="activity-info__right">
-                <div class="activity-info__title">{{ item.title }}</div>
-                <div class="activity-info__time">
-                  报名截止：{{ item.jtime }}
-                </div>
-              </div>
-            </div>
+      <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
+        <!-- 9.9特卖 -->
+        <div v-if="bargainVisible" class="life-box bargain-sale">
+          <div class="life-box__title" @click="goSpecialSale">9.9特卖</div>
+          <div class="life-box__description" @click="goSpecialSale">
+            省钱好机会
+            <span class="tf-icon tf-icon-right"></span>
           </div>
+          <van-swipe
+            ref="bargainSwipe"
+            :autoplay="3000"
+            :show-indicators="false"
+          >
+            <van-swipe-item
+              v-for="(item, i) in bargainSwipeList"
+              :lazy-render="true"
+              :key="i"
+            >
+              <tf-image-list
+                :data="item"
+                :column="ollageGoodsVisible ? 1 : 3"
+                srcKey="thumb"
+                @click="clickSpecialSale"
+              >
+                <template v-slot:tag="{ img }">
+                  <div class="price-tag">￥{{ img.s_price / 100 }}</div>
+                </template>
+              </tf-image-list>
+            </van-swipe-item>
+          </van-swipe>
+        </div>
+        <!-- 限时闪购 -->
+        <div
+          v-if="ollageGoodsVisible"
+          class="life-box ollage-goods"
+          :style="{ flex: bargainVisible ? '2' : '1' }"
+        >
+          <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
+          <div class="life-box__description" @click="goTimeLimit">
+            惊喜折扣限时抢
+            <span class="tf-icon tf-icon-right"></span>
+          </div>
+          <van-swipe
+            ref="ollageGoods"
+            :autoplay="3000"
+            :show-indicators="false"
+          >
+            <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
+              <tf-image-list
+                :data="item"
+                :column="2"
+                srcKey="thumb"
+                @click="clickTimeLimit"
+              >
+                <template v-slot:tag="{ img }">
+                  <div class="price-tag">￥{{ img.s_price }}</div>
+                </template>
+              </tf-image-list>
+            </van-swipe-item>
+          </van-swipe>
         </div>
       </div>
+      <!-- 美好头条 -->
       <div class="front-page-container">
         <van-notice-bar class="front-page" :scrollable="false">
           <template v-slot:left-icon>
@@ -231,6 +208,47 @@
             </van-swipe-item>
           </van-swipe>
         </van-notice-bar>
+      </div>
+      <!-- 社区活动 -->
+      <div class="community-box" v-if="activityList && activityList.length">
+        <div class="community-box__title" @click="goCommunity">
+          社区活动
+          <span class="tf-icon tf-icon-right"></span>
+        </div>
+        <div class="activity-list">
+          <div
+            v-for="(item, i) in activityList"
+            :key="i"
+            class="activity-item"
+            @click="goActivity(item)"
+          >
+            <van-image
+              class="activity-item__image"
+              :src="item.thumbnail"
+              v-imageCach="item.thumbnail"
+            >
+            </van-image>
+            <div class="activity-info">
+              <div class="activity-info__date">
+                <span class="activity-info__date-day">{{
+                  new Date(item.stime.replace(/-/g, "/")).getDate()
+                }}</span>
+                <span class="activity-info__date-month">{{
+                  new Date(item.stime.replace(/-/g, "/")).getMonth() | monthText
+                }}</span>
+              </div>
+              <div class="activity-info__right">
+                <div class="activity-info__title">{{ item.title }}</div>
+                <div class="activity-info__time">
+                  报名截止：{{ item.jtime }} |
+                  <span class="activity-item__description">
+                    {{ item.joins }}人已报名
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- 新手引导 -->
@@ -323,7 +341,26 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userType', 'userInfo'])
+    ...mapGetters(['userType', 'userInfo']),
+    // 9.9特卖显示
+    bargainVisible () {
+      return this.bargainList && this.bargainList.length
+    },
+    // 限时闪购显示
+    ollageGoodsVisible () {
+      return this.ollageGoods && this.ollageGoods.length
+    },
+    // 9.9特卖轮播列表，如果存在限时抢购，一次轮播一个商品，将二维数组转换为一维数组
+    bargainSwipeList () {
+      if (this.ollageGoodsVisible) {
+        return [].concat(
+          ...this.bargainList.map(obj => {
+            return obj.map(item => [item])
+          })
+        )
+      }
+      return this.bargainList
+    }
   },
   created () {
     var guidetype = api.getPrefs({ sync: true, key: 'guidetype' })
@@ -366,14 +403,14 @@ export default {
     },
     /* 获取轮播图 */
     getBannerIndex () {
-      getBannerIndex().then((res) => {
+      getBannerIndex().then(res => {
         this.swipeImages = res.data
         this.swipeChange(0)
       })
     },
     /* 获取我的app列表，并手动打入一个全部 */
     getMyApp () {
-      getMyApp().then((res) => {
+      getMyApp().then(res => {
         this.myAppList = res.data
       })
     },
@@ -389,22 +426,24 @@ export default {
     /* 签到 */
     sign () {
       this.signLoading = true
-      signin().then((res) => {
-        this.signLoading = false
-        Toast({
-          message: res.message
+      signin()
+        .then(res => {
+          this.signLoading = false
+          Toast({
+            message: res.message
+          })
+          this.$store.dispatch('getMyAccount')
+          this.mtjEvent({
+            eventId: 4
+          })
         })
-        this.$store.dispatch('getMyAccount')
-        this.mtjEvent({
-          eventId: 4
+        .catch(() => {
+          this.signLoading = false
         })
-      }).catch(() => {
-        this.signLoading = false
-      })
     },
     /* 获取幸福币专区 */
     getCreditsGoodsList () {
-      getCreditsGoodsList().then((res) => {
+      getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
@@ -418,7 +457,7 @@ export default {
     },
     /* 获取9.9特卖区 */
     getBargainGoods () {
-      getBargainGoods().then((res) => {
+      getBargainGoods().then(res => {
         this.bargainList = res.data
       })
     },
@@ -432,7 +471,7 @@ export default {
     },
     /* 获取闪购专区 */
     getOllageGoods () {
-      getOllageGoods().then((res) => {
+      getOllageGoods().then(res => {
         this.ollageGoods = res.data
       })
     },
@@ -446,7 +485,7 @@ export default {
     },
     /* 获取活动列表 */
     getActivityList () {
-      getActivityList().then((res) => {
+      getActivityList().then(res => {
         this.activityList = res.data
       })
     },
@@ -478,7 +517,7 @@ export default {
     },
     /* 获取美好头条 */
     getMhttList () {
-      getMhttList().then((res) => {
+      getMhttList().then(res => {
         this.frontList = res.data || []
       })
     },
@@ -501,6 +540,21 @@ export default {
       } else {
         this.$router.push(url)
       }
+    },
+    // 当9.9或者抢购显示隐藏状态有更改，比如从显示两个变为显示一个,触发重绘专区的轮播组件
+    resizeSwipeGoods () {
+      this.$nextTick(() => {
+        this.$refs.bragainSwipe && this.$refs.bragainSwipe.resize()
+        this.$refs.ollageGoods && this.$refs.ollageGoods.resize()
+      })
+    }
+  },
+  watch: {
+    ollageGoodsVisible () {
+      this.resizeSwipeGoods()
+    },
+    bargainVisible () {
+      this.resizeSwipeGoods()
     }
   },
   filters: {
@@ -637,16 +691,20 @@ export default {
 .coin-box {
   margin: 0 20px 40px;
   padding-bottom: 30px;
-  box-shadow: 0px 0px 12px 1px rgba(99, 99, 99, 0.2);
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   &__header {
     padding: 30px;
     border-radius: 10px;
-    background: linear-gradient(0deg, #ffffff, #ffdec8);
+    background: linear-gradient(0deg, #ffffff, #ffe5d3);
+    &-logo {
+      height: 40px;
+    }
   }
   &__title {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 34px;
     font-weight: 500;
     color: #ca864e;
@@ -660,6 +718,22 @@ export default {
       color: #fff;
       display: flex;
       align-items: center;
+    }
+    .coin-number-box {
+      display: flex;
+      align-items: center;
+      width: 154px;
+      height: 58px;
+      font-size: 28px;
+      color: #fff;
+      background: url("~@/assets/imgs/home-credits-num.png");
+      background-size: cover;
+    }
+    .coin-number {
+      width: 100%;
+      padding-left: 50px;
+      padding-right: 10px;
+      text-align: center;
     }
   }
   &__content {
@@ -687,35 +761,80 @@ export default {
     width: 100%;
   }
 }
+/* 专区容器 */
+.goods-container {
+  display: flex;
+  padding: 0 20px;
+}
+/* 9.9特卖 */
+.bargain-sale {
+  border-radius: 10px;
+  background-image: url("~@/assets/imgs/home-sale.png");
+  background-size: cover;
+}
+/* 限时闪购 */
+.ollage-goods {
+  border-radius: 10px;
+  background-image: url("~@/assets/imgs/home-limit.png");
+  background-size: cover;
+}
+.bargain-sale + .ollage-goods {
+  margin-left: 20px;
+}
 /* 专区 */
 .life-box {
+  flex: 1;
+  width: 0;
   padding: 30px 0;
   &__title {
     font-size: 34px;
     font-weight: 500;
     line-height: 1;
-    margin-bottom: 20px;
-    padding: 0 20px;
+    padding-left: 20px;
+    margin-bottom: 10px;
   }
   &__description {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 20px;
+    margin-bottom: 20px;
     font-size: 24px;
     line-height: 1;
-    margin-bottom: 30px;
-    padding: 0 20px;
+    color: #22222280;
+  }
+  .tf-icon-right {
+    color: #38383866;
   }
   /deep/ .van-swipe-item {
-    padding: 0 20px;
+    padding: 0 10px;
   }
-  /deep/ .van-image__img {
+  /deep/ .tf-image-item {
+    background: #ffffff;
+    border: 4px solid #ffffff;
     border-radius: 10px;
   }
   /deep/ .van-image__error {
     border-radius: 10px;
   }
+  .price-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 44px;
+    position: absolute;
+    bottom: -19px;
+    left: 50%;
+    margin-left: -65px;
+    background: #eb5841;
+    border-radius: 22px;
+    font-size: 26px;
+    line-height: 1;
+    color: #fff;
+  }
 }
+/* 社区活动 */
 .community-box {
   padding-left: 20px;
   margin-bottom: 60px;
@@ -734,7 +853,9 @@ export default {
     overflow-x: auto;
     overflow-y: hidden;
     .activity-item {
-      width: 480px;
+      display: flex;
+      flex-direction: column;
+      width: 600px;
       flex-shrink: 0;
     }
     .activity-item + .activity-item {
@@ -742,53 +863,58 @@ export default {
     }
     .activity-item__image {
       width: 100%;
-      height: 270px;
+      height: 276px;
       background: #f0f0f0;
-      border-radius: 10px;
+      border-radius: 10px 10px 0px 0px;
       /deep/ .van-image__img {
-        border-radius: 10px;
+        border-radius: 10px 10px 0px 0px;
         object-fit: cover;
       }
     }
-    /deep/ .activity-item__description {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 66px;
-      line-height: 66px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 0px 0px 10px 10px;
-      font-size: 24px;
-      color: #fff;
-      text-align: center;
-    }
     .activity-info {
       display: flex;
-      margin-top: 10px;
       width: 100%;
-      .activity-info__right {
-        width: calc(100% - 94px);
+      height: 120px;
+      background: #f2f2f4;
+      border-radius: 0px 0px 10px 10px;
+      &__right {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        flex: 1;
+        padding: 20px;
       }
-      &__day {
-        width: 74px;
-        height: 74px;
-        background: #f2f2f4;
-        border-radius: 4px;
-        margin-right: 20px;
-        color: #8f8f94;
-        font-size: 20px;
+      &__date {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-evenly;
+        width: 58px;
+        height: calc(100% - 20px);
+        margin-left: 20px;
+        background: url("~@/assets/imgs/home-activity-tag.png");
+        background-size: cover;
+        color: #8f8f94;
+        font-size: 20px;
+        &-day {
+          font-size: 30px;
+          font-weight: 500;
+          color: #ffffff;
+          border-bottom: 2px solid #fff;
+        }
+        &-month {
+          font-size: 24px;
+          font-weight: 500;
+          color: #ffffff;
+        }
+      }
+      .activity-item__description {
+        font-size: 24px;
+        color: @red-dark;
       }
       &__title {
         width: 100%;
-        font-size: 28px;
+        font-size: 30px;
         @text-ellipsis();
       }
       &__time {
@@ -799,14 +925,14 @@ export default {
   }
 }
 .front-page-container {
-  padding: 20px 20px 60px;
+  padding: 40px 20px 80px;
 }
 .front-page {
-  padding: 24px 30px 30px;
-  height: 142px;
-  background: url('../../assets/imgs/toutiao_bg.png') no-repeat;
-  background-size: contain;
+  padding: 30px;
+  height: 146px;
   border-radius: 10px;
+  border: 3px solid #222222;
+  background: #fff;
   .notice-swipe {
     height: 80px;
     /deep/ .van-swipe-item {
@@ -838,19 +964,6 @@ export default {
   color: #383838;
   line-height: 1;
 }
-.price-tag {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 140px;
-  height: 60px;
-  line-height: 60px;
-  background: linear-gradient(-90deg, @orange-dark, @orange);
-  border-radius: 30px 30px 0px 30px;
-  color: #fff;
-  text-align: center;
-  font-size: 24px;
-}
 /deep/ .van-notice-bar__content {
   width: 100%;
 }
@@ -870,14 +983,6 @@ export default {
   border-radius: 18px;
   .tf-icon {
     margin-right: 6px;
-  }
-}
-.coin-number {
-  font-size: 36px;
-  font-weight: 500;
-  color: @red-dark;
-  .tf-icon {
-    font-size: 28px;
   }
 }
 .coin-message {
@@ -907,7 +1012,7 @@ export default {
     display: flex;
     align-items: center;
     &::before {
-      content: '';
+      content: "";
       display: block;
       width: 8px;
       height: 8px;
