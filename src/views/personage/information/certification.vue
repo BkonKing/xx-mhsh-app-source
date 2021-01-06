@@ -81,10 +81,10 @@
       <div class="btnBox">
         <van-button
           class="btn"
-          @click="submit"
           :color="bol ? 'red' : 'gray'"
           :disabled="!bol"
           block
+          @click="goback"
           >实名认证</van-button
         >
       </div>
@@ -199,11 +199,11 @@ export default {
     // 回退
     goback() {
       this.$router.go(-1);
-    },
-    // 认证
-    submit() {
-      this.isShow = true;
     }
+    // 认证
+    // submit() {
+    //   this.isShow = true;
+    // }
   },
   created() {
     this.personName = this.userInfo.realname;

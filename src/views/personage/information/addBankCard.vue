@@ -253,7 +253,10 @@ export default {
         .then(res => {
           // console.log("银行名称", res);
           this.bankCardName = res.cnm + "   储蓄卡";
-          window.localStorage.setItem("bankCardNum", this.bankCardNum);
+          window.localStorage.setItem(
+            "addBankCardInfo",
+            JSON.stringify([this.bankCardNum, this.personName, this.phone])
+          );
         })
         .catch(error => {
           console.log(error);
