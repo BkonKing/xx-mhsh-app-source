@@ -13,13 +13,12 @@
         </div>
       </template>
     </van-nav-bar>
-  
-    
   </div>
 </template>
 
 <script>
 import { NavBar } from "vant";
+import { payAgreement } from "@/api/personage.js";
 export default {
   components: {
     [NavBar.name]: NavBar
@@ -29,6 +28,10 @@ export default {
     goback() {
       this.$router.go(-1);
     }
+  },
+  async created() {
+    const res = await payAgreement();
+    console.log(res);
   }
 };
 </script>

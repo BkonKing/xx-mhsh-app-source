@@ -17,9 +17,9 @@
       储蓄卡
     </div>
     <div class="conBox">
-      <div class="item" v-for="(item, index) in 20" :key="index">
-        <img src="@/assets/img/gsyh.png" alt="" />
-        <div class="txt">中国工商银行</div>
+      <div class="item" v-for="(item, index) in bankCardList" :key="index">
+        <img :src="item.bank_ico" alt="" />
+        <div class="txt">{{ item.bank_name }}</div>
       </div>
       <div class="item"></div>
     </div>
@@ -37,6 +37,7 @@ import {
   Toast,
   uploader
 } from "vant";
+import { supBankList } from "@/api/personage.js";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -48,11 +49,21 @@ export default {
     Toast,
     [uploader.name]: uploader
   },
+  data() {
+    return {
+      bankCardList: []
+    };
+  },
   methods: {
     // 回退
     goback() {
       this.$router.go(-1);
     }
+  },
+  async created() {
+    const res = await supBankList();
+    this.bankCardList = res.data;
+    // console.log("支持银行卡列表", res);
   }
 };
 </script>

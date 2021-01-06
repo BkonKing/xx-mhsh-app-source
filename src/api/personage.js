@@ -303,4 +303,27 @@ export function getBankInfo(data) {
   });
 }
 
+// 支持的银行卡列表
+export function supBankList() {
+  return request({
+    url: "/my/fupay/supBankList",
+    method: "post"
+  });
+}
+
+// 我的银行卡
+export function getBankList() {
+  return request({
+    url: "/my/fupay/getBankList",
+    method: "post"
+  });
+}
+// 支付协议
+export function payAgreement() {
+  return request({
+    url: "/ulogin/agreement/pay_agreement",
+    method: "post"
+  });
+}
+
 /* 基础信息 end */

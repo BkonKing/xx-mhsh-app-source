@@ -47,20 +47,26 @@
             <i class="font_family icon-xiangji right"></i>
           </template>
         </van-field>
-        <van-field class="field" v-model="value3" placeholder="银行卡号">
-          <template #label>
-            <div class="label2">
-              卡类型
-            </div>
-          </template>
-        </van-field>
-        <van-field class="field" v-model="phone" placeholder="银行预留手机号">
-          <template #label>
-            <div class="label2">
-              手机号
-            </div>
-          </template>
-        </van-field>
+        <div v-if="bankCardName && phone">
+          <van-field
+            class="field"
+            v-model="bankCardName"
+            placeholder="银行卡号"
+          >
+            <template #label>
+              <div class="label2">
+                卡类型
+              </div>
+            </template>
+          </van-field>
+          <van-field class="field" v-model="phone" placeholder="银行预留手机号">
+            <template #label>
+              <div class="label2">
+                手机号
+              </div>
+            </template>
+          </van-field>
+        </div>
       </div>
       <div class="other">
         <span
@@ -162,7 +168,7 @@ export default {
       isShow: false,
       personName: "",
       bankCardNum: "",
-      value3: "",
+      bankCardName: "",
       phone: "",
       checked: true,
       showPhone: false
@@ -170,7 +176,9 @@ export default {
   },
   computed: {
     bol() {
-      return true || this.personName || this.bankCardNum;
+      return (
+        this.personName && this.bankCardNum && this.bankCardName && this.phone
+      );
     },
     ...mapGetters(["userInfo"])
   },
@@ -220,14 +228,15 @@ export default {
     },
     // 获取银行卡所属银行名称
     getCardName() {
-      // getBankInfo({ bank_card: this.bankCardNum })
-      //   .then(res => {
-      //     console.log("银行名称", res);
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   });
-      console.log(this.bankCardNum);
+      getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, "") })
+        .then(res => {
+          // console.log("银行名称", res);
+          this.bankCardName = res.cnm + "   储蓄卡";
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      // console.log(this.bankCardNum);
     }
   },
   created() {

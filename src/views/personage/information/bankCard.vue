@@ -39,6 +39,7 @@
 
 <script>
 import { NavBar, Dialog } from "vant";
+import { getBankList } from "@/api/personage.js";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -79,6 +80,10 @@ export default {
       // 这个方法主要是用来将每次手指移出之后将计时器清零
       clearInterval(this.Loop);
     }
+  },
+  async created() {
+    const res = await getBankList();
+    console.log("银行卡", res);
   }
 };
 </script>
