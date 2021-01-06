@@ -84,7 +84,7 @@
           :color="bol ? 'red' : 'gray'"
           :disabled="!bol"
           block
-          @click="goback"
+          @click="submit"
           >实名认证</van-button
         >
       </div>
@@ -97,7 +97,7 @@
       </div>
       <div v-else>
         <div class="t1">不支持此卡</div>
-        <div class="t1">请使用支持的银行卡</div>
+        <div class="t1">请使用支持的银行储蓄卡</div>
         <div class="red" @click="isShow = false">知道了</div>
       </div>
     </van-popup>
@@ -140,7 +140,8 @@ export default {
       phone: "",
       bankCardNum: "",
       bankCardName: "",
-      idCard: ""
+      idCard: "",
+      message: this.$route.query.message
     };
   },
   methods: {
@@ -199,11 +200,11 @@ export default {
     // 回退
     goback() {
       this.$router.go(-1);
-    }
+    },
     // 认证
-    // submit() {
-    //   this.isShow = true;
-    // }
+    submit() {
+      this.isShow = true;
+    }
   },
   created() {
     this.personName = this.userInfo.realname;
