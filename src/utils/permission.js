@@ -41,16 +41,18 @@ export function handlePermission ({
   name,
   message,
   className,
-  overlayStyle
+  overlayStyle,
+  title = '提示',
+  confirmButtonText = '去开启'
 }) {
   return new Promise((resolve, reject) => {
     const perms = hasPermission(name)
     if (!perms[0].granted) {
       if (message) {
         Dialog.confirm({
-          title: '提示',
+          title,
           message,
-          confirmButtonText: '去开启',
+          confirmButtonText,
           className,
           overlayStyle
         })

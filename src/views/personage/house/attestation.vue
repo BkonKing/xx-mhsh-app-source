@@ -28,7 +28,7 @@
                 {{ house_name }}
               </div>
               <div v-else class="house-text van-multi-ellipsis--l2">
-                {{ house_name || '请选择' }}
+                {{ house_name || "请选择" }}
               </div>
             </template>
           </tf-list-item>
@@ -51,7 +51,11 @@
               <div class="tf-text">{{ userText[house_role] }}</div>
             </template>
           </tf-list-item>
-          <tf-list-item title="真实姓名" :showArrow="false" :IFocusStatus="true">
+          <tf-list-item
+            title="真实姓名"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
               <div v-if="mode === 1 && !editMode" class="tf-text">
                 {{ realname }}
@@ -74,7 +78,7 @@
         <tf-list v-if="type === 1 && mode === 1 && !editMode">
           <tf-list-item
             class="default-house-item"
-            title="设置当前房屋"
+            title="设为当前房屋"
             :showArrow="false"
           >
             <template v-slot:right>
@@ -91,6 +95,7 @@
       </div>
       <div class="page-footer-placeholder">
         <div class="page-footer">
+          <!-- 新增或者编辑模式 -->
           <template v-if="!mode || editMode">
             <van-checkbox
               v-if="type === 0"
@@ -200,7 +205,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'otherAgreement'])
+    ...mapGetters(['userInfo', 'otherAgreement', 'currentProject'])
   },
   created () {
     this.type = parseInt(this.$route.query.type)
@@ -219,13 +224,25 @@ export default {
       this.realname = realname
       this.mobile = mobile
       this.house_role = house_role
-      this.house_name = this.house_name = project_name + fc_info
+      this.house_name = project_name + fc_info
     } else if (this.type === 1) {
       if (this.mode === 1) {
         this.bindingId = this.$route.query.id
         this.bindingRoomInfo()
       } else {
         this.mobile = this.userInfo.mobile
+      }
+    }
+    // 成员模式
+    if (this.type === 0) {
+      // 成员不需要业主选项
+      this.items.shift()
+      // 新增成员模式房屋默认值为业主当前房产
+      if (this.mode === 0) {
+        const { project_id, house_id, project_name, fc_info } = this.currentProject
+        this.project_id = project_id
+        this.house_id = house_id
+        this.house_name = project_name + fc_info
       }
     }
     this.title = this.type ? '房屋认证' : this.mode ? '成员' : '添加成员'
@@ -241,8 +258,7 @@ export default {
         unit_id,
         project_name
       } = houseSelected
-      this.house_name = house_name
-      this.project_name = project_name
+      this.house_name = project_name + house_name
       this.house_id = house_id
       this.project_id = project_id
       this.building_id = building_id
@@ -251,7 +267,7 @@ export default {
     }
   },
   methods: {
-    /* 提交验证 */
+    // 提交验证
     submit () {
       if (!this.agreeValue && this.type === 0) {
         Toast('请先阅读并同意会员协议')
@@ -275,11 +291,11 @@ export default {
           message: '请填写手机号'
         }
       ]
-      validForm(validator).then((res) => {
+      validForm(validator).then(res => {
         this.submitType()
       })
     },
-    /* 提交判断 */
+    // 提交判断
     submitType () {
       if (this.type) {
         this.roomAttest()
@@ -287,7 +303,7 @@ export default {
         this.mode ? this.updateMember() : this.addMember()
       }
     },
-    /* 新增成员 */
+    // 新增成员
     addMember () {
       addMember({
         project_id: this.project_id,
@@ -295,7 +311,7 @@ export default {
         realname: this.realname,
         mobile: this.mobile,
         house_role: this.house_role
-      }).then((res) => {
+      }).then(res => {
         if (res.success) {
           Dialog.alert({
             title: '添加成功'
@@ -310,7 +326,7 @@ export default {
         }
       })
     },
-    /* 更新成员 */
+    // 更新成员
     updateMember () {
       updateMember({
         id: this.id,
@@ -318,7 +334,7 @@ export default {
         realname: this.realname,
         mobile: this.mobile,
         house_role: this.house_role
-      }).then((res) => {
+      }).then(res => {
         if (res.success) {
           Toast.success('修改成功')
         } else {
@@ -326,7 +342,7 @@ export default {
         }
       })
     },
-    /* 删除 */
+    // 删除
     onDelete () {
       Dialog.confirm({
         title: '是否确定删除',
@@ -339,7 +355,7 @@ export default {
           // on cancel
         })
     },
-    /* 房屋认证 */
+    // 房屋认证
     roomAttest () {
       this.submitLoad = true
       const params = {
@@ -353,34 +369,36 @@ export default {
         house_role: this.house_role,
         is_default: this.checked ? 1 : 0
       }
-      roomAttest(params).then((res) => {
-        this.submitLoad = false
-        if (res.success) {
-          Toast.success('审核成功')
-          if (this.userInfo.user_type == 0) {
-            this.$store.dispatch('getMyAccount')
+      roomAttest(params)
+        .then(res => {
+          this.submitLoad = false
+          if (res.success) {
+            Toast.success('审核成功')
+            if (this.userInfo.user_type == 0) {
+              this.$store.dispatch('getMyAccount')
+            }
+            if (this.select == '1') {
+              this.$store.dispatch('getHouse')
+            }
+            setTimeout(() => {
+              this.$router.go(-1)
+            }, 1000)
+            this.mtjEvent({
+              eventId: 24
+            })
+          } else {
+            Toast.fail('提交失败')
           }
-          if (this.select == '1') {
-            this.$store.dispatch('getHouse')
-          }
-          setTimeout(() => {
-            this.$router.go(-1)
-          }, 1000)
-          this.mtjEvent({
-            eventId: 24
-          })
-        } else {
-          Toast.fail('提交失败')
-        }
-      }).catch(() => {
-        this.submitLoad = false
-      })
+        })
+        .catch(() => {
+          this.submitLoad = false
+        })
     },
-    /* 获取认证房间详情 */
+    // 获取认证房间详情
     bindingRoomInfo () {
       bindingRoomInfo({
         bindingId: this.bindingId
-      }).then((res) => {
+      }).then(res => {
         const {
           realname,
           mobile,
@@ -406,20 +424,20 @@ export default {
         this.checked = is_default === '1'
       })
     },
-    /* 设置当前房间 */
+    // 设置当前房间
     bindingDefault () {
       bindingDefault({
         binding_id: this.bindingId
-      }).then((res) => {
+      }).then(res => {
         Toast.success('当前房间设置成功!')
         this.$store.dispatch('getHouse')
       })
     },
-    /* 解除绑定房间 */
+    // 解除绑定房间
     unBinding () {
       unBinding({
         binding_id: this.bindingId
-      }).then((res) => {
+      }).then(res => {
         Dialog.alert({
           title: '解绑成功！'
         }).then(() => {
@@ -428,11 +446,11 @@ export default {
         })
       })
     },
-    /* 删除报备成员 */
+    // 删除报备成员
     deleteMember () {
       deleteMember({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         Dialog.alert({
           title: '成员删除成功'
         }).then(() => {
@@ -440,25 +458,35 @@ export default {
         })
       })
     },
-    /* 选择房屋跳转 */
+    // 选择房屋跳转
     goCheckHouse () {
       if (this.mode === 1 && !this.editMode) {
         return
       }
-      this.$router.push('/pages/personage/house/select-community')
+      if (this.type === 0) {
+        this.$router.push({
+          name: 'houSeselectHouse',
+          query: {
+            mode: 2,
+            id: this.house_id
+          }
+        })
+      } else {
+        this.$router.push('/pages/personage/house/select-community')
+      }
     },
-    /* 查看转编辑 */
+    // 查看转编辑
     goEdit () {
       this.agreeValue = true
       this.editMode = true
     },
-    /* 返回并销毁当前实例 */
     goback () {
       this.$router.go(-1)
     }
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name !== 'houSelectCommunity' && to.name !== 'agreement') {
+    const whiteList = ['houSelectCommunity', 'agreement', 'houSeselectHouse']
+    if (whiteList.indexOf(to.name) === -1) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

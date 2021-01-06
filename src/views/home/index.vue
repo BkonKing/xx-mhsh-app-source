@@ -301,6 +301,7 @@ import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
+import { handlePermission } from '@/utils/permission'
 export default {
   name: 'home',
   components: {
@@ -425,9 +426,12 @@ export default {
     },
     /* 签到 */
     sign () {
-      this.signLoading = true
-      signin()
-        .then(res => {
+      handlePermission({
+        title: '定位服务未开启',
+        message: '为了提供更好服务，需要您开启定位'
+      }).then(() => {
+        this.signLoading = true
+        signin().then((res) => {
           this.signLoading = false
           Toast({
             message: res.message
@@ -436,10 +440,10 @@ export default {
           this.mtjEvent({
             eventId: 4
           })
-        })
-        .catch(() => {
+        }).catch(() => {
           this.signLoading = false
         })
+      })
     },
     /* 获取幸福币专区 */
     getCreditsGoodsList () {

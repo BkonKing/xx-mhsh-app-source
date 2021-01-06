@@ -136,6 +136,7 @@
 import tfCalendar from '@/components/tf-calendar'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
+import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
   components: {
@@ -180,21 +181,26 @@ export default {
     },
     /* 签到请求 */
     signin () {
-      this.signLoading = true
-      signin()
-        .then(res => {
-          this.signLoading = false
-          this.$toast({
-            message: res.message
+      handlePermission({
+        title: '定位服务未开启',
+        message: '为了提供更好服务，需要您开启定位'
+      }).then(() => {
+        this.signLoading = true
+        signin()
+          .then(res => {
+            this.signLoading = false
+            this.$toast({
+              message: res.message
+            })
+            this.getCreditsAccount()
+            this.mtjEvent({
+              eventId: 4
+            })
           })
-          this.getCreditsAccount()
-          this.mtjEvent({
-            eventId: 4
+          .catch(() => {
+            this.signLoading = false
           })
-        })
-        .catch(() => {
-          this.signLoading = false
-        })
+      })
     },
     /* 幸福币明细 */
     goCoinRecord () {
@@ -249,15 +255,17 @@ export default {
     /* 认证提醒 */
     authentication (url) {
       if (this.userType == 0) {
-        this.$dialog.confirm({
-          title: '提示',
-          message: '您尚未认证房间，是否去认证？',
-          confirmButtonText: '去认证'
-        }).then(res => {
-          this.$router.push(
-            '/pages/personage/house/attestation?type=1&mode=0&select=1'
-          )
-        })
+        this.$dialog
+          .confirm({
+            title: '提示',
+            message: '您尚未认证房间，是否去认证？',
+            confirmButtonText: '去认证'
+          })
+          .then(res => {
+            this.$router.push(
+              '/pages/personage/house/attestation?type=1&mode=0&select=1'
+            )
+          })
       } else {
         this.$router.push(url)
       }

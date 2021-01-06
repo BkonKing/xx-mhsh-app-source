@@ -269,6 +269,7 @@ import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
+import { handlePermission } from '@/utils/permission'
 export default {
   name: 'personage',
   components: {
@@ -299,18 +300,25 @@ export default {
     /* 签到 */
     sign () {
       if (this.userInfo.signin_today === '0') {
-        this.signLoading = true
-        signin().then((res) => {
-          this.signLoading = false
-          Toast({
-            message: res.message
-          })
-          this.$store.dispatch('getMyAccount')
-          this.mtjEvent({
-            eventId: 4
-          })
-        }).catch(() => {
-          this.signLoading = false
+        handlePermission({
+          title: '定位服务未开启',
+          message: '为了提供更好服务，需要您开启定位'
+        }).then(() => {
+          this.signLoading = true
+          signin()
+            .then(res => {
+              this.signLoading = false
+              Toast({
+                message: res.message
+              })
+              this.$store.dispatch('getMyAccount')
+              this.mtjEvent({
+                eventId: 4
+              })
+            })
+            .catch(() => {
+              this.signLoading = false
+            })
         })
       } else {
         // 已签到，弹出签到日历
