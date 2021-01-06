@@ -79,7 +79,7 @@
             class="nameCell"
             is-link
             center
-            @click="$router.push('/pages/personage/information/addBankCard')"
+            @click="$router.push('/pages/personage/information/BankCard')"
           >
             <template #title>
               <div class="title">

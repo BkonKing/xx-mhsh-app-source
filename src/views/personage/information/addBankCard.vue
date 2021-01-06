@@ -44,7 +44,7 @@
               v-if="bankCardNum != ''"
               @click="bankCardNum = ''"
             ></i>
-            <i class="font_family icon-xiangji right"></i>
+            <i class="font_family icon-xiangji right" @click="openCamera"></i>
           </template>
         </van-field>
         <div v-if="bankCardName && phone">
@@ -183,6 +183,27 @@ export default {
     ...mapGetters(["userInfo"])
   },
   methods: {
+    // 打开摄像头
+    openCamera() {
+      const baiduAd = api.require("baiduIdentifyOCR");
+      if (api.systemType === "android") {
+        baiduAd.init((ret, err) => {
+          if (ret.status) {
+            baiduAd.bankCardOCROnline(({ status, result }, err) => {
+              if (status) {
+                this.bankCardNum = result.split("\n")[0].split("：")[1];
+              }
+            });
+          }
+        });
+      } else {
+        baiduAd.bankCardOCROnline(({ status, result }, err) => {
+          if (status) {
+            this.bankCardNum = result.result.bank_card_number;
+          }
+        });
+      }
+    },
     // 格式化银行卡号
     formatCardNumber(cardNum) {
       // 获取input的dom对象，这里因为用的是vant ui的input，所以需要这样拿到
@@ -232,6 +253,7 @@ export default {
         .then(res => {
           // console.log("银行名称", res);
           this.bankCardName = res.cnm + "   储蓄卡";
+          window.localStorage.setItem("bankCardNum", this.bankCardNum);
         })
         .catch(error => {
           console.log(error);

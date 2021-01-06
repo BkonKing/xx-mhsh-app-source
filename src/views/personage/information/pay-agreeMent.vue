@@ -9,10 +9,11 @@
     >
       <template #title>
         <div>
-          银行支付服务协议
+          {{ info.title }}
         </div>
       </template>
     </van-nav-bar>
+    <div class="content" v-html="info.content"></div>
   </div>
 </template>
 
@@ -23,6 +24,11 @@ export default {
   components: {
     [NavBar.name]: NavBar
   },
+  data() {
+    return {
+      info: ""
+    };
+  },
   methods: {
     // 回退
     goback() {
@@ -31,9 +37,23 @@ export default {
   },
   async created() {
     const res = await payAgreement();
+    this.info = res.data;
     console.log(res);
   }
 };
 </script>
 
-<style></style>
+<style lang="less" scoped>
+.pay-agreeMent {
+  height: 100%;
+  overflow: auto;
+  .content {
+    padding: 30px 20px;
+    font-size: 25px !important;
+    font-family: PingFang SC;
+    font-weight: 400;
+    color: #222222;
+    line-height: 44px;
+  }
+}
+</style>

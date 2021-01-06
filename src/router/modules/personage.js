@@ -294,6 +294,7 @@ const personageRouter = [
         "@/views/personage/information/faceCollect.vue"
       )
   },
+  //实名认证
   {
     path: "/pages/personage/information/certification",
     name: "certification",
@@ -303,6 +304,7 @@ const personageRouter = [
         "@/views/personage/information/certification.vue"
       )
   },
+  // 个人信息
   {
     path: "/pages/personage/information/personInfo",
     name: "personInfo",
@@ -312,6 +314,7 @@ const personageRouter = [
         "@/views/personage/information/personInfo.vue"
       )
   },
+  //实名信息
   {
     path: "/pages/personage/information/realNameInfo",
     name: "realNameInfo",
@@ -321,6 +324,7 @@ const personageRouter = [
         "@/views/personage/information/realNameInfo.vue"
       )
   },
+  // 添加银行卡
   {
     path: "/pages/personage/information/addBankCard",
     name: "addBankCard",
@@ -330,6 +334,7 @@ const personageRouter = [
         "@/views/personage/information/addBankCard.vue"
       )
   },
+  // 支持的银行卡列表
   {
     path: "/pages/personage/information/support-bankCard-list",
     name: "support-bankCard-list",
@@ -339,6 +344,7 @@ const personageRouter = [
         "@/views/personage/information/support-bankCard-list.vue"
       )
   },
+  // 验证预留手机号
   {
     path: "/pages/personage/information/verifyPhone",
     name: "verifyPhone",
@@ -348,6 +354,7 @@ const personageRouter = [
         "@/views/personage/information/verifyPhone.vue"
       )
   },
+  // 支付协议
   {
     path: "/pages/personage/information/pay-agreeMent",
     name: "pay-agreeMent",
@@ -357,6 +364,7 @@ const personageRouter = [
         "@/views/personage/information/pay-agreeMent.vue"
       )
   },
+  // 我的银行卡
   {
     path: "/pages/personage/information/bankCard",
     name: "bankCard",

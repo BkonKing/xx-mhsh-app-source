@@ -14,49 +14,77 @@
         <div class="t2">请填写您的真实姓名</div>
       </div>
       <div class="item-card">
-        <van-field class="field" placeholder="真实姓名">
+        <van-field class="field" v-model="personName" placeholder="真实姓名">
           <template #label>
             <div class="label">姓名</div>
           </template>
         </van-field>
-        <van-field class="field" placeholder="身份证号码">
+        <van-field
+          class="field"
+          @change="getIdCard"
+          v-model="idCard"
+          placeholder="身份证号码"
+        >
           <template #label>
             <div class="label">身份证</div>
           </template>
         </van-field>
       </div>
       <div class="item-card">
-        <van-field class="field" v-model="value" placeholder="储蓄卡">
+        <van-field
+          ref="cardInput"
+          @input="formatCardNumber(bankCardNum)"
+          class="field"
+          v-model="bankCardNum"
+          placeholder="储蓄卡"
+          @change="getBankCardName"
+        >
           <template #label>
             <div class="label">卡号</div>
           </template>
           <template #button>
             <i
-              v-if="value.length > 0"
+              v-if="bankCardNum.length > 0"
               class="font_family icon-close-circle-fill close"
-              @click="value = ''"
+              @click="bankCardNum = ''"
             ></i>
           </template>
           <template #right-icon>
             <i class="font_family icon-xiangji xiangji"></i>
           </template>
         </van-field>
-        <van-field class="field card-sort" v-if="false">
+        <van-field
+          v-if="bankCardName"
+          v-model="bankCardName"
+          class="field card-sort"
+        >
           <template #label>
             <div class="label">卡类型</div>
           </template>
         </van-field>
-        <van-field class="field" type="tel" placeholder="手机号">
+        <van-field
+          class="field"
+          v-model="phone"
+          type="tel"
+          placeholder="手机号"
+        >
           <template #label>
             <div class="label">手机号</div>
           </template>
         </van-field>
       </div>
       <div class="toCard">
-        支持的银行>
+        <span @click="tosubBankCardList">
+          支持的银行>
+        </span>
       </div>
       <div class="btnBox">
-        <van-button class="btn" @click="submit" color="#aaaaaa" block
+        <van-button
+          class="btn"
+          @click="submit"
+          :color="bol ? 'red' : 'gray'"
+          :disabled="!bol"
+          block
           >实名认证</van-button
         >
       </div>
@@ -70,7 +98,7 @@
       <div v-else>
         <div class="t1">不支持此卡</div>
         <div class="t1">请使用支持的银行卡</div>
-        <div class="red">知道了</div>
+        <div class="red" @click="isShow = false">知道了</div>
       </div>
     </van-popup>
     <i
@@ -83,6 +111,8 @@
 
 <script>
 import { NavBar, Field, Button, Popup } from "vant";
+import { mapGetters } from "vuex";
+import { getBankInfo } from "@/api/personage.js";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -90,13 +120,82 @@ export default {
     [Button.name]: Button,
     [Popup.name]: Popup
   },
+  computed: {
+    ...mapGetters(["userInfo"]),
+    bol() {
+      return (
+        this.personName &&
+        this.idCard &&
+        this.bankCardNum &&
+        this.bankCardName &&
+        this.phone
+      );
+    }
+  },
   data() {
     return {
       value: "",
-      isShow: false
+      isShow: false,
+      personName: "",
+      phone: "",
+      bankCardNum: "",
+      bankCardName: "",
+      idCard: ""
     };
   },
   methods: {
+    // 保存身份证到本地
+    getIdCard() {
+      window.localStorage.setItem("idCard", this.idCard);
+    },
+    // 格式化银行卡号
+    formatCardNumber(cardNum) {
+      // 获取input的dom对象，这里因为用的是vant ui的input，所以需要这样拿到
+      const input = this.$refs.cardInput.$el.getElementsByTagName("input")[0];
+      // 获取当前光标的位置
+      const cursorIndex = input.selectionStart;
+      // 字符串中光标之前-的个数
+      const lineNumOfCursorLeft = (
+        cardNum.slice(0, cursorIndex).match(/ /g) || []
+      ).length;
+      // 去掉所有-的字符串
+      const noLine = cardNum.replace(/ /g, "");
+      // 去除格式不对的字符并重新插入-的字符串
+      const newCardNum = noLine
+        .replace(/\D+/g, "")
+        .replace(/(\d{4})/g, "$1 ")
+        .replace(/ $/, "");
+      // 改后字符串中原光标之前-的个数
+      const newLineNumOfCursorLeft = (
+        newCardNum.slice(0, cursorIndex).match(/ /g) || []
+      ).length;
+      // 光标在改后字符串中应在的位置
+      const newCursorIndex =
+        cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft;
+      // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
+      this.$nextTick(() => {
+        this.bankCardNum = newCardNum;
+        // 修正光标位置，nextTick保证在渲染新值后定位光标
+        this.$nextTick(() => {
+          // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
+          input.selectionStart = newCursorIndex;
+          input.selectionEnd = newCursorIndex;
+        });
+      });
+    },
+    // 获取银行卡所属银行名称
+    async getBankCardName() {
+      // console.log(1111);
+      const res = await getBankInfo({
+        bank_card: this.bankCardNum.replace(/\s/g, "")
+      });
+      this.bankCardName = res.cnm + "   储蓄卡";
+      console.log(res);
+    },
+    // 跳转支持的银行卡列表
+    tosubBankCardList() {
+      this.$router.push("/pages/personage/information/support-bankCard-list");
+    },
     // 回退
     goback() {
       this.$router.go(-1);
@@ -105,6 +204,13 @@ export default {
     submit() {
       this.isShow = true;
     }
+  },
+  created() {
+    this.personName = this.userInfo.realname;
+    this.phone =
+      this.userInfo.mobile.substr(0, 3) +
+      "****" +
+      this.userInfo.mobile.substr(7);
   }
 };
 </script>
@@ -158,14 +264,17 @@ export default {
         font-size: 32px;
         position: absolute;
         top: 50%;
-        right: 120px;
+        right: 60px;
         transform: translateY(-50%);
       }
     }
     .toCard {
-      font-size: 22px;
-      color: #8f8f94;
-      text-decoration: underline;
+      text-align: right;
+      span {
+        font-size: 22px;
+        color: #8f8f94;
+        text-decoration: underline;
+      }
     }
   }
   .btnBox {
