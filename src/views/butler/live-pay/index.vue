@@ -127,7 +127,7 @@ export default {
     ...mapGetters(['userInfo', 'currentProject'])
   },
   created () {
-    this.getLifePayList()
+    this.getLifePayList({}, true)
   },
   methods: {
     // 房屋切换
@@ -148,7 +148,7 @@ export default {
       })
     },
     // 获取当前房屋下的生活缴费列表
-    getLifePayList (params) {
+    getLifePayList (params, first) {
       getLifePayList(params).then(
         ({ house_data, table_data, month_data, month_name_text }) => {
           const houseId = this.currentProject.house_id
@@ -161,7 +161,7 @@ export default {
               project_id
             } = obj
             const value = `${project_id}-${expenses_house_id}`
-            if (houseId === house_id) {
+            if (houseId === house_id && first) {
               this.selectedHouse = value
             }
             return {
