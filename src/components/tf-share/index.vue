@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { setStatisticsData } from '@/utils/analysis.js'
 export default {
   name: 'tf-share',
   props: {
@@ -36,6 +37,15 @@ export default {
       this.$emit('closeSwal', val)
     },
     shareFunc (type) {
+      let eventId = ''
+      if (this.shareObj.contentUrl.indexOf('neighbours') > 0) {
+        eventId = 45
+      } else if (this.shareObj.contentUrl.indexOf('goodsDetail') > 0) {
+        eventId = 18
+      } else if (this.shareObj.contentUrl.indexOf('invite') > 0) {
+        eventId = 33
+      }
+      setStatisticsData(3, { event_id: eventId })
       const that = this
       this.$emit('closeSwal', 0)
       let sceneVal = ''
@@ -54,7 +64,7 @@ export default {
             description: that.shareObj.description,
             thumb: that.shareObj.thumb,
             contentUrl: that.shareObj.contentUrl
-          }, function(ret, err) {
+          }, function (ret, err) {
             if (ret.status) {
               // alert('分享成功')
             } else {
