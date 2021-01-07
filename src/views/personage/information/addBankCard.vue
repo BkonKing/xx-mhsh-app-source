@@ -241,14 +241,16 @@ export default {
     },
     // 跳转预留手机号
     toVerifyPhone() {
-      window.localStorage.setItem(
-        "realNameInfo",
-        JSON.stringify([
-          this.bankCardNum,
-          this.personName,
-          this.userInfo.mobile
-        ])
-      );
+      const realNameInfo = {
+        bank_card: this.bankCardNum,
+        realname: this.personName,
+        mobile: this.userInfo.mobile
+      };
+      api.setPrefs({
+        key: "realNameInfo",
+        value: JSON.stringify(realNameInfo)
+      });
+
       this.$router.push("/pages/personage/information/verifyPhone");
     },
     // 回退

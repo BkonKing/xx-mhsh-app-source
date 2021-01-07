@@ -172,15 +172,16 @@ export default {
       ) {
         return;
       }
-      window.localStorage.setItem(
-        "realNameInfo",
-        JSON.stringify([
-          this.personName,
-          this.idCard,
-          this.userInfo.mobile,
-          this.bankCardNum
-        ])
-      );
+      const realNameInfo = {
+        bank_card: this.bankCardNum,
+        realname: this.personName,
+        idcard: this.idCard,
+        mobile: this.userInfo.mobile
+      };
+      api.setPrefs({
+        key: "realNameInfo",
+        value: JSON.stringify(realNameInfo)
+      });
       //回退
       this.$router.go(-1);
     },
