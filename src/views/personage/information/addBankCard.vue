@@ -126,6 +126,10 @@
         </van-button>
       </div>
     </van-popup>
+    <van-popup v-model="show" round class="popup">
+      <div class="t1">{{ message }}</div>
+      <div class="red" @click="show = false">知道了</div>
+    </van-popup>
     <!-- 关闭弹窗按钮 -->
     <div class="close" v-if="isShow" @click="isShow = false">
       <i class="font_family icon-guanbi1 guanbi"></i>
@@ -172,7 +176,9 @@ export default {
       phone: "",
       checked: true,
       showPhone: false,
-      bankIco: ""
+      bankIco: "",
+      message: "",
+      show: false
     };
   },
   computed: {
@@ -263,14 +269,12 @@ export default {
     getCardName() {
       getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, "") })
         .then(res => {
-          console.log("银行名称", res);
           this.bankCardName = res.cnm + "   储蓄卡";
           this.bankIco = res.bank_ico;
         })
         .catch(error => {
           console.log(error);
         });
-      // console.log(this.bankCardNum);
     }
   },
   created() {
@@ -279,6 +283,16 @@ export default {
       this.userInfo.mobile.substr(0, 3) +
       "****" +
       this.userInfo.mobile.substr(7);
+
+    if (this.$route.query.message) {
+      this.show = true;
+      this.message = this.$route.query.message;
+      const realNameInfo = api.getPrefs({ sync: true, key: "realNameInfo" });
+      this.personName = realNameInfo.realname;
+      this.bankCardNum = realNameInfo.bank_card;
+      // this.idCard = realNameInfo.idcard;
+      this.bankCardName = realNameInfo.bank_name;
+    }
   }
 };
 </script>
@@ -435,6 +449,46 @@ export default {
     font-weight: 300;
     color: #8f8f94;
     line-height: 44px;
+  }
+  .popup {
+    width: 560px;
+    height: 320px;
+    background: #ffffff;
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 60px;
+    .gouxuan {
+      font-size: 128px;
+      color: #eb5841;
+    }
+    .txt {
+      font-size: 30px;
+      font-family: PingFang SC;
+      font-weight: 400;
+      color: #000000;
+      line-height: 46px;
+    }
+    .t1 {
+      // margin-top: 40px;
+      padding: 0 30px;
+      font-size: 30px;
+      font-family: PingFang SC;
+      font-weight: 400;
+      color: #000000;
+      line-height: 46px;
+    }
+    .red {
+      width: 300px;
+      height: 60px;
+      background: #eb5841;
+      border-radius: 4px;
+      margin: 60px auto;
+      font-size: 30px;
+      font-family: PingFang SC;
+      font-weight: 400;
+      color: #ffffff;
+      line-height: 60px;
+    }
   }
 }
 </style>

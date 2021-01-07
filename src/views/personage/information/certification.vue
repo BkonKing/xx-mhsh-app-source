@@ -86,15 +86,14 @@
     </div>
     <!-- 认证通过 -->
     <van-popup v-model="isShow" round class="popup">
-      <div v-if="false">
+      <!-- <div v-if="showTc">
         <i class="font_family icon-gouxuan gouxuan"></i>
         <div class="txt">认证成功</div>
-      </div>
-      <div v-else>
-        <div class="t1">不支持此卡</div>
-        <div class="t1">请使用支持的银行储蓄卡</div>
-        <div class="red" @click="isShow = false">知道了</div>
-      </div>
+      </div> -->
+      <!-- <div v-else> -->
+      <div class="t1">{{ message }}</div>
+      <div class="red" @click="isShow = false">知道了</div>
+      <!-- </div> -->
     </van-popup>
     <i
       v-if="isShow"
@@ -137,7 +136,7 @@ export default {
       bankCardNum: "",
       bankCardName: "",
       idCard: "",
-      message: this.$route.query.message,
+      message: "",
       bankIco: ""
     };
   },
@@ -225,13 +224,11 @@ export default {
     },
     // 获取银行卡所属银行名称
     async getBankCardName() {
-      // console.log(1111);
       const res = await getBankInfo({
         bank_card: this.bankCardNum.replace(/\s/g, "")
       });
       this.bankCardName = res.cnm + "   储蓄卡";
       this.bankIco = res.bank_ico;
-      console.log(res);
     },
     // 跳转支持的银行卡列表
     tosubBankCardList() {
@@ -241,10 +238,6 @@ export default {
     goback() {
       this.$router.go(-1);
     }
-    // 认证
-    // submit() {
-    //   this.isShow = true;
-    // }
   },
   created() {
     this.personName = this.userInfo.realname;
@@ -252,6 +245,15 @@ export default {
       this.userInfo.mobile.substr(0, 3) +
       "****" +
       this.userInfo.mobile.substr(7);
+    if (this.$route.query.message) {
+      this.isShow = true;
+      this.message = this.$route.query.message;
+      const realNameInfo = api.getPrefs({ sync: true, key: "realNameInfo" });
+      this.personName = realNameInfo.realname;
+      this.bankCardNum = realNameInfo.bank_card;
+      this.idCard = realNameInfo.idcard;
+      this.bankCardName = realNameInfo.bank_name;
+    }
   }
 };
 </script>
@@ -326,10 +328,12 @@ export default {
     bottom: 20px;
   }
   .popup {
-    width: 460px;
-    height: 315px;
+    width: 560px;
+    height: 320px;
+    background: #ffffff;
+    border-radius: 10px;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 60px;
     .gouxuan {
       font-size: 128px;
       color: #eb5841;
@@ -342,9 +346,8 @@ export default {
       line-height: 46px;
     }
     .t1 {
-      &:first-child {
-        margin-top: 40px;
-      }
+      // margin-top: 40px;
+      padding: 0 30px;
       font-size: 30px;
       font-family: PingFang SC;
       font-weight: 400;
@@ -356,7 +359,7 @@ export default {
       height: 60px;
       background: #eb5841;
       border-radius: 4px;
-      margin: 40px auto;
+      margin: 60px auto;
       font-size: 30px;
       font-family: PingFang SC;
       font-weight: 400;
