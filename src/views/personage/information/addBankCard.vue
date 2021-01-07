@@ -171,7 +171,8 @@ export default {
       bankCardName: "",
       phone: "",
       checked: true,
-      showPhone: false
+      showPhone: false,
+      bankIco: ""
     };
   },
   computed: {
@@ -244,13 +245,14 @@ export default {
       const realNameInfo = {
         bank_card: this.bankCardNum,
         realname: this.personName,
-        mobile: this.userInfo.mobile
+        mobile: this.userInfo.mobile,
+        bank_name: this.bankCardName,
+        bank_ico: this.bankIco
       };
       api.setPrefs({
         key: "realNameInfo",
         value: JSON.stringify(realNameInfo)
       });
-
       this.$router.push("/pages/personage/information/verifyPhone");
     },
     // 回退
@@ -261,8 +263,9 @@ export default {
     getCardName() {
       getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, "") })
         .then(res => {
-          // console.log("银行名称", res);
+          console.log("银行名称", res);
           this.bankCardName = res.cnm + "   储蓄卡";
+          this.bankIco = res.bank_ico;
         })
         .catch(error => {
           console.log(error);

@@ -85,8 +85,11 @@ export default {
   },
   created() {
     this.$store.dispatch("getMyAccount");
-    let idCard = window.localStorage.getItem("idCard");
-    this.str = idCard.replace(/^(.{4})(?:\d+)(.{4})$/, "$1******$2");
+    let idCard = api.getPrefs({
+      key: "realNameInfo",
+      sync: true
+    });
+    this.str = idCard.idcard.replace(/^(.{4})(?:\d+)(.{4})$/, "$1******$2");
   }
 };
 </script>

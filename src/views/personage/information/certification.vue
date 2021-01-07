@@ -137,7 +137,8 @@ export default {
       bankCardNum: "",
       bankCardName: "",
       idCard: "",
-      message: this.$route.query.message
+      message: this.$route.query.message,
+      bankIco: ""
     };
   },
   methods: {
@@ -176,7 +177,9 @@ export default {
         bank_card: this.bankCardNum,
         realname: this.personName,
         idcard: this.idCard,
-        mobile: this.userInfo.mobile
+        mobile: this.userInfo.mobile,
+        bank_name: this.bankCardName,
+        bank_ico: this.bankIco
       };
       api.setPrefs({
         key: "realNameInfo",
@@ -227,7 +230,8 @@ export default {
         bank_card: this.bankCardNum.replace(/\s/g, "")
       });
       this.bankCardName = res.cnm + "   储蓄卡";
-      // console.log(res);
+      this.bankIco = res.bank_ico;
+      console.log(res);
     },
     // 跳转支持的银行卡列表
     tosubBankCardList() {
