@@ -85,8 +85,8 @@ export default {
   },
   created() {
     this.$store.dispatch("getMyAccount");
-    let idCard = "350102199003072616";
-    this.str = idCard.replace(/^(.{1})(?:\d+)(.{1})$/, "$1**************$2");
+    let idCard = window.localStorage.getItem("idCard");
+    this.str = idCard.replace(/^(.{4})(?:\d+)(.{4})$/, "$1******$2");
   }
 };
 </script>

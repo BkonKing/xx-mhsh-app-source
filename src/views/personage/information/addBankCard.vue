@@ -255,7 +255,11 @@ export default {
           this.bankCardName = res.cnm + "   储蓄卡";
           window.localStorage.setItem(
             "addBankCardInfo",
-            JSON.stringify([this.bankCardNum, this.personName, this.phone])
+            JSON.stringify([
+              this.bankCardNum,
+              this.personName,
+              this.userInfo.mobile
+            ])
           );
         })
         .catch(error => {

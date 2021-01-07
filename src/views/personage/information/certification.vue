@@ -19,12 +19,7 @@
             <div class="label">姓名</div>
           </template>
         </van-field>
-        <van-field
-          class="field"
-          @change="getIdCard"
-          v-model="idCard"
-          placeholder="身份证号码"
-        >
+        <van-field class="field" v-model="idCard" placeholder="身份证号码">
           <template #label>
             <div class="label">身份证</div>
           </template>
@@ -50,7 +45,7 @@
             ></i>
           </template>
           <template #right-icon>
-            <i class="font_family icon-xiangji xiangji"></i>
+            <i class="font_family icon-xiangji xiangji" @click="openCamera"></i>
           </template>
         </van-field>
         <van-field
@@ -84,7 +79,7 @@
           :color="bol ? 'red' : 'gray'"
           :disabled="!bol"
           block
-          @click="submit"
+          @click="getIdCard"
           >实名认证</van-button
         >
       </div>
@@ -110,7 +105,7 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Popup } from "vant";
+import { NavBar, Field, Button, Popup, Toast } from "vant";
 import { mapGetters } from "vuex";
 import { getBankInfo } from "@/api/personage.js";
 export default {
@@ -118,7 +113,8 @@ export default {
     [NavBar.name]: NavBar,
     [Field.name]: Field,
     [Button.name]: Button,
-    [Popup.name]: Popup
+    [Popup.name]: Popup,
+    [Toast.name]: Toast
   },
   computed: {
     ...mapGetters(["userInfo"]),
@@ -145,9 +141,48 @@ export default {
     };
   },
   methods: {
-    // 保存身份证到本地
+    // 打开摄像头
+    openCamera() {
+      const baiduAd = api.require("baiduIdentifyOCR");
+      if (api.systemType === "android") {
+        baiduAd.init((ret, err) => {
+          if (ret.status) {
+            baiduAd.bankCardOCROnline(({ status, result }, err) => {
+              if (status) {
+                this.bankCardNum = result.split("\n")[0].split("：")[1];
+              }
+            });
+          }
+        });
+      } else {
+        baiduAd.bankCardOCROnline(({ status, result }, err) => {
+          if (status) {
+            this.bankCardNum = result.result.bank_card_number;
+          }
+        });
+      }
+    },
+    // 保存实名信息到本地
     getIdCard() {
-      window.localStorage.setItem("idCard", this.idCard);
+      if (
+        this.idCard == "" ||
+        this.bankCardNum == "" ||
+        this.personName == "" ||
+        this.userInfo.mobile == ""
+      ) {
+        return;
+      }
+      window.localStorage.setItem(
+        "realNameInfo",
+        JSON.stringify([
+          this.personName,
+          this.idCard,
+          this.userInfo.mobile,
+          this.bankCardNum
+        ])
+      );
+      //回退
+      this.$router.go(-1);
     },
     // 格式化银行卡号
     formatCardNumber(cardNum) {
@@ -191,7 +226,7 @@ export default {
         bank_card: this.bankCardNum.replace(/\s/g, "")
       });
       this.bankCardName = res.cnm + "   储蓄卡";
-      console.log(res);
+      // console.log(res);
     },
     // 跳转支持的银行卡列表
     tosubBankCardList() {
@@ -200,11 +235,11 @@ export default {
     // 回退
     goback() {
       this.$router.go(-1);
-    },
-    // 认证
-    submit() {
-      this.isShow = true;
     }
+    // 认证
+    // submit() {
+    //   this.isShow = true;
+    // }
   },
   created() {
     this.personName = this.userInfo.realname;
