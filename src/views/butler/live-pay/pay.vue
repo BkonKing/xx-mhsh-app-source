@@ -128,7 +128,7 @@ export default {
         num += obj.child.length
         obj.child.forEach(li => {
           if (li.is_force == 1) {
-            coerceResult.push(`${li.id}-${li.number}`)
+            coerceResult.push(`${li.id}-${li.money}`)
           }
         })
       })
@@ -156,7 +156,10 @@ export default {
     },
     // 全选
     checkAll (type) {
-      this.$refs.checkboxGroup.toggleAll(type)
+      this.$refs.checkboxGroup.toggleAll({
+        checked: type,
+        skipDisabled: true
+      })
     },
     // 跳转费用详情
     goCostDetail ({ id }) {
