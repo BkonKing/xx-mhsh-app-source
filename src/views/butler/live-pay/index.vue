@@ -151,7 +151,7 @@ export default {
     getLifePayList (params, first) {
       getLifePayList(params).then(
         ({ house_data, table_data, month_data, month_name_text }) => {
-          const houseId = this.currentProject.house_id
+          const houseId = this.$route.query.id || this.currentProject.house_id
           this.houseList = house_data.map(obj => {
             const {
               project_name,

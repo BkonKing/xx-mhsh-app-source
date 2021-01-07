@@ -47,6 +47,12 @@
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
+              缴费账户
+            </div>
+            <div class="pay-info-content">{{payInfo.pay_text}}</div>
+          </div>
+          <div class="pay-info-box">
+            <div class="pay-info-label">
               缴费时间
             </div>
             <div class="pay-info-content">{{payInfo.pay_time}}</div>
@@ -65,22 +71,7 @@ export default {
   data () {
     return {
       id: '',
-      payInfo: {
-        type: 0,
-        unPayNum: 100,
-        penalSum: 10,
-        community: 'xx美好生活家园  5栋1单元1001',
-        buildingNum: '123456789(*小华)',
-        biaohao: '987654321000',
-        shuqi: '2020-10-01 ~ 2020-10-31',
-        shiyong: '150(单位)',
-        yuefen: '2020-10',
-        danhao: '54304165401320303',
-        shijian: '2020-00-00 00:00:00',
-        images: [
-          'https://test.tosolomo.com/upload/image/20200822/thumb_300_600_20200822135602_56310.png'
-        ]
-      }
+      payInfo: {}
     }
   },
   created () {
