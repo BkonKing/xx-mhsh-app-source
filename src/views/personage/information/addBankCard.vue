@@ -241,6 +241,14 @@ export default {
     },
     // 跳转预留手机号
     toVerifyPhone() {
+      window.localStorage.setItem(
+        "realNameInfo",
+        JSON.stringify([
+          this.bankCardNum,
+          this.personName,
+          this.userInfo.mobile
+        ])
+      );
       this.$router.push("/pages/personage/information/verifyPhone");
     },
     // 回退
@@ -253,14 +261,6 @@ export default {
         .then(res => {
           // console.log("银行名称", res);
           this.bankCardName = res.cnm + "   储蓄卡";
-          window.localStorage.setItem(
-            "addBankCardInfo",
-            JSON.stringify([
-              this.bankCardNum,
-              this.personName,
-              this.userInfo.mobile
-            ])
-          );
         })
         .catch(error => {
           console.log(error);
