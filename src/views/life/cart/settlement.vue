@@ -271,7 +271,6 @@ export default {
   },
   activated () {
     let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    console.log(11, bankCardInfo)
     if (bankCardInfo) {
       if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
         this.idcard = bankCardInfo.idCard
@@ -532,7 +531,6 @@ export default {
       }
     },
     surePaySwal (callData) {
-      console.log(callData)
       payOrderUp({
         order_id: this.order_id,
         pay_type: callData.pay_type,
@@ -701,9 +699,8 @@ export default {
       if (this.cartClear) {
         this.cartInit()
       }
-      api.setPrefs({
-        key: 'realNameInfo',
-        value: ''
+      api.removePrefs({
+        key: 'realNameInfo'
       })
     }
     next()
