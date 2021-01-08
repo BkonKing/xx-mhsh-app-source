@@ -88,9 +88,10 @@
                     center
                     @click="$router.push('/pages/personage/information/BankCard')">
             <template #title>
-              <div class="title">
+              <div class="title"
+                   v-if="userInfo.idcard">
                 <div class="txt">银行卡</div>
-                <div class="name">0000000000000000</div>
+                <!-- <div class="name">0000000000000000</div> -->
               </div>
             </template>
           </van-cell>
@@ -182,51 +183,54 @@
                         @click="editLoginPassword"></tf-list-item>
         </tf-list>
       </van-tab>
-      <van-tab v-if="userType != 0 && currentProject" title="房产信息">
-        <house
-          ref="house"
-          @manClick="toHouseMember"
-          @change="(bindingId) => goAttestation(1,1,bindingId)"
-        ></house>
+      <van-tab v-if="userType != 0 && currentProject"
+               title="房产信息">
+        <house ref="house"
+               @manClick="toHouseMember"
+               @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
       </van-tab>
-      <van-tab v-if="userType == 1 && currentProject" title="成员信息">
-        <van-dropdown-menu class="tf-mb-lg" @change="getMemberList">
-          <van-dropdown-item v-model="selectedHouseId" :options="houselist" />
+      <van-tab v-if="userType == 1 && currentProject"
+               title="成员信息">
+        <van-dropdown-menu class="tf-mb-lg"
+                           @change="getMemberList">
+          <van-dropdown-item v-model="selectedHouseId"
+                             :options="houselist" />
         </van-dropdown-menu>
-        <div
-          class="tf-card tf-mb-lg"
-          v-for="(item, i) in memberList"
-          :key="i"
-          @click="goAttestation(item.house_role === '1' ? 1 : 0, 1, item.id, item)"
-        >
+        <div class="tf-card tf-mb-lg"
+             v-for="(item, i) in memberList"
+             :key="i"
+             @click="goAttestation(item.house_role === '1' ? 1 : 0, 1, item.id, item)">
           <div class="tf-card-header">{{item.project_name}} {{item.fc_info}}</div>
           <div class="tf-card-content">
-            <van-tag
-              class="user-role tf-mr-lg"
-              plain
-              :type="houseRoleColor[item.house_role]"
-              :inverted="true"
-              size="small"
-            >{{item.house_role | houseRoleText}}</van-tag>
+            <van-tag class="user-role tf-mr-lg"
+                     plain
+                     :type="houseRoleColor[item.house_role]"
+                     :inverted="true"
+                     size="small">{{item.house_role | houseRoleText}}</van-tag>
             <div class="tf-mr-lg">
               {{item.realname}}
-              <span
-                v-if="item.house_role === '1'"
-                class="tf-text-grey tf-text-sm"
-              >(本人)</span>
+              <span v-if="item.house_role === '1'"
+                    class="tf-text-grey tf-text-sm">(本人)</span>
             </div>
             <div class="tf-mr-lg">{{item.gender | sexText}}</div>
             <div>{{item.mobile}}</div>
           </div>
         </div>
         <div class="btn-placeholder">
-          <button class="tf-btn tf-btn-primary" type="warn" @click="addMember">新增成员</button>
+          <button class="tf-btn tf-btn-primary"
+                  type="warn"
+                  @click="addMember">新增成员</button>
         </div>
       </van-tab>
     </van-tabs>
-    <tf-dialog class="explain-dialog" v-model="faceDialog" title="请上传一张清晰的人脸照片" :showFotter="false">
-      <van-uploader :after-read="cjFace" style="width: 100%;">
-        <van-button type="danger" style="width: 100%;">确定</van-button>
+    <tf-dialog class="explain-dialog"
+               v-model="faceDialog"
+               title="请上传一张清晰的人脸照片"
+               :showFotter="false">
+      <van-uploader :after-read="cjFace"
+                    style="width: 100%;">
+        <van-button type="danger"
+                    style="width: 100%;">确定</van-button>
       </van-uploader>
     </tf-dialog>
   </div>

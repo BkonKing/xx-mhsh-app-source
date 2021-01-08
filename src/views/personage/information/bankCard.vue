@@ -13,7 +13,7 @@
     </van-nav-bar>
     <div class="content">
       <div class="item"
-           :style="{background:'url( '+ 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2718853745,1288801299&fm=26&gp=0.jpg' +') no-repeat',backgroundSize:'100% 100%'}"
+           :style="{background:'url( '+ item.bank_bj +') no-repeat',backgroundSize:'100% 100%'}"
            v-for="(item, index) in bankCardArr"
            :key="index"
            @touchstart.prevent="touchinUk(item,index)"
@@ -108,7 +108,7 @@ export default {
       width: 710px;
       height: 232px;
       // background: url(~@/assets/imgs/zgyhdb.png);
-
+      background-color: #fff;
       margin-bottom: 30px;
       .top {
         display: flex;
@@ -124,14 +124,14 @@ export default {
             font-size: 30px;
             font-family: PingFang SC;
             font-weight: 500;
-            // color: #ffffff;
+            color: #ffffff;
             line-height: 38px;
           }
           .t2 {
             font-size: 22px;
             font-family: PingFang SC;
             font-weight: 400;
-            // color: #ffffff;
+            color: #ffffff;
             line-height: 38px;
             opacity: 0.6;
           }
@@ -144,7 +144,7 @@ export default {
         font-size: 48px;
         font-family: PingFang SC;
         font-weight: 500;
-        // color: #ffffff;
+        color: #ffffff;
         line-height: 38px;
       }
       .box {
