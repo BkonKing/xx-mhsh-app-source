@@ -1,37 +1,69 @@
 <template>
   <div style="width:100%;height:100%;">
     <refreshList :list.sync="list" :load="load" finished-text>
-      <template v-slot="{item}">
-        <div class="tf-list-content tf-mb-base tf-center">{{item.ctime}}</div>
+      <template v-slot="{ item }">
+        <div class="tf-list-content tf-mb-base tf-center">{{ item.ctime }}</div>
         <div class="tf-list" @click="jump(item)">
           <template v-if="type == 'transaction'">
             <div
               v-if="item.sub_type == 6 || item.sub_type == 7"
               class="list-icon-box tf-icon tf-icon-xingfubi"
             ></div>
+            <div
+              v-else-if="item.sub_type == 20"
+              class="list-icon-box tf-icon tf-icon-shuibiao"
+            ></div>
             <img v-else class="tf-list-image" :src="item.thumb" />
           </template>
           <template v-else-if="type == 'butler'">
-            <div class="list-icon-box tf-icon" :class="item.sub_type | butlerIcon"></div>
+            <div
+              class="list-icon-box tf-icon"
+              :class="item.sub_type | butlerIcon"
+            ></div>
           </template>
           <template v-else-if="type == 'activity'">
-            <div class="list-icon-box tf-icon" :class="item.sub_type | activityIcon"></div>
+            <div
+              class="list-icon-box tf-icon"
+              :class="item.sub_type | activityIcon"
+            ></div>
           </template>
           <template v-else-if="item.sub_type == '16'">
-            <div class="list-icon-box tf-icon" :class="item.repairs_status | repairIcon"></div>
+            <div
+              class="list-icon-box tf-icon"
+              :class="item.repairs_status | repairIcon"
+            ></div>
           </template>
           <div class="tf-space-around">
-            <div class="tf-row-vertical-center" :class="{'tf-mb-base': type === 'system'}">
-              <div class="tf-list-title" :class="{'tf-read-after-tag': item.status}">{{item.title}}</div>
-              <div v-if="item.is_read == '0'" class="tf-circle-tag--warning"></div>
+            <div
+              class="tf-row-vertical-center"
+              :class="{ 'tf-mb-base': type === 'system' }"
+            >
+              <div
+                class="tf-list-title"
+                :class="{ 'tf-read-after-tag': item.status }"
+              >
+                {{ item.title }}
+              </div>
+              <div
+                v-if="item.is_read == '0'"
+                class="tf-circle-tag--warning"
+              ></div>
             </div>
-            <div class="tf-list-content" :class="{'system-content': type == 'transaction'}">{{item.content}}</div>
+            <div
+              class="tf-list-content"
+              :class="{ 'system-content': type == 'transaction' }"
+            >
+              {{ item.content }}
+            </div>
           </div>
         </div>
       </template>
       <template v-slot:nodata>
         <div class="empty-session">
-          <img class="empty-session__img" src="@/assets/imgs/message_xiaoxi.png" />
+          <img
+            class="empty-session__img"
+            src="@/assets/imgs/message_xiaoxi.png"
+          />
           <div class="empty-session__text">暂无消息</div>
         </div>
       </template>
@@ -86,7 +118,7 @@ export default {
       this.$emit('click', item)
     },
     readAll () {
-      this.list.forEach((obj) => {
+      this.list.forEach(obj => {
         obj.is_read = '1'
       })
     },
@@ -115,7 +147,8 @@ export default {
         13: 'tf-icon-gonggao1',
         14: 'tf-icon-guihuan',
         15: 'tf-icon-biaoyangtousu',
-        16: 'tf-icon-baoshibaoxiu'
+        16: 'tf-icon-baoshibaoxiu',
+        19: 'tf-icon-shuibiao'
       }
       return icon[value]
     },
@@ -213,5 +246,8 @@ export default {
 .tf-icon-tf-icon-guihuan,
 .tf-icon-huodongkaishi {
   background: #fd7d6f;
+}
+.tf-icon-shuibiao {
+  background: #877ded;
 }
 </style>

@@ -30,6 +30,13 @@ export default {
       images: this.value
     }
   },
+  created () {
+    if (this.value && this.value.length > 0) {
+      this.fileList = this.value.map(obj => ({
+        url: obj
+      }))
+    }
+  },
   methods: {
     afterRead (file) {
       // 此时可以自行将文件上传至服务器

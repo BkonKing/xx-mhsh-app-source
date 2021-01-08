@@ -383,6 +383,26 @@ const personageRouter = [
         /* webpackChunkName: "faceCollectCamera" */
         '@/views/personage/information/faceCollectCamera.vue'
       )
+  },
+  /* 水电费-选择房间 */
+  {
+    path: '/pages/personage/water-electricity/select',
+    name: 'waterElectricitySelect',
+    component: () =>
+      import(
+        /* webpackChunkName: "waterElectricitySelect" */
+        '@/views/personage/transaction/water-electricity/select.vue'
+      )
+  },
+  /* 水电费-水电抄表 */
+  {
+    path: '/pages/personage/water-electricity/meter-reading',
+    name: 'waterElectricityMeter',
+    component: () =>
+      import(
+        /* webpackChunkName: "waterElectricityMeter" */
+        '@/views/personage/transaction/water-electricity/meter-reading.vue'
+      )
   }
 ];
 

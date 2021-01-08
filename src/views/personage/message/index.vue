@@ -11,11 +11,16 @@
       @click-right="messageAllRead"
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
-      <van-tab id="message-list-0" v-if="userInfo.swrole == 1" title="工作" :badge="badgeList[1]">
+      <van-tab
+        id="message-list-0"
+        v-if="userInfo.swrole == 1"
+        title="工作"
+        :badge="badgeList[1]"
+      >
         <message-list
           ref="work"
           type="work"
-          :load="({pages}) => getMessageList(pages, 1)"
+          :load="({ pages }) => getMessageList(pages, 1)"
           @click="onWork"
           @mark="messageRead"
         ></message-list>
@@ -24,19 +29,23 @@
         <message-list
           ref="transaction"
           type="transaction"
-          :load="({pages}) => getMessageList(pages, 2)"
+          :load="({ pages }) => getMessageList(pages, 2)"
           @click="toTransaction"
           @mark="messageRead"
         ></message-list>
       </van-tab>
       <van-tab id="message-list-2" title="互动" :badge="badgeList[3]">
-        <interaction ref="interaction" @click="toInteraction" @mark="messageRead"></interaction>
+        <interaction
+          ref="interaction"
+          @click="toInteraction"
+          @mark="messageRead"
+        ></interaction>
       </van-tab>
       <van-tab id="message-list-3" title="物业" :badge="badgeList[4]">
         <message-list
           ref="butler"
           type="butler"
-          :load="({pages}) => getMessageList(pages, 4)"
+          :load="({ pages }) => getMessageList(pages, 4)"
           @click="toButler"
           @mark="messageRead"
         ></message-list>
@@ -45,7 +54,7 @@
         <message-list
           ref="activity"
           type="activity"
-          :load="({pages}) => getMessageList(pages, 5)"
+          :load="({ pages }) => getMessageList(pages, 5)"
           @click="onActivity"
           @mark="messageRead"
         ></message-list>
@@ -54,7 +63,7 @@
         <message-list
           ref="system"
           type="system"
-          :load="({pages}) => getMessageList(pages, 6)"
+          :load="({ pages }) => getMessageList(pages, 6)"
           @click="onSystem"
           @mark="messageRead"
         ></message-list>
@@ -104,7 +113,11 @@ export default {
       if (this.userInfo.swrole != 1) {
         index = index + 1
       }
-      document.getElementById(`message-list-${index}`).getElementsByClassName('tf-list-refresh')[0].scrollTop = this.scrollTop
+      document
+        .getElementById(`message-list-${index}`)
+        .getElementsByClassName(
+          'tf-list-refresh'
+        )[0].scrollTop = this.scrollTop
     }
   },
   methods: {
@@ -117,7 +130,7 @@ export default {
     },
     // 获取统计未读消息
     getCountMessage () {
-      getCountMessage().then((res) => {
+      getCountMessage().then(res => {
         this.badgeList = res.data
       })
     },
@@ -125,16 +138,16 @@ export default {
     messageRead (item) {
       messageRead({
         id: item.id
-      }).then((res) => {
+      }).then(res => {
         item.is_read = '1'
         // this.getCountMessage()
       })
     },
     // 设置消息全部已读
     messageAllRead () {
-      messageAllRead().then((res) => {
+      messageAllRead().then(res => {
         this.getCountMessage()
-        Object.keys(this.$refs).forEach((key) => {
+        Object.keys(this.$refs).forEach(key => {
           this.$refs[key] && this.$refs[key].readAll()
         })
       })
@@ -190,6 +203,13 @@ export default {
               id: item.source_id
             }
           })
+          break
+        case '20':
+          if (item.isSelfPay) {
+            this.$router.push({
+              name: 'livePayRecord'
+            })
+          }
           break
       }
       // 幸福币详情
@@ -264,6 +284,15 @@ export default {
             }
           })
           break
+        // 报事报修-详情
+        case '19':
+          this.$router.push({
+            name: 'livePayIndex',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
       }
     },
     // 系统操作
@@ -303,7 +332,9 @@ export default {
       if (this.userInfo.swrole != 1) {
         index = index + 1
       }
-      const el = document.getElementById(`message-list-${index}`).getElementsByClassName('tf-list-refresh')
+      const el = document
+        .getElementById(`message-list-${index}`)
+        .getElementsByClassName('tf-list-refresh')
       this.scrollTop = (el[0] && el[0].scrollTop) || 0
     }
     next()

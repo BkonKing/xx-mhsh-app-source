@@ -233,6 +233,59 @@ const butlerRouter = [
         /* webpackChunkName: "convenienceIndex" */
         '@/views/butler/convenience-phone/index.vue'
       )
+  },
+  /* 生活缴费 */
+  {
+    path: '/pages/butler/live-pay/index',
+    name: 'livePayIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayIndex" */
+        '@/views/butler/live-pay/index.vue'
+      )
+  },
+  /* 缴费页面 */
+  {
+    path: '/pages/butler/live-pay/pay',
+    name: 'livePayPay',
+    meta: {
+      keepAlive: true
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayPay" */
+        '@/views/butler/live-pay/pay.vue'
+      )
+  },
+  /* 缴费记录 */
+  {
+    path: '/pages/butler/live-pay/record',
+    name: 'livePayRecord',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayRecord" */
+        '@/views/butler/live-pay/record.vue'
+      )
+  },
+  /* 缴费记录详情 */
+  {
+    path: '/pages/butler/live-pay/record-detail',
+    name: 'livePayRecordDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayRecordDetail" */
+        '@/views/butler/live-pay/record-detail.vue'
+      )
+  },
+  /* 费用详情 */
+  {
+    path: '/pages/butler/live-pay/cost-detail',
+    name: 'livePayCostDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayCostDetail" */
+        '@/views/butler/live-pay/cost-detail.vue'
+      )
   }
 ]
 
