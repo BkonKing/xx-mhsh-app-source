@@ -12,20 +12,22 @@
               </van-count-down>)</div>
         </div>
         <div class="common-list">
-          <div class="common-item-first common-item" @click.stop="selectSwal(0)">
-            <div class="common-item-left">
-              <div :class="[tapIndex == 0 ? 'cur' : '','cart-checkbox flex-center']">
-                <div class="checkbox-session"></div>
-              </div><img src="@/assets/img/icon_21.png" />微信支付
+          <template v-if="wxzfbShow">
+            <div class="common-item-first common-item" @click.stop="selectSwal(0)">
+              <div class="common-item-left">
+                <div :class="[tapIndex == 0 ? 'cur' : '','cart-checkbox flex-center']">
+                  <div class="checkbox-session"></div>
+                </div><img src="@/assets/img/icon_21.png" />微信支付
+              </div>
             </div>
-          </div>
-          <div class="common-item" @click.stop="selectSwal(1)">
-            <div class="common-item-left">
-              <div :class="[tapIndex == 1 ? 'cur' : '','cart-checkbox flex-center']">
-                <div class="checkbox-session"></div>
-              </div><img src="@/assets/img/icon_22.png" />支付宝支付
+            <div class="common-item" @click.stop="selectSwal(1)">
+              <div class="common-item-left">
+                <div :class="[tapIndex == 1 ? 'cur' : '','cart-checkbox flex-center']">
+                  <div class="checkbox-session"></div>
+                </div><img src="@/assets/img/icon_22.png" />支付宝支付
+              </div>
             </div>
-          </div>
+          </template>
           <div class="common-item" @click.stop="selectSwal(2)">
             <div class="common-item-left">
               <div :class="[tapIndex == 2 ? 'cur' : '','cart-checkbox flex-center']">
@@ -102,6 +104,10 @@ export default {
       type: Number,
       default: 0
     },
+    wxzfbShow: {
+      type: Boolean,
+      default: true
+    },
     downTime: {
       type: Number,
       default: 0
@@ -157,7 +163,6 @@ export default {
     },
     // 新增银行卡
     newCard (res) {
-      console.log(res)
       if (typeof res.idcard === 'undefined' || !res.idcard) {
         res.idcard = this.idCard
       }
@@ -165,7 +170,8 @@ export default {
       res.bank_card = res.bank_card.replace(/\s*/g, '')
       res.cardFour = res.bank_card.slice(-4)
       this.cardList.push(res)
-      this.selectCard(this.selectIndex + 1)
+      console.log(this.selectIndex, res)
+      this.selectCard(this.cardList.length - 1)
     },
     // 银行卡支付
     cardPay () {

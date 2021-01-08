@@ -27,7 +27,7 @@
               </div>
               <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="product-icon flex-center">特卖</div></div> -->
               <div class="flex-align-center">
-                <div v-if="item.goods_type == 2" class="product-icon flex-center">特卖</div>
+                <div v-if="item.goods_type == 2" class="product-icon goods-type flex-center">特卖</div>
                 <div class="product-icon flex-center product-label">顺丰</div>
               </div>
               <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
@@ -384,14 +384,15 @@ export default {
   overflow: hidden;
   font-size: 24px;
   margin-bottom: 10px;
+  margin-right: 10px;
 }
-.cart-item-tm .product-icon {
-  color: #55b862;
-  background-color: #eef8ef;
+.cart-item-tm .product-icon.goods-type {
+  color: #fff;
+  background: linear-gradient(90deg, #EB5841, #FFA45A);
 }
-.cart-item-sg .product-icon {
-  color: #eb5841;
-  background-color: #fdeeec;
+.cart-item-sg .product-icon.goods-type {
+  color: #fff;
+  background: linear-gradient(90deg, #FFA110, #FFC017);
 }
 .product-label {
   color: #55b862;
