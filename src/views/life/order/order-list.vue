@@ -1,15 +1,15 @@
 <template>
-	<div class="app-body">
-		<div class="order-bar bar-white">
-			<van-nav-bar
-	      :title="navHide ? titList[typeVal] : titList[0]"
-	      :fixed="true"
-	      :border="false"
-	      placeholder
-	      left-arrow
-	      @click-left="$router.go(-1)"
-	    ></van-nav-bar>
-		</div>
+  <div class="app-body">
+    <div class="order-bar bar-white">
+      <van-nav-bar
+        :title="navHide ? titList[typeVal] : titList[0]"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        @click-left="$router.go(-1)"
+      ></van-nav-bar>
+    </div>
 
     <div :class="[navHide ? 'scroll-body-other' : '', 'scroll-body tab-scroll']" id="order-list-body">
       <van-tabs v-model="active" :swipeable="navHide ? false : true" swipe-threshold="10" @change="navFun">
@@ -85,11 +85,13 @@
     @closeSwal="closeExplainSwal"
     ></explain-swal>
     <pay-swal
+    ref="payblock"
     :show-swal="showPaySwal"
     :pay-money="payMoney"
     :down-time="downTime"
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
+    @fyResult="fyResult"
     ></pay-swal>
     <remind-swal
     :show-swal="showSwal"
@@ -121,37 +123,37 @@ export default {
   data () {
     return {
       navItems: ['全部', '待付款', '待发货', '待收货', '退换'],
-      titList: ['我的订单','待付款','待发货','待收货','退换'],
-      showExplainSwal: false,  //弹窗
+      titList: ['我的订单', '待付款', '待发货', '待收货', '退换'],
+      showExplainSwal: false, // 弹窗
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
-      showSwal: false,                           //提醒弹窗
-      remindTit: '确定取消订单', //提醒标题
+      showSwal: false, // 提醒弹窗
+      remindTit: '确定取消订单', // 提醒标题
 
-	    active: 0,
-      typeVal: 0,          //tab切换index
-	    navHide: false,
+      active: 0,
+      typeVal: 0, // tab切换index
+      navHide: false,
 
-	    time: 11 * 60 * 60 * 1000,
-	    newTime: '',       //当前时间
+      time: 11 * 60 * 60 * 1000,
+      newTime: '', // 当前时间
 
-	    listData: [],   //数据列表
-      page: 1,   //页码
-      pageSize: 10,  //分页条数
-      isEmpty: false, //是否为空
+      listData: [], // 数据列表
+      page: 1, // 页码
+      pageSize: 10, // 分页条数
+      isEmpty: false, // 是否为空
       loading: false,
       finished: false,
 
-      showPaySwal: false,   //支付方式弹窗
-      payMoney: 0,          //支付金额
-      downTime: 0,          //支付结束时间
+      showPaySwal: false, // 支付方式弹窗
+      payMoney: 0, // 支付金额
+      downTime: 0 // 支付结束时间
     }
   },
-  created(){
-  	var type = this.$route.query.type;
-  	if(type&&type!='undefined'){
-  		this.typeVal = type;
-  		this.navHide = true;
-  	}/* else {
+  created () {
+    var type = this.$route.query.type
+    if (type && type != 'undefined') {
+      this.typeVal = type
+      this.navHide = true
+    }/* else {
       api.addEventListener(
         {
           name: 'swiperight'
@@ -162,7 +164,7 @@ export default {
       )
     } */
 
-  	// console.log(this.$store.state.paddingTop)
+    // console.log(this.$store.state.paddingTop)
   },
   activated () {
     if (this.scrollTop) {
@@ -172,37 +174,44 @@ export default {
           'van-tabs__content'
         )[0].scrollTop = this.scrollTop
     }
+    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+    if (bankCardInfo) {
+      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
+        this.idcard = bankCardInfo.idCard
+      }
+      bankCardInfo = JSON.parse(bankCardInfo)
+      this.$refs.payblock.newCard(bankCardInfo)
+    }
   },
   methods: {
     navFun (index) {
-      this.flag = false;
-      this.typeVal = this.active;
-      this.listInit();
+      this.flag = false
+      this.typeVal = this.active
+      this.listInit()
     },
-    onLoad() {
+    onLoad () {
       // 异步更新数据
-      this.getData();
-      return;
+      this.getData()
     },
-    updateOne(){
+    updateOne () {
       getOrderOne({
         page_type: this.typeVal,
         order_project_id: this.tapId
       }).then(res => {
         if (res.success) {
-          if(res.data.order_project_list && res.data.order_project_list.length){
-            var listOne = res.data.order_project_list[0];
-            for (var i=0; i < this.listData.length; i++) {
-              if(this.listData[i].id == this.tapId){
-                this.listData.splice(i,1,listOne);
-                break;
+          if (res.data.order_project_list && res.data.order_project_list.length) {
+            var listOne = res.data.order_project_list[0]
+            for (var i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].id == this.tapId) {
+                this.listData.splice(i, 1, listOne)
+                break
               }
             }
-          }else {
-            for (var i=0; i < this.listData.length; i++) {
-              if(this.listData[i].id == this.tapId){
-                this.listData.splice(i,1);
-                break;
+          } else {
+            for (var i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].id == this.tapId) {
+                this.listData.splice(i, 1)
+                break
               }
             }
           }
@@ -215,77 +224,85 @@ export default {
         page_type: this.typeVal
       }).then(res => {
         if (res.success) {
-        	this.flag = true;
-        	this.newTime = parseInt(new Date().getTime());
-          this.listData = this.page == 1 ? res.data.order_project_list : this.listData.concat(res.data.order_project_list);
-          this.isEmpty = this.page == 1 && res.data.order_project_list.length ==0 ? true : false;
-          if(res.data.order_project_list.length < res.data.pageSize){
-            this.finished = true;
-            this.flag = true;
-          }else {
-            this.page = this.page+1;
-            this.flag = false;
+          this.flag = true
+          this.newTime = parseInt(new Date().getTime())
+          this.listData = this.page == 1 ? res.data.order_project_list : this.listData.concat(res.data.order_project_list)
+          this.isEmpty = !!(this.page == 1 && res.data.order_project_list.length == 0)
+          if (res.data.order_project_list.length < res.data.pageSize) {
+            this.finished = true
+            this.flag = true
+          } else {
+            this.page = this.page + 1
+            this.flag = false
           }
-          this.loading = false;
+          this.loading = false
         }
       })
     },
-    //倒计时开始
-    start() {
-      this.$refs.countDown.start();
+    // 倒计时开始
+    start () {
+      this.$refs.countDown.start()
     },
-    //倒计时暂停
-    pause() {
-      this.$refs.countDown.pause();
+    // 倒计时暂停
+    pause () {
+      this.$refs.countDown.pause()
     },
-    //倒计时结束
-    finish(index,id) {
+    // 倒计时结束
+    finish (index, id) {
       // Toast('倒计时结束');
-      this.cancelOrder(index,id);
+      this.cancelOrder(index, id)
     },
-    //再次付款
-    payFunc(index,id){
-    	this.downTime = this.listData[index].is_again_pay_time*1000-this.newTime;
-    	this.payMoney = this.listData[index].pay_price/100;
-    	this.showPaySwal = true;
-    	this.payOderdId = id;
-      this.tapId = this.listData[index].id;
+    // 再次付款
+    payFunc (index, id) {
+      this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
+      this.payMoney = this.listData[index].pay_price / 100
+      this.showPaySwal = true
+      this.payOderdId = id
+      this.tapId = this.listData[index].id
     },
     // 关闭支付选择弹窗
-    closePaySwal(data){
-      this.showPaySwal = data == 1 ? true : false;
+    closePaySwal (data) {
+      this.showPaySwal = data == 1
     },
-    surePaySwal(data){
-      this.showPaySwal = false;
+    surePaySwal (callData) {
       payOrderUp({
         order_id: this.payOderdId,
-        pay_type: data == 0 ? 1 : 2
+        pay_type: callData.pay_type,
+        bank_id: callData.bank_id,
+        bank_card: callData.bank_card,
+        realname: callData.realname,
+        idcard: callData.idcard,
+        mobile: callData.mobile
       }).then(res => {
         if (res.success) {
           if (res.data) {
             this.payOrderInfo = res.data
-            if (data == 0) {
+            if (callData.pay_type == 1) {
+              this.showPaySwal = false
               this.wxPayUp()
-            } else {
+            } else if (callData.pay_type == 2) {
+              this.showPaySwal = false
               this.aliPayUp()
+            } else if (callData.pay_type == 4) {
+              this.$refs.payblock.sendCode(res)
             }
           }
         }
       })
     },
-    //支付宝支付
-    aliPayUp(){
-      let that = this;
-      var aliPayPlus = api.require('aliPayPlus');
+    // 支付宝支付
+    aliPayUp () {
+      const that = this
+      var aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
-        function(ret, err) {
-          that.updateOne();
+        function (ret, err) {
+          that.updateOne()
           // that.listInit(1);
-          if(ret.code == '9000'){  //支付成功
+          if (ret.code == '9000') { // 支付成功
 
           }
         }
-      );
+      )
     },
     // 微信支付
     wxPayUp () {
@@ -299,164 +316,173 @@ export default {
         timeStamp: that.payOrderInfo.timestamp,
         package: that.payOrderInfo.package,
         sign: that.payOrderInfo.paySign
-      }, function(ret, err) {
+      }, function (ret, err) {
         that.updateOne()
       })
     },
-    // 取消订单
-    cancelOrder(index,id){
-    	let that = this;
-    	if(this.listData[index].is_pay == 0){ //未付款
-    		cancelNoPayOrder({
-	        order_project_id: this.listData[index].id,
-	      }).then(res => {
-	        if (res.success) {
-            that.updateOne();
-	        	// that.listInit(1);
-	        }
-	      })
-    	}else {
-    		cancelPayOrder({
-	        order_project_id: this.listData[index].id,
-	      }).then(res => {
-	        if (res.success) {
-            that.updateOne();
-	        	// that.listInit(1);
-	        }
-	      })
-    	}
+    fyResult () {
+      this.showPaySwal = false
+      this.updateOne()
     },
-    //初始化列表
-    listInit(type=''){
-    	this.listData = [];
-      this.page = 1;
-      this.finished = false;
-      this.loading = true;
-      if(!this.flag || type==1){
-      	this.getData();
+    // 取消订单
+    cancelOrder (index, id) {
+      const that = this
+      if (this.listData[index].is_pay == 0) { // 未付款
+        cancelNoPayOrder({
+          order_project_id: this.listData[index].id
+        }).then(res => {
+          if (res.success) {
+            that.updateOne()
+            // that.listInit(1);
+          }
+        })
+      } else {
+        cancelPayOrder({
+          order_project_id: this.listData[index].id
+        }).then(res => {
+          if (res.success) {
+            that.updateOne()
+            // that.listInit(1);
+          }
+        })
+      }
+    },
+    // 初始化列表
+    listInit (type = '') {
+      this.listData = []
+      this.page = 1
+      this.finished = false
+      this.loading = true
+      if (!this.flag || type == 1) {
+        this.getData()
       }
     },
     // 打开弹窗
-    openExplainSwal(){
-      this.showExplainSwal = true;
+    openExplainSwal () {
+      this.showExplainSwal = true
     },
     // 关闭弹窗
-    closeExplainSwal(data){
-      this.showExplainSwal = data == 1 ? true : false;
+    closeExplainSwal (data) {
+      this.showExplainSwal = data == 1
     },
-    //打开取消弹窗
-    openSwal(index,id){
-      this.clickIndex = index;
-      this.clickId = id;
-      this.showSwal = true;
-      this.tapId = this.listData[index].id;
+    // 打开取消弹窗
+    openSwal (index, id) {
+      this.clickIndex = index
+      this.clickId = id
+      this.showSwal = true
+      this.tapId = this.listData[index].id
     },
-    //关闭取消弹窗
-    closeSwal(data){
-      this.showSwal = data == 1 ? true : false;
+    // 关闭取消弹窗
+    closeSwal (data) {
+      this.showSwal = data == 1
     },
     // 取消提醒回调
     sureSwal: function (e) {
-      const that = this;
-      this.closeSwal(0);
-      console.log(this.clickIndex);
-      this.cancelOrder(this.clickIndex,this.clickId);
+      const that = this
+      this.closeSwal(0)
+      console.log(this.clickIndex)
+      this.cancelOrder(this.clickIndex, this.clickId)
     },
-    //列表商品显示隐藏
+    // 列表商品显示隐藏
     toggle (index) {
-      this.listData[index].is_toggle = this.listData[index].is_toggle ? false : true;
+      this.listData[index].is_toggle = !this.listData[index].is_toggle
     },
-    linkFunc (type,obj={}) {
-    	switch (type){
-    		case 5:
-    		this.$router.push({
-	      	path: '/store/goods-detail',
-	      	query: {
-	      		id: obj.id
-	      	}
-	      })
-    		break;
-    		case 12:
-        this.tapId = obj.id;
-    		this.$router.push({
-	      	path: '/order/detail',
-	      	query: {
-	      		id: obj.id
-	      	}
-	      })
-    		break;
-    		case 13:
-        this.tapId = obj.id;
-    		this.$router.push({
-	      	path: '/order/special-detail',
-	      	query: {
-	      		id: obj.id
-	      	}
-	      })
-    		break;
-    		case 20:
-    		this.$router.push({
-	      	path: '/logistics/list',
-	      	query: {
-	      		id: 3
-	      	}
-	      })
-    		break;
-    	}
+    linkFunc (type, obj = {}) {
+      switch (type) {
+        case 5:
+          this.$router.push({
+            path: '/store/goods-detail',
+            query: {
+              id: obj.id
+            }
+          })
+          break
+        case 12:
+          this.tapId = obj.id
+          this.$router.push({
+            path: '/order/detail',
+            query: {
+              id: obj.id
+            }
+          })
+          break
+        case 13:
+          this.tapId = obj.id
+          this.$router.push({
+            path: '/order/special-detail',
+            query: {
+              id: obj.id
+            }
+          })
+          break
+        case 20:
+          this.$router.push({
+            path: '/logistics/list',
+            query: {
+              id: 3
+            }
+          })
+          break
+      }
     },
-    logisticsLink(index) {
-      this.tapId = this.listData[index].id;
-    	var _this = this.listData[index];
-      if(_this.project_logistice_count > 1 || (_this.project_logistice_count = 1 && _this.order_status == 1)){
-      	this.$router.push({
+    logisticsLink (index) {
+      this.tapId = this.listData[index].id
+      var _this = this.listData[index]
+      if (_this.project_logistice_count > 1 || (_this.project_logistice_count = 1 && _this.order_status == 1)) {
+        this.$router.push({
           path: '/logistics/list',
           query: {
             id: _this.id
           }
         })
-      }else {
-      	if(_this.project_logistice_buy_type == 0){ //0快递 1自提 2商家配送
-      		this.$router.push({
-	          path: '/logistics/logistics-express',
-	          query: {
-	            id: _this.id
-	          }
-	        })
-      	}else if(_this.project_logistice_buy_type == 1){
-      		this.$router.push({
-	          path: '/logistics/logistics-self',
-	          query: {
-	            id: _this.id
-	          }
-	        })
-      	}else {
-      		this.$router.push({
-	          path: '/logistics/logistics-business',
-	          query: {
-	            id: _this.id
-	          }
-	        })
-      	}
+      } else {
+        if (_this.project_logistice_buy_type == 0) { // 0快递 1自提 2商家配送
+          this.$router.push({
+            path: '/logistics/logistics-express',
+            query: {
+              id: _this.id
+            }
+          })
+        } else if (_this.project_logistice_buy_type == 1) {
+          this.$router.push({
+            path: '/logistics/logistics-self',
+            query: {
+              id: _this.id
+            }
+          })
+        } else {
+          this.$router.push({
+            path: '/logistics/logistics-business',
+            query: {
+              id: _this.id
+            }
+          })
+        }
       }
-    },
+    }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      if(from.name=='orderDetail' || from.name=='specialDetail' || from.name=='logisticsList' || from.name=='logisticsSelf' || from.name=='logisticsExpress' || from.name=='logisticsBusiness'){
-        vm.updateOne();
+      if (from.name == 'orderDetail' || from.name == 'specialDetail' || from.name == 'logisticsList' || from.name == 'logisticsSelf' || from.name == 'logisticsExpress' || from.name == 'logisticsBusiness') {
+        vm.updateOne()
       }
     })
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name == 'personage'||to.name == 'goodsDetail'||to.name == 'cart'){
-      this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+    if (to.name == 'personage' || to.name == 'goodsDetail' || to.name == 'cart') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    if (to.name != 'addBankCard' && to.name != 'certification') {
+      api.removePrefs({
+        key: 'realNameInfo'
+      })
     }
     const el = document
       .getElementById('order-list-body')
       .getElementsByClassName('van-tabs__content')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
-    next();
+    next()
   }
 }
 </script>
