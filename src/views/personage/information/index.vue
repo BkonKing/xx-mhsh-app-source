@@ -1,18 +1,16 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar
-      title="我的资料"
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    ></van-nav-bar>
-    <van-tabs class="tf-body-container" v-model="current">
+    <van-nav-bar title="我的资料"
+                 :fixed="true"
+                 :border="false"
+                 placeholder
+                 left-arrow
+                 @click-left="goback"></van-nav-bar>
+    <van-tabs class="tf-body-container"
+              v-model="current">
       <van-tab title="基础信息">
-        <!-- <tf-list class="basics-list"> -->
-          <van-uploader :after-read="afterRead" style="width: 100%;">
-          <!-- <tf-list-item class="title" border title="头像">
+        <!-- <van-uploader :after-read="afterRead" style="width: 100%;"> -->
+        <!-- <tf-list-item class="title" border title="头像">
             <template #right>
               <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
               <img
@@ -22,37 +20,48 @@
               />
             </template>
           </tf-list-item> -->
-          <van-cell is-link class="cell" center>
-            <template #title>
-              <div class="title">
-                <div class="left">
-                  <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
-                  <img
-                    v-else
-                    class="tf-avatar-m"
-                    src="@/assets/imgs/touxiang.png"
-                  />
-                </div>
-                <div class="right">
-                  <div class="t1">{{ userInfo.mobile }}</div>
+        <van-cell is-link
+                  class="cell"
+                  center
+                  @click="$router.push('/pages/personage/information/personInfo')">
+          <template #title>
+            <div class="title">
+              <div class="left">
+                <img v-if="avatar"
+                     class="tf-avatar-m"
+                     :src="avatar" />
+                <img v-else
+                     class="tf-avatar-m"
+                     src="@/assets/imgs/touxiang.png" />
+              </div>
+              <div class="right">
+                <div class="l-left">
+                  <div class="t1">{{ phone }}</div>
                   <div class="t2">
-                    <i
-                      v-if="userInfo.gender == 2"
-                      class="font_family icon-xingbie nv"
-                    ></i>
-                    <i
-                      v-if="userInfo.gender == 1"
-                      class="font_family icon-xingbie1 nan"
-                    ></i>
+                    <i v-if="userInfo.gender == 2"
+                       class="font_family icon-xingbie nv"></i>
+                    <i v-if="userInfo.gender == 1"
+                       class="font_family icon-xingbie1 nan"></i>
                     {{ userInfo.birthday }}
                   </div>
                 </div>
+                <div class="r-left">
+                  <div class="name">
+                    {{ userInfo.realname }}
+                    <i v-if="userInfo.idcard"
+                       class="font_family icon-yishiming n1">
+                    </i>
+                    <i v-else
+                       class="font_family icon-weishiming n2"></i>
+                  </div>
+                </div>
               </div>
-            </template>
-          </van-cell>
-        </van-uploader>
+            </div>
+          </template>
+        </van-cell>
+        <!-- </van-uploader> -->
         <div class="attes">
-          <van-cell class="nameCell" is-link center>
+          <!-- <van-cell class="nameCell" is-link center>
             <template #title>
               <div class="title" @click="toPersonInfo">
                 <div class="txt">实名认证</div>
@@ -67,21 +76,17 @@
                 </div>
               </div>
             </template>
-          </van-cell>
+          </van-cell> -->
 
-          <tf-list-item
-            border
-            title="手机号"
-            :rightText="mobile"
-            @click="jumpPhone"
-          >
+          <tf-list-item border
+                        title="手机号"
+                        :rightText="mobile"
+                        @click="jumpPhone">
           </tf-list-item>
-          <van-cell
-            class="nameCell"
-            is-link
-            center
-            @click="$router.push('/pages/personage/information/BankCard')"
-          >
+          <van-cell class="nameCell"
+                    is-link
+                    center
+                    @click="$router.push('/pages/personage/information/BankCard')">
             <template #title>
               <div class="title">
                 <div class="txt">银行卡</div>
@@ -140,36 +145,41 @@
             </template>
           </tf-list-item>
         </tf-list> -->
-        <!-- <tf-list class="basics-list">
-          <tf-list-item border title="姓名" :showArrow="false" :IFocusStatus="true">
+        <tf-list class="basics-list">
+          <!-- <tf-list-item
+            border
+            title="姓名"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
               <input v-model="realname" class="tf-input" @change="setRealname" />
             </template>
           </tf-list-item>
-          <tf-list-item border title="手机号" :rightText="mobile" @click="jumpPhone"></tf-list-item>
           <tf-list-item
-            title="收货地址"
-            :rightText="userInfo.address_name"
-            rightWidth="460px"
-            @click="goAddress"
-          ></tf-list-item>
-        </tf-list> -->
+            border
+            title="手机号"
+            :rightText="mobile"
+            @click="jumpPhone"
+          ></tf-list-item> -->
+          <tf-list-item title="收货地址"
+                        :rightText="userInfo.address_name"
+                        rightWidth="460px"
+                        @click="goAddress"></tf-list-item>
+        </tf-list>
         <tf-list class="basics-list">
           <!-- <van-uploader :after-read="cjFace" style="width: 100%;"> -->
           <!-- <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item> -->
-          <tf-list-item title="人脸采集" @click="openCamera"></tf-list-item>
+          <tf-list-item title="人脸采集"
+                        @click="openCamera"></tf-list-item>
           <!-- </van-uploader> -->
         </tf-list>
         <tf-list class="basics-list">
-          <tf-list-item
-            border
-            :title="`${userInfo.is_setpaypassword ? '修改' : '设置'}支付密码`"
-            @click="editPaymentCode"
-          ></tf-list-item>
-          <tf-list-item
-            :title="`${userInfo.is_setpassword ? '修改' : '设置'}登录密码`"
-            @click="editLoginPassword"
-          ></tf-list-item>
+          <tf-list-item border
+                        :title="`${userInfo.is_setpaypassword ? '修改' : '设置'}支付密码`"
+                        @click="editPaymentCode"></tf-list-item>
+          <tf-list-item :title="`${userInfo.is_setpassword ? '修改' : '设置'}登录密码`"
+                        @click="editLoginPassword"></tf-list-item>
         </tf-list>
       </van-tab>
       <van-tab v-if="userType != 0 && currentProject" title="房产信息">
@@ -290,6 +300,7 @@ export default {
       nickname: '',
       birthday: '',
       faceDialog: false,
+      phone: '',
       maxDate: new Date(getDate()),
       minDate: new Date('1900/1/1'),
       memberList: [], // 成员列表
@@ -327,6 +338,10 @@ export default {
   created () {
     this.userType == 1 && this.yzHouse(0)
     eventBus.$off('chooseAddress')
+    this.phone =
+      this.userInfo.mobile.substr(0, 3) +
+      '****' +
+      this.userInfo.mobile.substr(7)
   },
   activated () {
     if (this.current === 0) {
@@ -376,10 +391,10 @@ export default {
       const newFile = await selectFileImage(file.file)
       formData.append('imgFile', newFile)
       uImages(formData)
-        .then((res) => {
+        .then(res => {
           this.editAvatar(res.data)
         })
-        .catch((message) => {
+        .catch(message => {
           Toast.clear()
           Toast.fail(message)
         })
@@ -403,7 +418,7 @@ export default {
     setNickname () {
       editNickname({
         nickname: this.nickname
-      }).then((res) => {
+      }).then(res => {
         Toast.success('昵称设置成功')
       })
     },
@@ -411,7 +426,7 @@ export default {
     setSex () {
       editGender({
         gender: this.gender
-      }).then((res) => {
+      }).then(res => {
         Toast.success('性别设置成功')
       })
     },
@@ -419,7 +434,7 @@ export default {
     setBirthday () {
       editBirthday({
         birthday: this.birthday
-      }).then((res) => {
+      }).then(res => {
         Toast.success('生日设置成功')
       })
     },
@@ -427,7 +442,7 @@ export default {
     setRealname () {
       editRealname({
         realname: this.realname
-      }).then((res) => {
+      }).then(res => {
         Toast.success('姓名设置成功')
       })
     },
@@ -458,8 +473,8 @@ export default {
     /* 获取成员列表 */
     getMemberList () {
       getMemberList({
-        house_id: this.selectedHouseId
-      }).then((res) => {
+        house_id: this.value
+      }).then(res => {
         this.memberList = res.data
       })
     },
@@ -545,7 +560,7 @@ export default {
             Toast.fail(message)
           })
         })
-        .catch((message) => {
+        .catch(message => {
           Toast.clear()
           Toast.fail(message)
         })
@@ -605,18 +620,42 @@ export default {
         margin-right: 36px;
       }
       .right {
-        .t1 {
-          font-size: 24px;
-          font-weight: 600;
-        }
-        .t2 {
-          font-size: 20px;
-          color: #8f8f94;
-          .nv {
-            color: #e45487;
+        display: flex;
+
+        .l-left {
+          margin-right: 20px;
+          .t1 {
+            font-size: 30px;
+            font-weight: 600;
           }
-          .nan {
-            color: #448fe4;
+          .t2 {
+            font-size: 20px;
+            color: #8f8f94;
+            .nv {
+              color: #e45487;
+            }
+            .nan {
+              color: #448fe4;
+            }
+          }
+        }
+        .r-left {
+          .name {
+            color: #666666;
+            display: flex;
+            align-items: center;
+            .n1 {
+              margin-left: 10px;
+              vertical-align: middle;
+              font-size: 33px;
+              color: #f77e64;
+            }
+            .n2 {
+              margin-left: 10px;
+              vertical-align: middle;
+              font-size: 33px;
+              color: gray;
+            }
           }
         }
       }

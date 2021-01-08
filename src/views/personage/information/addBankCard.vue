@@ -1,65 +1,60 @@
 <template>
   <div class="addBankCard">
-    <van-nav-bar
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    >
+    <van-nav-bar :fixed="true"
+                 :border="false"
+                 placeholder
+                 left-arrow
+                 @click-left="goback">
     </van-nav-bar>
     <div class="content">
       <div class="top">
-        <h3>添加银行卡</h3>
+        <h3>使用新银行卡支付</h3>
         <div class="t1">请绑定持卡人本人的银行卡</div>
       </div>
       <div class="middle">
-        <van-field class="field" v-model="personName" placeholder="姓名">
+        <van-field class="field"
+                   v-model="personName"
+                   placeholder="姓名">
           <template #label>
             <div class="label">
               持卡人
             </div>
           </template>
           <template #right-icon>
-            <i
-              class="font_family icon-shuoming right"
-              @click="isShow = true"
-            ></i>
+            <i class="font_family icon-shuoming right"
+               @click="isShow = true"></i>
           </template>
         </van-field>
-        <van-field
-          @change="getCardName"
-          class="field"
-          v-model="bankCardNum"
-          placeholder="银行卡号"
-          ref="cardInput"
-          @input="formatCardNumber(bankCardNum)"
-        >
+        <van-field @change="getCardName"
+                   class="field"
+                   v-model="bankCardNum"
+                   placeholder="银行卡号"
+                   ref="cardInput"
+                   @input="formatCardNumber(bankCardNum)">
           <template #label>
             <div class="label">卡号</div>
           </template>
           <template #right-icon>
-            <i
-              class="font_family icon-close-circle-fill clear"
-              v-if="bankCardNum != ''"
-              @click="bankCardNum = ''"
-            ></i>
-            <i class="font_family icon-xiangji right" @click="openCamera"></i>
+            <i class="font_family icon-close-circle-fill clear"
+               v-if="bankCardNum != ''"
+               @click="bankCardNum = ''"></i>
+            <i class="font_family icon-xiangji right"
+               @click="openCamera"></i>
           </template>
         </van-field>
         <div v-if="bankCardName && phone">
-          <van-field
-            class="field"
-            v-model="bankCardName"
-            placeholder="银行卡号"
-          >
+          <van-field class="field"
+                     v-model="bankCardName"
+                     placeholder="银行卡号">
             <template #label>
               <div class="label2">
                 卡类型
               </div>
             </template>
           </van-field>
-          <van-field class="field" v-model="phone" placeholder="银行预留手机号">
+          <van-field class="field"
+                     v-model="phone"
+                     placeholder="银行预留手机号">
             <template #label>
               <div class="label2">
                 手机号
@@ -69,45 +64,34 @@
         </div>
       </div>
       <div class="other">
-        <span
-          @click="
+        <span @click="
             $router.push('/pages/personage/information/support-bankCard-list')
-          "
-          >支持的银行></span
-        >
+          ">支持的银行></span>
       </div>
       <div class="btn1">
         <div class="agree">
-          <van-checkbox
-            class="checkbox"
-            v-model="checked"
-            shape="square"
-            icon-size="14px"
-          ></van-checkbox>
+          <van-checkbox class="checkbox"
+                        v-model="checked"
+                        shape="square"
+                        icon-size="14px"></van-checkbox>
           同意
-          <span
-            @click="$router.push('/pages/personage/information/pay-agreeMent')"
-            >《支付协议》
+          <span @click="$router.push('/pages/personage/information/pay-agreeMent')">《支付协议》
           </span>
         </div>
-        <van-button
-          class="btn"
-          block
-          :color="bol ? 'red' : 'gray'"
-          :disabled="!bol"
-          @click="toVerifyPhone"
-        >
-          下一步
+        <van-button class="btn"
+                    block
+                    :color="bol ? 'red' : 'gray'"
+                    :disabled="!bol"
+                    @click="goback">
+          去支付
         </van-button>
       </div>
     </div>
     <!-- 持卡人说明弹窗 -->
-    <van-popup
-      v-model="isShow"
-      round
-      position="bottom"
-      :style="{ height: '45%' }"
-    >
+    <van-popup v-model="isShow"
+               round
+               position="bottom"
+               :style="{ height: '45%' }">
       <div class="shuoming">
         <div class="title">持卡人说明</div>
         <div class="info">
@@ -121,17 +105,24 @@
         </div>
       </div>
       <div class="btnBox">
-        <van-button block color="#eb5841" class="btn" @click="isShow = false"
-          >知道了
+        <van-button block
+                    color="#eb5841"
+                    class="btn"
+                    @click="isShow = false">知道了
         </van-button>
       </div>
     </van-popup>
-    <van-popup v-model="show" round class="popup">
+    <van-popup v-model="show"
+               round
+               class="popup">
       <div class="t1">{{ message }}</div>
-      <div class="red" @click="show = false">知道了</div>
+      <div class="red"
+           @click="show = false">知道了</div>
     </van-popup>
     <!-- 关闭弹窗按钮 -->
-    <div class="close" v-if="isShow" @click="isShow = false">
+    <div class="close"
+         v-if="isShow"
+         @click="isShow = false">
       <i class="font_family icon-guanbi1 guanbi"></i>
     </div>
 
@@ -152,9 +143,9 @@ import {
   Toast,
   uploader,
   Checkbox
-} from "vant";
-import { mapGetters } from "vuex";
-import { getBankInfo } from "@/api/personage.js";
+} from 'vant'
+import { mapGetters } from 'vuex'
+import { getBankInfo } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -163,138 +154,138 @@ export default {
     [Popup.name]: Popup,
     [Picker.name]: Picker,
     [DatetimePicker.name]: DatetimePicker,
-    Toast,
+    [Toast.name]: Toast,
     [uploader.name]: uploader,
     [Checkbox.name]: Checkbox
   },
-  data() {
+  data () {
     return {
       isShow: false,
-      personName: "",
-      bankCardNum: "",
-      bankCardName: "",
-      phone: "",
+      personName: '',
+      bankCardNum: '',
+      bankCardName: '',
+      phone: '',
       checked: true,
       showPhone: false,
-      bankIco: "",
-      message: "",
+      bankIco: '',
+      message: '',
       show: false
-    };
+    }
   },
   computed: {
-    bol() {
+    bol () {
       return (
         this.personName && this.bankCardNum && this.bankCardName && this.phone
-      );
+      )
     },
-    ...mapGetters(["userInfo"])
+    ...mapGetters(['userInfo'])
   },
   methods: {
     // 打开摄像头
-    openCamera() {
-      const baiduAd = api.require("baiduIdentifyOCR");
-      if (api.systemType === "android") {
+    openCamera () {
+      const baiduAd = api.require('baiduIdentifyOCR')
+      if (api.systemType === 'android') {
         baiduAd.init((ret, err) => {
           if (ret.status) {
             baiduAd.bankCardOCROnline(({ status, result }, err) => {
               if (status) {
-                this.bankCardNum = result.split("\n")[0].split("：")[1];
+                this.bankCardNum = result.split('\n')[0].split('：')[1]
               }
-            });
+            })
           }
-        });
+        })
       } else {
         baiduAd.bankCardOCROnline(({ status, result }, err) => {
           if (status) {
-            this.bankCardNum = result.result.bank_card_number;
+            this.bankCardNum = result.result.bank_card_number
           }
-        });
+        })
       }
     },
     // 格式化银行卡号
-    formatCardNumber(cardNum) {
+    formatCardNumber (cardNum) {
       // 获取input的dom对象，这里因为用的是vant ui的input，所以需要这样拿到
-      const input = this.$refs.cardInput.$el.getElementsByTagName("input")[0];
+      const input = this.$refs.cardInput.$el.getElementsByTagName('input')[0]
       // 获取当前光标的位置
-      const cursorIndex = input.selectionStart;
+      const cursorIndex = input.selectionStart
       // 字符串中光标之前-的个数
       const lineNumOfCursorLeft = (
         cardNum.slice(0, cursorIndex).match(/ /g) || []
-      ).length;
+      ).length
       // 去掉所有-的字符串
-      const noLine = cardNum.replace(/ /g, "");
+      const noLine = cardNum.replace(/ /g, '')
       // 去除格式不对的字符并重新插入-的字符串
       const newCardNum = noLine
-        .replace(/\D+/g, "")
-        .replace(/(\d{4})/g, "$1 ")
-        .replace(/ $/, "");
+        .replace(/\D+/g, '')
+        .replace(/(\d{4})/g, '$1 ')
+        .replace(/ $/, '')
       // 改后字符串中原光标之前-的个数
       const newLineNumOfCursorLeft = (
         newCardNum.slice(0, cursorIndex).match(/ /g) || []
-      ).length;
+      ).length
       // 光标在改后字符串中应在的位置
       const newCursorIndex =
-        cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft;
+        cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft
       // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
       this.$nextTick(() => {
-        this.bankCardNum = newCardNum;
+        this.bankCardNum = newCardNum
         // 修正光标位置，nextTick保证在渲染新值后定位光标
         this.$nextTick(() => {
           // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
-          input.selectionStart = newCursorIndex;
-          input.selectionEnd = newCursorIndex;
-        });
-      });
+          input.selectionStart = newCursorIndex
+          input.selectionEnd = newCursorIndex
+        })
+      })
     },
     // 跳转预留手机号
-    toVerifyPhone() {
+    // toVerifyPhone () {
+    //   this.$router.push('/pages/personage/information/verifyPhone')
+    // },
+    // 回退
+    goback () {
       const realNameInfo = {
         bank_card: this.bankCardNum,
         realname: this.personName,
         mobile: this.userInfo.mobile,
         bank_name: this.bankCardName,
         bank_ico: this.bankIco
-      };
+      }
       api.setPrefs({
-        key: "realNameInfo",
+        key: 'realNameInfo',
         value: JSON.stringify(realNameInfo)
-      });
-      this.$router.push("/pages/personage/information/verifyPhone");
-    },
-    // 回退
-    goback() {
-      this.$router.go(-1);
+      })
+      this.$router.go(-1)
     },
     // 获取银行卡所属银行名称
-    getCardName() {
-      getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, "") })
+    getCardName () {
+      getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, '') })
         .then(res => {
-          this.bankCardName = res.cnm + "   储蓄卡";
-          this.bankIco = res.bank_ico;
+          this.bankCardName = res.cnm + '   储蓄卡'
+          this.bankIco = res.bank_ico
         })
         .catch(error => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     }
   },
-  created() {
-    this.personName = this.userInfo.realname;
+  created () {
+    this.personName = this.userInfo.realname
     this.phone =
       this.userInfo.mobile.substr(0, 3) +
-      "****" +
-      this.userInfo.mobile.substr(7);
+      '****' +
+      this.userInfo.mobile.substr(7)
 
     if (this.$route.query.message) {
-      this.show = true;
-      this.message = this.$route.query.message;
-      const realNameInfo = api.getPrefs({ sync: true, key: "realNameInfo" });
-      this.personName = realNameInfo.realname;
-      this.bankCardNum = realNameInfo.bank_card;
+      this.show = true
+      this.message = this.$route.query.message
+      const realNameInfo = api.getPrefs({ sync: true, key: 'realNameInfo' })
+      this.personName = realNameInfo.realname
+      this.bankCardNum = realNameInfo.bank_card
       // this.idCard = realNameInfo.idcard;
-      this.bankCardName = realNameInfo.bank_name;
+      this.bankCardName = realNameInfo.bank_name
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

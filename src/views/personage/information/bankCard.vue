@@ -1,12 +1,10 @@
 <template>
   <div class="bankCard">
-    <van-nav-bar
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    >
+    <van-nav-bar :fixed="true"
+                 :border="false"
+                 placeholder
+                 left-arrow
+                 @click-left="goback">
       <template #title>
         <div class="title">
           银行卡
@@ -14,23 +12,23 @@
       </template>
     </van-nav-bar>
     <div class="content">
-      <div
-        class="item"
-        v-for="(item, index) in arr"
-        :key="index"
-        @touchstart.prevent="touchinUk(index)"
-        @touchend.prevent="cleartime(index)"
-      >
+      <div class="item"
+           :style="{background:'url( '+ 'https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2718853745,1288801299&fm=26&gp=0.jpg' +') no-repeat',backgroundSize:'100% 100%'}"
+           v-for="(item, index) in bankCardArr"
+           :key="index"
+           @touchstart.prevent="touchinUk(item,index)"
+           @touchend.prevent="cleartime">
         <div class="top">
-          <img src="@/assets/img/zgyh.png" alt="" />
+          <img :src="item.bank_ico"
+               alt="" />
           <div class="right">
-            <div class="t1">中国银行</div>
+            <div class="t1">{{item.bank_name}}</div>
             <div class="t2">储蓄卡</div>
           </div>
         </div>
         <div class="bottom">
           ****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;
-          0505
+          {{item.bank_card}}
         </div>
       </div>
     </div>
@@ -38,54 +36,57 @@
 </template>
 
 <script>
-import { NavBar, Dialog } from "vant";
-import { getBankList } from "@/api/personage.js";
+import { NavBar, Dialog, Toast } from 'vant'
+import { getBankList, unbindBankCard } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    [Dialog.name]: Dialog
+    [Dialog.name]: Dialog,
+    [Toast.name]: Toast
   },
-  data() {
+  data () {
     return {
-      arr: [0, 1, 2, 3],
+      bankCardArr: [],
       isShow: false
-    };
+    }
   },
   methods: {
     // 回退
-    goback() {
-      this.$router.go(-1);
+    goback () {
+      this.$router.go(-1)
     },
-    touchinUk(index) {
-      console.log(index);
-      clearInterval(this.Loop); //再次清空定时器，防止重复注册定时器
+    touchinUk (item, index) {
+      console.log(index)
+      clearInterval(this.Loop) // 再次清空定时器，防止重复注册定时器
       this.Loop = setTimeout(
-        function() {
+        function () {
           Dialog.confirm({
-            message: "是否删除该银行卡"
+            message: '是否删除该银行卡'
           })
-            .then(() => {
-              console.log("删除");
-              this.arr.splice(index, 1);
+            .then(async () => {
+              this.bankCardArr.splice(index, 1)
+              await unbindBankCard({ bank_id: +item.id })
+              Toast.success('删除成功')
             })
             .catch(() => {
               // on cancel
-              console.log("不删");
-            });
+              console.log('不删')
+            })
         }.bind(this),
         1000
-      );
+      )
     },
-    cleartime(index) {
+    cleartime () {
       // 这个方法主要是用来将每次手指移出之后将计时器清零
-      clearInterval(this.Loop);
+      clearInterval(this.Loop)
     }
   },
-  async created() {
-    const res = await getBankList();
-    console.log("银行卡", res);
+  async created () {
+    const res = await getBankList()
+    this.bankCardArr = res.data
+    console.log('银行卡', res)
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -106,8 +107,8 @@ export default {
       position: relative;
       width: 710px;
       height: 232px;
-      background: url(~@/assets/imgs/zgyhdb.png);
-      background-size: 100% 100%;
+      // background: url(~@/assets/imgs/zgyhdb.png);
+
       margin-bottom: 30px;
       .top {
         display: flex;
@@ -123,14 +124,14 @@ export default {
             font-size: 30px;
             font-family: PingFang SC;
             font-weight: 500;
-            color: #ffffff;
+            // color: #ffffff;
             line-height: 38px;
           }
           .t2 {
             font-size: 22px;
             font-family: PingFang SC;
             font-weight: 400;
-            color: #ffffff;
+            // color: #ffffff;
             line-height: 38px;
             opacity: 0.6;
           }
@@ -143,7 +144,7 @@ export default {
         font-size: 48px;
         font-family: PingFang SC;
         font-weight: 500;
-        color: #ffffff;
+        // color: #ffffff;
         line-height: 38px;
       }
       .box {
