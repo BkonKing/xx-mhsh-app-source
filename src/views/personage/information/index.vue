@@ -10,18 +10,100 @@
     ></van-nav-bar>
     <van-tabs class="tf-body-container" v-model="current">
       <van-tab title="基础信息">
-        <tf-list class="basics-list">
+        <!-- <tf-list class="basics-list"> -->
           <van-uploader :after-read="afterRead" style="width: 100%;">
-            <tf-list-item border title="头像">
-              <template v-slot:right>
-                <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
-                <img v-else class="tf-avatar-m" src="@/assets/imgs/touxiang.png" />
-              </template>
-            </tf-list-item>
-          </van-uploader>
-          <tf-list-item border title="昵称" :showArrow="false" :IFocusStatus="true">
+          <!-- <tf-list-item class="title" border title="头像">
+            <template #right>
+              <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
+              <img
+                v-else
+                class="tf-avatar-m"
+                src="@/assets/imgs/touxiang.png"
+              />
+            </template>
+          </tf-list-item> -->
+          <van-cell is-link class="cell" center>
+            <template #title>
+              <div class="title">
+                <div class="left">
+                  <img v-if="avatar" class="tf-avatar-m" :src="avatar" />
+                  <img
+                    v-else
+                    class="tf-avatar-m"
+                    src="@/assets/imgs/touxiang.png"
+                  />
+                </div>
+                <div class="right">
+                  <div class="t1">{{ userInfo.mobile }}</div>
+                  <div class="t2">
+                    <i
+                      v-if="userInfo.gender == 2"
+                      class="font_family icon-xingbie nv"
+                    ></i>
+                    <i
+                      v-if="userInfo.gender == 1"
+                      class="font_family icon-xingbie1 nan"
+                    ></i>
+                    {{ userInfo.birthday }}
+                  </div>
+                </div>
+              </div>
+            </template>
+          </van-cell>
+        </van-uploader>
+        <div class="attes">
+          <van-cell class="nameCell" is-link center>
+            <template #title>
+              <div class="title" @click="toPersonInfo">
+                <div class="txt">实名认证</div>
+                <div class="name">
+                  {{ userInfo.realname }}
+                  <i
+                    v-if="userInfo.realname"
+                    class="font_family icon-yishiming n1"
+                  >
+                  </i>
+                  <i v-else class="font_family icon-weishiming n2"></i>
+                </div>
+              </div>
+            </template>
+          </van-cell>
+
+          <tf-list-item
+            border
+            title="手机号"
+            :rightText="mobile"
+            @click="jumpPhone"
+          >
+          </tf-list-item>
+          <van-cell
+            class="nameCell"
+            is-link
+            center
+            @click="$router.push('/pages/personage/information/BankCard')"
+          >
+            <template #title>
+              <div class="title">
+                <div class="txt">银行卡</div>
+                <div class="name">0000000000000000</div>
+              </div>
+            </template>
+          </van-cell>
+        </div>
+        <!-- <tf-list class="basics-list">
+          <tf-list-item
+            border
+            title="昵称"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
-              <input v-model="nickname" class="tf-input" @change="setNickname" maxlength="15" />
+              <input
+                v-model="nickname"
+                class="tf-input"
+                @change="setNickname"
+                maxlength="15"
+              />
             </template>
           </tf-list-item>
           <tf-list-item border title="性别">
@@ -57,8 +139,8 @@
               </tf-date-time-picker>
             </template>
           </tf-list-item>
-        </tf-list>
-        <tf-list class="basics-list">
+        </tf-list> -->
+        <!-- <tf-list class="basics-list">
           <tf-list-item border title="姓名" :showArrow="false" :IFocusStatus="true">
             <template v-slot:right>
               <input v-model="realname" class="tf-input" @change="setRealname" />
@@ -71,7 +153,7 @@
             rightWidth="460px"
             @click="goAddress"
           ></tf-list-item>
-        </tf-list>
+        </tf-list> -->
         <tf-list class="basics-list">
           <!-- <van-uploader :after-read="cjFace" style="width: 100%;"> -->
           <!-- <tf-list-item title="人脸采集" @click="faceDialog = true"></tf-list-item> -->
@@ -148,15 +230,18 @@ import {
   DropdownMenu,
   DropdownItem,
   Tag,
+  Dialog,
   Toast,
   uploader,
   Field,
-  Button
+  Button,
+  Cell
+  // CellGroup
 } from 'vant'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
-import tfPicker from '@/components/tf-picker/index'
-import tfDateTimePicker from '@/components/tf-date-time-picker/index'
+// import tfPicker from '@/components/tf-picker/index'
+// import tfDateTimePicker from '@/components/tf-date-time-picker/index'
 import tfDialog from '@/components/tf-dialog/index.vue'
 import house from '../house/components/house'
 import { uImages } from '@/api/user'
@@ -185,12 +270,13 @@ export default {
     [Button.name]: Button,
     [Tag.name]: Tag,
     [Field.name]: Field,
-    tfDateTimePicker,
+    // tfDateTimePicker,
     tfList,
     tfListItem,
-    tfPicker,
+    // tfPicker,
     house,
-    tfDialog
+    tfDialog,
+    [Cell.name]: Cell
   },
   data () {
     return {
@@ -254,6 +340,10 @@ export default {
     }
   },
   methods: {
+    //  个人信息
+    toPersonInfo () {
+      this.$router.push('/pages/personage/information/realNameInfo')
+    },
     /* 获取用户信息 */
     async getMyAccount () {
       await this.$store.dispatch('getMyAccount')
@@ -504,6 +594,34 @@ export default {
 <style lang="less" scoped>
 .tf-body-container {
   @flex-column();
+  .cell {
+    background-color: #fff;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    .title {
+      display: flex;
+      align-items: center;
+      .left {
+        margin-right: 36px;
+      }
+      .right {
+        .t1 {
+          font-size: 24px;
+          font-weight: 600;
+        }
+        .t2 {
+          font-size: 20px;
+          color: #8f8f94;
+          .nv {
+            color: #e45487;
+          }
+          .nan {
+            color: #448fe4;
+          }
+        }
+      }
+    }
+  }
   /deep/ .van-tabs__content {
     flex: 1;
     overflow: auto;
@@ -526,6 +644,58 @@ export default {
 .basics-list {
   background-color: #fff;
   border-radius: 8px;
+}
+
+.attes {
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 0 30px;
+  border-radius: 8px;
+  /deep/ .tf-text {
+    text-align: left !important;
+    margin-left: -50px !important;
+    color: #666666;
+  }
+  .van-cell {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+  .nameCell {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 20px 0;
+    &:last-child {
+      border: none;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      .txt {
+        width: 120px;
+        margin-right: 68px;
+      }
+      .name {
+        color: #666666;
+        display: flex;
+        align-items: center;
+        .n1 {
+          margin-left: 10px;
+          vertical-align: middle;
+          font-size: 33px;
+          color: #f77e64;
+        }
+        .n2 {
+          margin-left: 10px;
+          vertical-align: middle;
+          font-size: 33px;
+          color: gray;
+        }
+      }
+    }
+  }
+  /deep/ .tf-clist-box {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .btn-placeholder {
