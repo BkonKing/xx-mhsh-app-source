@@ -12,6 +12,61 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-weishiming:before {
+  content: "\e657";
+}
+
+.tf-icon-yishiming:before {
+  content: "\e667";
+}
+
+.tf-icon-xingbie:before {
+  content: "\e60f";
+}
+
+.tf-icon-xingbie1:before {
+  content: "\e611";
+}
+
+.tf-icon-shuoming:before {
+  content: "\e656";
+}
+
+.tf-icon-xiangji:before {
+  content: "\e655";
+}
+
+.tf-icon-qitajiaofei:before {
+  content: "\e654";
+}
+
+.tf-icon-shengjiangpaixu:before {
+  content: "\e653";
+}
+
+.tf-icon-shuibiao:before {
+  content: "\e651";
+}
+
+.tf-icon-dianbiao:before {
+  content: "\e652";
+}
+
+.tf-icon-dianfei:before {
+  content: "\e64d";
+}
+
+.tf-icon-gongtanfei:before {
+  content: "\e64e";
+}
+
+.tf-icon-shuifei:before {
+  content: "\e64f";
+}
+
+.tf-icon-ranqifei:before {
+  content: "\e650";
+}
 
 .tf-icon-xingfubi:before {
   content: "\e64c";
@@ -312,3 +367,4 @@
 .tf-icon-wode:before {
   content: "\e60e";
 }
+

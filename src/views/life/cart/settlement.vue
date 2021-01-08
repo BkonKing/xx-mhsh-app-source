@@ -557,7 +557,7 @@ export default {
           }
         }
       }).catch((res) => {
-        console.log(res)
+        console.log(res.message)
         if (this.idcard) {
           this.$router.push({
             path: '/pages/personage/information/addBankCard',

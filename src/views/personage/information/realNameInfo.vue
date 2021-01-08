@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { NavBar, Field, Button, Popup, Cell, CellGroup } from "vant";
-import { mapGetters } from "vuex";
+import { NavBar, Field, Button, Popup, Cell } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -56,42 +56,42 @@ export default {
     [Popup.name]: Popup,
     [Cell.name]: Cell
   },
-  data() {
+  data () {
     return {
-      str: ""
-    };
+      str: ''
+    }
   },
   computed: {
-    ...mapGetters(["userInfo"]),
-    isPerfect() {
+    ...mapGetters(['userInfo']),
+    isPerfect () {
       return (
         this.userInfo.avatar &&
         this.userInfo.nickname &&
         this.userInfo.realname &&
         this.userInfo.gender &&
         this.userInfo.birthday
-      );
+      )
     }
   },
   methods: {
     // 回退
-    goback() {
-      this.$router.go(-1);
+    goback () {
+      this.$router.go(-1)
     },
     // 跳转个人信息
-    toPersonInfo() {
-      this.$router.push("/pages/personage/information/personInfo");
+    toPersonInfo () {
+      this.$router.push('/pages/personage/information/personInfo')
     }
   },
-  created() {
-    this.$store.dispatch("getMyAccount");
-    let idCard = api.getPrefs({
-      key: "realNameInfo",
+  created () {
+    this.$store.dispatch('getMyAccount')
+    const idCard = api.getPrefs({
+      key: 'realNameInfo',
       sync: true
-    });
-    this.str = idCard.idcard.replace(/^(.{4})(?:\d+)(.{4})$/, "$1******$2");
+    })
+    this.str = idCard.idcard.replace(/^(.{4})(?:\d+)(.{4})$/, '$1******$2')
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
