@@ -238,6 +238,9 @@ const butlerRouter = [
   {
     path: '/pages/butler/live-pay/index',
     name: 'livePayIndex',
+    meta: {
+      keepAlive: true
+    },
     component: () =>
       import(
         /* webpackChunkName: "livePayIndex" */

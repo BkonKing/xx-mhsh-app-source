@@ -129,6 +129,9 @@ export default {
   created () {
     this.getLifePayList({}, true)
   },
+  activated () {
+    this.getLifePayList({})
+  },
   methods: {
     // 房屋切换
     houseChange () {
@@ -205,7 +208,15 @@ export default {
       })
     }
   },
-  filters: filters
+  filters: filters,
+  beforeRouteLeave (to, from, next) {
+    const names = ['butler']
+    if (names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
+  }
 }
 </script>
 
