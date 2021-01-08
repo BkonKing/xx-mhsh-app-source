@@ -147,7 +147,7 @@ export default {
         setmeal_days: date
       })
     },
-    // 获取当前房屋下的生活缴费列表
+    // 获取当前房屋下的生活缴费列表, first是否第一次进入页面刷新
     getLifePayList (params, first) {
       getLifePayList(params).then(
         ({ house_data, table_data, month_data, month_name_text }) => {
@@ -160,7 +160,7 @@ export default {
               expenses_house_id,
               project_id
             } = obj
-            const value = `${project_id}-${expenses_house_id}`
+            const value = `${project_id}-${expenses_house_id}-${house_id}`
             if (houseId === house_id && first) {
               this.selectedHouse = value
             }

@@ -87,10 +87,6 @@ export default {
     tfImageList
   },
   props: {
-    status: {
-      type: [Boolean, Number],
-      default: 1
-    },
     errors_digit: {
       type: Number,
       default: 100
@@ -121,6 +117,7 @@ export default {
       showKeyboard: false,
       editStatus: !this.status,
       meterNum: this.record || '',
+      status: this.old_record || false,
       images: this.pic || []
     }
   },

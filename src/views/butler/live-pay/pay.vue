@@ -65,10 +65,12 @@
       </div>
     </div>
     <pay-swal
+      ref="payblock"
       :show-swal="showPaySwal"
       :pay-money="payTotal"
       @closeSwal="closePaySwal"
       @sureSwal="surePaySwal"
+      @fyResult="fyResult"
     ></pay-swal>
   </div>
 </template>
@@ -103,6 +105,16 @@ export default {
   },
   mounted () {
     this.getPayInfo()
+  },
+  activated () {
+    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+    if (bankCardInfo) {
+      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
+        this.idcard = bankCardInfo.idCard
+      }
+      bankCardInfo = JSON.parse(bankCardInfo)
+      this.$refs.payblock.newCard(bankCardInfo)
+    }
   },
   methods: {
     // 获取缴费信息
@@ -176,22 +188,30 @@ export default {
       this.showPaySwal = data == 1
     },
     surePaySwal (data) {
-      this.showPaySwal = false
       const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
       createPay({
         order_ids,
         expenses_house_id: this.expensesHouseId,
         project_id: this.projectId,
         z_money: this.payTotal,
-        pay_type: data == 0 ? 1 : 2// 支付方式 1微信 2支付宝
+        pay_type: data.pay_type,
+        bank_id: data.bank_id,
+        bank_card: data.bank_card,
+        realname: data.realname,
+        idcard: data.idcard,
+        mobile: data.mobile
       }).then(res => {
         if (res.success) {
           if (res.data) {
             this.payOrderInfo = res.data
-            if (data == 0) {
+            if (data.pay_type == 1) {
+              this.showPaySwal = false
               this.wxPayUp()
-            } else {
+            } else if (data.pay_type == 2) {
+              this.showPaySwal = false
               this.aliPayUp()
+            } else if (data.pay_type == 4) {
+              this.$refs.payblock.sendCode(res)
             }
           }
         }
@@ -200,26 +220,27 @@ export default {
     // 支付宝支付
     aliPayUp () {
       var aliPayPlus = api.require('aliPayPlus')
-      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
-        (ret, err) => {
-          this.getPayInfo()
-        }
-      )
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
+        this.getPayInfo()
+      })
     },
     // 微信支付
     wxPayUp () {
       const wxPayPlus = api.require('wxPayPlus')
-      wxPayPlus.payOrder({
-        apiKey: this.payOrderInfo.appid,
-        mchId: this.payOrderInfo.partnerid,
-        orderId: this.payOrderInfo.prepayid,
-        nonceStr: this.payOrderInfo.noncestr,
-        timeStamp: this.payOrderInfo.timestamp,
-        package: this.payOrderInfo.package,
-        sign: this.payOrderInfo.paySign
-      }, (ret, err) => {
-        this.getPayInfo()
-      })
+      wxPayPlus.payOrder(
+        {
+          apiKey: this.payOrderInfo.appid,
+          mchId: this.payOrderInfo.partnerid,
+          orderId: this.payOrderInfo.prepayid,
+          nonceStr: this.payOrderInfo.noncestr,
+          timeStamp: this.payOrderInfo.timestamp,
+          package: this.payOrderInfo.package,
+          sign: this.payOrderInfo.paySign
+        },
+        (ret, err) => {
+          this.getPayInfo()
+        }
+      )
     }
   },
   watch: {
@@ -234,7 +255,18 @@ export default {
       }
     }
   },
-  filters
+  filters,
+  beforeRouteLeave (to, from, next) {
+    const arr = ['livePayCostDetail', 'addBankCard', 'certification']
+    if (!arr.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+      api.removePrefs({
+        key: 'realNameInfo'
+      })
+    }
+    next()
+  }
 }
 </script>
 

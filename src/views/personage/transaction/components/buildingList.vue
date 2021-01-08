@@ -14,8 +14,12 @@
           <div class="build-number">{{ item.count }}户</div>
         </div>
         <div class="build-right">
-          <img class="build-water" :src="item.w_icon">
-          <img class="build-electricity" :src="item.e_icon">
+          <div class="build-water" :class="{'active': item.w_icon}">
+            <span class="tf-icon tf-icon-shuibiao"></span>
+          </div>
+          <div class="build-electricity" :class="{'active': item.e_icon}">
+            <span class="tf-icon tf-icon-dianbiao"></span>
+          </div>
         </div>
       </div>
     </template>
@@ -129,5 +133,9 @@ export default {
     flex-wrap: wrap;
     margin: 0 -10px;
   }
+}
+/deep/ .van-list {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

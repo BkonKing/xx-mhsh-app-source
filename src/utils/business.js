@@ -12,7 +12,8 @@ export function bulterPermission (to, from, next, userType, userInfo, fn) {
     'questionnaireIndex',
     'propertyIndex',
     'convenienceIndex',
-    'noticeDetails'
+    'noticeDetails',
+    'livePayIndex'
   ]
   if (userType == 0 && butlerList.indexOf(to.name) !== -1) {
     if (userInfo.bsbx_allots === '1' && to.name === 'repairsIndex') {

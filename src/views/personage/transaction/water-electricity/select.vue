@@ -44,15 +44,15 @@
             class="house-water"
             :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit }"
           >
-            <img :src="item.w_icon" class="tf-icon">
-            {{ item.is_water_fee  == '0' ? "-" : item.disparity_water }}
+          <span class="tf-icon tf-icon-shuibiao"></span
+            >{{ item.is_water_fee  == '0' ? "-" : item.disparity_water }}
           </div>
           <div
             class="house-electricity"
             :class="{ 'tf-text-primary': item.disparity_electric > eErrorsDigit }"
           >
-            <img :src="item.e_icon" class="tf-icon">
-            {{ item.is_electric_fee == '0' ? "-" : item.disparity_electric }}
+          <span class="tf-icon tf-icon-dianbiao"></span
+            >{{ item.is_electric_fee == '0' ? "-" : item.disparity_electric }}
           </div>
         </div>
       </template>

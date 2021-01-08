@@ -1,4 +1,5 @@
 import request from '../utils/request.js'
+import store from '../store'
 
 /* 常见问题列表 */
 export function getEqList (params) {
@@ -125,6 +126,7 @@ export function searchHouse (params) {
   return request.get('/room/binding/searchHouse', { params })
 }
 
+/* 事务处理 start */
 /* 报事报修待办列表 */
 export function getDbRepairList (params, ProjectId) {
   return request.get('/my/account/getDbRepairList', {
@@ -152,6 +154,42 @@ export function getDesigneeList (ProjectId) {
     }
   })
 }
+/* 事务处理 end */
+
+/* 水电抄表 start */
+// 事物处理 水电抄表
+export function getHydropowerList (data) {
+  return request.post('/live/thing/hydropower_list', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
+}
+// 事物处理 水电抄表 选择单元房间
+export function getLiveHouseList (data) {
+  return request.post('/live/thing/choose_house_list', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
+}
+// 事物处理 水电抄表 获取抄表信息
+export function getMonthRecord (data) {
+  return request.post('/live/thing/getMonthRecordJson', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
+}
+// 事物处理 账单录入 修改水电费
+export function editRecord (data) {
+  return request.post('/live/thing/editRecord', data, {
+    headers: {
+      ProjectId: store.getters.userInfo.xm_project_id
+    }
+  })
+}
+/* 水电抄表 end */
 
 /* 幸福币 start */
 

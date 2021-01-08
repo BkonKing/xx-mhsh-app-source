@@ -251,12 +251,12 @@ export default {
         ({ month_record_list, month_list, record_state }) => {
           if (this.monthStatus) {
             this.monthStatus = false
-            this.monthList = month_list
+            this.monthList = month_list || []
             this.date = this.monthList[0].id || ''
           }
           this.statusList = record_state
           return Promise.resolve({
-            data: month_record_list
+            data: month_record_list || []
           })
         }
       )
