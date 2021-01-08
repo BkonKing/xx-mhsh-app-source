@@ -58,8 +58,8 @@
             <i v-if="userInfo.idcard"
                class="font_family icon-yishiming n1">
             </i>
-            <i v-else
-               class="font_family icon-weishiming n2"></i>
+            <!-- <i v-else
+               class="font_family icon-weishiming n2"></i> -->
           </template>
         </tf-list-item>
         <tf-list-item title="生日">
@@ -162,7 +162,6 @@ export default {
         }
         birthday = birthday.replace(/(.{4})(.{2})/, '$1-$2-')
       }
-
       return birthday
     },
     /* 设置姓名 */
@@ -170,7 +169,9 @@ export default {
       editRealname({
         realname: this.realname
       }).then(res => {
-        Toast.success('姓名设置成功')
+        if (!this.userInfo.idcard) {
+          Toast.success('姓名设置成功')
+        }
       })
     },
     /* 设置昵称 */
@@ -220,7 +221,9 @@ export default {
       editBirthday({
         birthday: this.birthday
       }).then(res => {
-        Toast.success('生日设置成功')
+        if (!this.userInfo.idcard) {
+          Toast.success('生日设置成功')
+        }
       })
     },
 
@@ -260,8 +263,7 @@ export default {
         }
       }
     })
-  },
-  mounted () { }
+  }
 }
 </script>
 
@@ -302,18 +304,19 @@ export default {
       margin-top: 30px;
       background-color: #fff;
       border-radius: 10px;
+      padding: 0 30px;
       .n1 {
         margin-left: 10px;
         vertical-align: middle;
         font-size: 33px;
         color: #f77e64;
       }
-      .n2 {
-        margin-left: 10px;
-        vertical-align: middle;
-        font-size: 33px;
-        color: gray;
-      }
+      // .n2 {
+      //   margin-left: 10px;
+      //   vertical-align: middle;
+      //   font-size: 33px;
+      //   color: gray;
+      // }
     }
   }
   .tf-input {

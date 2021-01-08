@@ -35,7 +35,7 @@
                    placeholder="储蓄卡"
                    @change="getBankCardName">
           <template #label>
-            <div class="label">卡号</div>
+            <div class="label kahao">卡号</div>
           </template>
           <template #button>
             <i v-if="bankCardNum.length > 0"
@@ -291,6 +291,9 @@ export default {
         .label {
           font-size: 28px;
           color: #222222;
+        }
+        .kahao {
+          line-height: 55px;
         }
         .xiangji {
           font-size: 40px;
