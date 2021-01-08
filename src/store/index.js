@@ -49,10 +49,11 @@ const store = {
   },
   mutations: {
     setUser_info (state, value) {
-      state.user_info = value
+      const val = typeof value === 'string' ? JSON.parse(value) : value
+      state.user_info = val
       api.setPrefs({
         key: 'user_info',
-        value
+        value: val
       })
     },
     login (state, provider) {
@@ -285,6 +286,7 @@ const store = {
         console.log(err)
       })
     },
+    // 刷新用户信息
     getMyAccount ({
       commit
     }) {

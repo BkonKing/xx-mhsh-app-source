@@ -14,6 +14,7 @@ import './styles/base.css'
 import './styles/common.less'
 import './styles/components.less'
 import './styles/iconfont.css'
+import '@/styles/iconfont2.css'
 import 'amfe-flexible'
 import { setStatisticsData } from '@/utils/analysis.js'
 import { checkUpdate } from '@/utils/apicloud_util'
@@ -98,19 +99,7 @@ if (process.env.VUE_APP_IS_APP === '1') {
         const {
           key: name
         } = obj
-        const reg = new RegExp('(^| )' + name + '=([^;]*)(;|$)')
-        const arr = document.cookie.match(reg)
-        if (arr) {
-          let value
-          try {
-            value = JSON.parse(arr[2])
-          } catch (error) {
-            value = arr[2]
-          }
-          return value
-        } else {
-          return null
-        }
+        return localStorage.getItem(name)
       },
       setPrefs (obj) {
         const {
@@ -118,13 +107,13 @@ if (process.env.VUE_APP_IS_APP === '1') {
           value
         } = obj
         const val = typeof value === 'object' ? JSON.stringify(value) : value
-        document.cookie = name + '=' + val + ';path=/;'
+        localStorage.setItem(name, val)
       },
       removePrefs (obj) {
         const {
           key: name
         } = obj
-        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+        localStorage.removeItem(name)
       }
     }
   }

@@ -17,6 +17,12 @@
 	<content src="index.html" />
 
 	<access origin="*" />
+	
+	<!-- 百度文字识别 -->
+	<feature name="baiduIdentifyOCR">
+		<param name="APIKey" value="fn4urDbi8kHPqX3oZhDr5fgu"/>
+		<param name="SecretKey" value="FN6dGMDzFh5Gqx1YIa99QO3p65pMN4mK"/>
+  </feature>
 
 	<!-- wxPlus -->
 	<feature name="wxPlus">

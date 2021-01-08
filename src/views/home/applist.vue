@@ -10,21 +10,32 @@
         <span v-show="editMode" class="font-26" @click="cancelEdit">取消</span>
       </div>
       <div v-show="!editMode" class="search-box">
-        <van-search class="app-search-box" v-model="value" placeholder="全部应用" @input="searchChange" />
+        <van-search
+          class="app-search-box"
+          v-model="value"
+          placeholder="全部应用"
+          @input="searchChange"
+        />
       </div>
-      <div class="van-nav-bar__title van-ellipsis" v-show="editMode">管理应用</div>
+      <div class="van-nav-bar__title van-ellipsis" v-show="editMode">
+        管理应用
+      </div>
       <div class="van-nav-bar__right">
-        <span v-show="!editMode" @click="edit" v-txAnalysis="{eventId: 3}">编辑</span>
-        <span class="comfirm-btn" v-show="editMode" @click="saveMyApp">完成</span>
+        <span v-show="!editMode" @click="edit" v-txAnalysis="{ eventId: 3 }"
+          >编辑</span
+        >
+        <span class="comfirm-btn" v-show="editMode" @click="saveMyApp"
+          >完成</span
+        >
       </div>
     </div>
-    <div class="tf-main-container" :class="{'app-container--edit': editMode}">
+    <div class="tf-main-container" :class="{ 'app-container--edit': editMode }">
       <div class="tf-bg-white home-app">
         <div class="edit-hint" v-if="editMode">按住应用可拖动调整顺序</div>
         <van-divider dashed>以下应用展示在首页</van-divider>
         <draggable
           class="app-container"
-          :class="{'dragging': isDragging}"
+          :class="{ dragging: isDragging }"
           id="app-container"
           v-model="myAppList"
           handle="#app-container"
@@ -38,12 +49,14 @@
             delayOnTouchOnly: true
           }"
           :move="onMove"
-          @start="isDragging=true"
-          @end="isDragging=false"
+          @start="isDragging = true"
+          @end="isDragging = false"
         >
           <app-item
-            v-for="(item,i) in myAppList"
-            :class="{'noborder': myAppList.length - myAppList.length % 5 <= i}"
+            v-for="(item, i) in myAppList"
+            :class="{
+              noborder: myAppList.length - (myAppList.length % 5) <= i
+            }"
             :key="i"
             :src="item.icon_image"
             :name="item.application"
@@ -62,11 +75,21 @@
         </div>-->
         <div v-if="showButler" class="tf-mb-lg">
           <div class="module-title">智慧管家</div>
-          <app-container :data="butlerList" :search="value" :editMode="editMode" @add="add"></app-container>
+          <app-container
+            :data="butlerList"
+            :search="value"
+            :editMode="editMode"
+            @add="add"
+          ></app-container>
         </div>
         <div v-if="showNeighbour">
           <div class="module-title">和谐邻里</div>
-          <app-container :data="neighbourList" :search="value" :editMode="editMode" @add="add"></app-container>
+          <app-container
+            :data="neighbourList"
+            :search="value"
+            :editMode="editMode"
+            @add="add"
+          ></app-container>
         </div>
       </div>
     </div>
@@ -74,13 +97,13 @@
 </template>
 
 <script>
-import { NavBar, Divider, Search, Toast } from 'vant'
-import appContainer from './components/app-container'
-import appItem from './components/app-item'
-import draggable from 'vuedraggable'
-import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
-import { mapGetters } from 'vuex'
-import { bulterPermission } from '@/utils/business'
+import { NavBar, Divider, Search, Toast } from "vant";
+import appContainer from "./components/app-container";
+import appItem from "./components/app-item";
+import draggable from "vuedraggable";
+import { getMyApp, saveMyApp, getAllApp } from "@/api/home";
+import { mapGetters } from "vuex";
+import { bulterPermission } from "@/utils/business";
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -90,9 +113,9 @@ export default {
     appItem,
     draggable
   },
-  data () {
+  data() {
     return {
-      value: '',
+      value: "",
       editMode: false,
       isDragging: false,
       myAppList: [],
@@ -103,115 +126,115 @@ export default {
       allAppList_copy: {},
       showButler: true,
       showNeighbour: true
-    }
+    };
   },
   computed: {
-    ...mapGetters(['userType', 'userInfo'])
+    ...mapGetters(["userType", "userInfo"])
   },
-  created () {
-    this.getAllApp()
-    this.getMyApp()
+  created() {
+    this.getAllApp();
+    this.getMyApp();
   },
   methods: {
     // 进入编辑模式
-    edit () {
-      this.editMode = true
-      this.myAppList_copy = this.cloneObject(this.myAppList)
+    edit() {
+      this.editMode = true;
+      this.myAppList_copy = this.cloneObject(this.myAppList);
       this.allAppList_copy = this.cloneObject({
         // latelyList: this.latelyList,
         butlerList: this.butlerList,
         neighbourList: this.neighbourList
-      })
+      });
     },
     /* 添加应用 */
-    add (item) {
+    add(item) {
       if (this.myAppList.length >= 9) {
-        Toast('数量已经到达上限')
-        return
+        Toast("数量已经到达上限");
+        return;
       }
-      item.status = 2
-      this.myAppList.push(item)
+      item.status = 2;
+      this.myAppList.push(item);
     },
     /* 删除应用 */
-    remove (item, i) {
-      this.myAppList.splice(i, 1)
-      const { id } = item
-      const changeStatus = (obj) => {
+    remove(item, i) {
+      this.myAppList.splice(i, 1);
+      const { id } = item;
+      const changeStatus = obj => {
         if (obj.id === id) {
-          obj.status = 0
-          return true
+          obj.status = 0;
+          return true;
         }
-      }
+      };
       // this.latelyList.some(changeStatus)
-      this.butlerList.some(changeStatus)
-      this.neighbourList.some(changeStatus)
+      this.butlerList.some(changeStatus);
+      this.neighbourList.some(changeStatus);
     },
     // 拖拽监听事件
-    onMove ({ relatedContext, draggedContext }) {
-      const relatedElement = relatedContext.element
-      const draggedElement = draggedContext.element
+    onMove({ relatedContext, draggedContext }) {
+      const relatedElement = relatedContext.element;
+      const draggedElement = draggedContext.element;
       return (
         (!relatedElement || !relatedElement.fixed) && !draggedElement.fixed
-      )
+      );
     },
     /* 取消编辑 */
-    cancelEdit () {
-      this.myAppList = this.myAppList_copy
-      const { butlerList, neighbourList } = this.allAppList_copy
-      this.butlerList = butlerList
-      this.neighbourList = neighbourList
-      this.editMode = false
+    cancelEdit() {
+      this.myAppList = this.myAppList_copy;
+      const { butlerList, neighbourList } = this.allAppList_copy;
+      this.butlerList = butlerList;
+      this.neighbourList = neighbourList;
+      this.editMode = false;
     },
     /* 搜索 */
-    searchChange (value) {
+    searchChange(value) {
       this.showButler = this.butlerList.some(
-        (obj) => obj.application.indexOf(value) > -1
-      )
+        obj => obj.application.indexOf(value) > -1
+      );
       this.showNeighbour = this.neighbourList.some(
-        (obj) => obj.application.indexOf(value) > -1
-      )
+        obj => obj.application.indexOf(value) > -1
+      );
     },
     /* 获取全部应用 */
-    getAllApp () {
-      getAllApp().then((res) => {
+    getAllApp() {
+      getAllApp().then(res => {
         /* 给所有应用分类赋值 */
-        const { zhgj, hxll } = res.data
+        const { zhgj, hxll } = res.data;
         // this.latelyList = latelyList
-        this.butlerList = zhgj
-        this.neighbourList = hxll
-      })
+        this.butlerList = zhgj;
+        this.neighbourList = hxll;
+      });
     },
-    getMyApp () {
+    getMyApp() {
       // Toast.loading({
       //   overlay: true,
       //   duration: 0,
       //   message: '加载中'
       // })
-      getMyApp().then((res) => {
-        this.myAppList = res.data || []
+      getMyApp().then(res => {
+        this.myAppList = res.data || [];
         // Toast.clear()
-      })
+      });
     },
-    saveMyApp () {
-      const ids = this.myAppList.map((obj) => obj.id)
+    saveMyApp() {
+      const ids = this.myAppList.map(obj => obj.id);
       const params = {
-        appids: ids.join(',')
-      }
-      saveMyApp(params).then((res) => {
-        this.editMode = false
-      })
+        appids: ids.join(",")
+      };
+      saveMyApp(params).then(res => {
+        this.editMode = false;
+      });
     },
-    cloneObject (obj) {
-      return JSON.parse(JSON.stringify(obj))
+    cloneObject(obj) {
+      return JSON.parse(JSON.stringify(obj));
     }
   },
-  beforeRouteLeave (to, from, next) {
-    bulterPermission(to, from, next, this.userType, this.userInfo)
+  beforeRouteLeave(to, from, next) {
+    bulterPermission(to, from, next, this.userType, this.userInfo);
   }
-}
+};
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .search-box {
   position: absolute;
   left: 90px;

@@ -208,3 +208,18 @@ export function getLogisticsOne (params) {
 export function sureVerification (params) {
   return request.post('/life/order/projectSmztScanCode', params)
 }
+
+// 我的银行卡
+export function getMyCard (params) {
+  return request.post('/my/fupay/getBankList', params)
+}
+
+// 富友协议下单支付
+export function fuPay (params) {
+  return request.post('/my/fupay/payOrder', params)
+}
+
+// 再次获取验证码
+export function getCodeAgain (params) {
+  return request.post('/my/fupay/fupay_code', params)
+}
