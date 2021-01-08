@@ -68,9 +68,10 @@
       ref="payblock"
       :show-swal="showPaySwal"
       :pay-money="payTotal"
+      :wxzfbShow="false"
       @closeSwal="closePaySwal"
       @sureSwal="surePaySwal"
-      @fyResult="fyResult"
+      @fyResult="getPayInfo"
     ></pay-swal>
   </div>
 </template>
@@ -123,6 +124,9 @@ export default {
         expenses_house_id: this.expensesHouseId,
         project_id: this.projectId
       }).then(({ table_data: data, month_name_text }) => {
+        if (!data || !data.length) {
+          this.$router.go(-1)
+        }
         this.payInfo = month_name_text
         this.payList = data
         this.handlePaymentTerm()
