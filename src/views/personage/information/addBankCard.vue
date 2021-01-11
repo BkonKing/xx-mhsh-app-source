@@ -14,7 +14,8 @@
       <div class="middle">
         <van-field class="field"
                    v-model="personName"
-                   placeholder="姓名">
+                   placeholder="姓名"
+                   @change="setRealname">
           <template #label>
             <div class="label">
               持卡人
@@ -82,7 +83,7 @@
                     block
                     :color="bol ? 'red' : 'gray'"
                     :disabled="!bol"
-                    @click="goback">
+                    @click="goToPay">
           去支付
         </van-button>
       </div>
@@ -145,7 +146,7 @@ import {
   Checkbox
 } from 'vant'
 import { mapGetters } from 'vuex'
-import { getBankInfo } from '@/api/personage.js'
+import { getBankInfo, editRealname } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -181,6 +182,31 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    // 去支付
+    goToPay () {
+      const realNameInfo = {
+        bank_card: this.bankCardNum,
+        realname: this.personName,
+        mobile: this.userInfo.mobile,
+        bank_name: this.bankCardName,
+        bank_ico: this.bankIco
+      }
+      api.setPrefs({
+        key: 'realNameInfo',
+        value: JSON.stringify(realNameInfo)
+      })
+      this.$router.go(-1)
+    },
+    /* 设置姓名 */
+    setRealname () {
+      editRealname({
+        realname: this.personName
+      }).then(res => {
+        if (!this.userInfo.idcard) {
+          Toast.success('姓名设置成功')
+        }
+      })
+    },
     // 打开摄像头
     openCamera () {
       const baiduAd = api.require('baiduIdentifyOCR')
@@ -243,17 +269,6 @@ export default {
     // },
     // 回退
     goback () {
-      const realNameInfo = {
-        bank_card: this.bankCardNum,
-        realname: this.personName,
-        mobile: this.userInfo.mobile,
-        bank_name: this.bankCardName,
-        bank_ico: this.bankIco
-      }
-      api.setPrefs({
-        key: 'realNameInfo',
-        value: JSON.stringify(realNameInfo)
-      })
       this.$router.go(-1)
     },
     // 获取银行卡所属银行名称

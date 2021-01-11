@@ -14,7 +14,8 @@
       <div class="item-card">
         <van-field class="field"
                    v-model="personName"
-                   placeholder="真实姓名">
+                   placeholder="真实姓名"
+                   @change="setRealname">
           <template #label>
             <div class="label">姓名</div>
           </template>
@@ -99,7 +100,7 @@
 <script>
 import { NavBar, Field, Button, Popup, Toast } from 'vant'
 import { mapGetters } from 'vuex'
-import { getBankInfo } from '@/api/personage.js'
+import { getBankInfo, editRealname } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -134,6 +135,16 @@ export default {
     }
   },
   methods: {
+    /* 设置姓名 */
+    setRealname () {
+      editRealname({
+        realname: this.personName
+      }).then(res => {
+        if (!this.userInfo.idcard) {
+          Toast.success('姓名设置成功')
+        }
+      })
+    },
     // 打开摄像头
     openCamera () {
       const baiduAd = api.require('baiduIdentifyOCR')

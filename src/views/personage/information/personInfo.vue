@@ -252,7 +252,6 @@ export default {
       this.nickname = this.userInfo.nickname
       this.realname = this.userInfo.realname
       if (this.userInfo.idcard) {
-        console.log(this.userInfo.idcard)
         let realNameInfo = api.getPrefs({ sync: true, key: 'realNameInfo' })
         this.birthday = this.getBirthdayFromIdCard(this.userInfo.idcard)
         this.setBirthday()

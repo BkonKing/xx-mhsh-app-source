@@ -19,8 +19,10 @@
            @touchstart.prevent="touchinUk(item,index)"
            @touchend.prevent="cleartime">
         <div class="top">
-          <img :src="item.bank_ico"
-               alt="" />
+          <div class="img">
+            <img :src="item.bank_ico"
+                 alt="" />
+          </div>
           <div class="right">
             <div class="t1">{{item.bank_name}}</div>
             <div class="t2">储蓄卡</div>
@@ -56,7 +58,6 @@ export default {
       this.$router.go(-1)
     },
     touchinUk (item, index) {
-      console.log(index)
       clearInterval(this.Loop) // 再次清空定时器，防止重复注册定时器
       this.Loop = setTimeout(
         function () {
@@ -84,7 +85,6 @@ export default {
   async created () {
     const res = await getBankList()
     this.bankCardArr = res.data
-    console.log('银行卡', res)
   }
 }
 </script>
@@ -114,11 +114,22 @@ export default {
         display: flex;
         align-items: center;
         padding: 30px 30px 0;
-        img {
+        .img {
+          padding: 12px;
+          background-color: #fff;
           width: 66px;
           height: 66px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           margin-right: 22px;
+          img {
+            width: 42px;
+            height: 42px;
+          }
         }
+
         .right {
           .t1 {
             font-size: 30px;
