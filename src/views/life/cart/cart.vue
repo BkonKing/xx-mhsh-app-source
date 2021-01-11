@@ -28,7 +28,7 @@
               <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="product-icon flex-center">特卖</div></div> -->
               <div class="flex-align-center">
                 <div v-if="item.goods_type == 2" class="product-icon goods-type flex-center">特卖</div>
-                <div class="product-icon flex-center product-label">顺丰</div>
+                <!-- <div class="product-icon flex-center product-label">顺丰</div> -->
               </div>
               <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
             </div>
