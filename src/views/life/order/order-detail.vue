@@ -238,14 +238,14 @@ export default {
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
       downTime: 0, // 支付结束时间
-      is_toggle: false
+      is_toggle: false,
+      idcard: '' // 身份证
     }
   },
   mounted () {
     var that = this
     // 根据key名获取传递回来的参数，data就是map
     eventBus.$on('chooseAddress', function (data) {
-      console.log(data)
       if (data) {
         that.addressInfo = JSON.parse(data)
         that.orderInfo.rece_realname = that.addressInfo.realname
@@ -349,6 +349,24 @@ export default {
             }
           }
         }
+      }).catch((res) => {
+        if (callData.pay_type == 4) {
+          if (this.idcard) {
+            this.$router.push({
+              path: '/pages/personage/information/addBankCard',
+              query: {
+                message: res.message
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/pages/personage/information/certification',
+              query: {
+                message: res.message
+              }
+            })
+          }
+        }
       })
     },
     // 支付宝支付
@@ -379,7 +397,7 @@ export default {
     },
     fyResult () {
       this.showPaySwal = false
-      that.getData()
+      this.getData()
     },
     // 取消订单
     cancelOrder () {
@@ -517,7 +535,7 @@ export default {
     if (!this.clickGoods && (to.name == 'goodsDetail' || to.name == 'cart')) {
       this.$router.push('/order/list')
     }
-    if (to.name != 'addressList') {
+    if (to.name != 'addressList' && to.name != 'addBankCard' && to.name != 'certification') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

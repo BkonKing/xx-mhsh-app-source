@@ -145,7 +145,8 @@ export default {
 
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
-      downTime: 0 // 支付结束时间
+      downTime: 0, // 支付结束时间
+      idcard: '' // 身份证
     }
   },
   created () {
@@ -286,6 +287,24 @@ export default {
             } else if (callData.pay_type == 4) {
               this.$refs.payblock.sendCode(res)
             }
+          }
+        }
+      }).catch((res) => {
+        if (callData.pay_type == 4) {
+          if (this.idcard) {
+            this.$router.push({
+              path: '/pages/personage/information/addBankCard',
+              query: {
+                message: res.message
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/pages/personage/information/certification',
+              query: {
+                message: res.message
+              }
+            })
           }
         }
       })

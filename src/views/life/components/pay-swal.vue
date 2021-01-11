@@ -88,7 +88,7 @@
 
 <script>
 import { CountDown, Toast } from 'vant'
-import { getMyCard, fuPay, getCodeAgain } from '@/api/life.js'
+import { getMyCard, fuPay } from '@/api/life.js'
 export default {
   components: {
     [CountDown.name]: CountDown,
@@ -187,17 +187,19 @@ export default {
     },
     // 再次获取验证码
     codeAgain () {
-      getCodeAgain({
-        pay_id: this.fyData.pay_id,
-        fu_order_num: this.fyData.fu_order_num,
-        bank_id: this.fyData.bank_id
-      }).then(res => {
-        Toast(res.message)
-        this.isAgain = false
-        this.fyData = res.data
-        this.downTime2 = 60000
-        this.start2()
-      })
+      this.$emit('sureSwal', this.callData)
+      this.isAgain = false
+      // getCodeAgain({
+      //   pay_id: this.fyData.pay_id,
+      //   fu_order_num: this.fyData.fu_order_num,
+      //   bank_id: this.fyData.bank_id
+      // }).then(res => {
+      //   Toast(res.message)
+      //   this.isAgain = false
+      //   this.fyData = res.data
+      //   this.downTime2 = 60000
+      //   this.start2()
+      // })
     },
     // 富友确认支付
     sureFuPay () {
@@ -256,19 +258,23 @@ export default {
       this.tapIndex = index
     },
     goLink (message) {
+      let data = {}
+      if (message) {
+        data = {
+          message: message
+        }
+      } else {
+        data = {}
+      }
       if (this.isRealname) {
         this.$router.push({
           path: '/pages/personage/information/addBankCard',
-          query: {
-            message: message
-          }
+          query: data
         })
       } else {
         this.$router.push({
           path: '/pages/personage/information/certification',
-          query: {
-            message: message
-          }
+          query: data
         })
       }
     },

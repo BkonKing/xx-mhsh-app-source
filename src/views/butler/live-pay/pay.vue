@@ -97,7 +97,8 @@ export default {
       payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
       showPaySwal: false,
-      payOrderInfo: null // 支付参数
+      payOrderInfo: null, // 支付参数
+      idcard: '' // 身份证
     }
   },
   created () {
@@ -217,6 +218,24 @@ export default {
             } else if (data.pay_type == 4) {
               this.$refs.payblock.sendCode(res)
             }
+          }
+        }
+      }).catch((res) => {
+        if (data.pay_type == 4) {
+          if (this.idcard) {
+            this.$router.push({
+              path: '/pages/personage/information/addBankCard',
+              query: {
+                message: res.message
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/pages/personage/information/certification',
+              query: {
+                message: res.message
+              }
+            })
           }
         }
       })
