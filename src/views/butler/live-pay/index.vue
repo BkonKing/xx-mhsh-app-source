@@ -130,7 +130,11 @@ export default {
     this.getLifePayList({}, true)
   },
   activated () {
-    this.getLifePayList({})
+    const [project_id, expenses_house_id] = this.selectedHouse.split('-')
+    this.getLifePayList({
+      expenses_house_id,
+      project_id
+    })
   },
   methods: {
     // 房屋切换

@@ -400,6 +400,32 @@ export default {
 
 <style scoped>
 @import '../../../styles/life.css';
+.goods-price {
+  line-height: 70px;
+  color: #eb5841;
+  font-size: 44px;
+  font-weight: bold;
+}
+.happy-block {
+  height: 60px;
+  display: flex;
+}
+.happy-coin {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  font-size: 24px;
+  padding: 0 28px;
+  background: rgba(235, 88, 65, 0.1);
+  color: #EB5841;
+  margin: 0 auto;
+  border-radius: 30px;
+}
+.happy-coin img {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+}
 /*规格*/
 .shops-params {
   position: relative;
@@ -427,7 +453,7 @@ export default {
   justify-content: space-between;
 }
 .params-goods-right .goods-name {
-  font-size: 26px;
+  font-size: 30px;
   line-height: 40px;
   text-align: left;
   margin-top: 6px;

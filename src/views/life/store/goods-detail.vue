@@ -29,7 +29,7 @@
           </div>
         </van-swipe>
       </div>
-      
+
       <template v-if="infoData.goods_type == 3">
         <div :class="[infoData.ollage_info.is_start == 1 ? 'flash-session-bg' : '','flash-session']">
           <div class="flash-limit">
@@ -47,100 +47,48 @@
           <div>已结束</div>
         </div> -->
       </template>
-
       <div class="goods-info goods-session">
-        <div class="goods-name">{{infoData.goods_name}}</div>
-
-        <template v-if="infoData.pay_type == 1">
-          <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-          <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits/10}} 幸福币可兑换</div></div>
-        </template>
-        <template v-else>
-          <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-
-          <!-- 闪购 -->
-          <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-209cff">限时闪购 </span><span class="font-24 color-209cff">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
-          
-          <!-- 拼单 -->
-          <div v-else class="price-block">
-            <div class="price-left">
-              <div class="activity-limit-price activity-flash-price">限时闪购</div>
-              <div class="activity-now-price activity-pay-price">拼单价</div>
-            </div>
-            <div class="price-right">
-              <div class="activity-flash-price"><span class="font-24">￥</span>{{infoData.flash_price/100}}<div class="activity-old-price">￥{{infoData.original_price/100}}</div></div>
-              <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}</div>
-            </div>
+        <div class="info-pubilc">
+          <div class="flex-between">
+            <div class="goods-name">{{infoData.goods_name}}</div>
+            <span
+              class="tf-icon tf-icon-zhuanfa flex-center"
+              @click="shareShow=true"
+            >分享</span>
           </div>
-          <div v-if="infoData.credits && infoData.credits!='0'" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits/100}}</div></div>
-        </template>
-      </div>
+          <div class="label-list">
+            <div class="label-item">包邮</div><div class="label-item">包邮</div><div class="label-item">包邮</div>
+          </div>
+        </div>
+        <div class="info-price">
+          <template v-if="infoData.pay_type == 1">
+            <div class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
+            <div class="happy-block"><div class="happy-coin">使用 {{infoData.credits/10}} 幸福币可兑换</div></div>
+          </template>
+          <template v-else>
+            <div v-if="infoData.goods_type<3" class="goods-price"><span class="font-24">￥</span>{{infoData.sell_price/100}} <span v-if="infoData.original_price && infoData.original_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
 
-      <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
-        <div class="flex-between collage-header"><span>拼单</span>(新老用户均可参加)</div>
-        <div class=" p-30">
-          <div class="flex-between collage-step">
-            <div>①选择商品</div>
-            <div class="collage-step-icon"></div>
-            <div>②支付开团</div>
-            <div class="collage-step-icon"></div>
-            <div>③分享好友</div>
-            <div class="collage-step-icon"></div>
-            <div>④成功(失败退款)</div>
-          </div>
-          <div v-if="collageList.length > 0" class="collage-total flex-between">
-            <div class="color-8f8f94">以下小伙伴正在发起拼单，可直接参与</div>
-            <div class="color-222">{{collageList[0].collage_num}}人拼单</div>
-          </div>
-          <div v-if="collageList.length > 0" class="collage-list">
-            <template v-for="(item, index) in collageList">
-              <div class="collage-item flex-between">
-                <div class="collage-user flex-align-center">
-                  <div v-for="(val, key) in item.user_arr" class="collage-user-info">
-                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
-                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
-                    <div class="collage-user-name p-nowrap">{{val.nickname}}</div>
-                  </div>
-                  <div v-if="item.user_arr.length > 5" class="collage-user-info">
-                    <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
-                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
-                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
-                  </div>
-                </div>
-                <div v-if="item.is_pay" class="collage-item-right">
-                  <div @click="shareShow=true" class="collage-btn yq-btn">邀请好友</div>
-                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
-                </div>
-                <div v-else class="collage-item-right">
-                  <div @click="showFunc('collage',item.f_collage_order_project_id)" class="collage-btn pd-btn" v-txAnalysis="{eventId: 21}">一起拼单</div>
-                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
-                </div>
+            <!-- 闪购 -->
+            <div v-else-if="infoData.dq_collage_type == 1" class="goods-price activity-flash-price"><span class="font-30 color-222">限时闪购 </span><span class="font-24">￥</span>{{infoData.sell_price/100}} <span class="font-24 color-8f8f94 font-normal through-line">￥{{infoData.original_price/100}}</span></div>
+
+            <!-- 拼单 -->
+            <div v-else class="price-block">
+              <div class="price-left">
+                <div class="activity-limit-price activity-flash-price">限时闪购：</div>
+                <div class="activity-flash-price"><span class="font-24">￥</span>{{infoData.flash_price/100}}<span class="activity-old-price">￥{{infoData.original_price/100}}</span></div>
               </div>
-            </template>
-          </div>
+              <div class="price-right">
+                <div class="activity-now-price activity-pay-price">拼单价：</div>
+                <div class="activity-pay-price"><span class="font-24">￥</span>{{infoData.sell_price/100}}<span class="font-24">起</span></div>
+              </div>
+            </div>
+            <div v-if="infoData.credits && infoData.credits!='0'" class="happy-block"><div class="happy-coin">幸福币可抵￥{{infoData.credits/100}}</div></div>
+          </template>
         </div>
       </div>
-
-      <div v-if="infoData.goods_type == 3" class="common-list goods-session" @click="ensureFunc">
-        <div class="common-item">
-          <div class="font-26 color-222">基础保障</div>
-          <div class="link-icon">
-            <img class="img-100" src="@/assets/img/right.png" />
-          </div>
-        </div>
-      </div>
-
-      <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
-        <div class="tip-left flex-center">
-          <img src="@/assets/img/icon_02.png" />
-        </div>
-        <div class="tip-right">
-          <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
-        </div>
-      </div> -->
 
       <div class="goods-tip goods-session flex-align-center">
-        <div v-if="infoData.goods_type == 3" @click="ensureFunc" class="tip-item">
+        <!-- <div v-if="infoData.goods_type == 3" @click="ensureFunc" class="tip-item">
           <div class="tip-left logistics-left">
             保障
           </div>
@@ -150,7 +98,7 @@
           <div class="link-icon">
             <img class="img-100" src="@/assets/img/right.png" />
           </div>
-        </div>
+        </div> -->
         <div class="tip-item">
           <div class="tip-left logistics-left">
             配送
@@ -184,6 +132,82 @@
           </div>
         </div>
       </div>
+
+      <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
+        <div class="collage-header flex-between">
+          <div class="collage-header-l"><span>拼单</span>(新老用户均可参加)</div>
+          <div class="collage-header-r flex-center" @click="ensureFunc">
+            保障<i class="van-icon van-icon-arrow"></i>
+          </div>
+        </div>
+        <div class=" p-30">
+          <div class="flex-between collage-step">
+            <div>①选择商品</div>
+            <div class="collage-step-icon"></div>
+            <div>②支付开团</div>
+            <div class="collage-step-icon"></div>
+            <div>③分享好友</div>
+            <div class="collage-step-icon"></div>
+            <div>④成功(失败退款)</div>
+          </div>
+          <div v-if="collageList.length > 0" class="collage-total flex-between">
+            <div class="color-222">以下小伙伴正在发起拼单，可直接参与</div>
+            <div class="color-222">{{collageList[0].collage_num}}人拼单</div>
+          </div>
+          <div v-if="collageList.length > 0" class="collage-list">
+            <template>
+              <div v-for="(item, index) in collageList" :key="index" class="collage-item flex-between">
+                <div v-if="item.is_pay" @click="shareShow=true" class="collage-share van-icon van-icon-plus"></div>
+                <div v-else @click="showFunc('collage',item.f_collage_order_project_id)" v-txAnalysis="{eventId: 21}" class="collage-share van-icon van-icon-plus"></div>
+                <div v-for="(val, key) in item.user_arr" :key="key">
+                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
+                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
+                </div>
+              </div>
+              <!-- <div class="collage-item flex-between">
+                <div class="collage-user flex-align-center">
+                  <div v-for="(val, key) in item.user_arr" class="collage-user-info">
+                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
+                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
+                    <div class="collage-user-name p-nowrap">{{val.nickname}}</div>
+                  </div>
+                  <div v-if="item.user_arr.length > 5" class="collage-user-info">
+                    <div class="collage-mask flex-center"><span></span><span></span><span></span></div>
+                    <img v-if="val.avatar" class="collage-user-photo" :src="val.avatar" />
+                    <img v-else class="collage-user-photo" src="@/assets/imgs/touxiang.png" />
+                  </div>
+                </div>
+                <div v-if="item.is_pay" class="collage-item-right">
+                  <div @click="shareShow=true" class="collage-btn yq-btn">邀请好友</div>
+                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
+                </div>
+                <div v-else class="collage-item-right">
+                  <div @click="showFunc('collage',item.f_collage_order_project_id)" class="collage-btn pd-btn" v-txAnalysis="{eventId: 21}">一起拼单</div>
+                  <div class="collage-need-num">还差 <span class="color-eb5841">{{item.need_num}}</span> 人</div>
+                </div>
+              </div> -->
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type != 2" class="common-list goods-session" @click="ensureFunc">
+        <div class="common-item">
+          <div class="font-26 color-222">基础保障</div>
+          <div class="link-icon">
+            <img class="img-100" src="@/assets/img/right.png" />
+          </div>
+        </div>
+      </div>
+
+      <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
+        <div class="tip-left flex-center">
+          <img src="@/assets/img/icon_02.png" />
+        </div>
+        <div class="tip-right">
+          <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
+        </div>
+      </div> -->
 
       <div class="goods-cont goods-session">
         <div class="goods-cont-tit">商品详情</div>
@@ -253,7 +277,7 @@
                     </template>
                   </van-count-down>结束</div> -->
               </template>
-              
+
             </template>
           </template>
           <template v-else>
@@ -275,23 +299,23 @@
                 <div class="goods-name p-nowrapm">{{infoData.goods_name}}</div>
                 <template v-if="infoData.goods_type<3">
                   <div class="goods-price">
-                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}}
                     <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                   </div>
                 </template>
                 <template v-else>
                   <div v-if="is_collage" class="goods-price">
-                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}} 
+                    <span class="font-24">￥</span>{{skuList[typeVal].s_price/100}}
                     <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                   </div>
                   <div v-else class="goods-price">
-                    <span class="font-24">￥</span>{{infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_price/100 : skuList[typeVal].s_price/100}} 
+                    <span class="font-24">￥</span>{{infoData.ollage_info.is_start == 1 ? skuList[typeVal].o_price/100 : skuList[typeVal].s_price/100}}
                     <span v-if="skuList[typeVal].y_price && skuList[typeVal].y_price!='0'" class="font-24 color-8f8f94 font-normal through-line">￥{{skuList[typeVal].y_price/100}}</span>
                   </div>
                 </template>
               </div>
               <template v-if="infoData.pay_type == 1">
-                <div class="happy-block"><div class="happy-coin"><img src="@/assets/img/icon_20.png" />{{skuList[typeVal].credits/10}}</div></div>
+                <div class="happy-block"><div class="happy-coin dh-happy-coin">使用{{skuList[typeVal].credits/10}}幸福币可兑换</div></div>
               </template>
               <template v-else>
                 <template v-if="infoData.goods_type<3">
@@ -303,7 +327,7 @@
               </template>
             </div>
           </div>
-        
+
           <div class="shops-dlist">
             <div class="shops-ditem">
               <div class="shops-dtit">规格</div>
@@ -347,6 +371,17 @@
         <div class="submit-btn" @click="ensureFunc">确认</div>
       </div>
       <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
+      <!-- <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
+        <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
+        <div class="public-header">服务说明</div>
+        <div class="ensure-list">
+          <div v-for="(item,index) in infoData.tips_arr" class="ensure-item">
+            <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_03.png" />{{item}}</div>
+            <div class="ensure-cont">{{item}}</div>
+          </div>
+        </div>
+        <div class="submit-btn" @click="tipToggle">确认</div>
+      </div> -->
       <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
         <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
         <div class="public-header">优惠限制</div>
@@ -359,12 +394,12 @@
         <div class="submit-btn" @click="tipToggle">确认</div>
       </div>
       <div v-show="tipShow" class="mask-bg" catchtouchmove="true" @click="tipToggle"></div>
-      <remind-swal 
+      <remind-swal
       :show-swal="showSwal"
       :remind-tit="remindTit"
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()"></remind-swal>
-      <tf-share 
+      <tf-share
       :share-show="shareShow"
       :share-obj="shareObj"
       @closeSwal="closeShare"></tf-share >
@@ -397,77 +432,75 @@ export default {
       windowHeight: document.documentElement.clientHeight,
       time: 11 * 60 * 60 * 1000,
       newTime: '',
-      showSwal: false,       //提醒弹窗
-      remindTit: '提醒消息将在活动开始时通知您',         //提醒标题
+      showSwal: false, // 提醒弹窗
+      remindTit: '提醒消息将在活动开始时通知您', // 提醒标题
 
-      shop_id: '',          //商品id
-      skuList: [],          //商品规格
-      isShow: false,        //商品规格弹窗是否显示
-      btnIsShow: true,      //商品加入礼包按钮是否显示
-      is_sell_out: false,   //商品是否售罄
-      typeVal: 0,           //当前选中的商品规格index
-      ensureShow: false,    //基础保障弹窗
-      tipShow: false,       //商品提示说明弹窗
-      is_collage: true,     //是否拼单(拼单专用 true拼单 false 单独购买)
-      f_orderid: '',        //拼单分享 分享人订单id(f_collage_order_project_id)
-      f_id: '',             //参与的拼单 id
-      specs_id: '',         //拼单分享 分享商品规格id
-      ollage_ing_info: '',  //当前的拼单信息
-      my_ing_info: '',      //我发起的拼单信息
-      cart_num: '',         //购物车商品数
-      goods: {              //购物车
+      shop_id: '', // 商品id
+      skuList: [], // 商品规格
+      isShow: false, // 商品规格弹窗是否显示
+      btnIsShow: true, // 商品加入礼包按钮是否显示
+      is_sell_out: false, // 商品是否售罄
+      typeVal: 0, // 当前选中的商品规格index
+      ensureShow: false, // 基础保障弹窗
+      tipShow: false, // 商品提示说明弹窗
+      is_collage: true, // 是否拼单(拼单专用 true拼单 false 单独购买)
+      f_orderid: '', // 拼单分享 分享人订单id(f_collage_order_project_id)
+      f_id: '', // 参与的拼单 id
+      specs_id: '', // 拼单分享 分享商品规格id
+      ollage_ing_info: '', // 当前的拼单信息
+      my_ing_info: '', // 我发起的拼单信息
+      cart_num: '', // 购物车商品数
+      goods: { // 购物车
         goods_id: '',
         goods_name: '',
         sign_url: '',
-        count: 1,             //数量
-        goods_type: 1,        //类型 1正常  2特价  3闪购
-        special_bargain_type: '', //1专区 2特价
-        y_specs_img: '',      //规格图
-        specs_img: '',        //规格图
-        specs_name: '',       //规格名称
-        specs_id: '',         //规格id
-        s_price: '',          //售价
-        pay_price: '',        //售价
-        y_price: '',          //规格原价
-        credits: '',          //规格幸福币
-        stock: 0,             //库存
-        max_buy: 0,           //限制最大购买数
-        is_checked: true,     //是否选中（购物车中）
-        tip_text: '',
+        count: 1, // 数量
+        goods_type: 1, // 类型 1正常  2特价  3闪购
+        special_bargain_type: '', // 1专区 2特价
+        y_specs_img: '', // 规格图
+        specs_img: '', // 规格图
+        specs_name: '', // 规格名称
+        specs_id: '', // 规格id
+        s_price: '', // 售价
+        pay_price: '', // 售价
+        y_price: '', // 规格原价
+        credits: '', // 规格幸福币
+        stock: 0, // 库存
+        max_buy: 0, // 限制最大购买数
+        is_checked: true, // 是否选中（购物车中）
+        tip_text: ''
       },
-      cart_counts: 0,      //购物车中这个商品的总数量
-      collageList: [],     //闪购拼单列表
+      cart_counts: 0, // 购物车中这个商品的总数量
+      collageList: [], // 闪购拼单列表
 
-
-      goodsId: '',   //商品id
-      infoData: '',  //商品数据
-      btn_type: 'cart',            //cart点击了加入购物 buy点击了立即购买
+      goodsId: '', // 商品id
+      infoData: '', // 商品数据
+      btn_type: 'cart', // cart点击了加入购物 buy点击了立即购买
       current: 0,
       ableCredits: '',
       rightShow: false,
 
       // show: false,
-      swiperArr: [], //轮播图
-      skuPicArr: []  //规格图
+      swiperArr: [], // 轮播图
+      skuPicArr: [] // 规格图
     }
   },
-  created(){
-    this.goodsId = this.$route.query.id;
-    this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : '';
-    this.getNum();
-    this.getData();
+  created () {
+    this.goodsId = this.$route.query.id
+    this.f_orderid = this.$route.query.f_id ? this.$route.query.f_id : ''
+    this.getNum()
+    this.getData()
   },
   watch: {
     infoData (value) {
       this.$nextTick(() => {
-        if(value.tips_arr.length > 0){
-          var itemWidth = this.$refs.tipItem.offsetWidth;
-          var tipWidth = this.$refs.tipTxt.offsetWidth;
-          if(tipWidth/itemWidth > 620/750){
-            this.rightShow = true;
+        if (value.tips_arr.length > 0) {
+          var itemWidth = this.$refs.tipItem.offsetWidth
+          var tipWidth = this.$refs.tipTxt.offsetWidth
+          if (tipWidth / itemWidth > 620 / 750) {
+            this.rightShow = true
           }
         }
-        
       })
     },
     // 监听 this.$route.query
@@ -502,8 +535,8 @@ export default {
       }) || ''
       user_info = user_info ? JSON.parse(user_info) : ''
       if (this.infoData.goods_type == 3 && this.infoData.dq_collage_type == 2) {
-        title = '【拼团￥' + this.infoData.sell_price/100 + '】我发现一件好货，一起拼优惠！'
-        description = '[原价￥' + this.infoData.original_price/100 + ']' + this.infoData.goods_name
+        title = '【拼团￥' + this.infoData.sell_price / 100 + '】我发现一件好货，一起拼优惠！'
+        description = '[原价￥' + this.infoData.original_price / 100 + ']' + this.infoData.goods_name
         pyqTitle = this.infoData.goods_name
         contentUrl = 'http://live.tosolomo.com/wap/#/goodsDetail?f_id=' + user_info.id + '&id=' + this.infoData.id
       } else {
@@ -520,17 +553,17 @@ export default {
         contentUrl: contentUrl
       }
     },
-    //获取购物车数量
-    getNum(){
-      var cartList = api.getPrefs({ sync: true, key: 'cart' }) || [];
-      var cart_num = 0;
-      if(cartList && cartList.length > 0){
-        cartList = JSON.parse(cartList);
-        for(var i=0;i<cartList.length;i++){
-          cart_num+=parseInt(cartList[i].count);
+    // 获取购物车数量
+    getNum () {
+      var cartList = api.getPrefs({ sync: true, key: 'cart' }) || []
+      var cart_num = 0
+      if (cartList && cartList.length > 0) {
+        cartList = JSON.parse(cartList)
+        for (var i = 0; i < cartList.length; i++) {
+          cart_num += parseInt(cartList[i].count)
         }
       }
-      this.cart_num = cart_num;
+      this.cart_num = cart_num
     },
     getData () {
       getGoodsDetail({
@@ -538,37 +571,37 @@ export default {
         f_id: this.f_orderid
       }).then(res => {
         if (res.success) {
-          this.infoData = res.data;
-          this.ableCredits = res.ok_credits;
-          this.swiperArr = res.data.pic_url_arr;
-          this.skuList = res.data.formats;
-          this.skuList.forEach((res2)=>{
-            this.$set(res2,"count",1);
+          this.infoData = res.data
+          this.ableCredits = res.ok_credits
+          this.swiperArr = res.data.pic_url_arr
+          this.skuList = res.data.formats
+          this.skuList.forEach((res2) => {
+            this.$set(res2, 'count', 1)
             this.skuPicArr.push(res2.specs_img)
           })
-          this.newTime = parseInt(new Date().getTime());
+          this.newTime = parseInt(new Date().getTime())
 
-          this.goods.goods_id = res.data.id;
-          this.goods.goods_name = res.data.goods_name;
-          this.goods.goods_type = res.data.goods_type;
-          this.goods.tip_text = res.data.tip_text;
-          if(res.data.goods_type == 3){
-            this.goods.sign_url = res.data.sign_url;
-            if(this.is_collage){
-              this.collageList = res.data.f_collage_order_arr ? res.data.f_collage_order_arr : [];
+          this.goods.goods_id = res.data.id
+          this.goods.goods_name = res.data.goods_name
+          this.goods.goods_type = res.data.goods_type
+          this.goods.tip_text = res.data.tip_text
+          if (res.data.goods_type == 3) {
+            this.goods.sign_url = res.data.sign_url
+            if (this.is_collage) {
+              this.collageList = res.data.f_collage_order_arr ? res.data.f_collage_order_arr : []
             }
-            if(res.data.user_order_project_info){
-              this.my_ing_info = res.data.user_order_project_info;
+            if (res.data.user_order_project_info) {
+              this.my_ing_info = res.data.user_order_project_info
             }
           }
-          if(res.data.goods_type == 2){
-            this.goods.special_bargain_type = res.data.special_bargain_type;
+          if (res.data.goods_type == 2) {
+            this.goods.special_bargain_type = res.data.special_bargain_type
           }
           // if(this.infoData.goods_type == 3 && !this.is_collage){
           //   this.goods.s_price = this.skuList[index].o_price;
           //   this.goods.pay_price = this.skuList[index].o_price;
           // }
-          this.typeFunc(0);
+          this.typeFunc(0)
           this.downloadSharePic()
         }
       })
@@ -576,14 +609,14 @@ export default {
     onChange (index) {
       this.current = index
     },
-    predivPic(index,type) {
-      var imagesArr = [];
-      imagesArr = type ==1 ? this.swiperArr : this.skuPicArr
+    predivPic (index, type) {
+      var imagesArr = []
+      imagesArr = type == 1 ? this.swiperArr : this.skuPicArr
       ImagePreview({
         images: imagesArr,
         startPosition: index,
         closeOnPopstate: true,
-        onClose() {
+        onClose () {
           // do something
         }
       })
@@ -592,180 +625,178 @@ export default {
     /*
     *显示/隐藏弹窗(规格)
     */
-    showFunc(type='',f_orderid='') {
-      this.is_collage = type && type == 'collage' ? true : false;
-      this.btn_type = type && (type == 'buy'||type == 'collage'||type == 'flash') ? 'buy' : 'cart';
-      this.f_id = f_orderid ? f_orderid : '';
-      if(this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 1){
-        if(this.is_collage){
-           this.goods.s_price = this.skuList[this.typeVal].p_price;
-            this.goods.pay_price = this.skuList[this.typeVal].p_price;
-            this.goods.credits = this.skuList[this.typeVal].p_credits;
-        }else {
-         this.goods.s_price = this.skuList[this.typeVal].o_price;
-            this.goods.pay_price = this.skuList[this.typeVal].o_price;
+    showFunc (type = '', f_orderid = '') {
+      this.is_collage = !!(type && type == 'collage')
+      this.btn_type = type && (type == 'buy' || type == 'collage' || type == 'flash') ? 'buy' : 'cart'
+      this.f_id = f_orderid || ''
+      if (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 1) {
+        if (this.is_collage) {
+          this.goods.s_price = this.skuList[this.typeVal].p_price
+          this.goods.pay_price = this.skuList[this.typeVal].p_price
+          this.goods.credits = this.skuList[this.typeVal].p_credits
+        } else {
+          this.goods.s_price = this.skuList[this.typeVal].o_price
+          this.goods.pay_price = this.skuList[this.typeVal].o_price
         }
-      }else {
-        this.goods.goods_type = 1;
+      } else {
+        this.goods.goods_type = 1
       }
 
-      this.isShow = !this.isShow;
+      this.isShow = !this.isShow
     },
     /*
     *显示/隐藏弹窗（基础保障）
     */
     ensureFunc: function (e) {
-      this.ensureShow = !this.ensureShow;
+      this.ensureShow = !this.ensureShow
     },
     /*
     *显示/隐藏弹窗（商品提示）
     */
     tipToggle: function (e) {
-      this.tipShow = !this.tipShow;
+      this.tipShow = !this.tipShow
     },
     /*
     *选中规格
     */
-    typeFunc(index) {
-      let nowSku = this.skuList[index];
-      this.typeVal = index;
-      this.goods.y_specs_img = nowSku.y_specs_img;
-      this.goods.specs_img = nowSku.specs_img;
-      this.goods.specs_name = nowSku.specs_name;
-      this.goods.specs_id = nowSku.specs_id;
-      this.goods.s_price = nowSku.s_price;
-      this.goods.pay_price = nowSku.s_price;
-      this.goods.y_price = nowSku.y_price ? nowSku.y_price : 0;
-      this.goods.credits = nowSku.credits;
-      this.goods.stock = nowSku.stock;
-      nowSku.count = nowSku.count ? nowSku.count : 1;
-      nowSku.notAdd = nowSku.notAdd ? nowSku.notAdd : false;
+    typeFunc (index) {
+      const nowSku = this.skuList[index]
+      this.typeVal = index
+      this.goods.y_specs_img = nowSku.y_specs_img
+      this.goods.specs_img = nowSku.specs_img
+      this.goods.specs_name = nowSku.specs_name
+      this.goods.specs_id = nowSku.specs_id
+      this.goods.s_price = nowSku.s_price
+      this.goods.pay_price = nowSku.s_price
+      this.goods.y_price = nowSku.y_price ? nowSku.y_price : 0
+      this.goods.credits = nowSku.credits
+      this.goods.stock = nowSku.stock
+      nowSku.count = nowSku.count ? nowSku.count : 1
+      nowSku.notAdd = nowSku.notAdd ? nowSku.notAdd : false
       // this.goods.count = 1;
       this.limitNum()
     },
     /*
     *商品数量加减
     */
-    countTab(types) {
-      let nowSku = this.skuList[this.typeVal];
-      nowSku.stock = parseInt(nowSku.stock);
-      if(nowSku.notAdd && types==1) return;
-      if(nowSku.stock > this.goods.max_buy){
-        nowSku.stock = this.goods.max_buy;
+    countTab (types) {
+      const nowSku = this.skuList[this.typeVal]
+      nowSku.stock = parseInt(nowSku.stock)
+      if (nowSku.notAdd && types == 1) return
+      if (nowSku.stock > this.goods.max_buy) {
+        nowSku.stock = this.goods.max_buy
       }
-      
-      if(nowSku.count + types >= nowSku.stock){
-        console.log(nowSku.count,nowSku.stock);
-        if(nowSku.count + types == nowSku.stock){
-          nowSku.count = parseInt(nowSku.count) + types;
+
+      if (nowSku.count + types >= nowSku.stock) {
+        console.log(nowSku.count, nowSku.stock)
+        if (nowSku.count + types == nowSku.stock) {
+          nowSku.count = parseInt(nowSku.count) + types
         }
-        console.log(nowSku.count,nowSku.stock);
-        nowSku.notAdd = true;return;
+        console.log(nowSku.count, nowSku.stock)
+        nowSku.notAdd = true; return
       }
-      console.log(456);
+      console.log(456)
       if (nowSku.count + types > 0) {
-        nowSku.count = parseInt(nowSku.count) + types;
-        nowSku.notAdd = false;
+        nowSku.count = parseInt(nowSku.count) + types
+        nowSku.notAdd = false
       }
     },
     /**
      * 加入购物车
      */
     addCar: function (e) {
-      this.isShow = false;
-      this.checkData();
+      this.isShow = false
+      this.checkData()
     },
-    //加入购物车
-    checkNext(){
-      var goods = this.goods;
-      goods.count = this.skuList[this.typeVal].count;
-      //goods.isSelect = false;
-      var count = goods.count;
-      var title = goods.goods_name;
-      // 获取购物车的缓存数组（没有数据，则赋予一个空数组）  
-      
-      var arr = [];
-      if ((this.infoData.pay_type==0 && this.infoData.goods_type <3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0)){
+    // 加入购物车
+    checkNext () {
+      var goods = this.goods
+      goods.count = this.skuList[this.typeVal].count
+      // goods.isSelect = false;
+      var count = goods.count
+      var title = goods.goods_name
+      // 获取购物车的缓存数组（没有数据，则赋予一个空数组）
 
+      var arr = []
+      if ((this.infoData.pay_type == 0 && this.infoData.goods_type < 3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0)) {
         // var arr = JSON.parse(localStorage.getItem('cart')) || [];
-        var arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
-        if(arr && arr.length > 0){
-          arr = JSON.parse(arr);
+        var arr = api.getPrefs({ sync: true, key: 'cart' }) || []
+        if (arr && arr.length > 0) {
+          arr = JSON.parse(arr)
         }
         if (arr.length > 0) {
-          // 遍历购物车数组  
+          // 遍历购物车数组
           for (var j in arr) {
-            // 判断购物车内的item的id，和事件传递过来的id，是否相等  
+            // 判断购物车内的item的id，和事件传递过来的id，是否相等
             if (arr[j].goods_id == goods.goods_id && arr[j].specs_id == goods.specs_id) {
-              // 相等的话，给count+1（即再次添加入购物车，数量+1）  
+              // 相等的话，给count+1（即再次添加入购物车，数量+1）
               // console.log(this.cart_counts >= this.infoData.quota_num);return;
-              if (parseInt(arr[j].count) >= goods.max_buy){   //判断是否已经达到限购
-                arr[j].count = parseInt(arr[j].count) + goods.count - 1;
-              }else {
-                arr[j].count = parseInt(arr[j].count) + goods.count;
+              if (parseInt(arr[j].count) >= goods.max_buy) { // 判断是否已经达到限购
+                arr[j].count = parseInt(arr[j].count) + goods.count - 1
+              } else {
+                arr[j].count = parseInt(arr[j].count) + goods.count
               }
-              if(parseInt(arr[j].max_buy)>goods.max_buy){
-                arr[j].max_buy = goods.max_buy;
+              if (parseInt(arr[j].max_buy) > goods.max_buy) {
+                arr[j].max_buy = goods.max_buy
               }
-              
-              // 最后，把购物车数据，存放入缓存（此处不用再给购物车数组push元素进去，因为这个是购物车有的，直接更新当前数组即可）  
+
+              // 最后，把购物车数据，存放入缓存（此处不用再给购物车数组push元素进去，因为这个是购物车有的，直接更新当前数组即可）
               try {
                 // localStorage.setItem('cart', JSON.stringify(arr))
-                api.setPrefs({ key: 'cart', value: JSON.stringify(arr) });
+                api.setPrefs({ key: 'cart', value: JSON.stringify(arr) })
               } catch (e) {
                 console.log(e)
               }
-              if(this.btn_type != 'cart'){
-                this.goLink();
+              if (this.btn_type != 'cart') {
+                this.goLink()
               }
-              this.getNum();
-              // 返回（在if内使用return，跳出循环节约运算，节约性能） 
-              return;
+              this.getNum()
+              // 返回（在if内使用return，跳出循环节约运算，节约性能）
+              return
             }
           }
-          // 遍历完购物车后，没有对应的item项，把goodslist的当前项放入购物车数组  
-          arr.push(goods);
+          // 遍历完购物车后，没有对应的item项，把goodslist的当前项放入购物车数组
+          arr.push(goods)
         } else {
-          arr.push(goods);
+          arr.push(goods)
         }
-        console.log(arr);
+        console.log(arr)
 
-        // 最后，把购物车数据，存放入缓存  
+        // 最后，把购物车数据，存放入缓存
         try {
           // localStorage.setItem('cart', JSON.stringify(arr));
-          api.setPrefs({ key: 'cart', value: JSON.stringify(arr) });
-          // 返回（在if内使用return，跳出循环节约运算，节约性能） 
-          //关闭窗口
-          if(this.btn_type != 'cart'){
-            this.goLink();
+          api.setPrefs({ key: 'cart', value: JSON.stringify(arr) })
+          // 返回（在if内使用return，跳出循环节约运算，节约性能）
+          // 关闭窗口
+          if (this.btn_type != 'cart') {
+            this.goLink()
           }
-          this.getNum();
-          return;
+          this.getNum()
+          return
         } catch (e) {
           console.log(e)
         }
-      }else {
-        arr.push(goods);
+      } else {
+        arr.push(goods)
         // localStorage.setItem('cart2', JSON.stringify(arr));
-        api.setPrefs({ key: 'cart2', value: JSON.stringify(arr) });
-        if(this.btn_type != 'cart'){
-          this.goLink();
+        api.setPrefs({ key: 'cart2', value: JSON.stringify(arr) })
+        if (this.btn_type != 'cart') {
+          this.goLink()
         }
-        this.getNum();
-        return;
+        this.getNum()
       }
     },
-    //再次请求数据，验证商品信息是否更改
-    checkData(){
-      const that = this;
-      var backVal = true;
+    // 再次请求数据，验证商品信息是否更改
+    checkData () {
+      const that = this
+      var backVal = true
       getGoodsDetail({
         goods_id: this.goodsId,
         f_id: this.f_orderid
       }).then(res => {
-        var newData = res.data;
-        if(newData.is_sell_out > 0){  //上下架变动
-          backVal = false;
+        var newData = res.data
+        if (newData.is_sell_out > 0) { // 上下架变动
+          backVal = false
           // toastTxt = newData.sell_out_text;
           // Toast({
           //   message: newData.sell_out_text,
@@ -773,89 +804,88 @@ export default {
           //     that.getData();
           //   }
           // })
-        }else {
-          if(that.infoData.pay_type != newData.pay_type){  //购买方式变动（兑换/购买）
-            backVal = false;
-          }else {
-            if(that.infoData.goods_type != newData.goods_type){  //商品购买类型变动（闪购/特卖）
-              backVal = false;
-            }else {
-              if(that.infoData.goods_type == 3 && that.infoData.ollage_info.is_start != newData.ollage_info.is_start){  //闪购状态改变
-                backVal = false;
+        } else {
+          if (that.infoData.pay_type != newData.pay_type) { // 购买方式变动（兑换/购买）
+            backVal = false
+          } else {
+            if (that.infoData.goods_type != newData.goods_type) { // 商品购买类型变动（闪购/特卖）
+              backVal = false
+            } else {
+              if (that.infoData.goods_type == 3 && that.infoData.ollage_info.is_start != newData.ollage_info.is_start) { // 闪购状态改变
+                backVal = false
               }
             }
           }
         }
-        if(backVal){
-          that.checkNext();
-        }else {
-          that.getData();
+        if (backVal) {
+          that.checkNext()
+        } else {
+          that.getData()
         }
       })
     },
     /**
-     * 判断限购数量是否大于购物车数量
+    * 判断限购数量是否大于购物车数量
     */
-    limitNum() {
+    limitNum () {
       // let carts_arr = JSON.parse(localStorage.getItem('cart')) || [];
-      var carts_arr = [];
-      var arr = api.getPrefs({ sync: true,key: 'cart' }) || [];
-      if(arr.length){
-        carts_arr = JSON.parse(api.getPrefs({ sync: true,key: 'cart' })) || [];
+      var carts_arr = []
+      var arr = api.getPrefs({ sync: true, key: 'cart' }) || []
+      if (arr.length) {
+        carts_arr = JSON.parse(api.getPrefs({ sync: true, key: 'cart' })) || []
       }
-      let cart_counts = 0;
-      var num_count = this.skuList[this.typeVal].count;
-      let that = this;
-      if (carts_arr.length > 0){
+      let cart_counts = 0
+      var num_count = this.skuList[this.typeVal].count
+      const that = this
+      if (carts_arr.length > 0) {
         carts_arr.forEach(function (val, index) {
-          if (val.specs_id == that.skuList[that.typeVal].specs_id){
-            if(that.infoData.goods_type!=3||that.infoData.ollage_info.is_start != 1){
-              num_count += parseInt(val.count);
+          if (val.specs_id == that.skuList[that.typeVal].specs_id) {
+            if (that.infoData.goods_type != 3 || that.infoData.ollage_info.is_start != 1) {
+              num_count += parseInt(val.count)
             }
-            cart_counts += parseInt(val.count);
+            cart_counts += parseInt(val.count)
           }
         })
         // this.cart_counts = cart_counts;
       }
 
-      this.goods.max_buy = parseInt(this.skuList[this.typeVal].stock);
-      if(this.infoData.goods_type == 3){
-        if(this.goods.max_buy > parseInt(this.infoData.ollage_quota_num)){
-          this.goods.max_buy = parseInt(this.infoData.ollage_quota_num);
+      this.goods.max_buy = parseInt(this.skuList[this.typeVal].stock)
+      if (this.infoData.goods_type == 3) {
+        if (this.goods.max_buy > parseInt(this.infoData.ollage_quota_num)) {
+          this.goods.max_buy = parseInt(this.infoData.ollage_quota_num)
         }
       }
-      if(this.infoData.is_quota == 1){
-        if(parseInt(this.goods.max_buy) > parseInt(this.infoData.quota_num)){
-          this.goods.max_buy = parseInt(this.infoData.quota_num);
+      if (this.infoData.is_quota == 1) {
+        if (parseInt(this.goods.max_buy) > parseInt(this.infoData.quota_num)) {
+          this.goods.max_buy = parseInt(this.infoData.quota_num)
         }
       }
-      if(num_count  >= this.goods.max_buy){
+      if (num_count >= this.goods.max_buy) {
         this.skuList[this.typeVal].notAdd = true
-      }else {
+      } else {
         this.skuList[this.typeVal].notAdd = false
       }
-      
     },
     /**
-     * 拼单倒计时结束
+    * 拼单倒计时结束
     */
     overFunc: function () {
-      
+
     },
 
-    goLink(f_orderid=''){
-      //order_type订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
-      if(this.infoData.pay_type == 1){  //幸福币兑换
+    goLink (f_orderid = '') {
+      // order_type订单类型 0普通商品（普通、特卖、专车） 1闪购 2拼单 3幸福币兑换
+      if (this.infoData.pay_type == 1) { // 幸福币兑换
         this.$router.push({
           path: '/life/settlement',
           query: {
             prev_page: 1,
             order_type: 3,
-            specs_id: this.skuList[this.typeVal].specs_id,
+            specs_id: this.skuList[this.typeVal].specs_id
           }
         })
-      }else {
-        if(this.infoData.goods_type ==3 && this.infoData.ollage_info.is_start == 1 ){
+      } else {
+        if (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 1) {
           this.$router.push({
             path: '/life/settlement',
             query: {
@@ -866,98 +896,95 @@ export default {
               f_id: this.f_id
             }
           })
-          
-        }else {
-          if(this.btn_type == 'buy'){
+        } else {
+          if (this.btn_type == 'buy') {
             this.$router.push({
               path: '/life/settlement',
               query: {
                 prev_page: 1,
                 order_type: 0,
-                specs_id: this.skuList[this.typeVal].specs_id,
+                specs_id: this.skuList[this.typeVal].specs_id
               }
             })
-          }else {
-            this.$router.push('/life/cart');
+          } else {
+            this.$router.push('/life/cart')
           }
         }
       }
     },
 
-    linkFunc (type,obj={}) {
-      switch (type){
+    linkFunc (type, obj = {}) {
+      switch (type) {
         case 7:
-        this.$router.push('/life/cart');
-        break;
+          this.$router.push('/life/cart')
+          break
         case 8:
-        this.$router.push({
-          path: '/life/settlement',
-          query: {
-            id: obj.id
-          }
-        })
-        break;
+          this.$router.push({
+            path: '/life/settlement',
+            query: {
+              id: obj.id
+            }
+          })
+          break
         case 6:
-        this.$router.push('/store/search');
-        break;
+          this.$router.push('/store/search')
+          break
       }
     },
 
-
-    //倒计时开始
-    start() {
-      this.$refs.countDown.start();
+    // 倒计时开始
+    start () {
+      this.$refs.countDown.start()
     },
-    //倒计时暂停
-    pause() {
-      this.$refs.countDown.pause();
+    // 倒计时暂停
+    pause () {
+      this.$refs.countDown.pause()
     },
-    //倒计时结束
-    finish() {
-      that.getData();
+    // 倒计时结束
+    finish () {
+      that.getData()
     },
-    closeSwal(data){
-      this.showSwal = data == 1 ? true : false;
+    closeSwal (data) {
+      this.showSwal = data == 1
     },
     /**
-     * 提醒
+    * 提醒
     */
-    remindFunc() {
-      const that = this;
-      let newTime = parseInt(new Date().getTime()/1000);
-      let overTime = this.infoData.ollage_info.start_time;
-      if(newTime >=overTime){   //当前时间大于等于活动开始时间
-        Toast('该商品已开抢');
+    remindFunc () {
+      const that = this
+      const newTime = parseInt(new Date().getTime() / 1000)
+      const overTime = this.infoData.ollage_info.start_time
+      if (newTime >= overTime) { // 当前时间大于等于活动开始时间
+        Toast('该商品已开抢')
         setTimeout(() => {
-          that.getData();
-        }, 1500);
-      }else {
-        this.showSwal = true;
+          that.getData()
+        }, 1500)
+      } else {
+        this.showSwal = true
       }
     },
     /**
-     * 提醒回调
+    * 提醒回调
     */
     sureSwal: function (e) {
-      const that = this;
-      this.closeSwal(0);
+      const that = this
+      this.closeSwal(0)
       remindSend({
         goods_id: this.infoData.id,
         ollage_id: this.infoData.ollage_info.id
       }).then(res => {
         if (res.success) {
-          Toast(res.message);
-          this.infoData.is_set = true;
+          Toast(res.message)
+          this.infoData.is_set = true
         }
       })
     },
-    closeShare(data){
-      this.shareShow = data == 1 ? true : false;
+    closeShare (data) {
+      this.shareShow = data == 1
     }
   },
   beforeRouteLeave (to, from, next) {
-    
-    next();
+    next()
   }
 }
 </script>
@@ -1005,21 +1032,60 @@ export default {
   margin-bottom: 0;
 }
 .goods-info {
-  padding: 30px 30px 40px;
+  padding: 25px 0 40px;
 }
-.goods-name {
+.info-pubilc {
+  padding-left: 30px;
+}
+.info-pubilc > div:nth-child(1) {
+  height: 60px;
+  line-height: 60px;
+}
+.info-pubilc .goods-name {
   color: #222;
   font-size: 34px;
-  line-height: 52px;
   font-weight: bold;
-  text-align: center;
+  flex-grow: 1;
+}
+.info-pubilc .tf-icon-zhuanfa {
+  width: 148px;
+  height: 60px;
+  background: #F2F2F4;
+  border-radius: 30px 0px 0px 30px;
+  font-size: 26px;
+  color: #8F8F94;
+  line-height: 60px;
+}
+.info-pubilc .tf-icon-zhuanfa::before {
+  font-size: 34px;
+  padding-right: 6px;
+}
+.label-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.label-item {
+  height: 36px;
+  line-height: 32px;
+  border: 1PX solid #55B862;
+  border-radius: 4px;
+  padding: 0 11px;
+  font-size: 22px;
+  color: #55B862;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+.info-price {
+  padding: 11px 0 0 30px;
+}
+.info-price .goods-price {
+  text-align: left;
 }
 .goods-price {
-  line-height: 92px;
-  margin-top: 10px;
+  line-height: 70px;
   color: #eb5841;
-  font-size: 42px;
-  text-align: center;
+  font-size: 44px;
   font-weight: bold;
 }
 .font-normal {
@@ -1033,17 +1099,28 @@ export default {
   display: flex;
   align-items: center;
   height: 60px;
-  color: #ffa110;
+  /* color: #ffa110; */
   font-size: 24px;
   padding: 0 28px;
-  background-color: #fff5e7;
+  /* background-color: #fff5e7; */
+  background: rgba(235, 88, 65, 0.1);
+  color: #EB5841;
   margin: 0 auto;
   border-radius: 30px;
 }
+/* .dh-happy-coin.happy-coin {
+  color: #ffa110;
+} */
 .happy-coin img {
   width: 28px;
   height: 28px;
   margin-right: 8px;
+}
+.info-price .happy-coin {
+  background: linear-gradient(90deg, #EB5841, #F9866B);
+  font-size: 26px;
+  color: #FFFFFF;
+  margin: 0;
 }
 
 .link-icon {
@@ -1228,10 +1305,11 @@ div.btn-disabled {
   justify-content: space-between;
 }
 .params-goods-right .goods-name {
-  font-size: 26px;
+  font-size: 30px;
   line-height: 40px;
   text-align: left;
   margin-top: 6px;
+  font-weight: 500;
 }
 .params-goods-right .goods-price {
   line-height: 76px;
@@ -1374,7 +1452,7 @@ div.btn-disabled {
   font-size: 32px;
 }
 .activity-flash-price {
-  color: #209cff;
+  /* color: #209cff; */
 }
 .activity-old-price {
   margin-left: 8px;
@@ -1394,28 +1472,27 @@ div.btn-disabled {
 }
 .price-block {
   display: flex;
-  line-height: 61px;
-  margin: 18px 0 24px;
+  margin-top: 25px;
+  padding-right: 30px;
 }
-.price-left {
-  width: 260px;
-  flex-shrink: 1;
-  text-align: right;
-  font-size: 30px;
+.price-left,.price-right {
+  flex: 1;
+  font-size: 24px;
 }
-.price-left div {
-  line-height: 61px;
+.price-left > div:nth-child(1),
+.price-right > div:nth-child(1) {
+  line-height: 32px;
+  color: #222222;
 }
-.price-right {
-  flex-grow: 1;
-  text-align: left;
-  font-size: 42px;
-  
-}
-.price-right div {
-  height: 61px;
-  line-height: 61px;
+.price-left > div:nth-child(2),
+.price-right > div:nth-child(2) {
+  font-size: 44px;
+  line-height: 70px;
   font-weight: bold;
+}
+.price-left > div:nth-child(2) span,
+.price-right > div:nth-child(2) span {
+  font-weight: normal;
 }
 .price-right span {
   font-weight: bold;
@@ -1424,12 +1501,12 @@ div.btn-disabled {
   display: inline;
 }
 
-
   /* 拼单 */
 .collage-header {
   height: 120px;
+  line-height: 120px;
   background-color: #d2ebff;
-  padding: 0 30px;
+  padding-left: 30px;
 }
 .collage-header-l {
   color: #209cff;
@@ -1440,14 +1517,23 @@ div.btn-disabled {
   font-weight: bold;
   padding-right: 6px;
 }
+.collage-header-r {
+  color: #209cff;
+  font-size: 26px;
+  padding-right: 30px;
+  line-height: 120px;
+}
+.collage-header-r i {
+  font-size: 34px;
+  margin-left: 8px;
+}
 .p-30 {
   padding: 0 30px;
 }
 .collage-step {
   height: 83px;
   font-size: 24px;
-  color: #222;
-  border-bottom: 1.5px dashed #aaa;
+  color: #8f8f94;
 }
 .collage-step-icon {
   width: 0;
@@ -1457,10 +1543,49 @@ div.btn-disabled {
   border-color: transparent transparent transparent #383838;
 }
 .collage-total {
+  border-top: 1.5px dashed #aaa;
   height: 84px;
   font-size: 24px;
+  margin-bottom: 10px;
+}
+.collage-total div:nth-child(2) {
+  color: #EB5841;
+}
+.collage-list {
+  display: flex;
+  overflow-y: auto;
+  padding-bottom: 40px;
 }
 .collage-item {
+  height: 120px;
+  background: #F2F2F4;
+  border-radius: 60px;
+  padding: 20px;
+  margin-right: 20px;
+}
+.collage-item > div {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 10px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+.collage-item > div:last-child {
+  margin-right: 0;
+}
+.collage-share {
+  border: 2px solid #448FE4;
+  line-height: 80px;
+  font-size: 42px;
+  color: #448fe4;
+}
+.collage-user-photo {
+  width: 100%;
+  height: 80px;
+}
+/* .collage-item {
   height: 161px;
   padding-bottom: 30px;
   border-bottom: 1px solid #f0f0f0;
@@ -1469,7 +1594,6 @@ div.btn-disabled {
 .collage-item:last-child {
   border-bottom: 0;
 }
-
 .collage-user {
   height: 130px;
   width: 540px;
@@ -1484,7 +1608,7 @@ div.btn-disabled {
   width: 100%;
   height: 88px;
   border-radius: 50%;
-}
+} */
 .collage-mask {
   position: absolute;
   top: 0;

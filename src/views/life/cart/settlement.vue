@@ -555,21 +555,22 @@ export default {
           }
         }
       }).catch((res) => {
-        console.log(res.message)
-        if (this.idcard) {
-          this.$router.push({
-            path: '/pages/personage/information/addBankCard',
-            query: {
-              message: res.message
-            }
-          })
-        } else {
-          this.$router.push({
-            path: '/pages/personage/information/certification',
-            query: {
-              message: res.message
-            }
-          })
+        if (callData.pay_type == 4) {
+          if (this.idcard) {
+            this.$router.push({
+              path: '/pages/personage/information/addBankCard',
+              query: {
+                message: res.message
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/pages/personage/information/certification',
+              query: {
+                message: res.message
+              }
+            })
+          }
         }
       })
     },
