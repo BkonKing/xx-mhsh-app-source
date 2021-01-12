@@ -147,6 +147,12 @@ export default {
       }
     }
   },
+  created () {
+    if (!this.wxzfbShow) {
+      this.tapIndex = 2
+      this.callData.pay_type = 4
+    }
+  },
   methods: {
     // 选择银行卡
     selectCard (index) {
