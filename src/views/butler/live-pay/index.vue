@@ -47,7 +47,8 @@
             >
               <template v-slot="{ valueText }">
                 <div class="tf-text selected-date">
-                  {{ valueText }}<span class="tf-icon tf-icon-caret-down"></span>
+                  {{ valueText
+                  }}<span class="tf-icon tf-icon-caret-down"></span>
                 </div>
                 <div class="pay-info">
                   费用共￥{{ item.common_money }}
@@ -56,7 +57,9 @@
                       ? `&nbsp;已缴费￥${item.already_money}`
                       : ""
                   }}
-                  {{ item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : "" }}
+                  {{
+                    item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : ""
+                  }}
                 </div>
               </template>
             </tf-picker>
@@ -90,7 +93,7 @@
         </template>
         <template v-else>
           <div class="pay-detail-container">
-            <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png">
+            <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png" />
             <div class="pay-detail-text">暂无待缴费用</div>
           </div>
         </template>
@@ -118,6 +121,7 @@ export default {
     return {
       selectedHouse: '',
       houseList: [],
+      first: true,
       payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
       monthList: [] // 缴费月份列表
@@ -126,10 +130,11 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'currentProject'])
   },
-  created () {
-    this.getLifePayList({}, true)
-  },
   activated () {
+    if (this.first) {
+      this.getLifePayList({}, true)
+      return
+    }
     const [project_id, expenses_house_id] = this.selectedHouse.split('-')
     this.getLifePayList({
       expenses_house_id,
@@ -159,6 +164,7 @@ export default {
       getLifePayList(params).then(
         ({ house_data, table_data, month_data, month_name_text }) => {
           const houseId = this.$route.query.id || this.currentProject.house_id
+          let status = false // 是否第一次进入，并且当前房间没有账号
           this.houseList = house_data.map(obj => {
             const {
               project_name,
@@ -168,17 +174,31 @@ export default {
               project_id
             } = obj
             const value = `${project_id}-${expenses_house_id}-${house_id}`
+            // 如果是首次渲染，则默认设置选中当前房屋
             if (houseId === house_id && first) {
               this.selectedHouse = value
+              this.first = false
+            }
+            // 如果当前房屋没有账单id
+            if (this.selectedHouse === value && !expenses_house_id) {
+              status = true
             }
             return {
               text: `${project_name} ${fc_info}`,
               value
             }
           })
-          this.monthList = month_data || []
-          this.payInfo = month_name_text
-          this.payList = table_data
+          if (status) {
+            this.payList = []
+            this.monthList = []
+            this.payInfo = ''
+          } else if (first) {
+            this.searchLifePayList()
+          } else {
+            this.monthList = month_data || []
+            this.payInfo = month_name_text
+            this.payList = table_data
+          }
         }
       )
     },
