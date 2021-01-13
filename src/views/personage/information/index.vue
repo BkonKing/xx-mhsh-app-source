@@ -190,7 +190,7 @@
                @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
       </van-tab>
       <van-tab v-if="userType == 1 && currentProject"
-               title="成员信息">
+               title="成员信息" class="mermber-info">
         <van-dropdown-menu class="tf-mb-lg"
                            @change="getMemberList">
           <van-dropdown-item v-model="selectedHouseId"
@@ -805,5 +805,8 @@ export default {
   flex: 1;
   font-size: 30px;
   text-align: right;
+}
+.mermber-info {
+  padding-bottom: 108px !important;
 }
 </style>

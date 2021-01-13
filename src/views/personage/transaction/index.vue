@@ -125,7 +125,7 @@
           </div>
           <building-list
             ref="buildList"
-            :data.sync="list1"
+            :data.sync="monthRecordList"
             :load="getMeterBuilding"
           ></building-list>
         </van-tab>
@@ -169,6 +169,7 @@ export default {
       buildList: [],
       backStatus: false,
       monthList: [],
+      monthRecordList: [],
       monthStatus: true // 水电抄表参数是否赋值
     }
   },
@@ -338,7 +339,7 @@ export default {
   background-color: @red-dark;
 }
 .transaction-list {
-  height: 100% !important;
+  height: calc(100% - 126px) !important;
 }
 .transaction-list-item--time {
   text-align: center;
@@ -368,9 +369,14 @@ export default {
 .padding63 {
   padding-top: 126px;
 }
+/deep/ .van-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 /deep/ .van-tabs__content {
   flex: 1;
-  max-height: calc(100% - 98px);
+  height: 0;
   .van-tab__pane {
     height: 100%;
   }
