@@ -102,26 +102,35 @@
         </van-tab>
         <van-tab title="水电抄表" v-if="userInfo.sdcbrole == 1" name="1">
           <div class="select-header">
-            <tf-picker
-              class="date-time-box"
-              v-model="date"
-              title="选择时间"
-              value-key="days_time_name"
-              selected-key="id"
-              :columns="monthList"
-              @confirm="handleChange"
-            >
-              <template v-slot="{ valueText }">
-                <div class="tf-text">{{ valueText }}</div>
-              </template>
-            </tf-picker>
-            <van-dropdown-menu>
-              <van-dropdown-item
-                v-model="selectStatus"
-                @change="handleChange"
-                :options="statusList"
-              />
-            </van-dropdown-menu>
+            <div class="tf-flex">
+              <tf-picker
+                class="date-time-box"
+                v-model="date"
+                title="选择时间"
+                value-key="days_time_name"
+                selected-key="id"
+                :columns="monthList"
+                @confirm="handleChange"
+              >
+                <template v-slot="{ valueText }">
+                  <div class="tf-text">
+                    {{ valueText
+                    }}<span class="tf-icon tf-icon-caret-down"></span>
+                  </div>
+                </template>
+              </tf-picker>
+              <van-dropdown-menu>
+                <van-dropdown-item
+                  v-model="selectStatus"
+                  @change="handleChange"
+                  :options="statusList"
+                />
+              </van-dropdown-menu>
+            </div>
+            <div
+              class="tf-icon tf-icon-shengjiangpaixu"
+              @click="changeOrder"
+            ></div>
           </div>
           <building-list
             ref="buildList"
@@ -170,7 +179,8 @@ export default {
       backStatus: false,
       monthList: [],
       monthRecordList: [],
-      monthStatus: true // 水电抄表参数是否赋值
+      monthStatus: true, // 水电抄表参数是否赋值
+      listOrder: 0 // 水电抄表排序 0 正序 1倒序
     }
   },
   computed: {
@@ -246,7 +256,8 @@ export default {
     getMeterBuilding () {
       const params = {
         month_id: this.date,
-        record_state: this.selectStatus
+        record_state: this.selectStatus,
+        list_order: this.listOrder
       }
       return getHydropowerList(params).then(
         ({ month_record_list, month_list, record_state }) => {
@@ -261,6 +272,11 @@ export default {
           })
         }
       )
+    },
+    // 更换水电抄表顺序
+    changeOrder () {
+      this.listOrder = this.listOrder === 0 ? 1 : 0
+      this.$refs.buildList.reload()
     },
     handleChange () {
       this.$refs.buildList.reload()
@@ -395,9 +411,29 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 30px;
+  .tf-flex {
+    align-items: center;
+  }
+  .date-time-box {
+    margin-right: 30px;
+    .tf-icon-caret-down {
+      margin-left: 20px;
+    }
+  }
   .selected-date {
     font-size: 28px;
     color: #222;
+    margin-right: 20px;
+  }
+  .tf-icon-shengjiangpaixu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 66px;
+    border: 2px solid #aaaaaa;
+    border-radius: 33px;
+    font-size: 28px;
   }
   /deep/ .van-dropdown-menu__bar {
     width: 220px;
