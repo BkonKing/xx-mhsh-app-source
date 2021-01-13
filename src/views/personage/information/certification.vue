@@ -344,7 +344,7 @@ export default {
     position: fixed;
     padding: 0 20px;
     left: 0;
-    bottom: 150px;
+    top: 1200px;
   }
   .popup {
     width: 560px;
