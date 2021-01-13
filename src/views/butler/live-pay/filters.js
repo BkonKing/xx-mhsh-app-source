@@ -1,6 +1,6 @@
 export default {
   orderStatusText (status) {
-    const text = ['待缴费', '超时未缴', '已缴费']
+    const text = ['', '超时未缴', '已缴费']
     return text[status]
   },
   payTypeText (type) {

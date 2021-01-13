@@ -477,7 +477,7 @@ export default {
     /* 获取成员列表 */
     getMemberList () {
       getMemberList({
-        house_id: this.value
+        house_id: this.selectedHouseId
       }).then(res => {
         this.memberList = res.data
       })

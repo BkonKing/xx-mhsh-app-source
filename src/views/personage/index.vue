@@ -325,6 +325,7 @@ export default {
     sign () {
       if (this.userInfo.signin_today === '0') {
         handlePermission({
+          name: 'location',
           title: '定位服务未开启',
           message: '为了提供更好服务，需要您开启定位'
         }).then(() => {
