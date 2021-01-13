@@ -185,6 +185,10 @@ export default {
   methods: {
     // 去支付
     goToPay () {
+      if (this.bankCardNum.replace(/\s/g, '').length > 19) {
+        Toast.fail('请输入正确的银行卡')
+        return
+      }
       const realNameInfo = {
         bank_card: this.bankCardNum,
         realname: this.personName,
