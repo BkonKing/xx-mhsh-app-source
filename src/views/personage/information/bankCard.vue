@@ -13,6 +13,7 @@
     </van-nav-bar>
     <div class="content">
       <div class="item"
+           v-show="api.systemType==='android'"
            :style="{background:'url( '+ item.bank_bj +') no-repeat',backgroundSize:'100% 100%'}"
            v-for="(item, index) in bankCardArr"
            :key="index"
@@ -33,18 +34,48 @@
           {{item.bank_card}}
         </div>
       </div>
+      <van-swipe-cell v-for="(item, index) in bankCardArr"
+                      :key="index"
+                      v-show="api.systemType==='ios'">
+        <div class="item"
+             :style="{background:'url( '+ item.bank_bj +') no-repeat',backgroundSize:'100% 100%'}">
+          <div class="top">
+            <div class="img">
+              <img :src="item.bank_ico"
+                   alt="" />
+            </div>
+            <div class="right">
+              <div class="t1">{{item.bank_name}}</div>
+              <div class="t2">储蓄卡</div>
+            </div>
+          </div>
+          <div class="bottom">
+            ****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;
+            {{item.bank_card}}
+          </div>
+        </div>
+        <template #right>
+          <van-button text="删除"
+                      type="danger"
+                      class="delete-button"
+                      @click="removeBankCard(item,index)" />
+        </template>
+      </van-swipe-cell>
+
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Dialog, Toast } from 'vant'
+import { NavBar, Dialog, Toast, SwipeCell, Card } from 'vant'
 import { getBankList, unbindBankCard } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [Dialog.name]: Dialog,
-    [Toast.name]: Toast
+    [Toast.name]: Toast,
+    [SwipeCell.name]: SwipeCell,
+    [Card.name]: Card
   },
   data () {
     return {
@@ -53,6 +84,20 @@ export default {
     }
   },
   methods: {
+    removeBankCard (item, index) {
+      Dialog.confirm({
+        message: '是否删除该银行卡'
+      })
+        .then(async () => {
+          this.bankCardArr.splice(index, 1)
+          await unbindBankCard({ bank_id: +item.id })
+          Toast.success('删除成功')
+        })
+        .catch(() => {
+          // on cancel
+          console.log('不删')
+        })
+    },
     // 回退
     goback () {
       this.$router.go(-1)
@@ -85,6 +130,7 @@ export default {
   async created () {
     const res = await getBankList()
     this.bankCardArr = res.data
+    // alert(api.systemType)
   }
 }
 </script>
@@ -169,6 +215,9 @@ export default {
         border-radius: 10px;
       }
     }
+  }
+  .delete-button {
+    height: 100%;
   }
 }
 </style>
