@@ -337,10 +337,10 @@ const personageRouter = [
   // 支持的银行卡列表
   {
     path: '/pages/personage/information/support-bankCard-list',
-    name: 'support-bankCard-list',
+    name: 'supportBankCardList',
     component: () =>
       import(
-        /* webpackChunkName: "support-bankCard-list" */
+        /* webpackChunkName: "supportBankCardList" */
         '@/views/personage/information/support-bankCard-list.vue'
       )
   },
@@ -357,10 +357,10 @@ const personageRouter = [
   // 支付协议
   {
     path: '/pages/personage/information/pay-agreeMent',
-    name: 'pay-agreeMent',
+    name: 'payAgreeMent',
     component: () =>
       import(
-        /* webpackChunkName: "pay-agreeMent" */
+        /* webpackChunkName: "payAgreeMent" */
         '@/views/personage/information/pay-agreeMent.vue'
       )
   },

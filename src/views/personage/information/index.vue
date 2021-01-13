@@ -83,13 +83,13 @@
                         :rightText="mobile"
                         @click="jumpPhone">
           </tf-list-item>
-          <van-cell class="nameCell"
+          <van-cell v-if="userInfo.idcard"
+                    class="nameCell"
                     is-link
                     center
                     @click="$router.push('/pages/personage/information/BankCard')">
             <template #title>
-              <div class="title"
-                   v-if="userInfo.idcard">
+              <div class="title">
                 <div class="txt">银行卡</div>
                 <!-- <div class="name">0000000000000000</div> -->
               </div>
@@ -808,5 +808,8 @@ export default {
 }
 .mermber-info {
   padding-bottom: 108px !important;
+}
+/deep/ .van-cell__right-icon {
+  font-size: 26px;
 }
 </style>

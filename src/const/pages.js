@@ -90,5 +90,21 @@ export const pagesArr = {
   openingPage: 89,
   faceCollect: 90,
   settingAbout: 91,
-  orderVerification: 92
+  orderVerification: 92,
+  livePayIndex: 93, // 生活缴费首页
+  livePayPay: 94, // 生活缴费支付
+  livePayRecord: 95, // 生活缴费记录
+  livePayRecordDetail: 96, // 生活缴费记录详情
+  livePayCostDetail: 97, // 生活缴费费用详情
+  waterElectricitySelect: 98, // 水电费选择房间
+  waterElectricityMeter: 99, // 水电抄表
+  faceCollectCamera: 100, // 人脸收集拍照
+  certification: 101, // 实名认证
+  personInfo: 102, // 个人信息
+  realNameInfo: 103, // 实名信息
+  addBankCard: 104, // 添加银行卡
+  supportBankCardList: 105, // 支持的银行卡列表
+  verifyPhone: 106, // 验证预留手机号
+  payAgreeMent: 107, // 支付协议
+  bankCard: 108 // 我的银行卡
 }
