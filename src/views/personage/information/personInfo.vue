@@ -11,8 +11,7 @@
     </van-nav-bar>
     <div class="content">
       <div class="info">
-        <van-uploader :after-read="afterRead"
-                      style="width: 100%;">
+        <van-uploader :after-read="afterRead">
           <mycell class="cell"
                   title="头像"
                   value="头像"
@@ -278,6 +277,7 @@ export default {
   .content {
     padding: 30px 20px;
     .info {
+      width: 100%;
       padding: 0 30px;
       background-color: #fff;
       border-radius: 10px;
@@ -287,6 +287,10 @@ export default {
           border-bottom: 1px solid #f0f0f0;
         }
       }
+    }
+    /deep/ .van-uploader {
+      display: block;
+      width: 100%;
     }
     /deep/ .van-uploader__input {
       width: 100% !important;
@@ -327,6 +331,14 @@ export default {
   }
   /deep/ .tf-clist-cell {
     padding: 0 20px;
+  }
+  /deep/ .van-cell__right-icon {
+    font-size: 26px;
+  }
+  /deep/ .van-uploader__input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
   }
 }
 </style>

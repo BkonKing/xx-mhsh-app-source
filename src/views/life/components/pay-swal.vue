@@ -30,7 +30,7 @@
           </template>
           <div class="common-item" @click.stop="selectSwal(2)">
             <div class="common-item-left">
-              <div :class="[tapIndex == 2 ? 'cur' : '','cart-checkbox flex-center']">
+              <div v-show="wxzfbShow" :class="[tapIndex == 2 ? 'cur' : '','cart-checkbox flex-center']">
                 <div class="checkbox-session"></div>
               </div>
               <template v-if="selectIndex == -1">
@@ -145,6 +145,12 @@ export default {
           this.start()
         })
       }
+    }
+  },
+  created () {
+    if (!this.wxzfbShow) {
+      this.tapIndex = 2
+      this.callData.pay_type = 4
     }
   },
   methods: {

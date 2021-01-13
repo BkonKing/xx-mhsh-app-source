@@ -80,6 +80,7 @@
 import { getChoicePayList, createPay } from '@/api/butler'
 import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
+import { makeCount } from '@/utils/util'
 export default {
   name: 'livePayPay',
   components: {
@@ -165,7 +166,7 @@ export default {
       } else {
         this.checked = false
       }
-      this.payTotal = sum
+      this.payTotal = makeCount(sum)
     },
     // 发起缴费
     handlePay () {

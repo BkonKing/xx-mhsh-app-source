@@ -182,6 +182,7 @@ export default {
     /* 签到请求 */
     signin () {
       handlePermission({
+        name: 'location',
         title: '定位服务未开启',
         message: '为了提供更好服务，需要您开启定位'
       }).then(() => {

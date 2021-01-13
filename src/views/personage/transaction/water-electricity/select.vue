@@ -11,25 +11,28 @@
     </van-nav-bar>
 
     <div class="select-header">
-      <van-dropdown-menu>
+      <van-dropdown-menu class="tf-flex-item">
         <van-dropdown-item
           v-model="selectStatus"
           @change="handleChange"
           :options="statusList"
         />
       </van-dropdown-menu>
-      <van-dropdown-menu class="unit-dropdown">
+      <van-dropdown-menu class="unit-dropdown tf-flex-item">
         <van-dropdown-item
           v-model="selectedUnit"
           @change="handleChange"
           :options="unitList"
         />
       </van-dropdown-menu>
-      <van-field
-        v-model="houseString"
-        @change="handleChange"
-        placeholder="房间"
-      />
+      <div class="tf-flex-item house-string">
+        <van-field
+          v-model="houseString"
+          @change="handleChange"
+          placeholder="房间"
+        />
+      </div>
+      <div class="tf-icon tf-icon-shengjiangpaixu" @click="changeOrder"></div>
     </div>
     <refreshList
       ref="list"
@@ -44,15 +47,17 @@
             class="house-water"
             :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit }"
           >
-          <span class="tf-icon tf-icon-shuibiao"></span
-            >{{ item.is_water_fee  == '0' ? "-" : item.disparity_water }}
+            <span class="tf-icon tf-icon-shuibiao"></span
+            >{{ item.is_water_fee == "0" ? "-" : item.disparity_water }}
           </div>
           <div
             class="house-electricity"
-            :class="{ 'tf-text-primary': item.disparity_electric > eErrorsDigit }"
+            :class="{
+              'tf-text-primary': item.disparity_electric > eErrorsDigit
+            }"
           >
-          <span class="tf-icon tf-icon-dianbiao"></span
-            >{{ item.is_electric_fee == '0' ? "-" : item.disparity_electric }}
+            <span class="tf-icon tf-icon-dianbiao"></span
+            >{{ item.is_electric_fee == "0" ? "-" : item.disparity_electric }}
           </div>
         </div>
       </template>
@@ -80,7 +85,8 @@ export default {
       houseString: '',
       houseList: [],
       wErrorsDigit: 0,
-      eErrorsDigit: 0
+      eErrorsDigit: 0,
+      listOrder: 0 // 水电抄表排序 0 正序 1倒序
     }
   },
   created () {
@@ -96,11 +102,18 @@ export default {
         month_id: this.monthId,
         house_name: this.houseString,
         record_state: this.selectStatus,
-        unit_id: this.selectedUnit
-        // list_order: 0 // 0 正序 1倒序
+        unit_id: this.selectedUnit,
+        list_order: this.listOrder // 0 正序 1倒序
       }
       return getLiveHouseList(params).then(
-        ({ month_record_list, month_list, record_state, unit_data, w_errors_digit, e_errors_digit }) => {
+        ({
+          month_record_list,
+          month_list,
+          record_state,
+          unit_data,
+          w_errors_digit,
+          e_errors_digit
+        }) => {
           this.unitList = unit_data
           this.statusList = record_state
           this.wErrorsDigit = w_errors_digit
@@ -114,8 +127,19 @@ export default {
     handleChange () {
       this.$refs.list.reload()
     },
+    // 更换水电抄表顺序
+    changeOrder () {
+      this.listOrder = this.listOrder === 0 ? 1 : 0
+      this.$refs.list.reload()
+    },
     // 跳转到抄表
-    goMeterReading ({ id, disparity_water, disparity_electric, is_electric_fee, is_water_fee }) {
+    goMeterReading ({
+      id,
+      disparity_water,
+      disparity_electric,
+      is_electric_fee,
+      is_water_fee
+    }) {
       const type = disparity_water && !disparity_electric ? 2 : 1
       this.$router.push({
         name: 'waterElectricityMeter',
@@ -136,9 +160,24 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 30px 20px;
+  .tf-icon-shengjiangpaixu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 66px;
+    height: 66px;
+    border: 2px solid #aaaaaa;
+    border-radius: 33px;
+    font-size: 28px;
+  }
+  .tf-flex-item {
+    margin-right: 20px;
+  }
+  .house-string {
+    width: 0;
+  }
   /deep/ .van-dropdown-menu__bar,
   /deep/ .van-field {
-    width: 220px;
     background: none;
     border: 2px solid #aaaaaa;
     border-radius: 33px;

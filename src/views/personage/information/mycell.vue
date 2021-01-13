@@ -32,14 +32,14 @@
 </template>
 
 <script>
-import { Cell, CellGroup } from "vant";
-import { mapGetters } from "vuex";
+import { Cell, CellGroup } from 'vant'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [Cell.name]: Cell
   },
-  data() {
-    return {};
+  data () {
+    return {}
   },
   props: {
     title: {
@@ -57,9 +57,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["userInfo"])
+    ...mapGetters(['userInfo'])
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -83,9 +83,11 @@ export default {
     width: 64px;
     height: 64px;
     border-radius: 50%;
+    vertical-align: middle;
   }
   .nan {
     color: #448fe4;
+    font-size: 26px;
   }
   .nv {
     color: #ff3366;

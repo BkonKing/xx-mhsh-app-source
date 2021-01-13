@@ -144,7 +144,7 @@
                 @click="clickSpecialSale"
               >
                 <template v-slot:tag="{ img }">
-                  <div class="price-tag">￥{{ img.s_price / 100 }}</div>
+                  <div class="price-tag">￥{{ img.te_price / 100 }}</div>
                 </template>
               </tf-image-list>
             </van-swipe-item>
@@ -427,6 +427,7 @@ export default {
     /* 签到 */
     sign () {
       handlePermission({
+        name: 'location',
         title: '定位服务未开启',
         message: '为了提供更好服务，需要您开启定位'
       }).then(() => {

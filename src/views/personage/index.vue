@@ -1,5 +1,6 @@
 <template>
-  <div class="tf-bg tf-body" :class="{ 'theme-body': userInfo.swrole == 1 }">
+  <div class="tf-bg tf-body">
+    <div class="theme-container"></div>
     <van-nav-bar :fixed="true" :border="false" placeholder>
       <template #right>
         <span class="tf-icon tf-icon-shezhi" @click="goSetting"></span>
@@ -11,7 +12,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container tf-overflow-auto">
-      <div :class="{ 'theme-header': userInfo.swrole == 1 }">
+      <div class="theme-header">
         <div class="tf-bg-white">
           <div class="tf-row tf-padding-lg" @click="goInformation">
             <img
@@ -96,7 +97,10 @@
         </div>
       </div>
       <div class="functional-box">
-        <div v-if="userInfo.swrole == 1 || userInfo.sdcbrole == 1" class="tansaction-box">
+        <div
+          v-if="userInfo.swrole == 1 || userInfo.sdcbrole == 1"
+          class="tansaction-box"
+        >
           <div class="tansaction-header" @click="handleTransaction">
             <div class="tansaction-title">报事报修</div>
             <div class="tansaction-btn">事务处理 ></div>
@@ -282,7 +286,6 @@
       </div>
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
-
   </div>
 </template>
 
@@ -325,6 +328,7 @@ export default {
     sign () {
       if (this.userInfo.signin_today === '0') {
         handlePermission({
+          name: 'location',
           title: '定位服务未开启',
           message: '为了提供更好服务，需要您开启定位'
         }).then(() => {
@@ -417,10 +421,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.theme-body {
-  background-image: linear-gradient(to bottom, @red, @red-dark);
-  background-size: 100% 260px;
-  background-repeat: no-repeat;
+.theme-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 750px;
+  height: 260px;
+  background-image: linear-gradient(to right, @red, @red-dark);
+}
+.tf-body {
   .functional-box {
     background: #f2f2f4;
   }
@@ -632,9 +641,10 @@ export default {
 .tansaction-box {
   padding: 30px 30px 40px;
   margin-bottom: 30px;
-  background: url('~@/assets/imgs/transaction-bg.png');
+  background: url("~@/assets/imgs/transaction-bg.png");
   background-size: cover;
   border-radius: 10px;
+  z-index: 1;
   .tansaction-header {
     display: flex;
     justify-content: space-between;

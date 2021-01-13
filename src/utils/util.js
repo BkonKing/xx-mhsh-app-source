@@ -406,3 +406,8 @@ export function downloadPic (picUrl, name) {
     })
   })
 }
+
+// 精准度计算转换
+export function makeCount (num, precision = 12) {
+  return parseFloat((num).toPrecision(precision))
+}

@@ -83,13 +83,13 @@
                         :rightText="mobile"
                         @click="jumpPhone">
           </tf-list-item>
-          <van-cell class="nameCell"
+          <van-cell v-if="userInfo.idcard"
+                    class="nameCell"
                     is-link
                     center
                     @click="$router.push('/pages/personage/information/BankCard')">
             <template #title>
-              <div class="title"
-                   v-if="userInfo.idcard">
+              <div class="title">
                 <div class="txt">银行卡</div>
                 <!-- <div class="name">0000000000000000</div> -->
               </div>
@@ -190,7 +190,7 @@
                @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
       </van-tab>
       <van-tab v-if="userType == 1 && currentProject"
-               title="成员信息">
+               title="成员信息" class="mermber-info">
         <van-dropdown-menu class="tf-mb-lg"
                            @change="getMemberList">
           <van-dropdown-item v-model="selectedHouseId"
@@ -477,7 +477,7 @@ export default {
     /* 获取成员列表 */
     getMemberList () {
       getMemberList({
-        house_id: this.value
+        house_id: this.selectedHouseId
       }).then(res => {
         this.memberList = res.data
       })
@@ -805,5 +805,11 @@ export default {
   flex: 1;
   font-size: 30px;
   text-align: right;
+}
+.mermber-info {
+  padding-bottom: 108px !important;
+}
+/deep/ .van-cell__right-icon {
+  font-size: 26px;
 }
 </style>
