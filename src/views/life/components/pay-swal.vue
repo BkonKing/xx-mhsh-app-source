@@ -28,18 +28,25 @@
               </div>
             </div>
           </template>
-          <div class="common-item" @click.stop="selectSwal(2)">
+          <div v-if="selectIndex == -1" class="common-item" @click.stop="selectSwal(2)">
             <div class="common-item-left">
               <div v-show="wxzfbShow" :class="[tapIndex == 2 ? 'cur' : '','cart-checkbox flex-center']">
                 <div class="checkbox-session"></div>
               </div>
-              <template v-if="selectIndex == -1">
-                <img src="@/assets/img/icon_27.png" />银行卡支付
-              </template>
-              <template v-else>
-                <img :src="cardList[selectIndex].bank_ico" />{{ cardList[selectIndex].bank_name }} ({{ cardList[selectIndex].cardFour ? cardList[selectIndex].cardFour : cardList[selectIndex].bank_card }})
-              </template>
+              <img src="@/assets/img/icon_27.png" />银行卡支付
             </div>
+            <i class="van-icon van-icon-arrow right-next"></i>
+          </div>
+          <div v-else class="common-item">
+            <div class="left-link" @click.stop="selectSwal(2)"></div>
+            <div class="right-link" @click.stop="CardNext"></div>
+            <div class="common-item-left">
+              <div v-show="wxzfbShow" :class="[tapIndex == 2 ? 'cur' : '','cart-checkbox flex-center']">
+                <div class="checkbox-session"></div>
+              </div>
+              <img :src="cardList[selectIndex].bank_ico" />{{ cardList[selectIndex].bank_name }} ({{ cardList[selectIndex].cardFour ? cardList[selectIndex].cardFour : cardList[selectIndex].bank_card }})
+            </div>
+            <i class="van-icon van-icon-arrow right-next"></i>
           </div>
         </div>
         <div v-if="selectIndex == -1" class="submit-btn color-fff" @click.stop="sureSwal()">去付款</div>
@@ -51,7 +58,7 @@
             <div class="common-item-left">
               <div :class="[selectIndex == index ? 'cur' : '','cart-checkbox flex-center']">
                 <div class="checkbox-session"></div>
-              </div><img :src="item.bank_ico" />{{ item.bank_name}} ({{ item.bank_card }})
+              </div><img :src="item.bank_ico" />{{ item.bank_name}} ({{ item.cardFour ? item.cardFour : item.bank_card }})
             </div>
           </div>
           <!-- <div class="common-item" @click.stop="selectSwal(1)">
@@ -88,7 +95,7 @@
 
 <script>
 import { CountDown, Toast } from 'vant'
-import { getMyCard, fuPay } from '@/api/life.js'
+import { getMyCard, fuPay, getBankOne } from '@/api/life.js'
 export default {
   components: {
     [CountDown.name]: CountDown,
@@ -152,6 +159,7 @@ export default {
       this.tapIndex = 2
       this.callData.pay_type = 4
     }
+    this.myUseCard()
   },
   methods: {
     // 选择银行卡
@@ -169,6 +177,7 @@ export default {
     },
     // 新增银行卡
     newCard (res) {
+      console.log(112, res)
       if (typeof res.idcard === 'undefined' || !res.idcard) {
         res.idcard = this.idCard
       }
@@ -176,7 +185,6 @@ export default {
       res.bank_card = res.bank_card.replace(/\s*/g, '')
       res.cardFour = res.bank_card.slice(-4)
       this.cardList.push(res)
-      console.log(this.selectIndex, res)
       this.selectCard(this.cardList.length - 1)
     },
     // 银行卡支付
@@ -228,16 +236,34 @@ export default {
         }
       })
     },
-    // 获取我的银行卡
-    myCard () {
+    // 获取默认使用的银行卡
+    myUseCard () {
       getMyCard().then(res => {
         if (res.success) {
           this.cardList = res.data
           this.idCard = res.idcard
           if (res.realname && res.idcard) this.isRealname = 1
-          this.step = 2
+          // this.step = 2
+          if (res.data && res.data.length) {
+            if (res.data[0].selected == 1) {
+              this.selectIndex = 0
+              this.selectCard(this.selectIndex)
+            }
+          }
         }
       })
+    },
+    // 获取我的银行卡
+    myCard () {
+      this.step = 2
+      // getMyCard().then(res => {
+      //   if (res.success) {
+      //     this.cardList = res.data
+      //     this.idCard = res.idcard
+      //     if (res.realname && res.idcard) this.isRealname = 1
+      //     this.step = 2
+      //   }
+      // })
     },
     // 返回上一步
     prevStep () {
@@ -262,6 +288,13 @@ export default {
     },
     selectSwal (index) {
       this.tapIndex = index
+      if (index == 2 && this.selectIndex == -1) {
+        this.sureSwal()
+      }
+    },
+    CardNext () {
+      this.step = 2
+      this.tapIndex = 2
     },
     goLink (message) {
       let data = {}
@@ -356,11 +389,40 @@ export default {
   height: 120px;
   border-top: 0;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+.left-link {
+  position: absolute;
+  left: -30px;
+  top: 0;
+  bottom: 0;
+  width: 180px;
+  z-index: 8;
+}
+.right-link {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  bottom: 0;
+  width: 570px;
+  z-index: 8;
+}
+.common-item-left {
+  height: 100%;
+  flex-grow: 1;
 }
 .pay-mask .common-item-left img {
   width: 58px;
   height: 58px;
   margin-right: 20px;
+}
+.right-next {
+  font-size: 30px;
+  color: #8f8f94;
+  height: 100%;
+  padding: 0 30px;
+  margin-right: -30px;
+  line-height: 120px;
 }
 .pay-mask .submit-btn {
   margin-top: 60px;
