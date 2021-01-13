@@ -86,7 +86,7 @@ import { getCoupon } from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    [List.name]: List,
+    [List.name]: List
   },
   data () {
     return {
@@ -95,26 +95,29 @@ export default {
       navItems: ['未使用', '已使用', '已过期'],
       msg: '一个订单只能使用一张优惠券；\n可与其他活动优惠同时享受（提示不可用券的除外）；\n订单申请退款，优惠券不退回；',
 
-      listData: [],   //数据列表
-      page: 1,   //页码
-      pageSize: 10,  //分页条数
-      isEmpty: false, //是否为空
+      listData: [], // 数据列表
+      page: 1, // 页码
+      pageSize: 10, // 分页条数
+      isEmpty: false, // 是否为空
       loading: false,
       finished: false
     }
   },
   methods: {
     navFun (index) {
-      this.typeVal = index;
-      this.page = 1;
-      this.listData = [];
-      this.loading = false;
-      this.finished = false;
+      this.typeVal = index
+      this.page = 1
+      this.listData = []
+      if (!this.loading && !this.finished) {
+        this.getData()
+      } else {
+        this.loading = false
+        this.finished = false
+      }
     },
-    onLoad() {
+    onLoad () {
       // 异步更新数据
-      this.getData();
-      return;
+      this.getData()
     },
     getData () {
       getCoupon({
@@ -122,28 +125,28 @@ export default {
         c_type: this.typeVal
       }).then(res => {
         if (res.success) {
-          this.listData = this.page == 1 ? res.data : this.listData.concat(res.data);
-          this.isEmpty = this.page == 1 && res.data.length ==0 ? true : false;
-          if(res.data.length < res.pageSize){
-            this.finished = true;
-          }else {
-            this.page = this.page+1;
+          this.listData = this.page == 1 ? res.data : this.listData.concat(res.data)
+          this.isEmpty = !!(this.page == 1 && res.data.length == 0)
+          if (res.data.length < res.pageSize) {
+            this.finished = true
+          } else {
+            this.page = this.page + 1
           }
-          this.loading = false;
+          this.loading = false
         }
       })
     },
-    contToggle(index){
-      console.log(this.listData[index].is_down);
-      this.listData[index].is_down = !this.listData[index].is_down;
+    contToggle (index) {
+      console.log(this.listData[index].is_down)
+      this.listData[index].is_down = !this.listData[index].is_down
     },
-    linkFunc(type,obj={}) {
-      switch (type){
+    linkFunc (type, obj = {}) {
+      switch (type) {
         case 0:
-        this.$router.push('/life')
-        break;
+          this.$router.push('/life')
+          break
       }
-    },
+    }
   }
 }
 </script>

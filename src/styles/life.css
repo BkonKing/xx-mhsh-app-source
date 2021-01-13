@@ -246,3 +246,24 @@ div.no-top-border {
 	height: 100%;
 	position: relative;
 }
+
+.label-item-block {
+	padding: 0 11px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 22px;
+  color: #fff;
+}
+.label-item-block.label-item-tm {
+	background: linear-gradient(90deg, #EB5841, #FFA45A);
+}
+.label-item-block.label-item-sg {
+	background: linear-gradient(90deg, #FFA110, #FFC017);
+}
+.label-item-block.label-item-tip {
+	color: #55b862;
+  border: 1PX solid #55b862;
+  line-height: 34px;
+}
