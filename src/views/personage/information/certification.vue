@@ -352,7 +352,11 @@ export default {
     background: #ffffff;
     border-radius: 10px;
     text-align: center;
-    padding-top: 60px;
+    padding: 60px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     .gouxuan {
       font-size: 128px;
       color: #eb5841;
@@ -378,7 +382,7 @@ export default {
       height: 60px;
       background: #eb5841;
       border-radius: 4px;
-      margin: 60px auto;
+      // margin: 50px auto;
       font-size: 30px;
       font-family: PingFang SC;
       font-weight: 400;
