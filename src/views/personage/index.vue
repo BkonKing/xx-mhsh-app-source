@@ -102,7 +102,7 @@
           class="tansaction-box"
         >
           <div class="tansaction-header" @click="handleTransaction">
-            <div class="tansaction-title">报事报修</div>
+            <div class="tansaction-title">{{userInfo.swrole == 1 ? '报事报修' : '水电抄表'}}</div>
             <div class="tansaction-btn">事务处理 ></div>
           </div>
           <div
@@ -371,7 +371,7 @@ export default {
       if (this.userInfo.swrole == 1) {
         type = this.userInfo.role_dep == 1 ? 1 : 3
       } else if (this.userInfo.sdcbrole == 1) {
-        type = 6
+        type = 10
       }
       type && this.goTransaction(type)
     },

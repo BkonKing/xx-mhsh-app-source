@@ -11,14 +11,20 @@
     </van-nav-bar>
 
     <div class="select-header">
-      <van-dropdown-menu class="tf-flex-item">
+      <van-dropdown-menu
+        class="tf-flex-item"
+        :class="{ 'default-select': selectStatus === '全部' }"
+      >
         <van-dropdown-item
           v-model="selectStatus"
           @change="handleChange"
           :options="statusList"
         />
       </van-dropdown-menu>
-      <van-dropdown-menu class="unit-dropdown tf-flex-item">
+      <van-dropdown-menu
+        class="unit-dropdown tf-flex-item"
+        :class="{ 'default-select': selectedUnit == 0 }"
+      >
         <van-dropdown-item
           v-model="selectedUnit"
           @change="handleChange"
@@ -32,7 +38,18 @@
           placeholder="房间"
         />
       </div>
-      <div class="tf-icon tf-icon-shengjiangpaixu" @click="changeOrder"></div>
+      <img
+        v-if="listOrder == 0"
+        class="order-image"
+        src="@/assets/imgs/transaction-asc.png"
+        @click="changeOrder"
+      />
+      <img
+        v-if="listOrder == 1"
+        class="order-image"
+        src="@/assets/imgs/transaction-des.png"
+        @click="changeOrder"
+      />
     </div>
     <refreshList
       ref="list"
@@ -40,15 +57,19 @@
       :list.sync="houseList"
       :load="getLiveHouseList"
     >
-      <template v-slot="{ item }">
-        <div class="house-item" @click="goMeterReading(item)">
+      <template v-slot="{ item, index }">
+        <div class="house-item" @click="goMeterReading(item, index)">
           <div class="house-text">{{ item.unit_house_name }}</div>
           <div
+            v-if="item.is_water_fee == '1'"
             class="house-water"
             :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit }"
           >
             <span class="tf-icon tf-icon-shuibiao"></span
-            >{{ item.is_water_fee == "0" ? "-" : item.disparity_water }}
+            >{{ item.disparity_water }}
+          </div>
+          <div class="house-water tf-flex" v-else>
+            <div class="no-open"></div>
           </div>
           <div
             class="house-electricity"
@@ -96,8 +117,9 @@ export default {
   },
   methods: {
     // 获取房屋
-    getLiveHouseList () {
+    getLiveHouseList ({ pages: page }) {
       const params = {
+        page,
         building_id: this.id,
         month_id: this.monthId,
         house_name: this.houseString,
@@ -133,21 +155,35 @@ export default {
       this.$refs.list.reload()
     },
     // 跳转到抄表
-    goMeterReading ({
-      id,
-      disparity_water,
-      disparity_electric,
-      is_electric_fee,
-      is_water_fee
-    }) {
-      const type = disparity_water && !disparity_electric ? 2 : 1
+    goMeterReading (
+      {
+        id,
+        disparity_water,
+        disparity_electric,
+        is_electric_fee,
+        is_water_fee,
+        subscript
+      },
+      index
+    ) {
+      const type =
+        (disparity_water && !disparity_electric) || is_water_fee === '0'
+          ? 2
+          : 1
       this.$router.push({
         name: 'waterElectricityMeter',
         query: {
-          id,
+          month_record_id: id,
           type,
+          subscript,
           water: is_water_fee,
-          electric: is_electric_fee
+          electric: is_electric_fee,
+          building_id: this.id,
+          month_id: this.monthId,
+          house_name: this.houseString,
+          record_state: this.selectStatus,
+          unit_id: this.selectedUnit,
+          list_order: this.listOrder // 0 正序 1倒序
         }
       })
     }
@@ -160,15 +196,13 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 30px 20px;
-  .tf-icon-shengjiangpaixu {
+  .order-image {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 66px;
     height: 66px;
-    border: 2px solid #aaaaaa;
     border-radius: 33px;
-    font-size: 28px;
   }
   .tf-flex-item {
     margin-right: 20px;
@@ -206,6 +240,25 @@ export default {
     left: 225px;
   }
 }
+.default-select {
+  /deep/ .van-dropdown-menu__item {
+    .van-dropdown-menu__title {
+      color: #222;
+      &::after {
+        border-color: transparent transparent #aaa #aaa;
+      }
+    }
+  }
+  /deep/ .van-dropdown-menu__bar {
+    border-color: #aaa;
+  }
+}
+.no-open {
+  width: 110px;
+  height: 2px;
+  background: #aaaaaa;
+  border-radius: 2px;
+}
 .house-list {
   padding: 0 20px;
   /deep/ .tf-van-cell {
@@ -230,8 +283,14 @@ export default {
     .house-text,
     .house-water,
     .house-electricity {
-      width: 33%;
       font-size: 28px;
+    }
+    .house-text {
+      flex: 5;
+    }
+    .house-water,
+    .house-electricity {
+      flex: 4;
     }
   }
   .tf-van-cell + .tf-van-cell .house-item {

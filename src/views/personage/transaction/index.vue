@@ -119,7 +119,9 @@
                   </div>
                 </template>
               </tf-picker>
-              <van-dropdown-menu>
+              <van-dropdown-menu
+                :class="{ 'default-select': selectStatus === '全部' }"
+              >
                 <van-dropdown-item
                   v-model="selectStatus"
                   @change="handleChange"
@@ -127,10 +129,18 @@
                 />
               </van-dropdown-menu>
             </div>
-            <div
-              class="tf-icon tf-icon-shengjiangpaixu"
+            <img
+              v-if="listOrder == 0"
+              class="order-image"
+              src="@/assets/imgs/transaction-asc.png"
               @click="changeOrder"
-            ></div>
+            />
+            <img
+              v-if="listOrder == 1"
+              class="order-image"
+              src="@/assets/imgs/transaction-des.png"
+              @click="changeOrder"
+            />
           </div>
           <building-list
             ref="buildList"
@@ -425,15 +435,13 @@ export default {
     color: #222;
     margin-right: 20px;
   }
-  .tf-icon-shengjiangpaixu {
+  .order-image {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 66px;
     height: 66px;
-    border: 2px solid #aaaaaa;
     border-radius: 33px;
-    font-size: 28px;
   }
   /deep/ .van-dropdown-menu__bar {
     width: 220px;
@@ -457,6 +465,19 @@ export default {
         border-color: transparent transparent @primary @primary;
       }
     }
+  }
+}
+.default-select {
+  /deep/ .van-dropdown-menu__item {
+    .van-dropdown-menu__title {
+      color: #222;
+      &::after {
+        border-color: transparent transparent #aaa #aaa;
+      }
+    }
+  }
+  /deep/ .van-dropdown-menu__bar {
+    border-color: #aaa;
   }
 }
 /deep/ .van-popup--top {
