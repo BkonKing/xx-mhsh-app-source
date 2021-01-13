@@ -148,7 +148,9 @@ import {
 } from 'vant'
 import { mapGetters } from 'vuex'
 import { getBankInfo, editRealname } from '@/api/personage.js'
+import { handlePermission } from '@/utils/permission'
 export default {
+  name: 'addBankCard',
   components: {
     [NavBar.name]: NavBar,
     [Field.name]: Field,
@@ -214,24 +216,28 @@ export default {
     },
     // 打开摄像头
     openCamera () {
-      const baiduAd = api.require('baiduIdentifyOCR')
-      if (api.systemType === 'android') {
-        baiduAd.init((ret, err) => {
-          if (ret.status) {
-            baiduAd.bankCardOCROnline(({ status, result }, err) => {
-              if (status) {
-                this.bankCardNum = result.split('\n')[0].split('：')[1]
-              }
-            })
-          }
-        })
-      } else {
-        baiduAd.bankCardOCROnline(({ status, result }, err) => {
-          if (status) {
-            this.bankCardNum = result.result.bank_card_number
-          }
-        })
-      }
+      handlePermission({
+        name: 'camera'
+      }).then(() => {
+        const baiduAd = api.require('baiduIdentifyOCR')
+        if (api.systemType === 'android') {
+          baiduAd.init((ret, err) => {
+            if (ret.status) {
+              baiduAd.bankCardOCROnline(({ status, result }, err) => {
+                if (status) {
+                  this.bankCardNum = result.split('\n')[0].split('：')[1]
+                }
+              })
+            }
+          })
+        } else {
+          baiduAd.bankCardOCROnline(({ status, result }, err) => {
+            if (status) {
+              this.bankCardNum = result.result.bank_card_number
+            }
+          })
+        }
+      })
     },
     // 格式化银行卡号
     formatCardNumber (cardNum) {
@@ -304,6 +310,14 @@ export default {
       // this.idCard = realNameInfo.idcard;
       this.bankCardName = realNameInfo.bank_name
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['payAgreeMent', 'supportBankCardList']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

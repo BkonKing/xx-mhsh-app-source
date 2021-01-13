@@ -105,6 +105,7 @@ import { NavBar, Field, Button, Popup, Toast } from 'vant'
 import { mapGetters } from 'vuex'
 import { getBankInfo, editRealname } from '@/api/personage.js'
 export default {
+  name: 'certification',
   components: {
     [NavBar.name]: NavBar,
     [Field.name]: Field,
@@ -270,6 +271,14 @@ export default {
       this.idCard = realNameInfo.idcard
       this.bankCardName = realNameInfo.bank_name
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['payAgreeMent', 'supportBankCardList']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

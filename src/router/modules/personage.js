@@ -302,7 +302,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "certification" */
         '@/views/personage/information/certification.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 个人信息
   {
@@ -332,7 +335,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "addBankCard" */
         '@/views/personage/information/addBankCard.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 支持的银行卡列表
   {

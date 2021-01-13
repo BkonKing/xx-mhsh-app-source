@@ -56,9 +56,9 @@
               @click="shareShow=true"
             >分享</span>
           </div>
-          <div class="label-list">
-            <div class="label-item">包邮</div><div class="label-item">包邮</div><div class="label-item">包邮</div>
-          </div>
+          <!-- <div class="label-list">
+            <div class="label-item label-item-block label-item-tip">包邮</div><div class="label-item label-item-block label-item-tip">包邮</div><div class="label-item label-item-block label-item-tip">包邮</div>
+          </div> -->
         </div>
         <div class="info-price">
           <template v-if="infoData.pay_type == 1">
@@ -1064,15 +1064,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-top: 6px;
+  display: none;
 }
 .label-item {
-  height: 36px;
-  line-height: 32px;
-  border: 1PX solid #55B862;
-  border-radius: 4px;
-  padding: 0 11px;
-  font-size: 22px;
-  color: #55B862;
   margin-right: 10px;
   margin-bottom: 10px;
 }

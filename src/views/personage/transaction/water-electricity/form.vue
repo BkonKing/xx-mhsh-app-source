@@ -17,16 +17,17 @@
       <div class="meter-number-text" style="justify-content: space-between;">
         <span class="meter-text-point">本次读表数</span>
         <span
-          v-if="status && !editStatus"
+          v-if="status && !editStatus && !disabled"
           class="tf-icon tf-icon-bianxie"
-          @click="editStatus = true"
+          @click="handleEdit"
         ></span>
       </div>
       <div class="meter-number-input">
         <van-password-input
           ref="meter"
           :class="{
-            'tf-text-primary': meterError
+            'meter-error': meterError,
+            'number-input-focus': showKeyboard
           }"
           :value="meterNum"
           :length="meterLength"
@@ -39,7 +40,7 @@
     <div class="meter-number-container">
       <div class="meter-number-text">提供照片</div>
       <tf-uploader
-        v-if="editStatus"
+        v-if="editStatus && !disabled"
         class="upload-image"
         v-model="images"
         max-count="6"
@@ -53,7 +54,7 @@
       ></tf-image-list>
       <div class="no-image" v-else>无</div>
     </div>
-    <div v-if="editStatus" class="tf-padding">
+    <div v-if="editStatus && !disabled" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="save"
         >保存</van-button
       >
@@ -110,6 +111,10 @@ export default {
     meterLength: {
       type: Number,
       default: 6
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -130,12 +135,14 @@ export default {
     }
   },
   mounted () {
-    this.focusMeter()
+    if (!this.disabled) {
+      this.focusMeter()
+    }
   },
   methods: {
     // 数字键盘焦点事件
     focusMeter () {
-      if (this.editStatus) {
+      if (this.editStatus && !this.disabled) {
         this.showKeyboard = true
       }
     },
@@ -178,6 +185,9 @@ export default {
       } else {
         this.emitSave()
       }
+    },
+    handleEdit () {
+      this.editStatus = true
     },
     emitSave () {
       this.$emit('save', {
@@ -231,7 +241,7 @@ export default {
     /deep/ .van-password-input {
       height: 100%;
       margin: 0;
-      /deep/ .van-password-input__security {
+      .van-password-input__security {
         height: 100%;
         li {
           background: #fff;
@@ -240,9 +250,20 @@ export default {
           }
         }
       }
-      /deep/ .van-password-input__item {
+      .van-password-input__item {
+        color: #222;
         font-size: 42px;
       }
+    }
+    /deep/ .van-password-input__cursor {
+      background-color: #000;
+    }
+    /deep/ .van-password-input__security::after {
+      border-radius: 10px;
+      border: 2px solid #f0f0f0;
+    }
+    .number-input-focus:after {
+      border: 4px solid #383838;
     }
   }
   .upload-image {
@@ -258,6 +279,9 @@ export default {
     line-height: 1;
     margin-top: -4px;
   }
+}
+.meter-error .van-password-input__item {
+  color: @red-dark !important;
 }
 .no-image {
   display: flex;

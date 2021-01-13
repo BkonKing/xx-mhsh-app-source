@@ -14,15 +14,23 @@
     </van-nav-bar>
     <div class="house-switch">
       <div class="tf-icon tf-icon-doubleleft" @click="prevHouse"></div>
-      <div class="house-selected">{{houseName}}</div>
+      <div class="house-selected">{{ houseName }}</div>
       <div class="tf-icon tf-icon-doubleright" @click="nextHouse"></div>
     </div>
     <div class="tf-body-container">
-      <div class="meter-switch">
-        <div class="meter-item water-meter" @click="switchMeter(1)">
+      <div
+        class="meter-switch"
+        :class="{ 'meter-center': !water || !electric }"
+      >
+        <div
+          v-if="water == 1"
+          class="meter-item water-meter"
+          @click="switchMeter(1)"
+        >
           <span class="tf-icon tf-icon-shuibiao"></span>水表
         </div>
         <div
+          v-if="electric == 1"
           class="meter-item electricity-meter"
           :class="{ 'meter-active': meterActive == 2 }"
           @click="switchMeter(2)"
@@ -37,6 +45,7 @@
         v-bind="waterInfo"
         @save="saveWater"
         v-show="meterActive == 1"
+        :disabled="isBill == '1'"
       ></meter-form>
       <meter-form
         v-if="electric == 1"
@@ -45,6 +54,7 @@
         v-bind="electricityInfo"
         @save="saveElectricity"
         v-show="meterActive == 2"
+        :disabled="isBill == '1'"
       ></meter-form>
     </div>
   </div>
@@ -54,6 +64,7 @@
 import { getMonthRecord, editRecord } from '@/api/personage'
 import eventBus from '@/api/eventbus'
 import meterForm from './form'
+import { Toast } from 'vant'
 export default {
   name: 'waterElectricityMeter',
   components: {
@@ -67,13 +78,17 @@ export default {
       waterInfo: {},
       electricityInfo: {},
       water: '',
-      electric: ''
+      electric: '',
+      params: {},
+      status: '',
+      isBill: '1'
     }
   },
   created () {
-    this.id = this.$route.query.id
-    this.water = this.$route.query.water
-    this.electric = this.$route.query.electric
+    this.params = this.$route.query
+    this.id = this.$route.query.month_record_id
+    this.water = parseInt(this.$route.query.water)
+    this.electric = parseInt(this.$route.query.electric)
     this.meterActive = parseInt(this.$route.query.type)
     eventBus.$on('swiperight', (ret, err) => {
       this.meterActive && (this.meterActive = 0)
@@ -90,9 +105,22 @@ export default {
   },
   methods: {
     // 上一个房间
-    prevHouse () {},
+    prevHouse () {
+      const index = parseInt(this.params.subscript) - 1
+      if (index) {
+        this.params.subscript = index
+        this.status = 'prev'
+        this.getMeterInfo()
+      } else {
+        Toast('这是第一家了')
+      }
+    },
     // 下一个房间
-    nextHouse () {},
+    nextHouse () {
+      this.params.subscript = parseInt(this.params.subscript) + 1
+      this.status = 'next'
+      this.getMeterInfo()
+    },
     // 切换电水表
     switchMeter (type) {
       if (this.electric == 0 && type == 2) {
@@ -107,17 +135,36 @@ export default {
     },
     // 获取房屋水电信息
     getMeterInfo () {
-      getMonthRecord({
-        month_record_id: this.id,
-        type: this.meterActive
-      }).then(({ data }) => {
-        this.houseName = data.house_property_name
-        if (this.meterActive == 1) {
-          this.waterInfo = data
-        } else {
-          this.electricityInfo = data
-        }
-      })
+      this.params.type = this.meterActive
+      getMonthRecord(this.params)
+        .then(({ data }) => {
+          this.houseName = data.house_property_name
+          this.isBill = data.is_bill
+          if (this.status) {
+            this.water = parseInt(data.is_water_fee)
+            this.electric = parseInt(data.is_electric_fee)
+            this.meterActive = this.water == 1 ? 1 : 2
+            this.status = ''
+          }
+          if (this.meterActive == 1) {
+            this.waterInfo = data
+          } else {
+            this.electricityInfo = data
+          }
+        })
+        .catch(err => {
+          Toast.clear()
+          if (err.code == '203') {
+            if (this.status === 'prev') {
+              Toast('这是第一家了')
+              this.params.subscript = this.params.subscript + 1
+            } else if (this.status === 'next') {
+              Toast('没有房间了')
+              this.params.subscript = this.params.subscript - 1
+            }
+          }
+          this.status = ''
+        })
     },
     // 抄水表保存
     saveWater (params) {
@@ -144,11 +191,13 @@ export default {
         pic_url,
         month_record_id: this.id,
         type: this.meterActive
-      }).then(({ data }) => {
-        this.$toast.success('保存成功')
-      }).catch(() => {
-        this.$toast.fail('保存失败')
       })
+        .then(({ data }) => {
+          this.$toast.success('保存成功')
+        })
+        .catch(() => {
+          this.$toast.fail('保存失败')
+        })
     }
   },
   watch: {
@@ -203,6 +252,15 @@ export default {
   .tf-icon {
     font-size: 32px;
     margin-right: 20px;
+  }
+}
+.meter-center {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  .meter-item {
+    width: 100%;
+    position: static;
   }
 }
 .electricity-active {
