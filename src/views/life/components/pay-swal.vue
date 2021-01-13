@@ -275,7 +275,7 @@ export default {
       this.$emit('closeSwal', val)
     },
     sureSwal (index) {
-      this.callData.pay_type = index == 0 ? 1 : 2
+      this.callData.pay_type = this.tapIndex == 0 ? 1 : 2
       if (this.tapIndex == 2) {
         if (this.selectIndex > -1) {
           this.step = 3

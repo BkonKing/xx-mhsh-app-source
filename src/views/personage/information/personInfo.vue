@@ -42,7 +42,7 @@
         <mycell @click.native="genderShow = true"
                 class="cell"
                 title="性别"
-                value="男"
+                value=""
                 type="iconfont"></mycell>
       </div>
       <div class="mt30">
