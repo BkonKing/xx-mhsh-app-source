@@ -408,8 +408,7 @@ export default {
       const that = this
       if (!this.addressInfo || !this.addressInfo.id) {
         Toast('请先选择收货地址')
-        return
-      }
+          }
       if (this.order_type == 0 || this.prev_page == 0) {
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight))
         ordinaryCreate({

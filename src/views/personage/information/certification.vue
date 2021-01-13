@@ -22,7 +22,9 @@
         </van-field>
         <van-field class="field"
                    v-model="idCard"
-                   placeholder="身份证号码">
+                   placeholder="身份证号码"
+                   maxlength="18"
+                   onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
           <template #label>
             <div class="label">身份证</div>
           </template>
@@ -34,6 +36,7 @@
                    class="field"
                    v-model="bankCardNum"
                    placeholder="储蓄卡"
+                   type="number"
                    @change="getBankCardName">
           <template #label>
             <div class="label kahao">卡号</div>

@@ -234,8 +234,7 @@ export default {
     // 修改性别确定
     async onConfirm (value, index) {
       // console.log(value, index);
-      const res = await editGender({ gender: index + 1 })
-      console.log(res)
+      await editGender({ gender: index + 1 })
       this.$toast.success('修改成功')
       this.genderShow = false
       this.$store.dispatch('getMyAccount')
@@ -246,20 +245,19 @@ export default {
     }
   },
   created () {
-    // console.log('realname1', api.getPrefs({ sync: true, key: 'realNameInfo' }))
     this.$store.dispatch('getMyAccount').then(() => {
       this.birthday = this.userInfo.birthday
       this.nickname = this.userInfo.nickname
       this.realname = this.userInfo.realname
       if (this.userInfo.idcard) {
-        let realNameInfo = api.getPrefs({ sync: true, key: 'realNameInfo' })
+        // let realNameInfo = api.getPrefs({ sync: true, key: 'realNameInfo' })
         this.birthday = this.getBirthdayFromIdCard(this.userInfo.idcard)
         this.setBirthday()
-        if (realNameInfo) {
-          realNameInfo = JSON.parse(realNameInfo)
-          this.realname = realNameInfo.realname
-          this.setRealname()
-        }
+        // if (realNameInfo) {
+        //   realNameInfo = JSON.parse(realNameInfo)
+        //   this.realname = realNameInfo.realname
+        //   this.setRealname()
+        // }
       }
     })
   }

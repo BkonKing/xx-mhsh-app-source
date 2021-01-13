@@ -1,12 +1,10 @@
 <template>
   <div class="support-bankCard-list">
-    <van-nav-bar
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    >
+    <van-nav-bar :fixed="true"
+                 :border="false"
+                 placeholder
+                 left-arrow
+                 @click-left="goback">
       <template #title>
         <div class="title">
           支持的银行卡列表
@@ -17,11 +15,13 @@
       储蓄卡
     </div>
     <div class="conBox">
-      <div class="item" v-for="(item, index) in bankCardList" :key="index">
-        <img :src="item.bank_ico" alt="" />
+      <div class="item"
+           v-for="(item, index) in bankCardList"
+           :key="index">
+        <img :src="item.bank_ico"
+             alt="" />
         <div class="txt">{{ item.bank_name }}</div>
       </div>
-      <div class="item"></div>
     </div>
   </div>
 </template>
@@ -34,10 +34,9 @@ import {
   Popup,
   Picker,
   DatetimePicker,
-  Toast,
   uploader
-} from "vant";
-import { supBankList } from "@/api/personage.js";
+} from 'vant'
+import { supBankList } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -46,26 +45,24 @@ export default {
     [Popup.name]: Popup,
     [Picker.name]: Picker,
     [DatetimePicker.name]: DatetimePicker,
-    Toast,
     [uploader.name]: uploader
   },
-  data() {
+  data () {
     return {
       bankCardList: []
-    };
+    }
   },
   methods: {
     // 回退
-    goback() {
-      this.$router.go(-1);
+    goback () {
+      this.$router.go(-1)
     }
   },
-  async created() {
-    const res = await supBankList();
-    this.bankCardList = res.data;
-    // console.log("支持银行卡列表", res);
+  async created () {
+    const res = await supBankList()
+    this.bankCardList = res.data
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
