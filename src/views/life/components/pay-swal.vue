@@ -232,7 +232,9 @@ export default {
         }
       }).catch((res) => {
         if (res.code != '8143') {
-          this.goLink(res.message)
+          if (res.message.indexOf('短信验证码校验失败') == -1) {
+            this.goLink(res.message)
+          }
         }
       })
     },
@@ -267,7 +269,11 @@ export default {
     },
     // 返回上一步
     prevStep () {
-      this.step = this.step - 1
+      if (this.step == 3) {
+        this.step = 1
+      } else {
+        this.step = this.step - 1
+      }
     },
     // 发送
     // payblock () {},
@@ -288,6 +294,11 @@ export default {
     },
     selectSwal (index) {
       this.tapIndex = index
+      console.log(index)
+      if (index < 2) {
+        this.callData.pay_type = index == 0 ? 1 : 2
+      }
+      console.log(this.callData.pay_type)
       if (index == 2 && this.selectIndex == -1) {
         this.sureSwal()
       }
