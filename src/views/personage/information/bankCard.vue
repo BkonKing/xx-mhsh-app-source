@@ -13,7 +13,7 @@
     </van-nav-bar>
     <div class="content">
       <div class="item"
-           v-show="api.systemType==='android'"
+           v-show="type==='android'"
            :style="{background:'url( '+ item.bank_bj +') no-repeat',backgroundSize:'100% 100%'}"
            v-for="(item, index) in bankCardArr"
            :key="index"
@@ -36,7 +36,7 @@
       </div>
       <van-swipe-cell v-for="(item, index) in bankCardArr"
                       :key="index"
-                      v-show="api.systemType==='ios'">
+                      v-show="type==='ios'">
         <div class="item"
              :style="{background:'url( '+ item.bank_bj +') no-repeat',backgroundSize:'100% 100%'}">
           <div class="top">
@@ -80,7 +80,8 @@ export default {
   data () {
     return {
       bankCardArr: [],
-      isShow: false
+      isShow: false,
+      type: api.systemType
     }
   },
   methods: {
