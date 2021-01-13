@@ -289,7 +289,7 @@ export default {
     }
   },
   created () {
-    this.personName = this.userInfo.realname
+    this.personName = this.userInfo.realname || ''
     this.phone =
       this.userInfo.mobile.substr(0, 3) +
       '****' +
