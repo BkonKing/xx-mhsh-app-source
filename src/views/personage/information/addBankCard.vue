@@ -31,6 +31,7 @@
                    v-model="bankCardNum"
                    placeholder="银行卡号"
                    ref="cardInput"
+                   maxlength="23"
                    @input="formatCardNumber(bankCardNum)">
           <template #label>
             <div class="label">卡号</div>

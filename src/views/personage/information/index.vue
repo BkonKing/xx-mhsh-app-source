@@ -51,8 +51,6 @@
                     <i v-if="userInfo.idcard"
                        class="font_family icon-yishiming n1">
                     </i>
-                    <i v-else
-                       class="font_family icon-weishiming n2"></i>
                   </div>
                 </div>
               </div>
@@ -61,22 +59,25 @@
         </van-cell>
         <!-- </van-uploader> -->
         <div class="attes">
-          <!-- <van-cell class="nameCell" is-link center>
+          <van-cell class="nameCell"
+                    is-link
+                    center
+                    v-if="userInfo.idcard">
             <template #title>
-              <div class="title" @click="toPersonInfo">
+              <div class="title"
+                   @click="toPersonInfo">
                 <div class="txt">实名认证</div>
                 <div class="name">
                   {{ userInfo.realname }}
-                  <i
-                    v-if="userInfo.realname"
-                    class="font_family icon-yishiming n1"
-                  >
+                  <i v-if="userInfo.realname"
+                     class="font_family icon-yishiming n1">
                   </i>
-                  <i v-else class="font_family icon-weishiming n2"></i>
+                  <i v-else
+                     class="font_family icon-weishiming n2"></i>
                 </div>
               </div>
             </template>
-          </van-cell> -->
+          </van-cell>
 
           <tf-list-item border
                         title="手机号"
@@ -164,7 +165,6 @@
             @click="jumpPhone"
           ></tf-list-item> -->
           <tf-list-item title="收货地址"
-                        :rightText="userInfo.address_name"
                         rightWidth="460px"
                         @click="goAddress"></tf-list-item>
         </tf-list>
@@ -190,7 +190,8 @@
                @change="(bindingId) => goAttestation(1,1,bindingId)"></house>
       </van-tab>
       <van-tab v-if="userType == 1 && currentProject"
-               title="成员信息" class="mermber-info">
+               title="成员信息"
+               class="mermber-info">
         <van-dropdown-menu class="tf-mb-lg"
                            @change="getMemberList">
           <van-dropdown-item v-model="selectedHouseId"
@@ -617,6 +618,7 @@ export default {
     background-color: #fff;
     margin-bottom: 30px;
     border-radius: 8px;
+    height: 140px;
     .title {
       display: flex;
       align-items: center;
