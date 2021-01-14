@@ -183,11 +183,6 @@ export default {
     },
     // 保存实名信息到本地
     getIdCard () {
-      // const idCardReg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
-      // if (!idCardReg.test(this.idCard) || this.bankCardNum.replace(/\s/g, '').length > 19) {
-      //   Toast.fail('请输入正确的银行卡或者身份证号')
-      //   return
-      // }
       if (
         this.idCard === '' ||
         this.bankCardNum === '' ||

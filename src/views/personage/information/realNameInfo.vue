@@ -1,12 +1,10 @@
 <template>
   <div class="realNameInfo">
-    <van-nav-bar
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goback"
-    >
+    <van-nav-bar :fixed="true"
+                 :border="false"
+                 placeholder
+                 left-arrow
+                 @click-left="goback">
       <template #title>
         <div class="title">实名认证</div>
       </template>
@@ -14,21 +12,28 @@
     <div class="content">
       <div class="info">
         <div class="left">
-          <img v-if="userInfo.avatar" :src="userInfo.avatar" alt="" />
-          <img v-else src="@/assets/imgs/touxiang.png" alt="" />
+          <img v-if="userInfo.avatar"
+               :src="userInfo.avatar"
+               alt="" />
+          <img v-else
+               src="@/assets/imgs/touxiang.png"
+               alt="" />
         </div>
         <div class="right">
           <div class="t1">姓名</div>
           <div class="t2">
             {{ userInfo.realname }}
-            <img src="@/assets/imgs/realname.png" alt="" />
+            <img src="@/assets/imgs/realname.png"
+                 alt="" />
           </div>
           <div class="t3">证件号</div>
           <div class="t4">{{ str }}</div>
         </div>
       </div>
-      <div class="personInfo" @click="toPersonInfo">
-        <van-cell is-link center>
+      <div class="personInfo"
+           @click="toPersonInfo">
+        <van-cell is-link
+                  center>
           <template #title>
             <div class="title">
               个人信息
@@ -84,12 +89,12 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('getMyAccount')
-    const idCard = api.getPrefs({
-      key: 'realNameInfo',
-      sync: true
-    })
-    this.str = idCard.idcard.replace(/^(.{4})(?:\d+)(.{4})$/, '$1******$2')
+    // this.$store.dispatch('getMyAccount')
+    // const idCard = api.getPrefs({
+    //   key: 'realNameInfo',
+    //   sync: true
+    // })
+    this.str = this.userInfo.idcard.replace(/^(.{1})(?:\d+)(.{1})$/, '$1****************$2')
   }
 }
 </script>
@@ -135,11 +140,11 @@ export default {
         .t1 {
           margin-top: 57px;
           font-size: 22px;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
         }
         .t2 {
           font-size: 30px;
-          margin-bottom: 10px;
+          margin-bottom: 20px;
           display: flex;
           align-items: center;
           img {
@@ -150,7 +155,7 @@ export default {
         }
         .t3 {
           font-size: 22px;
-          margin-bottom: 10px;
+          margin-bottom: 5px;
         }
         .t4 {
           font-size: 32px;
