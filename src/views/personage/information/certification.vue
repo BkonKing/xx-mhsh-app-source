@@ -45,11 +45,13 @@
             <i v-if="bankCardNum.length > 0"
                class="font_family icon-close-circle-fill close"
                @click="bankCardNum = ''"></i>
-          </template>
-          <template #right-icon>
             <i class="font_family icon-xiangji xiangji"
                @click="openCamera"></i>
           </template>
+          <!-- <template #right-icon>
+            <i class="font_family icon-xiangji xiangji"
+               @click="openCamera"></i>
+          </template> -->
         </van-field>
         <van-field v-if="bankCardName"
                    v-model="bankCardName"
@@ -158,6 +160,7 @@ export default {
             baiduAd.bankCardOCROnline(({ status, result }, err) => {
               if (status) {
                 this.bankCardNum = result.split('\n')[0].split('：')[1]
+                this.getBankCardName()
               }
             })
           }
@@ -166,6 +169,7 @@ export default {
         baiduAd.bankCardOCROnline(({ status, result }, err) => {
           if (status) {
             this.bankCardNum = result.result.bank_card_number
+            this.getBankCardName()
           }
         })
       }
@@ -333,10 +337,11 @@ export default {
       }
       .close {
         font-size: 32px;
-        position: absolute;
-        top: 50%;
-        right: 60px;
-        transform: translateY(-50%);
+        margin-right: 10px;
+        // position: absolute;
+        // top: 50%;
+        // left: 200px;
+        // transform: translateY(-50%);
       }
     }
     .toCard {

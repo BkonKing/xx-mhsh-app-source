@@ -226,6 +226,7 @@ export default {
               baiduAd.bankCardOCROnline(({ status, result }, err) => {
                 if (status) {
                   this.bankCardNum = result.split('\n')[0].split('：')[1]
+                  this.getCardName()
                 }
               })
             }
@@ -234,6 +235,7 @@ export default {
           baiduAd.bankCardOCROnline(({ status, result }, err) => {
             if (status) {
               this.bankCardNum = result.result.bank_card_number
+              this.getCardName()
             }
           })
         }
