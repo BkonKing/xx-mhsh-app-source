@@ -138,7 +138,7 @@ export default {
       return (
         parseInt(this.meterNum) - parseInt(this.old_record || '0') >
         parseInt(this.errors_digit)
-      ) || parseInt(this.meterNum) < parseInt(this.old_record || '0')
+      ) || parseInt(this.meterNum) < parseInt(this.old_record || '0') || parseInt(this.meterNum) === 0
     }
   },
   mounted () {

@@ -71,7 +71,7 @@
       :wxzfbShow="false"
       @closeSwal="closePaySwal"
       @sureSwal="surePaySwal"
-      @fyResult="getPayInfo"
+      @fyResult="fyResult"
     ></pay-swal>
   </div>
 </template>
@@ -258,6 +258,12 @@ export default {
           }
         }
       })
+    },
+    // 支付成功
+    fyResult () {
+      this.$toast('缴费成功')
+      this.showPaySwal = false
+      this.getPayInfo()
     }
   },
   watch: {

@@ -177,6 +177,7 @@ export function getLiveHouseList (data) {
 export function getMonthRecord (data) {
   return request.post('/live/thing/getMonthRecordJson', data, {
     headers: {
+      noToast: true,
       ProjectId: store.getters.userInfo.xm_project_id
     }
   })
