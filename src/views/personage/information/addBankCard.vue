@@ -194,6 +194,10 @@ export default {
     },
     // 去支付
     goToPay () {
+      if (!this.checked) {
+        Toast('请同意支付协议')
+        return
+      }
       const realNameInfo = {
         bank_card: this.bankCardNum,
         realname: this.personName,
