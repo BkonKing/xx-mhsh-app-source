@@ -98,22 +98,22 @@
       </div>
       <div class="functional-box">
         <div
-          v-if="userInfo.swrole == 1 || userInfo.sdcbrole == 1"
+          v-if="isSwRole || isSdcbRole"
           class="tansaction-box"
         >
           <div class="tansaction-header" @click="handleTransaction">
-            <div class="tansaction-title">{{userInfo.swrole == 1 ? '报事报修' : '水电抄表'}}</div>
+            <div class="tansaction-title">{{isSwRole ? '报事报修' : '水电抄表'}}</div>
             <div class="tansaction-btn">事务处理 ></div>
           </div>
           <div
             class="tf-row"
             :style="{
               'justify-content':
-                userInfo.role_dep == 1 ? 'space-between' : 'space-around'
+                isService ? 'space-between' : 'space-around'
             }"
           >
-            <template v-if="userInfo.swrole == 1">
-              <template v-if="userInfo.role_dep == 1">
+            <template v-if="isSwRole">
+              <template v-if="isService">
                 <div class="manage-box" @click="goTransaction(1)">
                   <img
                     class="manage-image"
@@ -153,7 +153,7 @@
                 <div class="text-sm">已结案</div>
               </div>
             </template>
-            <template v-else-if="userInfo.sdcbrole == 1">
+            <template v-else-if="isSdcbRole">
               <div class="manage-box" @click="goTransaction(6)">
                 <img
                   class="manage-image"
@@ -309,16 +309,29 @@ export default {
   },
   data () {
     return {
-      signStatus: true,
+      signStatus: true, // 签到状态
       showCalendar: false, // 签到日历是否隐藏
-      orderData: {},
+      orderData: {}, // 订单数据
       signLoading: false // 签到loading
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'userType', 'currentProject'])
+    ...mapGetters(['userInfo', 'userType', 'currentProject']),
+    // 用户是否是客服部人员
+    isService () {
+      return this.userInfo.role_dep == 1
+    },
+    // 用户是否有报事报修事务处理权限
+    isSwRole () {
+      return this.userInfo.swrole
+    },
+    // 用户是否有水电抄表事务处理权限
+    isSdcbRole () {
+      return this.userInfo.sdcbrole
+    }
   },
   activated () {
+    // 重新获取用户信息
     this.$store.dispatch('getMyAccount').then(({ order_data }) => {
       this.orderData = order_data
     })
@@ -327,6 +340,7 @@ export default {
     /* 签到 */
     sign () {
       if (this.userInfo.signin_today === '0') {
+        // 签到一定要开启定位
         handlePermission({
           name: 'location',
           title: '定位服务未开启',
@@ -368,16 +382,16 @@ export default {
     /* 点击事务处理 */
     handleTransaction () {
       let type
-      if (this.userInfo.swrole == 1) {
-        type = this.userInfo.role_dep == 1 ? 1 : 3
-      } else if (this.userInfo.sdcbrole == 1) {
-        type = 10
+      if (this.isSwRole) {
+        type = this.isService ? 1 : 3
+      } else if (this.isSdcbRole) {
+        type = 8
       }
       type && this.goTransaction(type)
     },
     /**
      * 事务处理
-     * @param type {number} 1: 待处理 2:：待分派 3：待结案 4：已结案
+     * @param type {number}  1：待处理，2：待分派，3：待结案，4：已结案，5：已取消，6：未抄电表 7：未抄水表 8:水电抄表全部
      */
     goTransaction (type) {
       const url = `/pages/personage/transaction/index?type=${type}`

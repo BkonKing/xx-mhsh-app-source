@@ -137,9 +137,7 @@ export default {
     margin: 0 -10px;
   }
 }
-/deep/ .van-list {
-  display: flex;
-  flex: initial;
-  flex-wrap: wrap;
+/deep/ .tf-van-cell {
+  float: left;
 }
 </style>
