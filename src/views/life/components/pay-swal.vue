@@ -76,7 +76,7 @@
         <div class="validation-code">
           <div class="flex-center">
             <div class="code-label">验证码</div>
-            <input type="number" v-model.trim="codeVal" oninput="if(value.length > 6)value=value.slice(0, 6)" placeholder="请输入验证码" />
+            <input type="number" v-model.trim="codeVal" oninput="if(value.length > 6)value=value.slice(0, 6)" placeholder="请输入6位验证码" />
             <div v-if="!isAgain" class="code-time">
               <van-count-down ref="countDown2" :auto-start="false" :time="downTime2" @finish="finish(2)">
                 <template v-slot="timeData">{{ timeData.seconds }}</template>
@@ -86,7 +86,7 @@
             </div>
           </div>
         </div>
-        <div :class="[this.codeVal ? '' : 'submit-btn-unable', 'submit-btn color-fff']" @click.stop="sureFuPay()">确认</div>
+        <div :class="[codeVal && codeVal.length==6 ? '' : 'submit-btn-unable', 'submit-btn color-fff']" @click.stop="sureFuPay()">确认</div>
       </div>
     </div>
     <div v-show="showSwal" class="mask-bg" @click="calcel(0)"></div>
@@ -190,12 +190,18 @@ export default {
     // 银行卡支付
     cardPay () {
       this.$emit('sureSwal', this.callData)
+      this.codeVal = ''
+      this.downTime2 = 60000
+      this.$refs.countDown2.reset()
+      this.start2()
     },
     // 获取验证码
     sendCode (data) {
       this.step = 3
       this.fyData = data.data
+      this.codeVal = ''
       this.downTime2 = 60000
+      this.$refs.countDown2.reset()
       this.start2()
       console.log(data)
     },
@@ -231,11 +237,15 @@ export default {
           this.$emit('fyResult', res.success)
         }
       }).catch((res) => {
-        if (res.code != '8143') {
-          if (res.message.indexOf('短信验证码校验失败') == -1) {
-            this.goLink(res.message)
-          }
+        if (res.message.indexOf('短信') == -1 && res.message.indexOf('验证码') == -1) {
+          this.step = 1
+          // this.goLink(res.message)
         }
+        // if (res.code != '8143') {
+        //   if (res.message.indexOf('短信验证码校验失败') == -1 && res.message.indexOf('验证码验证次数超限') == -1) {
+        //     this.goLink(res.message)
+        //   }
+        // }
       })
     },
     // 获取默认使用的银行卡

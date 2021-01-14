@@ -89,7 +89,7 @@ export default {
   data () {
     return {
       checked: false, // 是否全部选中
-      expensesHouseId: '',
+      expensesHouseId: '', // 账单id
       projectId: '',
       result: [], // 选中缴费项数组
       payTotal: 0, // 选中的缴费金额
@@ -98,7 +98,6 @@ export default {
       payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
       showPaySwal: false,
-      payOrderInfo: null, // 支付参数
       idcard: '' // 身份证
     }
   },
@@ -107,9 +106,11 @@ export default {
     this.projectId = this.$route.query.projectId
   },
   mounted () {
+    // 刚进入页面需要默认选中账单，所以放在mounted中
     this.getPayInfo()
   },
   activated () {
+    // 判断缓存中是否有实名认证信息，有就触发支付组件回填银行卡信息（支付绑卡会跳转到实名认证或者添加银行卡页面）
     let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
     if (bankCardInfo) {
       if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
@@ -126,6 +127,7 @@ export default {
         expenses_house_id: this.expensesHouseId,
         project_id: this.projectId
       }).then(({ table_data: data, month_name_text }) => {
+        // 如果没有账单信息就返回上一个页面
         if (!data || !data.length) {
           this.$router.go(-1)
         }
@@ -138,7 +140,7 @@ export default {
         })
       })
     },
-    // 处理所有强制缴费项，并计算所有缴费项
+    // 处理所有强制缴费项保存到变量（取消全选需要用到），并计算所有缴费项
     handlePaymentTerm () {
       let num = 0
       const coerceResult = []
@@ -166,6 +168,7 @@ export default {
       } else {
         this.checked = false
       }
+      // 精准度计算
       this.payTotal = makeCount(sum)
     },
     // 发起缴费
@@ -193,6 +196,7 @@ export default {
     closePaySwal (data) {
       this.showPaySwal = data == 1
     },
+    // 发起支付
     surePaySwal (data) {
       const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
       createPay({
@@ -207,22 +211,12 @@ export default {
         idcard: data.idcard,
         mobile: data.mobile
       }).then(res => {
-        if (res.success) {
-          if (res.data) {
-            this.payOrderInfo = res.data
-            if (data.pay_type == 1) {
-              this.showPaySwal = false
-              this.wxPayUp()
-            } else if (data.pay_type == 2) {
-              this.showPaySwal = false
-              this.aliPayUp()
-            } else if (data.pay_type == 4) {
-              this.$refs.payblock.sendCode(res)
-            }
-          }
+        if (res.success && res.data && data.pay_type == 4) {
+          this.$refs.payblock.sendCode(res)
         }
       }).catch((res) => {
         if (data.pay_type == 4) {
+          // 有身份证就跳到添加银行卡，否则是实名认证
           if (this.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
@@ -240,31 +234,6 @@ export default {
           }
         }
       })
-    },
-    // 支付宝支付
-    aliPayUp () {
-      var aliPayPlus = api.require('aliPayPlus')
-      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
-        this.getPayInfo()
-      })
-    },
-    // 微信支付
-    wxPayUp () {
-      const wxPayPlus = api.require('wxPayPlus')
-      wxPayPlus.payOrder(
-        {
-          apiKey: this.payOrderInfo.appid,
-          mchId: this.payOrderInfo.partnerid,
-          orderId: this.payOrderInfo.prepayid,
-          nonceStr: this.payOrderInfo.noncestr,
-          timeStamp: this.payOrderInfo.timestamp,
-          package: this.payOrderInfo.package,
-          sign: this.payOrderInfo.paySign
-        },
-        (ret, err) => {
-          this.getPayInfo()
-        }
-      )
     }
   },
   watch: {

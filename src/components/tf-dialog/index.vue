@@ -23,7 +23,7 @@
               v-if="!hiddenOff"
               class="tf-dialog-footer__btn tf-dialog-footer__btn--grey"
               style="margin-right: 30px;"
-              @click="close"
+              @click="cancel"
             >{{cancleText}}</div>
             <div
               v-preventReClick
@@ -87,6 +87,10 @@ export default {
     }
   },
   methods: {
+    cancel () {
+      this.$emit('cancel')
+      this.close()
+    },
     close () {
       this.valueChild = false
       this.$emit('closed')

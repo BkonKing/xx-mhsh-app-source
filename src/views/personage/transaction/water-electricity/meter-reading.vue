@@ -161,7 +161,7 @@ export default {
           // 没有上一家或者已经是最后一家报错203，排序号需要还原
           if (err.code == '203') {
             if (this.switchHouseStatus === 'prev') {
-              Toast('这是第一家了')
+              Toast('没有房间了')
               this.params.subscript = this.params.subscript + 1
             } else if (this.switchHouseStatus === 'next') {
               Toast('没有房间了')

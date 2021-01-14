@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
     </van-nav-bar>
-    <refreshList ref="buildList" :list.sync="recordList" :load="getRecordList">
+    <refreshList ref="recordList" :list.sync="recordList" :load="getRecordList">
       <template v-slot="{ item }">
         <tf-picker
           class="date-time-box"
@@ -80,9 +80,10 @@ export default {
         }
       )
     },
+    // 列表时间选择重新渲染列表
     handleChange (value) {
       this.changeDate = value
-      this.$refs.buildList.reload()
+      this.$refs.recordList.reload()
     },
     // 跳转缴费详情页
     goPayDetail ({ id }) {

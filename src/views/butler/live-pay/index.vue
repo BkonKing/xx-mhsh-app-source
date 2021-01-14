@@ -119,8 +119,8 @@ export default {
   },
   data () {
     return {
-      selectedHouse: '',
-      houseList: [],
+      selectedHouse: '', // 选中的房间，值为项目ID + 房间账单ID + 房间ID
+      houseList: [], // 房间列表
       first: true,
       payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
@@ -173,6 +173,7 @@ export default {
               expenses_house_id,
               project_id
             } = obj
+            // 项目ID + 房间账单ID + 房间ID
             const value = `${project_id}-${expenses_house_id}-${house_id}`
             // 如果是首次渲染，则默认设置选中当前房屋
             if (houseId === house_id && first) {
@@ -193,8 +194,10 @@ export default {
             this.monthList = []
             this.payInfo = ''
           } else if (first) {
+            // 第一次进入获取完房间后，拿到房间账单id需要重新请求一次当前账单数据
             this.searchLifePayList()
           } else {
+            // 正常数据赋值
             this.monthList = month_data || []
             this.payInfo = month_name_text
             this.payList = table_data

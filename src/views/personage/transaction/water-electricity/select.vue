@@ -37,7 +37,7 @@
       <div class="tf-flex-item house-string">
         <van-field
           v-model="houseString"
-          @change="handleChange"
+          @input="handleChange"
           placeholder="房间"
         />
       </div>

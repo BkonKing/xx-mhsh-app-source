@@ -112,6 +112,7 @@ export default {
     },
     // 跳转缴费页面
     goPay () {
+      // 如果从缴费页面进入，点击缴费按钮就返回
       if (this.isChoicePay) {
         this.$router.go(-1)
         return
