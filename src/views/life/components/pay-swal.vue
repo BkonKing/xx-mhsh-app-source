@@ -190,12 +190,18 @@ export default {
     // 银行卡支付
     cardPay () {
       this.$emit('sureSwal', this.callData)
+      this.codeVal = ''
+      this.downTime2 = 60000
+      this.$refs.countDown2.reset()
+      this.start2()
     },
     // 获取验证码
     sendCode (data) {
       this.step = 3
       this.fyData = data.data
+      this.codeVal = ''
       this.downTime2 = 60000
+      this.$refs.countDown2.reset()
       this.start2()
       console.log(data)
     },
@@ -232,7 +238,8 @@ export default {
         }
       }).catch((res) => {
         if (res.message.indexOf('短信') == -1 && res.message.indexOf('验证码') == -1) {
-          this.goLink(res.message)
+          this.step = 1
+          // this.goLink(res.message)
         }
         // if (res.code != '8143') {
         //   if (res.message.indexOf('短信验证码校验失败') == -1 && res.message.indexOf('验证码验证次数超限') == -1) {
