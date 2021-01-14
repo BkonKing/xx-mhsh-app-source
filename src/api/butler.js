@@ -419,9 +419,21 @@ export function getLifePayList (data) {
 export function getChoicePayList (data) {
   return request.post('/live/live/choice_lifepay_list', data)
 }
+// 判断是否可以生成缴费账单
+export function canCreatePay (data) {
+  return request.post('/live/live/jforder', data, {
+    headers: {
+      noToast: true
+    }
+  })
+}
 // 生成缴费账单
 export function createPay (data) {
-  return request.post('/live/live/create_jforder', data)
+  return request.post('/live/live/create_jforder', data, {
+    headers: {
+      noToast: true
+    }
+  })
 }
 // 获取费用详情接口
 export function getFeeDetails (data) {

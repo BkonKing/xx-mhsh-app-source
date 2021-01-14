@@ -32,7 +32,7 @@
             </div>
             <div class="pay-info-content">{{ payInfo.house_property_name }}</div>
           </div>
-          <div class="pay-info-box">
+          <div class="pay-info-box" v-if="payInfo.account_numb">
             <div class="pay-info-label">
               缴费户号
             </div>
@@ -59,13 +59,14 @@
           </div>
           <div class="pay-info-content">{{ payInfo.disparity }}</div>
         </div>
-        <tf-image-list
-          v-if="payInfo.pic && payInfo.pic.length"
-          class="pay-images"
-          :data="payInfo.pic"
-          :column="5"
-          mode="show"
-        ></tf-image-list>
+        <div v-if="payInfo.pic && payInfo.pic.length" class="pay-images">
+          <tf-image-list
+            :data="payInfo.pic"
+            :column="6"
+            :gutter="5"
+            mode="show"
+          ></tf-image-list>
+        </div>
       </div>
     </div>
     <div v-if="payInfo.order_status != 2" class="tf-padding">
@@ -200,7 +201,7 @@ export default {
     padding-bottom: 30px;
   }
   .pay-images {
-    padding: 30px 0 10px;
+    padding: 38px 0 10px;
     margin-top: 25px;
     border-top: 2px dashed #f0f0f0;
   }

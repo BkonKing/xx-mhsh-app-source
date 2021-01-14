@@ -8,7 +8,7 @@
       <div class="meter-number-input">
         <van-password-input
           :value="old_record"
-          :length="meterLength"
+          :length="surface_digit"
           :mask="false"
         />
       </div>
@@ -30,7 +30,7 @@
             'number-input-focus': showKeyboard
           }"
           :value="meterNum"
-          :length="meterLength"
+          :length="surface_digit"
           :mask="false"
           :focused="showKeyboard"
           @focus="focusMeter"
@@ -114,7 +114,7 @@ export default {
       type: [Array, String],
       default: ''
     },
-    meterLength: {
+    surface_digit: {
       type: Number,
       default: 6
     },
@@ -126,7 +126,7 @@ export default {
   data () {
     return {
       showKeyboard: false,
-      editStatus: !this.old_record,
+      editStatus: !this.record,
       meterNum: this.record || '',
       images: this.pic || [],
       saveDisabled: false // 保存按钮禁用，文件上传中禁用
@@ -138,14 +138,12 @@ export default {
       return (
         parseInt(this.meterNum) - parseInt(this.old_record || '0') >
         parseInt(this.errors_digit)
-      )
+      ) || parseInt(this.meterNum) < parseInt(this.old_record || '0')
     }
   },
   mounted () {
     // 第一次进来如果未生成账单，要弹起键盘
-    if (!this.disabled) {
-      this.focusMeter()
-    }
+    // this.focusMeter()
   },
   methods: {
     // 数字键盘焦点事件
@@ -161,7 +159,7 @@ export default {
         this.showKeyboard = false
         return
       }
-      this.meterNum = (this.meterNum + key).slice(0, this.meterLength)
+      this.meterNum = (this.meterNum + key).slice(0, this.surface_digit)
     },
     // 数字键盘删除事件
     handleDelete () {
@@ -169,7 +167,7 @@ export default {
     },
     // 数字键盘确定事件
     handleConfirm () {
-      const difference = this.meterLength - this.meterNum.length
+      const difference = this.surface_digit - this.meterNum.length
       if (difference > 0) {
         this.meterNum = '0'.repeat(difference) + this.meterNum
       }
@@ -186,7 +184,7 @@ export default {
           .catch(() => {
             // on cancel
           })
-      } else if (this.old_record) {
+      } else if (this.record) {
         Dialog.confirm({
           title: '是否覆盖之前保存过的数据？'
         })
@@ -221,13 +219,11 @@ export default {
   },
   watch: {
     record (val) {
+      this.editStatus = !val
       this.meterNum = val
     },
     pic (val) {
       this.images = val || []
-    },
-    old_record (val) {
-      this.editStatus = !val
     }
   }
 }

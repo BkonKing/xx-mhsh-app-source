@@ -14,7 +14,7 @@
       <!-- 筛选，默认全部，样式跟选中不一样 -->
       <van-dropdown-menu
         class="tf-flex-item"
-        :class="{ 'default-select': selectStatus === '全部' }"
+        :class="{ 'default-select': selectStatus === '全部状态' }"
       >
         <van-dropdown-item
           v-model="selectStatus"
@@ -69,7 +69,7 @@
           <div
             v-if="item.is_water_fee == '1'"
             class="house-water"
-            :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit }"
+            :class="{ 'tf-text-primary': item.disparity_water > wErrorsDigit || item.disparity_water < 0 }"
           >
             <span class="tf-icon tf-icon-shuibiao"></span
             >{{ item.disparity_water }}
@@ -83,7 +83,7 @@
             v-if="item.is_electric_fee == '1'"
             class="house-electricity"
             :class="{
-              'tf-text-primary': item.disparity_electric > eErrorsDigit
+              'tf-text-primary': item.disparity_electric > eErrorsDigit || item.disparity_electric < 0
             }"
           >
             <span class="tf-icon tf-icon-dianbiao"></span
@@ -112,7 +112,7 @@ export default {
       buildingId: 0, // 楼栋ID
       monthId: '', // 账单月份ID
       title: '',
-      selectStatus: '全部',
+      selectStatus: '全部状态',
       statusList: [],
       selectedUnit: 0,
       unitList: [],
@@ -218,6 +218,7 @@ export default {
   }
   .tf-flex-item {
     margin-right: 20px;
+    width: 0;
   }
   .house-string {
     width: 0;

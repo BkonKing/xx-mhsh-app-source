@@ -77,10 +77,11 @@
 </template>
 
 <script>
-import { getChoicePayList, createPay } from '@/api/butler'
+import { getChoicePayList, createPay, canCreatePay } from '@/api/butler'
 import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
 import { makeCount } from '@/utils/util'
+import { Dialog, Toast } from 'vant'
 export default {
   name: 'livePayPay',
   components: {
@@ -123,7 +124,7 @@ export default {
   methods: {
     // 获取缴费信息
     getPayInfo () {
-      getChoicePayList({
+      return getChoicePayList({
         expenses_house_id: this.expensesHouseId,
         project_id: this.projectId
       }).then(({ table_data: data, month_name_text }) => {
@@ -173,7 +174,26 @@ export default {
     },
     // 发起缴费
     handlePay () {
-      this.showPaySwal = true
+      const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
+      canCreatePay({
+        order_ids,
+        expenses_house_id: this.expensesHouseId,
+        project_id: this.projectId,
+        z_money: this.payTotal
+      }).then(() => {
+        this.showPaySwal = true
+      }).catch((res) => {
+        const code = ['203', '204']
+        if (code.includes(res.code)) {
+          this.$toast(res.message)
+          return
+        }
+        if (res.code == '202') {
+          this.getPayInfo().then(() => {
+            this.showPaySwal = true
+          })
+        }
+      })
     },
     // 全选
     checkAll (type) {
@@ -215,6 +235,10 @@ export default {
           this.$refs.payblock.sendCode(res)
         }
       }).catch((res) => {
+        const code = ['202', '203', '204']
+        if (code.includes(res.code)) {
+          return
+        }
         if (data.pay_type == 4) {
           // 有身份证就跳到添加银行卡，否则是实名认证
           if (this.idcard) {

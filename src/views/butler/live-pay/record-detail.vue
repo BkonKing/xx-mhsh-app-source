@@ -21,7 +21,7 @@
             </div>
             <div class="pay-info-content">{{payInfo.house_property_name}}</div>
           </div>
-          <div class="pay-info-box">
+          <div class="pay-info-box" v-if="payInfo.account_numb">
             <div class="pay-info-label">
               缴费户号
             </div>

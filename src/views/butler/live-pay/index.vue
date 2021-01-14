@@ -51,15 +51,12 @@
                   }}<span class="tf-icon tf-icon-caret-down"></span>
                 </div>
                 <div class="pay-info">
-                  费用共￥{{ item.common_money }}
-                  {{
-                    item.already_money
-                      ? `&nbsp;已缴费￥${item.already_money}`
-                      : ""
-                  }}
-                  {{
-                    item.stay_money ? `&nbsp;待缴费￥${item.stay_money}` : ""
-                  }}
+                  费用共￥{{ item.common_money
+                  }}<span class="tf-ml-sm" v-if="item.already_money"
+                    >已缴费￥{{ item.already_money }}</span
+                  ><span class="tf-ml-sm" v-if="item.stay_money"
+                    >待缴费￥{{ item.stay_money }}</span
+                  >
                 </div>
               </template>
             </tf-picker>
@@ -398,5 +395,8 @@ export default {
 /deep/ .van-overlay {
   top: 30px;
   background-color: rgba(0, 0, 0, 0.3);
+}
+.tf-ml-sm {
+  margin-left: 20px;
 }
 </style>

@@ -241,7 +241,6 @@ export default {
         this.$refs.list4.reload()
       } else {
         // 刷新水电抄表楼栋列表，需要重新给参数列表赋值
-        this.monthStatus = true
         this.$refs.buildList.reload()
       }
     },

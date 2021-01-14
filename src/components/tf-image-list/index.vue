@@ -4,8 +4,8 @@
     :square="square"
     :border="false"
     :column-num="column"
-    :gutter="10"
-    style="margin-right: -10px !important;"
+    :gutter="gutter"
+    :style="{'margin-right': `-${gutter}px !important`}"
   >
     <van-grid-item v-for="(img, i) in list" :key="i">
       <van-image
@@ -65,6 +65,10 @@ export default {
     srcKey: {
       type: String,
       default: ''
+    },
+    gutter: {
+      type: Number,
+      default: 10
     }
   },
   methods: {

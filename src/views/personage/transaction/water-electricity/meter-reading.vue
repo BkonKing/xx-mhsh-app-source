@@ -72,6 +72,7 @@ export default {
   },
   data () {
     return {
+      first: true,
       meterActive: 1, // tab：1 => 水表 2 => 电表
       houseName: '', // 显示的房间名称
       waterInfo: {}, // 水表信息数据
@@ -114,7 +115,7 @@ export default {
         this.switchHouseStatus = 'prev'
         this.getMeterInfo()
       } else {
-        Toast('这是第一家了')
+        Toast('没有房间了')
       }
     },
     // 下一个房间
@@ -155,6 +156,11 @@ export default {
           } else {
             this.electricityInfo = data
           }
+          // 第一次进来如果未生成账单，要弹起键盘
+          this.first && this.isBill && this.$nextTick(() => {
+            this.first = false
+            this.meterActive == 2 ? (this.$refs.electricity.focusMeter()) : (this.$refs.water.focusMeter())
+          })
         })
         .catch(err => {
           Toast.clear()
@@ -189,10 +195,6 @@ export default {
     },
     // 水电保存请求
     editRecord ({ record, pic_url }) {
-      if (!parseInt(record)) {
-        this.$toast('请输入表读数')
-        return Promise.reject(new Error(false))
-      }
       return editRecord({
         record,
         pic_url,
@@ -204,7 +206,7 @@ export default {
           return true
         })
         .catch(() => {
-          this.$toast.fail('保存失败')
+          // this.$toast.fail('保存失败')
           return false
         })
     }
@@ -268,7 +270,6 @@ export default {
   justify-content: center;
   padding: 40px;
   .meter-item {
-    width: 100%;
     position: static;
   }
 }

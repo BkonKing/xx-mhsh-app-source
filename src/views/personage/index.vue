@@ -160,6 +160,9 @@
                   src="@/assets/imgs/personage_weichaodianbiao.svg"
                 />
                 <div class="text-sm">未抄电表</div>
+                <span v-if="userInfo.wcdb_num" class="personage-badge">{{
+                  userInfo.wcdb_num
+                }}</span>
               </div>
               <div class="manage-box" @click="goTransaction(7)">
                 <img
@@ -167,8 +170,8 @@
                   src="@/assets/imgs/personage_weichaoshuibiao.svg"
                 />
                 <div class="text-sm">未抄水表</div>
-                <span v-if="userInfo.dja_num" class="personage-badge">{{
-                  userInfo.dja_num
+                <span v-if="userInfo.wcsb_num" class="personage-badge">{{
+                  userInfo.wcsb_num
                 }}</span>
               </div>
             </template>
