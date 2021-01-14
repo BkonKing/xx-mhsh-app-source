@@ -44,6 +44,7 @@
         </van-notice-bar>
       </div>
       <van-swipe
+        v-if="swipeImages && swipeImages.length"
         class="home-swipe"
         :autoplay="6000"
         :lazy-render="true"

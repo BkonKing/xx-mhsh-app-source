@@ -70,7 +70,7 @@
       cancleText="联系物业"
       :showFotter="true"
       @confirm="dialog = false"
-      @closed="$router.push('/pages/butler/call-property/index')"
+      @cancel="$router.push('/pages/butler/call-property/index')"
     >
       <div class="tf-text" v-html="tip.replace(/\r\n/g, '<br/>')"></div>
     </tfDialog>
