@@ -39,7 +39,7 @@
           <template #right-icon>
             <i class="font_family icon-close-circle-fill clear"
                v-if="bankCardNum != ''"
-               @click="bankCardNum = ''"></i>
+               @click="clearBankInfo"></i>
             <i class="font_family icon-xiangji right"
                @click="openCamera"></i>
           </template>
@@ -56,7 +56,8 @@
           </van-field>
           <van-field class="field"
                      v-model="phone"
-                     placeholder="银行预留手机号">
+                     placeholder="银行预留手机号"
+                     maxlength="11">
             <template #label>
               <div class="label2">
                 手机号
@@ -185,12 +186,16 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
+    clearBankInfo () {
+      this.bankCardNum = ''
+      this.bankCardName = ''
+    },
     // 去支付
     goToPay () {
-      if (this.bankCardNum.replace(/\s/g, '').length > 19) {
-        Toast.fail('请输入正确的银行卡')
-        return
-      }
+      // if (this.bankCardNum.replace(/\s/g, '').length > 19) {
+      //   Toast.fail('请输入正确的银行卡')
+      //   return
+      // }
       const realNameInfo = {
         bank_card: this.bankCardNum,
         realname: this.personName,
@@ -290,9 +295,6 @@ export default {
         .then(res => {
           this.bankCardName = res.cnm + '   储蓄卡'
           this.bankIco = res.bank_ico
-        })
-        .catch(error => {
-          console.log(error)
         })
     }
   },
@@ -467,7 +469,7 @@ export default {
 
   .txt-support {
     position: fixed;
-    bottom: 40px;
+    top: 1200px;
     left: 0;
     width: 100%;
     text-align: center;

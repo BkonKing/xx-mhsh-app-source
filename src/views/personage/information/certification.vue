@@ -24,7 +24,7 @@
                    v-model="idCard"
                    placeholder="身份证号码"
                    maxlength="18"
-                   onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
+                   onkeyup="value=value.replace(/[\W]/g,'')">
           <template #label>
             <div class="label">身份证</div>
           </template>
@@ -44,7 +44,7 @@
           <template #button>
             <i v-if="bankCardNum.length > 0"
                class="font_family icon-close-circle-fill close"
-               @click="bankCardNum = ''"></i>
+               @click="clearBankInfo"></i>
             <i class="font_family icon-xiangji xiangji"
                @click="openCamera"></i>
           </template>
@@ -55,7 +55,8 @@
         </van-field>
         <van-field v-if="bankCardName"
                    v-model="bankCardName"
-                   class="field card-sort">
+                   class="field card-sort"
+                   disabled>
           <template #label>
             <div class="label">卡类型</div>
           </template>
@@ -63,7 +64,8 @@
         <van-field class="field"
                    v-model="phone"
                    type="tel"
-                   placeholder="手机号">
+                   placeholder="手机号"
+                   maxlength="11">
           <template #label>
             <div class="label">手机号</div>
           </template>
@@ -141,6 +143,10 @@ export default {
     }
   },
   methods: {
+    clearBankInfo () {
+      this.bankCardName = ''
+      this.bankCardNum = ''
+    },
     /* 设置姓名 */
     setRealname () {
       editRealname({
@@ -176,11 +182,11 @@ export default {
     },
     // 保存实名信息到本地
     getIdCard () {
-      const idCardReg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
-      if (!idCardReg.test(this.idCard) || this.bankCardNum.replace(/\s/g, '').length > 19) {
-        Toast.fail('请输入正确的银行卡或者身份证号')
-        return
-      }
+      // const idCardReg = /^(^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$)|(^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])((\d{4})|\d{3}[Xx])$)$/
+      // if (!idCardReg.test(this.idCard) || this.bankCardNum.replace(/\s/g, '').length > 19) {
+      //   Toast.fail('请输入正确的银行卡或者身份证号')
+      //   return
+      // }
       if (
         this.idCard === '' ||
         this.bankCardNum === '' ||
@@ -334,6 +340,9 @@ export default {
       }
       .card-sort {
         border-bottom: 1px solid #f0f0f0;
+      }
+      /deep/ .van-field__control {
+        color: black;
       }
       .close {
         font-size: 32px;

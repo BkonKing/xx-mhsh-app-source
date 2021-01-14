@@ -131,7 +131,7 @@ export default {
   async created () {
     const res = await getBankList()
     this.bankCardArr = res.data
-    // alert(api.systemType)
+    console.log(res)
   }
 }
 </script>
