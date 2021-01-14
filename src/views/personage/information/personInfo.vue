@@ -53,6 +53,7 @@
           <template v-slot:right>
             <input v-model="realname"
                    class="tf-input"
+                   :disabled="userInfo.idcard"
                    @change="setRealname" />
             <i v-if="userInfo.idcard"
                class="font_family icon-yishiming n1">
@@ -61,9 +62,11 @@
                class="font_family icon-weishiming n2"></i> -->
           </template>
         </tf-list-item>
-        <tf-list-item title="生日">
+        <tf-list-item title="生日" :showArrow="!userInfo.idcard">
           <template v-slot:right>
-            <tf-date-time-picker class="tf-date-time-picker"
+            <div class="tf-input" v-if="userInfo.idcard">{{birthday}}</div>
+            <tf-date-time-picker v-else
+                                 class="tf-date-time-picker"
                                  v-model="birthday"
                                  type="date"
                                  title="生日"
@@ -324,6 +327,7 @@ export default {
     flex: 1;
     font-size: 30px;
     text-align: right;
+    background: #fff;
   }
   .tf-clist-box {
     padding-left: 0;

@@ -179,7 +179,7 @@ export default {
       // 跳转后显示哪个表，2：电表，1：水表
       // 如果水表有值，电表没值，或者水表没有开启这跳转电表，否则跳转水表
       const type =
-        (disparity_water && !disparity_electric) || is_water_fee === '0'
+        (disparity_water != '0' && disparity_electric == '0') || is_water_fee === '0'
           ? 2
           : 1
       this.$router.push({

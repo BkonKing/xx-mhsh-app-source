@@ -59,7 +59,7 @@
         </van-cell>
         <!-- </van-uploader> -->
         <div class="attes">
-          <van-cell class="nameCell"
+          <!-- <van-cell class="nameCell"
                     is-link
                     center
                     v-if="userInfo.idcard">
@@ -77,14 +77,14 @@
                 </div>
               </div>
             </template>
-          </van-cell>
+          </van-cell> -->
 
           <tf-list-item border
                         title="手机号"
                         :rightText="mobile"
                         @click="jumpPhone">
           </tf-list-item>
-          <van-cell v-if="userInfo.idcard"
+          <van-cell v-if="userInfo.idcard && userInfo.have_bank_card"
                     class="nameCell"
                     is-link
                     center
@@ -635,12 +635,14 @@ export default {
             font-weight: 600;
           }
           .t2 {
-            font-size: 20px;
+            font-size: 26px;
             color: #8f8f94;
             .nv {
+              font-size: 26px;
               color: #e45487;
             }
             .nan {
+              font-size: 26px;
               color: #448fe4;
             }
           }
@@ -655,6 +657,7 @@ export default {
               vertical-align: middle;
               font-size: 33px;
               color: #f77e64;
+              margin-top: -2px;
             }
             .n2 {
               margin-left: 10px;
@@ -813,5 +816,8 @@ export default {
 }
 /deep/ .van-cell__right-icon {
   font-size: 26px;
+}
+.tf-avatar-m {
+  vertical-align: middle;
 }
 </style>

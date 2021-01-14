@@ -414,4 +414,7 @@ export default {
   border-color: #eb5841;
   background-color: #eb5841;
 }
+/deep/ .van-checkbox-group {
+  padding-bottom: 30px;
+}
 </style>

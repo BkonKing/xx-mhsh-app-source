@@ -12,17 +12,17 @@
         <span class="tf-icon tf-icon-shijian" @click="goLivePayList"></span>
       </template>
     </van-nav-bar>
+    <div class="house-dropdown">
+      <van-dropdown-menu>
+        <van-dropdown-item
+          v-model="selectedHouse"
+          :disabled="houseList.length < 2"
+          :options="houseList"
+          @change="houseChange"
+        />
+      </van-dropdown-menu>
+    </div>
     <div class="tf-body-container">
-      <div class="house-dropdown">
-        <van-dropdown-menu>
-          <van-dropdown-item
-            v-model="selectedHouse"
-            :disabled="houseList.length < 2"
-            :options="houseList"
-            @change="houseChange"
-          />
-        </van-dropdown-menu>
-      </div>
       <van-notice-bar
         v-if="payInfo"
         class="swiper-nav"
