@@ -47,7 +47,8 @@
         <div v-if="bankCardName && phone">
           <van-field class="field"
                      v-model="bankCardName"
-                     placeholder="银行卡号">
+                     placeholder="银行卡号"
+                     disabled>
             <template #label>
               <div class="label2">
                 卡类型
@@ -189,6 +190,7 @@ export default {
     clearBankInfo () {
       this.bankCardNum = ''
       this.bankCardName = ''
+      this.$refs.cardInput.focus()
     },
     // 去支付
     goToPay () {
@@ -291,11 +293,16 @@ export default {
     },
     // 获取银行卡所属银行名称
     getCardName () {
-      getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, '') })
-        .then(res => {
-          this.bankCardName = res.cnm + '   储蓄卡'
-          this.bankIco = res.bank_ico
-        })
+      setTimeout(() => {
+        if (this.bankCardNum === '') {
+          return
+        }
+        getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, '') })
+          .then(res => {
+            this.bankCardName = res.cnm + '   储蓄卡'
+            this.bankIco = res.bank_ico
+          })
+      }, 100)
     }
   },
   created () {
@@ -380,6 +387,9 @@ export default {
       }
       .field {
         padding: 30px 0px;
+      }
+      /deep/ .van-field__control {
+        color: #000;
       }
       .right {
         font-size: 44px;
@@ -468,9 +478,10 @@ export default {
   }
 
   .txt-support {
-    position: fixed;
-    top: 1200px;
-    left: 0;
+    // position: fixed;
+    // top: 1200px;
+    // left: 0;
+    margin-top: 250px;
     width: 100%;
     text-align: center;
     font-size: 24px;

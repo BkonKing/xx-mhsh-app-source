@@ -146,6 +146,7 @@ export default {
     clearBankInfo () {
       this.bankCardName = ''
       this.bankCardNum = ''
+      this.$refs.cardInput.focus()
     },
     /* 设置姓名 */
     setRealname () {
@@ -246,12 +247,18 @@ export default {
       })
     },
     // 获取银行卡所属银行名称
-    async getBankCardName () {
-      const res = await getBankInfo({
-        bank_card: this.bankCardNum.replace(/\s/g, '')
-      })
-      this.bankCardName = res.cnm + '   储蓄卡'
-      this.bankIco = res.bank_ico
+    getBankCardName () {
+      setTimeout(async () => { // 进行延时处理，时间单位为千分之一秒
+        // 事件处理
+        if (this.bankCardNum === '') {
+          return
+        }
+        const res = await getBankInfo({
+          bank_card: this.bankCardNum.replace(/\s/g, '')
+        })
+        this.bankCardName = res.cnm + '   储蓄卡'
+        this.bankIco = res.bank_ico
+      }, 100)
     },
     // 跳转支持的银行卡列表
     tosubBankCardList () {
