@@ -11,6 +11,7 @@
     </van-nav-bar>
 
     <div class="select-header">
+      <!-- 筛选，默认全部，样式跟选中不一样 -->
       <van-dropdown-menu
         class="tf-flex-item"
         :class="{ 'default-select': selectStatus === '全部' }"
@@ -21,6 +22,7 @@
           :options="statusList"
         />
       </van-dropdown-menu>
+      <!-- 单元，默认全部，样式跟选中不一样  -->
       <van-dropdown-menu
         class="unit-dropdown tf-flex-item"
         :class="{ 'default-select': selectedUnit == 0 }"
@@ -31,6 +33,7 @@
           :options="unitList"
         />
       </van-dropdown-menu>
+      <!-- 房间名称 -->
       <div class="tf-flex-item house-string">
         <van-field
           v-model="houseString"
@@ -38,12 +41,14 @@
           placeholder="房间"
         />
       </div>
+      <!-- 升序 -->
       <img
         v-if="listOrder == 0"
         class="order-image"
         src="@/assets/imgs/transaction-asc.png"
         @click="changeOrder"
       />
+      <!-- 降序 -->
       <img
         v-if="listOrder == 1"
         class="order-image"
@@ -57,9 +62,10 @@
       :list.sync="houseList"
       :load="getLiveHouseList"
     >
-      <template v-slot="{ item, index }">
-        <div class="house-item" @click="goMeterReading(item, index)">
+      <template v-slot="{ item }">
+        <div class="house-item" @click="goMeterReading(item)">
           <div class="house-text">{{ item.unit_house_name }}</div>
+          <!-- 开启水费，要判断是否超出提醒数值，超出显示红色 -->
           <div
             v-if="item.is_water_fee == '1'"
             class="house-water"
@@ -68,17 +74,24 @@
             <span class="tf-icon tf-icon-shuibiao"></span
             >{{ item.disparity_water }}
           </div>
-          <div class="house-water tf-flex" v-else>
+          <!-- 没有开启水费 -->
+          <div v-else class="house-water tf-flex">
             <div class="no-open"></div>
           </div>
+          <!-- 开启电费，要判断是否超出提醒数值，超出显示红色 -->
           <div
+            v-if="item.is_electric_fee == '1'"
             class="house-electricity"
             :class="{
               'tf-text-primary': item.disparity_electric > eErrorsDigit
             }"
           >
             <span class="tf-icon tf-icon-dianbiao"></span
-            >{{ item.is_electric_fee == "0" ? "-" : item.disparity_electric }}
+            >{{ item.disparity_electric }}
+          </div>
+          <!-- 没有开启电费 -->
+          <div v-else class="house-electricity tf-flex">
+            <div class="no-open"></div>
           </div>
         </div>
       </template>
@@ -96,8 +109,8 @@ export default {
   },
   data () {
     return {
-      id: 0,
-      monthId: '',
+      buildingId: 0, // 楼栋ID
+      monthId: '', // 账单月份ID
       title: '',
       selectStatus: '全部',
       statusList: [],
@@ -105,13 +118,13 @@ export default {
       unitList: [],
       houseString: '',
       houseList: [],
-      wErrorsDigit: 0,
-      eErrorsDigit: 0,
+      wErrorsDigit: 0, // 水费超出提醒数值
+      eErrorsDigit: 0, // 电费超出提醒数值
       listOrder: 0 // 水电抄表排序 0 正序 1倒序
     }
   },
   created () {
-    this.id = this.$route.query.id
+    this.buildingId = this.$route.query.id
     this.monthId = this.$route.query.monthId
     this.title = this.$route.query.name
   },
@@ -120,7 +133,7 @@ export default {
     getLiveHouseList ({ pages: page }) {
       const params = {
         page,
-        building_id: this.id,
+        building_id: this.buildingId,
         month_id: this.monthId,
         house_name: this.houseString,
         record_state: this.selectStatus,
@@ -130,7 +143,6 @@ export default {
       return getLiveHouseList(params).then(
         ({
           month_record_list,
-          month_list,
           record_state,
           unit_data,
           w_errors_digit,
@@ -146,26 +158,26 @@ export default {
         }
       )
     },
+    // 参数更改，重新刷新列表数据
     handleChange () {
       this.$refs.list.reload()
     },
-    // 更换水电抄表顺序
+    // 更换水电抄表排序，重新刷新列表数据
     changeOrder () {
       this.listOrder = this.listOrder === 0 ? 1 : 0
       this.$refs.list.reload()
     },
     // 跳转到抄表
-    goMeterReading (
-      {
-        id,
-        disparity_water,
-        disparity_electric,
-        is_electric_fee,
-        is_water_fee,
-        subscript
-      },
-      index
-    ) {
+    goMeterReading ({
+      id,
+      disparity_water,
+      disparity_electric,
+      is_electric_fee,
+      is_water_fee,
+      subscript
+    }) {
+      // 跳转后显示哪个表，2：电表，1：水表
+      // 如果水表有值，电表没值，或者水表没有开启这跳转电表，否则跳转水表
       const type =
         (disparity_water && !disparity_electric) || is_water_fee === '0'
           ? 2
@@ -176,9 +188,9 @@ export default {
           month_record_id: id,
           type,
           subscript,
-          water: is_water_fee,
-          electric: is_electric_fee,
-          building_id: this.id,
+          // water: is_water_fee,
+          // electric: is_electric_fee,
+          building_id: this.buildingId,
           month_id: this.monthId,
           house_name: this.houseString,
           record_state: this.selectStatus,

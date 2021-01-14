@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="tf-bg tf-body">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="事务处理"
       :fixed="true"
@@ -15,12 +15,13 @@
         :lazy-render="false"
         @click="reloadAllList"
       >
+        <!-- 需要有报事报修权限 -->
         <van-tab title="报事报修" v-if="userInfo.swrole == 1" name="0">
           <div
             class="transaction-tab-box"
-            :class="[{ 'flex-start': userInfo.role_dep != 1 }]"
+            :class="{ 'flex-start': !isService }"
           >
-            <template v-if="userInfo.role_dep == 1">
+            <template v-if="isService">
               <div
                 class="transaction-tab"
                 :class="{ 'transaction-tab--active': type === 1 }"
@@ -50,7 +51,7 @@
             >
               已结案({{ countObj.yja_num }})
             </div>
-            <template v-if="userInfo.role_dep == 1">
+            <template v-if="isService">
               <div
                 class="transaction-tab"
                 :class="{ 'transaction-tab--active': type === 5 }"
@@ -61,7 +62,7 @@
             </template>
           </div>
           <div class="transaction-list">
-            <template v-if="userInfo.role_dep == 1">
+            <template v-if="isService">
               <list
                 v-show="type === 1"
                 ref="list1"
@@ -100,12 +101,14 @@
             ></list>
           </div>
         </van-tab>
+        <!-- 需要有水电抄表权限 -->
         <van-tab title="水电抄表" v-if="userInfo.sdcbrole == 1" name="1">
           <div class="select-header">
             <div class="tf-flex">
+              <!-- 账单月份 -->
               <tf-picker
                 class="date-time-box"
-                v-model="date"
+                v-model="monthId"
                 title="选择时间"
                 value-key="days_time_name"
                 selected-key="id"
@@ -119,6 +122,7 @@
                   </div>
                 </template>
               </tf-picker>
+              <!-- 筛选，默认全部，样式跟选中不一样  -->
               <van-dropdown-menu
                 :class="{ 'default-select': selectStatus === '全部' }"
               >
@@ -129,12 +133,14 @@
                 />
               </van-dropdown-menu>
             </div>
+            <!-- 升序 -->
             <img
               v-if="listOrder == 0"
               class="order-image"
               src="@/assets/imgs/transaction-asc.png"
               @click="changeOrder"
             />
+            <!-- 降序 -->
             <img
               v-if="listOrder == 1"
               class="order-image"
@@ -173,33 +179,41 @@ export default {
   },
   data () {
     return {
-      active: '0',
+      active: '0', // tab,0:报事报修，1:水电抄表
+      backStatus: false, // 是否从详情页返回
+      // 报事报修是选中tab，1：待处理，2：待分派，3：待结案，4：已结案，5：已取消；
+      // 水电抄表是选中选择器，6：未抄电表 7：未抄水表 8:水电抄表全部
       type: undefined,
       list1: [],
       list2: [],
       list3: [],
       list4: [],
       list5: [],
-      countObj: {}, // 事务统计对象
-      container: null,
-      selectStatus: '全部',
-      statusList: [],
-      date: '',
-      buildList: [],
-      backStatus: false,
-      monthList: [],
-      monthRecordList: [],
-      monthStatus: true, // 水电抄表参数是否赋值
-      listOrder: 0 // 水电抄表排序 0 正序 1倒序
+      countObj: {}, // 报事报修统计对象
+      selectStatus: '全部', // 水电抄表筛选条件参数
+      statusList: [], // 水电抄表筛选条件列表
+      monthId: '', // 选中月份账单ID
+      monthList: [], // 水电抄表月份账单参数列表
+      listOrder: 0, // 水电抄表排序 0 正序 1倒序
+      monthRecordList: [], // 水电抄表楼栋数据
+      // 水电抄表参数列表是否赋值过，因为参数列表和楼栋数据是一起返回的
+      // 月份参数默认取第一个值，如果每次赋值会覆盖掉原来的值，所以只需要进入页面赋值一次就行
+      monthStatus: true
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    // 用户是否是客服部人员
+    isService () {
+      return this.userInfo.role_dep == 1
+    }
   },
   created () {
-    const type = parseInt(this.$route.query.type)
-    this.active = type < 6 ? '0' : '1'
-    switch (type) {
+    this.type = parseInt(this.$route.query.type)
+    // 判断是报事报修还是水电抄表，也可以用是否客服人员判断
+    this.active = this.type < 6 ? '0' : '1'
+    // 水电抄表，根据type给筛选参数赋值
+    switch (this.type) {
       case 6:
         this.selectStatus = '未抄电表'
         break
@@ -207,26 +221,18 @@ export default {
         this.selectStatus = '未抄水表'
         break
     }
-    this.type = type
-  },
-  mounted () {
-    this.reloadAllList()
-    this.container = this.$refs.container
   },
   activated () {
-    this.getRepairCount()
-    if (this.backStatus) {
-      this.reloadAllList()
-    }
+    this.reloadAllList()
   },
   methods: {
-    // 刷新报事报修所有列表
+    // 刷新事务处理列表
     reloadAllList () {
+      // 刷新报事报修所有列表
       if (this.active === '0') {
-        if (this.type > 5) {
-          this.type = this.userInfo.role_dep == 1 ? 1 : 3
-        }
-        if (this.userInfo.role_dep == 1) {
+        this.getRepairCount()
+        // 客服才有待处理，待分派，已取消
+        if (this.isService) {
           this.$refs.list1.reload()
           this.$refs.list2.reload()
           this.$refs.list5.reload()
@@ -234,11 +240,12 @@ export default {
         this.$refs.list3.reload()
         this.$refs.list4.reload()
       } else {
+        // 刷新水电抄表楼栋列表，需要重新给参数列表赋值
         this.monthStatus = true
         this.$refs.buildList.reload()
       }
     },
-    // 列表请求数据
+    // 报事报修列表请求数据
     listLoad (params, status) {
       params.status = status
       return getDbRepairList(params, this.userInfo.xm_project_id)
@@ -254,7 +261,7 @@ export default {
         this[`list${status}`] = res.data
       })
     },
-    // 报事报修统计事务处理
+    // 报事报修各状态数量统计
     getRepairCount (status) {
       getRepairCount(
         this.userInfo.xm_project_id // 服务人员的服务项目id
@@ -265,16 +272,17 @@ export default {
     // 获取水电表楼栋
     getMeterBuilding () {
       const params = {
-        month_id: this.date,
+        month_id: this.monthId,
         record_state: this.selectStatus,
         list_order: this.listOrder
       }
       return getHydropowerList(params).then(
         ({ month_record_list, month_list, record_state }) => {
+          // 是否需要重新给参数列表赋值，进入页面时需要，进入和返回
           if (this.monthStatus) {
             this.monthStatus = false
             this.monthList = month_list || []
-            this.date = this.monthList[0].id || ''
+            this.monthId = this.monthList[0].id || ''
           }
           this.statusList = record_state
           return Promise.resolve({
@@ -283,11 +291,12 @@ export default {
         }
       )
     },
-    // 更换水电抄表顺序
+    // 变换水电抄表楼栋排序
     changeOrder () {
       this.listOrder = this.listOrder === 0 ? 1 : 0
       this.$refs.buildList.reload()
     },
+    // 水电抄表账单月份和筛选参数变换触发楼栋列表刷新
     handleChange () {
       this.$refs.buildList.reload()
     }

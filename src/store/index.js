@@ -49,7 +49,7 @@ const store = {
   },
   mutations: {
     setUser_info (state, value) {
-      const val = typeof value === 'string' ? JSON.parse(value) : value
+      const val = (value && typeof value === 'string') ? JSON.parse(value) : value
       state.user_info = val
       api.setPrefs({
         key: 'user_info',

@@ -3,7 +3,7 @@
     <div class="meter-number-container">
       <div class="meter-number-text">
         <span class="meter-text-point"></span>
-        上次表读数（{{ old_record_time }}）
+        上次表读数{{ old_record_time ? `（${old_record_time}）` : "" }}
       </div>
       <div class="meter-number-input">
         <van-password-input
@@ -17,7 +17,7 @@
       <div class="meter-number-text" style="justify-content: space-between;">
         <span class="meter-text-point">本次读表数</span>
         <span
-          v-if="status && !editStatus && !disabled"
+          v-if="!editStatus && !disabled"
           class="tf-icon tf-icon-bianxie"
           @click="handleEdit"
         ></span>
@@ -44,6 +44,7 @@
         class="upload-image"
         v-model="images"
         max-count="6"
+        @getUpload="changeUploadStatus"
       ></tf-uploader>
       <tf-image-list
         v-else-if="images && images.length > 0"
@@ -55,7 +56,12 @@
       <div class="no-image" v-else>无</div>
     </div>
     <div v-if="editStatus && !disabled" class="tf-padding">
-      <van-button v-preventReClick size="large" type="danger" @click="save"
+      <van-button
+        v-preventReClick
+        size="large"
+        type="danger"
+        :disabled="saveDisabled"
+        @click="save"
         >保存</van-button
       >
     </div>
@@ -120,21 +126,23 @@ export default {
   data () {
     return {
       showKeyboard: false,
-      editStatus: !this.status,
+      editStatus: !this.old_record,
       meterNum: this.record || '',
-      status: this.old_record || false,
-      images: this.pic || []
+      images: this.pic || [],
+      saveDisabled: false // 保存按钮禁用，文件上传中禁用
     }
   },
   computed: {
+    // 当输入的值比上一次表数多出报错数值时返回true
     meterError () {
       return (
-        parseInt(this.meterNum) - parseInt(this.old_record) >
+        parseInt(this.meterNum) - parseInt(this.old_record || '0') >
         parseInt(this.errors_digit)
       )
     }
   },
   mounted () {
+    // 第一次进来如果未生成账单，要弹起键盘
     if (!this.disabled) {
       this.focusMeter()
     }
@@ -148,6 +156,11 @@ export default {
     },
     // 数字键盘输入事件
     handleInput (key) {
+      // 右下角额外按键会返回undefined
+      if (key === undefined) {
+        this.showKeyboard = false
+        return
+      }
       this.meterNum = (this.meterNum + key).slice(0, this.meterLength)
     },
     // 数字键盘删除事件
@@ -161,6 +174,7 @@ export default {
         this.meterNum = '0'.repeat(difference) + this.meterNum
       }
     },
+    // 保存事件
     save () {
       if (this.meterError) {
         Dialog.confirm({
@@ -172,7 +186,7 @@ export default {
           .catch(() => {
             // on cancel
           })
-      } else if (this.status) {
+      } else if (this.old_record) {
         Dialog.confirm({
           title: '是否覆盖之前保存过的数据？'
         })
@@ -186,9 +200,11 @@ export default {
         this.emitSave()
       }
     },
+    // 切换编辑模式
     handleEdit () {
       this.editStatus = true
     },
+    // 触发保存事件
     emitSave () {
       this.$emit('save', {
         record: this.meterNum,
@@ -197,6 +213,10 @@ export default {
     },
     switchEdit (status) {
       this.editStatus = status
+    },
+    // 上传组件文件上传状态更改，是否有文件上传中
+    changeUploadStatus (status) {
+      this.saveDisabled = Boolean(status)
     }
   },
   watch: {
@@ -204,9 +224,9 @@ export default {
       this.meterNum = val
     },
     pic (val) {
-      this.images = val
+      this.images = val || []
     },
-    status (val) {
+    old_record (val) {
       this.editStatus = !val
     }
   }

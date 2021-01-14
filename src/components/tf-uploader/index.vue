@@ -27,7 +27,8 @@ export default {
   data () {
     return {
       fileList: [],
-      images: this.value
+      images: this.value,
+      uploadStatus: 0 // 图片的上传状态，0则为没有文件在上传中的状态
     }
   },
   created () {
@@ -43,10 +44,12 @@ export default {
       file.status = 'uploading'
       file.message = '上传中...'
       if (Array.isArray(file)) {
+        this.uploadStatus += file.length
         file.forEach(obj => {
           this.uImages(obj)
         })
       } else {
+        this.uploadStatus++
         this.uImages(file)
       }
     },
@@ -66,6 +69,9 @@ export default {
           Toast.fail('上传失败')
           this.fileList.pop()
         })
+        .finally(() => {
+          this.uploadStatus && this.uploadStatus--
+        })
     },
     // 删除上传图片
     onDelete (value, { index }) {
@@ -78,6 +84,10 @@ export default {
     },
     images (value) {
       this.$emit('input', value)
+    },
+    uploadStatus (value) {
+      console.log(value)
+      this.$emit('getUpload', value)
     }
   }
 }
