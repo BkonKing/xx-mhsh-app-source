@@ -172,7 +172,7 @@
             :autoplay="3000"
             :show-indicators="false"
           >
-            <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
+            <van-swipe-item v-for="(item, i) in ollageSwipeList" :key="i">
               <tf-image-list
                 :data="item"
                 :column="bargainVisible ? 2 : 3"
@@ -356,6 +356,26 @@ export default {
     // 限时闪购显示
     ollageGoodsVisible () {
       return this.ollageGoods && this.ollageGoods.length
+    },
+    // 限时抢购轮播列表，如果存在9.9特卖，一次轮播三个商品
+    ollageSwipeList () {
+      if (!this.bargainVisible) {
+        const arr = [].concat(
+          ...this.ollageGoods.map(obj => {
+            return obj.map(item => item)
+          })
+        )
+        const newArr = [] // 声明数组
+        arr.forEach((item, index) => {
+          const page = Math.floor(index / 3) // 计算该元素为第几个素组内
+          if (!newArr[page]) { // 判断是否存在
+            newArr[page] = []
+          }
+          newArr[page].push(item)
+        })
+        return newArr
+      }
+      return this.ollageGoods
     },
     // 9.9特卖轮播列表，如果存在限时抢购，一次轮播一个商品，将二维数组转换为一维数组
     bargainSwipeList () {
