@@ -178,10 +178,14 @@ export default {
     }) {
       // 跳转后显示哪个表，2：电表，1：水表
       // 如果水表有值，电表没值，或者水表没有开启这跳转电表，否则跳转水表
-      const type =
-        (disparity_water != '0' && disparity_electric == '0') || is_water_fee === '0'
-          ? 2
-          : 1
+      let type = 1
+      if (is_water_fee === '0') {
+        type = 2
+      } else if (is_electric_fee === '0') {
+        type = 1
+      } else if (disparity_water != '0' && disparity_electric == '0') {
+        type = 2
+      }
       this.$router.push({
         name: 'waterElectricityMeter',
         query: {

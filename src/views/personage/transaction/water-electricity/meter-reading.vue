@@ -148,7 +148,12 @@ export default {
           this.openElectric = parseInt(data.is_electric_fee)
           // 切换房屋才执行，切换成功，如果水表开启则默认显示水表
           if (this.switchHouseStatus) {
-            this.meterActive = this.openWater == 1 ? 1 : 2
+            if (this.meterActive == 1 && this.openWater == 0) {
+              this.meterActive = 2
+            }
+            if (this.meterActive == 2 && this.openElectric == 0) {
+              this.meterActive = 1
+            }
             this.switchHouseStatus = '' // 重置切换房屋状态
           }
           if (this.meterActive == 1) {
@@ -214,7 +219,9 @@ export default {
   },
   watch: {
     meterActive () {
-      this.getMeterInfo()
+      if (!this.first) {
+        this.getMeterInfo()
+      }
     }
   }
 }

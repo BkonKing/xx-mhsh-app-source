@@ -185,7 +185,7 @@ export default {
       }).catch((res) => {
         const code = ['203', '204']
         if (code.includes(res.code)) {
-          this.$toast(res.message)
+          this.getPayInfo()
           return
         }
         if (res.code == '202') {

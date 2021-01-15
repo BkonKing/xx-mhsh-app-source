@@ -13,11 +13,11 @@
           <div class="build-name">{{ item.building_name }}</div>
           <div class="build-number">{{ item.count }}户</div>
         </div>
-        <div class="build-right">
-          <div class="build-water" :class="{ active: item.w_icon }">
+        <div class="build-right" :class="{'build-center': !item.w_icon || !item.e_icon}">
+          <div v-if="item.w_icon" class="build-water" :class="{ active: item.w_icon == 1 }">
             <span class="tf-icon tf-icon-shuibiao"></span>
           </div>
-          <div class="build-electricity" :class="{ active: item.e_icon }">
+          <div v-if="item.e_icon" class="build-electricity" :class="{ active: item.e_icon == 1 }">
             <span class="tf-icon tf-icon-dianbiao"></span>
           </div>
         </div>
@@ -123,6 +123,9 @@ export default {
         background: #ffb91533;
         color: #ffb915;
       }
+    }
+    .build-center {
+      justify-content: center;
     }
   }
 }

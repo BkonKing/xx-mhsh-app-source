@@ -13,7 +13,7 @@
                 :src="item.thumbnail"
                 v-imageCach="item.thumbnail"
               />
-              <div class="activity-join">{{ item.joins || 0 }}人已报名</div>
+              <div v-if="item.joins != '0'" class="activity-join">{{ item.joins || 0 }}人已报名</div>
             </div>
             <div class="tf-status-tag">活动</div>
             <div class="activity-title">{{ item.title }}</div>

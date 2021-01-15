@@ -94,18 +94,14 @@
     <!-- 持卡人说明弹窗 -->
     <van-popup v-model="isShow"
                round
-               position="bottom"
-               :style="{ height: '45%' }">
+               position="bottom">
       <div class="shuoming">
         <div class="title">持卡人说明</div>
         <div class="info">
           <div class="t1">
-            1.为了资金安全，一个账号，只能添加同一身份下的银行卡。
+            1.为了资金安全，一个账号只能添加同一身份下的银行卡。
           </div>
-          <div class="t2">2.如需添加其他持卡人的银行卡，需要更换实名。</div>
-          <div class="t3">
-            3.更换实名后，原持卡人信息将被清空，后续仅能添加持卡人的银行卡。
-          </div>
+          <div class="t2">2.后续仅能添加持卡人的银行卡。</div>
         </div>
       </div>
       <div class="btnBox">
@@ -459,12 +455,13 @@ export default {
     margin-top: 80px;
     padding: 0 30px;
     .btn {
+      margin-bottom: 40px;
       border-radius: 10px;
     }
   }
   .close {
     position: absolute;
-    top: 642px;
+    bottom: 540px;
     right: 30px;
     z-index: 9999999999999999;
     .guanbi {

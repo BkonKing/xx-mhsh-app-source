@@ -246,10 +246,16 @@
               <div class="activity-info__right">
                 <div class="activity-info__title">{{ item.title }}</div>
                 <div class="activity-info__time">
-                  报名截止：{{ item.jtime }} |
-                  <span class="activity-item__description">
-                    {{ item.joins }}人已报名
-                  </span>
+                  报名截止：{{ item.jtime.substr(0, 10) }}
+                  <template v-if="item.joins != '0'">
+                    |
+                    <span
+                      v-if="item.joins != '0'"
+                      class="activity-item__description"
+                    >
+                      {{ item.joins }}人已报名
+                    </span></template
+                  >
                 </div>
               </div>
             </div>
@@ -368,7 +374,8 @@ export default {
         const newArr = [] // 声明数组
         arr.forEach((item, index) => {
           const page = Math.floor(index / 3) // 计算该元素为第几个素组内
-          if (!newArr[page]) { // 判断是否存在
+          if (!newArr[page]) {
+            // 判断是否存在
             newArr[page] = []
           }
           newArr[page].push(item)
@@ -927,6 +934,7 @@ export default {
         justify-content: space-between;
         flex: 1;
         padding: 20px;
+        width: 0;
       }
       &__date {
         display: flex;

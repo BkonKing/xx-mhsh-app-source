@@ -116,7 +116,7 @@ export default {
     },
     surface_digit: {
       type: Number,
-      default: 6
+      default: 5
     },
     disabled: {
       type: Boolean,

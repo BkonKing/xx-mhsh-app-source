@@ -103,7 +103,7 @@
         </van-tab>
         <!-- 需要有水电抄表权限 -->
         <van-tab title="水电抄表" v-if="userInfo.sdcbrole == 1" name="1">
-          <div class="select-header">
+          <div v-if="monthList && monthList.length" class="select-header">
             <div class="tf-flex">
               <!-- 账单月份 -->
               <tf-picker
@@ -149,10 +149,15 @@
             />
           </div>
           <building-list
+            v-show="monthList && monthList.length"
             ref="buildList"
             :data.sync="monthRecordList"
             :load="getMeterBuilding"
           ></building-list>
+          <div v-show="!monthList || !monthList.length" class="empty-month">
+            <img src="@/assets/img/empty_order.png" />
+            <div class="tf-text">暂无数据</div>
+          </div>
         </van-tab>
       </van-tabs>
     </div>
@@ -233,15 +238,15 @@ export default {
         this.getRepairCount()
         // 客服才有待处理，待分派，已取消
         if (this.isService) {
-          this.$refs.list1.reload()
-          this.$refs.list2.reload()
-          this.$refs.list5.reload()
+          this.$refs.list1 && this.$refs.list1.reload()
+          this.$refs.list2 && this.$refs.list2.reload()
+          this.$refs.list5 && this.$refs.list5.reload()
         }
-        this.$refs.list3.reload()
-        this.$refs.list4.reload()
+        this.$refs.list3 && this.$refs.list3.reload()
+        this.$refs.list4 && this.$refs.list4.reload()
       } else {
         // 刷新水电抄表楼栋列表，需要重新给参数列表赋值
-        this.$refs.buildList.reload()
+        this.$refs.buildList && this.$refs.buildList.reload()
       }
     },
     // 报事报修列表请求数据
@@ -283,7 +288,7 @@ export default {
             this.monthList = month_list || []
             this.monthId = this.monthList[0].id || ''
           }
-          this.statusList = record_state
+          this.statusList = record_state || []
           return Promise.resolve({
             data: month_record_list || []
           })
@@ -514,5 +519,19 @@ export default {
 }
 /deep/ .van-sticky--fixed {
   top: 85px;
+}
+.empty-month {
+  display: flex;
+  flex-direction: column;
+  padding-top: 200px;
+  img {
+    width: 100%;
+    height: 500px;
+  }
+  .tf-text {
+    text-align: center;
+    line-height: 92px;
+    color: #222;
+  }
 }
 </style>
