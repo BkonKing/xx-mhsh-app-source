@@ -91,25 +91,25 @@
               :loading="signLoading"
               @click="sign"
             >
-              {{ userInfo.signin_today | signText }}
+              <img v-if="userInfo.signin_today == '0'" class="sign-img" src="@/assets/imgs/my-sign.png" />{{
+                userInfo.signin_today | signText
+              }}
             </van-button>
           </div>
         </div>
       </div>
       <div class="functional-box">
-        <div
-          v-if="isSwRole || isSdcbRole"
-          class="tansaction-box"
-        >
+        <div v-if="isSwRole || isSdcbRole" class="tansaction-box">
           <div class="tansaction-header" @click="handleTransaction">
-            <div class="tansaction-title">{{isSwRole ? '报事报修' : '水电抄表'}}</div>
+            <div class="tansaction-title">
+              {{ isSwRole ? "报事报修" : "水电抄表" }}
+            </div>
             <div class="tansaction-btn">事务处理 ></div>
           </div>
           <div
             class="tf-row"
             :style="{
-              'justify-content':
-                isService ? 'space-between' : 'space-around'
+              'justify-content': isService ? 'space-between' : 'space-around'
             }"
           >
             <template v-if="isSwRole">
@@ -564,11 +564,20 @@ export default {
 .user-btn {
   width: 200px;
   height: 66px;
-  line-height: 66px;
   border-radius: 33px;
   border-width: 0;
   font-size: 30px;
   padding: 0;
+  /deep/ .van-button__text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sign-img {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+  }
 }
 .user-btn--signin {
   background-image: linear-gradient(to right, #f9866b, #eb5841);

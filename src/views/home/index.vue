@@ -122,7 +122,11 @@
       </div>
       <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
         <!-- 9.9特卖 -->
-        <div v-if="bargainVisible" class="life-box bargain-sale">
+        <div
+          v-if="bargainVisible"
+          class="life-box bargain-sale"
+          :class="{ 'bargain-sale-cover': !ollageGoodsVisible }"
+        >
           <div class="life-box__title" @click="goSpecialSale">9.9特卖</div>
           <div class="life-box__description" @click="goSpecialSale">
             省钱好机会
@@ -155,6 +159,7 @@
         <div
           v-if="ollageGoodsVisible"
           class="life-box ollage-goods"
+          :class="{ 'life-box-cover': !bargainVisible }"
           :style="{ flex: bargainVisible ? '2' : '1' }"
         >
           <div class="life-box__title" @click="goTimeLimit">限时闪购</div>
@@ -170,7 +175,7 @@
             <van-swipe-item v-for="(item, i) in ollageGoods" :key="i">
               <tf-image-list
                 :data="item"
-                :column="2"
+                :column="bargainVisible ? 2 : 3"
                 srcKey="thumb"
                 @click="clickTimeLimit"
               >
@@ -433,18 +438,20 @@ export default {
         message: '为了提供更好服务，需要您开启定位'
       }).then(() => {
         this.signLoading = true
-        signin().then((res) => {
-          this.signLoading = false
-          Toast({
-            message: res.message
+        signin()
+          .then(res => {
+            this.signLoading = false
+            Toast({
+              message: res.message
+            })
+            this.$store.dispatch('getMyAccount')
+            this.mtjEvent({
+              eventId: 4
+            })
           })
-          this.$store.dispatch('getMyAccount')
-          this.mtjEvent({
-            eventId: 4
+          .catch(() => {
+            this.signLoading = false
           })
-        }).catch(() => {
-          this.signLoading = false
-        })
       })
     },
     /* 获取幸福币专区 */
@@ -771,6 +778,7 @@ export default {
 .goods-container {
   display: flex;
   padding: 0 20px;
+  margin-bottom: 40px;
 }
 /* 9.9特卖 */
 .bargain-sale {
@@ -778,11 +786,17 @@ export default {
   background-image: url("~@/assets/imgs/home-sale.png");
   background-size: cover;
 }
+.bargain-sale-cover {
+  background-image: url("~@/assets/imgs/home-sale-cover.png");
+}
 /* 限时闪购 */
 .ollage-goods {
   border-radius: 10px;
   background-image: url("~@/assets/imgs/home-limit.png");
   background-size: cover;
+}
+.ollage-goods-cover {
+  background-image: url("~@/assets/imgs/home-limit-cover.png");
 }
 .bargain-sale + .ollage-goods {
   margin-left: 20px;
@@ -791,7 +805,10 @@ export default {
 .life-box {
   flex: 1;
   width: 0;
-  padding: 30px 0;
+  padding: 30px 0 0;
+  /deep/ .tf-image-grid {
+    height: 260px;
+  }
   &__title {
     font-size: 34px;
     font-weight: 500;
@@ -834,6 +851,7 @@ export default {
     left: 50%;
     margin-left: -65px;
     background: #eb5841;
+    box-shadow: 0px 4px 10px 0px rgba(209, 58, 33, 0.45);
     border-radius: 22px;
     font-size: 26px;
     line-height: 1;
@@ -931,7 +949,7 @@ export default {
   }
 }
 .front-page-container {
-  padding: 40px 20px 80px;
+  padding: 40px 20px 76px;
 }
 .front-page {
   padding: 30px;
