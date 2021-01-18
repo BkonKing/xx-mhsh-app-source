@@ -4,16 +4,17 @@
       safe-area-inset-bottom
       get-container="body"
       class="more-dialog"
-      v-model="moreShowChild"
+      v-model="valueChild"
     >
       <div v-if="comment" class="more-btn" @click="clickComment">回复</div>
-      <div v-if="!share" class="more-btn" @click="clickShare">分享</div>
+      <div v-if="share" class="more-btn" @click="clickShare">分享</div>
       <div v-if="shield" class="more-btn" @click="clickShield">屏蔽</div>
       <div v-if="complain" class="more-btn" @click="clickComplain">投诉</div>
       <div v-preventReClick v-if="deleteProp" class="more-btn tf-text-primary" @click="onDelete">
         删除
       </div>
     </van-popup>
+    <!-- 投诉 -->
     <van-popup
       class="complain-dialog"
       safe-area-inset-bottom
@@ -31,7 +32,7 @@
       <div class="complain-content van-multi-ellipsis--l2">
         投诉
         <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
-        ：{{ complainInfo.content }}
+        ：{{ complainInfo.content && complainInfo.content.replace(/<.*?>/ig,"") }}
       </div>
       <tf-radio-btn
         class="complain-radio"
@@ -48,6 +49,7 @@
         提交
       </div>
     </van-popup>
+    <!-- 屏蔽选择 -->
     <van-popup
       v-model="shieldShow"
       safe-area-inset-bottom
@@ -67,6 +69,7 @@
         屏蔽 此条内容
       </div>
     </van-popup>
+    <!-- 屏蔽人选项 -->
     <van-popup
       safe-area-inset-bottom
       get-container="body"
@@ -97,15 +100,16 @@
         >
       </div>
     </van-popup>
+    <!-- 屏蔽内容确认 -->
     <van-popup
       safe-area-inset-bottom
       get-container="body"
       class="shield-confirm"
       v-model="contentShieldDialog"
     >
-      <div class="tf-text">
+      <div class="tf-text van-multi-ellipsis--l2">
         <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
-        ：{{ complainInfo.content }}
+        ：{{ complainInfo.content && complainInfo.content.replace(/<.*?>/ig,"") }}
       </div>
       <div class="shield-confirm-footer">
         <van-button
@@ -150,34 +154,41 @@ export default {
     tfShare
   },
   props: {
-    moreShow: {
+    value: {
       type: [Boolean],
       default: false
     },
+    // 是否开启分享
     share: {
       type: [Boolean, Number],
       default: false
     },
+    // 是否开启删除
     deleteProp: {
       type: [Boolean, Number],
       default: false
     },
+    // 是否开启投诉
     complain: {
       type: [Boolean, Number],
       default: true
     },
+    // 如果是投诉，类型 1贴子、2评论、3回复
     complainType: {
       type: Number,
       default: 0
     },
+    // 当前需要投诉的信息
     complainInfo: {
       type: Object,
       default: () => ({})
     },
+    // 是否开启评论
     comment: {
       type: [Boolean, Number],
       default: false
     },
+    // 是否开启屏蔽
     shield: {
       type: [Boolean, Number],
       default: false
@@ -195,9 +206,10 @@ export default {
   },
   data () {
     return {
-      moreShowChild: this.moreShow,
+      valueChild: this.value,
       complainShow: false,
       showShare: false,
+      // 投诉类型
       types: [
         {
           value: '1',
@@ -244,14 +256,14 @@ export default {
   },
   methods: {
     clickShare () {
-      this.moreShowChild = false
+      this.valueChild = false
       this.showShare = true
     },
     onSelect (data) {
       this.showShare = data == 1
     },
     clickComment () {
-      this.moreShowChild = false
+      this.valueChild = false
       this.$emit('comment')
     },
     /* 删除 */
@@ -260,20 +272,25 @@ export default {
     },
     /* 打开投诉 */
     clickComplain () {
-      this.moreShowChild = false
+      this.valueChild = false
       this.complainShow = true
     },
     /* 提交投诉 */
     submitComplain () {
       if (this.com_type) {
+        const complainType = {
+          1: '4',
+          2: '5',
+          3: '1'
+        }
         addComplaint({
           com_type: this.com_type,
-          info_type: this.complainType,
+          info_type: this.complainType == '1' ? complainType[this.complainInfo.article_type] : this.complainType,
           info_id: this.complainInfo.id
         }).then((resr) => {
           Toast.success('投诉成功')
           this.complainShow = false
-          this.moreShowChild = false
+          this.valueChild = false
           this.mtjEvent({
             eventId: 43
           })
@@ -284,7 +301,7 @@ export default {
     },
     /* 打开屏蔽 */
     clickShield () {
-      this.moreShowChild = false
+      this.valueChild = false
       this.shieldShow = true
     },
     /* 屏蔽用户 */
@@ -305,7 +322,7 @@ export default {
     /* 提交屏蔽设置 */
     addShielding (params) {
       addShielding(params).then(() => {
-        this.moreShowChild = false
+        this.valueChild = false
         this.shieldShow = false
         this.userShieldDialog = false
         this.contentShieldDialog = false
@@ -315,11 +332,11 @@ export default {
     }
   },
   watch: {
-    moreShowChild (val) {
-      this.$emit('update:moreShow', val)
+    valueChild (val) {
+      this.$emit('input', val)
     },
-    moreShow (val) {
-      this.moreShowChild = val
+    value (val) {
+      this.valueChild = val
     }
   }
 }

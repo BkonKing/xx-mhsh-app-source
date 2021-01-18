@@ -29,7 +29,7 @@
               <div class="tf-card-header">
                 <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
                   <template v-slot:right>
-                    <div class="group-tag">{{item.category}}</div>
+                    <div v-if="item.article_type == 3" class="group-tag">{{item.category}}</div>
                   </template>
                 </userInfo>
               </div>

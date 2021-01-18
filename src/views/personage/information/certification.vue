@@ -108,6 +108,7 @@
 import { NavBar, Field, Button, Popup, Toast } from 'vant'
 import { mapGetters } from 'vuex'
 import { getBankInfo, editRealname } from '@/api/personage.js'
+import { handlePermission } from '@/utils/permission'
 export default {
   name: 'certification',
   components: {
@@ -160,26 +161,30 @@ export default {
     },
     // 打开摄像头
     openCamera () {
-      const baiduAd = api.require('baiduIdentifyOCR')
-      if (api.systemType === 'android') {
-        baiduAd.init((ret, err) => {
-          if (ret.status) {
-            baiduAd.bankCardOCROnline(({ status, result }, err) => {
-              if (status) {
-                this.bankCardNum = result.split('\n')[0].split('：')[1]
-                this.getBankCardName()
-              }
-            })
-          }
-        })
-      } else {
-        baiduAd.bankCardOCROnline(({ status, result }, err) => {
-          if (status) {
-            this.bankCardNum = result.result.bank_card_number
-            this.getBankCardName()
-          }
-        })
-      }
+      handlePermission({
+        name: 'camera'
+      }).then(() => {
+        const baiduAd = api.require('baiduIdentifyOCR')
+        if (api.systemType === 'android') {
+          baiduAd.init((ret, err) => {
+            if (ret.status) {
+              baiduAd.bankCardOCROnline(({ status, result }, err) => {
+                if (status) {
+                  this.bankCardNum = result.split('\n')[0].split('：')[1]
+                  this.getBankCardName()
+                }
+              })
+            }
+          })
+        } else {
+          baiduAd.bankCardOCROnline(({ status, result }, err) => {
+            if (status) {
+              this.bankCardNum = result.result.bank_card_number
+              this.getBankCardName()
+            }
+          })
+        }
+      })
     },
     // 保存实名信息到本地
     getIdCard () {

@@ -125,16 +125,16 @@
         @thumbsup="thumbsUp(info)"
       ></reply>
     </van-pull-refresh>
-    <!-- <more-popup :moreShow.sync="moreShow" :share="true"></more-popup> -->
     <more-popup
-      :complainInfo="info"
+      v-model="moreShow"
+      :complain="!info.is_mine"
       :complainType="1"
-      :moreShow.sync="moreShow"
-      :complain="!info.is_mine && articleType == 3"
-      :shield="!info.is_mine && articleType == 3"
+      :complainInfo="info"
+      :shield="!info.is_mine"
       :deleteProp="info.is_mine"
-      @delete="deleteArticle"
+      :share="true"
       :share-obj="shareObj"
+      @delete="deleteArticle"
     ></more-popup>
   </div>
 </template>

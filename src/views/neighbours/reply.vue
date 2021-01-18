@@ -84,10 +84,9 @@
       </van-list>
     </van-pull-refresh>
     <more-popup
-      :moreShow.sync="moreShow"
+      v-model="moreShow"
       :comment="true"
-      :complain="!oneself && category == 3"
-      :shield="isMine && !oneself && category == 3"
+      :complain="!oneself"
       :deleteProp="oneself"
       :complainInfo="active"
       :complainType="3"

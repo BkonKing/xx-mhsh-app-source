@@ -648,8 +648,6 @@ export default {
   @flex-column();
   flex: 1;
   padding: 30px 20px;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 .tf-icon-pinglun {
   @relative();

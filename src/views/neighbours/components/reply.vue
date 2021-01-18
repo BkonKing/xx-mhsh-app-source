@@ -71,13 +71,12 @@
     </van-list>
     <div class="no-comments" v-if="list.length === 0 && finished">暂无评论</div>
     <more-popup
-      :moreShow.sync="moreShow"
+      v-model="moreShow"
       :comment="true"
-      :complain="!oneself && articleType == 3"
-      :shield="isMine && !oneself && articleType == 3"
-      :deleteProp="oneself"
-      :complainInfo="active"
+      :complain="!oneself"
       :complainType="2"
+      :complainInfo="active"
+      :deleteProp="oneself"
       @comment="comment"
       @delete="deleteComment"
     ></more-popup>

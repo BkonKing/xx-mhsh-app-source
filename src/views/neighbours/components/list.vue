@@ -26,7 +26,7 @@
           >
             <div
               class="van-icon van-icon-ellipsis"
-              @click.stop="onOperation(item, index)"
+              @click.stop="onPostOperation(item, index)"
             ></div>
           </operation>
         </div>
@@ -98,28 +98,23 @@
           >
             <div
               class="van-icon van-icon-ellipsis"
-              @click.stop="onOperation(item, index)"
+              @click.stop="onPostOperation(item, index)"
             ></div>
           </operation>
         </div>
       </template>
     </refreshList>
     <more-popup
-      :class="{'ios-share': systemType === 'ios' && article_type != 3}"
-      :moreShow.sync="postMoreShow"
+      v-model="postMoreShow"
       :deleteProp="status"
       :complain="!status"
       :shield="!status"
       :complainInfo="active"
       :complainType="1"
+      :share="true"
       :shareObj="shareObj"
-      @delete="deleteArticle"
-    ></more-popup>
-    <more-popup
       :class="{'ios-share': systemType === 'ios' && article_type != 3}"
-      :moreShow.sync="moreShow"
-      :complain="false"
-      :shareObj="shareObj"
+      @delete="deleteArticle"
     ></more-popup>
   </div>
 </template>
@@ -157,7 +152,6 @@ export default {
   data () {
     return {
       postMoreShow: false,
-      moreShow: false,
       list: this.data,
       active: {},
       activeIndex: undefined,
@@ -192,16 +186,10 @@ export default {
         contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + data.article_type + '&id=' + data.id
       }
     },
-    /* 资讯活动操作 */
-    onOperation (item, index) {
-      this.downloadSharePic(item)
-      this.activeIndex = index
-      this.status = true
-      this.moreShow = true
-    },
     /* 帖子操作 */
     onPostOperation (item, index) {
       this.downloadSharePic(item)
+      this.active = item
       this.status = item.is_mine
       this.activeIndex = index
       this.postMoreShow = true
