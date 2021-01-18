@@ -313,24 +313,29 @@ function rotateImg (img, direction, canvas) {
   }
 }
 
-// 百度地图获取当前地址信息
-export function bMapGetLocationInfo () {
+// 百度地图获取当前地址信息,返回详细地址信息
+/**
+ * 百度地图获取当前地址信息
+ * @param {type} 1：返回转换为详细地址信息（省市县），2：返回 getLocation获取到信息
+ * @return {Promise} 根据type返回不同格式的地址信息
+ */
+export function bMapGetLocationInfo ({ type = 1 }) {
   return new Promise((resolve, reject) => {
     const bMap = api.require('bMap')
     if (api.systemType === 'ios') {
       // 初始化
       bMap.initMapSDK((ret, err) => {
         if (ret.status) {
-          getLocationServices()
+          getLocationServices(type)
         } else {
           reject(err)
         }
       })
     } else {
-      getLocationServices()
+      getLocationServices(type)
     }
 
-    function getLocationServices () {
+    function getLocationServices (type) {
       // 获取当前是否打开定位
       bMap.getLocationServices((ret, err) => {
         if (ret.enable) {
@@ -339,21 +344,25 @@ export function bMapGetLocationInfo () {
             accuracy: '100m'
           }, (ret, err) => {
             if (ret.status) {
-              const {
-                lon,
-                lat
-              } = ret
-              // 根据经纬度获取详细地址信息（省市县等）
-              bMap.getNameFromCoords({
-                lon,
-                lat
-              }, (ret, err) => {
-                if (ret.status) {
-                  resolve(ret)
-                } else {
-                  reject(err)
-                }
-              })
+              if (type === 1) {
+                const {
+                  lon,
+                  lat
+                } = ret
+                // 根据经纬度获取详细地址信息（省市县等）
+                bMap.getNameFromCoords({
+                  lon,
+                  lat
+                }, (ret, err) => {
+                  if (ret.status) {
+                    resolve(ret)
+                  } else {
+                    reject(err)
+                  }
+                })
+              } else {
+                resolve(ret)
+              }
             } else {
               reject(err)
               console.log(err.code)
