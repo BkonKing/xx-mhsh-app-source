@@ -14,28 +14,63 @@
     </van-nav-bar>
     <van-tabs class="tf-body-container tf-flex-column" v-model="current">
       <van-tab class="user-tab" title="用户">
-        <refreshList ref="list" :list.sync="shieldingUserList" :load="getShieldingUserList">
-          <template v-slot="{item, index}">
+        <refreshList
+          ref="list"
+          :list.sync="shieldingUserList"
+          :load="getShieldingUserList"
+        >
+          <template v-slot="{ item, index }">
             <div class="tf-card" @click="openRemove(item, index)">
-              <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime"></userInfo>
+              <userInfo
+                :avatar="item.avatar"
+                :name="item.nickname"
+                :time="item.ctime"
+              ></userInfo>
             </div>
           </template>
         </refreshList>
       </van-tab>
       <van-tab title="动态">
-        <refreshList class="reply-list" :list.sync="shieldingInfoList" :load="getShieldingInfoList">
-          <template v-slot="{item, index}">
-            <div class="tf-card" v-if="item.sub_type == 1" @click="openRemove(item, index)">
+        <refreshList
+          class="reply-list"
+          :list.sync="shieldingInfoList"
+          :load="getShieldingInfoList"
+        >
+          <template v-slot="{ item, index }">
+            <div
+              class="tf-card"
+              v-if="item.sub_type == 1"
+              @click="openRemove(item, index)"
+            >
               <div class="tf-card-header">
-                <userInfo :avatar="item.avatar" :name="item.nickname" :time="item.ctime">
+                <userInfo
+                  :avatar="item.avatar"
+                  :name="item.nickname"
+                  :time="item.ctime"
+                >
                   <template v-slot:right>
-                    <div v-if="item.article_type == 3" class="group-tag">{{item.category}}</div>
+                    <div v-if="item.article_type == 3" class="group-tag">
+                      {{ item.category }}
+                    </div>
                   </template>
                 </userInfo>
               </div>
-              <div v-if="item.content" class="tf-card-content">{{ item.content }}</div>
+              <img
+                class="thumbnail-image"
+                v-if="item.thumbnail"
+                :src="item.thumbnail"
+              />
+              <div
+                v-if="item.content"
+                class="tf-card-content"
+                v-html="item.content"
+              ></div>
               <template v-if="item.images">
-                <img width="33%" :src="item.images[0]" v-if="item.images.length === 1" />
+                <img
+                  width="33%"
+                  :src="item.images[0]"
+                  v-if="item.images.length === 1"
+                />
                 <tf-image-list
                   class="tf-mt-base"
                   mode="shadeShow"
@@ -44,22 +79,30 @@
                 ></tf-image-list>
               </template>
             </div>
-            <div v-else class="reply-cell-content" @click="openRemove(item, index)">
+            <div
+              v-else
+              class="reply-cell-content"
+              @click="openRemove(item, index)"
+            >
               <userInfo
                 :avatar="item.avatar || ''"
                 :name="item.nickname"
                 :time="item.ctime"
                 size="m"
               ></userInfo>
-              <div class="reply-cell-content__text">{{item.content}}</div>
-              <div v-if="item.images && item.images.length > 0" class="reply-cell-content__img-box">
+              <div class="reply-cell-content__text">{{ item.content }}</div>
+              <div
+                v-if="item.images && item.images.length > 0"
+                class="reply-cell-content__img-box"
+              >
                 <img class="reply-cell-content__img" :src="item.images[0]" />
               </div>
               <div class="reply-cell-content__reply">
                 <span class="tf-text">
-                  <strong style="color: #222">{{item.yh_nickname}}</strong>：
+                  <strong style="color: #222">{{ item.yh_nickname }}</strong
+                  >：
                 </span>
-                {{item.yh_content}}
+                {{ item.yh_content }}
               </div>
             </div>
           </template>
@@ -68,10 +111,16 @@
     </van-tabs>
     <van-popup class="operate-dialog" v-model="shieldPopup">
       <div class="operate-text van-ellipsis">
-        <template v-if="active.uid">@{{active.nickname}}</template>
-        <template v-else>@{{active.nickname}}：{{active.content}}</template>
+        <template v-if="active.uid">@{{ active.nickname }}</template>
+        <template v-else
+          >@{{ active.nickname }}：{{
+            active.content && active.content.replace(/<.*?>/gi, "")
+          }}</template
+        >
       </div>
-      <div class="operate-text operate-btn" @click="removeShielding">解除屏蔽</div>
+      <div class="operate-text operate-btn" @click="removeShielding">
+        解除屏蔽
+      </div>
     </van-popup>
   </div>
 </template>
@@ -122,7 +171,7 @@ export default {
     removeShielding () {
       removeShielding({
         shielding_id: this.active.shielding_id
-      }).then((res) => {
+      }).then(res => {
         Toast.success('解除屏蔽成功')
         if (this.current) {
           this.shieldingInfoList.splice(this.activeIndex, 1)
@@ -136,7 +185,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .tf-card-header {
   border-bottom: none;
   padding-bottom: 0;
@@ -211,5 +260,20 @@ export default {
   .operate-text + .operate-text {
     border-top: 1px solid @divider-color;
   }
+}
+.tf-card {
+  padding-bottom: 30px;
+}
+.tf-card-content {
+  padding: 0;
+  margin-top: 30px;
+  .text-multiple-ellipsis(3);
+}
+.thumbnail-image {
+  display: block;
+  width: 100%;
+  height: 365px;
+  margin-top: 30px;
+  object-fit: cover;
 }
 </style>

@@ -46,7 +46,7 @@
             </div>
             <div
               v-if="item.content"
-              class="tf-card-content"
+              class="tf-card-content text-multiple-ellipsis-3"
               @click="goDetails('3', item)"
             >
               {{ item.content }}
@@ -314,5 +314,10 @@ export default {
 }
 .ios-share /deep/ .mask-block {
   bottom: 98px;
+}
+.text-multiple-ellipsis-3 {
+  padding: 0;
+  margin: 30px 0;
+  .text-multiple-ellipsis(3);
 }
 </style>

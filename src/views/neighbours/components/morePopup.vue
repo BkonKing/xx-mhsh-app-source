@@ -313,9 +313,14 @@ export default {
     },
     /* 屏蔽内容 */
     shieldContent () {
+      const sub_type = {
+        1: '4',
+        2: '5',
+        3: '1'
+      }
       this.addShielding({
         shielding_type: 1,
-        sub_type: this.complainType > 2 ? 2 : this.complainType,
+        sub_type: this.complainType > 2 ? 2 : this.complainType == 1 ? sub_type[this.complainInfo.article_type] : this.complainType,
         shielding_infoid: this.complainInfo.id
       })
     },
@@ -373,7 +378,7 @@ export default {
     border-bottom: 1px solid @divider-color;
   }
   .complain-content {
-    padding: 30px 0;
+    margin: 30px 0;
     font-size: 28px;
   }
   .complain-footer {
