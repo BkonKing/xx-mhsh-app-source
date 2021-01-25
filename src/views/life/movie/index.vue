@@ -1,12 +1,14 @@
 <template>
-  <div class="tf-white-bg">
+  <div class="tf-bg-white">
+    <div class="header-bg"></div>
     <van-nav-bar :border="false" :fixed="true" placeholder>
       <template #left>
-        <i class="van-icon van-icon-arrow-left van-nav-bar__arrow" @click="goBack"></i>
-        电影
-      </template>
-      <template #right>
-        <van-field></van-field>
+        <i
+          class="van-icon van-icon-arrow-left van-nav-bar__arrow"
+          @click="goBack"
+        ></i>
+        <span>电影</span>
+        <van-field class="tf-flex-item" placeholder="电影、影院"></van-field>
       </template>
     </van-nav-bar>
     <van-swipe
@@ -14,7 +16,7 @@
       :autoplay="6000"
       :lazy-render="true"
       @change="swipeChange"
-      class="home-swipe"
+      class="movie-swipe"
       indicator-color="#fff"
     >
       <van-swipe-item
@@ -30,24 +32,90 @@
       </van-swipe-item>
     </van-swipe>
     <!-- 功能列表 -->
-    <div>
-      <div @click="goList(1)"><div></div><div>电影</div></div>
-      <div @click="goList(2)"><div></div><div>影院</div></div>
-      <div @click="goOrder"><div></div><div>订单</div></div>
+    <div class="feature-container">
+      <div class="feature-box" @click="goList('1')">
+        <img class="feature-img" src="@/assets/imgs/movie_film.png" />
+        <div class="tf-text">电影</div>
+      </div>
+      <div class="feature-box" @click="goList('2')">
+        <img class="feature-img" src="@/assets/imgs/movie_cinema.png" />
+        <div class="tf-text">影院</div>
+      </div>
+      <div class="feature-box" @click="goOrder">
+        <img class="feature-img" src="@/assets/imgs/movie_order.png" />
+        <div class="tf-text">订单</div>
+      </div>
+    </div>
+    <!-- 正在热映 -->
+    <div class="film-container">
+      <div class="film-header">
+        <div class="film-title">正在热映</div>
+        <div class="film-total">全部{{ nowMovieTotal }}部 ></div>
+      </div>
+      <div class="film-content">
+        <film-box
+          v-for="(film, i) in nowMovieList"
+          :key="i"
+          :data="film"
+          :type="1"
+        ></film-box>
+      </div>
+    </div>
+    <!-- 即将上映 -->
+    <div class="film-container">
+      <div class="film-header">
+        <div class="film-title">即将上映</div>
+        <div class="film-total">全部{{ startMovieTotal }}部 ></div>
+      </div>
+      <div class="film-content">
+        <film-box
+          v-for="(film, i) in startMovieList"
+          :key="i"
+          :data="film"
+          :type="2"
+        ></film-box>
+      </div>
     </div>
     <!-- 附近影院 -->
+    <div class="film-container">
+      <div class="film-header">
+        <div class="film-title">附近影院</div>
+        <div class="film-total">查看全部 ></div>
+      </div>
+      <cinema-list v-model="cinemaList" :load="getcinemanearby"></cinema-list>
+    </div>
   </div>
 </template>
 
 <script>
+import FilmBox from './components/FilmBox'
+import CinemaList from './components/CinemaList'
 import { handlePermission } from '@/utils/permission'
 import { getfilmlist, getcinemanearby } from '@/api/movie'
 import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   name: 'movieIndex',
+  components: {
+    FilmBox,
+    CinemaList
+  },
   data () {
     return {
-      swipeImages: []
+      swipeImages: [
+        {
+          img:
+            'https://images.zmaxfilm.com/release/zmaxyun/film/film/p2531326284.jpg'
+        }
+      ],
+      cityId: '',
+      adCode: '', // 行政区编码
+      lon: '', // 经度
+      lat: '', // 纬度
+      nowMovieList: [], // 正在上映的电影
+      nowMovieTotal: 0, // 正在上映电影总数
+      startMovieList: [], // 即将上映上映的电影
+      startMovieTotal: 0, // 即将上映电影总数
+      cinemaList: [] // 附近影院
     }
   },
   created () {
@@ -60,53 +128,78 @@ export default {
         confirmButtonText: '开启'
       })
         .then(() => {
+          this.getLocationInfo()
           this.pageInit()
         })
         .catch(() => {
           this.goBack()
         })
     }
+    // todo：测试使用
+    this.pageInit()
   },
   methods: {
     // 页面初始化获取
     pageInit () {
       this.getfilmlist(1)
       this.getfilmlist(2)
+      this.getcinemanearby()
     },
     // 获取影片资料(列表) type:1执映2待映
     getfilmlist (type) {
       getfilmlist({
-        type
-      }).then(({ data }) => {
-
+        type,
+        page_index: 1,
+        page_size: 10
+      }).then(({ data, total }) => {
+        // 热映
+        if (type === 1) {
+          this.nowMovieTotal = total
+          this.nowMovieList = data
+        } else {
+          this.startMovieTotal = total
+          this.startMovieList = data
+        }
+      })
+    },
+    // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
+    getLocationInfo () {
+      // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
+      bMapGetLocationInfo().then(({ cityCode, adCode, lon, lat }) => {
+        this.cityId = cityCode
+        this.adCode = adCode
+        this.lon = lon
+        this.lat = lat
       })
     },
     // 获取附近影院
     // 显示/不显示：若是没有开启位置定位，用户有小区则以小区为定位；若是也没小区，则不显示这个板块(页面一定要开启位置定位)
     getcinemanearby () {
-      // 获取当前地址信息 adCode:行政区编码
-      bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
-        getcinemanearby({
-          lat,
-          type: 2, // type=1城市ID，type=2区域ID
-          id: adCode,
-          lng: lon // 经度
-        }).then(({ data }) => {})
+      // todo:PC端地址信息写死
+      return getcinemanearby({
+        lat: this.lat || 26.05312,
+        type: 2, // type=1城市ID，type=2区域ID
+        id: this.adCode || 350103,
+        lng: this.lon || 119.33887 // 经度
       })
     },
     // 跳转影片/影院，1：影片，2：影院
     goList (type) {
+      // todo:PC端地址信息写死
       this.$router.push({
         name: 'movieList',
         query: {
-          type
+          type,
+          cityId: this.cityId || 350100,
+          lon: this.lon || 119.33887,
+          lat: this.lat || 26.05312
         }
       })
     },
     // 跳转电影票订单
     goOrder () {
       this.$router.push({
-        name: ''
+        name: 'movieOrder'
       })
     },
     goBack () {
@@ -116,4 +209,101 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="less" scoped>
+// 头部背景
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 750px;
+  height: 262px;
+  background: linear-gradient(-90deg, #f9866b, #eb5841);
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+// 头部导航
+/deep/ .van-nav-bar {
+  background: none;
+  .van-nav-bar__left,
+  .van-icon {
+    font-size: 34px;
+    color: #fff;
+  }
+  .van-nav-bar__left {
+    right: 0;
+  }
+  .van-nav-bar__arrow {
+    margin-right: 30px;
+  }
+  .tf-flex-item {
+    height: 66px;
+    margin-left: 30px;
+    border-radius: 10px;
+  }
+  .van-field__body {
+    height: 100%;
+  }
+}
+// 轮播图
+.movie-swipe {
+  height: 190px;
+  margin: 40px 20px 0;
+  /deep/ .van-image {
+    width: 100%;
+    height: 100%;
+    .van-image__img {
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  }
+}
+// 功能专区
+.feature-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 33px 105px 0;
+  .feature-box {
+    .feature-img {
+      width: 133px;
+      height: 133px;
+    }
+    .tf-text {
+      text-align: center;
+      line-height: 1;
+      color: #222;
+    }
+  }
+}
+// 正在热映
+.film-container {
+  margin: 40px 20px 0;
+  .film-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    line-height: 1;
+    .film-title {
+      font-size: 34px;
+      color: #222;
+    }
+    .film-total {
+      font-size: 26px;
+      color: #8f8f94;
+    }
+  }
+  .film-content {
+    display: flex;
+    margin-top: 30px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /deep/ .film-box + .film-box {
+      margin-left: 20px;
+    }
+  }
+}
+// 附近影院
+/deep/ .cinema-list {
+  margin-top: 39px;
+}
+</style>

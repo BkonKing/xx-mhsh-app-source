@@ -319,8 +319,11 @@ function rotateImg (img, direction, canvas) {
  * @param {type} 1：返回转换为详细地址信息（省市县），2：返回 getLocation获取到信息
  * @return {Promise} 根据type返回不同格式的地址信息
  */
-export function bMapGetLocationInfo ({ type = 1 }) {
+export function bMapGetLocationInfo (type = 1) {
   return new Promise((resolve, reject) => {
+    if (process.env.VUE_APP_IS_APP !== '1') {
+      reject(new Error(false))
+    }
     const bMap = api.require('bMap')
     if (api.systemType === 'ios') {
       // 初始化

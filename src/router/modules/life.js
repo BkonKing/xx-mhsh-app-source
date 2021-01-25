@@ -300,6 +300,76 @@ const lifeRouter = [{
       /* webpackChunkName: "movieList" */
       '@/views/life/movie/list'
     )
+},
+// 影片详情
+{
+  path: '/life/movie/filmDetails',
+  name: 'movieFilmDetails',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieFilmDetails" */
+      '@/views/life/movie/filmDetails'
+    )
+},
+// 选择影院
+{
+  path: '/life/movie/selectCinema',
+  name: 'movieSelectCinema',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieSelectCinema" */
+      '@/views/life/movie/selectCinema'
+    )
+},
+// 演职人员
+{
+  path: '/life/movie/cast',
+  name: 'movieCast',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieCast" */
+      '@/views/life/movie/cast'
+    )
+},
+// 影院详情
+{
+  path: '/life/movie/cinemaDetails',
+  name: 'movieCinemaDetails',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieCinemaDetails" */
+      '@/views/life/movie/cinemaDetails'
+    )
+},
+// 影院位置
+{
+  path: '/life/movie/location',
+  name: 'movieLocation',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieLocation" */
+      '@/views/life/movie/location'
+    )
+},
+// 我的影票订单列表
+{
+  path: '/life/movie/order',
+  name: 'movieOrder',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieOrder" */
+      '@/views/life/movie/order'
+    )
+},
+// 我的影票
+{
+  path: '/life/movie/ticket',
+  name: 'movieTicket',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieTicket" */
+      '@/views/life/movie/ticket'
+    )
 }
   /* 观影模块 end */
 ]
