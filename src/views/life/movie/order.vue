@@ -1,28 +1,57 @@
 <template>
-<div class='tf-bg'>
-  <van-nav-bar
-    title='我的影票'
-    :fixed='true'
-    :border='false'
-    left-arrow
-    placeholder
-    @click-left='$router.go(-1)'
-  >
-    <template #right>
-      <span class='tf-icon tf-icon-kefu'></span>
-    </template>
-  </van-nav-bar>
-  <div class='tf-main-container'>
-    <van-tabs v-model="type" @change="reloadOrderList">
-      <van-tab v-for="(item, i) in typeOptions" :key="i" :name="item.value" :title="item.text"></van-tab>
-    </van-tabs>
-    <refreshList ref="orderList" :list.sync="orderList" :load="getticklist">
-      <template v-slot="{item}">
-        <div @click="goTicket(item)">{{item}}</div>
+  <div class="tf-bg">
+    <van-nav-bar
+      title="我的影票"
+      :fixed="true"
+      :border="false"
+      left-arrow
+      placeholder
+      @click-left="$router.go(-1)"
+    >
+      <template #right>
+        <span class="tf-icon tf-icon-kefu"></span>
       </template>
-    </refreshList>
+    </van-nav-bar>
+    <div class="tf-main-container">
+      <van-tabs v-model="type" @change="reloadOrderList">
+        <van-tab
+          v-for="(item, i) in typeOptions"
+          :key="i"
+          :name="item.value"
+          :title="item.text"
+        ></van-tab>
+      </van-tabs>
+      <refreshList ref="orderList" :list.sync="orderList" :load="getticklist">
+        <template v-slot="{ item }">
+          <div class="order-box" @click="goTicket(item)">
+            <div class="order-header">
+              <div class="order-cinema">{{ item.cinema_name }}</div>
+              <div class="order-status">{{ item.order_desc }}</div>
+            </div>
+            <div class="order-content">
+              <img class="order-cover" :src="item.cover" />
+              <div class="order-content-right">
+                <div class="order-film-name">{{ item.film_name }}</div>
+                <div class="tf-flex">
+                  <div class="order-film-time">
+                    场次：
+                  </div>
+                  <div>
+                    {{ item.date }} {{ item.week }} <br />
+                    {{ item.time }}
+                  </div>
+                </div>
+                <div class="order-film-number">数量：{{ item.count }}张</div>
+              </div>
+            </div>
+            <div class="order-footer">
+              <span class="tf-text-grey">合计:</span>￥{{ item.pay_price }}
+            </div>
+          </div>
+        </template>
+      </refreshList>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -74,11 +103,11 @@ export default {
       this.$refs.orderList && this.$refs.orderList.reload()
     },
     // 跳转到电影票详情
-    goTicket ({ id }) {
+    goTicket ({ order_id }) {
       this.$router.push({
         name: 'movieTicket',
         query: {
-          id
+          id: order_id
         }
       })
     }
@@ -86,6 +115,58 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-
+<style lang="less" scoped>
+.order-box {
+  padding: 0 30px;
+  background: #fff;
+  .order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 90px;
+    border-bottom: 2px solid #f0f0f0;
+    .order-cinema {
+      font-size: 28px;
+      color: #222222;
+    }
+    .order-status {
+      font-size: 28px;
+      color: #8f8f94;
+    }
+  }
+  .order-content {
+    display: flex;
+    padding: 30px 0;
+    .order-cover {
+      width: 140px;
+      height: 196px;
+      margin-right: 20px;
+      border-radius: 4px;
+    }
+    .order-content-right {
+      display: flex;
+      flex-direction: column;
+      font-size: 30px;
+      color: #8f8f94;
+    }
+    .order-film-name {
+      margin-bottom: 20px;
+      font-size: 30px;
+      font-weight: 600;
+      color: #000000;
+    }
+  }
+  .order-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 90px;
+    font-size: 34px;
+    color: #222222;
+    border-top: 2px solid #f0f0f0;
+    .tf-text-grey {
+      font-size: 28px;
+    }
+  }
+}
 </style>

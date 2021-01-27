@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -12,66 +12,57 @@
         <span class="tf-icon tf-icon-zhuanfa"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
-      <div class="film-container">
-        <div class="film-header">
-          <img class="film-cover" :src="info.cover" alt="" />
-          <div class="film-info">
-            <div class="film-title">{{ info.film_name }}</div>
-            <div v-if="info.type" class="film-type">类型：{{ info.type }}</div>
-            <div class="film-duration">
-              {{ info.duration }}分钟 / {{ info.area }}
-            </div>
-            <div class="film-publish">{{ info.publish_date }}中国大陆上映</div>
-            <div class="film-tags" v-if="info.version">
-              <div
-                class="film-tag"
-                v-for="(tag, i) in info.version.split(',')"
-                :key="i"
-              >
-                {{ tag }}
-              </div>
-            </div>
-          </div>
+    <div class="tf-body-container">
+      <film-details :info="info"></film-details>
+      <div
+        class="film-introduction"
+        :class="[
+          { 'film-introduction-collapsed': collapsed },
+          { 'film-introduction-able': collapseable }
+        ]"
+      >
+        <div class="introduction-text">
+          <div ref="introductionText">{{ info.introduction }}</div>
         </div>
-        <div class="film-footer">
-          <div class="film-score">
-            <div class="film-text">{{ info.score }}</div>
-            <div class="film-minor">电影评分</div>
-          </div>
-          <div class="film-want">
-            <div class="film-text">{{ info.want_view | wantFormat }}</div>
-            <div class="film-minor">
-              {{ parseInt(info.want_view) > 999 ? "万" : "" }}人想看
-            </div>
-          </div>
-          <div class="film-view">
-            <div class="film-text">{{ info.view }}</div>
-            <div class="film-minor">
-              {{ info.view === "1" ? "已想看" : "想看" }}
-            </div>
-          </div>
+        <div class="tf-flex" v-if="collapseable">
+          <span
+            class="tf-icon"
+            :class="[collapsed ? 'tf-icon-caret-up' : 'tf-icon-caret-down']"
+            @click="collapsed = !collapsed"
+          ></span>
         </div>
       </div>
-      <div class="film-introduction">{{ info.introduction }}</div>
       <div class="film-cast-info">
         <div class="film-cast-header" @click="goCast">
           <div class="film-cast-title">演职人员</div>
-          <div class="tf-text-grey">全部 ></div>
+          <div class="tf-text-grey">
+            全部 <span class="tf-icon tf-icon-right"></span>
+          </div>
         </div>
-        <div class="van-ellipsis"><span class="tf-text-grey">导演：</span>{{ info.director }}</div>
+        <div class="van-ellipsis">
+          <span class="tf-text-grey">导演：</span>{{ info.director }}
+        </div>
         <div class="van-ellipsis">
           <span class="tf-text-grey"
             >{{ info.cast_type == "0" ? "主演" : "配音" }}：</span
           >{{ info.cast }}
         </div>
       </div>
-      <van-button @click="goSelectCinema">购票</van-button>
+    </div>
+    <div class="tf-padding">
+      <van-button
+        v-preventReClick
+        size="large"
+        type="danger"
+        @click="goSelectCinema"
+        >购票</van-button
+      >
     </div>
   </div>
 </template>
 
 <script>
+import filmDetails from './components/FilmDetails'
 import { getfilminfo } from '@/api/movie'
 export default {
   name: 'movieFilmDetails',
@@ -79,8 +70,13 @@ export default {
     return {
       id: '',
       title: '',
-      info: {}
+      info: {},
+      collapseable: false, // 是否需要折叠
+      collapsed: false // 是否折叠
     }
+  },
+  components: {
+    filmDetails
   },
   created () {
     this.id = this.$route.query.id
@@ -93,12 +89,21 @@ export default {
         film_id: this.id
       }).then(({ data }) => {
         this.info = data
+        this.$nextTick(() => {
+          if (this.$refs.introductionText.clientHeight > 105) {
+            this.collapseable = true
+          }
+        })
       })
     },
     // 购票跳转选择影院
     goSelectCinema () {
       this.$router.push({
-        name: 'movieSelectCinema'
+        name: 'movieSelectCinema',
+        query: {
+          id: this.id,
+          code: this.info.film_code
+        }
       })
     },
     // 跳转演职人员
@@ -109,13 +114,6 @@ export default {
           id: this.id
         }
       })
-    }
-  },
-  filters: {
-    // 超过一万则以万为单位
-    wantFormat (value) {
-      const val = parseInt(value)
-      return val > 9999 ? `${Math.ceil(val / 10000)}` : val
     }
   }
 }
@@ -129,82 +127,29 @@ export default {
     color: #fff;
   }
 }
-.film-container {
-  padding: 30px;
-  background: #000c;
-  .film-header {
-    display: flex;
-    .film-cover {
-      width: 186px;
-      height: 259px;
-      margin-right: 30px;
-      border-radius: 4px;
-    }
-  }
-  .film-title {
-    margin-bottom: 22px;
-    font-size: 42px;
-    font-weight: 600;
-    color: #fff;
-  }
-  .film-type,
-  .film-duration,
-  .film-publish {
-    font-size: 26px;
-    color: #ffffff99;
-  }
-  .film-tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 22px;
-    .film-tag {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 38px;
-      margin-right: 10px;
-      margin-bottom: 10px;
-      padding: 0 12px;
-      font-size: 24px;
-      color: #ffffff99;
-      border: 1px solid #ffffff99;
-      border-radius: 4px;
-    }
-  }
-  .film-footer {
-    display: flex;
-    height: 130px;
-    margin-top: 30px;
-    padding: 22px 0;
-    background: #ffffff1a;
-    border-radius: 10px;
-    > div {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    > div + div {
-      border-left: 2px solid #ffffff66;
-    }
-    .film-text {
-      font-size: 48px;
-      font-weight: 500;
-      color: #ffa110;
-    }
-    .film-minor {
-      font-size: 24px;
-      color: #fff;
-    }
-  }
-}
 .film-introduction {
   padding: 50px 30px;
   background: #fff;
   font-size: 30px;
   line-height: 50px;
   color: #222;
+  .introduction-text {
+    height: 210px;
+    overflow: hidden;
+  }
+}
+.film-introduction-able {
+  padding-bottom: 30px;
+  .tf-flex {
+    justify-content: center;
+    align-items: center;
+    padding-top: 30px;
+  }
+}
+.film-introduction-collapsed {
+  .introduction-text {
+    height: auto;
+  }
 }
 .film-cast-info {
   margin-top: 30px;
@@ -225,6 +170,9 @@ export default {
     .tf-text-grey {
       font-size: 26px;
     }
+  }
+  .van-ellipsis {
+    margin-top: 10px;
   }
 }
 </style>

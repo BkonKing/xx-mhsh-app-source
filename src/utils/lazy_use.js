@@ -49,7 +49,8 @@ import {
   Tabs,
   Tabbar,
   TabbarItem,
-  TreeSelect
+  TreeSelect,
+  Circle
 } from 'vant'
 
 Vue.use(Button)
@@ -102,3 +103,4 @@ Vue.use(Tabs)
 Vue.use(Tabbar)
 Vue.use(TabbarItem)
 Vue.use(TreeSelect)
+Vue.use(Circle)

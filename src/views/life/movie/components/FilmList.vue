@@ -13,8 +13,16 @@
           <div class="film-title">
             {{ item.film_name }}
             <span v-if="item.score != '0'" class="tf-text-primary">{{
-              item.score
+              parseFloat(item.score) / 10
             }}</span>
+            <span
+              v-else-if="type === 1 && item.pre_saleflag === '1' && item.want_view != 0"
+              class="tf-text-sm tf-text-grey"
+              ><span class="film-want-text">{{
+                item.want_view | wantFormat
+              }}</span
+              >人想看</span
+            >
           </div>
           <div class="film-content">
             <div class="film-left">
@@ -25,19 +33,19 @@
                 主演：{{ item.cast }}
               </div>
             </div>
-            <template v-if="type === 1">
-              <van-button round size="mini" type="primary">购票</van-button>
-            </template>
-            <template v-if="type === 2">
+            <van-button
+              v-if="item.pre_saleflag == '1'"
+              round
+              size="mini"
+              color="#55B862"
+              >预售</van-button
+            >
+            <van-button v-else-if="type === 1" round size="mini" type="primary"
+              >购票</van-button
+            >
+            <template v-else-if="type === 2">
               <van-button
-                v-if="item.publish_date == '1'"
-                round
-                size="mini"
-                color="#55B862"
-                >预售</van-button
-              >
-              <van-button
-                v-else-if="item.view == '0'"
+                v-if="item.view == '0'"
                 round
                 size="mini"
                 type="warning"
@@ -47,7 +55,7 @@
               <van-button v-else round size="mini">已想看</van-button>
             </template>
           </div>
-          <div class="film-tags">
+          <div v-if="type === 1 && item.version" class="film-tags">
             <div
               class="film-tag"
               v-for="(tag, i) in item.version.split(',')"
@@ -55,6 +63,19 @@
             >
               {{ tag }}
             </div>
+          </div>
+          <div
+            v-else-if="type === 1 && item.pre_saleflag == '1'"
+            class="film-now-publish-date"
+          >
+            {{ item.publish_date }}上映
+          </div>
+          <div
+            v-if="type === 2 && item.want_view != '0'"
+            class="tf-text-sm tf-text-grey tf-mt-lg"
+          >
+            <span class="film-want-text">{{ item.want_view | wantFormat }}</span
+            >人想看
           </div>
         </div>
       </div>
@@ -117,6 +138,13 @@ export default {
     value (value) {
       this.list = value
     }
+  },
+  filters: {
+    // 超过一万则以万为单位
+    wantFormat (value) {
+      const val = parseInt(value)
+      return val > 9999 ? `${Math.ceil(val / 10000)}` : val
+    }
   }
 }
 </script>
@@ -131,7 +159,7 @@ export default {
 }
 .film-box {
   display: flex;
-  min-height: 260px;
+  min-height: 252px;
   margin-top: 10px;
   .film-cover {
     width: 160px;
@@ -148,7 +176,8 @@ export default {
     font-size: 34px;
     font-weight: 600;
     color: #222;
-    .tf-text-primary {
+    .tf-text-primary,
+    .tf-text-grey {
       margin-left: 10px;
     }
   }
@@ -174,12 +203,11 @@ export default {
   .film-tags {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-top: 18px;
     .film-tag {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 38px;
       margin-right: 10px;
       margin-bottom: 10px;
       padding: 0 12px;
@@ -188,6 +216,14 @@ export default {
       border: 1px solid #aaaaaa;
       border-radius: 4px;
     }
+  }
+  .film-now-publish-date {
+    margin-top: 18px;
+    font-size: 24px;
+    color: #222;
+  }
+  .film-want-text {
+    color: #ffa110;
   }
 }
 /deep/ .van-button--round {

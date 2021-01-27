@@ -1,9 +1,17 @@
 <template>
   <div class="film-box">
-    <div class="film-info">
+    <div class="film-info" @click="goFilmDetails">
+      <div
+        v-if="versionList && versionList.length"
+        class="film-version-container"
+      >
+        <div v-for="(version, i) in versionList" :key="i" class="film-version">
+          {{ version }}
+        </div>
+      </div>
       <img class="film-img" :src="data.cover" />
       <div class="film-footer" :class="{ 'film-flex-end': data.score == '0' }">
-        <div v-if="data.score != '0'" class="film-score">{{ data.score }}</div>
+        <div v-if="data.score != '0'" class="film-score">{{ parseFloat(data.score) / 10 }}</div>
         <div v-if="data.want_view" class="film-want">
           {{ data.want_view | wantFormat }}想看
         </div>
@@ -14,10 +22,19 @@
       <van-button round size="mini" type="primary">购票</van-button>
     </template>
     <template v-if="type === 2">
-      <van-button v-if="data.publish_date == '1'" round size="mini"  color="#55B862"
+      <van-button
+        v-if="data.pre_saleflag == '1'"
+        round
+        size="mini"
+        color="#55B862"
         >预售</van-button
       >
-      <van-button v-else-if="data.view == '0'" round size="mini" type="warning" @click="setviewwatch"
+      <van-button
+        v-else-if="data.view == '0'"
+        round
+        size="mini"
+        type="warning"
+        @click="setviewwatch"
         >想看</van-button
       >
       <van-button v-else round size="mini">已想看</van-button>
@@ -39,6 +56,13 @@ export default {
       default: 1
     }
   },
+  computed: {
+    // 影片制式默认string，手动转为数组，并且只展示两个制式
+    versionList () {
+      const versions = this.data.version.split(',')
+      return versions.length > 2 ? versions.slice(0, 2) : versions
+    }
+  },
   methods: {
     // 设置影片想看
     setviewwatch () {
@@ -48,6 +72,15 @@ export default {
         // 变为已设置
         this.data.view = '1'
         this.data.want_view = parseInt(this.data.want_view) + 1
+      })
+    },
+    // 跳转影片详情
+    goFilmDetails ({ film_id }) {
+      this.$router.push({
+        name: 'movieFilmDetails',
+        query: {
+          id: this.data.film_id
+        }
       })
     }
   },
@@ -72,6 +105,22 @@ export default {
   position: relative;
   background: #e3e3e3;
   border-radius: 10px;
+}
+
+.film-version-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  .film-version {
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    background: #000000;
+    border-radius: 4px;
+    font-size: 24px;
+    line-height: 1;
+    color: #ffffff;
+    opacity: 0.6;
+  }
 }
 
 .film-img {
@@ -124,7 +173,7 @@ export default {
   font-size: 30px;
 }
 /deep/ .van-button--default {
-  color: #8F8F94;
-  border-color: #AAAAAA;
+  color: #8f8f94;
+  border-color: #aaaaaa;
 }
 </style>

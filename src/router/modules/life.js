@@ -289,7 +289,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieIndex" */
       '@/views/life/movie/index'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 影片/影院列表
 {
@@ -299,7 +302,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieList" */
       '@/views/life/movie/list'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 影片详情
 {

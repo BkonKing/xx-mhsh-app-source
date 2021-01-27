@@ -1,5 +1,10 @@
 import request from '@/utils/request.js'
 
+// 生活首页热映
+export function getHitMovies (data) {
+  return request.post('/film/film/hitmovies', data)
+}
+
 // 获取影片资料(列表) type:1执映2待映
 export function getfilmlist (data) {
   return request.post('/film/film/getfilmlist', data)
@@ -19,6 +24,20 @@ export function setviewwatch (data) {
  */
 export function getfilminfo (data) {
   return request.post('/film/film/getfilminfo', data)
+}
+
+/**
+ * 根据城市获取影院信息
+ * @param {string} city_id 城市ID
+ * @param {string} lng 经度
+ * @param {string} lat 纬度
+ * @param {string} county_id 区县ID
+ * @param {string} hall_no 影厅编码
+ * @param {string} sort_type 1按距离最低排序2按价格最低排序
+ * @param {string} film_no 影片编码
+ */
+export function selectCinema (data) {
+  return request.post('/film/film/selectCinema', data)
 }
 
 /**

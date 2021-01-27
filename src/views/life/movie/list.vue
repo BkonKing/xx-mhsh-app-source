@@ -11,7 +11,7 @@
         <div
           class="nav-tab film-tab"
           :class="{ 'nav-tab-active': type === '1' }"
-          @click="type = '1'"
+          @click="switchFilm"
         >
           电影
         </div>
@@ -29,8 +29,8 @@
     </van-nav-bar>
     <!-- 电影 -->
     <div class="film-container" v-show="type === '1'">
-      <van-tabs v-model="movieActive">
-        <van-tab title="正在上映">
+      <van-tabs v-model="movieActive" sticky offset-top="44">
+        <van-tab title="正在热映">
           <film-list
             ref="nowMovieList"
             key="1"
@@ -41,6 +41,7 @@
         </van-tab>
         <van-tab title="即将上映">
           <film-list
+            class="start-movie-list"
             ref="startMovieList"
             key="2"
             v-model="startMovieList"
@@ -52,120 +53,36 @@
     </div>
     <!-- 影院 -->
     <div v-show="type === '2'">
-      <van-dropdown-menu>
-        <van-dropdown-item v-model="countyId">
-          <van-cell
-            v-for="(item, i) in countyOptions"
-            :key="i"
-            @click="handleClickCounty(item)"
-          >
-            <template #title>
-              <span
-                v-if="countyId == item.text"
-                class="tf-icon tf-icon-gouxuan"
-              ></span>
-              <span
-                class="dropdown-menu-title"
-                :class="{ 'dropdown-menu-title-active': countyId == item.text }"
-                >{{ item.value
-                }}{{ item.total ? `（${item.total}）` : "" }}</span
-              >
-            </template>
-          </van-cell>
-          <template #title>
-            {{ countyText }}
-          </template>
-        </van-dropdown-item>
-        <van-dropdown-item v-model="hallNo">
-          <div class="hall-tags">
-            <div
-              class="hall-tag"
-              :class="{ 'hall-tag-active': hallNo === item.text }"
-              v-for="(item, i) in hallOptions"
-              :key="i"
-              @click="handleClickHall(item)"
-            >
-              {{ item.value }}
-            </div>
-          </div>
-          <template #title>
-            {{ hallText }}
-          </template>
-        </van-dropdown-item>
-        <van-dropdown-item v-model="sortType">
-          <van-cell
-            v-for="(item, i) in sortOptions"
-            :key="i"
-            @click="handleClickSort(item)"
-          >
-            <template #title>
-              <span
-                v-if="sortType == item.value"
-                class="tf-icon tf-icon-gouxuan"
-              ></span>
-              <span
-                class="dropdown-menu-title"
-                :class="{
-                  'dropdown-menu-title-active': sortType == item.value
-                }"
-                >{{ item.text }}</span
-              >
-            </template>
-          </van-cell>
-          <template #title>
-            {{ sortTypeText }}
-          </template>
-        </van-dropdown-item>
-      </van-dropdown-menu>
-      <cinema-list
+      <filter-cinema-list
         ref="cinemaList"
-        class="cinema-list"
-        v-model="cinemaList"
-        :load="getcinemainfobycity"
-        :tag="false"
-      ></cinema-list>
+        :cityId="cityId"
+        :lon="lon"
+        :lat="lat"
+      ></filter-cinema-list>
     </div>
   </div>
 </template>
 
 <script>
 import FilmList from './components/FilmList'
-import CinemaList from './components/CinemaList'
-import {
-  getfilmlist,
-  setviewwatch,
-  getcinemainfobycity,
-  gethall,
-  getcinematotalbycity
-} from '@/api/movie'
+import FilterCinemaList from './components/FilterCinemaList'
+import { getfilmlist, setviewwatch } from '@/api/movie'
 export default {
   name: 'movieList',
   components: {
     FilmList,
-    CinemaList
+    FilterCinemaList
   },
   data () {
     return {
       type: 0, // 1：影片，2：影院
-      movieActive: 0, // 影片tab
+      movieActive: 1, // 影片tab
       nowMovieList: [], // 正在上映的电影
       startMovieList: [], // 即将上映上映的电影
       cityId: '', // 城市id
       lon: '', // 经度
       lat: '', // 纬度
-      countyId: '', // 区县id
-      countyText: '全城', // 区县名称
-      countyOptions: [],
-      hallNo: '', // 影厅编码
-      hallText: '影厅', // 影厅名称
-      hallOptions: [],
-      sortType: 1, // 影厅排序
-      sortTypeText: '距离近', // 影厅排序显示
-      sortOptions: [
-        { text: '距离近', value: 1 },
-        { text: '价格低', value: 2 }
-      ],
-      cinemaList: [] // 影院列表
+      first: true // 是否从影院模块第一次进入页面
     }
   },
   created () {
@@ -173,13 +90,20 @@ export default {
     this.cityId = this.$route.query.cityId
     this.lon = this.$route.query.lon
     this.lat = this.$route.query.lat
-    this.gethall()
-    this.getcinematotalbycity()
   },
   mounted () {
-    this.$nextTick(() => {
-      this.filmReload('cinemaList')
-    })
+    if (this.type === '1') {
+      this.first = false
+      this.movieActive = this.$route.query.filmType ? 1 : 0
+      this.$nextTick(() => {
+        this.$refs.cinemaList && this.$refs.cinemaList.reload({})
+      })
+    } else {
+      this.$nextTick(() => {
+        this.filmReload('nowMovieList')
+        this.filmReload('startMovieList')
+      })
+    }
   },
   methods: {
     // 获取影片资料(列表) type:1执映2待映
@@ -203,58 +127,22 @@ export default {
         is_shown = true
       })
     },
-    // 获取所有及各区域县影院数量
-    getcinematotalbycity () {
-      getcinematotalbycity({
-        city_id: this.cityId
-      }).then(({ data, total }) => {
-        this.countyOptions = data
-        this.countyOptions.unshift({
-          value: '全城',
-          text: '',
-          total
-        })
-      })
-    },
-    // 获取影院地址列表
-    getcinemainfobycity () {
-      return getcinemainfobycity({
-        city_id: this.cityId,
-        county_id: this.countyId,
-        hall_no: this.hallNo,
-        sort_type: this.sortType,
-        lng: this.lon,
-        lat: this.lat
-      })
-    },
-    // 获取所有的影厅
-    gethall () {
-      gethall({
-        type: 1,
-        id: this.cityId
-      }).then(({ data }) => {
-        this.hallOptions = data
-        this.hallOptions.unshift({
-          value: '全城',
-          text: ''
-        })
-      })
-    },
-    // 区域点击事件
-    handleClickCounty ({ text, value }) {
-      this.countyText = value
-      this.countyId = text
-    },
-    // 影厅点击事件
-    handleClickHall ({ text, value }) {
-      this.hallText = value
-      this.hallNo = text
-    },
-    // 排序点击事件
-    handleClickSort ({ text, value }) {
-      this.sortTypeText = text
-      this.sortType = value
+    // 切换到电影tab
+    switchFilm () {
+      this.type = '1'
+      if (this.first) {
+        this.movieActive = 0
+        this.first = false
+      }
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['movieIndex']
+    if (names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
@@ -297,6 +185,8 @@ export default {
 .film-container {
   /deep/ .van-tabs__wrap {
     height: 90px;
+    border-bottom: 1px solid #f0f0f0;
+    margin: 0 30px;
   }
   /deep/ .van-tabs__line {
     width: 66px !important;
@@ -307,64 +197,11 @@ export default {
   /deep/ .van-tab__text {
     font-size: 30px;
   }
-}
-//影院
-/deep/ .van-dropdown-menu__bar {
-  height: 90px;
-}
-/deep/ .van-dropdown-menu__title::after {
-  border: 6px solid;
-  border-color: transparent transparent #aaaaaa #aaaaaa;
-  opacity: 1;
-}
-/deep/ .van-dropdown-menu__title--active::after {
-  border-color: transparent transparent #eb5841 #eb5841;
-}
-.dropdown-menu-title {
-  line-height: 36px;
-  font-size: 26px;
-  color: #666;
-}
-.dropdown-menu-title-active {
-  color: #eb5841;
-}
-/deep/ .van-dropdown-menu .van-popup {
-  padding: 10px 0;
-}
-.van-dropdown-menu .van-cell {
-  padding-left: 82px;
-}
-.van-dropdown-menu .tf-icon-gouxuan {
-  position: absolute;
-  top: 6px;
-  left: 30px;
-  font-size: 32px;
-  color: #eb5841;
-}
-.hall-tags {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 34px 10px 20px 30px;
-  .hall-tag {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 216px;
-    height: 66px;
-    padding: 0 20px;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    border: 2px solid #f0f0f0;
-    border-radius: 4px;
-    font-size: 26px;
-    color: #8f8f94;
+  /deep/ .tf-list-refresh {
+    padding: 30px;
   }
-  .hall-tag-active {
-    border-color: #eb5841;
-    color: #eb5841;
+  .start-movie-list {
+    padding: 0 30px;
   }
-}
-.cinema-list {
-  padding: 0 30px;
 }
 </style>
