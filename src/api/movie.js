@@ -120,3 +120,27 @@ export function getticklist (data) {
 export function getfilmdetails (data) {
   return request.post('/film/film/getfilmdetails', data)
 }
+
+/**
+ * 搜索电影或影院
+ * @param
+ */
+export function getFilmCinemaSeach (data) {
+  return request.post('/film/film/search', data)
+}
+
+/**
+ * 搜索电影列表
+ * @param
+ */
+export function getFilmSeachList (data) {
+  return request.post('/film/film/getsearchfilminfo', data)
+}
+
+/**
+ * 搜索影院列表
+ * @param
+ */
+export function getCinemaSeachList (data) {
+  return request.post('/film/film/getsearchcinemainfo', data)
+}
