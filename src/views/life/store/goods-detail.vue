@@ -718,7 +718,7 @@ export default {
       // 获取购物车的缓存数组（没有数据，则赋予一个空数组）
 
       var arr = []
-      if ((this.infoData.pay_type == 0 && this.infoData.goods_type < 3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0)) {
+      if ((this.infoData.pay_type == 0 && this.infoData.goods_type < 3 && this.btn_type == 'cart') || (this.infoData.goods_type == 3 && this.infoData.ollage_info.is_start == 0 && this.infoData.pay_type != 1)) {
         // var arr = JSON.parse(localStorage.getItem('cart')) || [];
         var arr = api.getPrefs({ sync: true, key: 'cart' }) || []
         if (arr && arr.length > 0) {
