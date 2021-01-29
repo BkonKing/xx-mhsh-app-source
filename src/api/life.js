@@ -162,6 +162,10 @@ export function cancelPayOrder (params) {
 export function cancelRefundApply (params) {
   return request.post('/life/my_order/cancelRefundOrderProject', params)
 }
+// 取消退款申请
+export function cancelRefundApply2 (params) {
+  return request.post('/life/my_order/cancelRefund', params)
+}
 // 取消退款退货申请
 export function cancelRefundReturnApply (params) {
   return request.post('/life/my_order/declineReturnfund', params)
