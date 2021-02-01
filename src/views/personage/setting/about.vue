@@ -10,7 +10,7 @@
     ></van-nav-bar>
     <div class="logo-container">
       <img class="logo-img" src="@/assets/imgs/logo.png" />
-      <div class="tf-text">版本号：{{ appVersion }}</div>
+      <div class="tf-text-lg">版本号：{{ appVersion }}</div>
     </div>
     <tf-list>
       <tf-list-item
@@ -81,6 +81,11 @@ export default {
 /deep/ .tf-clist {
   width: 710px;
   margin: 0 20px;
+  border-radius: 10px;
+  color: #222;
+  .tf-clist-box {
+    height: 100px;
+  }
 }
 .right-text {
   font-size: 24px;
@@ -101,7 +106,8 @@ export default {
     width: 228px;
     height: 228px;
   }
-  .tf-text {
+  .tf-text-lg {
+    color: #222;
     margin-bottom: 80px;
   }
 }
@@ -110,7 +116,7 @@ export default {
   text-align: center;
   position: absolute;
   bottom: 26px;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 42px;
   color: #8F8F94;
 }
