@@ -325,7 +325,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieSelectCinema" */
       '@/views/life/movie/selectCinema'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 演职人员
 {
@@ -345,7 +348,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieCinemaDetails" */
       '@/views/life/movie/cinemaDetails'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 影院位置
 {
@@ -356,6 +362,29 @@ const lifeRouter = [{
       /* webpackChunkName: "movieLocation" */
       '@/views/life/movie/location'
     )
+},
+// 选择座位
+{
+  path: '/life/movie/seat',
+  name: 'movieSeat',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieSeat" */
+      '@/views/life/movie/seat'
+    )
+},
+// 确定电影票订单
+{
+  path: '/life/movie/confirmOrder',
+  name: 'movieConfirmOrder',
+  component: () =>
+    import(
+      /* webpackChunkName: "movieConfirmOrder" */
+      '@/views/life/movie/confirmOrder'
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 我的影票订单列表
 {

@@ -40,7 +40,7 @@
             alt=""
           />
           <img
-            class="film-collect"
+            class="film-uncollect"
             v-else
             src="@/assets/imgs/movie_uncollect.png"
             @click="setviewwatch"
@@ -100,7 +100,7 @@ export default {
     }
   }
   .film-title {
-    margin-bottom: 22px;
+    margin-bottom: 16px;
     font-size: 42px;
     font-weight: 600;
     color: #fff;
@@ -108,24 +108,25 @@ export default {
   .film-type,
   .film-duration,
   .film-publish {
+    margin-top: 6px;
     font-size: 26px;
     color: #ffffff99;
   }
   .film-tags {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 22px;
+    margin-top: 18px;
     .film-tag {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 38px;
       margin-right: 10px;
       margin-bottom: 10px;
-      padding: 0 12px;
+      padding: 4px 12px;
       font-size: 24px;
+      line-height: 1;
       color: #ffffff99;
-      border: 1px solid #ffffff99;
+      border: 2px solid #ffffff99;
       border-radius: 4px;
     }
   }
@@ -157,6 +158,10 @@ export default {
     }
   }
   .film-collect {
+    width: 40px;
+    height: 40px;
+  }
+  .film-uncollect {
     width: 48px;
     height: 48px;
   }

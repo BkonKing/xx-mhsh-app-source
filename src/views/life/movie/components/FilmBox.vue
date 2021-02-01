@@ -11,7 +11,9 @@
       </div>
       <img class="film-img" :src="data.cover" />
       <div class="film-footer" :class="{ 'film-flex-end': data.score == '0' }">
-        <div v-if="data.score != '0'" class="film-score">{{ parseFloat(data.score) / 10 }}</div>
+        <div v-if="data.score != '0'" class="film-score">
+          {{ parseFloat(data.score) / 10 }}
+        </div>
         <div v-if="data.want_view" class="film-want">
           {{ data.want_view | wantFormat }}想看
         </div>
@@ -19,7 +21,9 @@
     </div>
     <div class="film-name">{{ data.film_name }}</div>
     <template v-if="type === 1">
-      <van-button round size="mini" type="primary">购票</van-button>
+      <van-button round size="mini" type="primary" @click="buyTicket"
+        >购票</van-button
+      >
     </template>
     <template v-if="type === 2">
       <van-button
@@ -27,6 +31,7 @@
         round
         size="mini"
         color="#55B862"
+        @click="buyTicket"
         >预售</van-button
       >
       <van-button
@@ -80,6 +85,16 @@ export default {
         name: 'movieFilmDetails',
         query: {
           id: this.data.film_id
+        }
+      })
+    },
+    // 售票/预售，跳转到选择影院
+    buyTicket () {
+      this.$router.push({
+        name: 'movieSelectCinema',
+        query: {
+          id: this.data.film_id,
+          code: this.data.film_code
         }
       })
     }

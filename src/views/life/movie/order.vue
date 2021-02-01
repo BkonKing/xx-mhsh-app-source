@@ -13,43 +13,48 @@
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
-      <van-tabs v-model="type" @change="reloadOrderList">
+      <van-tabs v-model="type" @change="reloadOrderList" sticky offset-top="44">
         <van-tab
           v-for="(item, i) in typeOptions"
           :key="i"
           :name="item.value"
           :title="item.text"
         ></van-tab>
-      </van-tabs>
-      <refreshList ref="orderList" :list.sync="orderList" :load="getticklist">
-        <template v-slot="{ item }">
-          <div class="order-box" @click="goTicket(item)">
-            <div class="order-header">
-              <div class="order-cinema">{{ item.cinema_name }}</div>
-              <div class="order-status">{{ item.order_desc }}</div>
-            </div>
-            <div class="order-content">
-              <img class="order-cover" :src="item.cover" />
-              <div class="order-content-right">
-                <div class="order-film-name">{{ item.film_name }}</div>
-                <div class="tf-flex">
-                  <div class="order-film-time">
-                    场次：
+        <refreshList
+          ref="orderList"
+          :pagination="false"
+          :list.sync="orderList"
+          :load="getticklist"
+        >
+          <template v-slot="{ item }">
+            <div class="order-box" @click="goTicket(item)">
+              <div class="order-header">
+                <div class="order-cinema">{{ item.cinema_name }}</div>
+                <div class="order-status">{{ item.order_desc }}</div>
+              </div>
+              <div class="order-content">
+                <img class="order-cover" :src="item.cover" />
+                <div class="order-content-right">
+                  <div class="order-film-name">{{ item.film_name }}</div>
+                  <div class="tf-flex">
+                    <div class="order-film-time">
+                      场次：
+                    </div>
+                    <div>
+                      {{ item.date }} {{ item.week }} <br />
+                      {{ item.time }}
+                    </div>
                   </div>
-                  <div>
-                    {{ item.date }} {{ item.week }} <br />
-                    {{ item.time }}
-                  </div>
+                  <div class="order-film-number">数量：{{ item.count }}张</div>
                 </div>
-                <div class="order-film-number">数量：{{ item.count }}张</div>
+              </div>
+              <div class="order-footer">
+                <span class="tf-text-grey">合计:</span>￥{{ item.pay_price }}
               </div>
             </div>
-            <div class="order-footer">
-              <span class="tf-text-grey">合计:</span>￥{{ item.pay_price }}
-            </div>
-          </div>
-        </template>
-      </refreshList>
+          </template>
+        </refreshList>
+      </van-tabs>
     </div>
   </div>
 </template>

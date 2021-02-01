@@ -16,7 +16,9 @@
               parseFloat(item.score) / 10
             }}</span>
             <span
-              v-else-if="type === 1 && item.pre_saleflag === '1' && item.want_view != 0"
+              v-else-if="
+                type === 1 && item.pre_saleflag === '1' && item.want_view != 0
+              "
               class="tf-text-sm tf-text-grey"
               ><span class="film-want-text">{{
                 item.want_view | wantFormat
@@ -38,9 +40,15 @@
               round
               size="mini"
               color="#55B862"
+              @click.stop="buyTicket(item)"
               >预售</van-button
             >
-            <van-button v-else-if="type === 1" round size="mini" type="primary"
+            <van-button
+              v-else-if="type === 1"
+              round
+              size="mini"
+              type="primary"
+              @click.stop="buyTicket(item)"
               >购票</van-button
             >
             <template v-else-if="type === 2">
@@ -124,6 +132,16 @@ export default {
         name: 'movieFilmDetails',
         query: {
           id: film_id
+        }
+      })
+    },
+    // 售票/预售，跳转到选择影院
+    buyTicket (data) {
+      this.$router.push({
+        name: 'movieSelectCinema',
+        query: {
+          id: data.film_id,
+          code: data.film_code
         }
       })
     },

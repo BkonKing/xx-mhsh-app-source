@@ -54,6 +54,15 @@ export function getcinemanearby (data) {
 }
 
 /**
+ * 获取所有的影厅
+ * @param {string} film_no 影片编码
+ * @param {string} city_id 城市ID
+ */
+export function getSelectCinemaDate (data) {
+  return request.post('/film/film/selectcinemadate', data)
+}
+
+/**
  * 根据城市获取影院信息
  * @param {string} city_id 城市ID
  * @param {string} lng 经度
@@ -102,6 +111,107 @@ export function getCinemadetail (data) {
  */
 export function getCinemaschedu (data) {
   return request.post('/film/film/cinemaschedu', data)
+}
+
+/**
+ * 获取实时座位图
+ * @param {string} cinema_id 影院ID
+ * @param {string} feature_appno 排期编码
+ */
+export function getplanseat (data) {
+  return request.post('/film/film/getplanseat', data)
+}
+
+/**
+ * 释放座位
+ * @param {string} order_id 订单ID
+ */
+export function unlockorder (data) {
+  return request.post('/film/film/unlockorder', data)
+}
+
+/**
+ * 锁座
+ * @param {string} cinema_id 影院ID
+ * @param {string} feature_appno 排期编码
+ * @param {string} seat_no 座位编码，多个参数用英文半角逗号拼接
+ * @param {string} ticket_price 票价，多个参数用英文半角逗号拼接，顺序要与座位编码对应
+ * @param {number} uid 用户ID
+ * @param {number} film_no 影片编码
+ * @param {number} seat_name 座位名称
+ */
+export function lockseat (data) {
+  return request.post('/film/film/lockseat', data, {
+    headers: {
+      noToast: true
+    }
+  })
+}
+
+/**
+ * 获取用户的优惠券
+ * @param {number} uid 用户ID
+ */
+export function getUserCoupon (data) {
+  return request.post('/film/film/getusercoupon', data)
+}
+
+/**
+ * 电影票计算支付价格
+ * @param {number} order_id 订单ID
+ * @param {number} credits 幸福币
+ * @param {number} coupon_id 优惠ID 有使用的话要传递过来
+ * @param {number} type 1使用幸福币2不使用
+ */
+export function calculatePrice (data) {
+  return request.post('/film/film/calculatePrice', data)
+}
+
+/**
+ * 电影票支付接口
+ * @param {number} order_id 订单ID
+ * @param {number} pay_price 支付价格
+ * @param {number} pay_type 支付方式 1微信2支付宝4银行卡支付
+ */
+export function payOrder (data) {
+  return request.post('/film/film/pay_order', data)
+}
+
+/**
+ * 电影票幸福币支付接口
+ * @param {number} order_id 订单ID
+ * @param {number} credits 幸福币
+ */
+export function payCredits (data) {
+  return request.post('/film/film/payCredits', data)
+}
+
+/**
+ * 影片场次列表
+ * @param {string} cinema_id 影院ID
+ * @param {string} film_no 影片编码
+ * @param {string} feature_appno 排期编码
+ * @param {string} date 排期时间
+ */
+export function getSessions (data) {
+  return request.post('/film/film/getSessions', data)
+}
+
+/**
+ * 获取排期的价格
+ * @param {string} cinema_id 影院ID
+ * @param {string} feature_appno 排期编码
+ */
+export function getfilmprice (data) {
+  return request.post('/film/film/getfilmprice', data)
+}
+
+/**
+ * 获取确定订单信息
+ * @param {string} order_id 订单ID
+ */
+export function getConfirmOrder (data) {
+  return request.post('/film/film/confirmorder', data)
 }
 
 /**

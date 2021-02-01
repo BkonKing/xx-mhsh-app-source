@@ -208,7 +208,7 @@ export default {
         query: {
           type,
           filmType: filmType,
-          cityId: this.cityId || 350100,
+          cityId: this.cityId || 500100,
           lon: this.lon || 119.33887,
           lat: this.lat || 26.05312
         }
@@ -295,6 +295,8 @@ export default {
 .feature-container {
   display: flex;
   justify-content: space-between;
+  position: relative;
+  z-index: 1;
   margin: 33px 105px 0;
   .feature-box {
     .feature-img {

@@ -35,9 +35,19 @@ export default {
       type: Object,
       default: () => ({})
     },
+    // 是否显示厅标签
     tag: {
       type: Boolean,
       default: true
+    },
+    filmNo: {
+      type: String,
+      default: ''
+    },
+    // 排期日期
+    scheduDate: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -47,7 +57,9 @@ export default {
         name: 'movieCinemaDetails',
         query: {
           id: cinema_id,
-          name: cinema_name
+          filmNo: this.filmNo,
+          name: cinema_name,
+          scheduDate: this.scheduDate
         }
       })
     }

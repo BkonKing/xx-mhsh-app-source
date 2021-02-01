@@ -32,7 +32,7 @@
           ></span>
         </div>
       </div>
-      <div class="film-cast-info">
+      <div class="film-cast-info" v-if="info.director || info.cast">
         <div class="film-cast-header" @click="goCast">
           <div class="film-cast-title">演职人员</div>
           <div class="tf-text-grey">
@@ -70,9 +70,12 @@ export default {
     return {
       id: '',
       title: '',
-      info: {},
+      info: {
+        score: 0,
+        want_view: 0
+      },
       collapseable: false, // 是否需要折叠
-      collapsed: false // 是否折叠
+      collapsed: false // 控制折叠
     }
   },
   components: {
@@ -90,6 +93,7 @@ export default {
       }).then(({ data }) => {
         this.info = data
         this.$nextTick(() => {
+          // 描述元素如果高度大于105则需要显示折叠按钮
           if (this.$refs.introductionText.clientHeight > 105) {
             this.collapseable = true
           }

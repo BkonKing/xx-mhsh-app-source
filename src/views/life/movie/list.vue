@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg-white">
+  <div class="tf-bg-white tf-body">
     <van-nav-bar
       :border="false"
       :fixed="true"
@@ -28,8 +28,8 @@
       </template>
     </van-nav-bar>
     <!-- 电影 -->
-    <div class="film-container" v-show="type === '1'">
-      <van-tabs v-model="movieActive" sticky offset-top="44">
+    <div class="film-container tf-body-container" v-show="type === '1'">
+      <van-tabs class="list-tabs" v-model="movieActive" sticky offset-top="44">
         <van-tab title="正在热映">
           <film-list
             ref="nowMovieList"
@@ -52,7 +52,7 @@
       </van-tabs>
     </div>
     <!-- 影院 -->
-    <div v-show="type === '2'">
+    <div class="tf-body-container" v-show="type === '2'">
       <filter-cinema-list
         ref="cinemaList"
         :cityId="cityId"

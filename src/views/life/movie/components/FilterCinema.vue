@@ -73,6 +73,10 @@ export default {
     cityId: {
       type: [String, Number],
       default: ''
+    },
+    filmNo: {
+      type: [String, Number],
+      default: ''
     }
   },
   data () {
@@ -100,7 +104,8 @@ export default {
     gethall () {
       gethall({
         type: 1,
-        id: this.cityId
+        id: this.cityId,
+        film_no: this.filmNo
       }).then(({ data }) => {
         this.hallOptions = data
         this.hallOptions.unshift({
@@ -112,7 +117,8 @@ export default {
     // 获取所有及各区域县影院数量
     getcinematotalbycity () {
       getcinematotalbycity({
-        city_id: this.cityId
+        city_id: this.cityId,
+        film_no: this.filmNo
       }).then(({ data, total }) => {
         this.countyOptions = data
         this.countyOptions.unshift({

@@ -44,6 +44,10 @@ export default {
     dataKey: {
       type: String,
       default: 'data'
+    },
+    pagination: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -76,9 +80,13 @@ export default {
             if (data && data.length > 0) {
               this.listChild.push(...data)
               this.$emit('update:list', this.listChild)
-              this.pageNum++
-              if (data.length >= 10) {
-                this.isEndNum = 0
+              if (this.pagination) {
+                this.pageNum++
+                if (data.length >= 10) {
+                  this.isEndNum = 0
+                } else {
+                  this.isEndNum = 1
+                }
               } else {
                 this.isEndNum = 1
               }

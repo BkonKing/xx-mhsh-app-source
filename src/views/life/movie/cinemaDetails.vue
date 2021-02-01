@@ -31,7 +31,7 @@
             <div
               v-for="(item, index) in filmList"
               :key="index"
-              @click="swipeTo(index, item)"
+              @click="handleClickFilm(item, index)"
               class="film-swipe-item"
               :class="{ active: item.film_no == filmNo }"
             >
@@ -39,15 +39,36 @@
             </div>
           </div>
         </div>
-        <div class="film-title">{{ filmActive.film_name }}</div>
-        <div class="film-des">
+        <div class="film-title" @click="goFilmDetails(filmActive.film_id)">
+          {{ filmActive.film_name }}
+        </div>
+        <div
+          v-if="filmActive.total_time"
+          class="film-des"
+          @click="goFilmDetails(filmActive.film_id)"
+        >
           {{ filmActive.total_time }}分钟 | {{ filmActive.copy_type }}
         </div>
         <div class="film-tag"></div>
       </div>
-      <van-tabs v-model="activeDate" title-active-color="#EB5841" sticky>
-        <van-tab v-for="(obj, key) in scheduList" :key="key" :title="key">
-          <div class="film-schedule" v-for="(item, i) in obj" :key="i">
+      <van-tabs
+        v-if="scheduList"
+        v-model="activeDate"
+        title-active-color="#EB5841"
+        sticky
+      >
+        <van-tab
+          v-for="(obj, key) in scheduList"
+          :key="key"
+          :title="key"
+          :name="key"
+        >
+          <div
+            class="film-schedule"
+            v-for="(item, i) in obj"
+            :key="i"
+            @click="goSeat(item)"
+          >
             <div class="tf-flex">
               <div class="film-start">{{ item.start_time }}</div>
               <div class="film-end">{{ item.end_time }}散场</div>
@@ -68,6 +89,7 @@
           </div>
         </van-tab>
       </van-tabs>
+      <van-loading v-else type="spinner" color="#eb5841" size="24px" />
     </div>
   </div>
 </template>
@@ -79,10 +101,10 @@ export default {
   data () {
     return {
       title: '',
-      id: '',
-      activeDate: 0, // 当前选中排期日期
+      cinemaId: '', // 影院id
+      activeDate: '', // 当前选中排期日期
       filmList: [], // 影片列表
-      scheduList: {}, // 影片排期列表
+      scheduList: null, // 影片排期列表
       filmNo: '', // 当前选中影片编码
       filmIndex: 0, // 当前选中影片序号
       filmActive: {}, // 当前选中影片数据
@@ -90,15 +112,17 @@ export default {
     }
   },
   created () {
-    this.id = this.$route.query.id
+    this.cinemaId = this.$route.query.id
+    this.filmNo = this.$route.query.filmNo
     this.title = this.$route.query.name
+    this.activeDate = this.$route.query.scheduDate
     this.getCinemadetail()
   },
   methods: {
     // 获取影片详情
     getCinemadetail () {
       getCinemadetail({
-        cinema_id: this.id
+        cinema_id: this.cinemaId
       }).then(({ data }) => {
         this.filmList = data.cinema_info
         this.swipeTo(0, this.filmList[0])
@@ -107,14 +131,19 @@ export default {
     // 获取影片排期
     getCinemaschedu () {
       getCinemaschedu({
-        cinema_id: this.id,
+        cinema_id: this.cinemaId,
         film_no: this.filmNo
       }).then(({ data }) => {
         this.scheduList = data
-        this.$nextTick(() => {
-          this.activeDate = 0
-        })
       })
+    },
+    // 点击影片，如果是当前选中，则跳转到详情页，否则就选中点击影片
+    handleClickFilm (item, index) {
+      if (this.filmNo === item.film_no) {
+        this.goFilmDetails(item.film_id)
+      } else {
+        this.swipeTo(index, item)
+      }
     },
     // 切换影片，为了将当前选中的居中显示，需要将轮播图位置少切换一个位置
     swipeTo (i, item) {
@@ -151,6 +180,42 @@ export default {
         this.filmActive = this.filmList[index]
       }
     },
+    // 跳转选择位置
+    goSeat (data) {
+      const {
+        feature_appno,
+        hall_name,
+        start_time,
+        end_time,
+        copy_language,
+        copy_type,
+        schedu_date
+      } = data
+      this.$router.push({
+        name: 'movieSeat',
+        query: {
+          cinemaName: this.title,
+          hallName: hall_name,
+          filmNo: this.filmNo,
+          filmName: this.filmActive.film_name,
+          date: this.activeDate,
+          time: `${start_time}-${end_time}`,
+          tag: `${copy_language} ${copy_type}`,
+          scheduDate: schedu_date,
+          cinemaId: this.cinemaId,
+          featureNo: feature_appno
+        }
+      })
+    },
+    // 跳转影片详情
+    goFilmDetails (id) {
+      this.$router.push({
+        name: 'movieFilmDetails',
+        query: {
+          id: id
+        }
+      })
+    },
     // 跳转影院位置
     goLocation () {
       this.$router.push({
@@ -162,6 +227,14 @@ export default {
     filmNo () {
       this.getCinemaschedu()
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['movieSelectCinema', 'movieList']
+    if (names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
@@ -188,6 +261,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 480px;
   padding: 10px 0 40px;
   position: relative;
   background: #000000cc;
@@ -261,7 +335,12 @@ export default {
     font-size: 30px;
   }
 }
+/deep/ .van-loading--spinner {
+  margin-top: 50px;
+  text-align: center;
+}
 .film-swipe-container {
+  height: 320px;
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;

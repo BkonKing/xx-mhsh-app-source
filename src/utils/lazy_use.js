@@ -50,7 +50,8 @@ import {
   Tabbar,
   TabbarItem,
   TreeSelect,
-  Circle
+  Circle,
+  Overlay
 } from 'vant'
 
 Vue.use(Button)
@@ -104,3 +105,4 @@ Vue.use(Tabbar)
 Vue.use(TabbarItem)
 Vue.use(TreeSelect)
 Vue.use(Circle)
+Vue.use(Overlay)
