@@ -49,7 +49,10 @@ import {
   Tabs,
   Tabbar,
   TabbarItem,
-  TreeSelect
+  TreeSelect,
+  Circle,
+  Overlay,
+  Progress
 } from 'vant'
 
 Vue.use(Button)
@@ -102,3 +105,6 @@ Vue.use(Tabs)
 Vue.use(Tabbar)
 Vue.use(TabbarItem)
 Vue.use(TreeSelect)
+Vue.use(Circle)
+Vue.use(Overlay)
+Vue.use(Progress)
