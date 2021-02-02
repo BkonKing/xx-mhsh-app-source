@@ -16,7 +16,12 @@
       <div class="order-box">
         <div class="order-header">
           <div class="order-cinema">{{ info.cinema_name }}</div>
-          <div class="order-status">{{ info.order_desc }}</div>
+          <div
+            class="order-status"
+            :class="{ 'tf-text-primary': info.get_status === 0 }"
+          >
+            {{ info.order_desc }}
+          </div>
         </div>
         <div class="film-box">
           <img class="film-cover" :src="info.cover" />
@@ -34,7 +39,12 @@
             <div class="tf-text-grey">
               场次
             </div>
-            <div>{{ info.date }} {{ info.week }} {{ info.time }}</div>
+            <div>
+              {{ info.date }} {{ info.week }} {{ info.time }} <br />{{
+                info.copy_language
+              }}
+              {{ info.copy_type }}
+            </div>
           </div>
           <div class="tf-flex">
             <div class="tf-text-grey">
@@ -53,18 +63,87 @@
             </div>
           </div>
         </div>
-        <div class="order-footer"></div>
+        <!-- <div class="order-footer"></div>
         <div class="border-indent border-indent-left"></div>
-        <div class="border-indent border-indent-right"></div>
+        <div class="border-indent border-indent-right"></div> -->
       </div>
-      <div class="order-status-box">
+      <!-- 已取消 -->
+      <div v-if="info.order_desc === '已取消'" class="order-box">
+        <div class="order-content">
+          <div class="tf-flex">
+            <div class="tf-text-grey">
+              取消时间
+            </div>
+            <div>
+              {{ info.refund_info.ctime }}
+            </div>
+          </div>
+          <div class="tf-flex">
+            <div class="tf-text-grey">
+              退款金额
+            </div>
+            <div>
+              <template v-if="refundPrice">
+                {{ refundPrice }}
+              </template>
+              <template v-if="refundPrice && refundHappiness">
+                +
+              </template>
+              <template v-if="refundHappiness">
+                {{ refundHappiness }}
+              </template>
+            </div>
+          </div>
+          <div class="tf-flex">
+            <div class="tf-text-grey">
+              退款方式
+            </div>
+            <div>
+              {{ info.refund_info.type | refundType }}
+            </div>
+          </div>
+          <div class="tf-flex">
+            <div class="tf-text-grey">
+              退款时间
+            </div>
+            <div>
+              {{ info.refund_info.htime }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="order-status-box"
+        :class="{
+          'order-status-complete':
+            info.get_status === 2 ||
+            (info.get_status === 1 && info.overdue === 1)
+        }"
+      >
+        <div class="order-status-divider"></div>
         <div class="border-indent border-indent-left"></div>
         <div class="border-indent border-indent-right"></div>
-        <!-- rate表示进度条的目标进度 -->
-        <van-circle v-model="currentRate" :rate="100" color="#EB5841" :speed="100"
-          ><img class="draw-bill-img" src="@/assets/imgs/movie_draw_bill.png" alt=""
-        /></van-circle>
-        <div class="tf-text-lg">出票中</div>
+        <template v-if="info.order_desc === '待出票'">
+          <!-- rate表示进度条的目标进度 -->
+          <van-circle
+            v-model="currentRate"
+            :rate="100"
+            color="#EB5841"
+            :speed="100"
+            ><img
+              class="draw-bill-img"
+              src="@/assets/imgs/movie_draw_bill.png"
+              alt=""
+          /></van-circle>
+          <div class="tf-text-lg">出票中</div>
+        </template>
+        <template v-else>
+          <img class="ticket-code-img" :src="info.ticket_code" />
+          <div class="tf-text-lg">
+            取票码：<span class="ticket-code-text">{{ info.ticket_code }}</span>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -81,6 +160,14 @@ export default {
       currentRate: 0 // 动画过程中的实时进度
     }
   },
+  computed: {
+    refundPrice () {
+      return this.info.refund_info.refund_price
+    },
+    refundHappiness () {
+      return this.info.refund_info.refund_happiness
+    }
+  },
   created () {
     this.orderId = this.$route.query.id
     this.getfilmdetails()
@@ -93,6 +180,19 @@ export default {
       }).then(({ data }) => {
         this.info = data
       })
+    }
+  },
+  filters: {
+    // 退款方式
+    refundType (value) {
+      const text = [
+        '',
+        '退回微信',
+        '退回支付宝',
+        '全额退回幸福币',
+        '退回银行卡'
+      ]
+      return text[value]
     }
   }
 }
@@ -134,6 +234,12 @@ export default {
     .film-info {
       font-size: 26px;
       color: #8f8f94;
+      .film-name {
+        margin-bottom: 20px;
+        font-size: 42px;
+        font-weight: 500;
+        color: #222;
+      }
     }
   }
   .order-content {
@@ -173,14 +279,33 @@ export default {
   align-items: center;
   width: 690px;
   position: relative;
-  height: 403px;
+  // height: 403px;
   margin: 0 30px;
-  padding: 0 40px;
+  padding: 0 40px 60px;
   background: #ffffff;
   border-radius: 10px;
+  .order-status-divider {
+    width: 100%;
+    border-top: 2px dotted #aaaaaa;
+  }
+  .ticket-code-img {
+    width: 300px;
+    height: 300px;
+    margin-top: 50px;
+  }
+  .ticket-code-text {
+    font-size: 34px;
+    color: #222;
+  }
   .tf-text-lg {
     margin-top: 36px;
     color: #222;
+  }
+}
+.order-status-complete {
+  .ticket-code-img,
+  .tf-text-lg {
+    opacity: 0.4;
   }
 }
 .draw-bill-img {

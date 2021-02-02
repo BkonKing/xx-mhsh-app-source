@@ -70,7 +70,7 @@ export default {
       cinemaList: [], // 影院列表
       activeDate: '', // 选中日期
       activeScheduDate: '', // 用来跳转到影院详情排期所需的参数
-      cityId: 500100,
+      cityId: 350100,
       lon: 119.33887,
       lat: 26.05312
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg tf-body">
     <van-nav-bar
       title="我的影票"
       :fixed="true"
@@ -12,8 +12,14 @@
         <span class="tf-icon tf-icon-kefu"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-main-container">
-      <van-tabs v-model="type" @change="reloadOrderList" sticky offset-top="44">
+    <div class="tf-body-container">
+      <van-tabs
+        class="list-tabs-nopane"
+        v-model="type"
+        @change="reloadOrderList"
+        sticky
+        offset-top="44"
+      >
         <van-tab
           v-for="(item, i) in typeOptions"
           :key="i"
@@ -30,7 +36,12 @@
             <div class="order-box" @click="goTicket(item)">
               <div class="order-header">
                 <div class="order-cinema">{{ item.cinema_name }}</div>
-                <div class="order-status">{{ item.order_desc }}</div>
+                <div
+                  class="order-status"
+                  :class="{ 'tf-text-primary': item.get_status === 0 }"
+                >
+                  {{ item.order_desc }}
+                </div>
               </div>
               <div class="order-content">
                 <img class="order-cover" :src="item.cover" />
@@ -123,7 +134,9 @@ export default {
 <style lang="less" scoped>
 .order-box {
   padding: 0 30px;
+  margin-bottom: 10px;
   background: #fff;
+  border-radius: 10px;
   .order-header {
     display: flex;
     justify-content: space-between;
@@ -155,7 +168,7 @@ export default {
       color: #8f8f94;
     }
     .order-film-name {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       font-size: 30px;
       font-weight: 600;
       color: #000000;
@@ -170,8 +183,11 @@ export default {
     color: #222222;
     border-top: 2px solid #f0f0f0;
     .tf-text-grey {
-      font-size: 28px;
+      font-size: 24px;
     }
   }
+}
+/deep/ .tf-list-refresh {
+  padding: 30px 20px;
 }
 </style>

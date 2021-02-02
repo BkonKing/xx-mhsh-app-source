@@ -342,6 +342,10 @@ export default {
   methods: {
     /* 签到 */
     sign () {
+      this.$router.push({
+        path: '/life/movie/index'
+      })
+      return
       if (this.userInfo.signin_today === '0') {
         // 签到一定要开启定位
         handlePermission({

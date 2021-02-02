@@ -110,10 +110,10 @@ export default {
   data () {
     return {
       swipeImages: [],
-      cityId: '',
+      cityId: 350100,
       adCode: '', // 行政区编码
-      lon: '', // 经度
-      lat: '', // 纬度
+      lon: 119.33887, // 经度
+      lat: 26.05312, // 纬度
       nowMovieList: [], // 正在上映的电影
       nowMovieTotal: 0, // 正在上映电影总数
       startMovieList: [], // 即将上映上映的电影
@@ -192,8 +192,8 @@ export default {
       return getcinemanearby({
         type: 2, // type=1城市ID，type=2区域ID
         id: this.adCode || 350103,
-        lng: this.lon || 119.33887, // 经度
-        lat: this.lat || 26.05312
+        lng: this.lon, // 经度
+        lat: this.lat
       })
     },
     // 页面滚动
@@ -208,9 +208,9 @@ export default {
         query: {
           type,
           filmType: filmType,
-          cityId: this.cityId || 500100,
-          lon: this.lon || 119.33887,
-          lat: this.lat || 26.05312
+          cityId: this.cityId,
+          lon: this.lon,
+          lat: this.lat
         }
       })
     },

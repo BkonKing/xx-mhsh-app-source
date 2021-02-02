@@ -91,7 +91,7 @@
           我同意<van-checkbox v-model="agreement" shape="square"></van-checkbox>
         </van-cell>
       </van-cell-group>
-      <van-button type="primary" size="large" @click="pay"
+      <van-button v-preventReClick type="primary" size="large" @click="pay"
         >￥{{ payAmount }} 确定支付</van-button
       >
     </div>
@@ -103,12 +103,16 @@
       @sureSwal="surePaySwal"
       @fyResult="fyResult"
     ></pay-swal>
-    <van-overlay :show="show" z-index="9999" class-name="pay-success">
+    <van-overlay :show="successShow" z-index="9999" class-name="pay-success">
       <span class="tf-icon tf-icon-guanbi1" @click="$router.go(-2)"></span>
-      <img class="success-img" src="@/assets/imgs/success.png" alt="">
+      <img class="success-img" src="@/assets/imgs/success.png" alt="" />
       <div class="tf-text">支付成功</div>
-      <div class="success-money">￥<span class="success-mony-number">200.00</span></div>
-      <router-link class="success-link" to="">查看详情</router-link>
+      <div class="success-money">
+        ￥<span class="success-mony-number">{{ payAmount }}</span>
+      </div>
+      <router-link class="success-link" :to="`/life/movie/ticket?id=${orderId}`"
+        >查看详情</router-link
+      >
       <van-button class="success-btn" @click="$router.go(-2)">确定</van-button>
     </van-overlay>
   </div>
@@ -136,7 +140,7 @@ export default {
       payAmount: 0, // 支付金额
       payOrderInfo: {}, // 支付信息
       idcard: '', // 身份证
-      show: false
+      successShow: false
     }
   },
   components: {
@@ -176,7 +180,7 @@ export default {
         this.info = data
         // 首次买票默认没勾选；购买过一次后，默认勾选
         this.agreement = data.ischeck
-        this.payAmount = data.price
+        this.payAmount = parseFloat(data.price)
       })
     },
     // 获取用户优惠券
@@ -223,7 +227,8 @@ export default {
         idcard: callData.idcard,
         mobile: callData.mobile
       })
-        .then(({ data, order_info }) => {
+        .then(res => {
+          const { data, order_info } = res
           this.payOrderInfo = data
           if (callData.pay_type == 1) {
             this.showPaySwal = false
@@ -292,6 +297,7 @@ export default {
     // 支付成功回调
     fyResult () {
       this.showPaySwal = false
+      this.successShow = true
       // this.getData()
     },
     // 关闭支付选择弹窗

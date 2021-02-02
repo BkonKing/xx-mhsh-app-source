@@ -219,7 +219,10 @@ export default {
     // 跳转影院位置
     goLocation () {
       this.$router.push({
-        name: 'movieLocation'
+        name: 'movieLocation',
+        query: {
+          id: this.cinemaId
+        }
       })
     }
   },

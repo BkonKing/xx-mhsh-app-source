@@ -105,6 +105,14 @@ export function getCinemadetail (data) {
 }
 
 /**
+ * 获取影院位置
+ * @param {string} cinema_id 影院ID
+ */
+export function getCinemaPosition (data) {
+  return request.post('/film/film/getcinemaposition', data)
+}
+
+/**
  * 影院详情（排期接口）
  * @param {string} cinema_id 影院ID
  * @param {string} film_no 影片编码
