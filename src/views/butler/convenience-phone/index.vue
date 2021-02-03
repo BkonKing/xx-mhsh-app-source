@@ -19,7 +19,7 @@
             </div>
           </div>
           <div v-if="item.remarks" class="tf-card-content">
-            <div class="phone-remarks" v-collapsed>{{ item.remarks }}</div>
+            <div class="phone-remarks" v-html="item.remarks.replace(/\r\n/g, '<br/>')" v-collapsed></div>
           </div>
         </div>
       </template>
