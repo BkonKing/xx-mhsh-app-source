@@ -62,7 +62,7 @@
 
 <script>
 import { NavBar, Button, Dialog } from 'vant'
-import { setPassword, updatePassword } from '@/api/personage'
+import { setPassword, updatePassword, resetPassword } from '@/api/personage'
 
 export default {
   components: {
@@ -71,26 +71,40 @@ export default {
   },
   data () {
     return {
-      updateStatus: undefined,
+      updateStatus: 0, // 是否修改密码
       steps: 0,
-      forgetStatus: 0,
+      forgetStatus: 0, // 是否忘记密码
       password: '',
       repassword: '',
-      old_password: ''
+      old_password: '',
+      opassword: '' // 原加密密码，忘记密码后使用
     }
   },
   created () {
     this.updateStatus = parseInt(this.$route.query.status)
     this.forgetStatus = parseInt(this.$route.query.forget)
     this.steps = parseInt(this.$route.query.steps)
+    this.opassword = this.$route.query.opassword
   },
   methods: {
     submit () {
-      if (this.updateStatus || this.forgetStatus) {
+      if (this.forgetStatus) {
+        this.resetPassword()
+      } else if (this.updateStatus) {
         this.updatePassword()
       } else {
         this.setPassword()
       }
+    },
+    // 重置密码
+    resetPassword () {
+      resetPassword({
+        opassword: this.opassword,
+        password: this.password,
+        repassword: this.repassword
+      }).then(res => {
+        this.successCallback('登录密码修改成功')
+      })
     },
     // 修改登录密码
     updatePassword () {

@@ -12,7 +12,7 @@
       <div class="tf-h3 tf-center">{{ userInfo.mobile }}</div>
       <div class="tf-phone-input-box tf-row-space-between">
         <div class="tf-phone-input-label">验证码</div>
-        <Field v-model="code" class="form-input width300" type="digit">
+        <van-field v-model="code" class="form-input width300" type="digit" maxlength="4">
           <template #button>
             <van-count-down
               v-if="codeStatus"
@@ -27,7 +27,7 @@
               获取验证码
             </button>
           </template>
-        </Field>
+        </van-field>
       </div>
       <van-button type="danger" size="large" @click="next">下一步</van-button>
     </div>
@@ -45,7 +45,7 @@ export default {
   components: {
     [CountDown.name]: CountDown,
     [NavBar.name]: NavBar,
-    Field,
+    [Field.name]: Field,
     [Button.name]: Button
   },
   data () {
@@ -61,10 +61,8 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created () {
-    this.type = parseInt(this.$route.query.type)
-  },
   activated () {
+    this.type = parseInt(this.$route.query.type)
     this.isCountDown()
   },
   methods: {
@@ -123,7 +121,8 @@ export default {
           path: '/pages/personage/information/login-password',
           query: {
             steps: 2,
-            forget: 1
+            forget: 1,
+            opassword: res.opassword
           }
         })
       })
@@ -132,6 +131,15 @@ export default {
     countFinish () {
       this.countDownTime = 60000
       this.codeStatus = false
+    }
+  },
+  watch: {
+    type () {
+      this.code = ''
+      this.codeStatus = false
+      this.countDownTime = 60000
+      this.countCopy = 60
+      this.codeTime = 0
     }
   },
   beforeRouteLeave (to, from, next) {
