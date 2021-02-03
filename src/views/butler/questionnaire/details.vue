@@ -477,6 +477,7 @@ export default {
     position: absolute;
     left: 0;
     top: 8px;
+    font-size: 24px;
     color: #55b862;
   }
   /deep/ .van-progress {

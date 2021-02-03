@@ -12,7 +12,7 @@
       <img class="logo-img" src="@/assets/imgs/logo.png" />
       <div class="tf-text-lg">版本号：{{ appVersion }}</div>
     </div>
-    <tf-list>
+    <tf-list class="about-list">
       <tf-list-item
         title="检查更新"
         @click="openDialog"
@@ -78,12 +78,12 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .tf-clist {
+.about-list {
   width: 710px;
   margin: 0 20px;
   border-radius: 10px;
   color: #222;
-  .tf-clist-box {
+  /deep/ .tf-clist-box {
     height: 100px;
   }
 }

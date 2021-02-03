@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-screen tf-bg">
+  <div class="tf-body tf-bg">
     <van-nav-bar
       title="便民电话"
       :fixed="true"
