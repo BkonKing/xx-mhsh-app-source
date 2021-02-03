@@ -1,68 +1,70 @@
 <template>
-  <van-dropdown-menu>
-    <van-dropdown-item v-model="countyId">
-      <van-cell
-        v-for="(item, i) in countyOptions"
-        :key="i"
-        @click="handleClickCounty(item)"
-      >
-        <template #title>
-          <span
-            v-if="countyId == item.text"
-            class="tf-icon tf-icon-gouxuan"
-          ></span>
-          <span
-            class="dropdown-menu-title"
-            :class="{ 'dropdown-menu-title-active': countyId == item.text }"
-            >{{ item.value }}{{ item.total ? `（${item.total}）` : "" }}</span
-          >
-        </template>
-      </van-cell>
-      <template #title>
-        {{ countyText }}
-      </template>
-    </van-dropdown-item>
-    <van-dropdown-item v-model="hallNo">
-      <div class="hall-tags">
-        <div
-          class="hall-tag"
-          :class="{ 'hall-tag-active': hallNo === item.text }"
-          v-for="(item, i) in hallOptions"
+  <van-sticky v-bind="$attrs">
+    <van-dropdown-menu>
+      <van-dropdown-item v-model="countyId">
+        <van-cell
+          v-for="(item, i) in countyOptions"
           :key="i"
-          @click="handleClickHall(item)"
+          @click="handleClickCounty(item)"
         >
-          {{ item.value }}
-        </div>
-      </div>
-      <template #title>
-        {{ hallText }}
-      </template>
-    </van-dropdown-item>
-    <van-dropdown-item v-model="sortType">
-      <van-cell
-        v-for="(item, i) in sortOptions"
-        :key="i"
-        @click="handleClickSort(item)"
-      >
+          <template #title>
+            <span
+              v-if="countyId == item.text"
+              class="tf-icon tf-icon-gouxuan"
+            ></span>
+            <span
+              class="dropdown-menu-title"
+              :class="{ 'dropdown-menu-title-active': countyId == item.text }"
+              >{{ item.value }}{{ item.total ? `（${item.total}）` : "" }}</span
+            >
+          </template>
+        </van-cell>
         <template #title>
-          <span
-            v-if="sortType == item.value"
-            class="tf-icon tf-icon-gouxuan"
-          ></span>
-          <span
-            class="dropdown-menu-title"
-            :class="{
-              'dropdown-menu-title-active': sortType == item.value
-            }"
-            >{{ item.text }}</span
-          >
+          {{ countyText }}
         </template>
-      </van-cell>
-      <template #title>
-        {{ sortTypeText }}
-      </template>
-    </van-dropdown-item>
-  </van-dropdown-menu>
+      </van-dropdown-item>
+      <van-dropdown-item v-model="hallNo">
+        <div class="hall-tags">
+          <div
+            class="hall-tag"
+            :class="{ 'hall-tag-active': hallNo === item.text }"
+            v-for="(item, i) in hallOptions"
+            :key="i"
+            @click="handleClickHall(item)"
+          >
+            {{ item.value }}
+          </div>
+        </div>
+        <template #title>
+          {{ hallText }}
+        </template>
+      </van-dropdown-item>
+      <van-dropdown-item v-model="sortType">
+        <van-cell
+          v-for="(item, i) in sortOptions"
+          :key="i"
+          @click="handleClickSort(item)"
+        >
+          <template #title>
+            <span
+              v-if="sortType == item.value"
+              class="tf-icon tf-icon-gouxuan"
+            ></span>
+            <span
+              class="dropdown-menu-title"
+              :class="{
+                'dropdown-menu-title-active': sortType == item.value
+              }"
+              >{{ item.text }}</span
+            >
+          </template>
+        </van-cell>
+        <template #title>
+          {{ sortTypeText }}
+        </template>
+      </van-dropdown-item>
+    </van-dropdown-menu>
+  </van-sticky>
 </template>
 
 <script>

@@ -1,13 +1,18 @@
 <template>
   <div class="tf-bg-white">
     <van-nav-bar
-      :title="title"
+      :class="{'unfixed-background': !isFixedTabs}"
       :fixed="true"
       :border="false"
-      left-arrow
       placeholder
-      @click-left="$router.go(-1)"
     >
+      <template #left>
+        <i class="van-icon van-icon-arrow-left van-nav-bar__arrow" @click="$router.go(-1)"></i>
+        <div v-if="!isFixedTabs" class="nav-title">{{title}}</div>
+      </template>
+      <template v-if="isFixedTabs" #title>
+        {{filmActive.film_name}}
+      </template>
       <template #right>
         <span class="tf-icon tf-icon-dingwei" @click="goLocation"></span>
         <span class="tf-icon tf-icon-zhuanfa"></span>
@@ -56,6 +61,8 @@
         v-model="activeDate"
         title-active-color="#EB5841"
         sticky
+        offset-top="1.17333rem"
+        @scroll="scrollTabs"
       >
         <van-tab
           v-for="(obj, key) in scheduList"
@@ -89,7 +96,8 @@
           </div>
         </van-tab>
       </van-tabs>
-      <van-loading v-else type="spinner" color="#eb5841" size="24px" />
+      <van-empty v-else-if="!loading" image="error" description="暂无排期" />
+      <van-loading v-if="loading" type="spinner" color="#eb5841" size="24px" />
     </div>
   </div>
 </template>
@@ -108,7 +116,9 @@ export default {
       filmNo: '', // 当前选中影片编码
       filmIndex: 0, // 当前选中影片序号
       filmActive: {}, // 当前选中影片数据
-      swipeStatus: 0 // 是否手动切换
+      swipeStatus: 0, // 是否手动切换
+      isFixedTabs: false, // tabs是否吸顶
+      loading: false
     }
   },
   created () {
@@ -125,16 +135,27 @@ export default {
         cinema_id: this.cinemaId
       }).then(({ data }) => {
         this.filmList = data.cinema_info
-        this.swipeTo(0, this.filmList[0])
+        if (this.filmList && this.filmList.length) {
+          this.swipeTo(0, this.filmList[0])
+        } else {
+          this.$dialog.alert({
+            title: '该影院暂时没有影片上映'
+          }).then(() => {
+            this.$router.go(-1)
+          })
+        }
       })
     },
     // 获取影片排期
     getCinemaschedu () {
+      this.loading = true
       getCinemaschedu({
         cinema_id: this.cinemaId,
         film_no: this.filmNo
       }).then(({ data }) => {
-        this.scheduList = data
+        this.scheduList = Array.isArray(data) && !data.length ? null : data
+      }).finally(() => {
+        this.loading = false
       })
     },
     // 点击影片，如果是当前选中，则跳转到详情页，否则就选中点击影片
@@ -153,10 +174,14 @@ export default {
       const left = i * 95
       const timer = setInterval(() => {
         this.swipeStatus = true
-        if (this.$refs.vanSwipe.scrollLeft < left) {
-          this.$refs.vanSwipe.scrollLeft = this.$refs.vanSwipe.scrollLeft + 1
-        } else if (this.$refs.vanSwipe.scrollLeft > left) {
-          this.$refs.vanSwipe.scrollLeft = this.$refs.vanSwipe.scrollLeft - 1
+        if (this.$refs.vanSwipe) {
+          if (this.$refs.vanSwipe.scrollLeft < left) {
+            this.$refs.vanSwipe.scrollLeft = this.$refs.vanSwipe.scrollLeft + 1
+          } else if (this.$refs.vanSwipe.scrollLeft > left) {
+            this.$refs.vanSwipe.scrollLeft = this.$refs.vanSwipe.scrollLeft - 1
+          } else {
+            clearInterval(timer)
+          }
         } else {
           clearInterval(timer)
         }
@@ -179,6 +204,10 @@ export default {
         this.filmNo = this.filmList[index].film_no
         this.filmActive = this.filmList[index]
       }
+    },
+    // tabs滚动
+    scrollTabs ({ isFixed }) {
+      this.isFixedTabs = isFixed
     },
     // 跳转选择位置
     goSeat (data) {
@@ -232,8 +261,8 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['movieSelectCinema', 'movieList']
-    if (names.includes(to.name)) {
+    const names = ['movieSeat', 'movieLocation']
+    if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
@@ -243,6 +272,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-bg-white {
+  // overflow-y: auto;
+  overflow-x: hidden !important;
+}
 .film-cover {
   width: 100%;
   height: 100%;
@@ -251,12 +284,18 @@ export default {
 .active .film-cover {
   transform: scale(1.15);
 }
-/deep/ .van-nav-bar {
+.nav-title {
+  width: 450px;
+  font-size: 30px;
+  text-align: left;
+  @text-ellipsis();
+}
+.unfixed-background /deep/ .van-nav-bar {
   background: #000000cc;
   color: #fff;
   .tf-icon,
   .van-icon,
-  .van-nav-bar__title {
+  .nav-title {
     color: #fff;
   }
 }
@@ -343,6 +382,7 @@ export default {
   text-align: center;
 }
 .film-swipe-container {
+  width: 100%;
   height: 320px;
   position: relative;
   overflow-x: auto;

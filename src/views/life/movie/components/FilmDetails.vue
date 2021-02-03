@@ -28,7 +28,7 @@
       <div class="film-want">
         <div class="film-text">{{ info.want_view | wantFormat }}</div>
         <div class="film-minor">
-          {{ parseInt(info.want_view) > 999 ? "万" : "" }}人想看
+          {{ parseInt(info.want_view) > 9999 ? "万" : "" }}人想看
         </div>
       </div>
       <div class="film-view">

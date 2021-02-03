@@ -26,7 +26,6 @@
 <script>
 import { handlePermission } from '@/utils/permission'
 import { getCinemaPosition } from '@/api/movie'
-import { set } from 'vuedraggable'
 export default {
   data () {
     return {
@@ -39,6 +38,9 @@ export default {
     this.cinemaId = this.$route.query.id
     this.getCinemaPosition()
     this.bMap = api.require('bMap')
+    // 绑定frame返回事件
+    window.closeFrame = new CustomEvent('closeFrame')
+    document.addEventListener('closeFrame', this.goBack)
     return
     handlePermission({
       name: 'location',
@@ -137,11 +139,26 @@ export default {
         },
         animation: true
       })
+    },
+    // 关闭frame
+    closeFrame () {
+      api.closeFrame({
+        name: 'closebtn'
+      })
+      this.FNScanner.closeView()
+      api.closeFrame({
+        name: 'scan'
+      })
     }
   },
   beforeRouteLeave (to, from, next) {
     this.bMap && this.bMap.close()
     next()
+  },
+  beforeDestroy () {
+    this.closeFrame()
+    document.removeEventListener('closeFrame', this.goBack)
+    window.closeFrame = ''
   }
 }
 </script>

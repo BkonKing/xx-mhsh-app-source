@@ -42,7 +42,7 @@
         <div class="van-ellipsis">
           <span class="tf-text-grey">导演：</span>{{ info.director }}
         </div>
-        <div class="van-ellipsis">
+        <div v-if="info.cast" class="van-ellipsis">
           <span class="tf-text-grey"
             >{{ info.cast_type == "0" ? "主演" : "配音" }}：</span
           >{{ info.cast }}
@@ -119,6 +119,14 @@ export default {
         }
       })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['movieCast', 'movieSelectCinema']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

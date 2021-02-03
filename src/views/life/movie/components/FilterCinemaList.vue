@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="filter-cinema-list">
     <filter-cinema :cityId="cityId" @change="reload"></filter-cinema>
     <cinema-list
       ref="cinemaList"
@@ -69,6 +69,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.filter-cinema-list {
+  height: 100%;
+  .cinema-list {
+    height: calc(100% - 90px);
+    padding: 0 30px;
+  }
+}
 //影院
 /deep/ .van-dropdown-menu__bar {
   height: 90px;
@@ -124,8 +131,5 @@ export default {
     border-color: #eb5841;
     color: #eb5841;
   }
-}
-.cinema-list {
-  padding: 0 30px;
 }
 </style>

@@ -315,7 +315,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieFilmDetails" */
       '@/views/life/movie/filmDetails'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 选择影院
 {
@@ -371,7 +374,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieSeat" */
       '@/views/life/movie/seat'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 确定电影票订单
 {

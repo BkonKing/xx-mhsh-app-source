@@ -41,12 +41,13 @@
       </div>
       <van-cell-group class="discounts-box">
         <van-cell
-          v-if="info.coupon"
+          v-if="couponList && couponList.length"
           class="cell-border"
           title="优惠券"
-          value="内容"
+          :value="couponName"
           center
           is-link
+          @click="couponPopup = true"
         />
         <van-cell
           class="cell-border"
@@ -103,6 +104,7 @@
       @sureSwal="surePaySwal"
       @fyResult="fyResult"
     ></pay-swal>
+    <!-- 支付成功 -->
     <van-overlay :show="successShow" z-index="9999" class-name="pay-success">
       <span class="tf-icon tf-icon-guanbi1" @click="$router.go(-2)"></span>
       <img class="success-img" src="@/assets/imgs/success.png" alt="" />
@@ -110,11 +112,50 @@
       <div class="success-money">
         ￥<span class="success-mony-number">{{ payAmount }}</span>
       </div>
-      <router-link class="success-link" :to="`/life/movie/ticket?id=${orderId}`"
+      <router-link
+        class="success-link"
+        replace
+        :to="`/life/movie/ticket?id=${orderId}`"
         >查看详情</router-link
       >
       <van-button class="success-btn" @click="$router.go(-2)">确定</van-button>
     </van-overlay>
+    <!-- 选择优惠券 -->
+    <van-popup
+      v-model="couponPopup"
+      round
+      position="bottom"
+      get-container="body"
+    >
+      <div class="coupon-popup">
+        <div class="coupon-popup-title">优惠券</div>
+        <van-radio-group v-model="couponId" checked-color="#EB5841">
+          <van-radio class="coupon-popup-item" name="">
+            <img
+              class="coupon-popup-item-img"
+              src="@/assets/imgs/movie_coupon_unuse.png"
+              alt=""
+            />
+            不使用优惠券
+          </van-radio>
+          <van-radio
+            v-for="item in couponList"
+            :key="item.coupon_id"
+            class="coupon-popup-item"
+            :name="item.coupon_id"
+          >
+            <div class="coupon-popup-item-tag">
+              <template v-if="item.type === '1'">
+                <span class="tf-text-sm">￥</span>{{ item.reduce_price }}
+              </template>
+              <template v-else>{{ item.reduce_discount }}</template>
+            </div>
+            {{ item.coupon_name }}
+          </van-radio>
+        </van-radio-group>
+        <van-button class="coupon-popup-btn" type="primary" @click="calculatePrice">确定</van-button>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -126,7 +167,8 @@ import {
   getUserCoupon,
   calculatePrice,
   payOrder,
-  payCredits
+  payCredits,
+  unlockorder
 } from '@/api/movie'
 export default {
   name: 'movieConfirmOrder',
@@ -134,20 +176,34 @@ export default {
     return {
       orderId: '',
       agreement: false,
+      couponId: '', // 优惠券id
+      couponList: [], // 优惠券列表
       useCredits: false, // 是否用幸福币抵用
       showPaySwal: false, // 支付方式弹窗
       info: {},
       payAmount: 0, // 支付金额
       payOrderInfo: {}, // 支付信息
       idcard: '', // 身份证
-      successShow: false
+      successShow: false, // 支付成功后显示
+      couponPopup: false // 选择优惠券
     }
   },
   components: {
     paySwal
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    couponName () {
+      let name = ''
+      const couponId = this.couponId
+      this.couponList.some((obj) => {
+        if (obj.coupon_id === couponId) {
+          name = obj.coupon_name
+          return true
+        }
+      })
+      return couponId ? name : '不使用优惠券'
+    }
     // payAmount () {
     //   let num = parseFloat(this.info.source_price)
     //   if (this.useCredits) {
@@ -180,6 +236,7 @@ export default {
         this.info = data
         // 首次买票默认没勾选；购买过一次后，默认勾选
         this.agreement = data.ischeck
+        this.couponId = data.coupon_id || ''
         this.payAmount = parseFloat(data.price)
       })
     },
@@ -188,7 +245,7 @@ export default {
       getUserCoupon({
         uid: this.userInfo.id
       }).then(({ data }) => {
-        console.log(data)
+        this.couponList = data.coupon || []
       })
     },
     // 计算支付金额
@@ -196,10 +253,11 @@ export default {
       calculatePrice({
         order_id: this.orderId,
         credits: this.info.credits,
-        coupon_id: this.info.credits,
+        coupon_id: this.couponId,
         type: this.useCredits ? 1 : 0
       }).then(({ data }) => {
         this.payAmount = parseFloat(data.price)
+        this.couponPopup = false
       })
     },
     // 发起支付
@@ -303,6 +361,12 @@ export default {
     // 关闭支付选择弹窗
     closePaySwal (data) {
       this.showPaySwal = data === 1
+    },
+    // 释放座位
+    unlockorder () {
+      unlockorder({
+        order_id: this.orderId
+      })
     }
   },
   watch: {
@@ -311,7 +375,10 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['movieSeat']
+    if (to.name === 'movieSeat') {
+      this.unlockorder()
+    }
+    const names = ['movieSeat', 'movieCinemaDetails', 'movieTicket']
     if (names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
@@ -331,14 +398,14 @@ export default {
   background-image: linear-gradient(to right, @red, @red-dark);
 }
 /deep/ .van-nav-bar {
-  background: initial;
+  background-image: linear-gradient(to right, #f9866b, #eb5841);
   .van-icon,
   .van-nav-bar__title {
     color: #fff;
   }
 }
 .tf-main-container {
-  padding: 0 20px;
+  padding: 0 20px 30px;
 }
 .pay-success {
   display: flex;
@@ -446,6 +513,59 @@ export default {
       display: flex;
       justify-content: flex-end;
       color: #222222;
+    }
+  }
+}
+.coupon-popup {
+  padding: 30px 40px;
+  &-title {
+    margin-bottom: 14px;
+    font-size: 34px;
+    font-weight: 500;
+    color: #222222;
+    text-align: center;
+  }
+  &-btn {
+    width: 100%;
+    border-radius: 10px;
+    /deep/ .van-button__text {
+      font-size: 30px;
+    }
+  }
+  &-item {
+    display: flex;
+    align-items: center;
+    height: 120px;
+    font-size: 30px;
+    color: #222;
+    border-bottom: 2px solid #f0f0f0;
+    &-img {
+      width: 88px;
+      height: 88px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    &-tag {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 88px;
+      height: 88px;
+      margin-left: 20px;
+      margin-right: 20px;
+      background: url("~@/assets/imgs/movie_coupon.png");
+      background-size: contain;
+      font-size: 30px;
+      color: #d6864c;
+    }
+    /deep/ .van-radio__icon,
+    /deep/.van-radio__icon .van-icon {
+      width: 32px;
+      height: 32px;
+    }
+    /deep/ .van-radio__label {
+      display: flex;
+      align-items: center;
     }
   }
 }

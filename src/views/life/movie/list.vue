@@ -29,7 +29,7 @@
     </van-nav-bar>
     <!-- 电影 -->
     <div class="film-container tf-body-container" v-show="type === '1'">
-      <van-tabs class="list-tabs" v-model="movieActive" sticky offset-top="44">
+      <van-tabs class="list-tabs" v-model="movieActive" sticky offset-top="1.17333rem">
         <van-tab title="正在热映">
           <film-list
             ref="nowMovieList"
@@ -202,6 +202,20 @@ export default {
   }
   .start-movie-list {
     padding: 0 30px;
+    /deep/ .van-list__loading .van-loading {
+      padding-top: 30px;
+    }
+  }
+}
+/deep/ .cinema-list .van-list__loading .van-loading {
+  padding-top: 30px;
+}
+/deep/ .van-sticky{
+  background-image:url('~@/assets/imgs/movie_list-header.png');
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  .van-tabs__nav, .van-dropdown-menu__bar {
+    background: initial;
   }
 }
 </style>

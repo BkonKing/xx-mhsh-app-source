@@ -21,9 +21,24 @@
         ￥{{ price }}
       </div>
     </div>
-    <div class="tf-body-container" :class="{'center-container': seatList && seatList.length && seatList[0].length < 14}">
-      <div class="seat-container">
-        <div v-if="seatList && seatList.length" class="screen-box">
+    <div
+      class="tf-body-container"
+      :class="{
+        'center-container':
+          seatList && seatList.length && seatList[0].length < 14
+      }"
+    >
+      <div v-if="loading" class="loading-placeholder">
+        <van-loading
+          type="spinner"
+          color="#448FE4"
+          vertical
+          size="24px"
+          >加载中...</van-loading
+        >
+      </div>
+      <div v-else-if="seatList && seatList.length" class="seat-container">
+        <div class="screen-box">
           <img class="screen" src="@/assets/imgs/movie_screen.png" alt="" />
           <div class="screnn-text">{{ hallName }} 巨幕</div>
         </div>
@@ -42,6 +57,9 @@
             ></div>
           </div>
         </div>
+      </div>
+      <div v-else class="loading-placeholder">
+        <van-empty v-if="!loading" image="error" description="暂无座位" />
       </div>
     </div>
     <div class="seat-footer">
@@ -92,7 +110,7 @@
               <div class="select-seat-piece">
                 {{ item.seatRow }}排{{ item.seatCol }}座
               </div>
-              <div class="select-seat-price">￥{{ item.ticket_price }}</div>
+              <div class="select-seat-price">￥{{ item.seat_price }}</div>
             </div>
             <span
               class="tf-icon tf-icon-guanbi"
@@ -127,8 +145,14 @@
     </tf-dialog>
     <van-dialog v-model="lockVisiable" :show-confirm-button="false">
       <div class="lock-dialog">
-        <van-circle v-model="currentRate" :rate="100" :speed="100" color="#EB5841" layer-color="#eb584166">
-          <img class="lock-img" src="@/assets/imgs/movie_lock.png" alt="">
+        <van-circle
+          v-model="currentRate"
+          :rate="100"
+          :speed="100"
+          color="#EB5841"
+          layer-color="#eb584166"
+        >
+          <img class="lock-img" src="@/assets/imgs/movie_lock.png" alt="" />
         </van-circle>
         <div class="tf-text-lg">锁座中</div>
       </div>
@@ -140,7 +164,6 @@
 import tfDialog from '@/components/tf-dialog/index'
 import {
   getplanseat,
-  unlockorder,
   lockseat,
   getSessions,
   getfilmprice
@@ -172,17 +195,19 @@ export default {
       lockseatFailVisiable: false, // 锁座失败弹窗
       lockVisiable: false, // 锁座中
       currentRate: 0, // 锁座进度
-      timer: 0 // 锁座定时器
+      timer: 0, // 锁座定时器
+      loading: false,
+      backStatus: false // 是否从确认订单返回
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
     totalPrice () {
-      let num = 0
+      let seatPrice = 0
       Object.keys(this.selectSeats).forEach(key => {
-        num += makeCount(parseFloat(this.selectSeats[key].ticket_price))
+        seatPrice += makeCount(parseFloat(this.selectSeats[key].seat_price))
       })
-      return num
+      return seatPrice
     }
   },
   created () {
@@ -208,19 +233,30 @@ export default {
     this.filmTime = time
     this.filmTag = tag
     this.scheduDate = scheduDate
-    this.getplanseat()
-    this.getSessions()
-    this.getfilmprice()
+  },
+  activated () {
+    setTimeout(() => {
+      if (!this.backStatus) {
+        this.getplanseat()
+        this.getSessions()
+        this.getfilmprice()
+      }
+    }, 0)
   },
   methods: {
     // 获取实时座位
     getplanseat () {
+      this.loading = true
       getplanseat({
         cinema_id: this.cinemaId,
         feature_appno: this.featureNo
-      }).then(({ data }) => {
-        this.seatList = data
       })
+        .then(({ data }) => {
+          this.seatList = data
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     // 获取影片场次列表
     getSessions () {
@@ -314,6 +350,8 @@ export default {
         if (this.seatList[rowIndex][colIndex - 2].seatType === 'L') {
           this.deleteSeat(this.seatList[rowIndex][colIndex - 2].seatNo)
         }
+      } else {
+        this.deleteSeat(col.seatNo)
       }
     },
     // 删除座位
@@ -340,10 +378,12 @@ export default {
       const seatNo = []
       const seatName = []
       const servicAddfee = []
+      const ticketPrice = []
       Object.keys(this.selectSeats).forEach(key => {
         seatNo.push(this.selectSeats[key].seatNo)
         seatName.push(this.selectSeats[key].seatPieceName)
         servicAddfee.push(this.selectSeats[key].service_addfee)
+        ticketPrice.push(this.selectSeats[key].ticket_price)
       })
       lockseat({
         cinema_id: this.cinemaId,
@@ -352,17 +392,19 @@ export default {
         uid: this.userInfo.id,
         mobile: this.userInfo.mobile,
         seat_no: seatNo.join(','),
-        seat_name: seatName.join(','),
+        seat_name: seatName.join(';'),
         service_addfee: servicAddfee.join(','),
-        ticket_price: this.totalPrice
+        ticket_price: ticketPrice.join(',')
       })
         .then(({ data }) => {
           this.lockVisiable = false
-          this.$router.push({
-            name: 'movieConfirmOrder',
-            query: {
-              orderId: data.order_id
-            }
+          this.$nextTick(() => {
+            this.$router.push({
+              name: 'movieConfirmOrder',
+              query: {
+                orderId: data.order_id
+              }
+            })
           })
         })
         .catch(err => {
@@ -393,7 +435,8 @@ export default {
 
       // 先判断是否不可售
       if (col.seatState === -1) {
-        className.push('unsold')
+        // 是否标记过，标记过代表已售
+        className.push(col.seatFlag ? 'soldout' : 'unsold')
       } else {
         const colorClass = ['seat-bass', 'seat-moderate', 'seat-high']
         const index = this.seatPrices.findIndex(e => e === col.seat_price)
@@ -417,6 +460,20 @@ export default {
         clearInterval(this.timer)
       }
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 看是否从确定订单返回
+      vm.backStatus = from.name === 'movieConfirmOrder'
+    })
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['movieConfirmOrder']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
@@ -674,6 +731,13 @@ export default {
   /deep/ .van-button--large {
     border-radius: 44px !important;
   }
+}
+.loading-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 .lock-dialog {
   display: flex;

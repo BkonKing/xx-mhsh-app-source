@@ -18,7 +18,7 @@
         v-model="type"
         @change="reloadOrderList"
         sticky
-        offset-top="44"
+        offset-top="1.17333rem"
       >
         <van-tab
           v-for="(item, i) in typeOptions"

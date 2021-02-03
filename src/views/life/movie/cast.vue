@@ -14,11 +14,11 @@
         导演（{{ info.director.count }}）
       </div>
       <div class="cast-content">{{ info.director.info }}</div>
-      <template v-if="info.cast_type == '0'">
+      <template v-if="info.cast_type == '0' && info.to_star.info">
         <div class="cast-title">主演（{{info.to_star.count}}）</div>
         <div class="cast-content">{{info.to_star.info}}</div>
       </template>
-      <template v-else>
+      <template v-else-if="info.cast_type == '1' && info.dubbing.info">
         <div class="cast-title">配音（{{info.dubbing.count}}）</div>
         <div class="cast-content">{{info.dubbing.info}}</div>
       </template>
@@ -32,7 +32,11 @@ export default {
   name: 'movieCast',
   data () {
     return {
-      info: {}
+      info: {
+        director: {},
+        to_star: {},
+        dubbing: {}
+      }
     }
   },
   created () {
