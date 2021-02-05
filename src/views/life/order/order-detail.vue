@@ -102,7 +102,7 @@
             <div class="shipping-address-item">
               <div class="shipping-address-item-left"></div>
               <div class="shipping-address-item-right">
-                <div class="shipping-address-text p-nowrap">{{orderInfo.rece_address}}</div>
+                <div class="shipping-address-text">{{orderInfo.rece_address}}</div>
               </div>
             </div>
           </div>

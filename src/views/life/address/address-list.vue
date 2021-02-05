@@ -36,7 +36,7 @@
             <div class="address-detail flex-align-center">
               <div v-if="item.is_default == 1"
                    class="address-default">默认</div>
-              <div class="default-detail-text color-8f8f94 font-24 p-nowrap">{{item.address_name+item.address_house}}</div>
+              <div class="default-detail-text color-8f8f94 font-24 p-nowrap">{{item.address_cont + item.address_name+item.address_house}}</div>
             </div>
           </div>
           <div class="address-link flex-align-center"
@@ -110,7 +110,8 @@ export default {
           if (res.data) {
             console.log(getArea('新疆维吾尔自治区和田地区和田县'))
             for (let i = 0; i < res.data.length; i++) {
-              res.data[i].address_name = getArea(res.data[i].address_detail) + res.data[i].address_name
+              res.data[i].address_cont = getArea(res.data[i].address_detail)
+              // res.data[i].address_name = getArea(res.data[i].address_detail) + res.data[i].address_name
             }
             this.listData = this.page == 1 ? res.data : this.listData.concat(res.data)
             this.isEmpty = !!(this.page == 1 && res.data.length == 0)

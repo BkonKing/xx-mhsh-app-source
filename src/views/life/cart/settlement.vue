@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="order-bar">
       <van-nav-bar
         title="结算"
@@ -14,21 +14,24 @@
       <div class="address-bg"></div>
       <div v-if="addressInfo" class="bht-session address-info" @click="linkFunc(23,{isSelect: 1})">
         <div class="address-text">
-          <div class="address-user flex-between">
-            <div class="address-name p-nowrap">{{addressInfo.realname}}</div>
-            <div class="address-tel">{{addressInfo.mobile}}</div>
-            <div class="link-icon"><img class="img-100" src="@/assets/img/right.png" /></div>
-          </div>
           <div class="address-detail">
             <div class="address-default" v-if="addressInfo.is_default == 1">默认</div>
+            <div class="p-nowrap">{{addressInfo.address_detail}}</div>
+          </div>
+          <div class="address-name flex-between">
             <div class="p-nowrap">{{addressInfo.address_name+addressInfo.address_house}}</div>
+            <div class="link-icon flex-center">修改<van-icon name="arrow" /></div>
+          </div>
+          <div class="address-user flex-between">
+            <div class="address-username p-nowrap">{{addressInfo.realname}}</div>
+            <div class="address-tel">{{addressInfo.mobile}}</div>
           </div>
         </div>
       </div>
       <div v-else class="bht-session address-info no-address flex-between" @click="linkFunc(23,{isSelect: 1})" data-url="">
-        <img class="address-icon" src="@/assets/img/address_02.png" alt="">
+        <van-icon class="address-icon" name="location" />
         <div class="no-address-text">请选择收货地址</div>
-        <div class="link-icon"><img class="img-100" src="@/assets/img/right.png" /></div>
+        <div class="link-icon"><van-icon name="arrow" /></div>
       </div>
     </div>
 
@@ -253,6 +256,7 @@ export default {
     var that = this
     // 根据key名获取传递回来的参数，data就是map
     eventBus.$on('chooseAddress', function (data) {
+      console.log(data)
       if (data) {
         that.addressInfo = JSON.parse(data)
       }
@@ -408,7 +412,7 @@ export default {
       const that = this
       if (!this.addressInfo || !this.addressInfo.id) {
         Toast('请先选择收货地址')
-          }
+      }
       if (this.order_type == 0 || this.prev_page == 0) {
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight))
         ordinaryCreate({
@@ -554,6 +558,7 @@ export default {
           }
         }
       }).catch((res) => {
+        console.log('error', res.message)
         if (callData.pay_type == 4) {
           if (this.idcard) {
             this.$router.push({
@@ -616,6 +621,7 @@ export default {
     // 富友支付成功
     fyResult () {
       this.closePaySwal(0)
+      this.goDetail()
     },
     goDetail () {
       if (this.order_type == 1 || this.order_type == 2) { // 闪购、拼单
@@ -720,9 +726,10 @@ export default {
 }
 /* 收货地址 start */
 .address-session {
-  height: 183px;
+  min-height: 183px;
   margin-bottom: 30px;
   position: relative;
+  overflow: hidden;
 }
 .address-bg {
   position: absolute;
@@ -734,28 +741,34 @@ export default {
   background-image: linear-gradient(to right, #f9866b, #eb5841);
 }
 .address-info {
-  height: 163px;
+  min-height: 163px;
   border-radius: 10px;
   border: none;
-  position: absolute;
+  /* position: absolute;
   top: 20px;
   left: 20px;
-  right: 20px;
+  right: 20px; */
+  width: 710px;
+  margin: 20px auto 0;
+  position: relative;
   z-index: 5;
   padding: 0 30px;
   display: flex;
   background: #fff url('../../../assets/img/address_bg.png') repeat-x -60px bottom/auto 8px;
 }
 .address-icon {
-  width: 28px;
-  height: 36px;
+  width: 40px;
+  height: 66px;
+  line-height: 66px;
   margin-right: 20px;
+  font-size: 46px;
 }
 .no-address-text {
   width: 300px;
   flex-grow: 1;
   color: #222222;
-  font-size: 34px;
+  font-size: 38px;
+  font-weight: bold;
 }
 .link-icon {
   width: 12px;
@@ -771,17 +784,35 @@ export default {
   flex-direction: column;
 }
 .address-user {
-  height: 72px;
-  line-height: 72px;
+  height: 44px;
+  line-height: 44px;
   color: #222;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-bottom: 38px;
+}
+.address-username {
+  max-width: 360px;
+  margin-right: 10px;
 }
 .address-name {
-  max-width: 380px;
+  width: 100%;
+  height: 55px;
+  margin-top: 9px;
+}
+.address-name div:nth-child(1) {
+  color: #222222;
+  font-size: 38px;
   font-weight: bold;
-  margin-right: 30px;
+  width: 550px;
+}
+.address-name .link-icon,
+.no-address .link-icon {
+  width: auto;
+  height: 100%;
+  line-height: 55px;
+  color: #8f8f94;
+  font-size: 28px;
 }
 .address-tel {
   width: 200px;
@@ -790,9 +821,10 @@ export default {
 .address-detail {
   height: 30px;
   line-height: 30px;
-  color: #919499;
-  font-size: 24px;
+  color: #8f8f94;
+  font-size: 26px;
   display: flex;
+  margin-top: 40px;
 }
 .address-default {
   flex-shrink: 0;

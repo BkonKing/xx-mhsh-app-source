@@ -49,7 +49,7 @@
             <i class="van-icon van-icon-arrow right-next"></i>
           </div>
         </div>
-        <div v-if="selectIndex == -1" class="submit-btn color-fff" @click.stop="sureSwal()">去付款</div>
+        <div v-if="selectIndex == -1 || tapIndex < 2" class="submit-btn color-fff" @click.stop="sureSwal()">去付款</div>
         <div v-else class="submit-btn color-fff" @click.stop="cardPay">去付款</div>
       </div>
       <div v-show="step == 2">
@@ -95,7 +95,7 @@
 
 <script>
 import { CountDown, Toast } from 'vant'
-import { getMyCard, fuPay, getBankOne } from '@/api/life.js'
+import { getMyCard, fuPay } from '@/api/life.js'
 export default {
   components: {
     [CountDown.name]: CountDown,
