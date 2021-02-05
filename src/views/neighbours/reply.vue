@@ -311,6 +311,7 @@ export default {
     margin-left: 86px;
     font-size: 26px;
     line-height: 1.8;
+    word-break: break-all;
   }
   &__img-box {
     margin-top: 30px;
@@ -329,6 +330,7 @@ export default {
       color: #666;
       margin-bottom: 10px;
       line-height: 1.8;
+      word-break: break-all;
     }
   }
 }
@@ -343,6 +345,7 @@ export default {
   .reply-cell-content__text {
     padding-bottom: 30px;
     border-bottom: 1px solid #f0f0f0;
+    word-break: break-all;
   }
   .no-border-bottom {
     border-bottom: none !important;

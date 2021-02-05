@@ -433,12 +433,14 @@ export default {
   font-weight: bold;
   margin-top: 10px;
   margin-bottom: 30px;
+  word-break: break-all;
 }
 .article-content {
   padding: 40px 0 10px;
   border-top: 1px solid @divider-color;
   font-size: 28px;
   color: #666;
+  word-break: break-all;
   /deep/ img {
     max-width: 100% !important;
   }
@@ -448,6 +450,7 @@ export default {
   align-items: center;
   border-top: 1px solid @divider-color;
   padding-top: 30px;
+  word-break: break-all;
   /deep/ img {
     max-width: 100% !important;
   }
