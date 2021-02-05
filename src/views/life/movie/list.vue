@@ -24,7 +24,7 @@
         </div>
       </template>
       <template #right>
-        <span class="tf-icon tf-icon-sousuo1"></span>
+        <span class="tf-icon tf-icon-sousuo1" @click="goSearch"></span>
       </template>
     </van-nav-bar>
     <!-- 电影 -->
@@ -76,28 +76,30 @@ export default {
   data () {
     return {
       type: 0, // 1：影片，2：影院
-      movieActive: 1, // 影片tab
+      // 影片tab，默认为即将上映，因为当影院进入，再切换到电影，默认为0的话，tab隐藏的情况下，默认选中第一个，选中下划线位置会出错，所以默认为1，第一次切换到影片后再设置为0
+      movieActive: 1,
       nowMovieList: [], // 正在上映的电影
       startMovieList: [], // 即将上映上映的电影
       cityId: '', // 城市id
       lon: '', // 经度
       lat: '', // 纬度
-      first: true // 是否从影院模块第一次进入页面
+      firstCinema: true // 是否从影院模块第一次进入页面
     }
   },
   created () {
-    this.type = this.$route.query.type
-    this.cityId = this.$route.query.cityId
-    this.lon = this.$route.query.lon
-    this.lat = this.$route.query.lat
+    const { type, cityId, lon, lat } = this.$route.query
+    this.type = type
+    this.cityId = cityId
+    this.lon = lon
+    this.lat = lat
   },
   mounted () {
     if (this.type === '1') {
-      this.first = false
+      // 影片
+      this.firstCinema = false
       this.movieActive = this.$route.query.filmType ? 1 : 0
-      this.$nextTick(() => {
-        this.$refs.cinemaList && this.$refs.cinemaList.reload({})
-      })
+      // 影院没有做点击后再初始化加载，所以从电影进入页面需要手动刷新影院列表
+      this.$refs.cinemaList && this.$refs.cinemaList.reload({})
     } else {
       this.$nextTick(() => {
         this.filmReload('nowMovieList')
@@ -123,17 +125,24 @@ export default {
       setviewwatch({
         film_id: id
       }).then(() => {
-        // 变为已设置
+        // 没有重新请求列表，只是手动变为已设置
         is_shown = true
       })
     },
     // 切换到电影tab
     switchFilm () {
       this.type = '1'
-      if (this.first) {
+      // 第一次切换到电影手动从即将上映切换到热映，才修复选中下划线位置错位
+      if (this.firstCinema) {
         this.movieActive = 0
-        this.first = false
+        this.firstCinema = false
       }
+    },
+    // 跳转到搜索页
+    goSearch () {
+      this.$router.push({
+        name: 'search'
+      })
     }
   },
   beforeRouteLeave (to, from, next) {

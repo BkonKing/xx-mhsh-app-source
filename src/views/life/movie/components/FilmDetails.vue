@@ -1,7 +1,7 @@
 <template>
   <div class="film-container">
     <div class="film-header">
-      <img class="film-cover" :src="info.cover" alt="" />
+      <img class="film-cover" :src="info.cover" alt="影片封面" />
       <div class="film-info">
         <div class="film-title">{{ info.film_name }}</div>
         <div v-if="info.type" class="film-type">类型：{{ info.type }}</div>
@@ -96,6 +96,8 @@ export default {
       width: 186px;
       height: 259px;
       margin-right: 30px;
+      font-size: 28px;
+      color: #fff;
       border-radius: 4px;
     }
   }

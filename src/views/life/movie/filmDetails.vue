@@ -13,7 +13,9 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
+      <!-- 影片信息 -->
       <film-details :info="info"></film-details>
+      <!-- 影片介绍 -->
       <div
         class="film-introduction"
         :class="[
@@ -32,6 +34,7 @@
           ></span>
         </div>
       </div>
+      <!-- 演职人员信息 -->
       <div class="film-cast-info" v-if="info.director || info.cast">
         <div class="film-cast-header" @click="goCast">
           <div class="film-cast-title">演职人员</div>

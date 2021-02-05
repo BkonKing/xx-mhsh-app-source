@@ -1,7 +1,7 @@
 <template>
   <van-sticky v-bind="$attrs">
     <van-dropdown-menu>
-      <van-dropdown-item v-model="countyId">
+      <van-dropdown-item v-model="countyId" ref="countyId">
         <van-cell
           v-for="(item, i) in countyOptions"
           :key="i"
@@ -23,7 +23,7 @@
           {{ countyText }}
         </template>
       </van-dropdown-item>
-      <van-dropdown-item v-model="hallNo">
+      <van-dropdown-item v-model="hallNo" ref="hallNo">
         <div class="hall-tags">
           <div
             class="hall-tag"
@@ -39,7 +39,7 @@
           {{ hallText }}
         </template>
       </van-dropdown-item>
-      <van-dropdown-item v-model="sortType">
+      <van-dropdown-item v-model="sortType" ref="sortType">
         <van-cell
           v-for="(item, i) in sortOptions"
           :key="i"
@@ -143,22 +143,24 @@ export default {
     handleClickCounty ({ text, value }) {
       this.countyText = value
       this.countyId = text
-      this.handleChange()
+      this.handleChange('countyId')
     },
     // 影厅点击事件
     handleClickHall ({ text, value }) {
       this.hallText = value
       this.hallNo = text
-      this.handleChange()
+      this.handleChange('hallNo')
     },
     // 排序点击事件
     handleClickSort ({ text, value }) {
       this.sortTypeText = text
       this.sortType = value
-      this.handleChange()
+      this.handleChange('sortType')
     },
     // 触发父组件change事件
-    handleChange () {
+    handleChange (menuRef) {
+      // 选中后就关闭当前menu
+      this.$refs[menuRef].toggle(false)
       this.$emit('change', {
         countyId: this.countyId,
         hallNo: this.hallNo,

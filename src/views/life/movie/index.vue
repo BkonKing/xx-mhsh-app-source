@@ -8,9 +8,10 @@
           @click="goBack"
         ></i>
         <span>电影</span>
-        <van-field class="tf-flex-item" placeholder="电影、影院"></van-field>
+        <van-field class="tf-flex-item" placeholder="电影、影院" @click="goSearch"></van-field>
       </template>
     </van-nav-bar>
+    <!-- 热映轮播 -->
     <van-swipe
       v-if="swipeImages && swipeImages.length"
       :autoplay="6000"
@@ -110,10 +111,10 @@ export default {
   data () {
     return {
       swipeImages: [],
-      cityId: 350100,
-      adCode: '', // 行政区编码
-      lon: 119.33887, // 经度
-      lat: 26.05312, // 纬度
+      cityId: 0,
+      adCode: 0, // 行政区编码
+      lon: 0, // 经度
+      lat: 0, // 纬度
       nowMovieList: [], // 正在上映的电影
       nowMovieTotal: 0, // 正在上映电影总数
       startMovieList: [], // 即将上映上映的电影
@@ -133,7 +134,6 @@ export default {
       })
         .then(() => {
           this.getLocationInfo()
-          this.getHitMovies()
           this.pageInit()
         })
         .catch(() => {
@@ -141,12 +141,16 @@ export default {
         })
     }
     // todo：测试使用
-    this.getHitMovies()
+    this.cityId = 350100
+    this.adCode = 350103
+    this.lon = 119.33887
+    this.lat = 26.05312
     this.pageInit()
   },
   methods: {
     // 页面初始化获取
     pageInit () {
+      this.getHitMovies()
       this.getfilmlist(1)
       this.getfilmlist(2)
       this.getcinemanearby()
@@ -164,45 +168,43 @@ export default {
         page_index: 1,
         page_size: 10
       }).then(({ data, total }) => {
-        // 热映
         if (type === 1) {
+          // 热映
           this.nowMovieTotal = total
           this.nowMovieList = data
         } else {
+          // 待映
           this.startMovieTotal = total
           this.startMovieList = data
         }
       })
     },
-    // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
+    // 获取当前地址信息
     getLocationInfo () {
-      // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
-      bMapGetLocationInfo().then(({ cityCode, adCode, lon, lat }) => {
-        // this.cityId = cityCode
-        // 百度获取的cityCode不同，需要将区域的后两位转为0才是当前城市编码
-        this.adCode = adCode.substring(0, 4) + '00'
+      // adCode:行政区编码
+      bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
+        // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
+        this.cityId = adCode.substring(0, 4) + '00'
+        this.adCode = adCode
         this.lon = lon
         this.lat = lat
       })
     },
     // 获取附近影院
-    // 显示/不显示：若是没有开启位置定位，用户有小区则以小区为定位；若是也没小区，则不显示这个板块(页面一定要开启位置定位)
     getcinemanearby () {
-      // todo:PC端地址信息写死
       return getcinemanearby({
         type: 2, // type=1城市ID，type=2区域ID
-        id: this.adCode || 350103,
+        id: this.adCode,
         lng: this.lon, // 经度
         lat: this.lat
       })
     },
-    // 页面滚动
+    // 页面滚动，页面滚动则头部背景图隐藏
     pageScroll (e) {
       this.scrollStatus = e.target.scrollTop > 0
     },
     // 跳转影片/影院，1：影片，2：影院 filmType 不传为热映，1为即将上映
     goList (type, filmType) {
-      // todo:PC端地址信息写死
       this.$router.push({
         name: 'movieList',
         query: {
@@ -220,6 +222,12 @@ export default {
         name: 'movieOrder'
       })
     },
+    // 跳转到搜索页
+    goSearch () {
+      this.$router.push({
+        name: 'search'
+      })
+    },
     goBack () {
       this.$router.go(-1)
     }
@@ -231,7 +239,7 @@ export default {
       if (to.matched.length === 0) {
         next(false)
       } else {
-        const names = ['butler']
+        const names = ['home', 'life']
         if (names.includes(to.name)) {
           this.$destroy()
           this.$store.commit('deleteKeepAlive', from.name)

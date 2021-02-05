@@ -10,17 +10,20 @@
     >
     </van-nav-bar>
     <div class="tf-main-container">
-      <div class="cast-title" v-if="info.director.count > 0">
-        导演（{{ info.director.count }}）
-      </div>
-      <div class="cast-content">{{ info.director.info }}</div>
-      <template v-if="info.cast_type == '0' && info.to_star.info">
-        <div class="cast-title">主演（{{info.to_star.count}}）</div>
-        <div class="cast-content">{{info.to_star.info}}</div>
+      <template v-if="actorInfo.director.count > 0">
+        <div class="cast-title">导演（{{ actorInfo.director.count }}）</div>
+        <div class="cast-content">{{ actorInfo.director.info }}</div>
       </template>
-      <template v-else-if="info.cast_type == '1' && info.dubbing.info">
-        <div class="cast-title">配音（{{info.dubbing.count}}）</div>
-        <div class="cast-content">{{info.dubbing.info}}</div>
+      <!-- 可能没有演员或者配音信息，所以需要多层判断 -->
+      <template v-if="actorInfo.cast_type == '0' && actorInfo.to_star.info">
+        <div class="cast-title">主演（{{ actorInfo.to_star.count }}）</div>
+        <div class="cast-content">{{ actorInfo.to_star.info }}</div>
+      </template>
+      <template
+        v-else-if="actorInfo.cast_type == '1' && actorInfo.dubbing.info"
+      >
+        <div class="cast-title">配音（{{ actorInfo.dubbing.count }}）</div>
+        <div class="cast-content">{{ actorInfo.dubbing.info }}</div>
       </template>
     </div>
   </div>
@@ -32,10 +35,10 @@ export default {
   name: 'movieCast',
   data () {
     return {
-      info: {
-        director: {},
-        to_star: {},
-        dubbing: {}
+      actorInfo: {
+        director: {}, // 导演
+        to_star: {}, // 演员
+        dubbing: {} // 配音演员
       }
     }
   },
@@ -44,11 +47,12 @@ export default {
     this.getActor()
   },
   methods: {
+    // 获取演职人员列表
     getActor () {
       getActor({
         film_id: this.id
       }).then(({ data }) => {
-        this.info = data
+        this.actorInfo = data
       })
     }
   }
@@ -69,5 +73,6 @@ export default {
   margin-bottom: 70px;
   font-size: 30px;
   color: #222;
+  word-break: break-all;
 }
 </style>
