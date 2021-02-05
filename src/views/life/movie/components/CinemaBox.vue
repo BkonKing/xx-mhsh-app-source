@@ -108,7 +108,7 @@ export default {
   .cinema-tags {
     display: flex;
     flex-wrap: wrap;
-    height: 52px;
+    height: 50px;
     overflow: hidden;
     margin-top: 28px;
     .cinema-tag {
@@ -116,9 +116,8 @@ export default {
       align-items: center;
       height: 40px;
       margin-right: 10px;
-      margin-bottom: 10px;
       padding: 0 12px;
-      border: 1px solid #ffa110;
+      border: 2px solid #ffa110;
       border-radius: 4px;
       font-size: 24px;
       line-height: 1;

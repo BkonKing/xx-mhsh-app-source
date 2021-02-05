@@ -2,7 +2,7 @@
   <div class="film-box">
     <div class="film-info" @click="goFilmDetails">
       <div
-        v-if="versionList && versionList.length"
+        v-if="versionList && versionList.length && type !== 3"
         class="film-version-container"
       >
         <div v-for="(version, i) in versionList" :key="i" class="film-version">
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="film-name">{{ data.film_name }}</div>
+    <div class="film-name" @click="goFilmDetails">{{ data.film_name }}</div>
     <template v-if="type === 1">
       <van-button round size="mini" type="primary" @click="buyTicket"
         >购票</van-button
@@ -43,6 +43,17 @@
         >想看</van-button
       >
       <van-button v-else round size="mini">已想看</van-button>
+    </template>
+    <template v-if="type === 3">
+      <van-button
+        class="ticket-btn"
+        round
+        size="mini"
+        type="primary"
+        @click="buyTicket"
+        >低至 <span class="tf-text-lg">{{ data.ticket_price }}</span
+        > 元<span class="tf-icon tf-icon-right"></span
+      ></van-button>
     </template>
   </div>
 </template>
@@ -180,6 +191,19 @@ export default {
   line-height: 1;
   color: #222222;
   @text-ellipsis();
+}
+
+.ticket-btn {
+  width: 100% !important;
+  /deep/ .van-button__text {
+    font-size: 26px;
+    .tf-text-lg {
+      line-height: 1;
+    }
+  }
+  .tf-icon-right {
+    margin-left: 15px;
+  }
 }
 
 /deep/ .van-button--round {

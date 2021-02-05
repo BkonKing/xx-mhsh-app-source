@@ -1,5 +1,5 @@
 <template>
-  <refreshList class="cinema-list" ref="list" :list.sync="list" :load="load">
+  <refreshList class="cinema-list" ref="list" :disabled="disabled" :list.sync="list" :load="load">
     <template v-slot="{ item }">
       <cinema-box :tag="tag" :data="item"></cinema-box>
     </template>
@@ -23,6 +23,10 @@ export default {
     tag: {
       type: Boolean,
       default: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

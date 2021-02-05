@@ -79,6 +79,10 @@ export default {
     filmNo: {
       type: [String, Number],
       default: ''
+    },
+    search: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -120,7 +124,8 @@ export default {
     getcinematotalbycity () {
       getcinematotalbycity({
         city_id: this.cityId,
-        film_no: this.filmNo
+        film_no: this.filmNo,
+        search: this.search
       }).then(({ data, total }) => {
         this.countyOptions = data
         this.countyOptions.unshift({

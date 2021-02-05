@@ -3,6 +3,7 @@
     class="tf-list-refresh"
     v-model="refreshing"
     success-text="刷新成功"
+    :disabled="disabled"
     @refresh="onRefresh"
   >
     <slot v-if="!loading && listChild.length === 0" name="nodata">
@@ -48,6 +49,10 @@ export default {
     pagination: {
       type: Boolean,
       default: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

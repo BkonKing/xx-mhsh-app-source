@@ -1,5 +1,5 @@
 <template>
-  <refreshList ref="list" :list.sync="list" :load="load">
+  <refreshList ref="list" :disabled="disabled" :list.sync="list" :load="load">
     <template v-slot="{ item, index }">
       <div
         class="film-publish-date"
@@ -108,7 +108,11 @@ export default {
       type: Number,
       default: 1
     },
-    load: Function
+    load: Function,
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {

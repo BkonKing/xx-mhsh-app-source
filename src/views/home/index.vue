@@ -215,6 +215,21 @@
           </van-swipe>
         </van-notice-bar>
       </div>
+      <!-- 热映电影 -->
+      <div class="community-box" v-if="filmlist && filmlist.length">
+        <div class="community-box__title" @click="goMovie">
+          热映电影
+          <span class="tf-icon tf-icon-right"></span>
+        </div>
+        <div class="film-list">
+          <film-box
+            v-for="(film, i) in filmlist"
+            :key="i"
+            :data="film"
+            :type="3"
+          ></film-box>
+        </div>
+      </div>
       <!-- 社区活动 -->
       <div class="community-box" v-if="activityList && activityList.length">
         <div class="community-box__title" @click="goCommunity">
@@ -288,18 +303,10 @@
 </template>
 
 <script>
-import {
-  Swipe,
-  SwipeItem,
-  Grid,
-  GridItem,
-  Image,
-  NoticeBar,
-  Toast,
-  Button
-} from 'vant'
+import { Toast } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
+import FilmBox from '@/views/life/movie/components/FilmBox'
 import {
   getMyApp,
   getBannerIndex,
@@ -311,21 +318,16 @@ import {
 import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
+import { getfilmlist } from '@/api/movie'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
 export default {
   name: 'home',
   components: {
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem,
-    [Grid.name]: Grid,
-    [GridItem.name]: GridItem,
-    [Image.name]: Image,
-    [NoticeBar.name]: NoticeBar,
-    [Button.name]: Button,
     pageNavBar,
-    tfImageList
+    tfImageList,
+    FilmBox
   },
   data () {
     return {
@@ -339,6 +341,7 @@ export default {
       ollageGoods: [], // 闪购商品
       creditsGoods: [], // 幸福币商品
       frontList: [],
+      filmlist: [], // 热映电影列表
       activityList: [],
       signLoading: false,
       guideShow: false, // 是否显示新手引导图
@@ -414,6 +417,7 @@ export default {
     this.getNoticeLbList()
     this.getCreditsGoodsList()
     this.getBargainGoods()
+    this.getfilmlist()
     this.getActivityList()
     this.getOllageGoods()
     this.getMhttList()
@@ -522,6 +526,22 @@ export default {
     /* 跳转限时闪购详情 */
     clickTimeLimit ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
+    },
+    // 获取热映影片资料(列表)
+    getfilmlist () {
+      getfilmlist({
+        type: 1,
+        page_index: 1,
+        page_size: 3
+      }).then(({ data }) => {
+        this.filmlist = data
+      })
+    },
+    // 跳转电影页面
+    goMovie () {
+      this.$router.push({
+        name: 'movieIndex'
+      })
     },
     /* 获取活动列表 */
     getActivityList () {
@@ -883,6 +903,23 @@ export default {
     font-size: 26px;
     line-height: 1;
     color: #fff;
+  }
+}
+// 电影专区
+.film-list {
+  display: flex;
+  /deep/ .film-box {
+    flex: 1;
+    padding-right: 20px;
+    .film-info {
+      flex: 1;
+      width: auto;
+      height: 310px;
+    }
+    .film-name {
+      width: auto;
+      text-align: center;
+    }
   }
 }
 /* 社区活动 */
