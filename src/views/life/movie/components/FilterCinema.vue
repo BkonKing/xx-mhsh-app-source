@@ -102,16 +102,20 @@ export default {
     }
   },
   created () {
-    this.gethall()
-    this.getcinematotalbycity()
+    this.reload()
   },
   methods: {
+    reload () {
+      this.gethall()
+      this.getcinematotalbycity()
+    },
     // 获取所有的影厅
     gethall () {
       gethall({
         type: 1,
         id: this.cityId,
-        film_no: this.filmNo
+        film_no: this.filmNo,
+        search: this.search
       }).then(({ data }) => {
         this.hallOptions = data
         this.hallOptions.unshift({

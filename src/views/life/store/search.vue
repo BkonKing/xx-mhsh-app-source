@@ -64,9 +64,10 @@
       <template v-else>
         <div class="result-more-box" >
           <div v-if="typeVal > 0" class="result-more-tit"><span class="color-222">{{ items[typeVal] }}</span>（{{oneSeach_count}}）</div>
+          <filter-cinema ref="filter-cinema" v-if="typeVal === 3" :cityId="cityId" :search="oneSeach_val" @change="changeFilterCinema"></filter-cinema>
         </div>
       </template>
-      <div class="nav-empty"></div>
+      <div class="nav-empty" :class="{'nav-empty-cinema': typeVal === 3}"></div>
 
       <van-list
         v-model="loading"
@@ -130,14 +131,16 @@
         <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0 || typeVal==2">
           <template v-if="filmList.length > 0">
             <div class="search-session result-session">
-              <div v-if="typeVal!=1" class="result-tit flex-between">
+              <div v-if="typeVal!=2" class="result-tit flex-between">
                 <div class="result-tit-l"><span class="color-222">电影</span>（{{film_count}}）</div>
                 <div @click="goMore(2)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多电影</div>
               </div>
               <div class="result-list list-690">
                 <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0">
+                  <film-list class="film-list" :value="filmList" :disabled="true"></film-list>
                 </template>
                 <template v-else>
+                  <film-list class="film-list"  :value="filmList2" :disabled="true"></film-list>
                 </template>
               </div>
             </div>
@@ -146,14 +149,16 @@
         <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0 || typeVal==3">
           <template v-if="cinemaList.length > 0">
             <div class="search-session result-session">
-              <div v-if="typeVal!=1" class="result-tit flex-between">
-                <div class="result-tit-l"><span class="color-222">影院</span>（{{film_count}}）</div>
+              <div v-if="typeVal!=3" class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">影院</span>（{{cinema_count}}）</div>
                 <div @click="goMore(3)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多影院</div>
               </div>
               <div class="result-list list-690">
                 <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0">
+                  <cinema-list class="cinema-list" :value="cinemaList" :tag="false" :disabled="true"></cinema-list>
                 </template>
                 <template v-else>
+                  <cinema-list class="cinema-list" :value="cinemaList2" :tag="false" :disabled="true"></cinema-list>
                 </template>
               </div>
             </div>
@@ -242,6 +247,11 @@
 <script>
 import { Tab, Tabs, Search, List } from 'vant'
 import tfImageList from '@/components/tf-image-list'
+import FilmList from '@/views/life/movie/components/FilmList'
+import CinemaList from '@/views/life/movie/components/CinemaList'
+import FilterCinema from '@/views/life/movie/components/FilterCinema'
+import { handlePermission } from '@/utils/permission'
+import { bMapGetLocationInfo } from '@/utils/util'
 import { thumbsUp } from '@/api/neighbours'
 import tfInput from '@/components/tf-input'
 import { getHotWords, getSearchGoods, getSearchApp, getSearchPostbar } from '@/api/life.js'
@@ -254,7 +264,10 @@ export default {
     [Search.name]: Search,
     [List.name]: List,
     tfImageList,
-    tfInput
+    tfInput,
+    FilmList,
+    CinemaList,
+    FilterCinema
   },
   data () {
     return {
@@ -284,6 +297,9 @@ export default {
       app_count: 0, // 搜索应用结果数量
       postbar_count: 0, // 搜索帖子结果数量
       oneSeach_count: 0, // 搜索结果数量
+      cityId: 0, // 城市id
+      lon: 0, // 经度
+      lat: 0, // 纬度
 
       page: 1, // 分页页码
       pageSize: 10, // 每页数
@@ -320,6 +336,20 @@ export default {
     }
   },
   created () {
+    if (process.env.VUE_APP_IS_APP === '1') {
+      handlePermission({
+        name: 'location',
+        title: '定位服务未开启',
+        message: '此功能需要授权定位权限才能更好为您提供服务，请授权',
+        confirmButtonText: '开启'
+      })
+        .then(() => {
+          this.getLocationInfo()
+        })
+        .catch(() => {
+          this.items.splice(3, 1)
+        })
+    }
     this.isSelect = this.$route.query.isSelect
     // this.searchList = JSON.parse(localStorage.getItem('searchWords')) || [];
     var searchWords = api.getPrefs({ sync: true, key: 'searchWords' }) || []
@@ -346,6 +376,15 @@ export default {
     }
   },
   methods: {
+    // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
+    getLocationInfo () {
+      bMapGetLocationInfo().then(({ cityCode, adCode, lon, lat }) => {
+        // 百度获取的cityCode不同，需要将区域的后两位转为0才是当前城市编码
+        this.cityId = adCode.substring(0, 4) + '00'
+        this.lon = lon
+        this.lat = lat
+      })
+    },
     // 输入框值变化/点击搜索
     inputCall (val) {
       this.search_val = val
@@ -365,9 +404,10 @@ export default {
       if (this.typeVal == 1) {
         this.getSearchGoods(2)
       } else if (this.typeVal == 2) {
-        this.getFilmSeachList(2)
+        this.getFilmSeachList()
       } else if (this.typeVal == 3) {
-        this.getCinemaSeachList(2)
+        this.$refs['filter-cinema'] && this.$refs['filter-cinema'].reload()
+        this.getCinemaSeachList()
       } else if (this.typeVal == 4) {
         this.getSearchPostbar(2)
       } else if (this.typeVal == 5) {
@@ -431,28 +471,35 @@ export default {
     },
     // 搜索电影或影院
     getFilmCinemaSeach () {
-      const that = this
-      getFilmCinemaSeach().then(res => {
+      if (!this.cityId) {
+        return
+      }
+      getFilmCinemaSeach({
+        city_id: this.cityId,
+        search: this.search_val,
+        lng: this.lon,
+        lat: this.lat
+      }).then(res => {
         if (res.success) {
-          var val = that.search_val
+          var val = this.search_val
           const dataArr = res.data.film_info
-          if (dataArr && dataArr.length > 0) {
-            for (let i = 0; i < dataArr.length; i++) {
-              const findText = dataArr[i].film_name.split(val)
-              const result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
-              dataArr[i].film_name = result
-            }
-          }
+          // if (dataArr && dataArr.length > 0) {
+          //   for (let i = 0; i < dataArr.length; i++) {
+          //     const findText = dataArr[i].film_name.split(val)
+          //     const result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+          //     dataArr[i].film_name = result
+          //   }
+          // }
           this.filmList = this.page == 1 ? dataArr : this.filmList.concat(dataArr)
           this.film_count = res.data.film_count
           const dataArr2 = res.data.cinema_info
-          if (dataArr2 && dataArr2.length > 0) {
+          /* if (dataArr2 && dataArr2.length > 0) {
             for (let i = 0; i < dataArr2.length; i++) {
               const findText2 = dataArr2[i].cinema_name.split(val)
               const result2 = findText2.join('<span style="color:#448fe4;">' + val + '</span>')
               dataArr2[i].cinema_name = result2
             }
-          }
+          } */
           this.cinemaList = this.page == 1 ? dataArr2 : this.cinemaList.concat(dataArr2)
           this.cinema_count = res.data.cinema_count
         }
@@ -460,26 +507,25 @@ export default {
     },
     // 搜索电影
     getFilmSeachList () {
-      const that = this
-      var search_key = this.search_val
-      if (this.typeVal == 2) {
-        search_key = this.oneSeach_val
+      if (!this.cityId) {
+        return
       }
+      const search_key = this.typeVal == 2 ? this.oneSeach_val : this.search_val
       getFilmSeachList({
-        search_key: search_key,
+        search: search_key,
         page: this.page,
         search_num: this.pageSize
       }).then(res => {
         if (res.success) {
           const dataArr = res.data.film_info
-          var val = that.search_val
-          if (dataArr && dataArr.length > 0) {
-            for (var i = 0; i < dataArr.length; i++) {
-              var findText = dataArr[i].film_name.split(val)
-              var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
-              dataArr[i].film_name = result
-            }
-          }
+          var val = this.search_val
+          // if (dataArr && dataArr.length > 0) {
+          //   for (var i = 0; i < dataArr.length; i++) {
+          //     var findText = dataArr[i].film_name.split(val)
+          //     var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+          //     dataArr[i].film_name = result
+          //   }
+          // }
           this.filmList2 = this.page == 1 ? dataArr : this.filmList2.concat(dataArr)
           if (dataArr.length < this.pageSize) {
             this.finished = true
@@ -491,27 +537,33 @@ export default {
         }
       })
     },
+    // 过滤影院
+    changeFilterCinema (params) {
+      this.getCinemaSeachList(params)
+    },
     // 搜索影院
-    getCinemaSeachList () {
-      const that = this
-      var search_key = this.search_val
-      if (this.typeVal == 3) {
-        search_key = this.oneSeach_val
+    getCinemaSeachList (params) {
+      if (!this.cityId) {
+        return
       }
+      var search_key = this.typeVal == 3 ? this.oneSeach_val : this.search_val
       getCinemaSeachList({
-        search_key: search_key,
+        city_id: this.cityId,
+        search: search_key,
+        lng: this.lon,
+        lat: this.lat,
         page: this.page,
-        search_num: this.pageSize
+        ...params
       }).then(res => {
         if (res.success) {
           const dataArr = res.data.cinema_info
-          if (dataArr && dataArr.length > 0) {
-            for (var i = 0; i < dataArr.length; i++) {
-              var findText = dataArr[i].cinema_name.split(search_key)
-              var result = findText.join('<span style="color:#448fe4;">' + search_key + '</span>')
-              dataArr[i].cinema_name = result
-            }
-          }
+          // if (dataArr && dataArr.length > 0) {
+          //   for (var i = 0; i < dataArr.length; i++) {
+          //     var findText = dataArr[i].cinema_name.split(search_key)
+          //     var result = findText.join('<span style="color:#448fe4;">' + search_key + '</span>')
+          //     dataArr[i].cinema_name = result
+          //   }
+          // }
           this.cinemaList2 = this.page == 1 ? dataArr : this.cinemaList2.concat(dataArr)
           if (dataArr.length < this.pageSize) {
             this.finished = true
@@ -913,6 +965,9 @@ export default {
 .nav-empty {
   height: 98px;
 }
+.nav-empty-cinema {
+  height: 188px;
+}
 .result-tit-l {
   font-size: 30px;
 }
@@ -1088,5 +1143,17 @@ export default {
   border-radius: 50%;
   background-color: #aaa;
   margin: 2px;
+}
+/* 影片列表 */
+.film-list {
+  padding: 0;
+}
+/* 电影院列表 */
+.cinema-list >>> .tf-van-list > .tf-van-cell:first-child .cinema-box{
+  padding-top: 0;
+  border-top: none;
+}
+.cinema-list >>> .van-pull-refresh__track > .tf-text-grey {
+  display: none;
 }
 </style>
