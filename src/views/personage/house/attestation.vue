@@ -485,8 +485,8 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const whiteList = ['houSelectCommunity', 'agreement', 'houSeselectHouse']
-    if (whiteList.indexOf(to.name) === -1) {
+    const whiteList = ['houSelectCommunity', 'agreement']
+    if (whiteList.indexOf(to.name) === -1 && !(to.name === 'houSeselectHouse' && to.query.mode === 2)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
