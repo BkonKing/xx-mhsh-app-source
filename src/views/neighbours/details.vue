@@ -439,6 +439,7 @@ export default {
   border-top: 1px solid @divider-color;
   font-size: 28px;
   color: #666;
+  word-break: break-all;
   /deep/ img {
     max-width: 100% !important;
   }
@@ -448,6 +449,7 @@ export default {
   align-items: center;
   border-top: 1px solid @divider-color;
   padding-top: 30px;
+  word-break: break-all;
   /deep/ img {
     max-width: 100% !important;
   }

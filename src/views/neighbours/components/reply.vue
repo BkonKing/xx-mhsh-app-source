@@ -329,6 +329,7 @@ export default {
         margin-top: 30px;
         font-size: 26px;
         line-height: 1.8;
+        word-break: break-all;
       }
       &__img-box {
         margin-top: 30px;
