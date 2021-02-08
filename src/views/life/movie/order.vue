@@ -26,6 +26,7 @@
           :name="item.value"
           :title="item.text"
         ></van-tab>
+        <!-- 订单列表 -->
         <refreshList
           ref="orderList"
           :pagination="false"
@@ -127,6 +128,14 @@ export default {
         }
       })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['movieTicket']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

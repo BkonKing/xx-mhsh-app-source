@@ -23,9 +23,10 @@
           { 'film-introduction-able': collapseable }
         ]"
       >
-        <div class="introduction-text">
+        <div ref="introductionBox" class="introduction-text">
           <div ref="introductionText">{{ info.introduction }}</div>
         </div>
+        <!-- 判断是否需要折叠，需要则显示折叠图标 -->
         <div class="tf-flex" v-if="collapseable">
           <span
             class="tf-icon"
@@ -71,12 +72,13 @@ export default {
   name: 'movieFilmDetails',
   data () {
     return {
-      id: '',
+      filmId: '',
       title: '',
       info: {
         score: 0,
         want_view: 0
       },
+      introductionBoxHeight: 0, // introductionBox默认高度
       collapseable: false, // 是否需要折叠
       collapsed: false // 控制折叠
     }
@@ -85,19 +87,22 @@ export default {
     filmDetails
   },
   created () {
-    this.id = this.$route.query.id
+    this.filmId = this.$route.query.id
     this.getfilminfo()
+  },
+  mounted () {
+    this.introductionBoxHeight = this.$refs.introductionBox.clientHeight
   },
   methods: {
     // 获取影片详情
     getfilminfo () {
       getfilminfo({
-        film_id: this.id
+        film_id: this.filmId
       }).then(({ data }) => {
         this.info = data
         this.$nextTick(() => {
-          // 描述元素如果高度大于105则需要显示折叠按钮
-          if (this.$refs.introductionText.clientHeight > 105) {
+          // 描述元素如果高度大于introductionBoxHeight则需要显示折叠按钮
+          if (this.$refs.introductionText.clientHeight > this.introductionBoxHeight) {
             this.collapseable = true
           }
         })
@@ -108,7 +113,7 @@ export default {
       this.$router.push({
         name: 'movieSelectCinema',
         query: {
-          id: this.id,
+          id: this.filmId,
           code: this.info.film_code
         }
       })
@@ -118,7 +123,7 @@ export default {
       this.$router.push({
         name: 'movieCast',
         query: {
-          id: this.id
+          id: this.filmId
         }
       })
     }
@@ -153,6 +158,7 @@ export default {
     overflow: hidden;
   }
 }
+// 介绍可以折叠
 .film-introduction-able {
   padding-bottom: 30px;
   .tf-flex {
@@ -161,6 +167,7 @@ export default {
     padding-top: 30px;
   }
 }
+// 介绍展开
 .film-introduction-collapsed {
   .introduction-text {
     height: auto;

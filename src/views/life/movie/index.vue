@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg-white" @scroll="pageScroll">
+  <div ref="el" class="tf-bg-white" @scroll="pageScroll">
     <div v-if="!scrollStatus" class="header-bg"></div>
     <van-nav-bar :border="false" :fixed="true" placeholder>
       <template #left>
@@ -120,7 +120,8 @@ export default {
       startMovieList: [], // 即将上映上映的电影
       startMovieTotal: 0, // 即将上映电影总数
       cinemaList: [], // 附近影院
-      scrollStatus: false // 页面是否滚动了
+      scrollStatus: false, // 页面是否滚动了
+      scrollTop: 0
     }
   },
   created () {
@@ -133,19 +134,25 @@ export default {
         confirmButtonText: '开启'
       })
         .then(() => {
-          this.getLocationInfo()
+          this.getLocationInfo().then(() => {
+            this.getcinemanearby()
+          })
           this.pageInit()
         })
         .catch(() => {
           this.goBack()
         })
+    } else {
+      // todo：测试使用
+      this.cityId = 350100
+      this.adCode = 350103
+      this.lon = 119.33887
+      this.lat = 26.05312
+      this.pageInit()
     }
-    // todo：测试使用
-    this.cityId = 350100
-    this.adCode = 350103
-    this.lon = 119.33887
-    this.lat = 26.05312
-    this.pageInit()
+  },
+  activated () {
+    this.scrollTop && (this.$refs.el.scrollTop = this.scrollTop)
   },
   methods: {
     // 页面初始化获取
@@ -153,7 +160,6 @@ export default {
       this.getHitMovies()
       this.getfilmlist(1)
       this.getfilmlist(2)
-      this.getcinemanearby()
     },
     // 获取热映轮播图
     getHitMovies () {
@@ -182,7 +188,7 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
+      return bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
         // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
         this.cityId = adCode.substring(0, 4) + '00'
         this.adCode = adCode
@@ -240,6 +246,7 @@ export default {
         next(false)
       } else {
         const names = ['home', 'life']
+        this.scrollTop = this.$refs.el.scrollTop || 0
         if (names.includes(to.name)) {
           this.$destroy()
           this.$store.commit('deleteKeepAlive', from.name)

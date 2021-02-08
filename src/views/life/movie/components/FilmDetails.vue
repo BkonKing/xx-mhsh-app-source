@@ -3,12 +3,17 @@
     <div class="film-header">
       <img class="film-cover" :src="info.cover" alt="影片封面" />
       <div class="film-info">
+        <!-- 名称 -->
         <div class="film-title">{{ info.film_name }}</div>
+        <!-- 类型 -->
         <div v-if="info.type" class="film-type">类型：{{ info.type }}</div>
+        <!-- 时长/地区 -->
         <div class="film-duration">
           {{ info.duration }}分钟 / {{ info.area }}
         </div>
+        <!-- 上映时间 -->
         <div class="film-publish">{{ info.publish_date }}中国大陆上映</div>
+        <!-- 制式 -->
         <div class="film-tags" v-if="info.version">
           <div
             class="film-tag"
@@ -21,28 +26,33 @@
       </div>
     </div>
     <div class="film-footer">
+      <!-- 评分 -->
       <div class="film-score">
         <div class="film-text">{{ parseFloat(info.score) / 10 }}</div>
         <div class="film-minor">电影评分</div>
       </div>
+      <!-- 想看人数 -->
       <div class="film-want">
         <div class="film-text">{{ info.want_view | wantFormat }}</div>
         <div class="film-minor">
           {{ parseInt(info.want_view) > 9999 ? "万" : "" }}人想看
         </div>
       </div>
+      <!-- 想看操作 -->
       <div class="film-view">
         <div class="film-text">
+          <!-- 已想看 -->
           <img
-            class="film-collect"
             v-if="info.view == 1"
+            class="film-collect"
             src="@/assets/imgs/movie_collect.png"
-            alt=""
+            alt="已想看"
           />
           <img
-            class="film-uncollect"
             v-else
+            class="film-uncollect"
             src="@/assets/imgs/movie_uncollect.png"
+            alt="想看"
             @click="setviewwatch"
           />
         </div>
@@ -70,7 +80,7 @@ export default {
       setviewwatch({
         film_id: this.info.film_id
       }).then(() => {
-        // 变为已设置
+        // 没有重新请求，手动变为已想看
         this.info.view = '1'
         this.info.want_view = parseInt(this.info.want_view) + 1
       })
@@ -99,6 +109,9 @@ export default {
       font-size: 28px;
       color: #fff;
       border-radius: 4px;
+    }
+    .film-info {
+      flex: 1;
     }
   }
   .film-title {
@@ -162,10 +175,14 @@ export default {
   .film-collect {
     width: 40px;
     height: 40px;
+    font-size: 24px;
+    color: #fff;
   }
   .film-uncollect {
     width: 48px;
     height: 48px;
+    font-size: 24px;
+    color: #fff;
   }
 }
 </style>

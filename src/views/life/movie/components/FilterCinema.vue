@@ -114,8 +114,8 @@ export default {
       gethall({
         type: 1,
         id: this.cityId,
-        film_no: this.filmNo,
-        search: this.search
+        film_no: this.filmNo, // 选择影院使用
+        search: this.search // 搜索页使用
       }).then(({ data }) => {
         this.hallOptions = data
         this.hallOptions.unshift({
@@ -128,8 +128,8 @@ export default {
     getcinematotalbycity () {
       getcinematotalbycity({
         city_id: this.cityId,
-        film_no: this.filmNo,
-        search: this.search
+        film_no: this.filmNo, // 选择影院使用
+        search: this.search // 搜索页使用
       }).then(({ data, total }) => {
         this.countyOptions = data
         this.countyOptions.unshift({

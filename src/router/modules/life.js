@@ -400,7 +400,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "movieOrder" */
       '@/views/life/movie/order'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 // 我的影票
 {

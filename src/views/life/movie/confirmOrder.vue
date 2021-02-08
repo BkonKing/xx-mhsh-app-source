@@ -11,35 +11,37 @@
     >
     </van-nav-bar>
     <div class="tf-main-container">
+      <!-- 订单信息 -->
       <div class="order-box">
-        <div class="order-film-name">{{ info.film_name }}</div>
-        <div class="order-cinema-name">{{ info.cinema_name }}</div>
+        <div class="order-film-name">{{ orderInfo.film_name }}</div>
+        <div class="order-cinema-name">{{ orderInfo.cinema_name }}</div>
         <div class="order-info">
           <div class="order-info-box">
             <div class="order-info-label">日期：</div>
-            <div class="order-info-value">{{ info.date }} {{ info.week }}</div>
+            <div class="order-info-value">{{ orderInfo.date }} {{ orderInfo.week }}</div>
           </div>
           <div class="order-info-box">
             <div class="order-info-label">时间：</div>
-            <div class="order-info-value">{{ info.time }}</div>
+            <div class="order-info-value">{{ orderInfo.time }}</div>
           </div>
           <div class="order-info-box">
             <div class="order-info-label">厅号：</div>
             <div class="order-info-value van-ellipsis">
-              {{ info.hall_name }}
+              {{ orderInfo.hall_name }}
             </div>
           </div>
           <div class="order-info-box">
             <div class="order-info-label">语言：</div>
-            <div class="order-info-value">{{ info.copy_language }}</div>
+            <div class="order-info-value">{{ orderInfo.copy_language }}</div>
           </div>
           <div class="order-info-box" style="width: 100%;">
             <div class="order-info-label">座位：</div>
-            <div class="order-info-value">{{ info.seat_name }}</div>
+            <div class="order-info-value">{{ orderInfo.seat_name }}</div>
           </div>
         </div>
       </div>
       <van-cell-group class="discounts-box">
+        <!-- 优惠券 -->
         <van-cell
           v-if="couponList && couponList.length"
           class="cell-border"
@@ -47,27 +49,30 @@
           :value="couponName"
           center
           is-link
-          @click="couponPopup = true"
+          @click="openCouponPopup"
         />
+        <!-- 幸福币 -->
         <van-cell
           class="cell-border"
-          :title="`幸福币(${info.credits}币)`"
+          :title="`幸福币(${orderInfo.credits}币)`"
           center
           title-class="auto-width"
         >
-          <template v-if="info.credits != '0'">
+          <template v-if="orderInfo.credits != '0'">
             <div class="tf-text" @click="useCredits = !useCredits">
-              使用{{ info.credits }}幸福币抵扣<span class="tf-text-primary"
-                >￥{{ parseInt(info.credits) / 10 }}</span
+              使用{{ orderInfo.credits }}幸福币抵扣<span class="tf-text-primary"
+                >￥{{ parseInt(orderInfo.credits) / 10 }}</span
               >
             </div>
+            <!-- 是否使用幸福币 -->
             <van-checkbox v-model="useCredits" shape="square"></van-checkbox>
           </template>
           <div class="tf-text-grey" v-else>攒幸福币可以用来抵扣哦！</div>
         </van-cell>
+        <!-- 订单价格 -->
         <van-cell title="" center>
           <div class="tf-text-grey">
-            共 {{ info.ticket_count }} 张
+            共 {{ orderInfo.ticket_count }} 张
             <span class="tf-ml-base"
               >合计:<span class="cell-text-emphasis"
                 >￥{{ payAmount }}</span
@@ -77,13 +82,14 @@
         </van-cell>
       </van-cell-group>
       <van-cell-group class="discounts-box">
-        <van-cell title="手机号" :value="info.mobile" center />
+        <van-cell title="手机号" :value="orderInfo.mobile" center />
         <van-cell
           class="cell-border"
           title="手机号仅用于生成订单，取票码不再以短信发送"
           center
         >
         </van-cell>
+        <!-- 是否同意协议 -->
         <van-cell
           title="不支持退票及改签"
           center
@@ -96,6 +102,7 @@
         >￥{{ payAmount }} 确定支付</van-button
       >
     </div>
+    <!-- 支付组件 -->
     <pay-swal
       ref="payblock"
       :show-swal="showPaySwal"
@@ -129,7 +136,7 @@
     >
       <div class="coupon-popup">
         <div class="coupon-popup-title">优惠券</div>
-        <van-radio-group v-model="couponId" checked-color="#EB5841">
+        <van-radio-group v-model="couponIdRadio" checked-color="#EB5841">
           <van-radio class="coupon-popup-item" name="">
             <img
               class="coupon-popup-item-img"
@@ -153,9 +160,12 @@
             {{ item.coupon_name }}
           </van-radio>
         </van-radio-group>
-        <van-button class="coupon-popup-btn" type="primary" @click="calculatePrice">确定</van-button>
+        <van-button class="coupon-popup-btn" type="primary" @click="confirmCoupon">确定</van-button>
       </div>
     </van-popup>
+    <van-overlay class="tf-flex-center" :show="payLoading" z-index="9999">
+      <van-loading type="spinner" color="#1989fa"  size="36px" vertical>加载中...</van-loading>
+    </van-overlay>
   </div>
 </template>
 
@@ -177,15 +187,17 @@ export default {
       orderId: '',
       agreement: false,
       couponId: '', // 优惠券id
+      couponIdRadio: '', // 优惠券radio值
       couponList: [], // 优惠券列表
       useCredits: false, // 是否用幸福币抵用
       showPaySwal: false, // 支付方式弹窗
-      info: {},
+      orderInfo: {},
       payAmount: 0, // 支付金额
       payOrderInfo: {}, // 支付信息
       idcard: '', // 身份证
       successShow: false, // 支付成功后显示
-      couponPopup: false // 选择优惠券
+      couponPopup: false, // 选择优惠券
+      payLoading: false
     }
   },
   components: {
@@ -193,6 +205,7 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+    // 当前使用的优惠券名称
     couponName () {
       let name = ''
       const couponId = this.couponId
@@ -204,13 +217,6 @@ export default {
       })
       return couponId ? name : '不使用优惠券'
     }
-    // payAmount () {
-    //   let num = parseFloat(this.info.source_price)
-    //   if (this.useCredits) {
-    //     num = num - parseInt(this.info.credits) / 10
-    //   }
-    //   return num
-    // }
   },
   created () {
     this.orderId = this.$route.query.orderId
@@ -233,7 +239,7 @@ export default {
       getConfirmOrder({
         order_id: this.orderId
       }).then(({ data }) => {
-        this.info = data
+        this.orderInfo = data
         // 首次买票默认没勾选；购买过一次后，默认勾选
         this.agreement = data.ischeck
         this.couponId = data.coupon_id || ''
@@ -252,13 +258,23 @@ export default {
     calculatePrice () {
       calculatePrice({
         order_id: this.orderId,
-        credits: this.info.credits,
+        credits: this.orderInfo.credits,
         coupon_id: this.couponId,
         type: this.useCredits ? 1 : 0
       }).then(({ data }) => {
         this.payAmount = parseFloat(data.price)
         this.couponPopup = false
       })
+    },
+    // 打开选择优惠券
+    openCouponPopup () {
+      this.couponPopup = true
+      this.couponIdRadio = this.couponId
+    },
+    // 确定优惠券
+    confirmCoupon () {
+      this.couponId = this.couponIdRadio
+      this.calculatePrice()
     },
     // 发起支付
     pay () {
@@ -320,7 +336,7 @@ export default {
     },
     // 支付宝支付
     aliPayUp () {
-      var aliPayPlus = api.require('aliPayPlus')
+      const aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
         this.fyResult()
       })
@@ -345,11 +361,14 @@ export default {
     },
     // 幸福币支付
     payCredits () {
+      this.payLoading = true
       payCredits({
         order_id: this.orderId,
-        credits: this.info.credits
+        credits: this.orderInfo.credits
       }).then(({ data }) => {
         this.fyResult()
+      }).finally(() => {
+        this.payLoading = false
       })
     },
     // 支付成功回调
@@ -370,11 +389,13 @@ export default {
     }
   },
   watch: {
+    // 是否使用幸福币，触发重新计算支付金额
     useCredits () {
       this.calculatePrice()
     }
   },
   beforeRouteLeave (to, from, next) {
+    // 返回选座，则释放当前订单座位
     if (to.name === 'movieSeat') {
       this.unlockorder()
     }
@@ -562,6 +583,13 @@ export default {
     /deep/.van-radio__icon .van-icon {
       width: 32px;
       height: 32px;
+      font-size: 24px;
+      line-height: 1;
+    }
+    /deep/ .van-icon-success{
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     /deep/ .van-radio__label {
       display: flex;

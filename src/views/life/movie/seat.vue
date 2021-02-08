@@ -12,6 +12,7 @@
         <span class="tf-icon tf-icon-time-circle"></span>
       </template>
     </van-nav-bar>
+    <!-- 座位价格列表 -->
     <div class="seat-price-list">
       <div class="seat-price" v-for="(price, i) in seatPrices" :key="i">
         <div
@@ -31,17 +32,19 @@
       <div v-if="loading" class="loading-placeholder">
         <van-loading
           type="spinner"
-          color="#448FE4"
+          color="#eb5841"
           vertical
           size="24px"
           >加载中...</van-loading
         >
       </div>
       <div v-else-if="seatList && seatList.length" class="seat-container">
+        <!-- 屏幕 -->
         <div class="screen-box">
           <img class="screen" src="@/assets/imgs/movie_screen.png" alt="" />
           <div class="screnn-text">{{ hallName }} 巨幕</div>
         </div>
+        <!-- 座位 -->
         <div class="seat-row" v-for="(row, i) in seatList" :key="i">
           <div class="seat-box" v-for="(col, index) in row" :key="index">
             <div
@@ -63,12 +66,13 @@
       </div>
     </div>
     <div class="seat-footer">
+      <!-- 座位标签 -->
       <div class="seat-status-container">
         <div class="seat-status"><span class="seat choosable"></span>可选</div>
         <div class="seat-status">
           <span class="seat selected tf-icon tf-icon-gou"></span>已选
         </div>
-        <div class="seat-status"><span class="seat soldout"></span>已售</div>
+        <!-- <div class="seat-status"><span class="seat soldout"></span>已售</div> -->
         <div class="seat-status"><span class="seat unsold"></span>不可售</div>
       </div>
       <div class="film-box">
@@ -82,6 +86,7 @@
           {{ filmDate }} {{ filmTime }}
           <span class="film-tag">{{ filmTag }}</span>
         </div>
+        <!-- 排期列表 -->
         <div v-if="isCollapsible" class="session-container">
           <div
             v-for="(item, i) in sessionList"
@@ -97,6 +102,7 @@
             <div class="session-price">￥{{ item.ticket_price }}起</div>
           </div>
         </div>
+        <!-- 选中座位列表 -->
         <div
           v-if="Object.keys(selectSeats).length"
           class="select-seat-container"
@@ -131,6 +137,7 @@
         }}</van-button
       >
     </div>
+    <!-- 锁座失败提示 -->
     <tf-dialog v-model="lockseatFailVisiable">
       <div class="lockseat-fail-dialog">
         <img class="lock-fail" src="@/assets/imgs/movie-fail.png" alt="" />
@@ -143,6 +150,7 @@
         >
       </div>
     </tf-dialog>
+    <!-- 锁座中 -->
     <van-dialog v-model="lockVisiable" :show-confirm-button="false">
       <div class="lock-dialog">
         <van-circle
@@ -202,6 +210,7 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+    // 显示的总座位价格，包含服务费
     totalPrice () {
       let seatPrice = 0
       Object.keys(this.selectSeats).forEach(key => {
@@ -235,11 +244,13 @@ export default {
     this.scheduDate = scheduDate
   },
   activated () {
+    // 从确认订单返回，则不重新请求（页面初始化）
     setTimeout(() => {
       if (!this.backStatus) {
         this.getplanseat()
         this.getSessions()
         this.getfilmprice()
+        this.selectSeats = {}
       }
     }, 0)
   },
@@ -269,7 +280,7 @@ export default {
         this.sessionList = data
       })
     },
-    // 获取排期价格
+    // 获取影片座位价格
     getfilmprice () {
       getfilmprice({
         cinema_id: this.cinemaId,
@@ -280,6 +291,7 @@ export default {
     },
     // 选中座位
     selectSeat (col, rowIndex, colIndex) {
+      // 不可售的则返回
       if (col.seatState === -1) {
         return
       }
@@ -399,6 +411,7 @@ export default {
         .then(({ data }) => {
           this.lockVisiable = false
           this.$nextTick(() => {
+            // 跳转确认订单
             this.$router.push({
               name: 'movieConfirmOrder',
               query: {
@@ -411,9 +424,11 @@ export default {
           this.lockVisiable = false
           if (err.code === 201) {
             this.lockseatFailVisiable = true
+            this.getplanseat()
+            // err.seat_no 已经被锁座位，不可以重复选择
             const seatArray = err.seat_no.split(',')
+            // 删除已经被锁座座位
             seatArray.forEach(key => {
-              this.getplanseat()
               this.deleteSeat(key)
             })
           }
@@ -436,8 +451,10 @@ export default {
       // 先判断是否不可售
       if (col.seatState === -1) {
         // 是否标记过，标记过代表已售
-        className.push(col.seatFlag ? 'soldout' : 'unsold')
+        // className.push(col.seatFlag ? 'soldout' : 'unsold')
+        className.push('unsold')
       } else {
+        // 根据票价显示不同颜色座位
         const colorClass = ['seat-bass', 'seat-moderate', 'seat-high']
         const index = this.seatPrices.findIndex(e => e === col.seat_price)
         className.push(colorClass[index])
@@ -453,6 +470,7 @@ export default {
     }
   },
   watch: {
+    // 锁座
     lockVisiable (val) {
       if (val) {
         this.rateLock()
@@ -611,14 +629,16 @@ export default {
     color: #8f8f94;
     .seat-status {
       display: flex;
+      justify-content: center;
       align-items: center;
+      flex: 1;
       .seat {
         margin-right: 10px;
       }
     }
-    .seat-status + .seat-status {
-      margin-left: 50px;
-    }
+    // .seat-status + .seat-status {
+    //   margin-left: 50px;
+    // }
   }
   .film-box {
     // height: 142px;

@@ -23,6 +23,7 @@
             {{ info.order_desc }}
           </div>
         </div>
+        <!-- 影片详情 -->
         <div class="film-box">
           <img class="film-cover" :src="info.cover" />
           <div class="film-info">
@@ -34,6 +35,7 @@
             <div class="film-star van-ellipsis">{{ info.to_star }}</div>
           </div>
         </div>
+        <!-- 订单详情 -->
         <div class="order-content">
           <div class="tf-flex">
             <div class="tf-text-grey">
@@ -63,12 +65,9 @@
             </div>
           </div>
         </div>
-        <!-- <div class="order-footer"></div>
-        <div class="border-indent border-indent-left"></div>
-        <div class="border-indent border-indent-right"></div> -->
       </div>
       <!-- 已取消 -->
-      <div v-if="info.order_desc === '已取消'" class="order-box">
+      <div v-if="info.get_status === 2" class="order-box">
         <div class="order-content">
           <div class="tf-flex">
             <div class="tf-text-grey">
@@ -83,12 +82,15 @@
               退款金额
             </div>
             <div>
+              <!-- 退款金额 -->
               <template v-if="refundPrice">
                 {{ refundPrice }}
               </template>
+              <!-- 两种都有 -->
               <template v-if="refundPrice && refundHappiness">
                 +
               </template>
+              <!-- 退款幸福币 -->
               <template v-if="refundHappiness">
                 {{ refundHappiness }}
               </template>
@@ -112,6 +114,7 @@
           </div>
         </div>
       </div>
+      <!-- order-status-complete 已取票或者已取消 -->
       <div
         v-else
         class="order-status-box"
@@ -121,11 +124,13 @@
             (info.get_status === 1 && info.overdue === 1)
         }"
       >
+        <!-- 连接分割符 -->
         <div class="order-status-divider"></div>
         <div class="border-indent border-indent-left"></div>
         <div class="border-indent border-indent-right"></div>
-        <template v-if="info.order_desc === '待出票'">
-          <!-- rate表示进度条的目标进度 -->
+        <!-- 待出票 -->
+        <!-- <template v-if="info.order_desc === '待出票'">
+          rate表示进度条的目标进度
           <van-circle
             v-model="currentRate"
             :rate="100"
@@ -137,20 +142,21 @@
               alt=""
           /></van-circle>
           <div class="tf-text-lg">出票中</div>
-        </template>
-        <template v-else>
-          <img class="ticket-code-img" :src="info.ticket_code" />
+        </template> -->
+        <!-- 有票 -->
+        <!-- <template v-else> -->
+          <img class="ticket-code-img" :src="info.printno_url" />
           <div class="tf-text-lg">
             取票码：<span class="ticket-code-text">{{ info.ticket_code }}</span>
           </div>
-        </template>
+        <!-- </template> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getfilmdetails } from '@/api/movie'
+import { getfilmdetails, generateticketcode } from '@/api/movie'
 export default {
   name: 'movieTicket',
   data () {
@@ -161,9 +167,11 @@ export default {
     }
   },
   computed: {
+    // 退款金额
     refundPrice () {
       return this.info.refund_info.refund_price
     },
+    // 退款幸福币
     refundHappiness () {
       return this.info.refund_info.refund_happiness
     }

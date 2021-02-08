@@ -196,9 +196,12 @@ export default {
 .ticket-btn {
   width: 100% !important;
   /deep/ .van-button__text {
+    display: flex;
+    align-items: center;
     font-size: 26px;
+    line-height: 1;
     .tf-text-lg {
-      line-height: 1;
+      margin: 0 6px;
     }
   }
   .tf-icon-right {

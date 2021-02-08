@@ -1,17 +1,10 @@
 <template>
   <div class="app-body">
-    <van-nav-bar
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      @click-left="goBack"
-    ></van-nav-bar>
     <div class="bottom-fixed">
       <div ref="fixed-footer" class="cinema-box">
-        <div class="cinema-name">{{ info.cinema_name }}</div>
-        <div class="cinema-address">{{ info.address }}</div>
-        <van-button type="primary" size="large" @click="isAppVisiable = true"
+        <div class="cinema-name">{{ cinemaInfo.cinema_name }}</div>
+        <div class="cinema-address">{{ cinemaInfo.address }}</div>
+        <van-button type="primary" size="large" @click="openAppPopup"
           ><img
             class="path-icon"
             src="@/assets/imgs/movie_map_path.png"
@@ -60,56 +53,69 @@
 <script>
 import { handlePermission } from '@/utils/permission'
 import { mapInstalled, openMapApp } from '@/utils/apicloud_util'
+import { bMapGetLocationInfo } from '@/utils/util'
 import { getCinemaPosition } from '@/api/movie'
 export default {
   data () {
     return {
       cinemaId: '',
-      info: {},
+      cinemaInfo: {},
       bMap: '',
-      lon: 119.33887, // 经度
-      lat: 26.05312, // 纬度
-      isAppVisiable: false,
-      hasBMap: true,
-      hasAMap: true,
-      hasQQMap: true,
-      hasAppleMap: true
+      lon: 0, // 经度
+      lat: 0, // 纬度
+      isAppVisiable: false, // 打开应用弹窗
+      hasBMap: false, // 是否安装百度地图
+      hasAMap: false, // 是否安装高德地图
+      hasQQMap: false, // 是否安装腾讯地图
+      hasAppleMap: false // 是否安装苹果自带地图
     }
   },
   created () {
     this.cinemaId = this.$route.query.id
-    this.getCinemaPosition()
-    this.bMap = api.require('bMap')
-    this.getMapInstalled()
-    // 绑定frame返回事件
     window.goback = new CustomEvent('goback')
     document.addEventListener('goback', this.goBack)
     window.setCenter = new CustomEvent('setCenter')
     document.addEventListener('setCenter', this.setCenter)
     window.showUserLocation = new CustomEvent('showUserLocation')
     document.addEventListener('showUserLocation', this.showUserLocation)
-    return
-    handlePermission({
-      name: 'location',
-      title: '定位服务未开启',
-      message: '此功能需要授权定位权限才能更好为您提供服务，请授权',
-      confirmButtonText: '开启'
-    })
-      .then(() => {
-        this.bMap = api.require('bMap')
-        this.getMap()
-      })
-      .catch(() => {
-        this.goBack()
-      })
   },
   mounted () {
-    setTimeout(() => {
-      this.getMap()
-    }, 1000)
+    if (process.env.VUE_APP_IS_APP === '1') {
+      handlePermission({
+        name: 'location',
+        title: '定位服务未开启',
+        message: '此功能需要授权定位权限才能更好为您提供服务，请授权',
+        confirmButtonText: '开启'
+      })
+        .then(() => {
+          this.bMap = api.require('bMap')
+          this.getLocationInfo()
+          this.getCinemaPosition()
+          this.getMapInstalled()
+        })
+        .catch(() => {
+          this.goBack()
+        })
+    } else {
+      // todo:测试
+      this.lon = 119.33887
+      this.lat = 26.05312
+      this.getCinemaPosition()
+      this.getMapInstalled()
+    }
   },
   methods: {
-    getMap () {
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
+        this.lon = lon
+        this.lat = lat
+      })
+    },
+    // 打开地图
+    openMap () {
+      // 底部高度
       const footerHeight =
         (this.$refs['fixed-footer'] &&
           this.$refs['fixed-footer'].clientHeight) ||
@@ -124,8 +130,8 @@ export default {
             // h: 300
           },
           center: {
-            lon: this.info.longitude,
-            lat: this.info.latitude
+            lon: this.cinemaInfo.longitude,
+            lat: this.cinemaInfo.latitude
           },
           zoomLevel: 17,
           showUserLocation: true,
@@ -134,13 +140,12 @@ export default {
         ret => {
           if (ret.status) {
             this.addAnnotations()
-            this.setMaxAndMinZoomLevel()
             this.openFrame()
           }
         }
       )
     },
-    // 获取影院位置
+    // 获取影院信息
     getCinemaPosition () {
       getCinemaPosition({
         cinema_id: this.cinemaId,
@@ -148,24 +153,13 @@ export default {
         lng: this.lon
       }).then(({ data }) => {
         // latitude longitude
-        this.info = data
-      })
-    },
-    // 设置最大缩放比例
-    setMaxAndMinZoomLevel () {
-      this.bMap.setMaxAndMinZoomLevel({
-        maxLevel: 18,
-        minLevel: 10
+        this.cinemaInfo = data
+        this.openMap()
       })
     },
     /**
      * 在地图上显示用户位置，会自动移动地图可视区域中心点到用户当前坐标位置
      * https://docs.apicloud.com/Client-API/Open-SDK/bMap#showUserLocation
-     * trackingMode：（可选项）用户当前位置显示形式
-     * 取值范围：
-     * none（标准模式）注：Android平台为指向箭头，iOS平台为圆点
-     * follow（跟踪模式）
-     * compass（罗盘模式）
      */
     showUserLocation () {
       this.bMap.showUserLocation({
@@ -178,8 +172,8 @@ export default {
       this.bMap.setCenter({
         zoomLevel: 17,
         coords: {
-          lon: this.info.longitude,
-          lat: this.info.latitude
+          lon: this.cinemaInfo.longitude,
+          lat: this.cinemaInfo.latitude
         },
         animation: true
       })
@@ -191,8 +185,8 @@ export default {
           annotations: [
             {
               id: 1,
-              lon: this.info.longitude,
-              lat: this.info.latitude
+              lon: this.cinemaInfo.longitude,
+              lat: this.cinemaInfo.latitude
             }
           ],
           icon: 'widget://res/annotation.png'
@@ -204,6 +198,11 @@ export default {
         }
       )
     },
+    // 开启打开地图应用popup
+    openAppPopup () {
+      this.getMapInstalled()
+      this.isAppVisiable = true
+    },
     // 获取本地地图APP安装情况
     getMapInstalled () {
       // 判断是否有百度地图
@@ -211,27 +210,35 @@ export default {
         .then(() => {
           this.hasBMap = true
         })
-        .catch(() => {})
+        .catch(() => {
+          this.hasBMap = false
+        })
       // 判断是否有高德地图
       mapInstalled(2)
         .then(() => {
           this.hasAMap = true
         })
-        .catch(() => {})
+        .catch(() => {
+          this.hasAMap = false
+        })
       // ios系统下判断是否有苹果自带地图
       if (api.systemType === 'ios') {
         mapInstalled(3)
           .then(() => {
             this.hasAppleMap = true
           })
-          .catch(() => {})
+          .catch(() => {
+            this.hasAppleMap = false
+          })
       }
       // 判断是否有腾讯地图
       mapInstalled(4)
         .then(() => {
           this.hasQQMap = true
         })
-        .catch(() => {})
+        .catch(() => {
+          this.hasQQMap = false
+        })
     },
     /**
      * 打开APP
@@ -240,11 +247,12 @@ export default {
     openMapApp (type) {
       openMapApp({
         type,
-        name: this.info.cinema_name,
-        lat: this.info.latitude,
-        lon: this.info.longitude
+        name: this.cinemaInfo.cinema_name,
+        lat: this.cinemaInfo.latitude,
+        lon: this.cinemaInfo.longitude
       })
     },
+    // 打开地图上按钮的frame页面，只暂用一小部分大小，不能全部覆盖，否则地图将无法缩放
     openFrame () {
       api.openFrame({
         name: 'mapClose',
@@ -288,7 +296,7 @@ export default {
         name: 'mapOperation'
       })
     },
-    goBack (index) {
+    goBack () {
       // 调用router回退页面
       this.$router.go(-1)
     }

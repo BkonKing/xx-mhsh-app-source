@@ -480,7 +480,7 @@ export const cinemadetail = [
     data: {
       cinema_info: [
         {
-          film_no: '00106872016',
+          film_no: '00106872012',
           film_name: '宝贝儿',
           copy_type: '2D',
           copy_language: '国语',
@@ -500,7 +500,7 @@ export const cinemadetail = [
           score: '52'
         },
         {
-          film_no: '00106872012',
+          film_no: '00106872018',
           film_name: '宝贝儿',
           copy_type: '2D',
           copy_language: '国语',

@@ -187,34 +187,6 @@
           </van-swipe>
         </div>
       </div>
-      <!-- 美好头条 -->
-      <div class="front-page-container">
-        <van-notice-bar class="front-page" :scrollable="false">
-          <template v-slot:left-icon>
-            <img
-              class="front-page__tag"
-              src="@/assets/imgs/home_toutiao.png"
-              @click="$router.push('/neighbours?active=3')"
-            />
-          </template>
-          <van-swipe
-            v-if="frontList.length"
-            class="notice-swipe"
-            vertical
-            :autoplay="3000"
-            :show-indicators="false"
-          >
-            <van-swipe-item v-for="(item, i) in frontList" :key="i">
-              <div
-                class="front-page__text van-multi-ellipsis--l2"
-                @click="clickFront(item)"
-              >
-                {{ item.title }}
-              </div>
-            </van-swipe-item>
-          </van-swipe>
-        </van-notice-bar>
-      </div>
       <!-- 热映电影 -->
       <div class="community-box" v-if="filmlist && filmlist.length">
         <div class="community-box__title" @click="goMovie">
@@ -276,6 +248,34 @@
             </div>
           </div>
         </div>
+      </div>
+      <!-- 美好头条 -->
+      <div class="front-page-container">
+        <van-notice-bar class="front-page" :scrollable="false">
+          <template v-slot:left-icon>
+            <img
+              class="front-page__tag"
+              src="@/assets/imgs/home_toutiao.png"
+              @click="$router.push('/neighbours?active=3')"
+            />
+          </template>
+          <van-swipe
+            v-if="frontList.length"
+            class="notice-swipe"
+            vertical
+            :autoplay="3000"
+            :show-indicators="false"
+          >
+            <van-swipe-item v-for="(item, i) in frontList" :key="i">
+              <div
+                class="front-page__text van-multi-ellipsis--l2"
+                @click="clickFront(item)"
+              >
+                {{ item.title }}
+              </div>
+            </van-swipe-item>
+          </van-swipe>
+        </van-notice-bar>
       </div>
     </div>
     <!-- 新手引导 -->

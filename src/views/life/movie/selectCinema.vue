@@ -14,9 +14,12 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
+      <!-- 影片信息 -->
       <film-details :info="filmInfo"></film-details>
+      <van-loading v-if="loading" type="spinner" color="#eb5841" size="24px" />
+      <!-- 排期tabs -->
       <van-tabs
-        v-if="scheduList.length"
+        v-else-if="scheduList.length"
         v-model="activeDate"
         title-active-color="#EB5841"
         sticky
@@ -24,6 +27,7 @@
         @scroll="scrollTabs"
         @change="changeSchedu"
       >
+        <!-- 影院筛选 -->
         <filter-cinema
           v-if="filmInfo.film_id"
           :cityId="cityId"
@@ -31,6 +35,7 @@
           offset-top="2.48rem"
           @change="getSelectCinema"
         ></filter-cinema>
+        <!-- 排期渲染选择 -->
         <van-tab
           v-for="(schedu, i) in scheduList"
           :key="i"
@@ -38,8 +43,12 @@
           :title="`${schedu.week} ${schedu.date}`"
         >
         </van-tab>
+        <!-- 当前排期影院列表 -->
         <div class="cinema-list">
+          <!-- 切换排期loading -->
+          <van-loading v-if="cinemaLoading" type="spinner" color="#eb5841" size="20px" />
           <cinema-box
+            v-show="!cinemaLoading"
             v-for="(item, i) in cinemaList"
             :key="i"
             :data="item"
@@ -50,7 +59,6 @@
         </div>
       </van-tabs>
       <van-empty v-else-if="!loading" image="error" description="暂无排期" />
-      <van-loading v-if="loading" type="spinner" color="#eb5841" size="24px" />
     </div>
   </div>
 </template>
@@ -59,27 +67,30 @@
 import filmDetails from './components/FilmDetails'
 import FilterCinema from './components/FilterCinema'
 import CinemaBox from './components/CinemaBox'
+import { handlePermission } from '@/utils/permission'
+import { bMapGetLocationInfo } from '@/utils/util'
 import { getfilminfo, selectCinema, getSelectCinemaDate } from '@/api/movie'
 export default {
   name: 'movieSelectCinema',
   data () {
     return {
-      id: '', // 影片id
+      filmId: '', // 影片id
       filmNo: '', // 影片编码
       title: '',
       filmInfo: {
         score: 0,
         want_view: 0
       },
-      loading: false,
+      loading: false, // 排期loading
+      cinemaLoading: false, // 影院loading
       scheduList: [], // 排期
       cinemaList: [], // 影院列表
       activeDate: '', // 选中日期
       activeScheduDate: '', // 用来跳转到影院详情排期所需的参数
       isFixedTabs: false, // tabs是否吸顶
-      cityId: 350100,
-      lon: 119.33887,
-      lat: 26.05312
+      cityId: 0,
+      lon: 0,
+      lat: 0
     }
   },
   components: {
@@ -88,16 +99,49 @@ export default {
     CinemaBox
   },
   created () {
-    this.id = this.$route.query.id
+    this.filmId = this.$route.query.id
     this.filmNo = this.$route.query.code
-    this.getfilminfo()
-    this.getSelectCinemaDate()
+    // 若是未开启，进入此页面弹出。必须强制授权定位，不授权则退出此页面
+    if (process.env.VUE_APP_IS_APP === '1') {
+      handlePermission({
+        name: 'location',
+        title: '定位服务未开启',
+        message: '此功能需要授权定位权限才能更好为您提供服务，请授权',
+        confirmButtonText: '开启'
+      })
+        .then(() => {
+          this.getLocationInfo().then(() => {
+            this.getSelectCinemaDate()
+          })
+          this.getfilminfo()
+        })
+        .catch(() => {
+          this.goBack()
+        })
+    } else {
+      // todo：测试使用
+      this.cityId = 350100
+      this.lon = 119.33887
+      this.lat = 26.05312
+      this.getfilminfo()
+      this.getSelectCinemaDate()
+    }
   },
   methods: {
+    // 获取当前地址信息
+    getLocationInfo () {
+      return bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
+        // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
+        this.cityId = adCode.substring(0, 4) + '00'
+        console.log(this.cityId)
+        this.lon = lon
+        this.lat = lat
+      })
+    },
     // 获取影片详情
     getfilminfo () {
       getfilminfo({
-        film_id: this.id
+        film_id: this.filmId
       }).then(({ data }) => {
         this.filmInfo = data
       })
@@ -128,6 +172,7 @@ export default {
     },
     // 获取影院
     getSelectCinema ({ countyId, hallNo, sortType }) {
+      this.cinemaLoading = true
       selectCinema({
         city_id: this.cityId,
         lng: this.lon,
@@ -139,10 +184,13 @@ export default {
         date: this.activeDate
       }).then(({ data }) => {
         this.cinemaList = data
+      }).finally(() => {
+        this.cinemaLoading = false
       })
     },
     // tabs滚动
     scrollTabs ({ isFixed }) {
+      // 滚动到tab固定到顶部，则头部导航栏背景色更改，title更改为影片名称
       this.isFixedTabs = isFixed
     }
   },
