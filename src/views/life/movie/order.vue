@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-kefu"></span>
+        <span class="tf-icon tf-icon-kefu" @click="makePhoneCall"></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
@@ -74,7 +74,7 @@
 <script>
 import refreshList from '@/components/tf-refresh-list'
 import { mapGetters } from 'vuex'
-import { getticklist } from '@/api/movie'
+import { getticklist, getCustomerPhone } from '@/api/movie'
 export default {
   name: 'movieOrder',
   components: {
@@ -101,11 +101,15 @@ export default {
           value: 3
         }
       ],
-      orderList: []
+      orderList: [],
+      customerPhone: '' // 客服电话
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
+  },
+  created () {
+    this.getCustomerPhone()
   },
   methods: {
     // 获取订单列表
@@ -118,6 +122,18 @@ export default {
     // 切换订单类型重新刷新类别
     reloadOrderList () {
       this.$refs.orderList && this.$refs.orderList.reload()
+    },
+    // 客服电话
+    getCustomerPhone () {
+      getCustomerPhone().then(({ data }) => {
+        this.customerPhone = data
+      })
+    },
+    makePhoneCall () {
+      api.call({
+        type: 'tel_prompt',
+        number: this.customerPhone || ''
+      })
     },
     // 跳转到电影票详情
     goTicket ({ order_id }) {

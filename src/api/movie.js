@@ -262,3 +262,11 @@ export function getFilmSeachList (data) {
 export function getCinemaSeachList (data) {
   return request.post('/film/film/getsearchcinemainfo', data)
 }
+
+/**
+ * 获取客服电话
+ * @param
+ */
+export function getCustomerPhone (data) {
+  return request.post('/film/film/getcustomerphone', data)
+}

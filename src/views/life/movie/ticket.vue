@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-kefu"></span>
+        <span class="tf-icon tf-icon-kefu" @click="makePhoneCall"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -156,14 +156,15 @@
 </template>
 
 <script>
-import { getfilmdetails, generateticketcode } from '@/api/movie'
+import { getfilmdetails, getCustomerPhone } from '@/api/movie'
 export default {
   name: 'movieTicket',
   data () {
     return {
       orderId: '',
       info: {},
-      currentRate: 0 // 动画过程中的实时进度
+      currentRate: 0, // 动画过程中的实时进度
+      customerPhone: '' // 客服电话
     }
   },
   computed: {
@@ -179,6 +180,7 @@ export default {
   created () {
     this.orderId = this.$route.query.id
     this.getfilmdetails()
+    this.getCustomerPhone()
   },
   methods: {
     // 获取电影票详细信息
@@ -187,6 +189,18 @@ export default {
         order_id: this.orderId
       }).then(({ data }) => {
         this.info = data
+      })
+    },
+    // 客服电话
+    getCustomerPhone () {
+      getCustomerPhone().then(({ data }) => {
+        this.customerPhone = data
+      })
+    },
+    makePhoneCall () {
+      api.call({
+        type: 'tel_prompt',
+        number: this.customerPhone || ''
       })
     }
   },
