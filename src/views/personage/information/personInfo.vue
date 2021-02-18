@@ -62,9 +62,11 @@
                class="font_family icon-weishiming n2"></i> -->
           </template>
         </tf-list-item>
-        <tf-list-item title="生日" :showArrow="!userInfo.idcard">
+        <tf-list-item title="生日"
+                      :showArrow="!userInfo.idcard">
           <template v-slot:right>
-            <div class="tf-input" v-if="userInfo.idcard">{{birthday}}</div>
+            <div class="tf-input"
+                 v-if="userInfo.idcard">{{birthday}}</div>
             <tf-date-time-picker v-else
                                  class="tf-date-time-picker"
                                  v-model="birthday"

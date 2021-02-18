@@ -409,6 +409,16 @@ const personageRouter = [
         /* webpackChunkName: "waterElectricityMeter" */
         '@/views/personage/transaction/water-electricity/meter-reading.vue'
       )
+  },
+  /* 幸福币-推荐购房 */
+  {
+    path: '/pages/personage/happiness-coin/recomBuyHouse',
+    name: 'recomBuyHouse',
+    component: () =>
+      import(
+        /* webpackChunkName: "waterElectricityMeter" */
+        '@/views/personage/happiness-coin/recom-buy-house.vue'
+      )
   }
 ]
 
