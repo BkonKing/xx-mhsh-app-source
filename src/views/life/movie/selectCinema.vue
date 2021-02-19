@@ -193,6 +193,17 @@ export default {
       this.isFixedTabs = isFixed
     }
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      const names = ['movieCinemaDetails']
+      if (!names.includes(from.name)) {
+        vm.filmId = vm.$route.query.id
+        vm.filmNo = vm.$route.query.code
+        vm.getSelectCinemaDate()
+        vm.getfilminfo()
+      }
+    })
+  },
   beforeRouteLeave (to, from, next) {
     const names = ['movieCinemaDetails']
     if (!names.includes(to.name)) {

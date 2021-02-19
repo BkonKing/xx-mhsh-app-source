@@ -402,8 +402,6 @@ export default {
         const newY = this.oldTranslateY + (events.pageY - this.touchParams.pageY)
         const width = this.$refs['seat-container'].clientWidth * this.touchParams.scale - this.$refs['tf-body-container'].clientWidth
         const height = this.$refs['seat-container'].clientHeight * this.touchParams.scale - this.$refs['tf-body-container'].clientHeight
-        console.log(newX, width)
-        console.log(newY, height)
         if (width < 0) {
           this.translateX = 0
         } else {

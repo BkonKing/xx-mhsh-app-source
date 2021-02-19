@@ -139,21 +139,19 @@ export default {
       first: true
     }
   },
-  created () {
-    this.cinemaId = this.$route.query.id
-    this.filmNo = this.$route.query.filmNo
-    this.title = this.$route.query.name
-    this.activeDate = this.$route.query.scheduDate
-    this.getCinemadetail()
-  },
   mounted () {
     this.filmItemWidth = (api.winWidth || document.body.clientWidth) / 4
     this.sidePaddingWidth = this.filmItemWidth * 3
   },
-  activated () {
-    this.scrollLeft && (this.$refs.vanSwipe.scrollLeft = this.scrollLeft)
-  },
   methods: {
+    // 页面初始化
+    pageInit () {
+      this.cinemaId = this.$route.query.id
+      this.filmNo = this.$route.query.filmNo
+      this.title = this.$route.query.name
+      this.activeDate = this.$route.query.scheduDate
+      this.getCinemadetail()
+    },
     // 获取影片详情
     getCinemadetail () {
       getCinemadetail({
@@ -211,7 +209,7 @@ export default {
     },
     // 切换影片，为了将当前选中的居中显示，需要将轮播图位置少切换一个位置
     swipeTo (i, item) {
-      const speed = Math.abs(this.filmIndex - i)
+      const speed = Math.abs(this.filmIndex - i) || 1
       const left = i * this.filmItemWidth
       this.filmIndex = i
       this.filmNo = item.film_no
@@ -329,6 +327,16 @@ export default {
     filmNo () {
       this.getCinemaschedu()
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      const names = ['movieSeat', 'movieLocation', 'movieFilmDetails']
+      if (!names.includes(from.name)) {
+        vm.pageInit()
+      } else {
+        vm.scrollLeft && (vm.$refs.vanSwipe.scrollLeft = vm.scrollLeft)
+      }
+    })
   },
   beforeRouteLeave (to, from, next) {
     const names = ['movieSeat', 'movieLocation', 'movieFilmDetails']

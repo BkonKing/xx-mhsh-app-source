@@ -86,13 +86,6 @@ export default {
   components: {
     filmDetails
   },
-  created () {
-    this.filmId = this.$route.query.id
-    this.getfilminfo()
-  },
-  mounted () {
-    this.introductionBoxHeight = this.$refs.introductionBox.clientHeight
-  },
   methods: {
     // 获取影片详情
     getfilminfo () {
@@ -127,6 +120,16 @@ export default {
         }
       })
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      const names = ['movieCast', 'movieSelectCinema']
+      if (!names.includes(from.name)) {
+        vm.filmId = vm.$route.query.id
+        vm.getfilminfo()
+        vm.introductionBoxHeight = vm.$refs.introductionBox.clientHeight
+      }
+    })
   },
   beforeRouteLeave (to, from, next) {
     const names = ['movieCast', 'movieSelectCinema']
