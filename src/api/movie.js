@@ -5,6 +5,11 @@ export function getHitMovies (data) {
   return request.post('/film/film/hitmovies', data)
 }
 
+// 观影首页轮播图
+export function getCarouselMap (data) {
+  return request.post('/film/film/getCarouselMap', data)
+}
+
 // 获取影片资料(列表) type:1执映2待映
 export function getfilmlist (data) {
   return request.post('/film/film/getfilmlist', data)

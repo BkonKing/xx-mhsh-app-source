@@ -92,7 +92,7 @@
               </template>
               <!-- 退款幸福币 -->
               <template v-if="refundHappiness">
-                {{ refundHappiness }}
+                幸福币{{ refundHappiness }}
               </template>
             </div>
           </div>

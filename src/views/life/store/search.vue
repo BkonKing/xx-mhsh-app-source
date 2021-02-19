@@ -286,6 +286,7 @@ export default {
       goodsList2: [], // 搜索结果（商品）
       filmList: [], // 搜索结果（电影）
       filmList2: [], // 搜索结果（电影）
+      filterParams: {}, // 搜索结果影院过滤参数
       cinemaList: [], // 搜索结果（影院）
       cinemaList2: [], // 搜索结果（影院）
       appList: [], // 搜索结果（应用）
@@ -380,7 +381,7 @@ export default {
     getLocationInfo () {
       bMapGetLocationInfo().then(({ cityCode, adCode, lon, lat }) => {
         // 百度获取的cityCode不同，需要将区域的后两位转为0才是当前城市编码
-        this.cityId = adCode.substring(0, 4) + '00'
+        this.cityId = String(adCode).substring(0, 4) + '00'
         this.lon = lon
         this.lat = lat
       })
@@ -513,7 +514,8 @@ export default {
       const search_key = this.typeVal == 2 ? this.oneSeach_val : this.search_val
       getFilmSeachList({
         search: search_key,
-        page: this.page,
+        page_index: this.page,
+        page_size: 10,
         search_num: this.pageSize
       }).then(res => {
         if (res.success) {
@@ -539,10 +541,16 @@ export default {
     },
     // 过滤影院
     changeFilterCinema (params) {
-      this.getCinemaSeachList(params)
+      this.page = 1
+      this.filterParams = {
+        county_id: params.countyId,
+        hall_no: params.hallNo,
+        sort_type: params.sortType
+      }
+      this.getCinemaSeachList()
     },
     // 搜索影院
-    getCinemaSeachList (params) {
+    getCinemaSeachList () {
       if (!this.cityId) {
         return
       }
@@ -552,8 +560,9 @@ export default {
         search: search_key,
         lng: this.lon,
         lat: this.lat,
-        page: this.page,
-        ...params
+        page_index: this.page,
+        page_size: 10,
+        ...this.filterParams
       }).then(res => {
         if (res.success) {
           const dataArr = res.data.cinema_info
@@ -829,7 +838,8 @@ export default {
   beforeRouteLeave (to, from, next) {
     this.$refs.tfinput.closeSeach()
     this.$refs.tfinput2.closeSeach()
-    if (to.name == 'life' || to.name == 'home') {
+    const deleteList = ['life', 'home', 'movieIndex', 'movieList']
+    if (deleteList.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

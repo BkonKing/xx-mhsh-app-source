@@ -25,7 +25,14 @@
     </van-nav-bar>
     <div class="tf-main-container">
       <div class="film-info">
-        <div ref="vanSwipe" class="film-swipe-container" @scroll="toSwipe">
+        <div
+          ref="vanSwipe"
+          class="film-swipe-container"
+          @scroll="toSwipe"
+          @touchstart="touchstart"
+          @touchend="touchend"
+          @touchcancel="touchend"
+        >
           <div
             class="film-swipe"
             :style="{
@@ -38,7 +45,9 @@
               :key="index"
               @click="handleClickFilm(item, index)"
               class="film-swipe-item"
-              :class="{ 'film-swipe-item-active': item.film_no == filmNo }"
+              :class="{
+                'film-swipe-item-active': item.film_no == filmActive.film_no
+              }"
               :style="{
                 flex: `0 0 ${filmItemWidth}px`
               }"
@@ -126,7 +135,7 @@ export default {
       loading: false,
       filmItemWidth: 96, // 影片轮播film-swipe-item宽度(包含padding)
       sidePaddingWidth: 280, // 影片轮播，film-swipe左右需要添加两个占位item和margin间距的宽度和
-      timer: null
+      scrollLeft: 0 // 离开页面保存的滚动位置
     }
   },
   created () {
@@ -139,6 +148,9 @@ export default {
   mounted () {
     this.filmItemWidth = (api.winWidth || document.body.clientWidth) / 4
     this.sidePaddingWidth = this.filmItemWidth * 3
+  },
+  activated () {
+    this.scrollLeft && (this.$refs.vanSwipe.scrollLeft = this.scrollLeft)
   },
   methods: {
     // 获取影片详情
@@ -198,7 +210,39 @@ export default {
       this.filmIndex = i
       this.filmNo = item.film_no
       this.filmActive = item
-      // 滚动动画
+      this.scrollAnimation(left, speed * 2)
+    },
+    // 影片列表左右滚动切换选中
+    toSwipe (e) {
+      // 自动切换则不触发滚动自动选中
+      if (this.swipeStatus) {
+        this.swipeStatus = false
+        return
+      }
+      const index = this.findSwipeIndex(e.target.scrollLeft)
+      this.filmIndex = index
+      // this.filmNo = this.filmList[index].film_no
+      this.filmActive = this.filmList[index]
+    },
+    // 滑动停止需要判断当前位置是在哪，然后滚动到当前影片中间
+    swipeTouchEnd () {
+      const index = this.findSwipeIndex(this.$refs.vanSwipe.scrollLeft)
+      this.filmNo = this.filmList[index].film_no
+      this.scrollAnimation(index * this.filmItemWidth, 2)
+    },
+    // 返回当前滚动位置所属的影片index
+    findSwipeIndex (left) {
+      // 超出则返回最后一个
+      if (left > this.filmList.length * this.filmItemWidth) {
+        return this.filmList.length - 1
+      } else if (left > 0) {
+        const scrollLeft = left + this.filmItemWidth / 2
+        return Math.floor(scrollLeft / this.filmItemWidth)
+      }
+      return 0
+    },
+    // 滚动动画
+    scrollAnimation (left, speed) {
       const timer = setInterval(() => {
         this.swipeStatus = true
         if (this.$refs.vanSwipe) {
@@ -218,28 +262,11 @@ export default {
         }
       }, 0.5)
     },
-    // 影片列表左右滚动切换选中
-    toSwipe (e) {
-      // 自动切换则不触发滚动自动选中
-      if (this.swipeStatus) {
-        this.swipeStatus = false
-        return
-      }
-      // 用来判断是否滚动结束
-      clearTimeout(this.timer)
-      const scrollLeft = e.target.scrollLeft + this.filmItemWidth / 2
-      const index = Math.floor(scrollLeft / this.filmItemWidth)
-      this.filmIndex = index
-      this.filmNo = this.filmList[index].film_no
-      this.filmActive = this.filmList[index]
-      // 用来判断是否滚动结束
-      this.timer = setTimeout(this.swipeTouchEnd, 100)
-    },
-    // 滑动停止需要判断当前位置是在哪，然后滚动到当前影片中间
-    swipeTouchEnd () {
-      const scrollLeft = this.$refs.vanSwipe.scrollLeft + this.filmItemWidth / 2
-      const index = Math.floor(scrollLeft / this.filmItemWidth)
-      this.$refs.vanSwipe.scrollLeft = index * this.filmItemWidth
+    touchstart () {},
+    // 滚动结束，这里滚动用css关闭了滚动惯性
+    touchend () {
+      this.swipeStatus = true
+      this.swipeTouchEnd()
     },
     // tabs滚动
     scrollTabs ({ isFixed }) {
@@ -298,7 +325,8 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['movieSeat', 'movieLocation']
+    const names = ['movieSeat', 'movieLocation', 'movieFilmDetails']
+    this.scrollLeft = this.$refs.vanSwipe.scrollLeft || 0
     if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
@@ -417,6 +445,7 @@ export default {
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: auto;
   cursor: grab;
   user-select: none;
 }
@@ -424,7 +453,7 @@ export default {
   display: flex;
   overflow-x: auto;
   overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
   width: 720px;
   height: 100%;
   .film-swipe-item {

@@ -19,7 +19,7 @@
       <div class="cinema-address">{{ data.address }}</div>
       <div class="cinema-distance">{{ data.distance }}km</div>
     </div>
-    <div class="cinema-tags">
+    <div v-if="data.hall && data.hall.length" class="cinema-tags">
       <div class="cinema-tag" v-for="(tag, i) in data.hall" :key="i">
         {{ tag.hall_name }}
       </div>
@@ -116,6 +116,7 @@ export default {
       align-items: center;
       height: 40px;
       margin-right: 10px;
+      margin-bottom: 10px;
       padding: 0 12px;
       border: 2px solid #ffa110;
       border-radius: 4px;

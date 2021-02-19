@@ -1,6 +1,6 @@
 <template>
   <div ref="el" class="tf-bg-white" @scroll="pageScroll">
-    <div v-if="!scrollStatus" class="header-bg"></div>
+    <div v-if="swipeImages && swipeImages.length && !scrollStatus" class="header-bg"></div>
     <van-nav-bar :border="false" :fixed="true" placeholder>
       <template #left>
         <i
@@ -90,7 +90,7 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
       </div>
-      <cinema-list v-model="cinemaList" :load="getcinemanearby"></cinema-list>
+      <cinema-list v-model="cinemaList" :disabled="true"></cinema-list>
     </div>
   </div>
 </template>
@@ -99,7 +99,7 @@
 import FilmBox from './components/FilmBox'
 import CinemaList from './components/CinemaList'
 import { handlePermission } from '@/utils/permission'
-import { getHitMovies, getfilmlist, getcinemanearby } from '@/api/movie'
+import { getCarouselMap, getfilmlist, getcinemanearby } from '@/api/movie'
 import { bMapGetLocationInfo } from '@/utils/util'
 import { bulterPermission } from '@/utils/business'
 export default {
@@ -145,9 +145,10 @@ export default {
     } else {
       // todo：测试使用
       this.cityId = 350100
-      this.adCode = 350103
+      this.adCode = 350104
       this.lon = 119.33887
       this.lat = 26.05312
+      this.getcinemanearby()
       this.pageInit()
     }
   },
@@ -157,13 +158,13 @@ export default {
   methods: {
     // 页面初始化获取
     pageInit () {
-      this.getHitMovies()
+      this.getCarouselMap()
       this.getfilmlist(1)
       this.getfilmlist(2)
     },
     // 获取热映轮播图
-    getHitMovies () {
-      getHitMovies().then(({ data }) => {
+    getCarouselMap () {
+      getCarouselMap().then(({ data }) => {
         this.swipeImages = data
       })
     },
@@ -188,21 +189,24 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      return bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
+      return bMapGetLocationInfo().then((data) => {
+        const { adCode, lon, lat } = data
         // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
-        this.cityId = adCode.substring(0, 4) + '00'
-        this.adCode = adCode
+        this.adCode = String(adCode)
+        this.cityId = String(adCode).substring(0, 4) + '00'
         this.lon = lon
         this.lat = lat
       })
     },
     // 获取附近影院
     getcinemanearby () {
-      return getcinemanearby({
+      getcinemanearby({
         type: 2, // type=1城市ID，type=2区域ID
         id: this.adCode,
         lng: this.lon, // 经度
         lat: this.lat
+      }).then(({ data }) => {
+        this.cinemaList = data || []
       })
     },
     // 页面滚动，页面滚动则头部背景图隐藏
@@ -357,7 +361,6 @@ export default {
     margin-top: 30px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-
     /deep/ .film-box + .film-box {
       margin-left: 20px;
     }

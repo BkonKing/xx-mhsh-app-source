@@ -54,14 +54,16 @@ export default {
       this.$refs.cinemaList && this.$refs.cinemaList.reload()
     },
     // 获取影院地址列表
-    getcinemainfobycity () {
+    getcinemainfobycity ({ pages }) {
       return getcinemainfobycity({
         city_id: this.cityId,
         county_id: this.countyId,
         hall_no: this.hallNo,
         sort_type: this.sortType,
         lng: this.lon,
-        lat: this.lat
+        lat: this.lat,
+        page_index: pages,
+        page_size: 10
       })
     }
   }

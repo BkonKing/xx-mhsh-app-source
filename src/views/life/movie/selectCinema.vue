@@ -132,8 +132,7 @@ export default {
     getLocationInfo () {
       return bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
         // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
-        this.cityId = adCode.substring(0, 4) + '00'
-        console.log(this.cityId)
+        this.cityId = String(adCode).substring(0, 4) + '00'
         this.lon = lon
         this.lat = lat
       })

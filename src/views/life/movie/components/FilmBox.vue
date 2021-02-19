@@ -26,6 +26,7 @@
       >
     </template>
     <template v-if="type === 2">
+      <div class="film-publish">{{data.time}}</div>
       <van-button
         v-if="data.pre_saleflag == '1'"
         round
@@ -191,6 +192,12 @@ export default {
   line-height: 1;
   color: #222222;
   @text-ellipsis();
+}
+
+.film-publish {
+  margin-top: 10px;
+  font-size: 24px;
+  color: #666;
 }
 
 .ticket-btn {

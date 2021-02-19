@@ -21,6 +21,9 @@ export default {
   mounted () {
     this.UIInput = api.require('UIInput')
   },
+  beforeDestroy () {
+    this.closeSeach()
+  },
   methods: {
     openInput (val) {
       // alert('initOpen22')
@@ -51,7 +54,7 @@ export default {
         }, function (ret, err) {
           if (ret) {
             // alert(JSON.stringify(ret))
-            console.log(JSON.stringify(ret))
+            // console.log(JSON.stringify(ret))
             that.inputId = ret.id
             // 点击了搜索按钮
             if (ret.eventType == 'search' || ret.eventType == 'change') {
@@ -102,10 +105,9 @@ export default {
     // 关闭搜索框
     closeSeach () {
       // alert('this.inputId' + this.inputId)
-      const that = this
-      if (this.inputId != '') {
+      if (this.inputId !== '') {
         this.UIInput.close({
-          id: that.inputId
+          id: this.inputId
         })
       }
     },

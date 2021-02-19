@@ -13,7 +13,12 @@
       </template>
     </van-nav-bar>
     <!-- 座位价格列表 -->
-    <div class="seat-price-list">
+    <div
+      class="seat-price-list"
+      :class="{
+        'seat-price-list-no-center': seatPrices && seatPrices.length > 3
+      }"
+    >
       <div class="seat-price" v-for="(price, i) in seatPrices" :key="i">
         <div
           class="seat"
@@ -30,37 +35,42 @@
       }"
     >
       <div v-if="loading" class="loading-placeholder">
-        <van-loading
-          type="spinner"
-          color="#eb5841"
-          vertical
-          size="24px"
+        <van-loading type="spinner" color="#eb5841" vertical size="24px"
           >加载中...</van-loading
         >
       </div>
-      <div v-else-if="seatList && seatList.length" class="seat-container">
-        <!-- 屏幕 -->
-        <div class="screen-box">
-          <img class="screen" src="@/assets/imgs/movie_screen.png" alt="" />
-          <div class="screnn-text">{{ hallName }} 巨幕</div>
-        </div>
-        <!-- 座位 -->
-        <div class="seat-row" v-for="(row, i) in seatList" :key="i">
-          <div class="seat-box" v-for="(col, index) in row" :key="index">
-            <div
-              v-if="col.areaId"
-              class="seat"
-              :class="[
-                ...creatSeatClass(col),
-                {
-                  'seat-active': selectSeats.hasOwnProperty(col.seatNo)
-                }
-              ]"
-              @click="selectSeat(col, i, index)"
-            ></div>
+      <template v-else-if="seatList && seatList.length">
+        <div
+          class="seat-container"
+          @touchstart="touchstart"
+          @touchmove="touchmove"
+          @touchend="touchend"
+          @touchcancel="touchend"
+          :style="{ transform: 'scale(' + touchParams.scale + ')' }"
+        >
+          <!-- 屏幕 -->
+          <div class="screen-box">
+            <img class="screen" src="@/assets/imgs/movie_screen.png" alt="" />
+            <div class="screnn-text">{{ hallName }} 巨幕</div>
+          </div>
+          <!-- 座位 -->
+          <div class="seat-row" v-for="(row, i) in seatList" :key="i">
+            <div class="seat-box" v-for="(col, index) in row" :key="index">
+              <div
+                v-if="col.areaId"
+                class="seat"
+                :class="[
+                  ...creatSeatClass(col),
+                  {
+                    'seat-active': selectSeats.hasOwnProperty(col.seatNo)
+                  }
+                ]"
+                @click="selectSeat(col, i, index)"
+              ></div>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
       <div v-else class="loading-placeholder">
         <van-empty v-if="!loading" image="error" description="暂无座位" />
       </div>
@@ -170,12 +180,7 @@
 
 <script>
 import tfDialog from '@/components/tf-dialog/index'
-import {
-  getplanseat,
-  lockseat,
-  getSessions,
-  getfilmprice
-} from '@/api/movie'
+import { getplanseat, lockseat, getSessions, getfilmprice } from '@/api/movie'
 import { makeCount } from '@/utils/util'
 import { mapGetters } from 'vuex'
 export default {
@@ -205,7 +210,11 @@ export default {
       currentRate: 0, // 锁座进度
       timer: 0, // 锁座定时器
       loading: false,
-      backStatus: false // 是否从确认订单返回
+      backStatus: false, // 是否从确认订单返回
+      // 座位放大属性
+      touchParams: {
+        scale: 1 // 缩放
+      }
     }
   },
   computed: {
@@ -288,6 +297,100 @@ export default {
       }).then(({ data }) => {
         this.seatPrices = data
       })
+    },
+    // 座位放大触摸开始事件
+    touchstart (event) {
+      // 判断是否有两个点在屏幕上
+      if (event.touches.length >= 2) {
+        var touches = event.touches
+        var events = touches[0]
+        var events2 = touches[1]
+
+        event.preventDefault()
+
+        // 第一个触摸点的坐标
+        this.touchParams.pageX = events.pageX
+        this.touchParams.pageY = events.pageY
+
+        // 放大缩小移动属性
+        this.touchParams.moveable = true
+
+        // 第二个触摸点的坐标
+        if (events2) {
+          this.touchParams.pageX2 = events2.pageX
+          this.touchParams.pageY2 = events2.pageY
+        }
+
+        // 旧的缩放等级
+        this.touchParams.originScale = this.touchParams.scale || 1
+      }
+    },
+    // 座位放大触摸移动事件
+    touchmove (event) {
+      // 看是否放大缩小移动
+      if (!this.touchParams.moveable) {
+        return
+      }
+
+      event.preventDefault()
+
+      var touches = event.touches
+      var events = touches[0]
+      var events2 = touches[1]
+      // 双指移动
+      if (events2) {
+        // 第2个指头坐标在touchmove时候获取
+        if (!this.touchParams.pageX2) {
+          this.touchParams.pageX2 = events2.pageX
+        }
+        if (!this.touchParams.pageY2) {
+          this.touchParams.pageY2 = events2.pageY
+        }
+
+        // 获取坐标之间的举例
+        const getDistance = function (start, stop) {
+          return Math.hypot(stop.x - start.x, stop.y - start.y)
+        }
+        // 双指缩放比例计算
+        const zoom =
+          getDistance(
+            {
+              x: events.pageX,
+              y: events.pageY
+            },
+            {
+              x: events2.pageX,
+              y: events2.pageY
+            }
+          ) /
+          getDistance(
+            {
+              x: this.touchParams.pageX,
+              y: this.touchParams.pageY
+            },
+            {
+              x: this.touchParams.pageX2,
+              y: this.touchParams.pageY2
+            }
+          )
+        // 应用在元素上的缩放比例
+        var newScale = this.touchParams.originScale * zoom
+        // 最大缩放比例限制
+        if (newScale > 2) {
+          newScale = 2
+        } else if (newScale < 1) {
+          newScale = 1
+        }
+        // 记住使用的缩放值
+        this.touchParams.scale = newScale
+      }
+    },
+    // 放大座位触摸结束事件
+    touchend () {
+      this.touchParams.moveable = false
+
+      delete this.touchParams.pageX2
+      delete this.touchParams.pageY2
     },
     // 选中座位
     selectSeat (col, rowIndex, colIndex) {
@@ -382,6 +485,7 @@ export default {
       this.filmTime = `${start_time} ${end_time}`
       this.filmTag = `${copy_language} ${copy_type}`
       this.selectSeats = {}
+      this.getfilmprice()
       this.getplanseat()
     },
     // 锁座生成订单
@@ -455,7 +559,15 @@ export default {
         className.push('unsold')
       } else {
         // 根据票价显示不同颜色座位
-        const colorClass = ['seat-bass', 'seat-moderate', 'seat-high']
+        const colorClass = [
+          'seat-1',
+          'seat-2',
+          'seat-3',
+          'seat-4',
+          'seat-5',
+          'seat-6',
+          'seat-7'
+        ]
         const index = this.seatPrices.findIndex(e => e === col.seat_price)
         className.push(colorClass[index])
       }
@@ -465,7 +577,15 @@ export default {
   filters: {
     // 根据价格座位显示不同的颜色
     seatColorClass (value) {
-      const colorClass = ['seat-bass', 'seat-moderate', 'seat-high']
+      const colorClass = [
+        'seat-1',
+        'seat-2',
+        'seat-3',
+        'seat-4',
+        'seat-5',
+        'seat-6',
+        'seat-7'
+      ]
       return colorClass[value]
     }
   },
@@ -501,8 +621,10 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
-  padding: 0 100px;
+  flex-wrap: wrap;
+  width: 100%;
+  padding-top: 30px;
+  padding-left: 30px;
   background: #fff;
   .seat-price {
     display: flex;
@@ -510,13 +632,19 @@ export default {
     font-size: 30px;
     color: #8f8f94;
     .seat {
-      margin-right: 10px;
+      width: 32px;
+      height: 32px;
+      margin-right: 6px;
       background: #fff;
     }
   }
-  .seat-price + .seat-price {
-    margin-left: 50px;
+  .seat-price {
+    padding-right: 20px;
+    padding-bottom: 30px;
   }
+}
+.seat-price-list-no-center {
+  justify-content: initial;
 }
 .center-container {
   display: flex;
@@ -529,13 +657,14 @@ export default {
   display: inline-flex;
   flex-direction: column;
   padding: 40px;
+  transform-origin: 0 0;
   .seat-row {
     display: flex;
     margin-bottom: 10px;
   }
   .seat-box {
     display: flex;
-    min-width: 20px;
+    min-width: 36px;
   }
   .seat-box + .seat-box {
     margin-left: 10px;
@@ -587,14 +716,26 @@ export default {
   border: 2px solid #aaaaaa;
   border-radius: 6px;
 }
-.seat-bass {
+.seat-1 {
+  border-color: #537fe3;
+}
+.seat-2 {
+  border-color: #21cdff;
+}
+.seat-3 {
   border-color: #55b862;
 }
-.seat-moderate {
+.seat-4 {
+  border-color: #c0b500;
+}
+.seat-5 {
   border-color: #ffa110;
 }
-.seat-high {
+.seat-6 {
   border-color: #eb5841;
+}
+.seat-7 {
+  border-color: #ff62a1;
 }
 .choosable {
   background: #ffffff;

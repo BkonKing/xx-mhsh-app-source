@@ -49,7 +49,7 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
-    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex', 'waterElectricityMeter']
+    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex', 'waterElectricityMeter', 'movieCinemaDetails']
     api.addEventListener({
       name: 'swiperight'
     }, (ret, err) => {
