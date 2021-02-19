@@ -28,6 +28,7 @@
       </div>
     </div>
     <div
+      ref="tf-body-container"
       class="tf-body-container"
       :class="{
         'center-container':
@@ -41,12 +42,22 @@
       </div>
       <template v-else-if="seatList && seatList.length">
         <div
+          ref="seat-container"
           class="seat-container"
           @touchstart="touchstart"
           @touchmove="touchmove"
           @touchend="touchend"
           @touchcancel="touchend"
-          :style="{ transform: 'scale(' + touchParams.scale + ')' }"
+          :style="{
+            transform:
+              'scale(' +
+              touchParams.scale +
+              ') translateX(' +
+              translateX +
+              'px) translateY(' +
+              translateY +
+              'px)'
+          }"
         >
           <!-- 屏幕 -->
           <div class="screen-box">
@@ -214,7 +225,11 @@ export default {
       // 座位放大属性
       touchParams: {
         scale: 1 // 缩放
-      }
+      },
+      translateX: 0,
+      oldTranslateX: 0,
+      translateY: 0,
+      oldTranslateY: 0
     }
   },
   computed: {
@@ -300,21 +315,21 @@ export default {
     },
     // 座位放大触摸开始事件
     touchstart (event) {
+      var touches = event.touches
+      var events = touches[0]
+      var events2 = touches[1]
+
+      // 第一个触摸点的坐标
+      this.oldTranslateX = this.translateX
+      this.oldTranslateY = this.translateY
+      this.touchParams.pageX = events.pageX
+      this.touchParams.pageY = events.pageY
+      // 放大缩小移动属性
+      this.touchParams.moveable = true
+
       // 判断是否有两个点在屏幕上
       if (event.touches.length >= 2) {
-        var touches = event.touches
-        var events = touches[0]
-        var events2 = touches[1]
-
         event.preventDefault()
-
-        // 第一个触摸点的坐标
-        this.touchParams.pageX = events.pageX
-        this.touchParams.pageY = events.pageY
-
-        // 放大缩小移动属性
-        this.touchParams.moveable = true
-
         // 第二个触摸点的坐标
         if (events2) {
           this.touchParams.pageX2 = events2.pageX
@@ -328,17 +343,16 @@ export default {
     // 座位放大触摸移动事件
     touchmove (event) {
       // 看是否放大缩小移动
-      if (!this.touchParams.moveable) {
-        return
-      }
-
-      event.preventDefault()
+      // if (!this.touchParams.moveable) {
+      //   return
+      // }
 
       var touches = event.touches
       var events = touches[0]
       var events2 = touches[1]
       // 双指移动
       if (events2) {
+        event.preventDefault()
         // 第2个指头坐标在touchmove时候获取
         if (!this.touchParams.pageX2) {
           this.touchParams.pageX2 = events2.pageX
@@ -383,6 +397,23 @@ export default {
         }
         // 记住使用的缩放值
         this.touchParams.scale = newScale
+      } else {
+        const newX = this.oldTranslateX + (events.pageX - this.touchParams.pageX)
+        const newY = this.oldTranslateY + (events.pageY - this.touchParams.pageY)
+        const width = this.$refs['seat-container'].clientWidth * this.touchParams.scale - this.$refs['tf-body-container'].clientWidth
+        const height = this.$refs['seat-container'].clientHeight * this.touchParams.scale - this.$refs['tf-body-container'].clientHeight
+        console.log(newX, width)
+        console.log(newY, height)
+        if (width < 0) {
+          this.translateX = 0
+        } else {
+          this.translateX = newX > 0 ? 0 : (Math.abs(newX) > width / this.touchParams.scale ? -width / this.touchParams.scale : newX)
+        }
+        if (height < 0) {
+          this.translateY = 0
+        } else {
+          this.translateY = newY > 0 ? 0 : (Math.abs(newY) > height / this.touchParams.scale ? -height / this.touchParams.scale : newY)
+        }
       }
     },
     // 放大座位触摸结束事件
@@ -617,6 +648,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-body-container {
+  overflow: hidden;
+}
 .seat-price-list {
   display: flex;
   justify-content: center;

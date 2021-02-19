@@ -135,7 +135,8 @@ export default {
       loading: false,
       filmItemWidth: 96, // 影片轮播film-swipe-item宽度(包含padding)
       sidePaddingWidth: 280, // 影片轮播，film-swipe左右需要添加两个占位item和margin间距的宽度和
-      scrollLeft: 0 // 离开页面保存的滚动位置
+      scrollLeft: 0, // 离开页面保存的滚动位置
+      first: true
     }
   },
   created () {
@@ -190,6 +191,11 @@ export default {
         .then(({ data }) => {
           // 排期没有数据的情况下是[]，scheduList应该为Object，所以需要手动转成null
           this.scheduList = Array.isArray(data) && !data.length ? null : data
+          if (this.first && this.activeDate) {
+            this.first = false
+            return
+          }
+          this.activeDate = Object.keys(data)[0]
         })
         .finally(() => {
           this.loading = false
