@@ -6,7 +6,8 @@
                    placeholder
                    left-arrow
                    right-text="记录"
-                   @click-left="$router.go(-1)" />
+                   @click-left="$router.go(-1)"
+                   @click-right="$router.push('/pages/personage/happiness-coin/recomRecord')" />
       <h2>推荐赚幸福币</h2>
       <div class="title">
         <div class="left">
@@ -71,7 +72,7 @@
          class="awardInfo">
       奖励：30000幸福币 (朋友到访100,购房29900)
     </div>
-    <!-- 楼盘名称弹出层 -->
+    <!-- 楼盘名称弹出层1 -->
     <van-popup v-model="show"
                position="bottom"
                :style="{ height: '80%' }">
@@ -100,13 +101,15 @@
                     @click="show=false">确定</van-button>
       </div>
     </van-popup>
+
     <i v-if="show===true"
        @click="show=false"
        class="tf-icon tf-icon-guanbi1 guanbi"></i>
     <div class="confirm">
       <van-button block
-                  :disabled="bol"
-                  color="#eb5841">确认提交</van-button>
+                  :disabled="!bol"
+                  :color="!bol?'#aaaaaa':'#eb5841'"
+                  @click="submit">确认提交</van-button>
     </div>
   </div>
 </template>
@@ -125,7 +128,7 @@ export default {
   },
   computed: {
     bol () {
-      return this.houseName && this.friedName && this.phone
+      return this.houseName !== '' && this.friedName !== '' && this.phone !== ''
     }
   },
   methods: {
@@ -134,6 +137,10 @@ export default {
       this.currentIndex = index
       console.log(item)
       this.houseName = item
+    },
+    // 确认提交
+    submit () {
+      this.$toast('提交成功')
     }
   }
 }
