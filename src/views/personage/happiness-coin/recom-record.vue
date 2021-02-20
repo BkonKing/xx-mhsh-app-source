@@ -83,7 +83,7 @@
           </div>
         </div>
       </div>
-      <div class="steps">
+      <!-- <div class="steps">
         <van-steps direction="vertical"
                    :active="active"
                    active-color='#ffa110'
@@ -109,6 +109,63 @@
             </div>
           </van-step>
         </van-steps>
+      </div> -->
+      <div class="steps">
+        <!-- <van-steps direction="vertical"
+                   :active="0"
+                   active-color='#ffa110'
+                   active-icon='checked'>
+          <van-step>
+            <div class="stepItem">
+              <p>2016.07.12 </p>
+              <div class="txt">推荐客户</div>
+
+            </div>
+          </van-step>
+          <van-step>
+            <div class="stepItem">
+              <p>客户购房</p>
+            </div>
+          </van-step>
+        </van-steps> -->
+        <div class="left">
+          <div class="item">
+            <van-icon class="gouxuan active"
+                      name="checked" />
+          </div>
+          <div class="line activeBg"></div>
+          <div class="item2">
+            <van-icon class="gouxuan active"
+                      name="checked" />
+            <div class="cir"
+                 v-if="false">
+            </div>
+          </div>
+          <div class="line2 activeBg"></div>
+          <div class="item">
+            <van-icon class="gouxuan active"
+                      name="checked" />
+            <div class="cir"
+                 v-if="false">
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <div class="t1">
+            <span>2021.01.01</span>
+            <span>推荐客户</span>
+          </div>
+          <div class="t2">
+            <span>2020.02.02</span>
+            <span>客户到访</span>
+            <span>+100</span>
+          </div>
+          <div class="t2">
+            <span>2020.02.02</span>
+            <span>客户购房</span>
+            <span>+10000</span>
+          </div>
+        </div>
       </div>
     </van-popup>
     <!-- 详情弹出层2 -->
@@ -140,7 +197,7 @@
         </div>
       </div>
       <div class="steps">
-        <van-steps direction="vertical"
+        <!-- <van-steps direction="vertical"
                    :active="0"
                    active-color='#ffa110'
                    active-icon='checked'>
@@ -156,7 +213,31 @@
               <p>客户购房</p>
             </div>
           </van-step>
-        </van-steps>
+        </van-steps> -->
+        <div class="left">
+          <div class="item">
+            <van-icon class="gouxuan active"
+                      name="checked" />
+          </div>
+          <div class="line activeBg"></div>
+          <div class="item">
+            <van-icon class="gouxuan active"
+                      name="checked" />
+            <div class="cir"
+                 v-if="false">
+            </div>
+          </div>
+        </div>
+        <div class="right">
+          <div class="t1">
+            <span>2021.01.01</span>
+            <span>推荐客户</span>
+          </div>
+          <div class="t2">
+            客户购房
+          </div>
+        </div>
+
       </div>
     </van-popup>
     <i class="tf-icon tf-icon-guanbi1 guanbi1"
@@ -298,13 +379,13 @@ export default {
   }
   /deep/ .van-popup {
     width: 620px;
-    height: 750px;
+    height: 850px;
     background: #ffffff;
     border-radius: 10px;
   }
   /deep/ .van-popup.popup2 {
     width: 620px;
-    height: 560px;
+    height: 600px;
     background: #ffffff;
     border-radius: 10px;
   }
@@ -353,11 +434,13 @@ export default {
       }
     }
     .steps {
+      margin-top: 25px;
       padding: 20px;
       background-color: #f0f0f0;
       font-size: 26px;
       border-radius: 10px;
       position: relative;
+      overflow: hidden;
       .stepItem {
         display: flex;
         align-items: center;
@@ -370,14 +453,69 @@ export default {
           color: #222222;
         }
       }
-      // .gouxuan {
-      //   position: absolute;
-      //   left: -35px;
-      //   top: -3px;
-      //   color: #ffa110;
-      //   z-index: 99999;
-      //   font-size: 40px;
-      // }
+      .left {
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        float: left;
+        position: relative;
+        .item2 {
+          margin: 55px 0;
+        }
+        .cir {
+          width: 36px;
+          height: 36px;
+          background: #aaaaaa;
+          border-radius: 50%;
+        }
+        .active {
+          color: #ffa110;
+        }
+        .activeBg {
+          background-color: #ffa110 !important;
+        }
+        .line {
+          width: 4px;
+          height: 78px;
+          background: #aaaaaa;
+          border-radius: 2px;
+          position: absolute;
+          top: 30px;
+          left: 20px;
+        }
+        .line2 {
+          width: 4px;
+          height: 78px;
+          background: #aaaaaa;
+          border-radius: 2px;
+          position: absolute;
+          top: 135px;
+          left: 20px;
+        }
+      }
+      .right {
+        color: #8f8f94;
+        .t1 {
+          margin-top: 5px;
+          span:last-child {
+            margin-left: 20px;
+            color: #222222;
+          }
+        }
+        .t2 {
+          margin-top: 70px;
+          span:nth-child(2) {
+            margin-left: 20px;
+            color: #222222;
+          }
+          span:nth-child(3) {
+            margin-left: 10px;
+            color: #eb5841;
+          }
+        }
+      }
     }
 
     /deep/ .van-steps {
@@ -452,6 +590,7 @@ export default {
       font-size: 26px;
       border-radius: 10px;
       position: relative;
+      overflow: hidden;
       .stepItem {
         display: flex;
         align-items: center;
@@ -464,18 +603,53 @@ export default {
           color: #222222;
         }
       }
-      // .gouxuan {
-      //   position: absolute;
-      //   left: -35px;
-      //   top: -3px;
-      //   color: #ffa110;
-      //   z-index: 99999;
-      //   font-size: 40px;
-      // }
+      .left {
+        margin-right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        float: left;
+        position: relative;
+        .item:first-child {
+          margin-bottom: 55px;
+        }
+        .cir {
+          width: 36px;
+          height: 36px;
+          background: #aaaaaa;
+          border-radius: 50%;
+        }
+        .active {
+          color: #ffa110;
+        }
+        .activeBg {
+          background-color: #ffa110 !important;
+        }
+        .line {
+          width: 4px;
+          height: 78px;
+          background: #aaaaaa;
+          border-radius: 2px;
+          position: absolute;
+          top: 30px;
+          left: 20px;
+        }
+      }
+      .right {
+        color: #8f8f94;
+        .t1 {
+          margin-top: 5px;
+          span:last-child {
+            margin-left: 20px;
+            color: #222222;
+          }
+        }
+        .t2 {
+          margin-top: 70px;
+        }
+      }
     }
-    // /deep/ .van-step__circle {
-    //   background-color: #fff !important;
-    // }
 
     /deep/ .van-steps {
       background-color: #f0f0f0;
@@ -505,7 +679,7 @@ export default {
     font-size: 50px;
     position: absolute;
     right: 95px;
-    top: 200px;
+    top: 150px;
     z-index: 9999;
     color: #ffffff;
   }
@@ -513,7 +687,7 @@ export default {
     font-size: 50px;
     position: absolute;
     right: 95px;
-    top: 300px;
+    top: 280px;
     z-index: 9999;
     color: #ffffff;
   }
