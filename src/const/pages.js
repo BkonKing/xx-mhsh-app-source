@@ -106,5 +106,16 @@ export const pagesArr = {
   supportBankCardList: 105, // 支持的银行卡列表
   verifyPhone: 106, // 验证预留手机号
   payAgreeMent: 107, // 支付协议
-  bankCard: 108 // 我的银行卡
+  bankCard: 108, // 我的银行卡
+  movieIndex: 109, // 电影首页
+  movieList: 110, // 电影影院列表
+  movieFilmDetails: 111, // 影片详情
+  movieCast: 112, // 演职人员
+  movieSelectCinema: 113, // 选择影院
+  movieCinemaDetails: 114, // 影院详情
+  movieLocation: 115, // 影院定位
+  movieSeat: 116, // 选择座位
+  movieConfirmOrder: 117, // 确认订单
+  movieOrder: 118, // 我的影票
+  movieTicket: 119 // 电影票
 }

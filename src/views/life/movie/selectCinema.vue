@@ -3,10 +3,10 @@
     <van-nav-bar
       :class="{'unfixed-background': !isFixedTabs}"
       :title="isFixedTabs ? filmInfo.film_name : ''"
-      :fixed="true"
       :border="false"
-      left-arrow
+      :fixed="true"
       placeholder
+      left-arrow
       @click-left="$router.go(-1)"
     >
       <template #right>
@@ -23,7 +23,7 @@
         v-model="activeDate"
         title-active-color="#EB5841"
         sticky
-        offset-top="1.17333rem"
+        :offset-top="`${offsetTop}rem`"
         @scroll="scrollTabs"
         @change="changeSchedu"
       >
@@ -32,7 +32,7 @@
           v-if="filmInfo.film_id"
           :cityId="cityId"
           :filmNo="filmInfo.film_code"
-          offset-top="2.48rem"
+          :offset-top="`${offsetTop + 1.30667}rem`"
           @change="getSelectCinema"
         ></filter-cinema>
         <!-- 排期渲染选择 -->
@@ -90,7 +90,8 @@ export default {
       isFixedTabs: false, // tabs是否吸顶
       cityId: 0,
       lon: 0,
-      lat: 0
+      lat: 0,
+      offsetTop: 1.17333 // tab吸顶距离（单位rem）
     }
   },
   components: {
@@ -125,6 +126,12 @@ export default {
       this.lat = 26.05312
       this.getfilminfo()
       this.getSelectCinemaDate()
+    }
+  },
+  mounted () {
+    // 安卓下部分需要添加顶部安全距离
+    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
+      this.offsetTop += api.safeArea.top / 37.5
     }
   },
   methods: {

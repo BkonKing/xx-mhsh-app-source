@@ -1014,7 +1014,7 @@ export default {
   }
 }
 .front-page-container {
-  padding: 40px 20px 76px;
+  padding: 20px 20px 76px;
 }
 .front-page {
   padding: 30px;

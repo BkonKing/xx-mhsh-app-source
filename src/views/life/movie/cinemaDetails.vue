@@ -76,7 +76,7 @@
         v-model="activeDate"
         title-active-color="#EB5841"
         sticky
-        offset-top="1.17333rem"
+        :offset-top="`${offsetTop}rem`"
         @scroll="scrollTabs"
       >
         <van-tab
@@ -136,12 +136,17 @@ export default {
       filmItemWidth: 96, // 影片轮播film-swipe-item宽度(包含padding)
       sidePaddingWidth: 280, // 影片轮播，film-swipe左右需要添加两个占位item和margin间距的宽度和
       scrollLeft: 0, // 离开页面保存的滚动位置
-      first: true
+      first: true,
+      offsetTop: 1.17333 // tab吸顶距离（单位rem）
     }
   },
   mounted () {
     this.filmItemWidth = (api.winWidth || document.body.clientWidth) / 4
     this.sidePaddingWidth = this.filmItemWidth * 3
+    // 安卓下部分需要添加顶部安全距离
+    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
+      this.offsetTop += api.safeArea.top / 37.5
+    }
   },
   methods: {
     // 页面初始化

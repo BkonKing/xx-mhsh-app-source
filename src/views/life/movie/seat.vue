@@ -42,6 +42,23 @@
       </div>
       <template v-else-if="seatList && seatList.length">
         <div
+          class="seat-number-list"
+          style="padding-top: 5px"
+          :style="{
+            transform:
+              'scale(' +
+              touchParams.scale +
+              ') translateY(' +
+              translateY +
+              'px)',
+            top: `${1.9467 * touchParams.scale}rem`
+          }"
+        >
+          <div class="seat-number" v-for="i in seatList.length" :key="i">
+            {{ i }}
+          </div>
+        </div>
+        <div
           ref="seat-container"
           class="seat-container"
           @touchstart="touchstart"
@@ -65,19 +82,21 @@
             <div class="screnn-text">{{ hallName }} 巨幕</div>
           </div>
           <!-- 座位 -->
-          <div class="seat-row" v-for="(row, i) in seatList" :key="i">
-            <div class="seat-box" v-for="(col, index) in row" :key="index">
-              <div
-                v-if="col.areaId"
-                class="seat"
-                :class="[
-                  ...creatSeatClass(col),
-                  {
-                    'seat-active': selectSeats.hasOwnProperty(col.seatNo)
-                  }
-                ]"
-                @click="selectSeat(col, i, index)"
-              ></div>
+          <div class="seat-rows">
+            <div class="seat-row" v-for="(row, i) in seatList" :key="i">
+              <div class="seat-box" v-for="(col, index) in row" :key="index">
+                <div
+                  v-if="col.areaId"
+                  class="seat"
+                  :class="[
+                    ...creatSeatClass(col),
+                    {
+                      'seat-active': selectSeats.hasOwnProperty(col.seatNo)
+                    }
+                  ]"
+                  @click="selectSeat(col, i, index)"
+                ></div>
+              </div>
             </div>
           </div>
         </div>
@@ -398,19 +417,35 @@ export default {
         // 记住使用的缩放值
         this.touchParams.scale = newScale
       } else {
-        const newX = this.oldTranslateX + (events.pageX - this.touchParams.pageX)
-        const newY = this.oldTranslateY + (events.pageY - this.touchParams.pageY)
-        const width = this.$refs['seat-container'].clientWidth * this.touchParams.scale - this.$refs['tf-body-container'].clientWidth
-        const height = this.$refs['seat-container'].clientHeight * this.touchParams.scale - this.$refs['tf-body-container'].clientHeight
+        const newX =
+          this.oldTranslateX + (events.pageX - this.touchParams.pageX)
+        const newY =
+          this.oldTranslateY + (events.pageY - this.touchParams.pageY)
+        const width =
+          this.$refs['seat-container'].clientWidth * this.touchParams.scale -
+          this.$refs['tf-body-container'].clientWidth
+        const height =
+          this.$refs['seat-container'].clientHeight * this.touchParams.scale -
+          this.$refs['tf-body-container'].clientHeight
         if (width < 0) {
           this.translateX = 0
         } else {
-          this.translateX = newX > 0 ? 0 : (Math.abs(newX) > width / this.touchParams.scale ? -width / this.touchParams.scale : newX)
+          this.translateX =
+            newX > 0
+              ? 0
+              : Math.abs(newX) > width / this.touchParams.scale
+                ? -width / this.touchParams.scale
+                : newX
         }
         if (height < 0) {
           this.translateY = 0
         } else {
-          this.translateY = newY > 0 ? 0 : (Math.abs(newY) > height / this.touchParams.scale ? -height / this.touchParams.scale : newY)
+          this.translateY =
+            newY > 0
+              ? 0
+              : Math.abs(newY) > height / this.touchParams.scale
+                ? -height / this.touchParams.scale
+                : newY
         }
       }
     },
@@ -683,6 +718,27 @@ export default {
   justify-content: center;
   .seat-container {
     align-items: center;
+  }
+}
+.tf-body-container {
+  position: relative;
+}
+.seat-number-list {
+  width: 28px;
+  position: absolute;
+  left: 10px;
+  z-index: 1;
+  transform-origin: 0 0;
+  background: #00000033;
+  border-radius: 13px;
+  .seat-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #fff;
   }
 }
 .seat-container {

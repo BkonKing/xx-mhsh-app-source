@@ -54,6 +54,7 @@
         class="form-input"
         key="password"
         :type="showPassword ? 'text' : 'password'"
+        maxlength="16"
         placeholder="密码"
       >
         <template #button>
