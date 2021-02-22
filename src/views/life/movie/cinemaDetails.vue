@@ -20,7 +20,7 @@
       </template>
       <template #right>
         <span class="tf-icon tf-icon-dingwei" @click="goLocation"></span>
-        <span class="tf-icon tf-icon-zhuanfa"></span>
+        <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
       </template>
     </van-nav-bar>
     <div class="tf-main-container">
@@ -113,10 +113,16 @@
       </van-tabs>
       <van-empty v-else-if="!loading" image="error" description="暂无排期" />
     </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare">
+    </tf-share>
   </div>
 </template>
 
 <script>
+import tfShare from '@/components/tf-share'
 import { getCinemadetail, getCinemaschedu } from '@/api/movie'
 export default {
   name: 'movieCinemaDetails',
@@ -137,8 +143,13 @@ export default {
       sidePaddingWidth: 280, // 影片轮播，film-swipe左右需要添加两个占位item和margin间距的宽度和
       scrollLeft: 0, // 离开页面保存的滚动位置
       first: true,
-      offsetTop: 1.17333 // tab吸顶距离（单位rem）
+      offsetTop: 1.17333, // tab吸顶距离（单位rem）
+      shareShow: false,
+      shareObj: {}
     }
+  },
+  components: {
+    tfShare
   },
   mounted () {
     this.filmItemWidth = (api.winWidth || document.body.clientWidth) / 4
@@ -155,6 +166,13 @@ export default {
       this.filmNo = this.$route.query.filmNo
       this.title = this.$route.query.name
       this.activeDate = this.$route.query.scheduDate
+      this.shareObj = {
+        title: `去${this.title}看电影，一起吗？`,
+        description: '来看下最近有什么好电影吧~',
+        thumb: '',
+        contentUrl: `http://live.tosolomo.com/wap/#/cinemaDetails?id=${this.cinemaId}&name=${this.title}`,
+        pyqHide: true
+      }
       this.getCinemadetail()
     },
     // 获取影片详情
@@ -326,6 +344,9 @@ export default {
           id: this.cinemaId
         }
       })
+    },
+    closeShare (data) {
+      this.shareShow = data == 1
     }
   },
   watch: {

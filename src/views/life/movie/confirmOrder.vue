@@ -338,7 +338,9 @@ export default {
     aliPayUp () {
       const aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
-        this.fyResult()
+        if (ret.code == 9000) { // 支付成功
+          this.fyResult()
+        }
       })
     },
     // 微信支付
@@ -355,7 +357,9 @@ export default {
           sign: this.payOrderInfo.paySign
         },
         (ret, err) => {
-          this.fyResult()
+          if (ret.status) {
+            this.fyResult()
+          }
         }
       )
     },

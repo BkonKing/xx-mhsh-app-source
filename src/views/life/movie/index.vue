@@ -1,6 +1,9 @@
 <template>
   <div ref="el" class="tf-bg-white" @scroll="pageScroll">
-    <div v-if="swipeImages && swipeImages.length && !scrollStatus" class="header-bg"></div>
+    <div
+      v-if="swipeImages && swipeImages.length && !scrollStatus"
+      class="header-bg"
+    ></div>
     <van-nav-bar :border="false" :fixed="true" placeholder>
       <template #left>
         <i
@@ -8,7 +11,12 @@
           @click="goBack"
         ></i>
         <span>电影</span>
-        <van-field class="tf-flex-item" placeholder="电影、影院" @click="goSearch"></van-field>
+        <van-field
+          class="tf-flex-item"
+          placeholder="电影、影院"
+          disabled
+          @click="goSearch"
+        ></van-field>
       </template>
     </van-nav-bar>
     <!-- 热映轮播 -->
@@ -54,7 +62,7 @@
           全部{{ nowMovieTotal }}部 <span class="tf-icon tf-icon-right"></span>
         </div>
       </div>
-      <div class="film-content">
+      <div class="film-content" ref="nowFilm">
         <film-box
           v-for="(film, i) in nowMovieList"
           :key="i"
@@ -72,7 +80,7 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
       </div>
-      <div class="film-content">
+      <div class="film-content" ref="startFilm">
         <film-box
           v-for="(film, i) in startMovieList"
           :key="i"
@@ -121,7 +129,9 @@ export default {
       startMovieTotal: 0, // 即将上映电影总数
       cinemaList: [], // 附近影院
       scrollStatus: false, // 页面是否滚动了
-      scrollTop: 0
+      scrollTop: 0, // 页面滚动位置
+      nowFilmLeft: 0, // 热映滚动位置
+      startFilmLeft: 0 // 待映滚动位置
     }
   },
   created () {
@@ -154,6 +164,9 @@ export default {
   },
   activated () {
     this.scrollTop && (this.$refs.el.scrollTop = this.scrollTop)
+    this.nowFilmLeft && (this.$refs.nowFilm.scrollLeft = this.nowFilmLeft)
+    this.startFilmLeft &&
+      (this.$refs.startFilm.scrollLeft = this.startFilmLeft)
   },
   methods: {
     // 页面初始化获取
@@ -189,7 +202,7 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      return bMapGetLocationInfo().then((data) => {
+      return bMapGetLocationInfo().then(data => {
         const { adCode, lon, lat } = data
         // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
         this.adCode = String(adCode)
@@ -251,6 +264,8 @@ export default {
       } else {
         const names = ['home', 'life']
         this.scrollTop = this.$refs.el.scrollTop || 0
+        this.nowFilmLeft = this.$refs.nowFilm.scrollLeft || 0
+        this.startFilmLeft = this.$refs.startFilm.scrollLeft || 0
         if (names.includes(to.name)) {
           this.$destroy()
           this.$store.commit('deleteKeepAlive', from.name)
@@ -359,7 +374,10 @@ export default {
   .film-content {
     display: flex;
     margin-top: 30px;
+    margin-bottom: -20px;
+    padding-bottom: 20px;
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     /deep/ .film-box + .film-box {
       margin-left: 20px;

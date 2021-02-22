@@ -1,9 +1,5 @@
 <template>
-  <div
-    class="app"
-    id="app"
-    :style="[{'padding-top': `${paddingTop}px`}]"
-  >
+  <div class="app" id="app" :style="[{ 'padding-top': `${paddingTop}px` }]">
     <transition
       :name="transitionName"
       v-on:before-enter="beforeEnter"
@@ -49,16 +45,32 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
-    const whiteList = ['goodsDetail', 'orderList', 'flashPurchase', 'life', 'interactionIndex', 'waterElectricityMeter', 'movieCinemaDetails', 'movieSeat']
-    api.addEventListener({
-      name: 'swiperight'
-    }, (ret, err) => {
-      if (this.$route.matched.length === 1 && whiteList.indexOf(this.$route.name) === -1) {
-        this.$router.go(-1)
-      } else {
-        eventBus.$emit('swiperight', ret, err)
+    const whiteList = [
+      'goodsDetail',
+      'orderList',
+      'flashPurchase',
+      'life',
+      'interactionIndex',
+      'waterElectricityMeter',
+      'movieCinemaDetails',
+      'movieSeat',
+      'movieIndex'
+    ]
+    api.addEventListener(
+      {
+        name: 'swiperight'
+      },
+      (ret, err) => {
+        if (
+          this.$route.matched.length === 1 &&
+          whiteList.indexOf(this.$route.name) === -1
+        ) {
+          this.$router.go(-1)
+        } else {
+          eventBus.$emit('swiperight', ret, err)
+        }
       }
-    })
+    )
     this.paddingTop = api.safeArea.top
     this.$store.commit('setPaddingTop', this.paddingTop)
     this.paddingBottom = api.safeArea.bottom

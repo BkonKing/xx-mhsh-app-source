@@ -208,6 +208,21 @@ export default {
               id: share_params.id
             }
           })
+        } else if (share_params.page_type == 3) {
+          this.$router.replace({
+            path: '/life/movie/filmDetails',
+            query: {
+              id: share_params.id
+            }
+          })
+        } else if (share_params.page_type == 4) {
+          this.$router.replace({
+            path: '/life/movie/cinemaDetails',
+            query: {
+              id: share_params.id,
+              name: share_params.name
+            }
+          })
         }
       } else {
         this.$router.replace({

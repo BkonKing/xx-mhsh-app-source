@@ -10,7 +10,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-zhuanfa"></span>
+        <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
@@ -60,10 +60,16 @@
       </van-tabs>
       <van-empty v-else-if="!loading" image="error" description="暂无排期" />
     </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare">
+    </tf-share>
   </div>
 </template>
 
 <script>
+import tfShare from '@/components/tf-share'
 import filmDetails from './components/FilmDetails'
 import FilterCinema from './components/FilterCinema'
 import CinemaBox from './components/CinemaBox'
@@ -81,7 +87,7 @@ export default {
         score: 0,
         want_view: 0
       },
-      loading: false, // 排期loading
+      loading: true, // 排期loading
       cinemaLoading: false, // 影院loading
       scheduList: [], // 排期
       cinemaList: [], // 影院列表
@@ -91,13 +97,17 @@ export default {
       cityId: 0,
       lon: 0,
       lat: 0,
-      offsetTop: 1.17333 // tab吸顶距离（单位rem）
+      offsetTop: 1.17333, // tab吸顶距离（单位rem）
+      shareShow: false,
+      shareObj: {},
+      first: true
     }
   },
   components: {
     filmDetails,
     FilterCinema,
-    CinemaBox
+    CinemaBox,
+    tfShare
   },
   created () {
     this.filmId = this.$route.query.id
@@ -135,6 +145,17 @@ export default {
     }
   },
   methods: {
+    // 页面初始化，获取数据
+    pageInit () {
+      if (this.first) {
+        this.first = false
+        return
+      }
+      this.filmId = this.$route.query.id
+      this.filmNo = this.$route.query.code
+      this.getSelectCinemaDate()
+      this.getfilminfo()
+    },
     // 获取当前地址信息
     getLocationInfo () {
       return bMapGetLocationInfo().then(({ adCode, lon, lat }) => {
@@ -150,6 +171,13 @@ export default {
         film_id: this.filmId
       }).then(({ data }) => {
         this.filmInfo = data
+        this.shareObj = {
+          title: `《${data.film_name}》${data.score && data.score !== '0' ? parseFloat(data.score) / 10 : ''}`,
+          description: data.introduction,
+          thumb: data.thumb ? 'fs://' + data.thumb + '.png' : '',
+          contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + data.id,
+          pyqHide: true
+        }
       })
     },
     // 获取影片排期
@@ -198,16 +226,16 @@ export default {
     scrollTabs ({ isFixed }) {
       // 滚动到tab固定到顶部，则头部导航栏背景色更改，title更改为影片名称
       this.isFixedTabs = isFixed
+    },
+    closeShare (data) {
+      this.shareShow = data == 1
     }
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       const names = ['movieCinemaDetails']
       if (!names.includes(from.name)) {
-        vm.filmId = vm.$route.query.id
-        vm.filmNo = vm.$route.query.code
-        vm.getSelectCinemaDate()
-        vm.getfilminfo()
+        vm.pageInit()
       }
     })
   },

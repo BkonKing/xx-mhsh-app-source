@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-zhuanfa"></span>
+        <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
@@ -62,10 +62,16 @@
         >购票</van-button
       >
     </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare">
+    </tf-share>
   </div>
 </template>
 
 <script>
+import tfShare from '@/components/tf-share'
 import filmDetails from './components/FilmDetails'
 import { getfilminfo } from '@/api/movie'
 export default {
@@ -80,11 +86,14 @@ export default {
       },
       introductionBoxHeight: 0, // introductionBox默认高度
       collapseable: false, // 是否需要折叠
-      collapsed: false // 控制折叠
+      collapsed: false, // 控制折叠
+      shareShow: false,
+      shareObj: {}
     }
   },
   components: {
-    filmDetails
+    filmDetails,
+    tfShare
   },
   methods: {
     // 获取影片详情
@@ -99,6 +108,13 @@ export default {
             this.collapseable = true
           }
         })
+        this.shareObj = {
+          title: `《${data.film_name}》${data.score && data.score !== '0' ? parseFloat(data.score) / 10 : ''}`,
+          description: data.introduction,
+          thumb: data.thumb ? 'fs://' + data.thumb + '.png' : '',
+          contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + data.id,
+          pyqHide: true
+        }
       })
     },
     // 购票跳转选择影院
@@ -119,6 +135,9 @@ export default {
           id: this.filmId
         }
       })
+    },
+    closeShare (data) {
+      this.shareShow = data == 1
     }
   },
   beforeRouteEnter (to, from, next) {

@@ -364,12 +364,14 @@ export default {
     this.inputInfo.x = 88 * api.winWidth / 750
     this.inputInfo.w = this.$refs.seachInput.offsetWidth
     this.inputInfo.h = this.$refs.seachInput.offsetHeight
-    this.$refs.tfinput.openInput()
-    this.$nextTick(() => {
-      setTimeout(() => {
-        // that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
-      }, 500)
-    })
+    setTimeout(() => {
+      this.$refs.tfinput.openInput()
+    }, 500)
+    // this.$nextTick(() => {
+    //   setTimeout(() => {
+    //     // that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
+    //   }, 500)
+    // })
   },
   activated () {
     if (this.scrollTop) {
