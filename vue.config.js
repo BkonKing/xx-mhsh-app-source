@@ -6,7 +6,8 @@ const {
 } = require('child_process')
 
 const appname = 'dist' // 项目文件名
-const appPort = 8111 // 真机同步端口,浏览器打开端口。
+const appPort = 8111 // 浏览器打开端口。
+const apicloudPort = 9999 // 真机同步端口
 const scriptActive = process.env.npm_lifecycle_event
 
 module.exports = {
@@ -64,7 +65,8 @@ module.exports = {
         if (scriptActive === 'watch-build') {
           /** 插件初始化后开启wifi服务 */
           compiler.hooks.afterPlugins.tap('apicloud', () => {
-            const wifiWorker = spawn(`apicloud wifiStart --port ${appPort}`, {
+            // 在子进程运行命令行，提供监听事件
+            const wifiWorker = spawn(`apicloud wifiStart --port ${apicloudPort}`, {
               shell: true
             })
             wifiWorker.stdout.on('data', function (chunk) {
@@ -77,16 +79,16 @@ module.exports = {
           })
           /** 生成资源后,删除重复热更新文件 */
           compiler.hooks.afterEmit.tap('apicloud', compilation => {
-            const assets = compilation.assets
-            const unlinked = []
+            const assets = compilation.assets // assets资源文件列表
+            const unlinked = [] // 被删除文件列表
             const files = fs.readdirSync(
-              path.join(__dirname, `../${appname}/`)
+              path.join(__dirname, `./${appname}/`)
             )
             if (files.length) {
               let jsFiles = files.filter(f => /.*(\.js|\.json)$/.test(f))
               jsFiles.forEach(file => {
                 if (!assets[file]) {
-                  fs.unlinkSync(path.resolve(`../${appname}/${file}`))
+                  fs.unlinkSync(path.resolve(`./${appname}/${file}`)) // 删除文件
                   unlinked.push(file)
                 }
               })
@@ -97,8 +99,9 @@ module.exports = {
           })
           /** 编译完成，真机同步 */
           compiler.hooks.done.tap('apicloud', () => {
+            // 在子进程运行命令行，提供回调函数
             exec(
-              `apicloud wifiSync --project ../${appname} --updateAll false --port ${appPort}`,
+              `apicloud wifiSync --project ./${appname} --updateAll false --port ${apicloudPort}`,
               (error, stdout) => {
                 if (error) {
                   console.error(`exec error: ${error}`)
@@ -119,7 +122,6 @@ module.exports = {
   devServer: {
     // 环境配置
     host: 'localhost',
-    // host: '192.168.1.158',
     hot: false,
     port: appPort,
     https: false,
