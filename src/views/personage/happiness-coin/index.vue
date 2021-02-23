@@ -1,85 +1,69 @@
 <template>
   <div class="tf-bg-white">
     <div class="page-bg">
-      <van-nav-bar
-        title="幸福币"
-        :fixed="true"
-        :border="false"
-        placeholder
-        left-arrow
-        right-text="明细"
-        @click-left="$router.go(-1)"
-        @click-right="goCoinRecord"
-      ></van-nav-bar>
+      <van-nav-bar title="幸福币"
+                   :fixed="true"
+                   :border="false"
+                   placeholder
+                   left-arrow
+                   right-text="明细"
+                   @click-left="$router.go(-1)"
+                   @click-right="goCoinRecord"></van-nav-bar>
       <div class="sign-box tf-row-space-between">
         <div class="tf-row-center tf-flex-item">
           <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
           <div class="coin-number">{{ credits }}</div>
         </div>
-        <van-button
-          v-preventReClick
-          :loading="signLoading"
-          class="sign-tag"
-          :class="{ 'sign-tag--complete': signinToday == '1' }"
-          @click="signIn()"
-          >{{ signinToday == "1" ? "已签到" : "签到" }}</van-button
-        >
+        <van-button v-preventReClick
+                    :loading="signLoading"
+                    class="sign-tag"
+                    :class="{ 'sign-tag--complete': signinToday == '1' }"
+                    @click="signIn()">{{ signinToday == "1" ? "已签到" : "签到" }}</van-button>
       </div>
     </div>
     <div class="coin-main-box">
       <div class="tf-row-space-between tf-padding-lg">
-        <div class="function-box" @click="goScanCode(1)">
-          <img
-            class="function-box__icon"
-            src="@/assets/imgs/credits_saoyisao.png"
-          />
+        <div class="function-box"
+             @click="goScanCode(1)">
+          <img class="function-box__icon"
+               src="@/assets/imgs/credits_saoyisao.png" />
           <div class="function-box__text">扫一扫</div>
         </div>
-        <div class="function-box" @click="goScanCode(2)">
-          <img
-            class="function-box__icon"
-            src="@/assets/imgs/credits_shoukuan.png"
-          />
+        <div class="function-box"
+             @click="goScanCode(2)">
+          <img class="function-box__icon"
+               src="@/assets/imgs/credits_shoukuan.png" />
           <div class="function-box__text">付款码</div>
         </div>
-        <div class="function-box" @click="goScanCode(3)">
-          <img
-            class="function-box__icon"
-            src="@/assets/imgs/credits_fukuan.png"
-          />
+        <div class="function-box"
+             @click="goScanCode(3)">
+          <img class="function-box__icon"
+               src="@/assets/imgs/credits_fukuan.png" />
           <div class="function-box__text">收款码</div>
         </div>
       </div>
       <template v-if="taskList && taskList.length">
         <div class="happiness-coin-title">幸福币任务</div>
         <div class="task-box">
-          <div class="task-item" v-for="(item, i) in taskList" :key="i">
+          <div class="task-item"
+               v-for="(item, i) in taskList"
+               :key="i">
             <div class="tf-row tf-flex-item">
-              <img
-                class="task-item__icon"
-                v-if="item.task_type == 1"
-                src="@/assets/imgs/credits_sign.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 2"
-                src="@/assets/imgs/credits_renzheng.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 3"
-                src="@/assets/imgs/credits_yunmenjin.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 4"
-                src="@/assets/imgs/credits_wenjuan.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 5"
-                src="@/assets/imgs/credits_toupiao.png"
-              />
+              <img class="task-item__icon"
+                   v-if="item.task_type == 1"
+                   src="@/assets/imgs/credits_sign.png" />
+              <img class="task-item__icon"
+                   v-else-if="item.task_type == 2"
+                   src="@/assets/imgs/credits_renzheng.png" />
+              <img class="task-item__icon"
+                   v-else-if="item.task_type == 3"
+                   src="@/assets/imgs/credits_yunmenjin.png" />
+              <img class="task-item__icon"
+                   v-else-if="item.task_type == 4"
+                   src="@/assets/imgs/credits_wenjuan.png" />
+              <img class="task-item__icon"
+                   v-else-if="item.task_type == 5"
+                   src="@/assets/imgs/credits_toupiao.png" />
               <div class="tf-space-between">
                 <div class="task-item__title">{{ item.task_name }}</div>
                 <div class="tf-row">
@@ -92,35 +76,34 @@
                 </div>
               </div>
             </div>
-            <div v-if="item.complete" class="task-item__number">
+            <div v-if="item.complete"
+                 class="task-item__number">
               +{{ item.credits }}
             </div>
-            <van-button
-              v-else
-              v-preventReClick
-              :loading="signLoading && item.task_type == 1"
-              class="task-item__btn"
-              v-txAnalysis="{ eventId: 48 }"
-              @click="complete(item)"
-              >去完成</van-button
-            >
+            <van-button v-else
+                        v-preventReClick
+                        :loading="signLoading && item.task_type == 1"
+                        class="task-item__btn"
+                        v-txAnalysis="{ eventId: 48 }"
+                        @click="complete(item)">去完成</van-button>
           </div>
         </div>
       </template>
       <div class="sale-box">
         <div class="happiness-coin-title">幸福币特卖区</div>
-        <div class="purchase-history" @click="goBuyRecord">购买记录</div>
+        <div class="purchase-history"
+             @click="goBuyRecord">购买记录</div>
       </div>
       <div class="sale-area">
-        <div
-          class="commodity-box"
-          v-for="(item, i) in creditsGoods"
-          :key="i"
-          @click="goCoinCommodity(item)"
-        >
-          <img class="commodity-image" :src="item.thumb" />
+        <div class="commodity-box"
+             v-for="(item, i) in creditsGoods"
+             :key="i"
+             @click="goCoinCommodity(item)">
+          <img class="commodity-image"
+               :src="item.thumb" />
           <div class="commodity-name">{{ item.goods_name }}</div>
-          <div class="tf-row" style="align-items: flex-end;">
+          <div class="tf-row"
+               style="align-items: flex-end;">
             <div class="commodity-current-price">￥{{ item.s_price }}</div>
             <div class="commodity-original-price">￥{{ item.y_price }}</div>
           </div>
@@ -168,6 +151,7 @@ export default {
         this.taskList = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
+        console.log('任务列表', data.task_list)
       })
     },
     /* 签到事件 */
@@ -247,6 +231,9 @@ export default {
           } else {
             this.authentication('/pages/butler/entrance/index')
           }
+          break
+        case '7':
+          this.$router.push('/pages/personage/happiness-coin/recomBuyHouse')
           break
         default:
           this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
