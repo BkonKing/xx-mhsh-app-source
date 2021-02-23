@@ -79,13 +79,13 @@
       <van-search v-model="value"
                   placeholder="请输入搜索关键词" />
       <div class="con">
-        <van-cell v-for="(item,index) in 10"
+        <van-cell v-for="(item,index) in yxlpList"
                   :key="index"
                   class="cell"
-                  @click="selectHome(item,index)">
+                  @click="selectHome(item.project,index)">
           <template #title>
             <div>
-              {{item}}
+              {{item.project}}
             </div>
           </template>
           <template>
@@ -115,6 +115,8 @@
 </template>
 
 <script>
+import { getYxlpList, recommendClient } from '@/api/personage.js'
+import { Toast } from 'vant'
 export default {
   data () {
     return {
@@ -123,7 +125,9 @@ export default {
       houseName: '',
       value: '',
       friedName: '',
-      phone: ''
+      phone: '',
+      yxlpList: [], // 意向楼盘列表
+      yxlpIndex: 0 // 意向楼盘索引
     }
   },
   computed: {
@@ -132,16 +136,37 @@ export default {
     }
   },
   methods: {
-    // 选择家园
+    // 选择楼盘
     selectHome (item, index) {
       this.currentIndex = index
+      this.yxlpIndex = index
       console.log(item)
       this.houseName = item
     },
     // 确认提交
-    submit () {
-      this.$toast('提交成功')
+    async submit () {
+      const res = await recommendClient({
+        alias: this.yxlpList[this.yxlpIndex].alias,
+        clientName: this.friedName,
+        clientMobile: this.phone,
+        yxlpId: +this.yxlpList[this.yxlpIndex].yxlpId,
+        project: this.yxlpList[this.yxlpIndex].project
+      })
+      console.log('推荐客户', res)
+      // 提交成功
+      if (res.success) {
+        Toast('提交成功')
+        this.$router.push('/pages/personage/happiness-coin/index')
+      } else {
+        // 提交失败
+        Toast('提交失败，请重试')
+      }
     }
+  },
+  async created () {
+    const res = await getYxlpList()
+    this.yxlpList = res.data
+    console.log('楼盘列表', res)
   }
 }
 </script>

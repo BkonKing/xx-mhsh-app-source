@@ -14,34 +14,39 @@
       </van-nav-bar>
       <div class="count">
         <div class="left">
-          <div class="t1">22</div>
+          <div class="t1">{{clientInfo.ljtjNum}}</div>
           <div class="t2">累计推荐人数</div>
         </div>
         <div class="line"></div>
         <div class="right">
-          <div class="t1">10000</div>
+          <div class="t1">{{clientInfo.ljjlCredits}}</div>
           <div class="t2">已奖励幸福币</div>
         </div>
       </div>
       <div class="content">
-        <van-cell v-for="(item,index) in 20"
-                  :key="index"
-                  @click="isShow=true">
-          <template #title>
-            <div class="item">
-              <div class="left">
-                <div class="t1">蔡文姬</div>
-                <div class="t2">新乡美好生活家园</div>
+        <van-list v-model="loading"
+                  :finished="finished"
+                  @load="onLoad">
+          <van-cell v-for="(item,index) in list"
+                    :key="index"
+                    @click="openDetail(item)">
+            <template #title>
+              <div class="item">
+                <div class="left">
+                  <div class="t1">{{item.clientName}}</div>
+                  <div class="t2">{{item.yxlpName}}</div>
+                </div>
+                <div class="right">
+                  <div class="t1"
+                       v-if="item.ydfCredits!==0">已到访 <span>+{{item.ygfCredits}}</span></div>
+                  <div class="t2"
+                       v-if="item.ygfCredits !==0">已购房 <span>+{{item.ygfCredits}}</span></div>
+                </div>
               </div>
-              <div class="right">
-                <div class="t1"
-                     v-if="index %2 ===0">已到访 <span>+100</span></div>
-                <div class="t2"
-                     v-if="index %2 ===0">已购房 <span>+10000</span></div>
-              </div>
-            </div>
-          </template>
-        </van-cell>
+            </template>
+          </van-cell>
+        </van-list>
+
       </div>
     </div>
     <!-- 详情弹出层1 -->
@@ -53,32 +58,33 @@
       <div class="info">
         <div class="t1">
           <div class="left">
-            客户姓名：</div> <span>鲁班</span>
+            客户姓名：</div> <span>{{currentClient.clientName}}</span>
         </div>
         <div class="t2">
           <div class="left">
-            手机号：</div><span>15020203030</span>
+            手机号：</div><span>{{currentClient.clientMobile}}</span>
         </div>
         <div class="t3">
           <div class="left">
-            楼盘：</div><span>美好生活家园</span>
+            楼盘：</div><span>{{currentClient.yxlpName}}</span>
         </div>
         <div class="t4">
           <div class="left">
             预计奖励：
           </div>
           <div class="right">
-            <div class="t4-top">10010幸福币</div>
+            <div class="t4-top">100幸福币</div>
             <div class="t4-bottom">(到访100，购房10000）</div>
           </div>
         </div>
-        <div class="t5">
+        <div class="t5"
+             v-if="currentClient.ydfCredits !==0 || currentClient.ygfCredits !==0">
           <div class="left">
             实际奖励：
           </div>
           <div class="right">
             <div class="t5-top"
-                 style="color:red">10010幸福币</div>
+                 style="color:#EB5841">{{currentClient.ydfCredits+currentClient.ygfCredits}}幸福币</div>
             <div class="t5-bottom">(到访100，购房10000）</div>
           </div>
         </div>
@@ -141,29 +147,31 @@
                  v-if="false">
             </div>
           </div>
-          <div class="line2 activeBg"></div>
+          <div class="line2"
+               :class="{'activeBg':currentClient.ygfCredits !==0}"></div>
           <div class="item">
             <van-icon class="gouxuan active"
-                      name="checked" />
+                      name="checked"
+                      v-if="currentClient.ygfCredits !==0" />
             <div class="cir"
-                 v-if="false">
+                 v-else>
             </div>
           </div>
         </div>
         <div class="right">
           <div class="t1">
-            <span>2021.01.01</span>
+            <span>{{currentClient.tjTime}}</span>
             <span>推荐客户</span>
           </div>
           <div class="t2">
             <span>2020.02.02</span>
             <span>客户到访</span>
-            <span>+100</span>
+            <span>+{{currentClient.ydfCredits}}</span>
           </div>
           <div class="t2">
-            <span>2020.02.02</span>
+            <span v-if="currentClient.gfjl_time !==''">{{currentClient.gfjl_time}}</span>
             <span>客户购房</span>
-            <span>+10000</span>
+            <span v-if="currentClient.ygfCredits!==0">+{{currentClient.ygfCredits}}</span>
           </div>
         </div>
       </div>
@@ -177,22 +185,33 @@
       <div class="info">
         <div class="t1">
           <div class="left">
-            客户姓名：</div> <span>鲁班</span>
+            客户姓名：</div> <span>{{currentClient.clientName}}</span>
         </div>
         <div class="t2">
           <div class="left">
-            手机号：</div><span>15020203030</span>
+            手机号：</div><span>{{currentClient.clientMobile}}</span>
         </div>
         <div class="t3">
           <div class="left">
-            楼盘：</div><span>美好生活家园</span>
+            楼盘：</div><span>{{currentClient.yxlpName}}</span>
         </div>
-        <div class="t5">
+        <div class="t4">
+          <div class="left">
+            预计奖励：
+          </div>
+          <div class="right">
+            <div class="t5-top">10000幸福币(购房10000)</div>
+          </div>
+        </div>
+        <div class="t5"
+             v-if=" currentClient.ygfCredits !==0">
           <div class="left">
             实际奖励：
           </div>
           <div class="right">
-            <div class="t5-top">10010幸福币(购房10000)</div>
+            <div class="t5-top"
+                 style="color:#EB5841">{{currentClient.ydfCredits}}幸福币</div>
+            <div class="t5-bottom">(购房10000）</div>
           </div>
         </div>
       </div>
@@ -219,22 +238,28 @@
             <van-icon class="gouxuan active"
                       name="checked" />
           </div>
-          <div class="line activeBg"></div>
+          <div class="line"
+               :class="{'activeBg':currentClient.ygfCredits!==0}"></div>
           <div class="item">
-            <van-icon class="gouxuan active"
-                      name="checked" />
+            <van-icon v-if="currentClient.ygfCredits!==0"
+                      class="gouxuan"
+                      name="checked"
+                      :class="{'active':currentClient.ygfCredits!==0}" />
             <div class="cir"
-                 v-if="false">
+                 v-else>
             </div>
           </div>
         </div>
         <div class="right">
           <div class="t1">
-            <span>2021.01.01</span>
+            <span>{{currentClient.tjTime}}</span>
             <span>推荐客户</span>
           </div>
           <div class="t2">
-            客户购房
+            <span v-if="currentClient.gfjl_time!==''">{{currentClient.gfjl_time}}</span>
+            <span>客户购房</span>
+            <span style="color:#EB5841"
+                  v-if="currentClient.ygfCredits!==0">+{{currentClient.ygfCredits}}</span>
           </div>
         </div>
 
@@ -252,15 +277,54 @@
 <script>
 import Vue from 'vue'
 import { Step, Steps } from 'vant'
+import { clientList, clientCount } from '@/api/personage.js'
 Vue.use(Step)
 Vue.use(Steps)
 export default {
   data () {
     return {
       isShow: false,
-      active: 2,
-      isShow2: false
+      isShow2: false,
+      currentPage: 1, // 页码
+      loading: false,
+      finished: false,
+      list: [], // 推荐客户列表
+      clientInfo: '', // 客户统计信息
+      currentClient: '' // 当前点击的推荐客户
     }
+  },
+  methods: {
+    // 打开详情窗口
+    openDetail (item) {
+      console.log(item)
+      // 如果已经到访
+      if (item.ydfCredits !== 0) {
+        this.isShow = true
+        this.currentClient = item
+      } else {
+        // 未到访
+        this.isShow2 = true
+        this.currentClient = item
+      }
+    },
+    // 获取推荐客户列表
+    async onLoad () {
+      const res = await clientList({
+        pages: this.currentPage
+      })
+      this.loading = false
+      this.list = res.data
+      console.log('客户列表', res)
+      if (this.list.length >= res.data.length) {
+        this.finished = true
+      }
+      this.currentPage++
+    }
+  },
+  async created () {
+    const res = await clientCount()
+    this.clientInfo = res
+    console.log('统计客户', res)
   }
 }
 </script>
@@ -379,7 +443,7 @@ export default {
   }
   /deep/ .van-popup {
     width: 620px;
-    height: 850px;
+    height: auto;
     background: #ffffff;
     border-radius: 10px;
   }
@@ -491,7 +555,7 @@ export default {
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 135px;
+          top: 143px;
           left: 20px;
         }
       }
@@ -628,11 +692,11 @@ export default {
         }
         .line {
           width: 4px;
-          height: 78px;
+          height: 70px;
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 30px;
+          top: 36px;
           left: 20px;
         }
       }
@@ -647,6 +711,15 @@ export default {
         }
         .t2 {
           margin-top: 70px;
+          span:first-child {
+            color: #8f8f94;
+          }
+          span:nth-child(2) {
+            color: #222222;
+          }
+          span:nth-child(-n + 2) {
+            margin-right: 20px;
+          }
         }
       }
     }
@@ -687,7 +760,7 @@ export default {
     font-size: 50px;
     position: absolute;
     right: 95px;
-    top: 280px;
+    top: 270px;
     z-index: 9999;
     color: #ffffff;
   }

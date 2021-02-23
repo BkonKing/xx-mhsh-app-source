@@ -254,6 +254,34 @@ export function getCreditsInfo (params) {
 export function getCreditsOrderList (data) {
   return request.post('/life/order/credits_order_list', data)
 }
+// 意向楼盘列表
+export function getYxlpList () {
+  return request({
+    url: '/hkt/tjgf/yxlpList'
+  })
+}
+// 推荐客户
+export function recommendClient (data) {
+  return request({
+    url: '/hkt/tjgf/recommendClient',
+    method: 'post',
+    data
+  })
+}
+
+// 推荐客户列表
+export function clientList (params) {
+  return request({
+    url: '/hkt/tjgf/clientList',
+    params
+  })
+}
+// 统计客户
+export function clientCount () {
+  return request({
+    url: '/hkt/tjgf/clientCount'
+  })
+}
 
 /* 幸福币 end */
 
