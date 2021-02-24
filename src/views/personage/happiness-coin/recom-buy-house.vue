@@ -8,7 +8,9 @@
                    right-text="记录"
                    @click-left="$router.go(-1)"
                    @click-right="$router.push('/pages/personage/happiness-coin/recomRecord')" />
-      <h2>推荐赚幸福币</h2>
+      <img class="recom-img"
+           src="@/assets/imgs/recom-happyicon.png"
+           alt="">
       <div class="title">
         <div class="left">
           <div class="line"></div>
@@ -61,7 +63,7 @@
             <template #title>
               <div class="title2">
                 楼盘名称 <span style="color:red">*</span>
-                <span class="houseName">{{ houseName }}</span>
+                <span class="houseName">{{ houseInfo.project }}</span>
               </div>
             </template>
           </van-cell>
@@ -70,20 +72,20 @@
     </div>
     <div v-if="bol"
          class="awardInfo">
-      奖励：30000幸福币 (朋友到访100,购房29900)
+      奖励：{{houseInfo.credits}}幸福币 (朋友到访{{houseInfo.credits_df}},购房{{houseInfo.credits_gf}})
     </div>
     <!-- 楼盘名称弹出层1 -->
     <van-popup v-model="show"
                position="bottom"
                :style="{ height: '80%' }">
       <van-search v-model="value"
-                  @search="onSearch"
+                  @input="onSearch"
                   v-if="yxlpList.length >=10" />
       <div class="con">
         <van-cell v-for="(item,index) in yxlpList"
                   :key="index"
                   class="cell"
-                  @click="selectHome(item.project,index)"
+                  @click="selectHome(item,index)"
                   v-show="searchBol">
           <template #title>
             <div>
@@ -99,7 +101,7 @@
         <van-cell v-for="(item,index) in searchList"
                   :key="index"
                   class="cell"
-                  @click="selectHome(item.project,index)"
+                  @click="selectHome(item,index)"
                   v-show="!searchBol">
           <template #title>
             <div>
@@ -140,7 +142,7 @@ export default {
     return {
       show: false,
       currentIndex: undefined,
-      houseName: '',
+      houseInfo: '',
       value: '',
       friedName: '',
       phone: '',
@@ -152,13 +154,19 @@ export default {
   },
   computed: {
     bol () {
-      return this.houseName !== '' && this.friedName !== '' && this.phone !== ''
+      return this.houseInfo !== '' && this.friedName !== '' && this.phone !== ''
     }
   },
   watch: {
     value (newVal) {
       if (newVal === '') {
         this.searchBol = true
+      }
+    },
+    show (newVal) {
+      if (newVal === false) {
+        this.searchBol = true
+        this.value = ''
       }
     }
   },
@@ -170,14 +178,13 @@ export default {
       this.searchList = this.yxlpList.filter(item => {
         return item.project.includes(this.value)
       })
-      console.log(this.searchList)
     },
     // 选择楼盘
     selectHome (item, index) {
       this.currentIndex = index
       this.yxlpIndex = index
-      console.log(item)
-      this.houseName = item
+      // console.log(item)
+      this.houseInfo = item
     },
     // 确认提交
     async submit () {
@@ -188,7 +195,7 @@ export default {
         yxlpId: +this.yxlpList[this.yxlpIndex].yxlpId,
         project: this.yxlpList[this.yxlpIndex].project
       })
-      console.log('推荐客户', res)
+      // console.log('推荐客户', res)
       // 提交成功
       if (res.success) {
         Toast('提交成功')
@@ -224,11 +231,17 @@ export default {
         color: #ca864e;
       }
     }
-    h2 {
-      color: #ca864e;
-      text-align: center;
-      font-size: 66px;
-      font-weight: 600;
+    // h2 {
+    //   color: #ca864e;
+    //   text-align: center;
+    //   font-size: 66px;
+    //   font-weight: 600;
+    // }
+    .recom-img {
+      display: block;
+      width: 423px;
+      height: 66px;
+      margin: 40px auto;
     }
     .title {
       display: flex;
@@ -343,7 +356,7 @@ export default {
     }
     .midCon {
       position: absolute;
-      top: 450px;
+      top: 510px;
       left: 50%;
       transform: translateX(-50%);
       width: 670px;
@@ -421,7 +434,7 @@ export default {
   }
   .confirm {
     position: fixed;
-    bottom: 100px;
+    bottom: 50px;
     left: 0;
     padding: 0 20px;
     width: 100%;

@@ -74,7 +74,7 @@
           </div>
           <div class="right">
             <div class="t4-top">{{currentClient.yjjlCredits}}幸福币</div>
-            <div class="t4-bottom">(到访{{currentClient.ydfCredits}}，购房{{currentClient.ygfCredits}}）</div>
+            <div class="t4-bottom">(到访{{currentClient.yjdfjlCredits}}，购房{{currentClient.yjgfjlCredits}}）</div>
           </div>
         </div>
         <div class="t5"
@@ -139,12 +139,14 @@
             <van-icon class="gouxuan active"
                       name="checked" />
           </div>
-          <div class="line activeBg"></div>
+          <div class="line"
+               :class="{'activeBg':currentClient.ydfCredits !==0}"></div>
           <div class="item2">
             <van-icon class="gouxuan active"
-                      name="checked" />
+                      name="checked"
+                      v-if="currentClient.ydfCredits !==0" />
             <div class="cir"
-                 v-if="false">
+                 v-else>
             </div>
           </div>
           <div class="line2"
@@ -164,9 +166,9 @@
             <span>推荐客户</span>
           </div>
           <div class="t2">
-            <span>{{currentClient.dfTime}}</span>
+            <span v-if="currentClient.dfTime!==''">{{currentClient.dfTime}}</span>
             <span>客户到访</span>
-            <span>+{{currentClient.ydfCredits}}</span>
+            <span v-if="currentClient.ydfCredits!==0">+{{currentClient.ydfCredits}}</span>
           </div>
           <div class="t2">
             <span v-if="currentClient.gfjl_time !==''">{{currentClient.gfjl_time}}</span>
@@ -203,7 +205,7 @@
             预计奖励：
           </div>
           <div class="right">
-            <div class="t5-top">{{currentClient.ygfCredits}}幸福币(购房{{currentClient.ygfCredits}})</div>
+            <div class="t5-top">{{currentClient.yjgfjlCredits}}幸福币(购房{{currentClient.yjgfjlCredits}})</div>
           </div>
         </div>
         <div class="t5"
@@ -213,8 +215,8 @@
           </div>
           <div class="right">
             <div class="t5-top"
-                 style="color:#EB5841">{{currentClient.ydfCredits}}幸福币</div>
-            <div class="t5-bottom">(购房{{currentClient.ydfCredits}}）</div>
+                 style="color:#EB5841">{{currentClient.ygfCredits}}幸福币</div>
+            <div class="t5-bottom">(购房{{currentClient.ygfCredits}}）</div>
           </div>
         </div>
       </div>
@@ -297,7 +299,7 @@ export default {
   methods: {
     // 打开详情窗口
     openDetail (item) {
-      console.log(item)
+      // console.log(item)
       // 如果已经到访
       if (item.ydfCredits !== 0) {
         this.isShow = true
@@ -314,12 +316,12 @@ export default {
         pages: this.currentPage
       })
       this.loading = false
-      this.list = res.data
+      this.list = [...this.list, ...res.data]
+      this.currentPage++
       console.log('客户列表', res)
-      if (this.list.length >= res.data.length) {
+      if (res.data.length === 0) {
         this.finished = true
       }
-      this.currentPage++
     }
   },
   async created () {
@@ -451,9 +453,10 @@ export default {
   }
   /deep/ .van-popup.popup2 {
     width: 620px;
-    height: 600px;
+    height: auto;
     background: #ffffff;
     border-radius: 10px;
+    padding-bottom: 20px;
   }
   .popup {
     .guanbi1 {
@@ -552,11 +555,11 @@ export default {
         }
         .line {
           width: 4px;
-          height: 78px;
+          height: 70px;
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 30px;
+          top: 37px;
           left: 20px;
         }
         .line2 {
@@ -565,7 +568,7 @@ export default {
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 140px;
+          top: 141px;
           left: 20px;
         }
       }
@@ -579,7 +582,7 @@ export default {
           }
         }
         .t2 {
-          margin-top: 70px;
+          margin-top: 63px;
           span:nth-child(2) {
             margin-left: 20px;
             color: #222222;
@@ -714,7 +717,7 @@ export default {
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 36px;
+          top: 37px;
           left: 20px;
         }
       }
