@@ -77,12 +77,30 @@
                position="bottom"
                :style="{ height: '80%' }">
       <van-search v-model="value"
-                  placeholder="请输入搜索关键词" />
+                  @search="onSearch"
+                  v-if="yxlpList.length >=10" />
       <div class="con">
         <van-cell v-for="(item,index) in yxlpList"
                   :key="index"
                   class="cell"
-                  @click="selectHome(item.project,index)">
+                  @click="selectHome(item.project,index)"
+                  v-show="searchBol">
+          <template #title>
+            <div>
+              {{item.project}}
+            </div>
+          </template>
+          <template>
+            <i class="tf-icon"
+               :class="{'tf-icon-gou':currentIndex===index}"></i>
+          </template>
+        </van-cell>
+
+        <van-cell v-for="(item,index) in searchList"
+                  :key="index"
+                  class="cell"
+                  @click="selectHome(item.project,index)"
+                  v-show="!searchBol">
           <template #title>
             <div>
               {{item.project}}
@@ -127,7 +145,9 @@ export default {
       friedName: '',
       phone: '',
       yxlpList: [], // 意向楼盘列表
-      yxlpIndex: 0 // 意向楼盘索引
+      yxlpIndex: 0, // 意向楼盘索引
+      searchList: [], // 搜索数据
+      searchBol: true // 控制是否显示搜索数据
     }
   },
   computed: {
@@ -135,7 +155,23 @@ export default {
       return this.houseName !== '' && this.friedName !== '' && this.phone !== ''
     }
   },
+  watch: {
+    value (newVal) {
+      if (newVal === '') {
+        this.searchBol = true
+      }
+    }
+  },
   methods: {
+
+    // 搜索
+    onSearch () {
+      this.searchBol = false
+      this.searchList = this.yxlpList.filter(item => {
+        return item.project.includes(this.value)
+      })
+      console.log(this.searchList)
+    },
     // 选择楼盘
     selectHome (item, index) {
       this.currentIndex = index
@@ -347,15 +383,17 @@ export default {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding-top: 20px;
+    padding-bottom: 200px;
     .con {
       padding: 0 20px;
-      position: absolute;
-      top: 150px;
-      bottom: 150px;
-      left: 0;
+      // position: absolute;
+      // top: 150px;
+      // bottom: 150px;
+      // left: 0;
+      height: 100%;
       overflow: auto;
       width: 100%;
-      padding-bottom: 50px;
+
       .cell.van-cell {
         padding: 34px 0;
         border-bottom: 1px solid #f0f0f0;
@@ -377,13 +415,13 @@ export default {
   .btn {
     position: absolute;
     left: 0;
-    bottom: 20px;
+    bottom: 40px;
     padding: 20px;
     width: 100%;
   }
   .confirm {
-    position: absolute;
-    top: 1200px;
+    position: fixed;
+    bottom: 100px;
     left: 0;
     padding: 0 20px;
     width: 100%;

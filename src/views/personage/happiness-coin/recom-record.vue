@@ -38,7 +38,7 @@
                 </div>
                 <div class="right">
                   <div class="t1"
-                       v-if="item.ydfCredits!==0">已到访 <span>+{{item.ygfCredits}}</span></div>
+                       v-if="item.ydfCredits!==0">已到访 <span>+{{item.ydfCredits}}</span></div>
                   <div class="t2"
                        v-if="item.ygfCredits !==0">已购房 <span>+{{item.ygfCredits}}</span></div>
                 </div>
@@ -73,8 +73,8 @@
             预计奖励：
           </div>
           <div class="right">
-            <div class="t4-top">100幸福币</div>
-            <div class="t4-bottom">(到访100，购房10000）</div>
+            <div class="t4-top">{{currentClient.yjjlCredits}}幸福币</div>
+            <div class="t4-bottom">(到访{{currentClient.ydfCredits}}，购房{{currentClient.ygfCredits}}）</div>
           </div>
         </div>
         <div class="t5"
@@ -85,7 +85,7 @@
           <div class="right">
             <div class="t5-top"
                  style="color:#EB5841">{{currentClient.ydfCredits+currentClient.ygfCredits}}幸福币</div>
-            <div class="t5-bottom">(到访100，购房10000）</div>
+            <div class="t5-bottom">(到访{{currentClient.ydfCredits}}，购房{{currentClient.ygfCredits}}）</div>
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@
             <span>推荐客户</span>
           </div>
           <div class="t2">
-            <span>2020.02.02</span>
+            <span>{{currentClient.dfTime}}</span>
             <span>客户到访</span>
             <span>+{{currentClient.ydfCredits}}</span>
           </div>
@@ -175,6 +175,9 @@
           </div>
         </div>
       </div>
+      <i class="tf-icon tf-icon-guanbi1 guanbi1"
+         @click="isShow=false"
+         v-if="isShow"></i>
     </van-popup>
     <!-- 详情弹出层2 -->
     <van-popup class="popup2"
@@ -200,7 +203,7 @@
             预计奖励：
           </div>
           <div class="right">
-            <div class="t5-top">10000幸福币(购房10000)</div>
+            <div class="t5-top">{{currentClient.ygfCredits}}幸福币(购房{{currentClient.ygfCredits}})</div>
           </div>
         </div>
         <div class="t5"
@@ -211,7 +214,7 @@
           <div class="right">
             <div class="t5-top"
                  style="color:#EB5841">{{currentClient.ydfCredits}}幸福币</div>
-            <div class="t5-bottom">(购房10000）</div>
+            <div class="t5-bottom">(购房{{currentClient.ydfCredits}}）</div>
           </div>
         </div>
       </div>
@@ -264,13 +267,11 @@
         </div>
 
       </div>
+      <i class="tf-icon tf-icon-guanbi1 guanbi2"
+         @click="isShow2=false"
+         v-if="isShow2"></i>
     </van-popup>
-    <i class="tf-icon tf-icon-guanbi1 guanbi1"
-       @click="isShow=false"
-       v-if="isShow"></i>
-    <i class="tf-icon tf-icon-guanbi1 guanbi2"
-       @click="isShow2=false"
-       v-if="isShow2"></i>
+
   </div>
 </template>
 
@@ -446,6 +447,7 @@ export default {
     height: auto;
     background: #ffffff;
     border-radius: 10px;
+    overflow: inherit;
   }
   /deep/ .van-popup.popup2 {
     width: 620px;
@@ -454,6 +456,14 @@ export default {
     border-radius: 10px;
   }
   .popup {
+    .guanbi1 {
+      font-size: 50px;
+      position: absolute;
+      right: 40px;
+      top: -100px;
+      z-index: 999999999999999999999999;
+      color: #fff;
+    }
     padding: 0 50px;
     padding-bottom: 20px;
     .title {
@@ -555,7 +565,7 @@ export default {
           background: #aaaaaa;
           border-radius: 2px;
           position: absolute;
-          top: 143px;
+          top: 140px;
           left: 20px;
         }
       }
@@ -604,6 +614,14 @@ export default {
     }
   }
   .popup2 {
+    .guanbi2 {
+      font-size: 50px;
+      position: absolute;
+      right: 40px;
+      top: -100px;
+      z-index: 999999999999999999999999;
+      color: #fff;
+    }
     padding: 0 50px;
     padding-bottom: 0px;
     .title {
@@ -747,22 +765,6 @@ export default {
   }
   /deep/ .van-step--vertical:not(:last-child)::after {
     border: none;
-  }
-  .guanbi1 {
-    font-size: 50px;
-    position: absolute;
-    right: 95px;
-    top: 150px;
-    z-index: 9999;
-    color: #ffffff;
-  }
-  .guanbi2 {
-    font-size: 50px;
-    position: absolute;
-    right: 95px;
-    top: 270px;
-    z-index: 9999;
-    color: #ffffff;
   }
 }
 </style>
