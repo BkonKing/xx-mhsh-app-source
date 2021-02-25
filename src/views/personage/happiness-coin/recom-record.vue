@@ -205,7 +205,7 @@
             预计奖励：
           </div>
           <div class="right">
-            <div class="t5-top">{{currentClient.yjgfjlCredits}}幸福币(购房{{currentClient.yjgfjlCredits}})</div>
+            <div class="t5-top">{{currentClient.yjgfjlCredits}}幸福币<br>(购房{{currentClient.yjgfjlCredits}})</div>
           </div>
         </div>
         <div class="t5"
@@ -300,12 +300,12 @@ export default {
     // 打开详情窗口
     openDetail (item) {
       // console.log(item)
-      // 如果已经到访
-      if (item.ydfCredits !== 0) {
+      //  到访+购房
+      if (+item.yjdfjlCredits !== 0) {
         this.isShow = true
         this.currentClient = item
       } else {
-        // 未到访
+        // 直接购房
         this.isShow2 = true
         this.currentClient = item
       }
@@ -327,7 +327,7 @@ export default {
   async created () {
     const res = await clientCount()
     this.clientInfo = res
-    console.log('统计客户', res)
+    // console.log('统计客户', res)
   }
 }
 </script>
