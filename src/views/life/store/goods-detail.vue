@@ -56,9 +56,9 @@
               @click="shareShow=true"
             >分享</span>
           </div>
-          <!-- <div class="label-list">
-            <div class="label-item label-item-block label-item-tip">包邮</div><div class="label-item label-item-block label-item-tip">包邮</div><div class="label-item label-item-block label-item-tip">包邮</div>
-          </div> -->
+          <div v-if="infoData.tag && infoData.tag.length" class="label-list">
+            <div v-for="(val, j) in infoData.tag" :key="j" class="label-item label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
+          </div>
         </div>
         <div class="info-price">
           <template v-if="infoData.pay_type == 1">
@@ -87,50 +87,38 @@
         </div>
       </div>
 
-      <div class="goods-tip goods-session flex-align-center">
-        <!-- <div v-if="infoData.goods_type == 3" @click="ensureFunc" class="tip-item">
-          <div class="tip-left logistics-left">
-            保障
+      <div class="goods-session">
+        <div class="goods-distribution flex-align-center">
+          <div class="tip-item">
+            <div class="tip-left logistics-left">
+              配送
+            </div>
+            <div v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2" class="tip-right color-222">
+              {{infoData.distribution_type_name}} · {{infoData.freight ? '运费'+(infoData.freight)+'元' : '免邮'}}
+            </div>
+            <div v-else-if="infoData.distribution_type == 1" class="tip-right color-222 p-nowrap">
+              {{infoData.distribution_type_name}}({{infoData.take_address}})
+            </div>
           </div>
-          <div class="tip-right color-222">
-            假一赔二 · 破损补寄 · 15天保价
-          </div>
-          <div class="link-icon">
-            <img class="img-100" src="@/assets/img/right.png" />
-          </div>
-        </div> -->
-        <div class="tip-item">
-          <div class="tip-left logistics-left">
-            配送
-          </div>
-          <div v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2" class="tip-right color-222">
-            {{infoData.distribution_type_name}} · {{infoData.freight ? '运费'+(infoData.freight)+'元' : '免邮'}}
-          </div>
-          <div v-else-if="infoData.distribution_type == 1" class="tip-right color-222 p-nowrap">
-            {{infoData.distribution_type_name}}({{infoData.take_address}})
-          </div>
-        </div>
-        <div v-if="infoData.tips_arr && infoData.tips_arr.length" @click="rightShow && tipToggle()" class="tip-item">
-          <div class="tip-left logistics-left">
-            说明
-          </div>
-          <div class="tip-right color-222 p-nowrap">
-            <template v-for="(item, index) in infoData.tips_arr">{{item}} {{index!=infoData.tips_arr.length-1 ? '·' : ''}} </template>
-          </div>
-          <div v-if="rightShow" class="link-icon">
-            <img class="img-100" src="@/assets/img/right.png" />
-          </div>
-        </div>
-        <div ref="tipItem" class="tip-item hide">
-          <div class="flex-center">
+          <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" @click="tipToggle()" class="tip-item">
             <div class="tip-left logistics-left">
               说明
             </div>
-            <div ref="tipTxt" class="tip-hide color-222">
+            <div class="tip-right color-222 p-nowrap">
               <template v-for="(item, index) in infoData.tips_arr">{{item}} {{index!=infoData.tips_arr.length-1 ? '·' : ''}} </template>
             </div>
-          </div>
+          </div> -->
         </div>
+        <template v-if="infoData.tip && infoData.tip.length">
+          <div class="hr-line"></div>
+          <div class="goods-tip flex-align-center" @click="tipToggle()">
+            <template v-for="(item, index) in infoData.tip">
+              <img :src="item.icon_url" />
+              <span>{{ item.tips_name }}</span>
+            </template>
+            <i class="tip-point tf-icon tf-icon-gengduo flex-center"></i>
+          </div>
+        </template>
       </div>
 
       <div v-if="infoData.goods_type == 3 && infoData.dq_collage_type == 2" class="goods-session collage-session">
@@ -371,18 +359,18 @@
         <div class="submit-btn" @click="ensureFunc">确认</div>
       </div>
       <div v-show="ensureShow" class="mask-bg" catchtouchmove="true" @click="ensureFunc"></div>
-      <!-- <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
+      <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
         <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
         <div class="public-header">服务说明</div>
         <div class="ensure-list">
-          <div v-for="(item,index) in infoData.tips_arr" class="ensure-item">
-            <div class="ensure-tit flex-align-center"><img src="@/assets/img/icon_03.png" />{{item}}</div>
-            <div class="ensure-cont">{{item}}</div>
+          <div v-for="(item,index) in infoData.tip" :key="index" class="ensure-item">
+            <div class="ensure-tit flex-align-center"><img :src="item.icon_url" />{{ item.tips_name }}</div>
+            <div class="ensure-cont">{{ item.tips_introduction }}</div>
           </div>
         </div>
         <div class="submit-btn" @click="tipToggle">确认</div>
-      </div> -->
-      <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
+      </div>
+      <!-- <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
         <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
         <div class="public-header">优惠限制</div>
 
@@ -392,7 +380,7 @@
           </div>
         </div>
         <div class="submit-btn" @click="tipToggle">确认</div>
-      </div>
+      </div> -->
       <div v-show="tipShow" class="mask-bg" catchtouchmove="true" @click="tipToggle"></div>
       <remind-swal
       :show-swal="showSwal"
@@ -478,8 +466,6 @@ export default {
       btn_type: 'cart', // cart点击了加入购物 buy点击了立即购买
       current: 0,
       ableCredits: '',
-      rightShow: false,
-
       // show: false,
       swiperArr: [], // 轮播图
       skuPicArr: [] // 规格图
@@ -492,17 +478,6 @@ export default {
     this.getData()
   },
   watch: {
-    infoData (value) {
-      this.$nextTick(() => {
-        if (value.tips_arr.length > 0) {
-          var itemWidth = this.$refs.tipItem.offsetWidth
-          var tipWidth = this.$refs.tipTxt.offsetWidth
-          if (tipWidth / itemWidth > 620 / 750) {
-            this.rightShow = true
-          }
-        }
-      })
-    },
     // 监听 this.$route.query
     '$route.query': function (newVal, oldVal) {
       this.goodsId = newVal.id
@@ -1064,7 +1039,6 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-top: 6px;
-  display: none;
 }
 .label-item {
   margin-right: 10px;
@@ -1121,12 +1095,48 @@ export default {
   width: 15px;
   height: 26px;
 }
-.goods-tip {
+.goods-distribution {
   padding: 20px 0;
   color: #8f8f94;
   font-size: 26px;
   min-height: 100px;
   flex-wrap: wrap;
+}
+.hr-line {
+  height: 1PX;
+  background-color: #f0f0f0;
+  width: 690px;
+  margin: 0 auto;
+}
+.goods-tip {
+  height: 66px;
+  padding: 0 30px;
+  font-size: 24px;
+  color: #8f8f94;
+  position: relative;
+}
+.goods-tip img {
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+}
+.goods-tip span {
+  padding-right: 30px;
+}
+.tip-point {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 66px;
+  color: #aaaaaa;
+  font-size: 30px;
+  padding-right: 2px;
+}
+.tip-point::before {
+  transform: rotate(-90deg);
+  height: 66px;
+  line-height: 66px;
 }
 .tip-item {
   height: 56px;

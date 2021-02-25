@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body white-bg">
+  <div class="app-body white-bg">
     <div class="body-block">
       <div :class="[navList.length == 0 ? 'empty-188' : 'empty-276','search-absolute']">
         <div class="absolute-top">
@@ -12,7 +12,7 @@
               <input class="search-input" type="text" placeholder="输入关键词搜索" />
             </div>
           </div>
-          
+
           <div class="right-header">
             <div v-if="navList.length > 0" class="right-nav">
               <scrollBar direction="x" :activeIndex="activeIndex">
@@ -34,14 +34,14 @@
           </div>
         </div>
       </div>
-  		
+
       <div class="classify-cont">
         <div class="classify-nav-block">
           <div class="classify-nav">
             <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
           </div>
         </div>
-        
+
         <div :class="[navList.length == 0 ? '' : 'classify-right-276', 'classify-right']" id="classify-body">
           <van-list
             v-model="loading"
@@ -54,8 +54,11 @@
                 <img class="res-goods-pic" :src="item.thumb" />
                 <div class="res-goods-info">
                   <div class="res-goods-name res-name p-nowrap">{{item.goods_name}}</div>
-                  <div v-if="item.goods_type>1" class="flex-align-center">
-                    <div :class="[item.goods_type == 2 ? 'res-goods-label-tm' : 'res-goods-label-xssg','res-goods-label']">{{item.goods_type == 2 ? '特卖' : '限时闪购'}}</div>
+                  <div class="flex-align-center">
+                    <template v-if="item.goods_type>1">
+                      <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
+                    </template>
+                    <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
                   </div>
                   <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                 </div>
@@ -69,7 +72,7 @@
         </div>
       </div>
     </div>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -88,17 +91,17 @@ export default {
       windowHeight: document.documentElement.clientHeight,
       leftActiveIndex: 0,
       leftNav: [],
-      activeIndex: 0,  //右侧菜单选中项
-      category_id: '',  //分类id
+      activeIndex: 0, // 右侧菜单选中项
+      category_id: '', // 分类id
       navList: [],
 
-      sort_val: 0,         //排序（0.默认/无筛选 1.销量降序 2.价格升序 3.价格降序）
-      
-      page: 1,         //页码
+      sort_val: 0, // 排序（0.默认/无筛选 1.销量降序 2.价格升序 3.价格降序）
+
+      page: 1, // 页码
       listData: [],
       loading: false,
       finished: false,
-      marginTop: 0,
+      marginTop: 0
     }
   },
   activated () {
@@ -107,10 +110,10 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(function(){
-      setTimeout(()=>{
-        this.marginTop = this.$store.state.paddingTop;
-      },500)
+    this.$nextTick(function () {
+      setTimeout(() => {
+        this.marginTop = this.$store.state.paddingTop
+      }, 500)
     })
   },
   methods: {
@@ -121,96 +124,96 @@ export default {
         order_type: this.sort_val
       }).then(res => {
         if (res.success) {
-          this.flag = true;
-          console.log(this.leftNav.length);
-          if(this.leftNav.length == 0){
-            this.leftNav = res.data.category_list;
-            if(res.data.category_list[this.leftActiveIndex].children){
+          this.flag = true
+          console.log(this.leftNav.length)
+          if (this.leftNav.length == 0) {
+            this.leftNav = res.data.category_list
+            if (res.data.category_list[this.leftActiveIndex].children) {
               this.navList = res.data.category_list[this.leftActiveIndex].children
             }
           }
 
-          this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list);
-          this.isEmpty = this.page == 1 && res.data.goods_list.length ==0 ? true : false;
-          if(res.data.goods_list.length < res.pageSize){
-            this.finished = true;
-            this.flag = true;
-          }else {
-            this.page = this.page+1;
-            this.flag = false;
+          this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
+          this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
+          if (res.data.goods_list.length < res.pageSize) {
+            this.finished = true
+            this.flag = true
+          } else {
+            this.page = this.page + 1
+            this.flag = false
           }
-          this.loading = false;
+          this.loading = false
         }
       })
     },
-    onLoad() {
-      this.getGoodsData();
+    onLoad () {
+      this.getGoodsData()
     },
-    //左侧菜单点击
-    categoryNav(index, id) {
-      this.leftActiveIndex = index;
-      this.category_id = this.leftNav[index].id;
-      if(this.leftNav[index].children){
-        this.navList = this.leftNav[index].children;
+    // 左侧菜单点击
+    categoryNav (index, id) {
+      this.leftActiveIndex = index
+      this.category_id = this.leftNav[index].id
+      if (this.leftNav[index].children) {
+        this.navList = this.leftNav[index].children
         this.category_id = this.leftNav[index].children[0].id
-      }else {
-        this.navList = [];
+      } else {
+        this.navList = []
       }
-      this.listInit();
+      this.listInit()
     },
-    //右侧菜单点击
-    changeNav(index, id) {
-      this.activeIndex = index;
-      this.category_id = id;
-      this.listInit();
+    // 右侧菜单点击
+    changeNav (index, id) {
+      this.activeIndex = index
+      this.category_id = id
+      this.listInit()
     },
-    listInit(){
-      this.page = 1;
-      this.loading = false;
-      this.finished = false;
-      this.listData = [];
-      if(!this.flag){
-        this.getGoodsData();
+    listInit () {
+      this.page = 1
+      this.loading = false
+      this.finished = false
+      this.listData = []
+      if (!this.flag) {
+        this.getGoodsData()
       }
     },
     // 排序
-    sortFunc: function (sort='') {
-      if(sort == 23){
-        if(this.sort_val == 0 || this.sort_val == 1){
-          this.sort_val = 2;
-        }else {
-          this.sort_val = this.sort_val == 2 ? 3 : 0;
+    sortFunc: function (sort = '') {
+      if (sort == 23) {
+        if (this.sort_val == 0 || this.sort_val == 1) {
+          this.sort_val = 2
+        } else {
+          this.sort_val = this.sort_val == 2 ? 3 : 0
         }
-      }else {
-        this.sort_val = this.sort_val == 1 ? 0 : sort;
+      } else {
+        this.sort_val = this.sort_val == 1 ? 0 : sort
       }
-      this.listInit();
+      this.listInit()
     },
-    linkFunc (type,obj={}) {
-      switch (type){
+    linkFunc (type, obj = {}) {
+      switch (type) {
         case 5:
-        this.$router.push({
-          path: '/store/goods-detail',
-          query: {
-            id: obj.id
-          }
-        })
-        break;
+          this.$router.push({
+            path: '/store/goods-detail',
+            query: {
+              id: obj.id
+            }
+          })
+          break
         case 6:
-        this.$router.push('/store/search');
-        break;
+          this.$router.push('/store/search')
+          break
       }
-    },
+    }
   },
   beforeRouteLeave (to, from, next) {
-    console.log(to.name);
-    if(to.name == 'life'){
-      this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+    console.log(to.name)
+    if (to.name == 'life') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
     }
     const el = document.getElementById('classify-body')
     this.scrollTop = (el && el.scrollTop) || 0
-    next();
+    next()
   }
 }
 </script>
@@ -310,7 +313,6 @@ export default {
   font-weight: bold;
 }
 
- 
 /*右侧列表*/
 .classify-right {
   width: 530px;
@@ -423,21 +425,8 @@ export default {
   height: 46px;
   line-height: 46px;
 }
-.res-goods-label {
-  height: 44px;
-  line-height: 44px;
-  padding: 0 11px;
-  border-radius: 4px;
-  font-size: 24px;
-  margin: 10px 0 6px;
-}
-.res-goods-label-tm {
-  color: #55b862;
-  background-color: #eef8ef;
-}
-.res-goods-label-xssg {
-  color: #eb5841;
-  background-color: #fdeeec;
+.label-item-block {
+  margin: 10px 10px 14px 0;
 }
 .res-goods-price {
   padding-top: 10px;

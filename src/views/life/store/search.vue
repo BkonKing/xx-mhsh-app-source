@@ -47,7 +47,7 @@
         </div>
       </template>
       <div class="nav-empty"></div>
-      
+
       <van-list
         v-model="loading"
         :finished="finished"
@@ -83,8 +83,10 @@
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
                       <div v-if="item.goods_type > 1" class="flex-align-center">
-                        <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
-                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+                        <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
+                        <!-- <div class="label-item-block label-item-tip">顺丰</div> -->
+                        <!-- <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
+                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div> -->
                       </div>
                       <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
@@ -96,8 +98,8 @@
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
                       <div v-if="item.goods_type > 1" class="flex-align-center">
-                        <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
-                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div>
+                        <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
+                        <!-- <div class="label-item-block label-item-tip">顺丰</div> -->
                       </div>
                       <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
@@ -205,52 +207,51 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       items: ['全部', '商品', '帖子', '应用'],
-      res_name: "<span>热门</span>报修",
-      search_val: '',    //搜索输入框值
-      goods_val: '',     //商品输入框
-      postbar_val: '',   //帖子输入框
-      noneHidden: true,  //缺省页是否隐藏（搜索无结果）
-      isFocus: true,   //显示热搜词和历史搜索
-      searchList: [],    //历史搜索词列表
-      hotWordsList: [],  //热搜词列表
+      res_name: '<span>热门</span>报修',
+      search_val: '', // 搜索输入框值
+      goods_val: '', // 商品输入框
+      postbar_val: '', // 帖子输入框
+      noneHidden: true, // 缺省页是否隐藏（搜索无结果）
+      isFocus: true, // 显示热搜词和历史搜索
+      searchList: [], // 历史搜索词列表
+      hotWordsList: [], // 热搜词列表
       // resShopList: [],   //搜索结果列表
-      goodsList: [],     //搜索结果（商品）
-      goodsList2: [],    //搜索结果（商品）
-      appList: [],       //搜索结果（应用）
-      postbarList: [],   //搜索结果（帖子）
-      postbarList2: [],  //搜索结果（帖子）
-      goods_count: 0,    //搜索商品结果数量
-      goods_count2: 0,    //搜索商品结果数量(单独搜索)
-      app_count: 0,      //搜索应用结果数量
-      postbar_count: 0,  //搜索帖子结果数量
-      postbar_count2: 0,  //搜索帖子结果数量(单独搜索)
+      goodsList: [], // 搜索结果（商品）
+      goodsList2: [], // 搜索结果（商品）
+      appList: [], // 搜索结果（应用）
+      postbarList: [], // 搜索结果（帖子）
+      postbarList2: [], // 搜索结果（帖子）
+      goods_count: 0, // 搜索商品结果数量
+      goods_count2: 0, // 搜索商品结果数量(单独搜索)
+      app_count: 0, // 搜索应用结果数量
+      postbar_count: 0, // 搜索帖子结果数量
+      postbar_count2: 0, // 搜索帖子结果数量(单独搜索)
 
-      page: 1,           //分页页码
-      pageSize: 10,      //每页数
-      noMoreHidden: true,//上拉加载更多，没有更多是否隐藏
-      tapIndex: 0,       //0全部 1商品 2帖子 3应用
-      typeVal: 0,        //1更多商品 2更多帖子 3更多应用
+      page: 1, // 分页页码
+      pageSize: 10, // 每页数
+      noMoreHidden: true, // 上拉加载更多，没有更多是否隐藏
+      tapIndex: 0, // 0全部 1商品 2帖子 3应用
+      typeVal: 0, // 1更多商品 2更多帖子 3更多应用
 
       loading: false,
-      finished: true,
+      finished: true
     }
   },
-  created(){
-    this.isSelect = this.$route.query.isSelect;
+  created () {
+    this.isSelect = this.$route.query.isSelect
     // this.searchList = JSON.parse(localStorage.getItem('searchWords')) || [];
-    var searchWords = api.getPrefs({ sync: true, key: 'searchWords' }) || [];
-    if(searchWords && searchWords.length > 0){
-      this.searchList = JSON.parse(searchWords);
+    var searchWords = api.getPrefs({ sync: true, key: 'searchWords' }) || []
+    if (searchWords && searchWords.length > 0) {
+      this.searchList = JSON.parse(searchWords)
     }
-    this.getData();
+    this.getData()
   },
   mounted () {
-    const that = this;
+    const that = this
     this.$nextTick(() => {
-      setTimeout(()=>{
+      setTimeout(() => {
         that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
-      },500)
-      
+      }, 500)
     })
   },
   activated () {
@@ -259,112 +260,111 @@ export default {
     }
   },
   methods: {
-    onLoad() {
+    onLoad () {
       // 异步更新数据
-      if(this.typeVal == 1){
-        this.getSearchGoods(2);
-      }else if(this.typeVal == 2){
-        this.getSearchPostbar(2);
-      }else {
-        this.getSearchApp(2);
+      if (this.typeVal == 1) {
+        this.getSearchGoods(2)
+      } else if (this.typeVal == 2) {
+        this.getSearchPostbar(2)
+      } else {
+        this.getSearchApp(2)
       }
-      return;
     },
     getData () {
-      //热词
+      // 热词
       getHotWords().then(res => {
         if (res.success) {
           this.hotWordsList = res.data
         }
       })
     },
-    //搜索商品
-    initFunc(){
-      this.finished = false;
-      this.loading = false;
-      this.page = 1;
+    // 搜索商品
+    initFunc () {
+      this.finished = false
+      this.loading = false
+      this.page = 1
     },
-    getSearchGoods(type=''){
-      var search_key = this.search_val;
-      let that =  this;
-      if(this.typeVal == 1){
-        search_key = this.goods_val;
+    getSearchGoods (type = '') {
+      var search_key = this.search_val
+      const that = this
+      if (this.typeVal == 1) {
+        search_key = this.goods_val
       }
       getSearchGoods({
         search_key: search_key,
         page: this.page,
-        search_num: this.pageSize,
+        search_num: this.pageSize
       }).then(res => {
         if (res.success) {
-          let dataArr = res.data;
-          var val = that.search_val;
-          if(that.typeVal == 1){
-            val = that.goods_val;
+          const dataArr = res.data
+          var val = that.search_val
+          if (that.typeVal == 1) {
+            val = that.goods_val
           }
-          if(dataArr&&dataArr.length > 0){
-            for (var i=0; i<dataArr.length; i++) {
-              var findText = dataArr[i].goods_name.split(val);
-              var result= findText.join('<span style="color:#448fe4;">' + val + '</span>');
-              dataArr[i].goods_name = result;
+          if (dataArr && dataArr.length > 0) {
+            for (var i = 0; i < dataArr.length; i++) {
+              var findText = dataArr[i].goods_name.split(val)
+              var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+              dataArr[i].goods_name = result
             }
           }
-          if(this.typeVal > 0){
-            this.goodsList2 = this.page == 1 ? res.data : this.goodsList2.concat(res.data);
-            if(res.data.length < this.pageSize){
-              this.finished = true;
-            }else {
-              this.page = this.page+1;
+          if (this.typeVal > 0) {
+            this.goodsList2 = this.page == 1 ? res.data : this.goodsList2.concat(res.data)
+            if (res.data.length < this.pageSize) {
+              this.finished = true
+            } else {
+              this.page = this.page + 1
             }
-            this.loading = false;
-            this.goods_count2 = res.count_num;
-          }else {
-            this.goodsList = this.page == 1 ? res.data : this.goodsList.concat(res.data);
-            this.goods_count = res.count_num;
+            this.loading = false
+            this.goods_count2 = res.count_num
+          } else {
+            this.goodsList = this.page == 1 ? res.data : this.goodsList.concat(res.data)
+            this.goods_count = res.count_num
           }
         }
       })
     },
-    //搜索app
-    getSearchApp(){
-      let that =  this;
+    // 搜索app
+    getSearchApp () {
+      const that = this
       getSearchApp({
         search_key: this.search_val,
         pages: this.page,
-        search_num: this.pageSize,
+        search_num: this.pageSize
       }).then(res => {
         if (res.success) {
-          let dataArr = res.data;
-          var val = that.search_val;
-          if(dataArr&&dataArr.length > 0){
-            for (var i=0; i<dataArr.length; i++) {
-              var findText = dataArr[i].application.split(val);
-              var result= findText.join('<span style="color:#448fe4;">' + val + '</span>');
-              dataArr[i].application = result;
+          const dataArr = res.data
+          var val = that.search_val
+          if (dataArr && dataArr.length > 0) {
+            for (var i = 0; i < dataArr.length; i++) {
+              var findText = dataArr[i].application.split(val)
+              var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+              dataArr[i].application = result
             }
           }
-          this.appList = this.page == 1 ? res.data : this.appList.concat(res.data);
-          this.app_count = res.count_num;
-          if(this.typeVal > 0){
-            if(res.data.length < this.pageSize){
-              this.finished = true;
-            }else {
-              this.page = this.page+1;
+          this.appList = this.page == 1 ? res.data : this.appList.concat(res.data)
+          this.app_count = res.count_num
+          if (this.typeVal > 0) {
+            if (res.data.length < this.pageSize) {
+              this.finished = true
+            } else {
+              this.page = this.page + 1
             }
-            this.loading = false;
+            this.loading = false
           }
         }
       })
     },
-    //搜索帖子
-    getSearchPostbar(type=''){
-      var search_key = this.search_val;
-      if(this.typeVal == 2){
-        search_key = this.postbar_val;
+    // 搜索帖子
+    getSearchPostbar (type = '') {
+      var search_key = this.search_val
+      if (this.typeVal == 2) {
+        search_key = this.postbar_val
       }
       getSearchPostbar({
         search_key: search_key,
         pages: this.page,
-        search_num: this.pageSize,
+        search_num: this.pageSize
       }).then(res => {
         if (res.success) {
           // let dataArr = res.data;
@@ -379,133 +379,132 @@ export default {
           //     dataArr[i].content = result;
           //   }
           // }
-          if(this.typeVal > 0){
-            this.postbarList2 = this.page == 1 ? res.data : this.postbarList2.concat(res.data);
-            if(res.data.length < this.pageSize){
-              this.finished = true;
-            }else {
-              this.page = this.page+1;
+          if (this.typeVal > 0) {
+            this.postbarList2 = this.page == 1 ? res.data : this.postbarList2.concat(res.data)
+            if (res.data.length < this.pageSize) {
+              this.finished = true
+            } else {
+              this.page = this.page + 1
             }
-            this.loading = false;
-            this.postbar_count2 = res.count_num;
-          }else {
-            this.postbarList = this.page == 1 ? res.data : this.postbarList.concat(res.data);
-            this.postbar_count = res.count_num;
+            this.loading = false
+            this.postbar_count2 = res.count_num
+          } else {
+            this.postbarList = this.page == 1 ? res.data : this.postbarList.concat(res.data)
+            this.postbar_count = res.count_num
           }
         }
       })
     },
-    //取消
-    cancelFunc(){
-      if(this.typeVal > 0){
-        this.typeVal = 0;
-        this.finished = true;
-        this.loading = false;
-        this.page = 1;
-      }else {
-        this.$router.go(-1);
+    // 取消
+    cancelFunc () {
+      if (this.typeVal > 0) {
+        this.typeVal = 0
+        this.finished = true
+        this.loading = false
+        this.page = 1
+      } else {
+        this.$router.go(-1)
       }
     },
-    //菜单切换
-    onClickItem(index){
+    // 菜单切换
+    onClickItem (index) {
       console.log(this.tapIndex)
     },
-    //更多
-    goMore(typeVal){
-      this.typeVal = typeVal;
-      this.finished = false;
-      this.loading = false;
-      this.page = 1;
-      if(typeVal == 1){
-        this.goods_val = this.search_val;
-      }else if(typeVal == 2){
-        this.postbar_val = this.search_val;
+    // 更多
+    goMore (typeVal) {
+      this.typeVal = typeVal
+      this.finished = false
+      this.loading = false
+      this.page = 1
+      if (typeVal == 1) {
+        this.goods_val = this.search_val
+      } else if (typeVal == 2) {
+        this.postbar_val = this.search_val
       }
       // this.goSearch();
     },
-    
+
     /**
      * 删除输入框内容
     */
     inputDel: function (e) {
-      const that = this;
+      const that = this
       that.setData({
         search_val: '',
         isFocus: true
-      });
+      })
     },
     /**
      * 获取焦点
     */
     focus: function (e) {
-      if(!this.isFocus){
-        this.isFocus = true;
+      if (!this.isFocus) {
+        this.isFocus = true
       }
     },
     /**
      * 失去焦点
     */
     blur: function (e) {
-      this.isFocus = false;
+      this.isFocus = false
     },
     /**
      * 点击关键词搜索
     */
     wordsSearch: function (val) {
-      this.isFocus = false;
-      this.search_val = val;
-      this.noneHidden = true;
-      this.noMoreHidden = true;
-      this.page = 1;
-      this.addSearch();
+      this.isFocus = false
+      this.search_val = val
+      this.noneHidden = true
+      this.noMoreHidden = true
+      this.page = 1
+      this.addSearch()
     },
     /**
      * 点击输入框搜索
     */
     onSearch: function (e) {
-      this.isFocus = false;
-      this.noneHidden = true;
-      this.noMoreHidden = true;
-      this.page = 1;
-      this.addSearch();
+      this.isFocus = false
+      this.noneHidden = true
+      this.noMoreHidden = true
+      this.page = 1
+      this.addSearch()
     },
     /**
      * 加入历史搜索
     */
     addSearch: function (e) {
-      var key_word = this.search_val;
+      var key_word = this.search_val
       if (key_word) {
         for (var key in this.searchList) {
           if (key_word == this.searchList[key]) {
-            this.searchList.splice(key, 1);
+            this.searchList.splice(key, 1)
           }
         }
-        
-        let wordText = [];
-        wordText[0] = key_word;
-        this.searchList = wordText.concat(this.searchList);
+
+        const wordText = []
+        wordText[0] = key_word
+        this.searchList = wordText.concat(this.searchList)
         if (this.searchList.length > 30) {
-          this.searchList = this.searchList.splice(30, 1);
+          this.searchList = this.searchList.splice(30, 1)
         }
         // localStorage.setItem('searchWords', JSON.stringify(this.searchList));
-        api.setPrefs({ key: 'searchWords', value: JSON.stringify(this.searchList) });
-        console.log(this.searchList);
-        this.goSearch();
+        api.setPrefs({ key: 'searchWords', value: JSON.stringify(this.searchList) })
+        console.log(this.searchList)
+        this.goSearch()
       }
-
     },
     goSearch: function (e) {
-      this.mtjEvent({eventId: '5'}); 
-      if(this.typeVal == 0){
-        this.getSearchGoods();
-        this.getSearchApp();
-        this.getSearchPostbar();
-      }else if(this.typeVal == 1){
-        this.getSearchGoods();
-      }else if(this.typeVal == 2){
-        this.getSearchPostbar();
-      }else {
-        this.getSearchApp();
+      this.mtjEvent({ eventId: '5' })
+      if (this.typeVal == 0) {
+        this.getSearchGoods()
+        this.getSearchApp()
+        this.getSearchPostbar()
+      } else if (this.typeVal == 1) {
+        this.getSearchGoods()
+      } else if (this.typeVal == 2) {
+        this.getSearchPostbar()
+      } else {
+        this.getSearchApp()
       }
     },
     /**
@@ -513,8 +512,8 @@ export default {
     */
     delSearch: function (e) {
       // localStorage.removeItem("searchWords");
-      api.removePrefs({ key: 'searchWords' });
-      this.searchList = [];
+      api.removePrefs({ key: 'searchWords' })
+      this.searchList = []
       // const that = this;
       // var addrId = e.currentTarget.dataset.id;
       // that.setData({
@@ -526,7 +525,7 @@ export default {
       //   duration: 2000
       // });
     },
-    //点赞
+    // 点赞
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
       if (item.is_thumbsup) {
@@ -541,40 +540,40 @@ export default {
         item.is_thumbsup = 1
       })
     },
-    goLink(url){
-      this.$router.push(url);
+    goLink (url) {
+      this.$router.push(url)
     },
-    linkFunc (type,obj={}) {
-      switch (type){
+    linkFunc (type, obj = {}) {
+      switch (type) {
         case 5:
-        this.$router.push({
-          path: '/store/goods-detail',
-          query: {
-            id: obj.id
-          }
-        })
-        break;
+          this.$router.push({
+            path: '/store/goods-detail',
+            query: {
+              id: obj.id
+            }
+          })
+          break
         case 30:
-        this.$router.push({
-          path: '/pages/neighbours/details',
-          query: {
-            articleType: '3',
-            id: obj.id
-          }
-        })
-        break;
+          this.$router.push({
+            path: '/pages/neighbours/details',
+            query: {
+              articleType: '3',
+              id: obj.id
+            }
+          })
+          break
       }
-    },
+    }
   },
   beforeRouteLeave (to, from, next) {
-    if(to.name == 'life' || to.name == 'home'){
-      this.$destroy();
-      this.$store.commit('deleteKeepAlive',from.name);
+    if (to.name == 'life' || to.name == 'home') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
     }
     const el = document.getElementById('scroll-body')
     this.scrollTop = (el && el.scrollTop) || 0
     console.log(this.scrollTop)
-    next();
+    next()
   }
 }
 </script>
@@ -770,21 +769,8 @@ export default {
   height: 46px;
   line-height: 46px;
 }
-.res-goods-label {
-  height: 44px;
-  line-height: 44px;
-  padding: 0 11px;
-  border-radius: 4px;
-  font-size: 24px;
-  margin: 10px 0 6px;
-}
-.res-goods-label-tm {
-  color: #55b862;
-  background-color: #eef8ef;
-}
-.res-goods-label-xssg {
-  color: #eb5841;
-  background-color: #fdeeec;
+.label-item-block {
+  margin: 10px 10px 14px 0;
 }
 .res-goods-price {
   padding-top: 10px;
