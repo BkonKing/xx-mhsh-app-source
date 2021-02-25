@@ -211,6 +211,15 @@ export default {
             })
           }
           break
+        // 观影-电影票订单详情
+        case '21':
+          this.$router.push({
+            name: 'movieTicket',
+            query: {
+              id: item.source_id
+            }
+          })
+          break
       }
       // 幸福币详情
       if (sub_type == 6 || sub_type == 7) {

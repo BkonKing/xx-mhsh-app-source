@@ -7,6 +7,9 @@ export function getLifeInfo (params) {
 export function getBanner (params) {
   return request.post('/index/banner/banner_life', params)
 }
+export function getMenu (params) {
+  return request.post('/life/goods/life_home_menu', params)
+}
 
 // 限时闪购
 export function getFlashNav (params) {

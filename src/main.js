@@ -114,6 +114,9 @@ if (process.env.VUE_APP_IS_APP === '1') {
           key: name
         } = obj
         localStorage.removeItem(name)
+      },
+      require () {
+        return {}
       }
     }
   }
