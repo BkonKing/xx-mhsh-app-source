@@ -26,6 +26,7 @@
         ></van-tab>
         <!-- 订单列表 -->
         <refreshList
+          id="orderList"
           ref="orderList"
           :pagination="false"
           :list.sync="orderList"
@@ -100,7 +101,8 @@ export default {
         }
       ],
       orderList: [],
-      customerPhone: '' // 客服电话
+      customerPhone: '', // 客服电话
+      scrollTop: 0 // 页面滚动位置
     }
   },
   computed: {
@@ -108,6 +110,9 @@ export default {
   },
   created () {
     this.getCustomerPhone()
+  },
+  activated () {
+    this.scrollTop && (document.getElementById('orderList').scrollTop = this.scrollTop)
   },
   methods: {
     // 获取订单列表
@@ -145,6 +150,7 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     const names = ['movieTicket']
+    this.scrollTop = document.getElementById('orderList').scrollTop || 0
     if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)

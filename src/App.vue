@@ -140,25 +140,21 @@ export default {
   },
   watch: {
     $route (to, from) {
-      // console.log(to)
-      // console.log(from)
-      // const index = this.historyList.indexOf(to.name)
+      // console.log(to, from)
       const len = this.historyList.length
       const lastPath = this.historyList[len - 2] // 上一次路由name
+      const index = this.historyList.indexOf(to.fullPath) // 路由所在index
       // eslint-disable-next-line eqeqeq
       if (to.fullPath === lastPath && to.query.forward != '1') {
+        const delIndex = this.historyList.indexOf(from.fullPath) // 返回页面路由所在的位置
         // 返回
-        const delIndex = this.historyList.indexOf(from.fullPath)
         this.transitionName = 'slide-right'
         this.historyList.splice(delIndex)
       } else {
-        if (this.historyList.length > 0) {
-          this.transitionName = 'slide-left'
-        }
-        const index = this.historyList.indexOf(to.fullPath)
-        if (index !== -1) {
-          this.historyList.splice(index)
-        }
+        // 进入第一个页面就会执行监听，所以第一个页面不需要动画
+        len > 0 && (this.transitionName = 'slide-left')
+        // 如果跳转页面是前面跳转过页面（historyList）中的页面，则删除这些页面
+        index !== -1 && this.historyList.splice(index)
         to.fullPath && this.historyList.push(to.fullPath)
       }
       // console.log(this.historyList)

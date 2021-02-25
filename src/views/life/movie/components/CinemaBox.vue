@@ -116,7 +116,7 @@ export default {
       align-items: center;
       height: 40px;
       margin-right: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       padding: 0 12px;
       border: 2px solid #ffa110;
       border-radius: 4px;

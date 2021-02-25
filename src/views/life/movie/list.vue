@@ -32,6 +32,7 @@
       <van-tabs class="list-tabs" v-model="movieActive" sticky offset-top="1.17333rem">
         <van-tab title="正在热映">
           <film-list
+            id="nowMovieList"
             ref="nowMovieList"
             key="1"
             v-model="nowMovieList"
@@ -41,6 +42,7 @@
         </van-tab>
         <van-tab title="即将上映">
           <film-list
+            id="startMovieList"
             class="start-movie-list"
             ref="startMovieList"
             key="2"
@@ -54,6 +56,7 @@
     <!-- 影院 -->
     <div class="tf-body-container" v-show="type === '2'">
       <filter-cinema-list
+        id="cinemaList"
         ref="cinemaList"
         :cityId="cityId"
         :lon="lon"
@@ -83,7 +86,10 @@ export default {
       cityId: '', // 城市id
       lon: '', // 经度
       lat: '', // 纬度
-      firstCinema: true // 是否从影院模块第一次进入页面
+      firstCinema: true, // 是否从影院模块第一次进入页面
+      scrollTop: 0, // 影院滚动位置
+      nowFilmTop: 0, // 热映滚动位置
+      startFilmTop: 0 // 待映滚动位置
     }
   },
   created () {
@@ -106,6 +112,9 @@ export default {
         this.filmReload('startMovieList')
       })
     }
+  },
+  activated () {
+    this.setScollTop()
   },
   methods: {
     // 获取影片资料(列表) type:1执映2待映
@@ -143,10 +152,55 @@ export default {
       this.$router.push({
         name: 'search'
       })
+    },
+    // 获取当前选中tab的滚动位置
+    getScollTop (type = this.type, movieActive = this.movieActive) {
+      if (type === '1') {
+        if (movieActive === 1) {
+          const startel = document.getElementById('startMovieList')
+          this.startFilmTop = (startel && startel.scrollTop) || 0
+        } else {
+          const nowel = document.getElementById('nowMovieList')
+          this.nowFilmTop = (nowel && nowel.scrollTop) || 0
+        }
+      } else {
+        const cinemael = document.getElementById('cinemaList').getElementsByClassName('cinema-list')[0]
+        this.scrollTop = (cinemael && cinemael.scrollTop) || 0
+      }
+    },
+    // 设置当前选中tab的滚动位置
+    setScollTop (type = this.type, movieActive = this.movieActive) {
+      if (type === '1') {
+        if (movieActive === 1) {
+          this.startFilmTop &&
+      (document.getElementById('startMovieList').scrollTop = this.startFilmTop)
+        } else {
+          this.nowFilmTop && (document.getElementById('nowMovieList').scrollTop = this.nowFilmTop)
+        }
+      } else {
+        this.scrollTop && (document.getElementById('cinemaList').getElementsByClassName('cinema-list')[0].scrollTop = this.scrollTop)
+      }
+    }
+  },
+  watch: {
+    // 电影影院切换时，先获取旧的滚动位置，这时页面还没重新渲染，重新渲染后再设置新的滚动位置
+    type (val, oldVal) {
+      this.getScollTop(oldVal)
+      this.$nextTick(() => {
+        this.setScollTop(val)
+      })
+    },
+    // 同上原理
+    movieActive (val, oldVal) {
+      this.getScollTop(this.type, oldVal)
+      this.$nextTick(() => {
+        this.setScollTop(this.type, val)
+      })
     }
   },
   beforeRouteLeave (to, from, next) {
     const names = ['movieIndex']
+    this.getScollTop()
     if (names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)

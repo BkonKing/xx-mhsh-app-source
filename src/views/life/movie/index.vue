@@ -33,8 +33,8 @@
         @click="$router.push(item.url)"
       >
         <van-image
-          :src="item.cover"
-          v-imageCach="item.cover"
+          :src="item.img"
+          v-imageCach="item.img"
           class="swipe-item__image"
         />
       </van-swipe-item>
