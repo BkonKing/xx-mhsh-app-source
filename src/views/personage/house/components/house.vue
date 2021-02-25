@@ -5,7 +5,10 @@
         v-for="(item, i) in houseList"
         :key="i"
         class="house-box"
-        :class="{'house-owner': i === 0 && mode !== 2, 'house-select': mode === 2 && selectId === item.house_id}"
+        :class="{
+          'house-owner': i === 0 && mode !== 2,
+          'house-select': mode === 2 && selectId === item.house_id
+        }"
         @click="handlechange(item, i)"
       >
         <div v-if="i === 0 && mode !== 2" class="tf-row-center">
@@ -13,10 +16,12 @@
         </div>
         <div class="tf-row-space-between">
           <div class="tf-row">
-            <div class="house-user house-user--relation">{{houseRoleText[item.house_role]}}</div>
+            <div class="house-user house-user--relation">
+              {{ houseRoleText[item.house_role] }}
+            </div>
             <div class="tf-space-around tf-flex-item">
-              <div class="house-name">{{item.project_name}}</div>
-              <div class="house-address">{{item.fc_info}}</div>
+              <div class="house-name">{{ item.project_name }}</div>
+              <div class="house-address">{{ item.fc_info }}</div>
             </div>
           </div>
           <div
@@ -25,13 +30,15 @@
             @click.stop="manClick(item)"
           >
             <div class="tf-icon tf-icon-renshu"></div>
-            <div class="house-people-number">{{item.members}}</div>
+            <div class="house-people-number">{{ item.members }}</div>
           </div>
         </div>
       </div>
     </div>
     <div v-if="addStatus" class="btn-placeholder">
-      <button class="tf-btn tf-btn-primary" type="warn" @click="goAttestation">新增房产</button>
+      <button class="tf-btn tf-btn-primary" type="warn" @click="goAttestation">
+        新增房产
+      </button>
     </div>
   </div>
 </template>
@@ -77,7 +84,7 @@ export default {
   methods: {
     // 获取房产信息
     bindingHouse () {
-      bindingHouse().then((res) => {
+      bindingHouse().then(res => {
         this.houseList = res.data || []
         if (this.entranceStatus) {
           this.houseList = this.houseList.filter(obj => {
@@ -110,7 +117,7 @@ export default {
     bindingDefault (bindingId, index) {
       bindingDefault({
         binding_id: bindingId
-      }).then((res) => {
+      }).then(() => {
         const current = this.houseList.splice(index, 1)
         this.houseList.unshift(...current)
         this.$store.commit('setCurrentProject', ...current)
@@ -153,7 +160,7 @@ export default {
   width: 194px;
   height: 40px;
   line-height: 40px;
-  background: url('~@/assets/imgs/current-house-tag.png');
+  background: url("~@/assets/imgs/current-house-tag.png");
   background-size: cover;
   font-size: 20px;
   color: #fff;
@@ -167,14 +174,15 @@ export default {
 
 .house-user {
   @flex();
-  width: 88px;
-  padding: 0 20px;
-  height: 88px;
-  text-align: center;
+  justify-content: center;
   align-items: center;
+  width: 88px;
+  padding: 0 12px;
+  height: 88px;
+  margin-right: @padding-md;
   color: #fff;
   font-size: 24px;
-  margin-right: @padding-md;
+  text-align: center;
 }
 
 .house-user--owner {
