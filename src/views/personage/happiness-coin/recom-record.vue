@@ -318,7 +318,7 @@ export default {
       this.loading = false
       this.list = [...this.list, ...res.data]
       this.currentPage++
-      console.log('客户列表', res)
+      // console.log('客户列表', res)
       if (res.data.length === 0) {
         this.finished = true
       }

@@ -209,7 +209,7 @@ export default {
   async created () {
     const res = await getYxlpList()
     this.yxlpList = res.data
-    console.log('楼盘列表', res)
+    // console.log('楼盘列表', res)
   }
 }
 </script>
