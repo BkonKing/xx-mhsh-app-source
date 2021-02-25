@@ -1,20 +1,42 @@
 <template>
-	<div :class="[isFocus ? 'white-bg' : '','app-body']" id="scroll-body">
+  <div :class="[isFocus ? 'white-bg' : '','app-body']" id="scroll-body">
     <form>
     <div class="search-header">
       <div class="search-input-block flex-between">
-        <div v-if="typeVal == 0" class="search-input-left flex-align-center">
+        <div v-show="typeVal == 0" class="search-input-left flex-align-center">
           <img class="search-icon" src="@/assets/img/icon_11.png" />
-          <van-search class="search-input" ref="input" v-model="search_val" @focus="focus" @input="onSearch" left-icon="" placeholder="搜索应用、商品、帖子" />
+          <!-- <van-search class="search-input" ref="input" v-model="search_val" @focus="focus" @input="onSearch" left-icon="" placeholder="搜索应用、商品、帖子" /> -->
+          <div ref="seachInput" class="search-input"></div>
+          <tf-input
+            ref="tfinput"
+            :inputInfo="inputInfo"
+            @inputCall="inputCall"
+            @inputFocus="inputFocus"
+          >
+          </tf-input>
         </div>
-        <div v-else-if="typeVal == 1" class="search-input-left flex-align-center">
+        <div v-show="typeVal > 0" class="search-input-left flex-align-center">
           <img class="search-icon" src="@/assets/img/icon_11.png" />
-          <van-search class="search-input" ref="input" v-model="goods_val" @input="initFunc" left-icon="" placeholder="搜索商品" />
+          <!-- <van-search class="search-input" ref="input" v-model="oneSeach_val" @input="initFunc" left-icon="" :placeholder="placeholder_val[typeVal-1]" /> -->
+          <tf-input
+            ref="tfinput2"
+            :inputInfo="inputInfo2"
+            @inputCall="inputCall2"
+          >
+          </tf-input>
         </div>
-        <div v-else-if="typeVal == 2" class="search-input-left flex-align-center">
+        <!-- <div v-else-if="typeVal == 2" class="search-input-left flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <van-search class="search-input" ref="input" v-model="film_val" @input="initFunc" left-icon="" placeholder="搜索电影" />
+        </div>
+        <div v-else-if="typeVal == 3" class="search-input-left flex-align-center">
+          <img class="search-icon" src="@/assets/img/icon_11.png" />
+          <van-search class="search-input" ref="input" v-model="cinema_val" @input="initFunc" left-icon="" placeholder="搜索影院" />
+        </div>
+        <div v-else-if="typeVal == 4" class="search-input-left flex-align-center">
           <img class="search-icon" src="@/assets/img/icon_11.png" />
           <van-search class="search-input" ref="input" v-model="postbar_val" @input="initFunc" left-icon="" placeholder="搜索帖子" />
-        </div>
+        </div> -->
         <div @click="cancelFunc" class="search-cancel flex-center">取消</div>
       </div>
     </div>
@@ -23,30 +45,29 @@
       <div v-if="hotWordsList.length > 0" class="search-session search-session1">
         <div class="search-tit">热门搜索</div>
         <div class="search-list">
-          <div v-for="(item, index) in hotWordsList" @click="wordsSearch(item.search_word)" class="search-item">{{item.search_word}}</div>
+          <div v-for="(item, index) in hotWordsList" :key="index" @click="wordsSearch(item.search_word)" class="search-item">{{item.search_word}}</div>
         </div>
       </div>
       <div v-if="searchList.length > 0" class="search-session">
         <div class="search-tit">历史搜索<div @click="delSearch" class="search-del"><img class="img-100" src="@/assets/img/icon_12.png" /></div></div>
         <div class="search-list">
-          <div v-for="(item, index) in searchList" class="search-item" @click="wordsSearch(item)">{{item}}</div>
+          <div v-for="(item, index) in searchList" :key="index" class="search-item" @click="wordsSearch(item)">{{item}}</div>
         </div>
       </div>
     </template>
     <template v-else>
       <div v-if="typeVal==0"  class="public-nav">
-        <van-tabs class="pt88" v-model="tapIndex" @click="onClickItem()">
+        <van-tabs class="pt88" swipe-threshold="6" v-model="tapIndex" @click="onClickItem()">
           <van-tab v-for="(item, i) in items" :key="i" :title="item"></van-tab>
         </van-tabs>
       </div>
       <template v-else>
         <div class="result-more-box" >
-          <div v-if="typeVal == 1" class="result-more-tit"><span class="color-222">商品</span>（{{goods_count2}}）</div>
-          <div v-else-if="typeVal == 2" class="result-more-tit"><span class="color-222">帖子</span>（{{postbar_count2}}）</div>
-          <!-- <div v-else class="result-more-tit"><span class="color-222">应用</span>（4）</div> -->
+          <div v-if="typeVal > 0" class="result-more-tit"><span class="color-222">{{ items[typeVal] }}</span>（{{oneSeach_count}}）</div>
+          <filter-cinema ref="filter-cinema" v-if="typeVal === 3" :cityId="cityId" :search="oneSeach_val" @change="changeFilterCinema"></filter-cinema>
         </div>
       </template>
-      <div class="nav-empty"></div>
+      <div class="nav-empty" :class="{'nav-empty-cinema': typeVal === 3}"></div>
 
       <van-list
         v-model="loading"
@@ -54,14 +75,14 @@
         finished-text=""
         @load="onLoad"
       >
-        <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0 || typeVal==3">
+        <template v-if="(tapIndex==0 || tapIndex==5) && typeVal==0 || typeVal==5">
           <template v-if="appList.length > 0">
             <div class="search-session result-session">
               <div class="result-tit flex-between">
                 <div class="result-tit-l"><span class="color-222">应用</span>（{{app_count}}）</div>
               </div>
               <div class="result-list list-690">
-                <div v-for="(item, index) in appList" @click="goLink(item.url)" class="res-application-item">
+                <div v-for="(item, index) in appList" :key="index" @click="goLink(item.url)" class="res-application-item">
                   <img :src="item.icon_image" />
                   <div class="application-name p-nowrap" v-html="item.application"></div>
                 </div>
@@ -78,7 +99,7 @@
               </div>
               <div class="result-list list-690">
                 <template v-if="(tapIndex==0 || tapIndex==1) && typeVal==0">
-                  <div v-for="(item, index) in goodsList" v-if="index < 3" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
+                  <div v-for="(item, index) in goodsList" :key="index" v-if="index < 3" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
                     <img class="res-goods-pic" :src="item.thumb" />
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
@@ -93,7 +114,7 @@
                   </div>
                 </template>
                 <template v-else>
-                  <div v-for="(item, index) in goodsList2" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
+                  <div v-for="(item, index) in goodsList2" :key="index" @click="linkFunc(5,{id:item.id})" class="res-goods-item flex-between">
                     <img class="res-goods-pic" :src="item.thumb" />
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
@@ -110,15 +131,51 @@
           </template>
         </template>
         <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0 || typeVal==2">
-          <template v-if="postbarList.length > 0">
+          <template v-if="filmList.length > 0">
             <div class="search-session result-session">
               <div v-if="typeVal!=2" class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">电影</span>（{{film_count}}）</div>
+                <div @click="goMore(2)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多电影</div>
+              </div>
+              <div class="result-list list-690">
+                <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0">
+                  <film-list class="film-list" :value="filmList" :disabled="true"></film-list>
+                </template>
+                <template v-else>
+                  <film-list class="film-list"  :value="filmList2" :disabled="true"></film-list>
+                </template>
+              </div>
+            </div>
+          </template>
+        </template>
+        <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0 || typeVal==3">
+          <template v-if="cinemaList.length > 0">
+            <div class="search-session result-session">
+              <div v-if="typeVal!=3" class="result-tit flex-between">
+                <div class="result-tit-l"><span class="color-222">影院</span>（{{cinema_count}}）</div>
+                <div @click="goMore(3)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多影院</div>
+              </div>
+              <div class="result-list list-690">
+                <template v-if="(tapIndex==0 || tapIndex==3) && typeVal==0">
+                  <cinema-list class="cinema-list" :value="cinemaList" :tag="false" :disabled="true"></cinema-list>
+                </template>
+                <template v-else>
+                  <cinema-list class="cinema-list" :value="cinemaList2" :tag="false" :disabled="true"></cinema-list>
+                </template>
+              </div>
+            </div>
+          </template>
+        </template>
+        <template v-if="(tapIndex==0 || tapIndex==4) && typeVal==0 || typeVal==4">
+          <template v-if="postbarList.length > 0">
+            <div class="search-session result-session">
+              <div v-if="typeVal!=4" class="result-tit flex-between">
                 <div class="result-tit-l"><span class="color-222">帖子</span>（{{postbar_count}}）</div>
-                <div @click="goMore(2)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多帖子</div>
+                <div @click="goMore(4)" class="result-tit-r flex-align-center"><img src="@/assets/img/icon_11.png" />更多帖子</div>
               </div>
               <div class="result-list list-710">
-                <template v-if="(tapIndex==0 || tapIndex==2) && typeVal==0">
-                  <div v-for="(item, index) in postbarList" v-if="index < 3" @click="linkFunc(30,{id: item.id})" class="res-post-item">
+                <template v-if="(tapIndex==0 || tapIndex==4) && typeVal==0">
+                  <div v-for="(item, index) in postbarList" :key="index" v-if="index < 3" @click="linkFunc(30,{id: item.id})" class="res-post-item">
                     <div class="post-item-header">
                       <div class="post-user-info flex-align-center">
                         <img v-if="item.avatar" class="post-user-photo" :src="item.avatar" />
@@ -148,7 +205,7 @@
                   </div>
                 </template>
                 <template v-else>
-                  <div v-for="(item, index) in postbarList2" @click="linkFunc(30,{id: item.id})" class="res-post-item">
+                  <div v-for="(item, index) in postbarList2" :key="index" @click="linkFunc(30,{id: item.id})" class="res-post-item">
                     <div class="post-item-header">
                       <div class="post-user-info flex-align-center">
                         <img class="post-user-photo" :src="item.avatar" />
@@ -180,20 +237,27 @@
             </div>
           </template>
         </template>
-        <div v-if="(tapIndex==0&&typeVal==0&&goodsList.length==0&&postbarList.length==0&&appList.length==0) || (tapIndex==1&&typeVal==0&&goodsList.length==0 || typeVal==1&&goodsList2.length==0)|| (tapIndex==2&&typeVal==0&&postbarList.length==0 || typeVal==2&&postbarList2.length==0)|| (tapIndex==3&&typeVal==0&&appList.length==0)" class="empty-session">
+        <div v-if="(tapIndex==0&&filmList.length==0&&cinemaList.length==0&&goodsList.length==0&&postbarList.length==0&&appList.length==0) || (tapIndex==1&&typeVal==0&&goodsList.length==0 || typeVal==1&&goodsList2.length==0) || (tapIndex==2&&typeVal==0&&filmList.length==0 || typeVal==2&&filmList2.length==0) || (tapIndex==3&&typeVal==0&&cinemaList.length==0 || typeVal==3&&cinemaList2.length==0) || (tapIndex==4&&typeVal==0&&postbarList.length==0 || typeVal==4&&postbarList2.length==0)|| (tapIndex==5&&typeVal==0&&appList.length==0)" class="empty-session">
           <img src="@/assets/img/empty_search.png" />
           <div>无搜索结果</div>
         </div>
       </van-list>
     </template>
-	</div>
+  </div>
 </template>
 
 <script>
 import { Tab, Tabs, Search, List } from 'vant'
 import tfImageList from '@/components/tf-image-list'
+import FilmList from '@/views/life/movie/components/FilmList'
+import CinemaList from '@/views/life/movie/components/CinemaList'
+import FilterCinema from '@/views/life/movie/components/FilterCinema'
+import { handlePermission } from '@/utils/permission'
+import { bMapGetLocationInfo } from '@/utils/util'
 import { thumbsUp } from '@/api/neighbours'
+import tfInput from '@/components/tf-input'
 import { getHotWords, getSearchGoods, getSearchApp, getSearchPostbar } from '@/api/life.js'
+import { getFilmCinemaSeach, getFilmSeachList, getCinemaSeachList } from '@/api/movie.js'
 export default {
   name: 'search',
   components: {
@@ -201,16 +265,20 @@ export default {
     [Tabs.name]: Tabs,
     [Search.name]: Search,
     [List.name]: List,
-    tfImageList
+    tfImageList,
+    tfInput,
+    FilmList,
+    CinemaList,
+    FilterCinema
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      items: ['全部', '商品', '帖子', '应用'],
+      items: ['全部', '商品', '电影', '影院', '帖子', '应用'],
       res_name: '<span>热门</span>报修',
       search_val: '', // 搜索输入框值
-      goods_val: '', // 商品输入框
-      postbar_val: '', // 帖子输入框
+      oneSeach_val: '', // 商品输入框、电影输入框、影院输入框、帖子输入框（单独选中更多时输入框）
+      placeholder_val: ['搜索商品', '搜索电影', '搜索影院', '搜索帖子'], // placeholder
       noneHidden: true, // 缺省页是否隐藏（搜索无结果）
       isFocus: true, // 显示热搜词和历史搜索
       searchList: [], // 历史搜索词列表
@@ -218,26 +286,73 @@ export default {
       // resShopList: [],   //搜索结果列表
       goodsList: [], // 搜索结果（商品）
       goodsList2: [], // 搜索结果（商品）
+      filmList: [], // 搜索结果（电影）
+      filmList2: [], // 搜索结果（电影）
+      filterParams: {}, // 搜索结果影院过滤参数
+      cinemaList: [], // 搜索结果（影院）
+      cinemaList2: [], // 搜索结果（影院）
       appList: [], // 搜索结果（应用）
       postbarList: [], // 搜索结果（帖子）
       postbarList2: [], // 搜索结果（帖子）
       goods_count: 0, // 搜索商品结果数量
-      goods_count2: 0, // 搜索商品结果数量(单独搜索)
+      film_count: 0, // 搜索电影结果数量
+      cinema_count: 0, // 搜索影院结果数量
       app_count: 0, // 搜索应用结果数量
       postbar_count: 0, // 搜索帖子结果数量
-      postbar_count2: 0, // 搜索帖子结果数量(单独搜索)
+      oneSeach_count: 0, // 搜索结果数量
+      cityId: 0, // 城市id
+      lon: 0, // 经度
+      lat: 0, // 纬度
 
       page: 1, // 分页页码
       pageSize: 10, // 每页数
       noMoreHidden: true, // 上拉加载更多，没有更多是否隐藏
-      tapIndex: 0, // 0全部 1商品 2帖子 3应用
-      typeVal: 0, // 1更多商品 2更多帖子 3更多应用
+      tapIndex: 0, // 0全部 1商品 2电影 3影院 4帖子 5应用
+      typeVal: 0, // 1更多商品 2更多电影 3更多影院 4更多帖子 5更多应用
 
       loading: false,
-      finished: true
+      finished: true,
+      inputInfo: {
+        x: 63,
+        y: 10,
+        w: 300,
+        h: 30,
+        size: 15,
+        color: '#000',
+        autoFocus: true,
+        phtext: '搜索应用、商品、帖子',
+        keyboardType: 'search',
+        fixed: true
+      },
+      inputInfo2: {
+        x: 63,
+        y: 10,
+        w: 300,
+        h: 30,
+        size: 15,
+        color: '#000',
+        autoFocus: true,
+        phtext: '搜索应用',
+        keyboardType: 'search',
+        fixed: true
+      }
     }
   },
   created () {
+    if (process.env.VUE_APP_IS_APP === '1') {
+      handlePermission({
+        name: 'location',
+        title: '定位服务未开启',
+        message: '此功能需要授权定位权限才能更好为您提供服务，请授权',
+        confirmButtonText: '开启'
+      })
+        .then(() => {
+          this.getLocationInfo()
+        })
+        .catch(() => {
+          this.items.splice(3, 1)
+        })
+    }
     this.isSelect = this.$route.query.isSelect
     // this.searchList = JSON.parse(localStorage.getItem('searchWords')) || [];
     var searchWords = api.getPrefs({ sync: true, key: 'searchWords' }) || []
@@ -247,12 +362,18 @@ export default {
     this.getData()
   },
   mounted () {
-    const that = this
-    this.$nextTick(() => {
-      setTimeout(() => {
-        that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
-      }, 500)
-    })
+    this.inputInfo.y = this.$refs.seachInput.getBoundingClientRect().top
+    this.inputInfo.x = 88 * api.winWidth / 750
+    this.inputInfo.w = this.$refs.seachInput.offsetWidth
+    this.inputInfo.h = this.$refs.seachInput.offsetHeight
+    setTimeout(() => {
+      this.$refs.tfinput.openInput()
+    }, 500)
+    // this.$nextTick(() => {
+    //   setTimeout(() => {
+    //     // that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
+    //   }, 500)
+    // })
   },
   activated () {
     if (this.scrollTop) {
@@ -260,13 +381,41 @@ export default {
     }
   },
   methods: {
+    // 获取当前地址信息 adCode:行政区编码 cityCode:城市编码
+    getLocationInfo () {
+      bMapGetLocationInfo().then(({ cityCode, adCode, lon, lat }) => {
+        // 百度获取的cityCode不同，需要将区域的后两位转为0才是当前城市编码
+        this.cityId = String(adCode).substring(0, 4) + '00'
+        this.lon = lon
+        this.lat = lat
+      })
+    },
+    // 输入框值变化/点击搜索
+    inputCall (val) {
+      this.search_val = val
+      this.onSearch()
+    },
+    // 输入框值变化/点击搜索
+    inputCall2 (val) {
+      this.oneSeach_val = val
+      this.initFunc()
+    },
+    // 聚焦
+    inputFocus () {
+      this.focus()
+    },
     onLoad () {
       // 异步更新数据
       if (this.typeVal == 1) {
         this.getSearchGoods(2)
       } else if (this.typeVal == 2) {
+        this.getFilmSeachList()
+      } else if (this.typeVal == 3) {
+        this.$refs['filter-cinema'] && this.$refs['filter-cinema'].reload()
+        this.getCinemaSeachList()
+      } else if (this.typeVal == 4) {
         this.getSearchPostbar(2)
-      } else {
+      } else if (this.typeVal == 5) {
         this.getSearchApp(2)
       }
     },
@@ -280,15 +429,19 @@ export default {
     },
     // 搜索商品
     initFunc () {
-      this.finished = false
-      this.loading = false
       this.page = 1
+      if (!this.loading && !this.finished) {
+        this.onLoad()
+      } else {
+        this.finished = false
+        this.loading = false
+      }
     },
     getSearchGoods (type = '') {
       var search_key = this.search_val
       const that = this
       if (this.typeVal == 1) {
-        search_key = this.goods_val
+        search_key = this.oneSeach_val
       }
       getSearchGoods({
         search_key: search_key,
@@ -297,10 +450,7 @@ export default {
       }).then(res => {
         if (res.success) {
           const dataArr = res.data
-          var val = that.search_val
-          if (that.typeVal == 1) {
-            val = that.goods_val
-          }
+          var val = search_key
           if (dataArr && dataArr.length > 0) {
             for (var i = 0; i < dataArr.length; i++) {
               var findText = dataArr[i].goods_name.split(val)
@@ -316,11 +466,125 @@ export default {
               this.page = this.page + 1
             }
             this.loading = false
-            this.goods_count2 = res.count_num
+            this.oneSeach_count = res.count_num
           } else {
             this.goodsList = this.page == 1 ? res.data : this.goodsList.concat(res.data)
             this.goods_count = res.count_num
           }
+        }
+      })
+    },
+    // 搜索电影或影院
+    getFilmCinemaSeach () {
+      if (!this.cityId) {
+        return
+      }
+      getFilmCinemaSeach({
+        city_id: this.cityId,
+        search: this.search_val,
+        lng: this.lon,
+        lat: this.lat
+      }).then(res => {
+        if (res.success) {
+          var val = this.search_val
+          const dataArr = res.data.film_info
+          // if (dataArr && dataArr.length > 0) {
+          //   for (let i = 0; i < dataArr.length; i++) {
+          //     const findText = dataArr[i].film_name.split(val)
+          //     const result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+          //     dataArr[i].film_name = result
+          //   }
+          // }
+          this.filmList = this.page == 1 ? dataArr : this.filmList.concat(dataArr)
+          this.film_count = res.data.film_count
+          const dataArr2 = res.data.cinema_info
+          /* if (dataArr2 && dataArr2.length > 0) {
+            for (let i = 0; i < dataArr2.length; i++) {
+              const findText2 = dataArr2[i].cinema_name.split(val)
+              const result2 = findText2.join('<span style="color:#448fe4;">' + val + '</span>')
+              dataArr2[i].cinema_name = result2
+            }
+          } */
+          this.cinemaList = this.page == 1 ? dataArr2 : this.cinemaList.concat(dataArr2)
+          this.cinema_count = res.data.cinema_count
+        }
+      })
+    },
+    // 搜索电影
+    getFilmSeachList () {
+      if (!this.cityId) {
+        return
+      }
+      const search_key = this.typeVal == 2 ? this.oneSeach_val : this.search_val
+      getFilmSeachList({
+        search: search_key,
+        page_index: this.page,
+        page_size: 10,
+        search_num: this.pageSize
+      }).then(res => {
+        if (res.success) {
+          const dataArr = res.data.film_info
+          var val = this.search_val
+          // if (dataArr && dataArr.length > 0) {
+          //   for (var i = 0; i < dataArr.length; i++) {
+          //     var findText = dataArr[i].film_name.split(val)
+          //     var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+          //     dataArr[i].film_name = result
+          //   }
+          // }
+          this.filmList2 = this.page == 1 ? dataArr : this.filmList2.concat(dataArr)
+          if (dataArr.length < this.pageSize) {
+            this.finished = true
+          } else {
+            this.page = this.page + 1
+          }
+          this.loading = false
+          this.oneSeach_count = res.data.total
+        }
+      })
+    },
+    // 过滤影院
+    changeFilterCinema (params) {
+      this.page = 1
+      this.filterParams = {
+        county_id: params.countyId,
+        hall_no: params.hallNo,
+        sort_type: params.sortType
+      }
+      this.getCinemaSeachList()
+    },
+    // 搜索影院
+    getCinemaSeachList () {
+      if (!this.cityId) {
+        return
+      }
+      var search_key = this.typeVal == 3 ? this.oneSeach_val : this.search_val
+      getCinemaSeachList({
+        city_id: this.cityId,
+        search: search_key,
+        lng: this.lon,
+        lat: this.lat,
+        page_index: this.page,
+        page_size: 10,
+        ...this.filterParams
+      }).then(res => {
+        if (res.success) {
+          const dataArr = res.data.cinema_info
+          // if (dataArr && dataArr.length > 0) {
+          //   for (var i = 0; i < dataArr.length; i++) {
+          //     var findText = dataArr[i].cinema_name.split(search_key)
+          //     var result = findText.join('<span style="color:#448fe4;">' + search_key + '</span>')
+          //     dataArr[i].cinema_name = result
+          //   }
+          // }
+          this.cinemaList2 = this.page == 1 ? dataArr : this.cinemaList2.concat(dataArr)
+          if (dataArr.length < this.pageSize) {
+            this.finished = true
+          } else {
+            this.page = this.page + 1
+          }
+          this.loading = false
+          this.oneSeach_count = res.data.total
         }
       })
     },
@@ -334,11 +598,10 @@ export default {
       }).then(res => {
         if (res.success) {
           const dataArr = res.data
-          var val = that.search_val
           if (dataArr && dataArr.length > 0) {
             for (var i = 0; i < dataArr.length; i++) {
-              var findText = dataArr[i].application.split(val)
-              var result = findText.join('<span style="color:#448fe4;">' + val + '</span>')
+              var findText = dataArr[i].application.split(that.search_val)
+              var result = findText.join('<span style="color:#448fe4;">' + that.search_val + '</span>')
               dataArr[i].application = result
             }
           }
@@ -358,8 +621,8 @@ export default {
     // 搜索帖子
     getSearchPostbar (type = '') {
       var search_key = this.search_val
-      if (this.typeVal == 2) {
-        search_key = this.postbar_val
+      if (this.typeVal == 4) {
+        search_key = this.oneSeach_val
       }
       getSearchPostbar({
         search_key: search_key,
@@ -369,7 +632,7 @@ export default {
         if (res.success) {
           // let dataArr = res.data;
           // var val = that.search_val;
-          // if(that.typeVal == 2){
+          // if(that.typeVal == 4){
           //   val = that.postbar_val;
           // }
           // if(dataArr&&dataArr.length > 0){
@@ -387,7 +650,7 @@ export default {
               this.page = this.page + 1
             }
             this.loading = false
-            this.postbar_count2 = res.count_num
+            this.oneSeach_count = res.count_num
           } else {
             this.postbarList = this.page == 1 ? res.data : this.postbarList.concat(res.data)
             this.postbar_count = res.count_num
@@ -402,6 +665,8 @@ export default {
         this.finished = true
         this.loading = false
         this.page = 1
+        this.$refs.tfinput2.hideSeach()
+        this.$refs.tfinput.showSeach()
       } else {
         this.$router.go(-1)
       }
@@ -412,15 +677,20 @@ export default {
     },
     // 更多
     goMore (typeVal) {
+      this.$refs.tfinput.hideSeach()
+      this.inputInfo2.y = this.inputInfo.y
+      this.inputInfo2.x = this.inputInfo.x
+      this.inputInfo2.w = this.inputInfo.w
+      this.inputInfo2.h = this.inputInfo.h
       this.typeVal = typeVal
       this.finished = false
       this.loading = false
       this.page = 1
-      if (typeVal == 1) {
-        this.goods_val = this.search_val
-      } else if (typeVal == 2) {
-        this.postbar_val = this.search_val
+      if (typeVal > 0) {
+        this.oneSeach_val = this.search_val
       }
+      this.inputInfo2.phtext = this.placeholder_val[this.typeVal - 1]
+      this.$refs.tfinput2.initOpen(this.oneSeach_val)
       // this.goSearch();
     },
 
@@ -458,6 +728,7 @@ export default {
       this.noMoreHidden = true
       this.page = 1
       this.addSearch()
+      this.$refs.tfinput.setValue(val)
     },
     /**
      * 点击输入框搜索
@@ -497,13 +768,16 @@ export default {
       this.mtjEvent({ eventId: '5' })
       if (this.typeVal == 0) {
         this.getSearchGoods()
+        this.getFilmCinemaSeach()
         this.getSearchApp()
         this.getSearchPostbar()
       } else if (this.typeVal == 1) {
         this.getSearchGoods()
-      } else if (this.typeVal == 2) {
+      } else if (this.typeVal == 2 || this.typeVal == 3) {
+        this.getFilmCinemaSeach()
+      } else if (this.typeVal == 4) {
         this.getSearchPostbar()
-      } else {
+      } else if (this.typeVal == 5) {
         this.getSearchApp()
       }
     },
@@ -566,13 +840,15 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name == 'life' || to.name == 'home') {
+    this.$refs.tfinput.closeSeach()
+    this.$refs.tfinput2.closeSeach()
+    const deleteList = ['life', 'home', 'movieIndex', 'movieList']
+    if (deleteList.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
     const el = document.getElementById('scroll-body')
     this.scrollTop = (el && el.scrollTop) || 0
-    console.log(this.scrollTop)
     next()
   }
 }
@@ -619,6 +895,7 @@ export default {
   margin: 0 10px 0 28px;
 }
 .search-input {
+  z-index: -1;
   width: 540px;
   height: 50px;
   line-height: 50px;
@@ -701,6 +978,9 @@ export default {
 }
 .nav-empty {
   height: 98px;
+}
+.nav-empty-cinema {
+  height: 188px;
 }
 .result-tit-l {
   font-size: 30px;
@@ -864,5 +1144,17 @@ export default {
   border-radius: 50%;
   background-color: #aaa;
   margin: 2px;
+}
+/* 影片列表 */
+.film-list {
+  padding: 0;
+}
+/* 电影院列表 */
+.cinema-list >>> .tf-van-list > .tf-van-cell:first-child .cinema-box{
+  padding-top: 0;
+  border-top: none;
+}
+.cinema-list >>> .van-pull-refresh__track > .tf-text-grey {
+  display: none;
 }
 </style>

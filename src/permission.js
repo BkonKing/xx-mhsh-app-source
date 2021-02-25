@@ -22,10 +22,10 @@ router.beforeEach(async (to, from, next) => {
         pageName: fromPageName
       })
       // 页面统计-离开更新
-      updateStatisticsData(2, {'page_id': pagesArr[fromPageName]})
+      updateStatisticsData(2, { page_id: pagesArr[fromPageName] })
     } else {
       // 应用启动新增
-      setStatisticsData(6, {'type': 1, 'page_id': pagesArr[toPageName]})
+      setStatisticsData(6, { type: 1, page_id: pagesArr[toPageName] })
       // 启动数据录入
       setStatisticsData(1)
     }
@@ -33,7 +33,7 @@ router.beforeEach(async (to, from, next) => {
       pageName: toPageName
     })
     // 页面统计-进入新增
-    setStatisticsData(2, {'page_id': pagesArr[toPageName]})
+    setStatisticsData(2, { page_id: pagesArr[toPageName] })
   }
 
   // Toast.loading({
@@ -92,12 +92,12 @@ router.beforeEach(async (to, from, next) => {
       } else {
         isClear = true
       }
-      if (typeof ret.appParam.wx_arguments != 'undefined' && ret.appParam.wx_arguments) {
+      if (typeof ret.appParam.wx_arguments !== 'undefined' && ret.appParam.wx_arguments) {
         // 安卓微信跳转app
         const appParams = JSON.parse(ret.appParam.wx_arguments).app_params
         params = getParams(appParams)
       }
-      if (typeof ret.iosUrl != 'undefined' && api.systemType == 'ios') {
+      if (typeof ret.iosUrl !== 'undefined' && api.systemType == 'ios') {
         // ios微信跳转app
         const wxPlus = api.require('wxPlus')
         wxPlus.addJumpFromWxListener(function (ret) {
@@ -121,6 +121,21 @@ router.beforeEach(async (to, from, next) => {
           query: {
             articleType: params.articleType,
             id: params.id
+          }
+        })
+      } else if (params.page_type == 3) {
+        router.push({
+          path: '/life/movie/filmDetails',
+          query: {
+            id: params.id
+          }
+        })
+      } else if (params.page_type == 4) {
+        router.push({
+          path: '/life/movie/cinemaDetails',
+          query: {
+            id: params.id,
+            name: params.name
           }
         })
       }

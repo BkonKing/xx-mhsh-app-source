@@ -7,7 +7,7 @@
   /*开启GPU加速*/
 }
 
-* ::-webkit-scrollbar {
+*::-webkit-scrollbar {
   display: none
 }
 
@@ -687,13 +687,6 @@
     background: none;
   }
 
-  .van-tab--active {
-    .van-tab__text {
-      font-size: 28px;
-      font-weight: bold;
-    }
-  }
-
   .van-tag {
     font-size: 24px;
   }
@@ -746,6 +739,13 @@
   /* tab选中下划线 */
   .van-tabs__line {
     width: 64px !important;
+  }
+
+  .van-tab--active {
+    .van-tab__text {
+      font-size: 28px;
+      font-weight: 600;
+    }
   }
 
   .van-nav-bar__left:active,
@@ -1073,4 +1073,21 @@
 
 .top-index-dialog {
   z-index: 9999 !important;
+}
+
+/* tab下的刷新列表 */
+.list-tabs {
+  height: 100%;
+  .van-tabs__content {
+    height: calc(100% - 90px);
+  }
+  .van-tab__pane {
+    height: 100%;
+  }
+}
+.list-tabs-nopane {
+  height: 100%;
+  .van-tabs__content {
+    height: calc(100% - 90px);
+  }
 }

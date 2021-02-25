@@ -49,6 +49,7 @@ export default {
       }) || {}
     this.accountList = typeof userList === 'string' ? JSON.parse(userList) : userList
     this.active = this.accountList[this.userInfo.id]
+    console.log(this.accountList)
   },
   computed: {
     ...mapGetters(['userInfo'])

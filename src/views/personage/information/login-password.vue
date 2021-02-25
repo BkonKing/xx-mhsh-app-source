@@ -15,6 +15,7 @@
           <input
             v-model="old_password"
             class="tf-phone-input width400"
+            maxlength="16"
             type="password"
           />
         </div>
@@ -24,6 +25,7 @@
             v-model="password"
             class="tf-phone-input width400"
             type="password"
+            maxlength="16"
             placeholder="填写新密码"
             placeholder-class="placeholder-password width400"
           />
@@ -36,6 +38,7 @@
             v-model="password"
             class="tf-phone-input"
             type="password"
+            maxlength="16"
             placeholder="填写密码"
           />
         </div>
