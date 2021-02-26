@@ -432,9 +432,10 @@ export default {
           }
         }
         .right {
+          padding-left: 20px;
           color: #8f8f94;
           font-size: 26px;
-          width: 150px;
+          width: 200px;
           span {
             color: #eb5841;
           }
