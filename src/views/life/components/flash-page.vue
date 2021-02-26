@@ -80,6 +80,7 @@
             :finished="finished"
             finished-text=""
             @load="onLoad"
+            :immediate-check="false"
           >
             <div class="flash-list">
               <template v-for="(item, index) in listData">
@@ -288,6 +289,7 @@ export default {
               this.start()
             })
           }
+          this.onLoad()
         }
       })
     },
@@ -318,10 +320,11 @@ export default {
     listInit () {
       this.listData = []
       this.page = 1
-      this.finished = false
-      this.loading = true
-      if (!this.flag) {
-        this.getGoodsData()
+      if (!this.loading && !this.finished) {
+        this.getData()
+      } else {
+        this.loading = false
+        this.finished = false
       }
     },
     // 倒计时开始

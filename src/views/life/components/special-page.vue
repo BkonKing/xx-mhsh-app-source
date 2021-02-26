@@ -4,9 +4,10 @@
     :finished="finished"
     finished-text=""
     @load="onLoad"
+    :immediate-check="false"
   >
     <div v-if="listData.length" class="special-list flex-between">
-      <div v-for="(item,index) in listData" class="special-item" @click="linkFunc(5,{id:item.goods_id})">
+      <div v-for="(item,index) in listData" :key="index" class="special-item" @click="linkFunc(5,{id:item.goods_id})">
         <div class="special-goods-pic">
           <img class="img-100" :src="item.thumb" />
         </div>
@@ -48,6 +49,7 @@ export default {
   },
   created () {
     this.finished = false
+    this.onLoad()
   },
   methods: {
     onLoad () {
@@ -77,10 +79,11 @@ export default {
     listInit () {
       this.listData = []
       this.page = 1
-      this.loading = false
-      this.finished = false
-      if (!this.flag) {
+      if (!this.loading && !this.finished) {
         this.getGoodsData()
+      } else {
+        this.loading = false
+        this.finished = false
       }
     },
     linkFunc (type, obj = {}) {

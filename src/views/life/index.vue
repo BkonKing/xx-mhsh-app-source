@@ -42,8 +42,9 @@
 
     <div :class="[activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length ? 'scroll-body-two' : '','scroll-body']" id="life-body">
       <van-tabs v-model="active" swipeable swipe-threshold="1" @change="changeNav">
-        <van-tab v-for="(item, index) in navList" :title="item.name">
-          <template v-if="activeIndex==0 || (isChange&&activeIndex==0)">
+        <van-tab v-for="(item, index) in navList" :key="index" :title="item.name">
+          <!-- <template v-if="activeIndex==0 || (isChange&&activeIndex==0)"> -->
+          <template v-if="index==0">
             <div v-if="bannerList.length > 0" class="life-swipe">
               <van-swipe :autoplay="3000" indicator-color="white">
                 <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
@@ -52,16 +53,16 @@
               </van-swipe>
             </div>
             <div v-else class="banner-empty"></div>
-            <div class="tab-list flex-between">
-              <div class="tab-item flex" @click="linkFunc(3)">
+            <div :class="[!navList2.length || !flashIcon || !nowMovieList.length ? 'flex-around' : '','tab-list flex-between']">
+              <div v-if="navList2.length" class="tab-item flex" @click="linkFunc(3)">
                 <img src="@/assets/img/icon_28.png" />
                 <div>9.9特卖</div>
               </div>
-              <div class="tab-item flex" @click="linkFunc(2)">
+              <div v-if="flashIcon" class="tab-item flex" @click="linkFunc(2)">
                 <img src="@/assets/img/icon_29.png" />
                 <div>限时闪购</div>
               </div>
-              <div class="tab-item flex">
+              <div v-if="nowMovieList.length" class="tab-item flex" @click="linkFunc(8)">
                 <img src="@/assets/img/icon_30.png" />
                 <div>电影影院</div>
               </div>
@@ -70,52 +71,30 @@
                 <div>全部分类</div>
               </div>
             </div>
-            <div class="life-session life-movie">
+            <div v-if="nowMovieList.length" class="life-session life-movie">
               <div class="movie-cont">
-                <div class="life-tit flex-between" @click="linkFunc(3)">
+                <div class="life-tit flex-between" @click="linkFunc(8)">
                   <div class="flex-align-center">
                     <span>热映电影</span>
                   </div>
                   <div class="life-arrow-right"><van-icon name="arrow" /></div>
                 </div>
                 <div class="movie-list">
-                  <div class="movie-item">
-                    <div class="movie-pic">
+                  <div v-for="(item, index) in nowMovieList" :key="index" class="movie-item">
+                    <div class="movie-pic" @click="linkFunc(9, {id: item.film_id})">
                       <div class="movie-tip flex-between">
-                        <div class="moive-score">9.2</div>
-                        <div class="moive-look">20.5万想看</div>
+                        <div class="moive-score">{{ parseFloat(item.score) / 10 }}</div>
+                        <div class="moive-look">{{ item.want_view | wantFormat }}想看</div>
                       </div>
-                      <img class="img-100" src="https://images.zmaxfilm.com/pro/zmaxyun/film/film/p2549170812.jpg" />
+                      <img class="img-100" :src="item.cover" />
                     </div>
-                    <div class="movie-name p-nowrap">心灵奇旅</div>
-                    <div class="movie-price flex-center">低至19.9元<van-icon name="arrow" /></div>
-                  </div>
-                  <div class="movie-item">
-                    <div class="movie-pic">
-                      <div class="movie-tip flex-between">
-                        <div class="moive-score">9.2</div>
-                        <div class="moive-look">20.5万想看</div>
-                      </div>
-                      <img class="img-100" src="https://images.zmaxfilm.com/pro/zmaxyun/film/film/p2544256615.jpg" />
-                    </div>
-                    <div class="movie-name p-nowrap">心灵奇旅</div>
-                    <div class="movie-price flex-center">低至19.9元<van-icon name="arrow" /></div>
-                  </div>
-                  <div class="movie-item">
-                    <div class="movie-pic">
-                      <div class="movie-tip flex-between">
-                        <div class="moive-score">9.2</div>
-                        <div class="moive-look">20.5万想看</div>
-                      </div>
-                      <img class="img-100" src="https://images.zmaxfilm.com/pro/zmaxyun/film/film/p2549170812.jpg" />
-                    </div>
-                    <div class="movie-name p-nowrap">心灵奇旅</div>
-                    <div class="movie-price flex-center">低至19.9元<van-icon name="arrow" /></div>
+                    <div class="movie-name p-nowrap" @click="linkFunc(9, {id: item.film_id})">{{ item.film_name }}</div>
+                    <div class="movie-price flex-center" @click="linkFunc(9, {id: item.film_id,code: item.film_code})">低至{{ item.ticket_price }}元<van-icon name="arrow" /></div>
                   </div>
                 </div>
               </div>
             </div>
-            <template v-for="(item, index) in lifeData">
+            <template v-for="(item) in lifeData">
               <template v-if="item.type == 2">
                 <div v-if="item.child && item.child.length > 0" class="life-session life-sale">
                   <div class="sale-cont">
@@ -126,7 +105,7 @@
                       <div class="life-arrow-right"><van-icon name="arrow" /></div>
                     </div>
                     <div class="special-goods-list">
-                      <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+                      <div v-for="(val, key) in item.child" :key="key" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
                         <div class="life-goods-pic">
                           <img class="img-100" :src="val.thumb" />
                         </div>
@@ -157,32 +136,12 @@
                       <div class="life-arrow-right"><van-icon name="arrow" /></div>
                     </div>
                     <div class="flash-goods-list">
-                      <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+                      <div v-for="(val, key) in item.child" :key="key" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
                         <div class="life-goods-pic">
                           <img class="img-100" :src="val.thumb" />
                         </div>
                         <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
                         <div class="life-goods-price"><span>￥</span>{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
-                        <!-- <div class="life-goods-pic">
-                          <img class="img-100" :src="val.thumb" />
-                        </div>
-                        <div class="flash-goods-info">
-                          <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-                          <div class="life-goods-price">￥{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
-                        </div>
-                        <div class="item-btn">
-                          <template v-if="item.ollage_info.is_start==1">
-                            <template v-if="val.is_over == 0">
-                              <div class="btn-collage" v-if="val.is_collage && val.order_project_id!=0">邀请拼单</div>
-                              <div class="btn-flash" v-else>马上抢</div>
-                            </template>
-                            <div v-else class="btn-over">已抢光</div>
-                          </template>
-                          <template v-else>
-                            <div v-if="!val.is_set" class="btn-remind flex-center" @click.stop="remindFunc(index,key,val.goods_id)" v-txAnalysis="{eventId: 19}"><img src="@/assets/img/icon_01.png" />提醒</div>
-                            <div v-else class="btn-remind-isset flex-center">已设提醒</div>
-                          </template>
-                        </div> -->
                       </div>
                     </div>
                   </div>
@@ -282,32 +241,11 @@
             </template>
             <template v-else-if="navList[index].type==3">
               <area-page
+                :ref="'area'+index"
                 :special_id="special_id"
                 :navBarShow="navBarShow"
               ></area-page>
             </template>
-            <!-- <van-list
-                v-model="loading"
-                :finished="finished"
-                :class="[navList2.length ? '' : 'mt-30']"
-                finished-text=""
-                @load="onLoad"
-              >
-              <div v-if="listData.length > 0" class="life-seconds-list">
-                <div v-for="(item,index) in listData" class="life-goods-item" @click="linkFunc(5,{id:item.id})">
-                  <div class="life-goods-pic">
-                    <img v-if="item.sign_url" class="img-100 goods-pic-icon" :src="item.sign_url" alt="">
-                    <img class="img-100" :src="item.thumb" />
-                  </div>
-                  <div class="life-goods-name color-222 font-24 p-nowrap">{{item.goods_name}}</div>
-                  <div class="life-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
-                </div>
-              </div>
-              <div v-else class="empty-session">
-                <img src="@/assets/img/empty_goods.png" />
-                <div>暂无商品</div>
-              </div>
-            </van-list> -->
           </template>
           <!-- <van-list
             v-model="loading"
@@ -328,6 +266,7 @@
 import { Swipe, SwipeItem, Icon, CountDown, List, Toast, Tab, Tabs } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import { getLifeInfo, getBanner, getMenu } from '@/api/life.js'
+import { getfilmlist } from '@/api/movie'
 import flashPage from './components/flash-page'
 import specialPage from './components/special-page'
 import areaPage from './components/area-page'
@@ -360,9 +299,11 @@ export default {
       special_id: '',
       newTime: '', // 当前时间
       bannerList: [], // 轮播图
+      nowMovieList: [], // 热映电影
       cart_num: 0,
       isChange: false, // 菜单是否变动
       remindTit: '提醒消息将在活动开始时通知您', // 提醒标题
+      flashIcon: true, // 闪购跳转图标是否显示
 
       listData: [], // 分类商品
       loading: false,
@@ -417,6 +358,14 @@ export default {
           this.bannerList = res.data
         }
       })
+      // 获取影片资料(列表) type:1执映2待映
+      getfilmlist({
+        type: 1,
+        page_index: 1,
+        page_size: 3
+      }).then(({ data }) => {
+        this.nowMovieList = data
+      })
       // if (this.activeIndex == 0) {
       // }
       this.isChange = false
@@ -445,11 +394,16 @@ export default {
           // }
           if (this.navList.length == 0) {
             this.navList = this.navList.concat(res.data)
+            let isFlash = false
             this.navList.forEach(item => {
               if (item.type == 2 && item.child) {
                 this.navList2 = item.child
               }
+              if (item.type == 1) {
+                isFlash = true
+              }
             })
+            this.flashIcon = isFlash && true
           } else {
             // this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
             // this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
@@ -537,14 +491,27 @@ export default {
       this.activeIndex2 = 0
       if (index > 0) {
         this.flag = false
+        if (this.navList[index].type == 1) {
+          if (this.$refs.flash[0]) {
+            this.$refs.flash[0].listInit()
+          }
+        }
         if (this.navList[index].type == 2 && this.navList[index].child) {
           this.navList2 = this.navList[index].child
           this.bargain_id = this.navList[index].child[0].id
+          if (this.$refs.special[0]) {
+            this.$refs.special[0].listInit()
+          }
         } else {
           this.navList2 = []
         }
         if (this.navList[index].type == 3) {
           this.special_id = this.navList[index].special_id
+          const key = 'area' + index
+          if (this.$refs[key]) {
+            console.log(this.$refs[key][0])
+            this.$refs[key][0].listInit()
+          }
         }
         this.listInit()
       } else {
@@ -622,7 +589,34 @@ export default {
         case 7:
           this.$router.push('/life/cart')
           break
+        case 8:
+          this.$router.push('/life/movie/index')
+          break
+        case 9:
+          this.$router.push({
+            name: 'movieFilmDetails',
+            query: {
+              id: obj.id
+            }
+          })
+          break
+        case 10:
+          this.$router.push({
+            name: 'movieSelectCinema',
+            query: {
+              id: obj.id,
+              code: obj.code
+            }
+          })
+          break
       }
+    }
+  },
+  filters: {
+    // 超过一万则以万为单位
+    wantFormat (value) {
+      const val = parseInt(value)
+      return val > 9999 ? `${Math.ceil(val / 10000)}万` : val
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -770,6 +764,9 @@ export default {
 .tab-list {
   padding: 14px 20px 40px;
   background: linear-gradient(to bottom,#fff 60%,#f2f2f4);
+}
+.tab-list.flex-around {
+  justify-content: space-around;
 }
 .tab-item {
   @flex-column();
