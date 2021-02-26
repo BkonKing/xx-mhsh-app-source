@@ -49,6 +49,7 @@
           v-model="repassword"
           class="tf-phone-input width400"
           type="password"
+          maxlength="16"
           placeholder="再次填写确认"
         />
       </div>
