@@ -434,6 +434,7 @@ export default {
         .right {
           color: #8f8f94;
           font-size: 26px;
+          width: 150px;
           span {
             color: #eb5841;
           }
