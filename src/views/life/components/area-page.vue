@@ -214,4 +214,7 @@ export default {
   color: #999999;
   text-decoration: line-through;
 }
+.label-item-block {
+  margin-right: 10px;
+}
 </style>
