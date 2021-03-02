@@ -88,14 +88,15 @@
                   @click="selectHome(item,index)"
                   v-show="searchBol">
           <template #title>
-            <div>
-              {{item.project}}
+            <div class="title">
+              <div>
+                {{item.project}}
+              </div>
+              <i class="tf-icon"
+                 :class="{'tf-icon-gou':currentIndex===index}"></i>
             </div>
           </template>
-          <template>
-            <i class="tf-icon"
-               :class="{'tf-icon-gou':currentIndex===index}"></i>
-          </template>
+
         </van-cell>
 
         <van-cell v-for="(item,index) in searchList"
@@ -104,13 +105,11 @@
                   @click="selectHome(item,index)"
                   v-show="!searchBol">
           <template #title>
-            <div>
-              {{item.project}}
+            <div class="title">
+              <div> {{item.project}}</div>
+              <i class="tf-icon"
+                 :class="{'tf-icon-gou':currentIndex===index}"></i>
             </div>
-          </template>
-          <template>
-            <i class="tf-icon"
-               :class="{'tf-icon-gou':currentIndex===index}"></i>
           </template>
         </van-cell>
       </div>
@@ -118,7 +117,7 @@
            v-if="show===true">
         <van-button block
                     color="#eb5841"
-                    @click="show=false">确定</van-button>
+                    @click="confirm">确定</van-button>
       </div>
     </van-popup>
 
@@ -142,7 +141,8 @@ export default {
     return {
       show: false,
       currentIndex: undefined,
-      houseInfo: '',
+      houseInfo: '', // 楼盘信息
+      houseItem: '',
       value: '',
       friedName: '',
       phone: '',
@@ -171,7 +171,11 @@ export default {
     }
   },
   methods: {
-
+    // 确定
+    confirm () {
+      this.houseInfo = this.houseItem
+      this.show = false
+    },
     // 搜索
     onSearch () {
       this.searchBol = false
@@ -183,8 +187,8 @@ export default {
     selectHome (item, index) {
       this.currentIndex = index
       this.yxlpIndex = index
-      // console.log(item)
-      this.houseInfo = item
+      console.log(item)
+      this.houseItem = item
     },
     // 确认提交
     async submit () {
@@ -365,14 +369,17 @@ export default {
       border-radius: 10px;
       overflow: hidden;
       padding: 0 30px;
-      .van-cell {
+      /deep/ .van-cell {
         padding: 40px 0;
         border-bottom: 1px solid #f0f0f0;
+      }
+      .van-icon-arrow {
+        font-size: 30px;
       }
       .title2 {
         color: #8f8f94;
         .houseName {
-          margin-left: 20px;
+          padding-left: 55px;
         }
       }
     }
@@ -396,25 +403,40 @@ export default {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding-top: 20px;
-    padding-bottom: 200px;
+    // padding-bottom: 200px;
     .con {
       padding: 0 20px;
-      // position: absolute;
-      // top: 150px;
-      // bottom: 150px;
-      // left: 0;
-      height: 100%;
+      position: absolute;
+      top: 150px;
+      bottom: 150px;
+      left: 0;
+      // height: 100%;
       overflow: auto;
       width: 100%;
 
-      .cell.van-cell {
+      /deep/ .cell.van-cell {
         padding: 34px 0;
         border-bottom: 1px solid #f0f0f0;
       }
-      .tf-icon-gou {
-        font-size: 30px;
-        color: black;
+      .cell {
+        .title {
+          height: 60px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .tf-icon-gou {
+            font-size: 40px;
+            color: black;
+          }
+        }
       }
+    }
+    .btn {
+      position: absolute;
+      left: 0;
+      bottom: 40px;
+      padding: 20px;
+      width: 100%;
     }
   }
   .guanbi {
@@ -425,13 +447,7 @@ export default {
     color: white;
     z-index: 99999;
   }
-  .btn {
-    position: absolute;
-    left: 0;
-    bottom: 40px;
-    padding: 20px;
-    width: 100%;
-  }
+
   .confirm {
     position: fixed;
     bottom: 50px;

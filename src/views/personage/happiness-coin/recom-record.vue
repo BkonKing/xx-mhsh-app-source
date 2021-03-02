@@ -407,7 +407,9 @@ export default {
       left: 50%;
       transform: translateX(-50%);
       width: 710px;
-      height: 767px;
+      min-height: 767px;
+      max-height: 1030px;
+
       background: #ffffff;
       border-radius: 10px;
       padding: 0 20px;
