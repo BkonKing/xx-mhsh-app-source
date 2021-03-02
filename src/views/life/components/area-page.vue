@@ -14,6 +14,7 @@
         :finished="finished"
         finished-text=""
         @load="onLoad"
+        :immediate-check="false"
       >
       <div class="special-list">
         <div v-for="(item,index) in listData" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
@@ -70,6 +71,7 @@ export default {
   },
   created () {
     this.finished = false
+    this.onLoad()
   },
   methods: {
     onLoad () {
@@ -95,6 +97,17 @@ export default {
           this.loading = false
         }
       })
+    },
+    listInit () {
+      this.listData = []
+      this.page = 1
+      if (!this.loading && !this.finished) {
+        this.getGoodsData()
+      } else {
+        this.loading = false
+        this.finished = false
+      }
+      // this.getGoodsData()
     },
     linkFunc (type, obj = {}) {
       switch (type) {
@@ -200,5 +213,8 @@ export default {
 .special-price-span2 {
   color: #999999;
   text-decoration: line-through;
+}
+.label-item-block {
+  margin-right: 10px;
 }
 </style>

@@ -408,6 +408,7 @@ export default {
 .classify-item {
   height: 160px;
   width: 530px;
+  overflow: hidden;
   margin-bottom: 30px;
 }
 .res-goods-pic {

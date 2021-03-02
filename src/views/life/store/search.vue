@@ -103,11 +103,11 @@
                     <img class="res-goods-pic" :src="item.thumb" />
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
-                      <div v-if="item.goods_type > 1" class="flex-align-center">
-                        <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
-                        <!-- <div class="label-item-block label-item-tip">顺丰</div> -->
-                        <!-- <div v-if="item.goods_type == 2" class="res-goods-label res-goods-label-tm">特卖</div>
-                        <div v-else class="res-goods-label res-goods-label-xssg">限时闪购</div> -->
+                      <div class="flex-align-center">
+                        <template v-if="item.goods_type>1">
+                          <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
+                        </template>
+                        <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
                       </div>
                       <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
@@ -118,9 +118,11 @@
                     <img class="res-goods-pic" :src="item.thumb" />
                     <div class="res-goods-info">
                       <div class="res-goods-name res-name p-nowrap" v-html="item.goods_name"></div>
-                      <div v-if="item.goods_type > 1" class="flex-align-center">
-                        <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
-                        <!-- <div class="label-item-block label-item-tip">顺丰</div> -->
+                      <div class="flex-align-center">
+                        <template v-if="item.goods_type>1">
+                          <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
+                        </template>
+                        <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
                       </div>
                       <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price&&item.y_price!='0'">￥{{item.y_price/100}}</span></div>
                     </div>
