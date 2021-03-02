@@ -28,7 +28,7 @@
       <van-list v-model="loading"
                 :finished="finished"
                 @load="onLoad">
-        <van-cell v-for="(item,index) in 2"
+        <van-cell v-for="(item,index) in list"
                   :key="index"
                   @click="openDetail(item)">
           <template #title>
