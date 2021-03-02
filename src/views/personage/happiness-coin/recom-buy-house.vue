@@ -426,6 +426,7 @@ export default {
           align-items: center;
           .tf-icon-gou {
             font-size: 40px;
+            font-weight: 600;
             color: black;
           }
         }
