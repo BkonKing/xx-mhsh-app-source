@@ -1122,6 +1122,7 @@ export default {
 }
 .goods-tip span {
   padding-right: 30px;
+  white-space: nowrap;
 }
 .tip-point {
   position: absolute;
@@ -1132,6 +1133,7 @@ export default {
   color: #aaaaaa;
   font-size: 30px;
   padding-right: 2px;
+  background-color: #fff;
 }
 .tip-point::before {
   transform: rotate(-90deg);
