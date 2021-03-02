@@ -23,31 +23,31 @@
           <div class="t2">已奖励幸福币</div>
         </div>
       </div>
-      <div class="content">
-        <van-list v-model="loading"
-                  :finished="finished"
-                  @load="onLoad">
-          <van-cell v-for="(item,index) in list"
-                    :key="index"
-                    @click="openDetail(item)">
-            <template #title>
-              <div class="item">
-                <div class="left">
-                  <div class="t1">{{item.clientName}}</div>
-                  <div class="t2">{{item.yxlpName}}</div>
-                </div>
-                <div class="right">
-                  <div class="t1"
-                       v-if="item.ydfCredits!==0">已到访 <span>+{{item.ydfCredits}}</span></div>
-                  <div class="t2"
-                       v-if="item.ygfCredits !==0">已购房 <span>+{{item.ygfCredits}}</span></div>
-                </div>
+    </div>
+    <div class="content">
+      <van-list v-model="loading"
+                :finished="finished"
+                @load="onLoad">
+        <van-cell v-for="(item,index) in list"
+                  :key="index"
+                  @click="openDetail(item)">
+          <template #title>
+            <div class="item">
+              <div class="left">
+                <div class="t1">{{item.clientName}}</div>
+                <div class="t2">{{item.yxlpName}}</div>
               </div>
-            </template>
-          </van-cell>
-        </van-list>
+              <div class="right">
+                <div class="t1"
+                     v-if="item.ydfCredits!==0">已到访 <span>+{{item.ydfCredits}}</span></div>
+                <div class="t2"
+                     v-if="item.ygfCredits !==0">已购房 <span>+{{item.ygfCredits}}</span></div>
+              </div>
+            </div>
+          </template>
+        </van-cell>
+      </van-list>
 
-      </div>
     </div>
     <!-- 详情弹出层1 -->
     <van-popup class="popup"
@@ -318,15 +318,17 @@ export default {
       this.loading = false
       this.list = [...this.list, ...res.data]
       this.currentPage++
-      // console.log('客户列表', res)
+      console.log('客户列表', res)
       if (res.data.length === 0) {
         this.finished = true
       }
     }
   },
+
   async created () {
     const res = await clientCount()
     this.clientInfo = res
+    this.onLoad()
     // console.log('统计客户', res)
   }
 }
@@ -336,6 +338,8 @@ export default {
 .recom-record {
   background-color: #f2f2f4;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   .top {
     background-color: #fadbbe;
     position: relative;
@@ -401,49 +405,57 @@ export default {
         }
       }
     }
-    .content {
-      position: absolute;
-      top: 300px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 710px;
-      min-height: 767px;
-      max-height: 1030px;
-
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 0 20px;
-      overflow: auto;
-      /deep/ .van-cell {
-        padding: 30px 0;
-        border-bottom: 1px solid #f0f0f0;
-      }
-      .item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        .left {
-          .t1 {
-            font-size: 34px;
-            font-weight: 600;
-          }
-          .t2 {
-            margin-top: 5px;
-            color: #8f8f94;
-            font-size: 24px;
-          }
+  }
+  .content {
+    // position: absolute;
+    // top: 300px;
+    // left: 50%;
+    // transform: translateX(-50%);
+    margin: 0 auto;
+    margin-top: -70px;
+    width: 710px;
+    height: calc(100%-70px);
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: auto;
+    /deep/ .van-cell {
+      padding: 30px 0;
+      padding-left: 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .van-cell:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    .van-cell:last-child {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left {
+        .t1 {
+          font-size: 34px;
+          font-weight: 600;
         }
-        .right {
-          padding-left: 20px;
+        .t2 {
+          margin-top: 5px;
           color: #8f8f94;
-          font-size: 26px;
-          width: 200px;
-          span {
-            color: #eb5841;
-          }
-          .t2 {
-            margin-top: 5px;
-          }
+          font-size: 24px;
+        }
+      }
+      .right {
+        padding-left: 20px;
+        color: #8f8f94;
+        font-size: 26px;
+        width: 200px;
+        span {
+          color: #eb5841;
+        }
+        .t2 {
+          margin-top: 5px;
         }
       }
     }
