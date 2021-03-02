@@ -5,7 +5,7 @@
       :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']"
     >
       <div class="flash-scroll">
-        <scrollBar direction="x" :activeIndex="tapIndex">
+        <scrollBar direction="x" :activeIndex="tapIndex" @scrollEvent="scrollEvent" @touchEnd="touchEnd">
           <div
             class=""
             v-for="(item, index) in navList"
@@ -70,7 +70,6 @@
     <div class="scroll-body" id="flash-body">
       <van-tabs
         v-model="active"
-        swipeable
         swipe-threshold="10"
         @change="changeNav"
       >
@@ -248,7 +247,6 @@ export default {
   },
   methods: {
     onLoad () {
-      console.log(1234)
       // 异步更新数据
       this.getGoodsData()
     },
@@ -326,6 +324,14 @@ export default {
         this.loading = false
         this.finished = false
       }
+    },
+    // 特卖横向滚动
+    scrollEvent () {
+      this.$emit('scrollEvent')
+    },
+    // 结束横向滚动
+    touchEnd () {
+      this.$emit('touchEnd')
     },
     // 倒计时开始
     start () {
