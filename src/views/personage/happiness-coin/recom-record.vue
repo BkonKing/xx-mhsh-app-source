@@ -28,7 +28,7 @@
       <van-list v-model="loading"
                 :finished="finished"
                 @load="onLoad">
-        <van-cell v-for="(item,index) in list"
+        <van-cell v-for="(item,index) in 2"
                   :key="index"
                   @click="openDetail(item)">
           <template #title>
@@ -415,12 +415,12 @@ export default {
     margin-top: -70px;
     width: 710px;
     height: calc(100%-70px);
-    background: #ffffff;
     border-radius: 10px;
     overflow: auto;
     /deep/ .van-cell {
       padding: 30px 0;
       padding-left: 20px;
+      background: #ffffff;
       border-bottom: 1px solid #f0f0f0;
     }
     .van-cell:first-child {
