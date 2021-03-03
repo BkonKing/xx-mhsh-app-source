@@ -342,7 +342,7 @@ export default {
   flex-direction: column;
   .top {
     background-color: #fadbbe;
-    position: relative;
+    // position: relative;
     padding-bottom: 100px;
     .title {
       font-size: 34px;
@@ -407,30 +407,27 @@ export default {
     }
   }
   .content {
-    // position: absolute;
-    // top: 300px;
-    // left: 50%;
-    // transform: translateX(-50%);
     margin: 0 auto;
     margin-top: -70px;
     width: 710px;
     height: calc(100%-70px);
     border-radius: 10px;
     overflow: auto;
+    // background-color: #fff;
     /deep/ .van-cell {
       padding: 30px 0;
       padding-left: 20px;
       background: #ffffff;
       border-bottom: 1px solid #f0f0f0;
     }
-    .van-cell:first-child {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
-    .van-cell:last-child {
-      border-bottom-left-radius: 10px;
-      border-bottom-right-radius: 10px;
-    }
+    // .van-cell:first-child {
+    //   border-top-left-radius: 10px;
+    //   border-top-right-radius: 10px;
+    // }
+    // .van-cell:last-child {
+    //   border-bottom-left-radius: 10px;
+    //   border-bottom-right-radius: 10px;
+    // }
     .item {
       display: flex;
       align-items: center;
