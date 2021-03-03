@@ -173,10 +173,7 @@ export default {
     }
   },
   methods: {
-    // 设置姓名
-    setName () {
 
-    },
     // 确定
     confirm () {
       this.houseInfo = this.houseItem
