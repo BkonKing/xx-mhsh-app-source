@@ -30,7 +30,8 @@
                 @load="onLoad">
         <van-cell v-for="(item,index) in list"
                   :key="index"
-                  @click="openDetail(item)">
+                  @click="openDetail(item)"
+                  :class="{'cellActive':index===list.length-1}">
           <template #title>
             <div class="item">
               <div class="left">
@@ -410,28 +411,37 @@ export default {
     margin: 0 auto;
     margin-top: -70px;
     width: 710px;
-    height: calc(100%-70px);
+    // height: calc(100%-70px);
+    flex: 1;
     border-radius: 10px;
     overflow: auto;
-    // background-color: #fff;
+    // background: pink;
+    // padding: 0 20px;
     /deep/ .van-cell {
-      padding: 30px 0;
+      // padding: 30px 0;
       padding-left: 20px;
       background: #ffffff;
-      border-bottom: 1px solid #f0f0f0;
+      // border-bottom: 1px solid #f0f0f0;
     }
-    // .van-cell:first-child {
-    //   border-top-left-radius: 10px;
-    //   border-top-right-radius: 10px;
-    // }
-    // .van-cell:last-child {
-    //   border-bottom-left-radius: 10px;
-    //   border-bottom-right-radius: 10px;
-    // }
+    /deep/ .van-cell:first-child {
+      // border-top-left-radius: 10px;
+      // border-top-right-radius: 10px;
+      // padding: 30px 0;
+      padding-left: 20px;
+      background: #ffffff;
+      // border-bottom: 1px solid #f0f0f0;
+    }
+    .cellActive {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
     .item {
+      padding: 30px 0;
+      padding-top: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-bottom: 1px solid #f0f0f0;
       .left {
         .t1 {
           font-size: 34px;
@@ -457,6 +467,7 @@ export default {
       }
     }
   }
+
   /deep/ .van-popup {
     width: 620px;
     height: auto;
