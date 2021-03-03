@@ -43,8 +43,9 @@
         <van-form ref="form">
           <van-field v-model="friedName"
                      maxlength="10"
-                     onkeyup="value=value.replace(/[^\a-zA-Z\u4E00-\u9FA5]/g,'')"
-                     onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\a-zA-Z\u4E00-\u9FA5]/g,''))">
+                     onkeyup="value=value.replace(/[^\a-\z\A-\Z\u4E00-\u9FA5\ ]/g,'')"
+                     onpaste="value=value.replace(/[^\a-\z\A-\Z\u4E00-\u9FA5\ ]/g,'')"
+                     oncontextmenu="value=value.replace(/[^\a-\z\A-\Z\u4E00-\u9FA5\ ]/g,'')">
             <template #label>
               <div>
                 <span>朋友姓名</span> <span style="color:red">*</span>
