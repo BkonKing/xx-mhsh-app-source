@@ -42,7 +42,9 @@
       <div class="midCon">
         <van-form ref="form">
           <van-field v-model="friedName"
-                     maxlength="10">
+                     maxlength="10"
+                     onkeyup="value=value.replace(/[^\a-zA-Z\u4E00-\u9FA5]/g,'')"
+                     onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\a-zA-Z\u4E00-\u9FA5]/g,''))">
             <template #label>
               <div>
                 <span>朋友姓名</span> <span style="color:red">*</span>
@@ -171,6 +173,10 @@ export default {
     }
   },
   methods: {
+    // 设置姓名
+    setName () {
+
+    },
     // 确定
     confirm () {
       this.houseInfo = this.houseItem
