@@ -122,11 +122,11 @@
                     color="#eb5841"
                     @click="confirm">确定</van-button>
       </div>
+      <i v-if="show===true"
+         @click="show=false"
+         class="tf-icon tf-icon-guanbi1 guanbi"></i>
     </van-popup>
 
-    <i v-if="show===true"
-       @click="show=false"
-       class="tf-icon tf-icon-guanbi1 guanbi"></i>
     <div class="confirm">
       <van-button block
                   :disabled="!bol"
@@ -350,6 +350,7 @@ export default {
         font-weight: 500;
         color: #7f532f;
         line-height: 52px;
+        margin-left: 20px;
       }
       .t2,
       .t3 {
@@ -383,7 +384,8 @@ export default {
       .title2 {
         color: #8f8f94;
         .houseName {
-          padding-left: 55px;
+          color: #222222;
+          padding-left: 60px;
         }
       }
     }
@@ -407,9 +409,12 @@ export default {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding-top: 20px;
+    overflow: inherit;
     // padding-bottom: 200px;
     .con {
-      padding: 0 20px;
+      // padding: 0 20px;
+      padding-left: 30px;
+      padding-right: 20px;
       position: absolute;
       top: 150px;
       bottom: 150px;
@@ -417,7 +422,6 @@ export default {
       // height: 100%;
       overflow: auto;
       width: 100%;
-
       /deep/ .cell.van-cell {
         padding: 34px 0;
         border-bottom: 1px solid #f0f0f0;
@@ -442,15 +446,19 @@ export default {
       bottom: 40px;
       padding: 20px;
       width: 100%;
+      button {
+        border-radius: 10px;
+        font-size: 34px;
+      }
     }
   }
   .guanbi {
     font-size: 50px;
     position: absolute;
-    top: 168px;
+    top: -90px;
     right: 30px;
     color: white;
-    z-index: 99999;
+    z-index: 999999999;
   }
 
   .confirm {
@@ -459,6 +467,10 @@ export default {
     left: 0;
     padding: 0 20px;
     width: 100%;
+  }
+  /deep/ .van-icon-search {
+    font-size: 36px !important;
+    color: #8f8f94;
   }
 }
 </style>

@@ -334,7 +334,7 @@ export default {
   },
   beforeDestroy () {
     this.list = []
-    console.log('销毁')
+    // console.log('销毁')
   },
   async created () {
     const res = await clientCount()
@@ -455,7 +455,7 @@ export default {
       .left {
         .t1 {
           font-size: 34px;
-          font-weight: 600;
+          font-weight: 700;
         }
         .t2 {
           margin-top: 5px;
@@ -546,7 +546,7 @@ export default {
     }
     .steps {
       margin-top: 25px;
-      padding: 20px;
+      padding: 30px;
       background-color: #f0f0f0;
       font-size: 26px;
       border-radius: 10px;
@@ -704,7 +704,7 @@ export default {
     }
     .steps {
       margin-top: 25px;
-      padding: 20px;
+      padding: 30px;
       background-color: #f0f0f0;
       font-size: 26px;
       border-radius: 10px;
