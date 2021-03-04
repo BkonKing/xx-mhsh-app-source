@@ -86,7 +86,7 @@
           <div class="right">
             <div class="t5-top"
                  style="color:#EB5841">{{currentClient.ydfCredits+currentClient.ygfCredits}}幸福币</div>
-            <div class="t5-bottom">(到访{{currentClient.ydfCredits}}，购房{{currentClient.ygfCredits}}）</div>
+            <div class="t5-bottom">(到访{{currentClient.ydfCredits}}<span v-if="currentClient.ygfCredits!==0">，购房{{currentClient.ygfCredits}}</span>）</div>
           </div>
         </div>
       </div>
