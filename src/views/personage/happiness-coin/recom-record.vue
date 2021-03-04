@@ -425,8 +425,6 @@ export default {
     flex: 1;
     border-radius: 10px;
     overflow: auto;
-    // background: pink;
-    // padding: 0 20px;
     /deep/ .van-cell {
       // padding: 30px 0;
       padding-left: 20px;
@@ -454,8 +452,8 @@ export default {
       border-bottom: 1px solid #f0f0f0;
       .left {
         .t1 {
+          color: #222222;
           font-size: 34px;
-          font-weight: 700;
         }
         .t2 {
           margin-top: 5px;
@@ -512,7 +510,7 @@ export default {
       line-height: 117px;
       text-align: center;
       font-weight: 600;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 3px solid #f0f0f0;
     }
     .info {
       margin-top: 38px;
@@ -670,7 +668,7 @@ export default {
       line-height: 117px;
       text-align: center;
       font-weight: 600;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 3px solid #f0f0f0;
     }
     .info {
       margin-top: 38px;
