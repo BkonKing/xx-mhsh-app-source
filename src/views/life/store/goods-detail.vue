@@ -362,7 +362,7 @@
       <div v-show="tipShow" class="public-mask ensure-mask bottom-fixed">
         <div class="public-dclose" @click="tipToggle"><img class="img-100" src="@/assets/img/close.png" /></div>
         <div class="public-header">服务说明</div>
-        <div class="ensure-list">
+        <div class="ensure-list serve-list">
           <div v-for="(item,index) in infoData.tip" :key="index" class="ensure-item">
             <div class="ensure-tit flex-align-center"><img :src="item.icon_url" />{{ item.tips_name }}</div>
             <div class="ensure-cont">{{ item.tips_introduction }}</div>
@@ -1114,6 +1114,7 @@ export default {
   font-size: 24px;
   color: #8f8f94;
   position: relative;
+  overflow: hidden;
 }
 .goods-tip img {
   width: 24px;
@@ -1187,6 +1188,15 @@ export default {
 }
 
 /*基础保障*/
+.serve-list.ensure-list {
+  padding: 0 30px;
+  margin: 0 -30px 30px;
+  max-height: 826px;
+  overflow-y: auto;
+}
+.serve-list.ensure-list .ensure-item:last-child .ensure-cont {
+  padding-bottom: 0;
+}
 .ensure-tit {
   font-size: 30px;
   height: 44px;
