@@ -99,7 +99,7 @@ export default {
       lat: 0,
       offsetTop: 1.17333, // tab吸顶距离（单位rem）
       shareShow: false,
-      shareObj: {},
+      shareObj: { pyqHide: true },
       first: true,
       layerNumber: 0 // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
     }
@@ -191,7 +191,7 @@ export default {
         title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? parseFloat(this.filmInfo.score) / 10 : ''}`,
         description: this.filmInfo.introduction,
         thumb: data ? 'fs://' + data + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmInfo.id,
+        contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
         pyqHide: true
       }
     },

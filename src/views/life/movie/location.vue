@@ -337,10 +337,10 @@ export default {
     line-height: 48px;
   }
   .cinema-address {
-    margin-bottom: 50px;
+    height: 98px;
+    padding-top: 16px;
     font-size: 24px;
     color: #8f8f94;
-    line-height: 48px;
   }
   /deep/ .van-button__text {
     display: flex;

@@ -89,7 +89,7 @@ export default {
       collapseable: false, // 是否需要折叠
       collapsed: false, // 控制折叠
       shareShow: false,
-      shareObj: {},
+      shareObj: { pyqHide: true },
       layerNumber: 0 // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
     }
   },
@@ -136,7 +136,7 @@ export default {
         title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? parseFloat(this.filmInfo.score) / 10 : ''}`,
         description: this.filmInfo.introduction,
         thumb: data ? 'fs://' + data + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmInfo.id,
+        contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
         pyqHide: true
       }
     },

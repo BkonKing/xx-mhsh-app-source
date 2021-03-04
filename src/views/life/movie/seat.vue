@@ -86,7 +86,7 @@
             <div class="seat-row" v-for="(row, i) in seatList" :key="i">
               <div class="seat-box" v-for="(col, index) in row" :key="index">
                 <div
-                  v-if="col.areaId"
+                  v-if="col.seatPieceNo"
                   class="seat"
                   :class="[
                     ...creatSeatClass(col),
