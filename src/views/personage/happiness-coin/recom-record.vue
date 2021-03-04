@@ -294,7 +294,8 @@ export default {
       finished: false,
       list: [], // 推荐客户列表
       clientInfo: '', // 客户统计信息
-      currentClient: '' // 当前点击的推荐客户
+      currentClient: '', // 当前点击的推荐客户
+      ajaxBol: false
     }
   },
   methods: {
@@ -313,19 +314,28 @@ export default {
     },
     // 获取推荐客户列表
     async onLoad () {
+      if (this.ajaxBol) {
+        return
+      }
+      this.ajaxBol = true
       const res = await clientList({
         pages: this.currentPage
       })
       this.loading = false
+      this.ajaxBol = false
       this.list = [...this.list, ...res.data]
       this.currentPage++
+
       console.log('客户列表', res)
       if (res.data.length === 0) {
         this.finished = true
       }
     }
   },
-
+  beforeDestroy () {
+    this.list = []
+    console.log('销毁')
+  },
   async created () {
     const res = await clientCount()
     this.clientInfo = res
