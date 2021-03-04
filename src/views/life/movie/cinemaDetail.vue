@@ -149,7 +149,7 @@ export default {
       first: true,
       offsetTop: 1.17333, // tab吸顶距离（单位rem）
       shareShow: false,
-      shareObj: {}
+      shareObj: { pyqHide: true }
     }
   },
   components: {
