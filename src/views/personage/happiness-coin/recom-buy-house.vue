@@ -62,7 +62,8 @@
             </template>
           </van-field>
           <van-cell is-link
-                    @click="show=true">
+                    @click="show=true"
+                    center>
             <template #title>
               <div class="title2">
                 楼盘名称 <span style="color:red">*</span>
@@ -83,7 +84,11 @@
                :style="{ height: '80%' }">
       <van-search v-model="value"
                   @input="onSearch"
-                  v-if="yxlpList.length >=10" />
+                  v-if="yxlpList.length >=10">
+        <template #left-icon>
+          <i class="tf-icon tf-icon-sousuo1 sousuo1"></i>
+        </template>
+      </van-search>
       <div class="con">
         <van-cell v-for="(item,index) in yxlpList"
                   :key="index"
@@ -191,7 +196,7 @@ export default {
     selectHome (item, index) {
       this.currentIndex = index
       this.yxlpIndex = index
-      console.log(item)
+      // console.log(item)
       this.houseItem = item
     },
     // 确认提交
@@ -239,12 +244,7 @@ export default {
         color: #ca864e;
       }
     }
-    // h2 {
-    //   color: #ca864e;
-    //   text-align: center;
-    //   font-size: 66px;
-    //   font-weight: 600;
-    // }
+
     .recom-img {
       display: block;
       width: 423px;
@@ -280,8 +280,8 @@ export default {
       position: relative;
       .c1 {
         left: 90px;
-        width: 66px;
-        height: 66px;
+        width: 88px;
+        height: 88px;
         background: linear-gradient(180deg, #fec98b, #fe8a44);
         border-radius: 50%;
         border: 10px solid #fff;
@@ -291,12 +291,12 @@ export default {
         font-weight: 600;
         color: #ffffff;
         text-align: center;
-        line-height: 52px;
+        line-height: 65px;
       }
       .poiter {
         position: absolute;
-        top: 80px;
-        left: 130px;
+        top: 100px;
+        left: 110px;
         width: 0;
         height: 0;
         border-left: 10px solid transparent;
@@ -305,8 +305,8 @@ export default {
       }
       .c2,
       .c3 {
-        width: 66px;
-        height: 66px;
+        width: 88px;
+        height: 88px;
         border-radius: 50%;
         background-color: #fff;
         border: 10px solid #fff;
@@ -316,24 +316,24 @@ export default {
         font-weight: 600;
         color: #fadbbe;
         text-align: center;
-        line-height: 52px;
+        line-height: 65px;
       }
       .c2 {
         margin: 0 170px;
       }
       .line1 {
         position: absolute;
-        top: 20px;
-        left: 170px;
+        top: 30px;
+        left: 160px;
         width: 180px;
         height: 25px;
         background-color: #fff;
       }
       .line2 {
         position: absolute;
-        top: 20px;
+        top: 30px;
         left: 400px;
-        width: 180px;
+        width: 190px;
         height: 25px;
         background-color: #fff;
       }
@@ -350,7 +350,7 @@ export default {
         font-weight: 500;
         color: #7f532f;
         line-height: 52px;
-        margin-left: 20px;
+        // margin-left: 20px;
       }
       .t2,
       .t3 {
@@ -392,7 +392,7 @@ export default {
   }
   .awardInfo {
     margin: 0 auto;
-    margin-top: 250px;
+    margin-top: 255px;
     width: 670px;
     height: 88px;
     background: #f1e2e2;
@@ -428,7 +428,7 @@ export default {
       }
       .cell {
         .title {
-          height: 60px;
+          height: 40px;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -443,7 +443,7 @@ export default {
     .btn {
       position: absolute;
       left: 0;
-      bottom: 40px;
+      bottom: 15px;
       padding: 20px;
       width: 100%;
       button {
@@ -463,7 +463,7 @@ export default {
 
   .confirm {
     position: fixed;
-    bottom: 50px;
+    bottom: 30px;
     left: 0;
     // padding: 0 20px;
     width: 100%;
@@ -473,10 +473,12 @@ export default {
       margin: 0 auto;
     }
   }
-  /deep/ .van-icon-search {
-    font-size: 45px !important;
+  .sousuo1 {
+    line-height: 40px;
+    font-size: 36px !important;
     color: #8f8f94;
   }
+
   /deep/ .van-search__content {
     border-radius: 10px !important;
   }

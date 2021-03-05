@@ -33,7 +33,8 @@
                   @click="openDetail(item)"
                   :class="{'cellActive':index===list.length-1}">
           <template #title>
-            <div class="item">
+            <div class="item"
+                 :class="{'itemActive':list.length=== 2 && index===1}">
               <div class="left">
                 <div class="t1">{{item.clientName}}</div>
                 <div class="t2">{{item.yxlpName}}</div>
@@ -368,25 +369,22 @@ export default {
     border-radius: 10px;
     overflow: auto;
     /deep/ .van-cell {
-      // padding: 30px 0;
+      padding-top: 0;
       padding-left: 20px;
       background: #ffffff;
-      // border-bottom: 1px solid #f0f0f0;
     }
     /deep/ .van-cell:first-child {
-      // border-top-left-radius: 10px;
-      // border-top-right-radius: 10px;
-      // padding: 30px 0;
       padding-left: 20px;
       background: #ffffff;
-      // border-bottom: 1px solid #f0f0f0;
     }
     .cellActive {
       border-bottom-left-radius: 10px;
       border-bottom-right-radius: 10px;
+      padding-bottom: 0;
     }
     .item {
-      padding: 30px 0;
+      // padding: 30px 0;
+      padding-bottom: 15px;
       padding-top: 10px;
       display: flex;
       align-items: center;
@@ -403,6 +401,7 @@ export default {
           font-size: 24px;
         }
       }
+
       .right {
         padding-left: 20px;
         color: #8f8f94;
@@ -415,6 +414,9 @@ export default {
           margin-top: 5px;
         }
       }
+    }
+    .itemActive {
+      border-bottom: none !important;
     }
   }
 
