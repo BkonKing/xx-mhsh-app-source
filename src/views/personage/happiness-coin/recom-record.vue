@@ -90,51 +90,9 @@
           </div>
         </div>
       </div>
-      <!-- <div class="steps">
-        <van-steps direction="vertical"
-                   :active="active"
-                   active-color='#ffa110'
-                   active-icon='checked'>
-          <van-step>
-            <div class="stepItem">
-              <p>2016.07.12 </p>
-              <div class="txt">推荐客户</div>
 
-            </div>
-          </van-step>
-          <van-step>
-            <div class="stepItem">
-              <p>2016.07.11 </p>
-              <div class="txt">客户到访 <span style="color:red">+100</span> </div>
-
-            </div>
-          </van-step>
-          <van-step>
-            <div class="stepItem">
-              <p>2016.07.10 </p>
-              <div class="txt">客户购房 <span style="color:red">+1000</span> </div>
-            </div>
-          </van-step>
-        </van-steps>
-      </div> -->
       <div class="steps">
-        <!-- <van-steps direction="vertical"
-                   :active="0"
-                   active-color='#ffa110'
-                   active-icon='checked'>
-          <van-step>
-            <div class="stepItem">
-              <p>2016.07.12 </p>
-              <div class="txt">推荐客户</div>
 
-            </div>
-          </van-step>
-          <van-step>
-            <div class="stepItem">
-              <p>客户购房</p>
-            </div>
-          </van-step>
-        </van-steps> -->
         <div class="left">
           <div class="item">
             <van-icon class="gouxuan active"
@@ -222,23 +180,7 @@
         </div>
       </div>
       <div class="steps">
-        <!-- <van-steps direction="vertical"
-                   :active="0"
-                   active-color='#ffa110'
-                   active-icon='checked'>
-          <van-step>
-            <div class="stepItem">
-              <p>2016.07.12 </p>
-              <div class="txt">推荐客户</div>
 
-            </div>
-          </van-step>
-          <van-step>
-            <div class="stepItem">
-              <p>客户购房</p>
-            </div>
-          </van-step>
-        </van-steps> -->
         <div class="left">
           <div class="item">
             <van-icon class="gouxuan active"
@@ -326,7 +268,7 @@ export default {
       this.list = [...this.list, ...res.data]
       this.currentPage++
 
-      console.log('客户列表', res)
+      // console.log('客户列表', res)
       if (res.data.length === 0) {
         this.finished = true
       }
@@ -488,7 +430,7 @@ export default {
     height: auto;
     background: #ffffff;
     border-radius: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 35px;
   }
   .popup {
     .guanbi1 {
@@ -500,7 +442,7 @@ export default {
       color: #fff;
     }
     padding: 0 50px;
-    padding-bottom: 20px;
+    padding-bottom: 35px;
     .title {
       height: 117px;
       font-size: 30px;
@@ -658,7 +600,7 @@ export default {
       color: #fff;
     }
     padding: 0 50px;
-    padding-bottom: 0px;
+
     .title {
       height: 117px;
       font-size: 30px;

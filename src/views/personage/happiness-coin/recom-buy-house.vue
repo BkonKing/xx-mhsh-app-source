@@ -73,7 +73,7 @@
         </van-form>
       </div>
     </div>
-    <div v-if="bol"
+    <div v-if="houseInfo !==''"
          class="awardInfo">
       奖励：{{houseInfo.credits}}幸福币 (朋友到访{{houseInfo.credits_df}},购房{{houseInfo.credits_gf}})
     </div>
@@ -465,12 +465,20 @@ export default {
     position: fixed;
     bottom: 50px;
     left: 0;
-    padding: 0 20px;
+    // padding: 0 20px;
     width: 100%;
+    button {
+      display: block;
+      width: 8.93333rem;
+      margin: 0 auto;
+    }
   }
   /deep/ .van-icon-search {
-    font-size: 36px !important;
+    font-size: 45px !important;
     color: #8f8f94;
+  }
+  /deep/ .van-search__content {
+    border-radius: 10px !important;
   }
 }
 </style>
