@@ -23,7 +23,7 @@
           {{ countyText }}
         </template>
       </van-dropdown-item>
-      <van-dropdown-item v-model="hallNo" ref="hallNo">
+      <!-- <van-dropdown-item v-model="hallNo" ref="hallNo">
         <div class="hall-tags">
           <div
             class="hall-tag"
@@ -38,7 +38,7 @@
         <template #title>
           {{ hallText }}
         </template>
-      </van-dropdown-item>
+      </van-dropdown-item> -->
       <van-dropdown-item v-model="sortType" ref="sortType">
         <van-cell
           v-for="(item, i) in sortOptions"

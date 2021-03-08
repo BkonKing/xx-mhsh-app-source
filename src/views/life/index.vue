@@ -912,6 +912,8 @@ export default {
   // @life-public-session();
   background: linear-gradient(0deg, #FFFFFF, #FFF7AF);
   padding-bottom: 20px;
+  width: 710px;
+  margin: 0 auto;
 }
 .van-tabs__content {
   .van-tab__pane,.flash-cont {
@@ -969,6 +971,9 @@ export default {
   background-color: #fff;
   margin-bottom: 20px;
 }
+.flash-goods-list .life-goods-item {
+  margin-right: 0;
+}
 .special-goods-list .life-goods-pic,
 .flash-goods-list .life-goods-pic {
   height: 216px;
@@ -990,6 +995,7 @@ export default {
   }
 }
 .flash-goods-list {
+  justify-content: space-around;
   .life-goods-name {
     line-height: 40px;
     margin-top: 13px;

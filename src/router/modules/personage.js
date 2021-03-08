@@ -416,7 +416,7 @@ const personageRouter = [
     name: 'recomBuyHouse',
     component: () =>
       import(
-        /* webpackChunkName: "waterElectricityMeter" */
+        /* webpackChunkName: "recomBuyHouse" */
         '@/views/personage/happiness-coin/recom-buy-house.vue'
       )
   },
@@ -426,7 +426,7 @@ const personageRouter = [
     name: 'recomRecord',
     component: () =>
       import(
-        /* webpackChunkName: "waterElectricityMeter" */
+        /* webpackChunkName: "recomRecord" */
         '@/views/personage/happiness-coin/recom-record.vue'
       )
   }

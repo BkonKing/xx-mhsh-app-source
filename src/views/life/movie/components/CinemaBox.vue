@@ -19,11 +19,11 @@
       <div class="cinema-address">{{ data.address }}</div>
       <div class="cinema-distance">{{ data.distance }}km</div>
     </div>
-    <div v-if="data.hall && data.hall.length" class="cinema-tags">
+    <!-- <div v-if="data.hall && data.hall.length" class="cinema-tags">
       <div class="cinema-tag" v-for="(tag, i) in data.hall" :key="i">
         {{ tag.hall_name }}
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
