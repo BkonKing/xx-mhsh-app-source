@@ -5,8 +5,8 @@
         v-if="versionList && versionList.length && type !== 3"
         class="film-version-container"
       >
-        <div v-for="(version, i) in versionList" :key="i" class="film-version">
-          {{ version }}
+        <div class="tf-flex" v-for="(version, i) in versionList" :key="i">
+          <span class="film-version-tag">{{ version }}</span>
         </div>
       </div>
       <img class="film-img" :src="data.cover" />
@@ -139,7 +139,7 @@ export default {
   position: absolute;
   top: 10px;
   left: 10px;
-  .film-version {
+  .film-version-tag {
     padding: 4px 6px;
     margin-bottom: 10px;
     background: #000000;

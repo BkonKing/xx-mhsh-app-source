@@ -185,6 +185,7 @@ export default {
     getfilmlist (type) {
       getfilmlist({
         type,
+        city_id: this.cityId,
         page_index: 1,
         page_size: 10
       }).then(({ data, total }) => {

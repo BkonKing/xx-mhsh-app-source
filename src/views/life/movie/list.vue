@@ -121,6 +121,7 @@ export default {
     getfilmlist ({ pages }, type) {
       return getfilmlist({
         type,
+        city_id: this.cityId,
         page_index: pages,
         page_size: 10
       })

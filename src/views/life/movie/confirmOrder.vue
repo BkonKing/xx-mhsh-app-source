@@ -133,6 +133,7 @@
       round
       position="bottom"
       get-container="body"
+      :style="{ 'max-height': '90%' }"
     >
       <div class="coupon-popup">
         <div class="coupon-popup-title">优惠券</div>
@@ -552,6 +553,7 @@ export default {
   }
   &-btn {
     width: 100%;
+    margin-top: 60px;
     border-radius: 10px;
     /deep/ .van-button__text {
       font-size: 30px;
