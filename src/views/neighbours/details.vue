@@ -1,141 +1,123 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar
-      title="正文"
-      :fixed="true"
-      placeholder
-      left-arrow
-      @click-left="$router.go(-1)"
-    >
+    <van-nav-bar title="正文"
+                 :fixed="true"
+                 placeholder
+                 left-arrow
+                 @click-left="$router.go(-1)">
       <template #right>
-        <span
-          class="van-icon van-icon-ellipsis"
-          @click="openArticleDialog"
-        ></span>
+        <span class="van-icon van-icon-ellipsis"
+              @click="openArticleDialog"></span>
       </template>
     </van-nav-bar>
-    <van-pull-refresh
-      class="tf-body-container"
-      success-text="刷新成功"
-      v-model="isLoading"
-      @refresh="onRefresh"
-    >
+    <van-pull-refresh class="tf-body-container"
+                      success-text="刷新成功"
+                      v-model="isLoading"
+                      @refresh="onRefresh">
       <div class="tf-card">
-        <div
-          class="tf-card-header"
-          style="border-bottom:none"
-          :class="{ 'border-none': articleType == 2 || articleType == 3 }"
-        >
-          <userInfo
-            :avatar="info.avatar"
-            :name="info.nickname"
-            :time="info.ctime"
-          >
-            <template v-if="articleType == 3" v-slot:right>
+        <div class="tf-card-header"
+             style="border-bottom:none"
+             :class="{ 'border-none': articleType == 2 || articleType == 3 }">
+          <userInfo :avatar="info.avatar"
+                    :name="info.nickname"
+                    :time="info.ctime">
+            <template v-if="articleType == 3"
+                      v-slot:right>
               <div class="group-tag">{{ info.category }}</div>
             </template>
           </userInfo>
         </div>
         <template v-if="articleType == 1">
           <div class="article-title">{{ info.title }}</div>
-          <div class="article-content" v-html="info.content"></div>
+          <div class="article-content"
+               v-html="info.content"></div>
           <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
         <template v-else-if="articleType == 3">
-          <tf-alert
-            v-if="info.status == 2"
-            type="warning"
-            content="该内容含有违规信息。"
-            :showRight="false"
-            :showIcon="false"
-            size="sm"
-          ></tf-alert>
+          <tf-alert v-if="info.status == 2"
+                    type="warning"
+                    content="该内容含有违规信息。"
+                    :showRight="false"
+                    :showIcon="false"
+                    size="sm"></tf-alert>
           <div class="tf-card-content">{{ info.content }}</div>
           <template v-if="info.images && info.images.length">
-            <img
-              width="33%"
-              :src="info.images[0]"
-              v-if="info.images.length === 1"
-            />
-            <tf-image-list
-              v-else
-              :data="info.images"
-              mode="show"
-            ></tf-image-list>
+            <img width="33%"
+                 :src="info.images[0]"
+                 v-if="info.images.length === 1" />
+            <tf-image-list v-else
+                           :data="info.images"
+                           mode="show"></tf-image-list>
           </template>
         </template>
         <template v-else-if="articleType == 2">
           <div class="article-title">{{ info.title }}</div>
           <div class="activity-content">
-            <div class="tf-text tf-mb-lg" v-html="info.content"></div>
+            <div class="tf-text tf-mb-lg"
+                 v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
-            <div class="apply-box" v-if="parseInt(info.joins) > 0">
+            <div class="apply-box"
+                 v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
                 <strong>报名人员</strong>
                 <span class="tf-text-grey">({{ info.joins }}人)</span>
-                <span v-if="info.is_join" class="tf-status-tag">我已报名</span>
+                <span v-if="info.is_join"
+                      class="tf-status-tag">我已报名</span>
               </div>
               <div class="apply-user">
                 <template v-for="(item, i) in info.join_uids">
-                  <img
-                    v-if="item.avatar"
-                    class="apply-user__avatar"
-                    :src="item.avatar"
-                    :key="i"
-                  />
-                  <img
-                    v-else
-                    class="apply-user__avatar"
-                    src="@/assets/imgs/touxiang.png"
-                    :key="i"
-                  />
+                  <img v-if="item.avatar"
+                       class="apply-user__avatar"
+                       :src="item.avatar"
+                       :key="i" />
+                  <img v-else
+                       class="apply-user__avatar"
+                       src="@/assets/imgs/touxiang.png"
+                       :key="i" />
                 </template>
               </div>
             </div>
-            <div
-              v-if="!info.is_join"
-              v-preventReClick
-              class="apply-btn"
-              @click="joinActivity"
-            >
+            <div v-if="!info.is_join"
+                 v-preventReClick
+                 class="apply-btn"
+                 @click="joinActivity">
               报名
             </div>
           </div>
         </template>
+        <!-- 播放视屏 -->
+        <videoChild :url='videoURL'
+                    :poster="poster"></videoChild>
         <div class="activity-footer">
-          <div
-            class="tf-icon tf-icon-zan"
-            :class="{ 'like-active': info.is_thumbsup }"
-            @click="thumbsUp(info)"
-          >
+          <div class="tf-icon tf-icon-zan"
+               :class="{ 'like-active': info.is_thumbsup }"
+               @click="thumbsUp(info)">
             <span class="tf-text-sm">{{ info.thumbsups | numberText }}</span>
           </div>
-          <div class="tf-icon tf-icon-pinglun" @click="$refs.reply.comment()">
+          <div class="tf-icon tf-icon-pinglun"
+               @click="$refs.reply.comment()">
             <span class="tf-text-sm">{{ info.comments | numberText }}</span>
           </div>
         </div>
+
       </div>
-      <reply
-        ref="reply"
-        class="tf-mt-lg activity-reply"
-        :is-mine="info.is_mine"
-        :articleId="id"
-        :articleType="articleType"
-        :thumbsupStatus="info.is_thumbsup"
-        @thumbsup="thumbsUp(info)"
-      ></reply>
+      <reply ref="reply"
+             class="tf-mt-lg activity-reply"
+             :is-mine="info.is_mine"
+             :articleId="id"
+             :articleType="articleType"
+             :thumbsupStatus="info.is_thumbsup"
+             @thumbsup="thumbsUp(info)"></reply>
     </van-pull-refresh>
-    <more-popup
-      v-model="moreShow"
-      :complain="!info.is_mine"
-      :complainType="1"
-      :complainInfo="info"
-      :shield="!info.is_mine"
-      :deleteProp="info.is_mine"
-      :share="true"
-      :share-obj="shareObj"
-      @delete="deleteArticle"
-    ></more-popup>
+    <more-popup v-model="moreShow"
+                :complain="!info.is_mine"
+                :complainType="1"
+                :complainInfo="info"
+                :shield="!info.is_mine"
+                :deleteProp="info.is_mine"
+                :share="true"
+                :share-obj="shareObj"
+                @delete="deleteArticle"></more-popup>
   </div>
 </template>
 
@@ -147,6 +129,7 @@ import reply from './components/reply'
 import morePopup from './components/morePopup'
 import tfImageList from '@/components/tf-image-list'
 import { downloadPic } from '@/utils/util.js'
+import videoChild from '@/components/videoChild/videoChild'
 import {
   getActivityInfo,
   joinActivity,
@@ -165,10 +148,13 @@ export default {
     TfAlert,
     reply,
     morePopup,
-    tfImageList
+    tfImageList,
+    videoChild
   },
   data () {
     return {
+      videoURL: 'https://api.dogecloud.com/player/get.mp4?vcode=5ac682e6f8231991&userId=17&ext=.mp4', // 视屏链接
+      poster: 'https://i.loli.net/2019/06/06/5cf8c5d9c57b510947.png', // 视屏封面
       articleType: 3,
       id: '',
       moreShow: false,
@@ -349,6 +335,7 @@ export default {
         this.moreShow = false
       })
     }
+
   },
   filters: {
     numberText (value) {

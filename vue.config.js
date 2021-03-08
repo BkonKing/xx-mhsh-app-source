@@ -14,7 +14,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : './',
   outputDir: './' + appname, // 运行时生成的生产环境构建文件的目录(默认""dist""，构建之前会被清除)
   indexPath: 'index.html', // 指定生成的 index.html 的输出路径(相对于 outputDir)也可以是一个绝对路径。
-  filenameHashing: process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */ ,
+  filenameHashing: process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */,
   productionSourceMap: false,
   pages: {
     // pages 里配置的路径和文件名在你的文档目录必须存在 否则启动服务会报错
@@ -137,8 +137,8 @@ module.exports = {
       },
       '/api': {
         // target: 'http://meihaoshenghuo.com/app/api/v1',
-        // target: 'https://test.tosolomo.com/app/api/v1',
-        target: 'https://develop.mhshjy.com/app/api/v1',
+        target: 'https://test.tosolomo.com/app/api/v1', 
+        // target: 'https://develop.mhshjy.com/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }
@@ -150,7 +150,7 @@ module.exports = {
   pluginOptions: {}
 }
 
-function addStyleResource(rule) {
+function addStyleResource (rule) {
   rule.use('style-resource')
     .loader('style-resources-loader')
     .options({

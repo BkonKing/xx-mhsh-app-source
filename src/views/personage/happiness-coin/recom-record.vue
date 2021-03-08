@@ -1,5 +1,6 @@
 <template>
   <div class="recom-record">
+
     <div class="top">
       <van-nav-bar :fixed="true"
                    :border="false"
