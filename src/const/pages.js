@@ -117,5 +117,7 @@ export const pagesArr = {
   movieSeat: 116, // 选择座位
   movieConfirmOrder: 117, // 确认订单
   movieOrder: 118, // 我的影票
-  movieTicket: 119 // 电影票
+  movieTicket: 119, // 电影票
+  recomBuyHouse: 120, // 推荐购房
+  recomRecord: 121 // 推荐记录
 }
