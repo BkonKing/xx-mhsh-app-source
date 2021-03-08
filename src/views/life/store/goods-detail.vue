@@ -1013,7 +1013,7 @@ export default {
   padding-left: 30px;
 }
 .info-pubilc > div:nth-child(1) {
-  height: 60px;
+  min-height: 60px;
   line-height: 60px;
 }
 .info-pubilc .goods-name {
@@ -1030,6 +1030,7 @@ export default {
   font-size: 26px;
   color: #8F8F94;
   line-height: 60px;
+  flex-shrink: 0;
 }
 .info-pubilc .tf-icon-zhuanfa::before {
   font-size: 34px;
