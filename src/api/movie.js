@@ -246,7 +246,6 @@ export function getfilmdetails (data) {
 
 /**
  * 搜索电影或影院
- * @param
  */
 export function getFilmCinemaSeach (data) {
   return request.post('/film/film/search', data)
@@ -254,7 +253,6 @@ export function getFilmCinemaSeach (data) {
 
 /**
  * 搜索电影列表
- * @param
  */
 export function getFilmSeachList (data) {
   return request.post('/film/film/getsearchfilminfo', data)
@@ -262,7 +260,6 @@ export function getFilmSeachList (data) {
 
 /**
  * 搜索影院列表
- * @param
  */
 export function getCinemaSeachList (data) {
   return request.post('/film/film/getsearchcinemainfo', data)
@@ -270,8 +267,15 @@ export function getCinemaSeachList (data) {
 
 /**
  * 获取客服电话
- * @param
  */
 export function getCustomerPhone (data) {
   return request.post('/film/film/getcustomerphone', data)
+}
+
+/**
+ * 取消支付
+ * @param order_id 订单ID
+ */
+export function cancelPay (data) {
+  return request.post('/film/film/cancelPay', data)
 }

@@ -179,7 +179,8 @@ import {
   calculatePrice,
   payOrder,
   payCredits,
-  unlockorder
+  unlockorder,
+  cancelPay
 } from '@/api/movie'
 export default {
   name: 'movieConfirmOrder',
@@ -341,6 +342,8 @@ export default {
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
         if (ret.code == 9000) { // 支付成功
           this.fyResult()
+        } else {
+          this.cancelPay()
         }
       })
     },
@@ -360,6 +363,8 @@ export default {
         (ret, err) => {
           if (ret.status) {
             this.fyResult()
+          } else {
+            this.cancelPay()
           }
         }
       )
@@ -385,6 +390,12 @@ export default {
     // 关闭支付选择弹窗
     closePaySwal (data) {
       this.showPaySwal = data === 1
+    },
+    // 取消支付
+    cancelPay () {
+      cancelPay({
+        order_id: this.orderId
+      })
     },
     // 释放座位
     unlockorder () {
