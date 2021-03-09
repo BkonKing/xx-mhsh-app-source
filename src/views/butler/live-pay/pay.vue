@@ -10,14 +10,6 @@
     >
     </van-nav-bar>
     <div class="tf-body-container">
-      <van-notice-bar
-        class="swiper-nav"
-        left-icon="warning"
-        background="rgba(249,134,107,0.2)"
-        :scrollable="false"
-      >
-        {{ payInfo }}
-      </van-notice-bar>
       <van-checkbox-group
         v-model="result"
         ref="checkboxGroup"
@@ -36,7 +28,6 @@
               ></van-checkbox>
               <div class="pay-info" @click="goCostDetail(li)">
                 <div class="pay-info-left">
-                  <img class="pay-type-icon" :src="li.genre_icon" />
                   <span class="pay-title">{{ li.genre_name }}</span>
                 </div>
                 <div class="pay-info-right">
@@ -81,7 +72,6 @@ import { getChoicePayList, createPay, canCreatePay } from '@/api/butler'
 import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
 import { makeCount } from '@/utils/util'
-import { Dialog, Toast } from 'vant'
 export default {
   name: 'livePayPay',
   components: {
@@ -96,7 +86,6 @@ export default {
       payTotal: 0, // 选中的缴费金额
       coerceResult: [], // 强制缴费项数组
       payBranches: 0, // 所需缴费的所有项数量
-      payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
       showPaySwal: false,
       idcard: '' // 身份证
@@ -129,10 +118,9 @@ export default {
         project_id: this.projectId
       }).then(({ table_data: data, month_name_text }) => {
         // 如果没有账单信息就返回上一个页面
-        if (!data || !data.length) {
-          this.$router.go(-1)
-        }
-        this.payInfo = month_name_text
+        // if (!data || !data.length) {
+        //   this.$router.go(-1)
+        // }
         this.payList = data
         this.handlePaymentTerm()
         // 默认全部选中
@@ -348,12 +336,6 @@ export default {
       .pay-info-left {
         display: flex;
         align-items: center;
-        .pay-type-icon {
-          // font-size: 66px;
-          width: 66px;
-          height: 66px;
-          line-height: 1;
-        }
         .pay-title {
           font-size: 30px;
           margin-left: 27px;

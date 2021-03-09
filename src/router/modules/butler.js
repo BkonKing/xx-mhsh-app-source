@@ -247,7 +247,33 @@ const butlerRouter = [
         '@/views/butler/live-pay/index.vue'
       )
   },
-  /* 缴费页面 */
+  // 充值页面
+  {
+    path: '/pages/butler/live-pay/topUp',
+    name: 'livePayTopUp',
+    meta: {
+      keepAlive: true
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayTopUp" */
+        '@/views/butler/live-pay/top-up.vue'
+      )
+  },
+  /* 主要缴费页面 */
+  {
+    path: '/pages/butler/live-pay/mainPay',
+    name: 'livemainPay',
+    meta: {
+      keepAlive: true
+    },
+    component: () =>
+      import(
+        /* webpackChunkName: "livemainPay" */
+        '@/views/butler/live-pay/main-pay.vue'
+      )
+  },
+  /* 其他费用缴费页面 */
   {
     path: '/pages/butler/live-pay/pay',
     name: 'livePayPay',
@@ -258,6 +284,16 @@ const butlerRouter = [
       import(
         /* webpackChunkName: "livePayPay" */
         '@/views/butler/live-pay/pay.vue'
+      )
+  },
+  // 缴费账单
+  {
+    path: '/pages/butler/live-pay/payBill',
+    name: 'livePayPayBill',
+    component: () =>
+      import(
+        /* webpackChunkName: "livePayPayBill" */
+        '@/views/butler/live-pay/pay-bill.vue'
       )
   },
   /* 缴费记录 */
