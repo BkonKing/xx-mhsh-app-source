@@ -145,6 +145,7 @@ export default {
       })
         .then(() => {
           this.getLocationInfo().then(() => {
+            this.getfilmlist(1)
             this.getcinemanearby()
           })
           this.pageInit()
@@ -158,6 +159,7 @@ export default {
       this.adCode = 350104
       this.lon = 119.33887
       this.lat = 26.05312
+      this.getfilmlist(1)
       this.getcinemanearby()
       this.pageInit()
     }
@@ -172,7 +174,6 @@ export default {
     // 页面初始化获取
     pageInit () {
       this.getCarouselMap()
-      this.getfilmlist(1)
       this.getfilmlist(2)
     },
     // 获取热映轮播图
