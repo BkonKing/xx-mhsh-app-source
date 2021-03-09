@@ -72,7 +72,7 @@
       </div>
     </div>
     <!-- 即将上映 -->
-    <div class="film-container">
+    <div v-if="startMovieTotal" class="film-container">
       <div class="film-header" @click="goList('1', '1')">
         <div class="film-title">即将上映</div>
         <div class="film-total">
