@@ -18,102 +18,54 @@
           v-model="selectedHouse"
           :disabled="houseList.length < 2"
           :options="houseList"
-          @change="houseChange"
+          @change="searchLifePayList"
         />
       </van-dropdown-menu>
     </div>
     <div class="tf-body-container">
-      <van-notice-bar
-        v-if="payInfo"
-        class="swiper-nav"
-        left-icon="warning"
-        mode="link"
-        background="rgba(249,134,107,0.2)"
-        :scrollable="false"
-        @click="goPay"
-      >
-        {{ payInfo }}
-      </van-notice-bar>
-      <div class="pay-container">
-        <template v-if="payList && payList.length > 0">
-          <template v-for="(item, index) in payList">
-            <tf-picker
-              class="date-time-box"
-              v-model="item.month_name"
-              title="选择时间"
-              :key="index"
-              :columns="monthList"
-              @confirm="queryMonthPay"
+      <div class="pay-container" v-if="payList && payList.length > 0">
+        <ul class="pay-list-container">
+          <template v-for="item in payList">
+            <li
+              v-for="(li, i) in item.child"
+              class="pay-list-item"
+              @click="goCostDetail(li)"
+              :key="i"
             >
-              <template v-slot="{ valueText }">
-                <div class="tf-text selected-date">
-                  {{ valueText
-                  }}<span class="tf-icon tf-icon-caret-down"></span>
-                </div>
-                <div class="pay-info">
-                  费用共￥{{ item.common_money
-                  }}<span class="tf-ml-sm" v-if="item.already_money"
-                    >已缴费￥{{ item.already_money }}</span
-                  ><span class="tf-ml-sm" v-if="item.stay_money"
-                    >待缴费￥{{ item.stay_money }}</span
-                  >
-                </div>
-              </template>
-            </tf-picker>
-            <ul class="pay-list-container" :key="`ul${index}`">
-              <li
-                v-for="(li, i) in item.child"
-                class="pay-list-item"
-                @click="goCostDetail(li)"
-                :key="i"
-              >
-                <div class="pay-list-item-left">
-                  <img class="pay-type-icon" :src="li.genre_icon" />
-                  <span class="pay-title">{{ li.genre_name }}</span>
-                </div>
-                <div class="pay-list-item-right">
-                  <div
-                    class="pay-number"
-                    :style="{
-                      color: li.order_status == '2' ? '#222' : '#EB5841'
-                    }"
-                  >
-                    ￥{{ li.money }}
-                  </div>
-                  <div class="pay-status">
-                    {{ li.order_status | orderStatusText }}
-                  </div>
-                </div>
-              </li>
-            </ul>
+              <div class="pay-list-item-left">
+                <img class="pay-type-icon" :src="li.genre_icon" />
+                <span class="pay-title">{{ li.genre_name }}</span>
+              </div>
+              <div class="pay-list-item-right">
+                <span
+                  class="pay-number"
+                  :style="{
+                    color: li.order_status === '2' ? '#222' : '#EB5841'
+                  }"
+                >
+                  {{ li.order_status === "2" ? "" : "-" }}{{ li.money }}</span
+                >
+                <span class="tf-icon tf-icon-right"></span>
+              </div>
+            </li>
           </template>
-        </template>
-        <template v-else>
-          <div class="pay-detail-container">
-            <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png" />
-            <div class="pay-detail-text">暂无待缴费用</div>
-          </div>
-        </template>
+        </ul>
       </div>
-    </div>
-    <div v-if="payInfo" class="tf-padding">
-      <van-button v-preventReClick size="large" type="danger" @click="goPay"
-        >缴费</van-button
-      >
+      <template v-else>
+        <div class="pay-detail-container">
+          <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png" />
+          <div class="pay-detail-text">暂无待缴费用</div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import tfPicker from '@/components/tf-picker/index'
 import { getLifePayList } from '@/api/butler'
-import filters from './filters'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
-  components: {
-    tfPicker
-  },
   data () {
     return {
       selectedHouse: '', // 选中的房间，值为项目ID + 房间账单ID + 房间ID
@@ -127,9 +79,11 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'currentProject'])
   },
+  created () {
+    this.getLifePayList({}, true)
+  },
   activated () {
     if (this.first) {
-      this.getLifePayList({}, true)
       return
     }
     const [project_id, expenses_house_id] = this.selectedHouse.split('-')
@@ -139,15 +93,7 @@ export default {
     })
   },
   methods: {
-    // 房屋切换
-    houseChange () {
-      this.searchLifePayList()
-    },
-    // 查询时间缴费
-    queryMonthPay (value) {
-      this.searchLifePayList(value)
-    },
-    // 条件搜索生活缴费列表
+    // 房屋切换获取生活缴费列表
     searchLifePayList (date) {
       const [project_id, expenses_house_id] = this.selectedHouse.split('-')
       this.getLifePayList({
@@ -208,17 +154,49 @@ export default {
         name: 'livePayRecord'
       })
     },
-    // 跳转费用详情
-    goCostDetail ({ id: orderId }) {
+    // 跳转生活缴费详情
+    goCostDetail ({ id: orderId, money }) {
       const [projectId, id] = this.selectedHouse.split('-')
-      this.$router.push({
-        name: 'livePayCostDetail',
-        query: {
-          orderId,
-          projectId,
-          id
-        }
-      })
+      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，则需要提醒先缴纳
+      var status = false
+      var text = '物业费、电梯费' // 需要缴纳的费用
+      if (status) {
+        this.$dialog
+          .alert({
+            title: `请先缴清${text}`
+          })
+          .then(() => {
+            this.$router.push({
+              name: 'livePayPay',
+              query: {
+                orderId,
+                projectId,
+                id
+              }
+            })
+          })
+        return
+      }
+      // 若余额<0，跳转的是缴费，若是余额>=0，跳转是充值页面
+      if (money < 0) {
+        this.$router.push({
+          name: 'livePayTopUp',
+          query: {
+            orderId,
+            projectId,
+            id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'livemainPay',
+          query: {
+            orderId,
+            projectId,
+            id
+          }
+        })
+      }
     },
     // 跳转缴费页面
     goPay () {
@@ -232,7 +210,6 @@ export default {
       })
     }
   },
-  filters: filters,
   beforeRouteLeave (to, from, next) {
     const names = ['butler']
     if (names.includes(to.name)) {
@@ -252,45 +229,85 @@ export default {
 /deep/ .van-nav-bar__right {
   padding-right: 0;
 }
-.swiper-nav {
-  height: 66px;
-  margin: 30px 20px 0;
-  border-radius: 10px;
-  /deep/ .van-notice-bar__left-icon {
-    margin-right: 10px;
-  }
-  /deep/ .van-notice-bar__content {
-    color: #eb5841;
-    font-size: 24px;
-  }
-  .notice-swipe {
-    height: 66px;
-    /deep/ .van-swipe-item {
-      line-height: 66px;
+// 列表
+.pay-container {
+  padding: 30px 20px;
+  .pay-list-container {
+    width: 100%;
+    padding: 0 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    .pay-list-item {
+      display: flex;
+      justify-content: space-between;
+      height: 148px;
+      .pay-list-item-left {
+        display: flex;
+        align-items: center;
+        .pay-type-icon {
+          width: 66px;
+          height: 66px;
+          line-height: 1;
+        }
+        .pay-title {
+          margin-left: 27px;
+          font-size: 30px;
+          color: #222;
+        }
+      }
+      .pay-list-item-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        .pay-number {
+          font-size: 42px;
+          font-weight: 600;
+        }
+        .tf-icon-right {
+          margin-left: 28px;
+          color: #aaaaaa;
+        }
+      }
     }
-  }
-  /deep/ .van-icon-arrow {
-    font-size: 24px !important;
-    margin-right: 0;
-    &::before {
-      font-family: tficonfont;
-      content: "\e85d";
+    .pay-list-item + .pay-list-item {
+      border-top: 2px solid #f0f0f0;
+      border-radius: 1px;
     }
   }
 }
+// 暂无数据
+.pay-detail-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  .pay-detail-img {
+    width: 483px;
+    margin-bottom: 120px;
+  }
+  .pay-detail-text {
+    font-size: 28px;
+    color: #222;
+  }
+}
+// 房屋选择内容
 .house-dropdown {
   padding: 30px 20px;
   background: #fff;
   /deep/ .van-dropdown-menu__bar {
     border-radius: 33px;
     background: #f2f2f4;
+    box-shadow: initial;
     .van-dropdown-menu__item {
       padding-right: 20px;
     }
     .van-dropdown-menu__title {
+      position: initial;
       color: #222222;
       font-size: 28px;
       &:after {
+        right: 32px;
         margin-top: -10px;
         border-width: 8px;
         border-color: transparent transparent #383838 #383838;
@@ -301,74 +318,7 @@ export default {
     }
   }
 }
-.pay-container {
-  padding: 30px 20px;
-  .selected-date {
-    font-size: 28px;
-    color: #222;
-  }
-  .pay-info {
-    font-size: 24px;
-    color: #8f8f94;
-    margin-top: 10px;
-  }
-  .pay-list-container {
-    width: 100%;
-    padding: 10px 30px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    background: #ffffff;
-    border-radius: 10px;
-    .pay-list-item {
-      display: flex;
-      justify-content: space-between;
-      height: 135px;
-      .pay-list-item-left {
-        display: flex;
-        align-items: center;
-        .pay-type-icon {
-          width: 66px;
-          height: 66px;
-          line-height: 1;
-        }
-        .pay-title {
-          font-size: 30px;
-          margin-left: 27px;
-        }
-      }
-      .pay-list-item-right {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: center;
-        .pay-number {
-          font-size: 34px;
-          font-weight: 600;
-        }
-        .pay-status {
-          font-size: 24px;
-          color: #8f8f94;
-        }
-      }
-    }
-    .pay-list-item + .pay-list-item {
-      border-top: 1px solid #f0f0f0;
-    }
-  }
-  .pay-detail-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .pay-detail-img {
-      width: 483px;
-      margin-top: 170px;
-      margin-bottom: 120px;
-    }
-    .pay-detail-text {
-      font-size: 28px;
-    }
-  }
-}
+// 房屋选择窗
 /deep/ .van-popup--top {
   width: 650px;
   top: 40px;
@@ -392,11 +342,9 @@ export default {
     display: none;
   }
 }
+// 房屋选择遮罩层
 /deep/ .van-overlay {
   top: 30px;
   background-color: rgba(0, 0, 0, 0.3);
-}
-.tf-ml-sm {
-  margin-left: 20px;
 }
 </style>
