@@ -343,7 +343,7 @@ export default {
         'scrollBarContent'
       )[0].scrollLeft = this.scrollLeft
     }
-    if (this.scrollLeft2) {
+    if (this.scrollLeft2 && document.getElementById('flash-top') && document.getElementById('flash-top').getElementsByClassName('scrollBarContent')) {
       document.getElementById('flash-top').getElementsByClassName(
         'scrollBarContent'
       )[0].scrollLeft = this.scrollLeft2
@@ -382,14 +382,11 @@ export default {
       getMenu().then(res => {
         if (res.success) {
           this.flag = true
-          console.log('this.isRefresh', this.isRefresh)
           // if (this.isRefresh) {
           this.isRefresh = false
           var navArr = this.navList.concat()
           if (navArr.length && res.data.length) {
-            console.log(11, JSON.stringify(navArr), JSON.stringify(res.data))
             if (JSON.stringify(navArr) != JSON.stringify(res.data)) {
-              console.log('change')
               this.isChange = true
               this.navList = []
               this.navList2 = []
@@ -425,46 +422,6 @@ export default {
           }
         }
       })
-      // getClassifyGoods({
-      //   page: this.page,
-      //   category_id: this.category_id
-      // }).then(res => {
-      //   if (res.success) {
-      //     this.flag = true
-      //     if (this.isRefresh) {
-      //       this.isRefresh = false
-      //       var navArr = this.navList.concat()
-      //       navArr.splice(0, 1)
-      //       if (navArr.length && res.data.category_list.length) {
-      //         if (JSON.stringify(navArr) != JSON.stringify(res.data.category_list)) {
-      //           this.navList = []
-      //           this.navList2 = []
-      //           this.category_id = ''
-      //           this.activeIndex = 0
-      //           this.activeIndex2 = 0
-      //         }
-      //       }
-      //     }
-      //     if (this.navList.length == 0) {
-      //       this.navList = [{ category_name: '推荐' }]
-      //       this.navList = this.navList.concat(res.data.category_list)
-      //       if (res.data.category_list[this.activeIndex].children) {
-      //         this.navList2 = res.data.category_list[this.activeIndex].children
-      //       }
-      //     } else {
-      //       this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
-      //       this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
-      //       if (res.data.goods_list.length < res.pageSize) {
-      //         this.finished = true
-      //         this.flag = true
-      //       } else {
-      //         this.flag = false
-      //         this.page = this.page + 1
-      //       }
-      //       this.loading = false
-      //     }
-      //   }
-      // })
     },
     compare (origin, target) {
       if (typeof target !== 'object') {
@@ -657,10 +614,12 @@ export default {
       'scrollBarContent'
     )
     this.scrollLeft = (el2.length && el2[0].scrollLeft) || 0
-    const el3 = document.getElementById('flash-top').getElementsByClassName(
-      'scrollBarContent'
-    )
-    this.scrollLeft2 = (el3.length && el3[0].scrollLeft) || 0
+    if (document.getElementById('flash-top') && document.getElementById('flash-top').getElementsByClassName('scrollBarContent')) {
+      const el3 = document.getElementById('flash-top').getElementsByClassName(
+        'scrollBarContent'
+      )
+      this.scrollLeft2 = (el3.length && el3[0].scrollLeft) || 0
+    }
     next()
   }
 }
