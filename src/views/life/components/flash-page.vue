@@ -236,7 +236,8 @@ export default {
       pageSize: 10, // 分页条数
       isEmpty: false, // 是否为空
       loading: false,
-      finished: true
+      finished: true,
+      isflag: false
     }
   },
   computed: {
@@ -248,6 +249,7 @@ export default {
   methods: {
     onLoad () {
       // 异步更新数据
+      console.log('onload')
       this.getGoodsData()
     },
     updateOne () {
@@ -297,6 +299,7 @@ export default {
         ollage_id: this.ollage_id
       }).then(res => {
         if (res.success) {
+          this.isflag = true
           this.flag = true
           this.listData =
             this.page == 1
@@ -319,7 +322,8 @@ export default {
       this.listData = []
       this.page = 1
       if (!this.loading && !this.finished) {
-        this.getData()
+        // this.getData()
+        this.getGoodsData()
       } else {
         this.loading = false
         this.finished = false
@@ -349,7 +353,12 @@ export default {
     // 菜单点击
     navFun (index) {
       this.active = index
-      console.log(1223)
+      this.isflag = false
+      setTimeout(() => {
+        if (!this.isflag) {
+          this.getGoodsData()
+        }
+      }, 600)
     },
     changeNav (index) {
       this.active = index
@@ -361,10 +370,7 @@ export default {
       const newTime = parseInt(new Date().getTime() / 1000)
       const startTime = this.navList[index].start_time
       if (newTime >= startTime && this.tapStatus == 3) {
-        if (newTime >= startTime) {
-          // 当前时间大于等于活动开始时间
-          this.getData()
-        }
+        this.getData()
       }
     },
     closeSwal (data) {

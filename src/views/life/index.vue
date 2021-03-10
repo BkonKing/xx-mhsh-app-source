@@ -344,6 +344,11 @@ export default {
         'scrollBarContent'
       )[0].scrollLeft = this.scrollLeft
     }
+    if (this.scrollLeft2) {
+      document.getElementById('flash-top').getElementsByClassName(
+        'scrollBarContent'
+      )[0].scrollLeft = this.scrollLeft2
+    }
   },
   methods: {
     onLoad () {
@@ -668,6 +673,10 @@ export default {
       'scrollBarContent'
     )
     this.scrollLeft = (el2.length && el2[0].scrollLeft) || 0
+    const el3 = document.getElementById('flash-top').getElementsByClassName(
+      'scrollBarContent'
+    )
+    this.scrollLeft2 = (el3.length && el3[0].scrollLeft) || 0
     next()
   }
 }
@@ -930,6 +939,7 @@ export default {
   padding-bottom: 20px;
   width: 710px;
   margin: 0 auto;
+  border-radius: 10px;
 }
 .van-tabs__content {
   .van-tab__pane,.flash-cont {
