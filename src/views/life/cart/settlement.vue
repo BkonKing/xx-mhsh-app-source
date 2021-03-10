@@ -463,7 +463,7 @@ export default {
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
         this.flashParam.old_pay_credits = this.settlementInfo.pay_credits
-        exchangeCreate(this.flashParam).then(res => { // 幸福币兑换
+        exchangeCreate(Object.assign({ user_explain: this.remarks }, this.flashParam)).then(res => { // 幸福币兑换
           if (res.success) {
             this.order_id = res.order_id
             // that.cartInit()
