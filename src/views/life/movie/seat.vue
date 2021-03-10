@@ -256,7 +256,7 @@ export default {
     totalPrice () {
       let seatPrice = 0
       Object.keys(this.selectSeats).forEach(key => {
-        seatPrice += makeCount(parseFloat(this.selectSeats[key].seat_price))
+        seatPrice = makeCount(parseFloat(this.selectSeats[key].seat_price) + seatPrice)
       })
       return seatPrice
     },

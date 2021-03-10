@@ -83,7 +83,7 @@
                   <div v-for="(item, index) in nowMovieList" :key="index" class="movie-item">
                     <div class="movie-pic" @click="linkFunc(9, {id: item.film_id})">
                       <div class="movie-tip flex-between">
-                        <div class="moive-score">{{ parseFloat(item.score) / 10 }}</div>
+                        <div class="moive-score">{{ item.score != 0 ? (parseFloat(item.score) / 10) : '' }}</div>
                         <div class="moive-look">{{ item.want_view | wantFormat }}想看</div>
                       </div>
                       <img class="img-100" :src="item.cover" />

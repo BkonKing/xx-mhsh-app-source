@@ -65,7 +65,7 @@
           class="film-des"
           @click="goFilmDetails(filmActive.film_id)"
         >
-          {{ filmActive.total_time }}分钟 | {{ filmActive.copy_type }}
+          {{ filmActive.total_time }}分钟 | {{ (filmActive.type && filmActive.type.replace(',', ' ')) }}
         </div>
         <div class="film-tag"></div>
       </div>
@@ -149,7 +149,7 @@ export default {
       first: true,
       offsetTop: 1.17333, // tab吸顶距离（单位rem）
       shareShow: false,
-      shareObj: { pyqHide: true }
+      shareObj: {}
     }
   },
   components: {
@@ -178,7 +178,7 @@ export default {
         description: '来看下最近有什么好电影吧~',
         thumb: '',
         contentUrl: `http://live.tosolomo.com/wap/#/cinemaDetails?id=${this.cinemaId}&name=${this.title}`,
-        pyqHide: true
+        pyqHide: false
       }
       this.getCinemadetail()
     },

@@ -101,6 +101,9 @@ export default {
       shareShow: false,
       shareObj: { pyqHide: true },
       first: true,
+      countyId: '',
+      hallNo: '',
+      sortType: 2,
       layerNumber: 0 // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
     }
   },
@@ -188,11 +191,11 @@ export default {
     // 设置分享参数
     setShareObj (data) {
       this.shareObj = {
-        title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? parseFloat(this.filmInfo.score) / 10 : ''}`,
+        title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? ' 评分' + parseFloat(this.filmInfo.score) / 10 : ''}`,
         description: this.filmInfo.introduction,
         thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
-        pyqHide: true
+        pyqHide: false
       }
     },
     // 获取影片排期
@@ -222,14 +225,16 @@ export default {
     // 获取影院
     getSelectCinema ({ countyId, hallNo, sortType }) {
       this.cinemaLoading = true
+      countyId && (this.countyId = countyId)
+      sortType && (this.sortType = sortType)
       selectCinema({
         city_id: this.cityId,
         lng: this.lon,
         lat: this.lat,
         film_no: this.filmNo,
-        county_id: countyId,
+        county_id: this.countyId,
         hall_no: hallNo,
-        sort_type: sortType,
+        sort_type: this.sortType,
         date: this.activeDate
       }).then(({ data }) => {
         this.cinemaList = data
@@ -263,7 +268,7 @@ export default {
   padding: 0;
   /deep/ .cinema-box {
     padding: 40px 30px 30px;
-    border-bottom: 2px solid #f0f0f0;
+    // border-bottom: 2px solid #f0f0f0;
   }
 }
 /deep/.van-tab {

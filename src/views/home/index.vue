@@ -932,6 +932,9 @@ export default {
       width: auto;
       text-align: center;
     }
+    .ticket-btn {
+      margin-top: 14px;
+    }
   }
 }
 /* 社区活动 */

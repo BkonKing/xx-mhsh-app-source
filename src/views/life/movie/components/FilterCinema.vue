@@ -1,7 +1,7 @@
 <template>
   <van-sticky v-bind="$attrs">
     <van-dropdown-menu>
-      <van-dropdown-item v-model="countyId" ref="countyId">
+      <van-dropdown-item v-model="countyId" ref="countyId" :title-class="countyTitleClass">
         <van-cell
           v-for="(item, i) in countyOptions"
           :key="i"
@@ -39,7 +39,7 @@
           {{ hallText }}
         </template>
       </van-dropdown-item> -->
-      <van-dropdown-item v-model="sortType" ref="sortType">
+      <van-dropdown-item v-model="sortType" ref="sortType" :title-class="sortTypeTitleClass">
         <van-cell
           v-for="(item, i) in sortOptions"
           :key="i"
@@ -93,12 +93,20 @@ export default {
       hallNo: '', // 影厅编码
       hallText: '影厅', // 影厅名称
       hallOptions: [],
-      sortType: 1, // 影厅排序
+      sortType: 2, // 影厅排序
       sortTypeText: '距离近', // 影厅排序显示
       sortOptions: [
-        { text: '距离近', value: 1 },
-        { text: '价格低', value: 2 }
+        { text: '距离近', value: 2 },
+        { text: '价格低', value: 1 }
       ]
+    }
+  },
+  computed: {
+    countyTitleClass () {
+      return this.countyId !== '' ? 'van-dropdown-menu-active' : ''
+    },
+    sortTypeTitleClass () {
+      return this.sortType !== 2 ? 'van-dropdown-menu-active' : ''
     }
   },
   created () {
@@ -106,7 +114,7 @@ export default {
   },
   methods: {
     reload () {
-      this.gethall()
+      // this.gethall()
       this.getcinematotalbycity()
     },
     // 获取所有的影厅
@@ -227,6 +235,12 @@ export default {
   .hall-tag-active {
     border-color: #eb5841;
     color: #eb5841;
+  }
+}
+/deep/ .van-dropdown-menu-active {
+  color: #eb5841;
+  &.van-dropdown-menu__title::after {
+    border-color: transparent transparent #eb5841 #eb5841;
   }
 }
 </style>

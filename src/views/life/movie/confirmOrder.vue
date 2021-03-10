@@ -62,8 +62,8 @@
         >
           <template v-if="orderInfo.credits != '0'">
             <div class="tf-text" @click="useCredits = !useCredits">
-              使用{{ orderInfo.credits }}幸福币抵扣<span class="tf-text-primary"
-                >￥{{ parseInt(orderInfo.credits) / 10 }}</span
+              使用{{ usePayCredits }}幸福币抵扣<span class="tf-text-primary"
+                >￥{{ usePayCredits / 10 }}</span
               >
             </div>
             <!-- 是否使用幸福币 -->
@@ -199,6 +199,7 @@ import {
   unlockorder,
   cancelPay
 } from '@/api/movie'
+import { makeCount } from '@/utils/util'
 export default {
   name: 'movieConfirmOrder',
   data () {
@@ -216,7 +217,8 @@ export default {
       idcard: '', // 身份证
       successShow: false, // 支付成功后显示
       couponPopup: false, // 选择优惠券
-      payLoading: false
+      payLoading: false,
+      coupon_price: 0
     }
   },
   components: {
@@ -234,7 +236,12 @@ export default {
           return true
         }
       })
-      return couponId ? name : '不使用优惠券'
+      return couponId ? name : '不使用'
+    },
+    usePayCredits () {
+      const couponPrice = parseInt(this.coupon_price ? this.coupon_price : this.payAmount * 10)
+      const userCredits = parseInt(this.orderInfo.credits) || 0
+      return couponPrice < userCredits ? couponPrice : userCredits
     }
   },
   created () {
@@ -282,6 +289,7 @@ export default {
         type: this.useCredits ? 1 : 0
       }).then(({ data }) => {
         this.payAmount = parseFloat(data.price)
+        this.coupon_price = data.coupon_price ? data.coupon_price / 10 : this.payAmount
         this.couponPopup = false
       })
     },
@@ -669,5 +677,8 @@ export default {
 }
 /deep/ .van-checkbox {
   margin-left: 20px;
+}
+/deep/ .van-icon {
+  font-size: 24px;
 }
 </style>

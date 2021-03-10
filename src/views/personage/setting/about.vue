@@ -8,26 +8,31 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="logo-container">
-      <img class="logo-img" src="@/assets/imgs/logo.png" />
-      <div class="tf-text-lg">版本号：{{ appVersion }}</div>
-    </div>
-    <tf-list class="about-list">
-      <tf-list-item
-        title="检查更新"
-        @click="openDialog"
-        v-txAnalysis="{ eventId: 81 }"
-        border
-      >
-        <template v-if="updateStatus" v-slot:right>
-          <div class="right-text tf-text-primary">发现新版本</div>
-        </template>
-      </tf-list-item>
-      <tf-list-item title="协议及声明" @click="goAgreementList"></tf-list-item>
-    </tf-list>
-    <div class="copyright-box">
-      copyright ©2020 河南美好生活家园运营服务集团有限公司<br />
-      All Rights Reserved
+    <div class="about-contariner">
+      <div class="logo-container">
+        <img class="logo-img" src="@/assets/imgs/logo.png" />
+        <div class="tf-text-lg">版本号：{{ appVersion }}</div>
+      </div>
+      <tf-list class="about-list">
+        <tf-list-item
+          title="检查更新"
+          @click="openDialog"
+          v-txAnalysis="{ eventId: 81 }"
+          border
+        >
+          <template v-if="updateStatus" v-slot:right>
+            <div class="right-text tf-text-primary">发现新版本</div>
+          </template>
+        </tf-list-item>
+        <tf-list-item
+          title="协议及声明"
+          @click="goAgreementList"
+        ></tf-list-item>
+      </tf-list>
+      <div class="copyright-box">
+        copyright ©2020 河南美好生活家园运营服务集团有限公司<br />
+        All Rights Reserved
+      </div>
     </div>
   </div>
 </template>
@@ -56,7 +61,7 @@ export default {
   methods: {
     /* 检查版本更新 */
     checkUpdate () {
-      checkUpdate(false).then((result) => {
+      checkUpdate(false).then(result => {
         this.updateInfo = result
         this.updateStatus = result.update
       })
@@ -78,9 +83,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.about-contariner {
+  padding: 0 20px;
+}
 .about-list {
-  width: 710px;
-  margin: 0 20px;
+  width: 100%;
   border-radius: 10px;
   color: #222;
   /deep/ .tf-clist-box {
@@ -112,12 +119,12 @@ export default {
   }
 }
 .copyright-box {
-  width: 100%;
+  width: 710px;
   text-align: center;
   position: absolute;
   bottom: 26px;
   font-size: 22px;
   line-height: 42px;
-  color: #8F8F94;
+  color: #8f8f94;
 }
 </style>

@@ -91,6 +91,7 @@ export default {
   }
   .nv {
     color: #ff3366;
+    font-size: 26px;
   }
 }
 </style>
