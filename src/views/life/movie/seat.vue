@@ -983,9 +983,6 @@ export default {
       margin-left: 20px;
     }
   }
-  /deep/ .van-button--large {
-    border-radius: 44px !important;
-  }
 }
 .loading-placeholder {
   display: flex;

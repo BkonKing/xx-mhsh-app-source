@@ -39,14 +39,14 @@ export default {
     return {
       countyId: '', // 区县id
       hallNo: '', // 影厅编码
-      sortType: 1, // 影厅排序
+      sortType: 2, // 影厅排序
       cinemaList: [] // 影院列表
     }
   },
   methods: {
     reload (data) {
       if (data) {
-        const { countyId = '', hallNo = '', sortType = 1 } = data
+        const { countyId = '', hallNo = '', sortType = 2 } = data
         this.countyId = countyId
         this.hallNo = hallNo
         this.sortType = sortType

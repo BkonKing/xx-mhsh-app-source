@@ -65,7 +65,7 @@
           class="film-des"
           @click="goFilmDetails(filmActive.film_id)"
         >
-          {{ filmActive.total_time }}分钟 | {{ (filmActive.type && filmActive.type.replace(',', ' ')) }}
+          {{ filmActive.total_time }}分钟 | {{ (filmActive.type && filmActive.type.replace(/,/g, ' ')) }}
         </div>
         <div class="film-tag"></div>
       </div>
