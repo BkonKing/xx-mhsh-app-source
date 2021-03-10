@@ -42,9 +42,8 @@
               场次
             </div>
             <div>
-              {{ info.date }} {{ info.week }} {{ info.time }} <br />{{
-                info.copy_language
-              }}
+              {{ info.date }} <span class="tf-margin">{{ info.week }}</span>
+              {{ info.time }} <br />{{ info.copy_language }}
               {{ info.copy_type }}
             </div>
           </div>
@@ -128,42 +127,50 @@
         <div class="order-status-divider"></div>
         <div class="border-indent border-indent-left"></div>
         <div class="border-indent border-indent-right"></div>
+        <!-- 有票 -->
+        <template v-if="info.ticket_code !== '0'">
+          <img class="ticket-code-img" :src="info.printno_url" />
+          <div class="tf-text-lg">
+            取票码：<span class="ticket-code-text">{{ info.ticket_code }}</span>
+          </div>
+        </template>
         <!-- 待出票 -->
-        <!-- <template v-if="info.order_desc === '待出票'">
-          rate表示进度条的目标进度
+        <template v-else>
           <van-circle
             v-model="currentRate"
             :rate="100"
-            color="#EB5841"
             :speed="100"
+            color="#EB5841"
+            layer-color="#f0f0f0"
+            class="tf-circle"
             ><img
               class="draw-bill-img"
               src="@/assets/imgs/movie_draw_bill.png"
               alt=""
           /></van-circle>
           <div class="tf-text-lg">出票中</div>
-        </template> -->
-        <!-- 有票 -->
-        <!-- <template v-else> -->
-          <img class="ticket-code-img" :src="info.printno_url" />
-          <div class="tf-text-lg">
-            取票码：<span class="ticket-code-text">{{ info.ticket_code }}</span>
-          </div>
-        <!-- </template> -->
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getfilmdetails, getCustomerPhone } from '@/api/movie'
+import {
+  getfilmdetails,
+  getCustomerPhone,
+  updateOrderStatus
+} from '@/api/movie'
 export default {
   name: 'movieTicket',
   data () {
     return {
       orderId: '',
-      info: {},
+      info: {
+        ticket_code: '  '
+      },
       currentRate: 0, // 动画过程中的实时进度
+      intervalTimer: 0, // 出票定时器
       customerPhone: '' // 客服电话
     }
   },
@@ -189,6 +196,9 @@ export default {
         order_id: this.orderId
       }).then(({ data }) => {
         this.info = data
+        if (this.info.ticket_code === '0') {
+          this.rateLock()
+        }
       })
     },
     // 客服电话
@@ -202,6 +212,37 @@ export default {
         type: 'tel_prompt',
         number: this.customerPhone || ''
       })
+    },
+    // 锁座中loading效果
+    rateLock () {
+      this.intervalTimer = setInterval(() => {
+        if (this.currentRate < 100) {
+          this.currentRate++
+        } else {
+          this.currentRate = 0
+        }
+      }, 10)
+      this.updateOrderStatus()
+    },
+    // 更新影票取票码
+    updateOrderStatus () {
+      setTimeout(() => {
+        updateOrderStatus({
+          order_id: this.orderId
+        })
+          .then((res) => {
+            if (res.is_update) {
+              this.getfilmdetails()
+              this.currentRate = 0
+              clearInterval(this.intervalTimer)
+            } else {
+              this.updateOrderStatus()
+            }
+          })
+          .catch(() => {
+            this.updateOrderStatus()
+          })
+      }, 3000)
     }
   },
   filters: {
@@ -254,6 +295,8 @@ export default {
       border-radius: 4px;
     }
     .film-info {
+      flex: 1;
+      width: 0;
       font-size: 26px;
       color: #8f8f94;
       .film-name {
@@ -261,6 +304,10 @@ export default {
         font-size: 42px;
         font-weight: 500;
         color: #222;
+      }
+      .film-type,
+      .film-time {
+        margin-bottom: 4px;
       }
     }
   }
@@ -333,5 +380,12 @@ export default {
 .draw-bill-img {
   width: 200px;
   height: 200px;
+}
+.tf-circle {
+  margin-top: 78px;
+}
+.tf-margin {
+  margin-left: 14px;
+  margin-right: 14px;
 }
 </style>

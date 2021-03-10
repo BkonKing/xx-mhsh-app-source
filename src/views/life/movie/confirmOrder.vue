@@ -18,7 +18,9 @@
         <div class="order-info">
           <div class="order-info-box">
             <div class="order-info-label">日期：</div>
-            <div class="order-info-value">{{ orderInfo.date }} {{ orderInfo.week }}</div>
+            <div class="order-info-value">
+              {{ orderInfo.date }} {{ orderInfo.week }}
+            </div>
           </div>
           <div class="order-info-box">
             <div class="order-info-label">时间：</div>
@@ -133,11 +135,16 @@
       round
       position="bottom"
       get-container="body"
-      :style="{ 'max-height': '90%' }"
+      class="tf-popup"
     >
+      <i class="tf-icon tf-icon-guanbi1" @click="couponPopup = false"></i>
       <div class="coupon-popup">
         <div class="coupon-popup-title">优惠券</div>
-        <van-radio-group v-model="couponIdRadio" checked-color="#EB5841">
+        <van-radio-group
+          class="coupon-popup-radio"
+          v-model="couponIdRadio"
+          checked-color="#EB5841"
+        >
           <van-radio class="coupon-popup-item" name="">
             <img
               class="coupon-popup-item-img"
@@ -151,6 +158,9 @@
             :key="item.coupon_id"
             class="coupon-popup-item"
             :name="item.coupon_id"
+            :disabled="
+              item.threshold_price > parseFloat(orderInfo.source_price) * 100
+            "
           >
             <div class="coupon-popup-item-tag">
               <template v-if="item.type === '1'">
@@ -161,11 +171,18 @@
             {{ item.coupon_name }}
           </van-radio>
         </van-radio-group>
-        <van-button class="coupon-popup-btn" type="primary" @click="confirmCoupon">确定</van-button>
+        <van-button
+          class="coupon-popup-btn"
+          type="primary"
+          @click="confirmCoupon"
+          >确定</van-button
+        >
       </div>
     </van-popup>
     <van-overlay class="tf-flex-center" :show="payLoading" z-index="9999">
-      <van-loading type="spinner" color="#1989fa"  size="36px" vertical>加载中...</van-loading>
+      <van-loading type="spinner" color="#1989fa" size="36px" vertical
+        >加载中...</van-loading
+      >
     </van-overlay>
   </div>
 </template>
@@ -211,7 +228,7 @@ export default {
     couponName () {
       let name = ''
       const couponId = this.couponId
-      this.couponList.some((obj) => {
+      this.couponList.some(obj => {
         if (obj.coupon_id === couponId) {
           name = obj.coupon_name
           return true
@@ -272,6 +289,10 @@ export default {
     openCouponPopup () {
       this.couponPopup = true
       this.couponIdRadio = this.couponId
+      const el = document.getElementsByClassName('coupon-popup-radio')[0]
+      this.$nextTick(() => {
+        el && (el.scrollTop = 0)
+      })
     },
     // 确定优惠券
     confirmCoupon () {
@@ -340,7 +361,8 @@ export default {
     aliPayUp () {
       const aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, (ret, err) => {
-        if (ret.code == 9000) { // 支付成功
+        if (ret.code == 9000) {
+          // 支付成功
           this.fyResult()
         } else {
           this.cancelPay()
@@ -375,11 +397,13 @@ export default {
       payCredits({
         order_id: this.orderId,
         credits: this.orderInfo.credits
-      }).then(({ data }) => {
-        this.fyResult()
-      }).finally(() => {
-        this.payLoading = false
       })
+        .then(({ data }) => {
+          this.fyResult()
+        })
+        .finally(() => {
+          this.payLoading = false
+        })
     },
     // 支付成功回调
     fyResult () {
@@ -553,8 +577,26 @@ export default {
     }
   }
 }
+.tf-popup {
+  height: 720px;
+  background: initial;
+  .tf-icon {
+    display: block;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 30px;
+    margin-left: 650px;
+    font-size: 50px;
+    line-height: 1;
+    color: #fff;
+  }
+}
 .coupon-popup {
+  display: flex;
+  flex-direction: column;
+  height: 640px;
   padding: 30px 40px;
+  background: #fff;
   &-title {
     margin-bottom: 14px;
     font-size: 34px;
@@ -569,6 +611,11 @@ export default {
     /deep/ .van-button__text {
       font-size: 30px;
     }
+  }
+  &-radio {
+    flex: 1;
+    height: 0;
+    overflow: auto;
   }
   &-item {
     display: flex;
@@ -587,13 +634,15 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 88px;
-      height: 88px;
+      width: 120px;
+      height: 52px;
       margin-left: 20px;
       margin-right: 20px;
       background: url("~@/assets/imgs/movie_coupon.png");
-      background-size: contain;
-      font-size: 30px;
+      background-size: 120px 52px;
+      background-repeat: no-repeat;
+      font-size: 28px;
+      line-height: 1;
       color: #d6864c;
     }
     /deep/ .van-radio__icon,
@@ -603,7 +652,7 @@ export default {
       font-size: 24px;
       line-height: 1;
     }
-    /deep/ .van-icon-success{
+    /deep/ .van-icon-success {
       display: flex;
       align-items: center;
       justify-content: center;

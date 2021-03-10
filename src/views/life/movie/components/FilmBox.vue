@@ -2,7 +2,7 @@
   <div class="film-box">
     <div class="film-info" @click="goFilmDetails">
       <div
-        v-if="versionList && versionList.length && type !== 3"
+        v-if="type !== 3 && versionList && versionList.length"
         class="film-version-container"
       >
         <div class="tf-flex" v-for="(version, i) in versionList" :key="i">

@@ -279,3 +279,11 @@ export function getCustomerPhone (data) {
 export function cancelPay (data) {
   return request.post('/film/film/cancelPay', data)
 }
+
+/**
+ * 取消支付
+ * @param order_id 订单ID
+ */
+export function updateOrderStatus (data) {
+  return request.post('/film/film/updateOrderStatus', data)
+}

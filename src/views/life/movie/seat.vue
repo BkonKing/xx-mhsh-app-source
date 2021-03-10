@@ -31,8 +31,7 @@
       ref="tf-body-container"
       class="tf-body-container"
       :class="{
-        'center-container':
-          seatList && seatList.length && seatList[0].length < 14
+        'center-container': maxSeatRow
       }"
     >
       <div v-if="loading" class="loading-placeholder">
@@ -260,6 +259,15 @@ export default {
         seatPrice += makeCount(parseFloat(this.selectSeats[key].seat_price))
       })
       return seatPrice
+    },
+    maxSeatRow () {
+      let num = 0
+      if (this.seatList && this.seatList.length) {
+        this.seatList.forEach(obj => {
+          num = Math.max(obj.length, num)
+        })
+      }
+      return num < 14
     }
   },
   created () {
@@ -365,11 +373,10 @@ export default {
       // if (!this.touchParams.moveable) {
       //   return
       // }
-
       var touches = event.touches
       var events = touches[0]
       var events2 = touches[1]
-      // 双指移动
+      // 双指放大
       if (events2) {
         event.preventDefault()
         // 第2个指头坐标在touchmove时候获取
@@ -714,8 +721,7 @@ export default {
   justify-content: initial;
 }
 .center-container {
-  display: flex;
-  justify-content: center;
+  margin: 0 auto;
   .seat-container {
     align-items: center;
   }
