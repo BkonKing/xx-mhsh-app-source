@@ -337,7 +337,8 @@ export default {
         phtext: '搜索应用',
         keyboardType: 'search',
         fixed: true
-      }
+      },
+      iscache: false // 是否跳转到详情页
     }
   },
   created () {
@@ -364,13 +365,6 @@ export default {
     this.getData()
   },
   mounted () {
-    this.inputInfo.y = this.$refs.seachInput.getBoundingClientRect().top
-    this.inputInfo.x = 88 * api.winWidth / 750
-    this.inputInfo.w = this.$refs.seachInput.offsetWidth
-    this.inputInfo.h = this.$refs.seachInput.offsetHeight
-    setTimeout(() => {
-      this.$refs.tfinput.openInput()
-    }, 500)
     // this.$nextTick(() => {
     //   setTimeout(() => {
     //     // that.$refs.input.getElementsByClassName('van-field__control')[0].focus()
@@ -378,6 +372,19 @@ export default {
     // })
   },
   activated () {
+    if (this.typeVal > 0) {
+      setTimeout(() => {
+        this.$refs.tfinput2.openInput()
+      }, 500)
+    } else {
+      this.inputInfo.y = this.$refs.seachInput.getBoundingClientRect().top
+      this.inputInfo.x = 88 * api.winWidth / 750
+      this.inputInfo.w = this.$refs.seachInput.offsetWidth
+      this.inputInfo.h = this.$refs.seachInput.offsetHeight
+      setTimeout(() => {
+        this.$refs.tfinput.openInput()
+      }, 500)
+    }
     if (this.scrollTop) {
       document.getElementById('scroll-body').scrollTop = this.scrollTop
     }
@@ -668,7 +675,12 @@ export default {
         this.loading = false
         this.page = 1
         this.$refs.tfinput2.hideSeach()
-        this.$refs.tfinput.showSeach()
+        if (!this.iscache) {
+          this.$refs.tfinput.showSeach()
+        } else {
+          this.iscache = false
+          this.$refs.tfinput.openInput()
+        }
       } else {
         this.$router.go(-1)
       }
@@ -848,6 +860,8 @@ export default {
     if (deleteList.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
+    } else {
+      this.iscache = true
     }
     const el = document.getElementById('scroll-body')
     this.scrollTop = (el && el.scrollTop) || 0
