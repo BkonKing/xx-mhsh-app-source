@@ -91,9 +91,11 @@
                   <div class="task-item__remarks">
                     {{ item.task_type | taskText }}
                   </div>
-                  <div class="tf-row task-item__remarks">获得<div class="task-item__remarks--gold">
-                    {{ item.credits }}起幸福币
-                  </div>
+                  <div v-if="yxlpNum" class="tf-row task-item__remarks">
+                    获得
+                    <div class="task-item__remarks--gold">
+                      {{ item.credits }}起幸福币
+                    </div>
                   </div>
                 </div>
                 <div class="tf-row" v-else>
@@ -148,7 +150,7 @@
 
 <script>
 import tfCalendar from '@/components/tf-calendar'
-import { signin, getCreditsAccount } from '@/api/personage'
+import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
@@ -164,7 +166,8 @@ export default {
       taskList: [], // 任务列表
       creditsGoods: [], // 幸福币商品列表
       signLoading: false, // 签到按钮loading
-      mj_status: true // 是否有门禁
+      mj_status: true, // 是否有门禁
+      yxlpNum: 0 // 推荐购房楼盘列表
     }
   },
   computed: {
@@ -182,7 +185,8 @@ export default {
         this.taskList = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
-        console.log('任务列表', data.task_list)
+        this.getYxlpList()
+        // console.log('任务列表', data.task_list)
       })
     },
     /* 签到事件 */
@@ -288,6 +292,12 @@ export default {
       } else {
         this.$router.push(url)
       }
+    },
+    // 获取推荐购房楼盘
+    getYxlpList () {
+      getYxlpList().then(({ data }) => {
+        this.yxlpNum = (data && data.length) || 0
+      })
     }
   },
   filters: {
