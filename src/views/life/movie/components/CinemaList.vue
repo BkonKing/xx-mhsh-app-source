@@ -1,5 +1,5 @@
 <template>
-  <refreshList class="cinema-list" ref="list" :disabled="disabled" :list.sync="list" :load="load">
+  <refreshList class="cinema-list" ref="list" :disabled="disabled" :list.sync="list" :load="load" @refresh="refresh">
     <template v-slot="{ item }">
       <cinema-box :tag="tag" :data="item"></cinema-box>
     </template>
@@ -37,6 +37,9 @@ export default {
   methods: {
     reload () {
       this.$refs.list.reload()
+    },
+    refresh () {
+      this.$emit('refresh')
     }
   },
   watch: {

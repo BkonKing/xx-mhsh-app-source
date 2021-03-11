@@ -29,7 +29,12 @@
     </van-nav-bar>
     <!-- 电影 -->
     <div class="film-container tf-body-container" v-show="type === '1'">
-      <van-tabs class="list-tabs" v-model="movieActive" sticky offset-top="1.17333rem">
+      <van-tabs
+        class="list-tabs"
+        v-model="movieActive"
+        sticky
+        offset-top="1.17333rem"
+      >
         <van-tab title="正在热映">
           <film-list
             id="nowMovieList"
@@ -105,8 +110,9 @@ export default {
       this.firstCinema = false
       this.movieActive = this.$route.query.filmType ? 1 : 0
       // 影院没有做点击后再初始化加载，所以从电影进入页面需要手动刷新影院列表
-      this.$refs.cinemaList && this.$refs.cinemaList.reload({})
+      this.$refs.cinemaList && this.$refs.cinemaList.reload()
     } else {
+      this.$refs.cinemaList && this.$refs.cinemaList.reload()
       this.$nextTick(() => {
         this.filmReload('nowMovieList')
         this.filmReload('startMovieList')
@@ -165,7 +171,9 @@ export default {
           this.nowFilmTop = (nowel && nowel.scrollTop) || 0
         }
       } else {
-        const cinemael = document.getElementById('cinemaList').getElementsByClassName('cinema-list')[0]
+        const cinemael = document
+          .getElementById('cinemaList')
+          .getElementsByClassName('cinema-list')[0]
         this.scrollTop = (cinemael && cinemael.scrollTop) || 0
       }
     },
@@ -174,12 +182,22 @@ export default {
       if (type === '1') {
         if (movieActive === 1) {
           this.startFilmTop &&
-      (document.getElementById('startMovieList').scrollTop = this.startFilmTop)
+            (document.getElementById(
+              'startMovieList'
+            ).scrollTop = this.startFilmTop)
         } else {
-          this.nowFilmTop && (document.getElementById('nowMovieList').scrollTop = this.nowFilmTop)
+          this.nowFilmTop &&
+            (document.getElementById(
+              'nowMovieList'
+            ).scrollTop = this.nowFilmTop)
         }
       } else {
-        this.scrollTop && (document.getElementById('cinemaList').getElementsByClassName('cinema-list')[0].scrollTop = this.scrollTop)
+        this.scrollTop &&
+          (document
+            .getElementById('cinemaList')
+            .getElementsByClassName(
+              'cinema-list'
+            )[0].scrollTop = this.scrollTop)
       }
     }
   },
@@ -274,12 +292,27 @@ export default {
 /deep/ .cinema-list .van-list__loading .van-loading {
   padding-top: 30px;
 }
-/deep/ .van-sticky{
-  background-image:url('~@/assets/imgs/movie_list-header.png');
+/deep/ .cinema-list .tf-van-cell {
+  margin-bottom: 0;
+}
+/deep/ .van-sticky {
+  background-image: url("~@/assets/imgs/movie_list-header.png");
   background-size: 100% auto;
   background-repeat: no-repeat;
-  .van-tabs__nav, .van-dropdown-menu__bar {
+  .van-tabs__nav,
+  .van-dropdown-menu__bar {
     background: initial;
+    box-shadow: initial;
+  }
+  .van-dropdown-menu__bar::after {
+    content: "";
+    display: block;
+    width: 690px;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+    background: #f0f0f0;
   }
 }
 </style>

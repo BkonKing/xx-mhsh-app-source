@@ -124,7 +124,7 @@
       <router-link
         class="success-link"
         replace
-        :to="`/life/movie/ticket?id=${orderId}`"
+        :to="`/life/movie/ticket?id=${orderInfo.id}`"
         >查看详情</router-link
       >
       <van-button class="success-btn" @click="$router.go(-2)">确定</van-button>

@@ -435,7 +435,7 @@ export default {
   height: 160px;
   padding: 30px;
   background: #fff;
-  border-top: 2px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0;
   .display-flex {
     display: flex;
     align-items: center;
@@ -517,5 +517,8 @@ export default {
   .film-swipe-item-active .film-cover {
     transform: scale(1.15);
   }
+}
+/deep/ .van-tabs--line .van-tabs__wrap {
+  border-bottom: 2px solid #f0f0f0;
 }
 </style>
