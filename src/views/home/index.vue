@@ -930,6 +930,7 @@ export default {
     }
     .film-name {
       width: auto;
+      font-size: 30px;
       text-align: center;
     }
     .ticket-btn {

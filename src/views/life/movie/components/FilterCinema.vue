@@ -188,9 +188,11 @@ export default {
   border: 6px solid;
   border-color: transparent transparent #aaaaaa #aaaaaa;
   opacity: 1;
+  margin-top: -8px;
 }
 /deep/ .van-dropdown-menu__title--active::after {
   border-color: transparent transparent #eb5841 #eb5841;
+  margin-top: -2px;
 }
 .dropdown-menu-title {
   line-height: 36px;

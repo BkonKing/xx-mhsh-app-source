@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg-white tf-body">
     <van-nav-bar
-      :class="{'unfixed-background': !isFixedTabs}"
+      :class="{ 'unfixed-background': !isFixedTabs }"
       :title="isFixedTabs ? filmInfo.film_name : ''"
       :border="false"
       :fixed="true"
@@ -46,7 +46,12 @@
         <!-- 当前排期影院列表 -->
         <div class="cinema-list">
           <!-- 切换排期loading -->
-          <van-loading v-if="cinemaLoading" type="spinner" color="#eb5841" size="20px" />
+          <van-loading
+            v-if="cinemaLoading"
+            type="spinner"
+            color="#eb5841"
+            size="20px"
+          />
           <cinema-box
             v-show="!cinemaLoading"
             v-for="(item, i) in cinemaList"
@@ -63,7 +68,8 @@
     <tf-share
       :share-show="shareShow"
       :share-obj="shareObj"
-      @closeSwal="closeShare">
+      @closeSwal="closeShare"
+    >
     </tf-share>
   </div>
 </template>
@@ -181,7 +187,7 @@ export default {
     /* 保存分享图片 */
     downloadSharePic () {
       downloadPic(this.filmInfo.thumb, `film_${this.filmInfo.film_id}`)
-        .then((data) => {
+        .then(data => {
           this.setShareObj(data)
         })
         .catch(() => {
@@ -191,10 +197,15 @@ export default {
     // 设置分享参数
     setShareObj (data) {
       this.shareObj = {
-        title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? ' 评分' + parseFloat(this.filmInfo.score) / 10 : ''}`,
+        title: `《${this.filmInfo.film_name}》${
+          this.filmInfo.score && this.filmInfo.score !== '0'
+            ? ' 评分' + parseFloat(this.filmInfo.score) / 10
+            : ''
+        }`,
         description: this.filmInfo.introduction,
         thumb: data ? 'fs://' + data + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
+        contentUrl:
+          'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
         pyqHide: false
       }
     },
@@ -204,28 +215,32 @@ export default {
       getSelectCinemaDate({
         film_no: this.filmNo,
         city_id: this.cityId
-      }).then(({ data }) => {
-        this.scheduList = data || []
-        if (this.scheduList.length) {
-          const { date, year_date, week } = this.scheduList[0]
-          this.activeDate = year_date
-          // 跳转到选择排期，那个页面tabs值（后台接口返回的值）用的是`${week} ${date}`
-          this.activeScheduDate = `${week} ${date}`
-          this.getSelectCinema({})
-        }
-      }).finally(() => {
-        this.loading = false
       })
+        .then(({ data }) => {
+          this.scheduList = data || []
+          if (this.scheduList.length) {
+            const { date, year_date, week } = this.scheduList[0]
+            this.activeDate = year_date
+            // 跳转到选择排期，那个页面tabs值（后台接口返回的值）用的是`${week} ${date}`
+            this.activeScheduDate = `${week} ${date}`
+            this.getSelectCinema({ init: true })
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     // 排期切换
     changeSchedu (name, title) {
       this.activeScheduDate = title
-      this.getSelectCinema({})
+      this.getSelectCinema({ init: true })
     },
     // 获取影院
-    getSelectCinema ({ countyId, hallNo, sortType }) {
+    getSelectCinema ({ countyId, hallNo, sortType, init }) {
       this.cinemaLoading = true
-      countyId && (this.countyId = countyId)
+      if (!init) {
+        this.countyId = countyId
+      }
       sortType && (this.sortType = sortType)
       selectCinema({
         city_id: this.cityId,
@@ -236,11 +251,13 @@ export default {
         hall_no: hallNo,
         sort_type: this.sortType,
         date: this.activeDate
-      }).then(({ data }) => {
-        this.cinemaList = data
-      }).finally(() => {
-        this.cinemaLoading = false
       })
+        .then(({ data }) => {
+          this.cinemaList = data
+        })
+        .finally(() => {
+          this.cinemaLoading = false
+        })
     },
     // tabs滚动
     scrollTabs ({ isFixed }) {
