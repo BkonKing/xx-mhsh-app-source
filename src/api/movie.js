@@ -238,7 +238,7 @@ export function getticklist (data) {
 
 /**
  * 获取电影票详情
- * @param {string} order_id 订单ID
+ * @param {string} id 订单ID
  */
 export function getfilmdetails (data) {
   return request.post('/film/film/getfilmdetails', data)

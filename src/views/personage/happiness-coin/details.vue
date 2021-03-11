@@ -107,6 +107,9 @@ export default {
             path = `/order/special-detail?id=${order_id}`
           }
           break
+        case '4':
+          path = `/life/movie/ticket?id=${order_id}`
+          break
       }
       this.$router.push({
         path

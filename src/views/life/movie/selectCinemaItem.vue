@@ -268,7 +268,8 @@ export default {
   padding: 0;
   /deep/ .cinema-box {
     padding: 40px 30px 30px;
-    // border-bottom: 2px solid #f0f0f0;
+    border-top: none;
+    border-bottom: 2px solid #f0f0f0;
   }
 }
 /deep/.van-tab {

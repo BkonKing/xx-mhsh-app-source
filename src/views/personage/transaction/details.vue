@@ -1052,6 +1052,9 @@ export default {
   width: 100%;
   padding: 20px 20px 40px;
   background-color: #fff;
+  .tf-btn + .tf-row-space-between {
+    margin-top: 20px;
+  }
 }
 .operation-content {
   text-align: center;

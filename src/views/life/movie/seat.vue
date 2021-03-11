@@ -521,8 +521,9 @@ export default {
       const rowIndex = ri || parseInt(col.seatRow) - 1
       const colIndex = ci || parseInt(col.seatCol) - 1
       if (col.seatType === 'L') {
-        if (this.seatList[rowIndex][colIndex + 2].seatType === 'R') {
-          this.deleteSeat(this.seatList[rowIndex][colIndex + 2].seatNo)
+        const col2 = this.seatList[rowIndex][colIndex + 2]
+        if (col2 && col2.seatType === 'R') {
+          this.deleteSeat(col2.seatNo)
         }
         this.deleteSeat(this.seatList[rowIndex][colIndex + 1].seatNo)
         this.deleteSeat(col.seatNo)
@@ -533,8 +534,9 @@ export default {
       } else if (col.seatType === 'R') {
         this.deleteSeat(col.seatNo)
         this.deleteSeat(this.seatList[rowIndex][colIndex - 1].seatNo)
-        if (this.seatList[rowIndex][colIndex - 2].seatType === 'L') {
-          this.deleteSeat(this.seatList[rowIndex][colIndex - 2].seatNo)
+        const col2 = this.seatList[rowIndex][colIndex - 2]
+        if (col2 && col2.seatType === 'L') {
+          this.deleteSeat(col2.seatNo)
         }
       } else {
         this.deleteSeat(col.seatNo)

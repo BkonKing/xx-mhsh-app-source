@@ -193,7 +193,7 @@ export default {
     // 获取电影票详细信息
     getfilmdetails () {
       getfilmdetails({
-        order_id: this.orderId
+        id: this.orderId
       }).then(({ data }) => {
         this.info = data
         if (this.info.ticket_code === '0') {
