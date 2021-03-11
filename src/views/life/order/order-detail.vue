@@ -89,7 +89,7 @@
             </div>
           </div>
         </div>
-        <div v-if="orderInfo.project_logistice_buy_type == 1" @click="logisticsLink" class="cont-session order-message smzt-session">
+        <div v-if="goodsList[0].buy_type == 1" @click="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 ? logisticsLink : ''" class="cont-session order-message smzt-session">
           <div class="order-message-item">
             <div class="order-message-item-left color-222 font-28">配送方式</div>
             <div class="color-222 font-28 order-message-item-right">上门自提</div>
@@ -100,7 +100,7 @@
               <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
             </div>
           </div>
-          <img class="shipping-address-icon" src="@/assets/img/right.png" />
+          <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" class="shipping-address-icon" src="@/assets/img/right.png" />
         </div>
         <div v-else class="cont-session address-logistics">
           <div @click="linkFunc(23)" class="shipping-address">
