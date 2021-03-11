@@ -296,6 +296,7 @@ export default {
       navList: [], // 一级菜单
       navList2: [], // 二级菜单
       bargain_id: '',
+      initId: 0,
       navBarShow: false,
       special_id: '',
       newTime: '', // 当前时间
@@ -402,6 +403,7 @@ export default {
             this.navList.forEach(item => {
               if (item.type == 2 && item.child) {
                 this.navList2 = item.child
+                this.initId = this.navList2[0].id
               }
               if (item.type == 1) {
                 isFlash = true
@@ -461,6 +463,7 @@ export default {
       }
     },
     changeNav (index = '') {
+      this.bargain_id = this.initId
       this.active = index
       this.activeIndex = index
       this.activeIndex2 = 0
@@ -503,7 +506,7 @@ export default {
     changeNav2 (index, id) {
       this.activeIndex2 = index
       this.bargain_id = id
-      this.$refs.special[0].listInit()
+      this.$refs.special[0].listInit(this.bargain_id)
       this.flag = false
       // this.activeIndex2 = index
 

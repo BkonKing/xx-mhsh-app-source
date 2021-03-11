@@ -56,10 +56,10 @@ export default {
       // 异步更新数据
       this.getGoodsData()
     },
-    getGoodsData () {
+    getGoodsData (id = -1) {
       getSaleGoods({
         page: this.page,
-        bargain_id: this.bargain_id
+        bargain_id: id > -1 ? id : this.bargain_id
       }).then(res => {
         if (res.success) {
           this.flag = true
@@ -76,11 +76,11 @@ export default {
         }
       })
     },
-    listInit () {
+    listInit (id) {
       this.listData = []
       this.page = 1
       if (!this.loading && !this.finished) {
-        this.getGoodsData()
+        this.getGoodsData(id)
       } else {
         this.loading = false
         this.finished = false
