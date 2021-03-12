@@ -31,6 +31,9 @@
           <div class="article-title">{{ info.title }}</div>
           <div class="article-content"
                v-html="info.content"></div>
+          <!-- 播放视屏  -->
+          <videoChild :url='videoURL'
+                      :poster="poster"></videoChild>
           <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
         <template v-else-if="articleType == 3">
@@ -49,6 +52,9 @@
                            :data="info.images"
                            mode="show"></tf-image-list>
           </template>
+          <!-- 播放视屏  -->
+          <videoChild :url='videoURL'
+                      :poster="poster"></videoChild>
         </template>
         <template v-else-if="articleType == 2">
           <div class="article-title">{{ info.title }}</div>
@@ -56,6 +62,9 @@
             <div class="tf-text tf-mb-lg"
                  v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
+            <!-- 播放视屏  -->
+            <videoChild :url='videoURL'
+                        :poster="poster"></videoChild>
             <div class="apply-box"
                  v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
@@ -85,9 +94,9 @@
             </div>
           </div>
         </template>
-        <!-- 播放视屏 -->
-        <videoChild :url='videoURL'
-                    :poster="poster"></videoChild>
+        <!-- 播放视屏 1111111 -->
+        <!-- <videoChild :url='videoURL'
+                    :poster="poster"></videoChild> -->
         <div class="activity-footer">
           <div class="tf-icon tf-icon-zan"
                :class="{ 'like-active': info.is_thumbsup }"
@@ -180,6 +189,7 @@ export default {
     this.id = id
     this.getInfo()
   },
+
   methods: {
     // 下拉刷新
     onRefresh () {
@@ -234,7 +244,21 @@ export default {
           })
           return
         }
+        console.log('资讯详情', data)
+
         this.info = data
+        this.$nextTick(() => {
+          const aEle = document.getElementsByTagName('a')[0]
+          const img = document.querySelector('a img')
+          console.log(aEle)
+          console.log(img)
+          img.onclick = (e) => {
+            e.preventDefault()
+          }
+          aEle.onclick = () => {
+            return false
+          }
+        })
         this.isLoading = false
         this.downloadSharePic()
       })
@@ -253,7 +277,21 @@ export default {
             })
             return
           }
+          console.log('帖子详情', data)
+
           this.info = data
+          this.$nextTick(() => {
+            const aEle = document.getElementsByTagName('a')[0]
+            const img = document.querySelector('a img')
+            console.log(aEle)
+            console.log(img)
+            img.onclick = (e) => {
+              e.preventDefault()
+            }
+            aEle.onclick = () => {
+              return false
+            }
+          })
           this.info.id = this.id
           this.isLoading = false
           this.downloadSharePic()
@@ -280,7 +318,21 @@ export default {
           })
           return
         }
+        console.log('活动详情', data)
+
         this.info = data
+        this.$nextTick(() => {
+          const aEle = document.getElementsByTagName('a')[0]
+          const img = document.querySelector('a img')
+          console.log(aEle)
+          console.log(img)
+          img.onclick = (e) => {
+            e.preventDefault()
+          }
+          aEle.onclick = () => {
+            return false
+          }
+        })
         this.isLoading = false
         this.downloadSharePic()
       })
