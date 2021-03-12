@@ -505,11 +505,13 @@ export default {
         }
         if (this.navList[index].type == 3) {
           this.special_id = this.navList[index].special_id
-          const key = 'area' + index
-          if (this.$refs[key]) {
-            console.log(this.$refs[key][0])
-            this.$refs[key][0].listInit()
-          }
+          this.$nextTick(() => {
+            const key = 'area' + index
+            if (this.$refs[key]) {
+              console.log(this.$refs[key][0])
+              this.$refs[key][0].listInit()
+            }
+          })
         }
         this.listInit()
       } else {
