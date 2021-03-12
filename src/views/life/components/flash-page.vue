@@ -72,6 +72,7 @@
         v-model="active"
         swipe-threshold="10"
         @change="changeNav"
+        :swipeable="swipeable"
       >
         <van-tab v-for="(item, index) in navList" :key="index" :title="item.status_txt">
           <van-list
@@ -213,6 +214,10 @@ export default {
     bargain_id: { // 特价id
       type: String,
       default: ''
+    },
+    swipeable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -327,7 +332,20 @@ export default {
       } else {
         this.loading = false
         this.finished = false
+        if (this.swipeable) {
+          // setTimeout(() => {
+          //   if (!this.listData.length) {
+          //     this.getGoodsData()
+          //   }
+          // }, 700)
+        }
       }
+      this.isflag = false
+      setTimeout(() => {
+        if (!this.isflag) {
+          this.getGoodsData()
+        }
+      }, 600)
     },
     // 特卖横向滚动
     scrollEvent () {
@@ -353,12 +371,12 @@ export default {
     // 菜单点击
     navFun (index) {
       this.active = index
-      this.isflag = false
-      setTimeout(() => {
-        if (!this.isflag) {
-          this.getGoodsData()
-        }
-      }, 600)
+      // this.isflag = false
+      // setTimeout(() => {
+      //   if (!this.isflag) {
+      //     this.getGoodsData()
+      //   }
+      // }, 600)
     },
     changeNav (index) {
       this.active = index

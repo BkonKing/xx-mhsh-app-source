@@ -65,12 +65,15 @@ export default {
     changeNav (item, index) {
       this.activeIndex = index
       this.bargain_id = this.navList[index].id
-      this.$refs.special.listInit()
+      this.$nextTick(() => {
+        this.$refs.special.listInit()
+      })
     },
     getData () {
       getSaleNav().then(res => {
         if (res.success) {
           this.navList = res.data
+          this.bargain_id = res.data[0].id
         }
       })
     }
