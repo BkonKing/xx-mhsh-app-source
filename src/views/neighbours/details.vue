@@ -32,7 +32,8 @@
           <div class="article-content"
                v-html="info.content"></div>
           <!-- 播放视屏  -->
-          <videoChild :url='videoURL'
+          <videoChild v-if="false"
+                      :url='videoURL'
                       :poster="poster"></videoChild>
           <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
@@ -53,7 +54,8 @@
                            mode="show"></tf-image-list>
           </template>
           <!-- 播放视屏  -->
-          <videoChild :url='videoURL'
+          <videoChild v-if="false"
+                      :url='videoURL'
                       :poster="poster"></videoChild>
         </template>
         <template v-else-if="articleType == 2">
@@ -63,7 +65,8 @@
                  v-html="info.content"></div>
             <!-- <img class="activity-image" :src="info.thumbnail" /> -->
             <!-- 播放视屏  -->
-            <videoChild :url='videoURL'
+            <videoChild v-if="false"
+                        :url='videoURL'
                         :poster="poster"></videoChild>
             <div class="apply-box"
                  v-if="parseInt(info.joins) > 0">
@@ -247,18 +250,18 @@ export default {
         console.log('资讯详情', data)
 
         this.info = data
-        this.$nextTick(() => {
-          const aEle = document.getElementsByTagName('a')[0]
-          const img = document.querySelector('a img')
-          console.log(aEle)
-          console.log(img)
-          img.onclick = (e) => {
-            e.preventDefault()
-          }
-          aEle.onclick = () => {
-            return false
-          }
-        })
+        // this.$nextTick(() => {
+        //   const aEle = document.getElementsByTagName('a')[0]
+        //   const img = document.querySelector('a img')
+        //   console.log(aEle)
+        //   console.log(img)
+        //   img.onclick = (e) => {
+        //     e.preventDefault()
+        //   }
+        //   aEle.onclick = () => {
+        //     return false
+        //   }
+        // })
         this.isLoading = false
         this.downloadSharePic()
       })
@@ -280,18 +283,18 @@ export default {
           console.log('帖子详情', data)
 
           this.info = data
-          this.$nextTick(() => {
-            const aEle = document.getElementsByTagName('a')[0]
-            const img = document.querySelector('a img')
-            console.log(aEle)
-            console.log(img)
-            img.onclick = (e) => {
-              e.preventDefault()
-            }
-            aEle.onclick = () => {
-              return false
-            }
-          })
+          // this.$nextTick(() => {
+          //   const aEle = document.getElementsByTagName('a')[0]
+          //   const img = document.querySelector('a img')
+          //   console.log(aEle)
+          //   console.log(img)
+          //   img.onclick = (e) => {
+          //     e.preventDefault()
+          //   }
+          //   aEle.onclick = () => {
+          //     return false
+          //   }
+          // })
           this.info.id = this.id
           this.isLoading = false
           this.downloadSharePic()
@@ -321,18 +324,18 @@ export default {
         console.log('活动详情', data)
 
         this.info = data
-        this.$nextTick(() => {
-          const aEle = document.getElementsByTagName('a')[0]
-          const img = document.querySelector('a img')
-          console.log(aEle)
-          console.log(img)
-          img.onclick = (e) => {
-            e.preventDefault()
-          }
-          aEle.onclick = () => {
-            return false
-          }
-        })
+        // this.$nextTick(() => {
+        //   const aEle = document.getElementsByTagName('a')[0]
+        //   const img = document.querySelector('a img')
+        //   console.log(aEle)
+        //   console.log(img)
+        //   img.onclick = (e) => {
+        //     e.preventDefault()
+        //   }
+        //   aEle.onclick = () => {
+        //     return false
+        //   }
+        // })
         this.isLoading = false
         this.downloadSharePic()
       })
