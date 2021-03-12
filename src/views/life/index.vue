@@ -84,7 +84,7 @@
                     <div v-for="(item, index) in nowMovieList" :key="index" class="movie-item">
                       <div class="movie-pic" @click="linkFunc(9, {id: item.film_id})">
                         <div class="movie-tip flex-between">
-                          <div class="moive-score">{{ parseFloat(item.score) / 10 }}</div>
+                          <div class="moive-score">{{ item.score != 0 ? (parseFloat(item.score) / 10) : '' }}</div>
                           <div class="moive-look">{{ item.want_view | wantFormat }}想看</div>
                         </div>
                         <img class="img-100" :src="item.cover" />
@@ -273,6 +273,7 @@ import { getfilmlist } from '@/api/movie'
 import flashPage from './components/flash-page'
 import specialPage from './components/special-page'
 import areaPage from './components/area-page'
+import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   components: {
     [Icon.name]: Icon,
@@ -368,16 +369,33 @@ export default {
           this.bannerList = res.data
         }
       })
-      // 获取影片资料(列表) type:1执映2待映
+      // 获取影片资料(列表)
+      this.getLocationInfo()
+      // if (this.activeIndex == 0) {
+      // }
+      this.isChange = false
+      this.getGoodsData()
+    },
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      bMapGetLocationInfo().then(data => {
+        const { adCode } = data
+        this.getfilmlist(String(adCode).substring(0, 4) + '00')
+      }).catch(() => {
+        this.getfilmlist()
+      })
+    },
+    // 获取热映影片资料(列表)
+    getfilmlist (cityId = '') {
       getfilmlist({
         type: 1,
         page_index: 1,
-        page_size: 3
+        page_size: 3,
+        city_id: cityId
       }).then(({ data }) => {
         this.nowMovieList = data
       })
-      // if (this.activeIndex == 0) {
-      // }
       this.isChange = false
       this.getGoodsData()
     },
