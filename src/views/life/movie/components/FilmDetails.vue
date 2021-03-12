@@ -6,7 +6,7 @@
         <!-- 名称 -->
         <div class="film-title">{{ info.film_name }}</div>
         <!-- 类型 -->
-        <div v-if="info.type" class="film-type">类型：{{ info.type }}</div>
+        <div v-if="info.type" class="film-type">{{ info.type }}</div>
         <!-- 时长/地区 -->
         <div class="film-duration">
           {{ info.duration }}分钟 / {{ info.area }}
@@ -27,7 +27,7 @@
     </div>
     <div class="film-footer">
       <!-- 评分 -->
-      <div class="film-score">
+      <div v-if="parseFloat(info.score) != 0" class="film-score">
         <div class="film-text">{{ parseFloat(info.score) / 10 }}</div>
         <div class="film-minor">电影评分</div>
       </div>
@@ -159,8 +159,20 @@ export default {
       align-items: center;
       justify-content: center;
     }
-    > div + div {
-      border-left: 2px solid #ffffff66;
+    .film-want, .film-view {
+      position: relative;
+    }
+    > div + div::before {
+      // border-left: 2px solid #ffffff66;
+      display: block;
+      width: 2px;
+      height: 70px;
+      position: absolute;
+      left: 0;
+      background: #ffffff;
+      opacity: 0.4;
+      border-radius: 1px;
+      content: "";
     }
     .film-text {
       font-size: 48px;
@@ -179,8 +191,8 @@ export default {
     color: #fff;
   }
   .film-uncollect {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     font-size: 24px;
     color: #fff;
   }

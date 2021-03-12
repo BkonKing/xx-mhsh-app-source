@@ -322,6 +322,7 @@ import { getfilmlist } from '@/api/movie'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
+import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   name: 'home',
   components: {
@@ -417,7 +418,7 @@ export default {
     this.getNoticeLbList()
     this.getCreditsGoodsList()
     this.getBargainGoods()
-    this.getfilmlist()
+    this.getLocationInfo()
     this.getActivityList()
     this.getOllageGoods()
     this.getMhttList()
@@ -528,13 +529,24 @@ export default {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
     // 获取热映影片资料(列表)
-    getfilmlist () {
+    getfilmlist (cityId = '') {
       getfilmlist({
         type: 1,
         page_index: 1,
-        page_size: 3
+        page_size: 3,
+        city_id: cityId
       }).then(({ data }) => {
         this.filmlist = data
+      })
+    },
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      bMapGetLocationInfo().then(data => {
+        const { adCode } = data
+        this.getfilmlist(String(adCode).substring(0, 4) + '00')
+      }).catch(() => {
+        this.getfilmlist()
       })
     },
     // 跳转电影页面
@@ -918,7 +930,11 @@ export default {
     }
     .film-name {
       width: auto;
+      font-size: 30px;
       text-align: center;
+    }
+    .ticket-btn {
+      margin-top: 14px;
     }
   }
 }

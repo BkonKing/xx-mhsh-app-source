@@ -1,12 +1,14 @@
 <template>
   <div class="filter-cinema-list">
     <filter-cinema :cityId="cityId" @change="reload"></filter-cinema>
+    <van-loading v-if="loading" class="tf-center" type="spinner" color="#eb5841" size="24px" />
     <cinema-list
+      v-show="!loading"
       ref="cinemaList"
       class="cinema-list"
       v-model="cinemaList"
-      :load="getcinemainfobycity"
       :tag="false"
+      @refresh="getcinemainfobycity"
     ></cinema-list>
   </div>
 </template>
@@ -39,31 +41,35 @@ export default {
     return {
       countyId: '', // 区县id
       hallNo: '', // 影厅编码
-      sortType: 1, // 影厅排序
-      cinemaList: [] // 影院列表
+      sortType: 2, // 影厅排序
+      cinemaList: [], // 影院列表
+      loading: false
     }
   },
   methods: {
     reload (data) {
       if (data) {
-        const { countyId = '', hallNo = '', sortType = 1 } = data
+        const { countyId = '', hallNo = '', sortType = 2 } = data
         this.countyId = countyId
         this.hallNo = hallNo
         this.sortType = sortType
       }
-      this.$refs.cinemaList && this.$refs.cinemaList.reload()
+      this.getcinemainfobycity()
     },
     // 获取影院地址列表
-    getcinemainfobycity ({ pages }) {
-      return getcinemainfobycity({
+    getcinemainfobycity () {
+      this.loading = true
+      getcinemainfobycity({
         city_id: this.cityId,
         county_id: this.countyId,
         hall_no: this.hallNo,
         sort_type: this.sortType,
         lng: this.lon,
-        lat: this.lat,
-        page_index: pages,
-        page_size: 10
+        lat: this.lat
+      }).then(({ data }) => {
+        this.cinemaList = data || []
+      }).finally(() => {
+        this.loading = false
       })
     }
   }
@@ -77,6 +83,9 @@ export default {
     height: calc(100% - 90px);
     padding: 0 30px;
   }
+}
+.tf-center {
+  margin-top: 30px;
 }
 //影院
 /deep/ .van-dropdown-menu__bar {

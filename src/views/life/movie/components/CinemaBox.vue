@@ -69,8 +69,8 @@ export default {
 
 <style lang="less" scoped>
 .cinema-box {
-  padding: 30px 0 10px;
-  border-top: 2px solid #f0f0f0;
+  padding: 34px 0;
+  border-bottom: 2px solid #f0f0f0;
   .cinema-info {
     display: flex;
     justify-content: space-between;

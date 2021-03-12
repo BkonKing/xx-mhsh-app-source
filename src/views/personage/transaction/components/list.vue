@@ -145,6 +145,7 @@ export default {
     }
     /deep/ .van-button {
       height: 66px;
+      flex-shrink: 0;
     }
   }
 }
