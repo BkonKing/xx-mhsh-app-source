@@ -89,7 +89,20 @@
             </div>
           </div>
         </div>
-        <div class="cont-session address-logistics">
+        <div v-if="goodsList[0].buy_type == 1" @click="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 ? logisticsLink : ''" class="cont-session order-message smzt-session">
+          <div class="order-message-item">
+            <div class="order-message-item-left color-222 font-28">配送方式</div>
+            <div class="color-222 font-28 order-message-item-right">上门自提</div>
+          </div>
+          <div class="order-message-item">
+            <div class="order-message-item-left color-222 font-28">提货地点</div>
+            <div class="shipping-address-item-right">
+              <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
+            </div>
+          </div>
+          <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" class="shipping-address-icon" src="@/assets/img/right.png" />
+        </div>
+        <div v-else class="cont-session address-logistics">
           <div @click="linkFunc(23)" class="shipping-address">
             <div class="shipping-address-item">
               <div class="shipping-address-item-left color-222 font-28">收货地址:</div>
@@ -556,5 +569,11 @@ export default {
   background-color: #f2f2f4;
   font-size: 28px;
   width: 100%;
+}
+.smzt-session .order-message-item {
+  padding-right: 20px;
+}
+.smzt-session .shipping-address-icon {
+  right: 30px;
 }
 </style>

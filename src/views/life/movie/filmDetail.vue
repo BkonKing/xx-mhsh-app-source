@@ -17,6 +17,7 @@
       <film-details :info="filmInfo"></film-details>
       <!-- 影片介绍 -->
       <div
+        v-if="filmInfo.introduction"
         class="film-introduction"
         :class="[
           { 'film-introduction-collapsed': collapsed },
@@ -83,13 +84,14 @@ export default {
       title: '',
       filmInfo: {
         score: 0,
-        want_view: 0
+        want_view: 0,
+        introduction: ' '
       },
       introductionBoxHeight: 0, // introductionBox默认高度
       collapseable: false, // 是否需要折叠
       collapsed: false, // 控制折叠
       shareShow: false,
-      shareObj: { pyqHide: true },
+      shareObj: {},
       layerNumber: 0 // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
     }
   },
@@ -133,11 +135,11 @@ export default {
     // 设置分享参数
     setShareObj (data) {
       this.shareObj = {
-        title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? parseFloat(this.filmInfo.score) / 10 : ''}`,
+        title: `《${this.filmInfo.film_name}》${this.filmInfo.score && this.filmInfo.score !== '0' ? ' 评分' + parseFloat(this.filmInfo.score) / 10 : ''}`,
         description: this.filmInfo.introduction,
         thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl: 'http://live.tosolomo.com/wap/#/filmDetails?id=' + this.filmId,
-        pyqHide: true
+        pyqHide: false
       }
     },
     // 购票跳转选择影院
@@ -191,7 +193,11 @@ export default {
   .tf-flex {
     justify-content: center;
     align-items: center;
-    padding-top: 30px;
+    padding-top: 24px;
+    .tf-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
   }
 }
 // 介绍展开

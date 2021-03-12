@@ -36,7 +36,7 @@
               </div>
             </div>
             <van-button
-              v-if="item.pre_saleflag == '1'"
+              v-if="item.pre_saleflag == '1' && item.film_code"
               round
               size="mini"
               color="#55B862"
@@ -57,7 +57,7 @@
                 round
                 size="mini"
                 type="warning"
-                @click="setviewwatch(item)"
+                @click.stop="setviewwatch(item)"
                 >想看</van-button
               >
               <van-button v-else round size="mini">已想看</van-button>
@@ -196,7 +196,7 @@ export default {
   }
   .film-title {
     font-size: 34px;
-    font-weight: 600;
+    font-weight: 400;
     color: #222;
     .tf-text-primary,
     .tf-text-grey {

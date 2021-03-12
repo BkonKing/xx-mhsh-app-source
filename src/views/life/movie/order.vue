@@ -139,11 +139,11 @@ export default {
       })
     },
     // 跳转到电影票详情
-    goTicket ({ order_id }) {
+    goTicket ({ id }) {
       this.$router.push({
         name: 'movieTicket',
         query: {
-          id: order_id
+          id
         }
       })
     }

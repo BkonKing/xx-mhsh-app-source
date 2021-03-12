@@ -82,51 +82,54 @@
     <van-popup v-model="show"
                position="bottom"
                :style="{ height: '80%' }">
-      <van-search v-model="value"
+      <template v-if="yxlpList && yxlpList.length">
+        <van-search v-model="value"
                   @input="onSearch"
                   v-if="yxlpList.length >=10">
-        <template #left-icon>
-          <i class="tf-icon tf-icon-sousuo1 sousuo1"></i>
-        </template>
-      </van-search>
-      <div class="con">
-        <van-cell v-for="(item,index) in yxlpList"
-                  :key="index"
-                  class="cell"
-                  @click="selectHome(item,index)"
-                  v-show="searchBol">
-          <template #title>
-            <div class="title">
-              <div>
-                {{item.project}}
+          <template #left-icon>
+            <i class="tf-icon tf-icon-sousuo1 sousuo1"></i>
+          </template>
+        </van-search>
+        <div class="con">
+          <van-cell v-for="(item,index) in yxlpList"
+                    :key="index"
+                    class="cell"
+                    @click="selectHome(item,index)"
+                    v-show="searchBol">
+            <template #title>
+              <div class="title">
+                <div>
+                  {{item.project}}
+                </div>
+                <i class="tf-icon"
+                  :class="{'tf-icon-gou':currentIndex===index}"></i>
               </div>
-              <i class="tf-icon"
-                 :class="{'tf-icon-gou':currentIndex===index}"></i>
-            </div>
-          </template>
+            </template>
 
-        </van-cell>
+          </van-cell>
 
-        <van-cell v-for="(item,index) in searchList"
-                  :key="index"
-                  class="cell"
-                  @click="selectHome(item,index)"
-                  v-show="!searchBol">
-          <template #title>
-            <div class="title">
-              <div> {{item.project}}</div>
-              <i class="tf-icon"
-                 :class="{'tf-icon-gou':currentIndex===index}"></i>
-            </div>
-          </template>
-        </van-cell>
-      </div>
-      <div class="btn"
-           v-if="show===true">
-        <van-button block
-                    color="#eb5841"
-                    @click="confirm">确定</van-button>
-      </div>
+          <van-cell v-for="(item,index) in searchList"
+                    :key="index"
+                    class="cell"
+                    @click="selectHome(item,index)"
+                    v-show="!searchBol">
+            <template #title>
+              <div class="title">
+                <div> {{item.project}}</div>
+                <i class="tf-icon"
+                  :class="{'tf-icon-gou':currentIndex===index}"></i>
+              </div>
+            </template>
+          </van-cell>
+        </div>
+        <div class="btn"
+            v-if="show===true">
+          <van-button block
+                      color="#eb5841"
+                      @click="confirm">确定</van-button>
+        </div>
+      </template>
+      <van-empty v-else image="search" description="暂无楼盘" style="margin-top: 30%;"></van-empty>
       <i v-if="show===true"
          @click="show=false"
          class="tf-icon tf-icon-guanbi1 guanbi"></i>

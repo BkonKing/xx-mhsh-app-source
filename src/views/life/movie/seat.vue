@@ -31,8 +31,7 @@
       ref="tf-body-container"
       class="tf-body-container"
       :class="{
-        'center-container':
-          seatList && seatList.length && seatList[0].length < 14
+        'center-container': maxSeatRow
       }"
     >
       <div v-if="loading" class="loading-placeholder">
@@ -257,9 +256,18 @@ export default {
     totalPrice () {
       let seatPrice = 0
       Object.keys(this.selectSeats).forEach(key => {
-        seatPrice += makeCount(parseFloat(this.selectSeats[key].seat_price))
+        seatPrice = makeCount(parseFloat(this.selectSeats[key].seat_price) + seatPrice)
       })
       return seatPrice
+    },
+    maxSeatRow () {
+      let num = 0
+      if (this.seatList && this.seatList.length) {
+        this.seatList.forEach(obj => {
+          num = Math.max(obj.length, num)
+        })
+      }
+      return num < 14
     }
   },
   created () {
@@ -365,11 +373,10 @@ export default {
       // if (!this.touchParams.moveable) {
       //   return
       // }
-
       var touches = event.touches
       var events = touches[0]
       var events2 = touches[1]
-      // 双指移动
+      // 双指放大
       if (events2) {
         event.preventDefault()
         // 第2个指头坐标在touchmove时候获取
@@ -514,8 +521,9 @@ export default {
       const rowIndex = ri || parseInt(col.seatRow) - 1
       const colIndex = ci || parseInt(col.seatCol) - 1
       if (col.seatType === 'L') {
-        if (this.seatList[rowIndex][colIndex + 2].seatType === 'R') {
-          this.deleteSeat(this.seatList[rowIndex][colIndex + 2].seatNo)
+        const col2 = this.seatList[rowIndex][colIndex + 2]
+        if (col2 && col2.seatType === 'R') {
+          this.deleteSeat(col2.seatNo)
         }
         this.deleteSeat(this.seatList[rowIndex][colIndex + 1].seatNo)
         this.deleteSeat(col.seatNo)
@@ -526,8 +534,9 @@ export default {
       } else if (col.seatType === 'R') {
         this.deleteSeat(col.seatNo)
         this.deleteSeat(this.seatList[rowIndex][colIndex - 1].seatNo)
-        if (this.seatList[rowIndex][colIndex - 2].seatType === 'L') {
-          this.deleteSeat(this.seatList[rowIndex][colIndex - 2].seatNo)
+        const col2 = this.seatList[rowIndex][colIndex - 2]
+        if (col2 && col2.seatType === 'L') {
+          this.deleteSeat(col2.seatNo)
         }
       } else {
         this.deleteSeat(col.seatNo)
@@ -714,8 +723,7 @@ export default {
   justify-content: initial;
 }
 .center-container {
-  display: flex;
-  justify-content: center;
+  margin: 0 auto;
   .seat-container {
     align-items: center;
   }
@@ -976,9 +984,6 @@ export default {
     .select-seat-item + .select-seat-item {
       margin-left: 20px;
     }
-  }
-  /deep/ .van-button--large {
-    border-radius: 44px !important;
   }
 }
 .loading-placeholder {
