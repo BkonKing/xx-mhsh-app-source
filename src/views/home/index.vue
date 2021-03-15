@@ -933,6 +933,13 @@ export default {
       font-size: 30px;
       text-align: center;
     }
+    .tf-text-lg {
+      font-size: 28px;
+      margin: 0 2px;
+    }
+    .ticket-btn .tf-icon-right {
+      margin-left: 4px;
+    }
     .ticket-btn {
       margin-top: 14px;
     }
