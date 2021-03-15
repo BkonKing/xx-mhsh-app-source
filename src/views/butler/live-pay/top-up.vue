@@ -58,7 +58,7 @@
         <van-field v-model="money" class="pay-input" type="number">
           <template v-slot:left-icon>￥</template>
         </van-field>
-        <div class="money-primary">
+        <div v-if="payInfo.money >= 0" class="money-primary">
           <div
             v-for="(item, i) in moneyPayList"
             :key="i"
@@ -256,5 +256,10 @@ export default {
   .money-tag-active {
     border: 4px solid #eb5841;
   }
+}
+/deep/ .van-button--disabled {
+  background: #aaa;
+  border-color: #aaa;
+  opacity: 1;
 }
 </style>
