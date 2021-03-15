@@ -59,8 +59,13 @@
         </div>
       </div>
       <div class="pay-detail pay-padding">
-        <div class="pay-number-label">充值金额</div>
-        <van-field v-model="money" class="pay-input" type="number" :autofocus="true">
+        <div class="pay-number-label">缴费金额</div>
+        <van-field
+          v-model="money"
+          class="pay-input"
+          type="number"
+          :autofocus="true"
+        >
           <template v-slot:left-icon>￥</template>
         </van-field>
       </div>
@@ -85,98 +90,98 @@
 </template>
 
 <script>
-import { getFeeDetails } from '@/api/butler'
-import paySuccess from './components/success'
-import filters from './filters'
+import { getFeeDetails } from "@/api/butler";
+import paySuccess from "./components/success";
+import filters from "./filters";
 export default {
-  name: 'livePayCostDetail',
+  name: "livePayCostDetail",
   components: {
     paySuccess
   },
-  data () {
+  data() {
     return {
-      id: '',
-      projectId: '',
-      orderId: '',
+      id: "",
+      projectId: "",
+      orderId: "",
       isChoicePay: false, // 是否从缴费页面进入
       payInfo: {
         order_status: 2
       },
-      money: '', // 充值金额
+      money: "", //
       successShow: false
-    }
+    };
   },
-  created () {
-    this.orderId = this.$route.query.orderId
-    this.id = this.$route.query.id
-    this.projectId = this.$route.query.projectId
-    this.isChoicePay = this.$route.query.isChoicePay
-    this.getFeeDetails()
+  created() {
+    this.orderId = this.$route.query.orderId;
+    this.id = this.$route.query.id;
+    this.projectId = this.$route.query.projectId;
+    this.isChoicePay = this.$route.query.isChoicePay;
+    this.getFeeDetails();
   },
   methods: {
     // 获取费用详情接口
-    getFeeDetails () {
+    getFeeDetails() {
       getFeeDetails({
         order_id: this.orderId
       }).then(({ data }) => {
-        this.payInfo = data
-      })
+        this.payInfo = data;
+      });
     },
     // 跳转账单页面
-    goBill () {
+    goBill() {
       this.$router.push({
-        name: 'livePayPayBill',
+        name: "livePayPayBill",
         query: {
           projectId: this.projectId,
           id: this.id
         }
-      })
+      });
     },
     // 跳转缴费页面
-    payMoney () {
+    payMoney() {
       // 金额做判断：1.大于0；2.>=应缴金额
       if (parseFloat(this.money) <= 0) {
         this.$dialog({
-          title: '金额必须大于零'
-        })
+          title: "金额必须大于零"
+        });
       } else if (parseFloat(this.money) < parseFloat(this.payInfo.money)) {
         this.$dialog({
-          title: '缴费金额必须大于等于欠费金额'
-        })
+          title: "缴费金额必须大于等于欠费金额"
+        });
       } else {
-
       }
     },
     // 跳转生活缴费列表页
-    goLivePayList () {
+    goLivePayList() {
       this.$router.push({
-        name: 'livePayRecord'
-      })
+        name: "livePayRecord"
+      });
     },
     // 重定向到生活缴费列表页
-    replaceLivePayList () {
+    replaceLivePayList() {
       this.$router.replace({
-        name: 'livePayRecord'
-      })
+        name: "livePayRecord"
+      });
     }
   },
   filters
-}
+};
 </script>
 
 <style lang="less" scoped>
 .pay-cost-detail {
   @flex-column();
   align-items: center;
-  padding: 50px 20px 0;
+  padding: 40px 20px 0;
   .pay-type-icon {
     width: 90px;
-    height: 90px;
+    height: 100px;
     margin-bottom: 15px;
   }
   .pay-title {
     margin-bottom: 10px;
     font-size: 30px;
+    color: #222;
   }
   .pay-info-container {
     padding: 30px 0;
@@ -201,7 +206,7 @@ export default {
         display: flex;
         align-items: center;
         font-size: 24px;
-        color: #8F8F94;
+        color: #8f8f94;
         .tf-icon-right {
           margin-left: 10px;
         }
@@ -217,6 +222,7 @@ export default {
       margin-right: 46px;
       font-size: 28px;
       color: #000;
+      line-height: 1;
     }
 
     .pay-info-box {
@@ -241,7 +247,7 @@ export default {
     padding-bottom: 30px;
   }
   .pay-input {
-    padding: 30px 0;
+    padding: 22px 0 16px;
     font-size: 72px;
     line-height: 1;
     border-bottom: 2px solid #f0f0f0;
@@ -258,5 +264,10 @@ export default {
       line-height: 72px;
     }
   }
+}
+/deep/ .van-button--disabled {
+  background: #aaa;
+  border-color: #aaa;
+  opacity: 1;
 }
 </style>

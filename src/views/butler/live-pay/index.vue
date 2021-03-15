@@ -231,7 +231,7 @@ export default {
 }
 // 列表
 .pay-container {
-  padding: 30px 20px;
+  padding: 40px 20px;
   .pay-list-container {
     width: 100%;
     padding: 0 30px;
@@ -279,12 +279,12 @@ export default {
 .pay-detail-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   height: 100%;
   .pay-detail-img {
     width: 483px;
-    margin-bottom: 120px;
+    margin-top: 165px;
+    margin-bottom: 108px;
   }
   .pay-detail-text {
     font-size: 28px;
@@ -308,9 +308,12 @@ export default {
       font-size: 28px;
       &:after {
         right: 32px;
-        margin-top: -10px;
+        margin-top: -12px;
         border-width: 8px;
         border-color: transparent transparent #383838 #383838;
+      }
+      &.van-dropdown-menu__title--down:after {
+        margin-top: -4px;
       }
     }
     .van-dropdown-item__option {
@@ -330,12 +333,14 @@ export default {
     color: #8f8f94;
     .van-cell__title {
       width: 100%;
+      justify-content: center;
     }
   }
   .van-dropdown-item__option + .van-dropdown-item__option {
     border-top: 1px solid #f0f0f0;
   }
   .van-dropdown-item__option--active {
+    font-weight: 500;
     color: #222;
   }
   .van-cell__value {
