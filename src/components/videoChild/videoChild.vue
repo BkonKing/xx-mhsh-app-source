@@ -2,13 +2,16 @@
   <div class="container"
        :class="[{an:isAndroid,ios:isiOS}]">
     <video v-if="isAndroid"
-           id="first-video"
+           id="video"
            width="100%"
-           height="100%"
+           height="200px"
+           x5-video-orientation="landscape"
            x5-video-player-fullscreen="true"
            x5-playsinline
            playsinline
+           x-webkit-airplay="allow"
            webkit-playsinline
+           autobufer
            preload="auto"
            controls
            @click="pauseVideo"
@@ -20,7 +23,7 @@
            v-if="isAndroid"
            :src="poster">
     </video>
-    <video id="first-video"
+    <video id="video"
            v-if="isiOS"
            width="100%"
            height="200px"
@@ -45,7 +48,8 @@
 
     </video>
 
-    <!-- <video id="first-video"
+    <!-- <video id="video"
+           v-if="isAndroid"
            width="100%"
            height="200px"
            x5-video-player-type="h5"
@@ -61,11 +65,7 @@
            @click="pauseVideo"
            @ended="onPlayerEnded($event)"
            controls>
-      <img v-show="isVideoShow"
-           class="play"
-           @click="playvideo"
-           v-if="isiOS"
-           :src="poster" />
+
       <img v-show="isShow"
            class="platStart"
            @click="androidPlay"
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+// const timer = []
 export default {
   name: 'videoChild',
   props: {
@@ -96,10 +97,21 @@ export default {
       isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/) // ios终端
     }
   },
-  // created () {
-  //   console.log('isAndroid', this.isAndroid)
-  //   console.log('isiOS', this.isiOS)
-  // },
+
+  mounted () {
+    // console.log('isAndroid', this.isAndroid)
+    // console.log('isiOS', this.isiOS)
+    // document.addEventListener('webkitfullscreenchange', function (e) {
+    //   // console.log('webkitfullscreenchange', e)
+    //   if (timer.length > 2) {
+    //     timer = []
+    //   }
+    //   timer.push(e.timeStamp)
+    //   if (timer[1] > timer[0]) {
+    //     screen.orientation.lock('natural')
+    //   }
+    // })
+  },
   methods: {
     playvideo (event) {
       if (this.isiOS) {
@@ -126,9 +138,15 @@ export default {
     onPlayerEnded (player) { // 视频结束
       this.isVideoShow = true
       this.isShow = true
+      // api.setScreenOrientation({
+      //   orientation: null
+      // })
     },
     androidPlay () {
       const video = document.querySelector('video')
+      api.setScreenOrientation({
+        orientation: 'auto_landscape'
+      })
       this.isShow = false
       video.play()
     }
@@ -137,11 +155,11 @@ export default {
 </script>
 
 <style scoped lang='less'>
-// #first-video {
+// #video {
 //   object-fit: fill;
 // }
 
-#first-video {
+#video {
   position: relative;
   .play,
   .platStart {

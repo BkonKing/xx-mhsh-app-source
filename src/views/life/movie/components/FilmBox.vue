@@ -2,7 +2,7 @@
   <div class="film-box">
     <div class="film-info" @click="goFilmDetails">
       <div
-        v-if="versionList && versionList.length && type !== 3"
+        v-if="type !== 3 && versionList && versionList.length"
         class="film-version-container"
       >
         <div class="tf-flex" v-for="(version, i) in versionList" :key="i">
@@ -28,7 +28,7 @@
     <template v-if="type === 2">
       <div class="film-publish">{{data.time2}}</div>
       <van-button
-        v-if="data.pre_saleflag == '1'"
+        v-if="data.pre_saleflag == '1' && data.film_code"
         round
         size="mini"
         color="#55B862"
@@ -40,7 +40,7 @@
         round
         size="mini"
         type="warning"
-        @click="setviewwatch"
+        @click.stop="setviewwatch"
         >想看</van-button
       >
       <van-button v-else round size="mini">已想看</van-button>

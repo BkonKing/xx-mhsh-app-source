@@ -117,7 +117,7 @@ export default {
       this.isEndNum = 0
       this.pageNum = 1
       this.listChild = []
-      // this.$emit('update:list', this.listChild)
+      this.$emit('refresh')
       this.onLoad()
     },
     reload () {

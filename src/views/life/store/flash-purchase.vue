@@ -12,6 +12,7 @@
     </div>
     <flash-page
       ref="flash"
+      :swipeable="true"
     ></flash-page>
   </div>
 </template>
@@ -73,7 +74,7 @@ export default {
     })
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name == 'life') {
+    if (to.name == 'life' || to.name == 'home') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

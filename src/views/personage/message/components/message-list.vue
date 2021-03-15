@@ -250,4 +250,7 @@ export default {
 .tf-icon-shuibiao {
   background: #877ded;
 }
+.tf-list-image {
+  object-fit: cover;
+}
 </style>
