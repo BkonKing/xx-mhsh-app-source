@@ -14,7 +14,7 @@
         v-model="mobile"
         class="form-input"
         maxlength="11"
-        type="tel"
+        type="digit"
         placeholder="手机号"
       ></van-field>
       <div v-if="loginType === 1" class="code-cell">
