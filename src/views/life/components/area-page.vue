@@ -91,9 +91,9 @@ export default {
           } else {
             this.page = this.page + 1
           }
-          if (!this.infoData) {
-            this.infoData = res.data.special_info
-          }
+          // if (!this.infoData) {
+          this.infoData = res.data.special_info
+          // }
           this.loading = false
         }
       })

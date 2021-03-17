@@ -181,6 +181,16 @@ const personageRouter = [
       keepAlive: true
     }
   },
+  /* app系统消息详情 */
+  {
+    path: '/pages/personage/message/sysMsgInfo',
+    name: 'sysMsgInfo',
+    component: () =>
+      import(
+        /* webpackChunkName: "sysMsgInfo" */
+        '@/views/personage/message/sysMsgInfo.vue'
+      )
+  },
   /* 签到 */
   {
     path: '/pages/personage/happiness-coin/index',

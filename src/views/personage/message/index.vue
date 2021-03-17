@@ -309,6 +309,14 @@ export default {
       if (item.is_read == 0) {
         this.messageRead(item)
       }
+      if (item.sub_type == 8) {
+        this.$router.push({
+          name: 'sysMsgInfo',
+          query: {
+            id: item.source_id
+          }
+        })
+      }
       if (item.sub_type == 9) {
         this.$router.push({
           path: '/pages/personage/feedback/details',
