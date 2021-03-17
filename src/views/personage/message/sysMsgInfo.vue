@@ -17,7 +17,8 @@
 </template>
 
 <script>
-import { getAppMsgDetail } from '@/api/personage.js'
+import { getAppMsgDetail } from '@/api/personage'
+import dayjs from 'dayjs'
 export default {
   name: 'sysMsgInfo',
   created () {
@@ -40,7 +41,7 @@ export default {
           const { title, content, ptime } = res.data
           this.title = title
           this.content = content
-          this.ctime = ptime
+          this.ctime = dayjs(ptime * 1000).format('YYYY-MM-DD HH:mm:ss')
         }
       })
     },
