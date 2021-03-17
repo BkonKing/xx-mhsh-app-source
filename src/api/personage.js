@@ -327,6 +327,10 @@ export function messageRead (data) {
 export function messageAllRead (data) {
   return request.post('/my/message/messageAllRead', data)
 }
+// 获取APP系统消息详情接口
+export function getAppMsgDetail (data) {
+  return request.post('/messagepush/app/getAppDetail', data)
+}
 
 /* 我的消息 end */
 
