@@ -79,7 +79,7 @@
       </van-tabs>
     </div>
 
-		<explain-swal
+    <explain-swal
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
@@ -99,7 +99,7 @@
     @closeSwal="closeSwal"
     @sureSwal="sureSwal()">
     </remind-swal>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -128,14 +128,11 @@ export default {
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
       showSwal: false, // 提醒弹窗
       remindTit: '确定取消订单', // 提醒标题
-
       active: 0,
       typeVal: 0, // tab切换index
       navHide: false,
-
       time: 11 * 60 * 60 * 1000,
       newTime: '', // 当前时间
-
       listData: [], // 数据列表
       page: 1, // 页码
       pageSize: 10, // 分页条数
@@ -175,14 +172,6 @@ export default {
           'van-tabs__content'
         )[0].scrollTop = this.scrollTop
     }
-    // let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    // if (bankCardInfo) {
-    //   if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-    //     this.idcard = bankCardInfo.idCard
-    //   }
-    //   bankCardInfo = JSON.parse(bankCardInfo)
-    //   this.$refs.payblock.newCard(bankCardInfo)
-    // }
   },
   methods: {
     navFun (index) {
@@ -492,11 +481,6 @@ export default {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
-    // if (to.name != 'addBankCard' && to.name != 'certification') {
-    //   api.removePrefs({
-    //     key: 'realNameInfo'
-    //   })
-    // }
     const el = document
       .getElementById('order-list-body')
       .getElementsByClassName('van-tabs__content')

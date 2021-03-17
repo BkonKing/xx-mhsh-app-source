@@ -170,7 +170,6 @@ export default {
     },
     // 新增银行卡
     newCard (res) {
-      console.log(112, res)
       if (typeof res.idcard === 'undefined' || !res.idcard) {
         res.idcard = this.idCard
       }
@@ -179,7 +178,6 @@ export default {
       res.cardFour = res.bank_card.slice(-4)
       let flag = 0
       for (let i = 0; i < this.cardList.length; i++) {
-        console.log(this.cardList[i], this.cardList[i].bank_card.slice(-4), res.cardFour)
         if (this.cardList[i].bank_card.slice(-4) == res.cardFour) {
           flag = 1
           break
@@ -189,10 +187,11 @@ export default {
         this.cardList.push(res)
         this.selectCard(this.cardList.length - 1)
       }
-      console.log(flag, this.selectCard, this.cardList)
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
+      setTimeout(() => {
+        api.removePrefs({
+          key: 'realNameInfo'
+        })
+      }, 0)
     },
     // 银行卡支付
     cardPay () {
@@ -216,17 +215,6 @@ export default {
     codeAgain () {
       this.$emit('sureSwal', this.callData)
       this.isAgain = false
-      // getCodeAgain({
-      //   pay_id: this.fyData.pay_id,
-      //   fu_order_num: this.fyData.fu_order_num,
-      //   bank_id: this.fyData.bank_id
-      // }).then(res => {
-      //   Toast(res.message)
-      //   this.isAgain = false
-      //   this.fyData = res.data
-      //   this.downTime2 = 60000
-      //   this.start2()
-      // })
     },
     // 富友确认支付
     sureFuPay () {
@@ -275,14 +263,6 @@ export default {
     // 获取我的银行卡
     myCard () {
       this.step = 2
-      // getMyCard().then(res => {
-      //   if (res.success) {
-      //     this.cardList = res.data
-      //     this.idCard = res.idcard
-      //     if (res.realname && res.idcard) this.isRealname = 1
-      //     this.step = 2
-      //   }
-      // })
     },
     // 返回上一步
     prevStep () {
@@ -311,11 +291,9 @@ export default {
     },
     selectSwal (index) {
       this.tapIndex = index
-      console.log(index)
       if (index < 2) {
         this.callData.pay_type = index == 0 ? 1 : 2
       }
-      console.log(this.callData.pay_type)
       if (index == 2 && this.selectIndex == -1) {
         this.sureSwal()
       }
@@ -372,12 +350,8 @@ export default {
       let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
       if (bankCardInfo) {
         bankCardInfo = JSON.parse(bankCardInfo)
-        console.log(to.name, bankCardInfo)
         this.newCard(bankCardInfo)
       }
-    },
-    cardList: function (val, oldval) {
-      console.log(val, oldval)
     }
   }
 }
