@@ -175,14 +175,14 @@ export default {
           'van-tabs__content'
         )[0].scrollTop = this.scrollTop
     }
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
+    // let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+    // if (bankCardInfo) {
+    //   if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
+    //     this.idcard = bankCardInfo.idCard
+    //   }
+    //   bankCardInfo = JSON.parse(bankCardInfo)
+    //   this.$refs.payblock.newCard(bankCardInfo)
+    // }
   },
   methods: {
     navFun (index) {
@@ -291,7 +291,7 @@ export default {
         }
       }).catch((res) => {
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -492,11 +492,11 @@ export default {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
-    if (to.name != 'addBankCard' && to.name != 'certification') {
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
-    }
+    // if (to.name != 'addBankCard' && to.name != 'certification') {
+    //   api.removePrefs({
+    //     key: 'realNameInfo'
+    //   })
+    // }
     const el = document
       .getElementById('order-list-body')
       .getElementsByClassName('van-tabs__content')

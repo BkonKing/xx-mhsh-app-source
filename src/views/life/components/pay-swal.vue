@@ -61,13 +61,6 @@
               </div><img :src="item.bank_ico" />{{ item.bank_name}} ({{ item.cardFour ? item.cardFour : item.bank_card }})
             </div>
           </div>
-          <!-- <div class="common-item" @click.stop="selectSwal(1)">
-            <div class="common-item-left">
-              <div :class="[tapIndex == 1 ? 'cur' : '','cart-checkbox flex-center']">
-                <div class="checkbox-session"></div>
-              </div><img src="@/assets/img/icon_22.png" />农业银行 储蓄卡（0505）
-            </div>
-          </div> -->
         </div>
         <div class="submit-btn color-fff" @click.stop="goLink(0)">使用新银行卡</div>
       </div>
@@ -184,8 +177,22 @@ export default {
       res.bank_name = res.bank_name.replace(/\s*/g, '')
       res.bank_card = res.bank_card.replace(/\s*/g, '')
       res.cardFour = res.bank_card.slice(-4)
-      this.cardList.push(res)
-      this.selectCard(this.cardList.length - 1)
+      let flag = 0
+      for (let i = 0; i < this.cardList.length; i++) {
+        console.log(this.cardList[i], this.cardList[i].bank_card.slice(-4), res.cardFour)
+        if (this.cardList[i].bank_card.slice(-4) == res.cardFour) {
+          flag = 1
+          break
+        }
+      }
+      if (!flag) {
+        this.cardList.push(res)
+        this.selectCard(this.cardList.length - 1)
+      }
+      console.log(flag, this.selectCard, this.cardList)
+      api.removePrefs({
+        key: 'realNameInfo'
+      })
     },
     // 银行卡支付
     cardPay () {
@@ -358,6 +365,19 @@ export default {
       } else if (type == 2) {
         this.isAgain = true
       }
+    }
+  },
+  watch: {
+    $route (to, from) {
+      let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+      if (bankCardInfo) {
+        bankCardInfo = JSON.parse(bankCardInfo)
+        console.log(to.name, bankCardInfo)
+        this.newCard(bankCardInfo)
+      }
+    },
+    cardList: function (val, oldval) {
+      console.log(val, oldval)
     }
   }
 }

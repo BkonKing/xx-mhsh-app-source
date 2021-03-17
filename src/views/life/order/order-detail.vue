@@ -256,30 +256,31 @@ export default {
     }
   },
   mounted () {
-    var that = this
-    // 根据key名获取传递回来的参数，data就是map
-    eventBus.$on('chooseAddress', function (data) {
-      if (data) {
-        that.addressInfo = JSON.parse(data)
-        that.orderInfo.rece_realname = that.addressInfo.realname
-        that.orderInfo.rece_mobile = that.addressInfo.mobile
-        that.orderInfo.rece_address = that.addressInfo.address_detail + that.addressInfo.address_name + that.addressInfo.address_house
-        that.orderAddress(that.addressInfo.id)
-      }
-    })
+    // var that = this
+    // // 根据key名获取传递回来的参数，data就是map
+    // eventBus.$on('chooseAddress', function (data) {
+    //   if (data) {
+    //     that.addressInfo = JSON.parse(data)
+    //     that.orderInfo.rece_realname = that.addressInfo.realname
+    //     that.orderInfo.rece_mobile = that.addressInfo.mobile
+    //     that.orderInfo.rece_address = that.addressInfo.address_detail + that.addressInfo.address_name + that.addressInfo.address_house
+    //     that.orderAddress(that.addressInfo.id)
+    //   }
+    // })
   },
   activated () {
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
+    // let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+    // if (bankCardInfo) {
+    //   if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
+    //     this.idcard = bankCardInfo.idCard
+    //   }
+    //   bankCardInfo = JSON.parse(bankCardInfo)
+    //   this.$refs.payblock.newCard(bankCardInfo)
+    // }
   },
   created () {
-    eventBus.$off('chooseAddress')
+    console.log(221122)
+    // eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
     this.getData()
   },
@@ -364,7 +365,7 @@ export default {
         }
       }).catch((res) => {
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -552,11 +553,11 @@ export default {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
-    if (to.name != 'addBankCard' && to.name != 'certification') {
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
-    }
+    // if (to.name != 'addBankCard' && to.name != 'certification') {
+    //   api.removePrefs({
+    //     key: 'realNameInfo'
+    //   })
+    // }
     next()
   }
 }
