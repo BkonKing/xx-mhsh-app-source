@@ -137,8 +137,8 @@ module.exports = {
       },
       '/api': {
         // target: 'http://meihaoshenghuo.com/app/api/v1',
-        target: 'https://test.tosolomo.com/app/api/v1', 
-        // target: 'https://develop.mhshjy.com/app/api/v1',
+        // target: 'https://test.tosolomo.com/app/api/v1', 
+        target: 'https://develop.mhshjy.com/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }
