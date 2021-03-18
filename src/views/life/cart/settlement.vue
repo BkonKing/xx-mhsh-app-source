@@ -273,16 +273,6 @@ export default {
       that.getData()
     }.bind(this))
   },
-  activated () {
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
-  },
   created () {
     eventBus.$off('chooseAddress')
     eventBus.$off('chooseCoupon')
@@ -560,7 +550,7 @@ export default {
       }).catch((res) => {
         console.log('error', res.message)
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -705,9 +695,6 @@ export default {
       if (this.cartClear) {
         this.cartInit()
       }
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
     }
     next()
   }

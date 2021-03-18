@@ -61,13 +61,6 @@
               </div><img :src="item.bank_ico" />{{ item.bank_name}} ({{ item.cardFour ? item.cardFour : item.bank_card }})
             </div>
           </div>
-          <!-- <div class="common-item" @click.stop="selectSwal(1)">
-            <div class="common-item-left">
-              <div :class="[tapIndex == 1 ? 'cur' : '','cart-checkbox flex-center']">
-                <div class="checkbox-session"></div>
-              </div><img src="@/assets/img/icon_22.png" />农业银行 储蓄卡（0505）
-            </div>
-          </div> -->
         </div>
         <div class="submit-btn color-fff" @click.stop="goLink(0)">使用新银行卡</div>
       </div>
@@ -177,15 +170,28 @@ export default {
     },
     // 新增银行卡
     newCard (res) {
-      console.log(112, res)
       if (typeof res.idcard === 'undefined' || !res.idcard) {
         res.idcard = this.idCard
       }
       res.bank_name = res.bank_name.replace(/\s*/g, '')
       res.bank_card = res.bank_card.replace(/\s*/g, '')
       res.cardFour = res.bank_card.slice(-4)
-      this.cardList.push(res)
-      this.selectCard(this.cardList.length - 1)
+      let flag = 0
+      for (let i = 0; i < this.cardList.length; i++) {
+        if (this.cardList[i].bank_card.slice(-4) == res.cardFour) {
+          flag = 1
+          break
+        }
+      }
+      if (!flag) {
+        this.cardList.push(res)
+        this.selectCard(this.cardList.length - 1)
+      }
+      setTimeout(() => {
+        api.removePrefs({
+          key: 'realNameInfo'
+        })
+      }, 0)
     },
     // 银行卡支付
     cardPay () {
@@ -209,17 +215,6 @@ export default {
     codeAgain () {
       this.$emit('sureSwal', this.callData)
       this.isAgain = false
-      // getCodeAgain({
-      //   pay_id: this.fyData.pay_id,
-      //   fu_order_num: this.fyData.fu_order_num,
-      //   bank_id: this.fyData.bank_id
-      // }).then(res => {
-      //   Toast(res.message)
-      //   this.isAgain = false
-      //   this.fyData = res.data
-      //   this.downTime2 = 60000
-      //   this.start2()
-      // })
     },
     // 富友确认支付
     sureFuPay () {
@@ -268,14 +263,6 @@ export default {
     // 获取我的银行卡
     myCard () {
       this.step = 2
-      // getMyCard().then(res => {
-      //   if (res.success) {
-      //     this.cardList = res.data
-      //     this.idCard = res.idcard
-      //     if (res.realname && res.idcard) this.isRealname = 1
-      //     this.step = 2
-      //   }
-      // })
     },
     // 返回上一步
     prevStep () {
@@ -304,11 +291,9 @@ export default {
     },
     selectSwal (index) {
       this.tapIndex = index
-      console.log(index)
       if (index < 2) {
         this.callData.pay_type = index == 0 ? 1 : 2
       }
-      console.log(this.callData.pay_type)
       if (index == 2 && this.selectIndex == -1) {
         this.sureSwal()
       }
@@ -357,6 +342,15 @@ export default {
         Toast('倒计时结束')
       } else if (type == 2) {
         this.isAgain = true
+      }
+    }
+  },
+  watch: {
+    $route (to, from) {
+      let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+      if (bankCardInfo) {
+        bankCardInfo = JSON.parse(bankCardInfo)
+        this.newCard(bankCardInfo)
       }
     }
   }

@@ -268,16 +268,6 @@ export default {
       }
     })
   },
-  activated () {
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
-  },
   created () {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
@@ -364,7 +354,7 @@ export default {
         }
       }).catch((res) => {
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -551,11 +541,6 @@ export default {
     if (to.name != 'addressList' && to.name != 'addBankCard' && to.name != 'certification') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
-    }
-    if (to.name != 'addBankCard' && to.name != 'certification') {
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
     }
     next()
   }
