@@ -22,7 +22,7 @@
     <div class="tf-body-container">
       <refreshList
         class="recordList"
-        ref="recordList"
+        id="billList"
         :list.sync="recordList"
         :load="getGenreBillList"
       >
@@ -66,7 +66,7 @@ import { getGenreBillList } from '@/api/butler/livepay'
 import filters from './filters'
 import refreshList from '@/components/tf-refresh-list'
 export default {
-  name: 'livePayRecord',
+  name: 'livePayPayBill',
   components: {
     refreshList
   },
@@ -79,7 +79,8 @@ export default {
       qfMoney: 0, // 欠费金额
       yjMoney: 0, // 已缴金额
       qfCount: 0, // 欠费类别数量
-      recordList: []
+      recordList: [],
+      scrollTop: 0
     }
   },
   computed: {
@@ -91,6 +92,9 @@ export default {
     this.genreType = this.$route.query.genreType
     this.houseId = this.$route.query.houseId
     this.projectId = this.$route.query.projectId
+  },
+  activated () {
+    this.scrollTop && (document.getElementById('billList').scrollTop = this.scrollTop)
   },
   methods: {
     // 获取缴费记录列表
@@ -140,6 +144,7 @@ export default {
   },
   filters,
   beforeRouteLeave (to, from, next) {
+    this.scrollTop = document.getElementById('billList').scrollTop
     if (to.name !== 'livePayCostDetail') {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()

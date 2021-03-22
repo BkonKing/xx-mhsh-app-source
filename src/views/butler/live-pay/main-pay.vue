@@ -129,7 +129,7 @@ import { getRecharge, launchRechargePay } from '@/api/butler/livepay'
 import paySwal from '@/views/life/components/pay-swal'
 import paySuccess from './components/success'
 export default {
-  name: 'livePayMainPay',
+  name: 'livemainPay',
   components: {
     paySwal,
     paySuccess
@@ -187,6 +187,8 @@ export default {
           title: '缴费金额必须大于等于欠费金额'
         })
       } else {
+        this.successShow = true
+        return
         this.showPaySwal = true
       }
     },
@@ -245,7 +247,11 @@ export default {
     // 重定向到充缴记录
     replaceLivePayList () {
       this.$router.replace({
-        name: 'livePayRecord'
+        name: 'livePayRecord',
+        query: {
+          houseId: this.houseId,
+          type: 'replace'
+        }
       })
     },
     // 跳转账单列表页面
@@ -259,6 +265,15 @@ export default {
         }
       })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['livePayIndex']
+    // 支付成功后，重定向到充缴记录也要销毁当前页面
+    if (names.includes(to.name) || (to.name === 'livePayRecord' && to.query.type === 'replace')) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

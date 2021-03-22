@@ -109,7 +109,7 @@
       </van-dropdown-menu>
       <refreshList
         class="recordList"
-        ref="recordList"
+        id="recordList"
         :list.sync="recordList"
         :load="getRecordList"
       >
@@ -188,7 +188,8 @@ export default {
       lowestMoney: '', // 筛选最低金额
       highestMoney: '', // 筛选最高金额
       isLowestMoney: '', // 确定的筛选最低金额
-      isHighestMoney: '' // 确定的筛选最高金额
+      isHighestMoney: '', // 确定的筛选最高金额
+      scrollTop: 0
     }
   },
   computed: {
@@ -220,6 +221,9 @@ export default {
     this.houseId = this.$route.query.houseId
     this.getMonthList()
     this.getGenreList()
+  },
+  activated () {
+    this.scrollTop && (document.getElementById('recordList').scrollTop = this.scrollTop)
   },
   methods: {
     // 获取月份记录月份列表
@@ -341,7 +345,8 @@ export default {
   },
   filters,
   beforeRouteLeave (to, from, next) {
-    if (to.name !== 'livePayCostDetail') {
+    this.scrollTop = document.getElementById('recordList').scrollTop
+    if (to.name !== 'livePayRecordDetail') {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
     }

@@ -290,16 +290,22 @@ const butlerRouter = [
   {
     path: '/pages/butler/live-pay/payBill',
     name: 'livePayPayBill',
+    meta: {
+      keepAlive: true
+    },
     component: () =>
       import(
         /* webpackChunkName: "livePayPayBill" */
         '@/views/butler/live-pay/pay-bill.vue'
       )
   },
-  /* 缴费记录 */
+  /* 充缴记录 */
   {
     path: '/pages/butler/live-pay/record',
     name: 'livePayRecord',
+    meta: {
+      keepAlive: true
+    },
     component: () =>
       import(
         /* webpackChunkName: "livePayRecord" */
