@@ -16,17 +16,17 @@
             <li
               class="filtrate-item"
               :class="{
-                'filtrate-item-active': monthActive == item
+                'filtrate-item-active': monthActive == item.value
               }"
               v-for="(item, i) in monthList"
               :key="i"
-              @click="monthActive = item"
+              @click="changeMonth(item)"
             >
-              {{ item }}
+              {{ item.text }}
             </li>
           </ul>
           <template #title>
-            {{ monthActive === "全部" ? "账单月份" : monthActive }}
+            {{ monthActive === "" ? "账单月份" : monthName }}
           </template>
         </van-dropdown-item>
         <van-dropdown-item ref="payType">
@@ -34,10 +34,10 @@
             <ul class="filtrate-list">
               <li
                 class="filtrate-item"
-                :class="{ 'filtrate-item-active': payWay === item.value }"
-                v-for="(item, i) in payWayList"
+                :class="{ 'filtrate-item-active': billType === item.value }"
+                v-for="(item, i) in billTypeList"
                 :key="i"
-                @click="payWay = item.value"
+                @click="changeBillType(item)"
               >
                 {{ item.text }}
               </li>
@@ -46,9 +46,9 @@
               <li
                 class="filtrate-item"
                 :class="{ 'filtrate-item-active': payType === item.value }"
-                v-for="(item, i) in payTypeList"
+                v-for="(item, i) in showPayTypeList"
                 :key="i"
-                @click="payType = item.value"
+                @click="changePayType(item)"
               >
                 {{ item.text }}
               </li>
@@ -116,27 +116,33 @@
         <template v-slot="{ item }">
           <div class="pay-base-info">
             <div class="record-date">
-              {{ item.valueText | dateText }}
+              {{ item.month_name }}
             </div>
             <div class="record-paynum">
-              <span>缴费 ￥{{ item.already_money }}</span>
-              <span class="tf-ml-sm">充值 ￥{{ item.already_money }}</span>
+              <span v-if="item.z_renew" class="tf-mr-sm"
+                >缴费 ￥{{ item.z_renew }}</span
+              >
+              <span v-if="item.z_recharge" class="tf-mr-sm"
+                >充值 ￥{{ item.z_recharge }}</span
+              >
             </div>
           </div>
           <div class="pay-list">
             <div
               class="pay-item"
-              v-for="(li, i) in item.child"
+              v-for="(li, i) in item.list"
               :key="i"
               @click="goPayDetail(li)"
             >
               <div class="pay-item-left">
-                <div class="pay-item-title">{{ li.genre_name }}</div>
+                <div class="pay-item-title">{{ li.name }}</div>
                 <div class="pay-item-time">{{ li.pay_time }}</div>
               </div>
               <div class="pay-item-right">
-                <div class="pay-item-money">-{{ li.money }}</div>
-                <div class="pay-item-time">余额 {{ li.money }}</div>
+                <div class="pay-item-money">
+                  {{ li.bill_type == 1 ? "+" : "-" }}{{ li.money }}
+                </div>
+                <div class="pay-item-time">余额 {{ li.balance }}</div>
               </div>
             </div>
           </div>
@@ -147,7 +153,11 @@
 </template>
 
 <script>
-import { getPayRecord } from '@/api/butler'
+import {
+  getMonthList,
+  getGenreList,
+  getPayLogList
+} from '@/api/butler/livepay'
 import filters from './filters'
 import refreshList from '@/components/tf-refresh-list'
 export default {
@@ -157,26 +167,24 @@ export default {
   },
   data () {
     return {
+      houseId: '',
       recordList: [],
       date: '',
-      monthList: [], // 缴费月份列表
-      monthActive: '全部', // 筛选账单月份
-      payWay: 0, // 筛选缴费类型
-      payType: 0, // 筛选缴费类型
+      monthList: [], // 充缴月份列表
+      monthActive: '', // 筛选账单月份
+      monthName: '', // 账单月份显示文本
+      billType: 0, // 筛选账单类型
+      payType: '', // 筛选缴费类型
+      billTypeName: '全部', // 筛选账单类型名称
+      payTypeName: '全部', // 筛选缴费类型名称
       // 筛选缴费类型列表
-      payWayList: [
+      billTypeList: [
         { text: '全部', value: 0 },
-        { text: '缴费', value: 1 },
-        { text: '充值', value: 2 }
+        { text: '缴费', value: 2 },
+        { text: '充值', value: 1 }
       ],
-      // 筛选缴费类型
-      payTypeList: [
-        { text: '全部', value: 0 },
-        { text: '水费', value: 1 },
-        { text: '电费', value: 2 },
-        { text: '燃气费', value: 3 },
-        { text: '物业费', value: 4 }
-      ],
+      payTypeList: [], // 缴费筛选缴费类型
+      genreList: [], // 充值筛选缴费类型
       lowestMoney: '', // 筛选最低金额
       highestMoney: '', // 筛选最高金额
       isLowestMoney: '', // 确定的筛选最低金额
@@ -185,12 +193,16 @@ export default {
   },
   computed: {
     detailType () {
-      if (!this.payWay && !this.payType) {
+      if (!this.billType && !this.payType) {
         return '明细类型'
       }
-      return `${this.payWayList[this.payWay].text}-${
-        this.payTypeList[this.payType].text
-      }`
+      if (!this.payType) {
+        return this.billTypeName
+      }
+      return `${this.billTypeName}-${this.payTypeName}`
+    },
+    showPayTypeList () {
+      return this.billType !== 1 ? this.payTypeList : this.genreList
     },
     moneyFiltrate () {
       if (!this.isLowestMoney && !this.isHighestMoney) {
@@ -204,7 +216,55 @@ export default {
       }
     }
   },
+  created () {
+    this.houseId = this.$route.query.houseId
+    this.getMonthList()
+    this.getGenreList()
+  },
   methods: {
+    // 获取月份记录月份列表
+    getMonthList () {
+      getMonthList({
+        expenses_house_id: this.houseId
+      }).then(({ data }) => {
+        this.monthList = data || []
+      })
+    },
+    // 获取充缴记录明细类型
+    getGenreList () {
+      getGenreList({
+        expenses_house_id: this.houseId
+      }).then(({ pay_data, recharge_data }) => {
+        this.payTypeList = pay_data || []
+        this.genreList = recharge_data || []
+      })
+    },
+    // 账单月份
+    changeMonth ({ value, text }) {
+      this.monthActive = value
+      this.monthName = text
+    },
+    // 账单类型
+    changeBillType ({ value, text }) {
+      if (
+        value === 1 &&
+        this.genreList.findIndex(obj => obj.value === this.payType) !== -1
+      ) {
+        this.billType = value
+        this.billTypeName = text
+      } else if (
+        value !== 1 &&
+        this.payTypeList.findIndex(obj => obj.value === this.payType) !== -1
+      ) {
+        this.billType = value
+        this.billTypeName = text
+      }
+    },
+    // 缴费/充值种类
+    changePayType ({ value, text }) {
+      this.payType = value
+      this.payTypeName = text
+    },
     // 金额筛选打开事件
     openMoneyFiltrate () {
       this.lowestMoney = this.isLowestMoney
@@ -212,14 +272,14 @@ export default {
     },
     // 确定金额筛选条件
     confirmFiltrateMoney () {
-      if (this.lowestMoney > this.highestMoney) {
-        this.isLowestMoney = this.highestMoney
-        this.isHighestMoney = this.lowestMoney
+      if (parseFloat(this.lowestMoney) > parseFloat(this.highestMoney)) {
+        this.isLowestMoney = parseFloat(this.highestMoney)
+        this.isHighestMoney = parseFloat(this.lowestMoney)
       } else {
-        this.isLowestMoney = this.lowestMoney
-        this.isHighestMoney = this.highestMoney
+        this.isLowestMoney = parseFloat(this.lowestMoney)
+        this.isHighestMoney = parseFloat(this.highestMoney)
       }
-      this.$refs.moneyFiltrate.toggle(false)
+      this.closeMenu('moneyFiltrate')
       this.listReload()
     },
     // 重置金额筛选条件
@@ -228,15 +288,20 @@ export default {
       this.highestMoney = ''
       this.isLowestMoney = ''
       this.isHighestMoney = ''
+      this.listReload()
     },
     // 获取缴费记录列表
     getRecordList (params) {
-      return getPayRecord({
-        setmeal_days: this.monthActive,
-        payWay: this.payWay,
-        payType: this.payType
-      }).then(({ data, month_data }) => {
-        this.monthList = ['全部'].concat(month_data)
+      const param = {
+        expenses_house_id: this.houseId,
+        month_name: this.monthActive,
+        bill_type: this.billType,
+        genre_type: this.payType,
+        genre_id: this.payType,
+        min_money: this.isLowestMoney,
+        max_money: this.isHighestMoney
+      }
+      return getPayLogList(param).then(({ data }) => {
         return Promise.resolve({
           data
         })
@@ -245,6 +310,10 @@ export default {
     // 列表时间选择重新渲染列表
     listReload () {
       this.$refs.recordList.reload()
+    },
+    // 关闭菜单下拉框
+    closeMenu (ref) {
+      this.$refs[ref].toggle(false)
     },
     // 跳转缴费详情页
     goPayDetail ({ id }) {
@@ -259,12 +328,15 @@ export default {
   watch: {
     monthActive () {
       this.listReload()
+      this.closeMenu('monthActive')
     },
-    payWay () {
+    billType () {
       this.listReload()
+      this.closeMenu('payType')
     },
     payType () {
       this.listReload()
+      this.closeMenu('payType')
     }
   },
   filters,
@@ -298,13 +370,13 @@ export default {
     margin-right: -10px;
   }
   .filtrate-item {
-    width: 165px;
+    min-width: 165px;
   }
 }
 .filtrate-list {
   display: flex;
   flex-wrap: wrap;
-  padding: 40px 20px 20px 30px;
+  padding: 34px 20px 20px 30px;
   .filtrate-item {
     display: flex;
     justify-content: center;
@@ -341,7 +413,10 @@ export default {
       height: 100%;
       .van-field__control {
         height: 100%;
-        font-size: 24px;
+        font-size: 34px;
+        &::placeholder{
+          font-size: 24px;
+        }
       }
     }
   }
@@ -384,6 +459,9 @@ export default {
     font-size: 24px;
     line-height: 1;
     color: #8f8f94;
+    .tf-mr-sm {
+      margin-right: 20px;
+    }
   }
 }
 // 缴费记录列表
@@ -394,7 +472,7 @@ export default {
 // 月份费用列表
 .pay-list {
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 0 30px;
   background: #ffffff;
   border-radius: 10px;
@@ -415,7 +493,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      font-size: 38px;
+      font-size: 34px;
     }
     &-money {
       line-height: 42px;
@@ -427,5 +505,16 @@ export default {
 }
 .tf-ml-sm {
   margin-left: 16px;
+}
+// 下拉菜单
+/deep/ .van-dropdown-menu__bar {
+  .van-dropdown-menu__title {
+    &:after {
+      margin-top: -9px;
+    }
+    &.van-dropdown-menu__title--down:after {
+      margin-top: -3px;
+    }
+  }
 }
 </style>

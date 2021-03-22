@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg">
     <van-nav-bar
-      title="缴费详情"
+      :title="`${billName}详情`"
       :fixed="true"
       :border="false"
       placeholder
@@ -10,10 +10,12 @@
     >
     </van-nav-bar>
     <div class="pay-record-detail">
-      <img class="pay-type-icon" :src="payInfo.icon" />
+      <img class="pay-type-icon" :src="payInfo.genre_icon" />
       <div class="pay-title">{{ payInfo.genre_name }}</div>
       <div class="pay-detail">
-        <div class="pay-number">-￥{{ payInfo.money }}</div>
+        <div class="pay-number">
+          {{ payInfo.bill_type == 1 ? "+" : "-" }}￥{{ payInfo.money }}
+        </div>
         <div class="pay-info-container">
           <div class="pay-info-box">
             <div class="pay-info-label">
@@ -28,41 +30,44 @@
               缴费户号
             </div>
             <div class="pay-info-content">
-              {{ payInfo.account_numb }}({{ payInfo.realname }})
+              {{ payInfo.account_numb }}
             </div>
           </div>
-          <div class="pay-info-box" v-if="payInfo.account_numb">
+          <div class="pay-info-box" v-if="payInfo.realname">
             <div class="pay-info-label">
-              户主
+              <span>户</span>
+              <span>主</span>
             </div>
             <div class="pay-info-content">
-              {{ payInfo.account_numb }}({{ payInfo.realname }})
+              {{ payInfo.realname }}
             </div>
           </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              账单月份
+          <template v-if="payInfo.bill_type == 2">
+            <div class="pay-info-box">
+              <div class="pay-info-label">
+                账单月份
+              </div>
+              <div class="pay-info-content">{{ payInfo.days_time }}</div>
             </div>
-            <div class="pay-info-content">{{ payInfo.days_time }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              缴费属期
+            <div class="pay-info-box">
+              <div class="pay-info-label">
+                缴费属期
+              </div>
+              <div class="pay-info-content">{{ payInfo.setmeal_days }}</div>
             </div>
-            <div class="pay-info-content">{{ payInfo.time }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              应缴金额
+            <div class="pay-info-box">
+              <div class="pay-info-label">
+                应缴金额
+              </div>
+              <div class="pay-info-content">￥{{ payInfo.payable }}</div>
             </div>
-            <div class="pay-info-content">{{ payInfo.time }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              实际已缴
+            <div class="pay-info-box">
+              <div class="pay-info-label">
+                实际已缴
+              </div>
+              <div class="pay-info-content">￥{{ payInfo.money }}</div>
             </div>
-            <div class="pay-info-content">{{ payInfo.time }}</div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -70,73 +75,31 @@
       <div class="pay-detail">
         <div class="pay-info-container">
           <div class="pay-info-box">
-            <div class="pay-info-label">
-              缴费金额
-            </div>
+            <div class="pay-info-label">{{ billName }}金额</div>
             <div class="pay-info-content">
-              <span class="tf-text-sm tf-text-grey">（自动缴费）</span>￥{{ payInfo.money }}
+              <span
+                v-if="payInfo.bill_type == 2 && payInfo.payable > payInfo.money"
+                class="tf-text-sm tf-text-grey"
+                >（自动缴费）</span
+              >￥{{ payInfo.money }}
             </div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">
               账户余额
             </div>
-            <div class="pay-info-content">￥{{ payInfo.money }}</div>
+            <div class="pay-info-content">￥{{ payInfo.balance }}</div>
           </div>
           <div class="pay-info-box">
-            <div class="pay-info-label">
-              缴费单号
-            </div>
-            <div class="pay-info-content">{{ payInfo.order_numb }}</div>
+            <div class="pay-info-label">{{ billName }}单号</div>
+            <div class="pay-info-content">{{ payInfo.id }}</div>
           </div>
           <div class="pay-info-box">
-            <div class="pay-info-label">
-              缴费用户
-            </div>
-            <div class="pay-info-content">{{ payInfo.pay_text }}</div>
+            <div class="pay-info-label">{{ billName }}用户</div>
+            <div class="pay-info-content">{{ payInfo.realname }}</div>
           </div>
           <div class="pay-info-box">
-            <div class="pay-info-label">
-              缴费时间
-            </div>
-            <div class="pay-info-content">{{ payInfo.pay_time }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pay-record-detail">
-      <div class="pay-detail">
-        <div class="pay-info-container">
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              充值金额
-            </div>
-            <div class="pay-info-content">
-              <span class="tf-text-sm tf-text-grey">（自动缴费）</span>￥{{ payInfo.money }}
-            </div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              账户余额
-            </div>
-            <div class="pay-info-content">￥{{ payInfo.money }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              充值单号
-            </div>
-            <div class="pay-info-content">{{ payInfo.order_numb }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              充值用户
-            </div>
-            <div class="pay-info-content">{{ payInfo.pay_text }}</div>
-          </div>
-          <div class="pay-info-box">
-            <div class="pay-info-label">
-              充值时间
-            </div>
+            <div class="pay-info-label">{{ billName }}时间</div>
             <div class="pay-info-content">{{ payInfo.pay_time }}</div>
           </div>
         </div>
@@ -146,8 +109,7 @@
 </template>
 
 <script>
-import { getPayDetails } from '@/api/butler'
-import filters from './filters'
+import { getPayLogDetails } from '@/api/butler/livepay'
 export default {
   name: 'livePayRecordDetail',
   data () {
@@ -158,18 +120,22 @@ export default {
   },
   created () {
     this.id = this.$route.query.id
-    this.getPayDetails()
+    this.getPayLogDetails()
+  },
+  computed: {
+    billName () {
+      return this.payInfo.bill_type === '1' ? '充值' : '缴费'
+    }
   },
   methods: {
-    getPayDetails () {
-      getPayDetails({
-        order_id: this.id
+    getPayLogDetails () {
+      getPayLogDetails({
+        pay_log_id: this.id
       }).then(({ data }) => {
         this.payInfo = data
       })
     }
-  },
-  filters
+  }
 }
 </script>
 
@@ -207,6 +173,7 @@ export default {
     height: 158px;
     font-size: 52px;
     font-weight: 500;
+    color: #222;
     border-bottom: 2px dashed #f0f0f0;
   }
   .pay-info-box {
@@ -215,12 +182,18 @@ export default {
     align-items: center;
     padding: 10px;
     .pay-info-label {
+      display: flex;
+      justify-content: space-between;
+      flex-shrink: 0;
+      width: 112px;
+      margin-right: 46px;
       font-size: 28px;
       color: #949494;
     }
     .pay-info-content {
       font-size: 28px;
       color: #222;
+      text-align: right;
     }
   }
 }

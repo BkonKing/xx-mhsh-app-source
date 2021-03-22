@@ -18,12 +18,19 @@
       <div class="pay-detail">
         <div class="pay-header">
           <div class="pay-header-left">
-            <div class="pay-number-label">应交金额</div>
-            <div class="pay-number">
-              {{ payInfo.money }}
+            <div class="pay-number-label">{{type === 1 ? '应交金额' : '余额'}}</div>
+            <div
+              class="pay-number"
+              :style="{
+                color: payInfo.z_balance < 0 ? '#EB5841' : '#222'
+              }"
+            >
+              {{
+                type === 1 ? Math.abs(payInfo.z_balance) : payInfo.z_balance
+              }}
             </div>
           </div>
-          <div class="pay-header-right" @click="goBill">
+          <div v-if="type === 1" class="pay-header-right" @click="goBill">
             查看账单 <span class="tf-icon tf-icon-right"></span>
           </div>
         </div>
@@ -59,15 +66,35 @@
         </div>
       </div>
       <div class="pay-detail pay-padding">
-        <div class="pay-number-label">缴费金额</div>
-        <van-field
-          v-model="money"
-          class="pay-input"
-          type="number"
-          :autofocus="true"
-        >
-          <template v-slot:left-icon>￥</template>
-        </van-field>
+        <template v-if="type === 1">
+          <div class="pay-number-label">缴费金额</div>
+          <van-field
+            v-model="money"
+            class="pay-input"
+            type="number"
+            :autofocus="true"
+          >
+            <template v-slot:left-icon>￥</template>
+          </van-field>
+        </template>
+        <template v-else>
+          <div class="pay-number-label">充值金额</div>
+          <van-field v-model="money" class="pay-input" type="number">
+            <template v-slot:left-icon>￥</template>
+          </van-field>
+          <div v-if="payInfo.z_balance >= 0" class="money-primary">
+            <div
+              v-for="(item, i) in moneyPayList"
+              :key="i"
+              class="money-tag"
+              :class="{ 'money-tag-active': money == item }"
+              @click="money = item"
+            >
+              <span class="tf-text-sm">￥</span>
+              <span>{{ item }}</span>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
     <div class="tf-padding">
@@ -75,7 +102,7 @@
         v-preventReClick
         size="large"
         type="danger"
-        :disabled="!money"
+        :disabled="payStatus"
         @click="payMoney"
         >立即缴费</van-button
       >
@@ -86,86 +113,154 @@
       @confirm="$router.go(-1)"
       @look="replaceLivePayList"
     ></pay-success>
+    <pay-swal
+      ref="payblock"
+      :show-swal="showPaySwal"
+      :pay-money="totalMoney"
+      :wxzfbShow="false"
+      @sureSwal="surePaySwal"
+      @fyResult="fyResult"
+    ></pay-swal>
   </div>
 </template>
 
 <script>
-import { getFeeDetails } from "@/api/butler";
-import paySuccess from "./components/success";
-import filters from "./filters";
+import { getRecharge, launchRechargePay } from '@/api/butler/livepay'
+import paySwal from '@/views/life/components/pay-swal'
+import paySuccess from './components/success'
 export default {
-  name: "livePayCostDetail",
+  name: 'livePayMainPay',
   components: {
+    paySwal,
     paySuccess
   },
-  data() {
+  data () {
     return {
-      id: "",
-      projectId: "",
-      orderId: "",
-      isChoicePay: false, // 是否从缴费页面进入
+      type: 1, // 1：缴费 2：充值
+      houseId: '',
+      projectId: '',
+      genreType: '', // 费用类别
       payInfo: {
-        order_status: 2
+        z_balance: 0
       },
-      money: "", //
-      successShow: false
-    };
+      money: '', // 金额
+      successShow: false,
+      moneyPayList: [1000, 500, 300, 100], // 充值预选列表
+      showPaySwal: false
+    }
   },
-  created() {
-    this.orderId = this.$route.query.orderId;
-    this.id = this.$route.query.id;
-    this.projectId = this.$route.query.projectId;
-    this.isChoicePay = this.$route.query.isChoicePay;
-    this.getFeeDetails();
+  computed: {
+    totalMoney () {
+      return parseFloat(this.money) || 0
+    },
+    // 金额输入框为空或等0时灰显不可点击，否则亮起可点击
+    payStatus () {
+      return !this.money || Number.isNaN(parseFloat(this.money)) || parseFloat(this.money) <= 0
+    }
+  },
+  created () {
+    this.type = parseInt(this.$route.query.type)
+    this.genreType = this.$route.query.genreType
+    this.houseId = this.$route.query.houseId
+    this.projectId = this.$route.query.projectId
+    this.getRecharge()
   },
   methods: {
-    // 获取费用详情接口
-    getFeeDetails() {
-      getFeeDetails({
-        order_id: this.orderId
+    // 获取详情接口
+    getRecharge () {
+      getRecharge({
+        genre_type: this.genreType,
+        expenses_house_id: this.houseId
       }).then(({ data }) => {
-        this.payInfo = data;
-      });
+        this.payInfo = data
+      })
     },
-    // 跳转账单页面
-    goBill() {
-      this.$router.push({
-        name: "livePayPayBill",
-        query: {
-          projectId: this.projectId,
-          id: this.id
-        }
-      });
-    },
-    // 跳转缴费页面
-    payMoney() {
+    // 缴费
+    payMoney () {
       // 金额做判断：1.大于0；2.>=应缴金额
       if (parseFloat(this.money) <= 0) {
         this.$dialog({
-          title: "金额必须大于零"
-        });
-      } else if (parseFloat(this.money) < parseFloat(this.payInfo.money)) {
+          title: '金额必须大于零'
+        })
+      } else if (parseFloat(this.money) + this.payInfo.z_balance < 0) {
         this.$dialog({
-          title: "缴费金额必须大于等于欠费金额"
-        });
+          title: '缴费金额必须大于等于欠费金额'
+        })
       } else {
+        this.showPaySwal = true
       }
     },
-    // 跳转生活缴费列表页
-    goLivePayList() {
-      this.$router.push({
-        name: "livePayRecord"
-      });
+    // 发起支付
+    surePaySwal (data) {
+      launchRechargePay({
+        expenses_house_id: this.houseId,
+        genre_type: this.genreType,
+        money: this.money,
+        pay_type: data.pay_type,
+        bank_id: data.bank_id,
+        bank_card: data.bank_card,
+        realname: data.realname,
+        idcard: data.idcard,
+        mobile: data.mobile
+      }).then(res => {
+        if (res.success && res.data && data.pay_type == 4) {
+          this.$refs.payblock.sendCode(res)
+        }
+      }).catch((res) => {
+        const code = ['202', '203', '204']
+        if (!code.includes(res.code) && data.pay_type == 4) {
+          // 有身份证就跳到添加银行卡，否则是实名认证
+          if (data.idcard) {
+            this.$router.push({
+              path: '/pages/personage/information/addBankCard',
+              query: {
+                message: res.message
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/pages/personage/information/certification',
+              query: {
+                message: res.message
+              }
+            })
+          }
+        }
+      })
     },
-    // 重定向到生活缴费列表页
-    replaceLivePayList() {
+    // 支付成功
+    fyResult () {
+      this.showPaySwal = false
+      this.successShow = true
+    },
+    // 跳转充缴记录
+    goLivePayList () {
+      this.$router.push({
+        name: 'livePayRecord',
+        query: {
+          houseId: this.houseId
+        }
+      })
+    },
+    // 重定向到充缴记录
+    replaceLivePayList () {
       this.$router.replace({
-        name: "livePayRecord"
-      });
+        name: 'livePayRecord'
+      })
+    },
+    // 跳转账单列表页面
+    goBill () {
+      this.$router.push({
+        name: 'livePayPayBill',
+        query: {
+          genreType: this.genreType,
+          projectId: this.projectId,
+          houseId: this.houseId
+        }
+      })
     }
-  },
-  filters
-};
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -196,7 +291,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 30px 0;
+      padding: 23px 0;
       border-bottom: 2px dashed #f0f0f0;
       .pay-header-left {
         display: flex;
@@ -219,9 +314,10 @@ export default {
     }
 
     .pay-number-label {
+      width: 112px;
       margin-right: 46px;
       font-size: 28px;
-      color: #000;
+      color: #222;
       line-height: 1;
     }
 
@@ -239,15 +335,16 @@ export default {
       }
       .pay-info-content {
         font-size: 28px;
+        color: #222;
       }
     }
   }
   .pay-padding {
-    padding-top: 30px;
+    padding-top: 40px;
     padding-bottom: 30px;
   }
   .pay-input {
-    padding: 22px 0 16px;
+    padding: 24px 0 16px;
     font-size: 72px;
     line-height: 1;
     border-bottom: 2px solid #f0f0f0;
@@ -263,6 +360,31 @@ export default {
     /deep/ .van-field__control {
       line-height: 72px;
     }
+  }
+}
+.money-primary {
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 0 10px;
+  .money-tag {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 147px;
+    height: 64px;
+    padding-bottom: 12px;
+    font-size: 30px;
+    color: #eb5841;
+    background: rgba(235, 88, 65, 0.1);
+    background-clip: padding-box;
+    border: 4px solid rgba(235, 88, 65, 0.1);
+    border-radius: 4px;
+    > span {
+      line-height: 1;
+    }
+  }
+  .money-tag-active {
+    border: 4px solid #eb5841;
   }
 }
 /deep/ .van-button--disabled {

@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { getChoicePayList, createPay, canCreatePay } from '@/api/butler'
+import { getChoicePayList, createPay, canCreatePay } from '@/api/butler/livepay'
 import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
 import { makeCount } from '@/utils/util'
@@ -92,7 +92,7 @@ export default {
     }
   },
   created () {
-    this.expensesHouseId = this.$route.query.id
+    this.expensesHouseId = this.$route.query.houseId
     this.projectId = this.$route.query.projectId
   },
   mounted () {
@@ -116,11 +116,7 @@ export default {
       return getChoicePayList({
         expenses_house_id: this.expensesHouseId,
         project_id: this.projectId
-      }).then(({ table_data: data, month_name_text }) => {
-        // 如果没有账单信息就返回上一个页面
-        // if (!data || !data.length) {
-        //   this.$router.go(-1)
-        // }
+      }).then(({ table_data: data }) => {
         this.payList = data
         this.handlePaymentTerm()
         // 默认全部选中
@@ -195,8 +191,7 @@ export default {
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          orderId: id,
-          isChoicePay: 1
+          orderId: id
         }
       })
     },
@@ -224,10 +219,7 @@ export default {
         }
       }).catch((res) => {
         const code = ['202', '203', '204']
-        if (code.includes(res.code)) {
-          return
-        }
-        if (data.pay_type == 4) {
+        if (!code.includes(res.code) && data.pay_type == 4) {
           // 有身份证就跳到添加银行卡，否则是实名认证
           if (this.idcard) {
             this.$router.push({
@@ -305,11 +297,13 @@ export default {
   margin-top: 40px;
   .month-text {
     font-size: 28px;
+    color: #222;
   }
   .unpay-number {
+    margin-top: 6px;
     font-size: 24px;
     color: #8f8f94;
-    margin-top: 6px;
+    line-height: 1;
   }
   .pay-list-container {
     width: 100%;
@@ -317,9 +311,9 @@ export default {
     .pay-list-item {
       display: flex;
       .pay-checkbox {
-        width: 80px;
+        width: 62px;
         display: flex;
-        justify-content: center;
+        margin-left: 10px;
       }
     }
     .pay-list-item + .pay-list-item {
@@ -338,7 +332,6 @@ export default {
         align-items: center;
         .pay-title {
           font-size: 30px;
-          margin-left: 27px;
         }
       }
       .pay-info-right {
