@@ -18,8 +18,13 @@
       <div class="pay-detail">
         <div class="pay-header">
           <div class="pay-number-label">应交金额</div>
-          <div class="pay-number">
-            {{ payInfo.money }}
+          <div
+            class="pay-number"
+            :style="{
+              color: payInfo.z_balance < 0 ? '#EB5841' : '#222'
+            }"
+          >
+            {{ payInfo.z_balance }}
           </div>
         </div>
         <div class="pay-info-container">
@@ -58,7 +63,7 @@
         <van-field v-model="money" class="pay-input" type="number">
           <template v-slot:left-icon>￥</template>
         </van-field>
-        <div v-if="payInfo.money >= 0" class="money-primary">
+        <div v-if="payInfo.z_balance >= 0" class="money-primary">
           <div
             v-for="(item, i) in moneyPayList"
             :key="i"
@@ -92,9 +97,8 @@
 </template>
 
 <script>
-import { getFeeDetails } from '@/api/butler'
+import { getRecharge } from '@/api/butler/livepay'
 import paySuccess from './components/success'
-import filters from './filters'
 export default {
   name: 'livePayTopUp',
   components: {
@@ -102,12 +106,12 @@ export default {
   },
   data () {
     return {
-      id: '',
+      houseId: '',
       projectId: '',
-      orderId: '',
+      genreType: '', // 费用类别
       isChoicePay: false, // 是否从缴费页面进入
       payInfo: {
-        order_status: 2
+        z_balance: 0
       },
       money: '', // 充值金额
       successShow: false,
@@ -115,39 +119,50 @@ export default {
     }
   },
   created () {
-    this.orderId = this.$route.query.orderId
-    this.id = this.$route.query.id
+    this.genreType = this.$route.query.genreType
+    this.houseId = this.$route.query.houseId
     this.projectId = this.$route.query.projectId
     this.isChoicePay = this.$route.query.isChoicePay
-    this.getFeeDetails()
+    this.getRecharge()
   },
   methods: {
     // 获取费用详情接口
-    getFeeDetails () {
-      getFeeDetails({
-        order_id: this.orderId
+    getRecharge () {
+      getRecharge({
+        genreType: this.genreType,
+        expenses_house_id: this.houseId
       }).then(({ data }) => {
         this.payInfo = data
       })
     },
-    // 支付金额
+    // 充值
     payMoney () {
-      this.successShow = true
+      // 金额做判断：1.大于0；2.>=应缴金额
+      if (parseFloat(this.money) <= 0) {
+        this.$dialog({
+          title: '金额必须大于零'
+        })
+      } else if (parseFloat(this.money) + this.payInfo.z_balance < 0) {
+        this.$dialog({
+          title: '充值金额必须大于等于欠费金额'
+        })
+      } else {
+        this.successShow = true
+      }
     },
-    // 跳转生活缴费列表页
+    // 跳转充缴记录
     goLivePayList () {
       this.$router.push({
         name: 'livePayRecord'
       })
     },
-    // 重定向到生活缴费列表页
+    // 重定向到充缴记录
     replaceLivePayList () {
       this.$router.replace({
         name: 'livePayRecord'
       })
     }
-  },
-  filters
+  }
 }
 </script>
 

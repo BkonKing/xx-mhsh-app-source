@@ -13,10 +13,10 @@
       </template>
     </van-nav-bar>
     <div class="bill-info">
-      <span class="bill-info-left">水费</span>
+      <span class="bill-info-left">{{genreName}}</span>
       <span class="bill-info-right">
-        <span>待缴￥70</span>
-        <span>已缴￥530</span>
+        <span v-if="qfMoney">待缴￥{{qfMoney}}</span>
+        <span v-if="yjMoney">已缴￥{{yjMoney}}</span>
       </span>
     </div>
     <div class="tf-body-container">
@@ -24,16 +24,16 @@
         class="recordList"
         ref="recordList"
         :list.sync="recordList"
-        :load="getRecordList"
+        :load="getGenreBillList"
       >
         <template v-slot="{ item }">
           <div class="pay-base-info">
             <div class="record-date">
-              {{ item.month_name }}
+              {{ item.name }}
             </div>
             <div class="record-paynum">
-              <span>待缴 ￥{{ item.already_money }}</span>
-              <span class="tf-ml-sm">已缴 ￥{{ item.already_money }}</span>
+              <span v-if="item.z_qf_money" class="tf-mr-sm">待缴 ￥{{ item.z_qf_money }}</span>
+              <span v-if="item.z_yj_money" class="tf-mr-sm">已缴 ￥{{ item.z_yj_money }}</span>
             </div>
           </div>
           <div class="pay-list">
@@ -43,10 +43,10 @@
               :key="i"
               @click="goPayDetail(li)"
             >
-              <div class="pay-item-left">￥{{ li.pay_time }}</div>
-              <!-- <div class="pay-item-right">￥{{ li.money }}</div> -->
-              <div class="pay-item-right-unpay">
-                <span class="unpay-tag">未缴</span>￥{{ li.money }}
+              <div class="pay-item-left">{{ li.name }}</div>
+              <div v-if="li.order_status == 2" class="pay-item-right">￥{{ li.pay_money }}</div>
+              <div v-else class="pay-item-right-unpay">
+                <span class="unpay-tag">未缴</span>￥{{ li.qf_money }}
               </div>
             </div>
           </div>
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { getPayRecord } from '@/api/butler'
+import { getGenreBillList } from '@/api/butler/livepay'
 import filters from './filters'
 import refreshList from '@/components/tf-refresh-list'
 export default {
@@ -72,38 +72,50 @@ export default {
   },
   data () {
     return {
-      costType: '4',
-      isMoreUnPay: false,
+      houseId: '',
+      projectId: '',
+      genreType: '', // 费用类别
+      genreName: '', // 类别名称
+      qfMoney: 0, // 欠费金额
+      yjMoney: 0, // 已缴金额
+      qfCount: 0, // 欠费类别数量
       recordList: []
     }
   },
   computed: {
     multiplePayAble () {
-      return this.costType === '4' && this.isMoreUnPay
+      return this.genreType === '4' && this.qfCount > 1
     }
   },
   created () {
-    // this.costType = this.$router.query.type
+    this.genreType = this.$route.query.genreType
+    this.houseId = this.$route.query.houseId
+    this.projectId = this.$route.query.projectId
   },
   methods: {
     // 获取缴费记录列表
-    getRecordList (params) {
-      return getPayRecord({
-        setmeal_days: this.changeDate
-      }).then(({ data, month_data }) => {
-        this.monthList = ['全部'].concat(month_data)
+    getGenreBillList (params) {
+      return getGenreBillList({
+        genre_type: this.genreType,
+        project_id: this.projectId,
+        expenses_house_id: this.houseId
+      }).then(({ data }) => {
+        this.genreName = data.genre_name
+        this.qfMoney = data.zz_qf_money
+        this.yjMoney = data.zz_yj_money
+        this.qfCount = data.qf_count
         return Promise.resolve({
-          data
+          data: data.list
         })
       })
     },
-    // 跳转缴费页面
+    // 跳转其他页面缴费页面
     goPay () {
       this.$router.push({
         name: 'livePayPay',
         query: {
           projectId: this.projectId,
-          id: this.id
+          houseId: this.houseId
         }
       })
     },
@@ -112,14 +124,17 @@ export default {
       this.$router.push({
         name: 'livePayCostDetail',
         query: {
-          id
+          orderId: id
         }
       })
     },
     // 跳转生活缴费列表页
     goLivePayList () {
       this.$router.push({
-        name: 'livePayRecord'
+        name: 'livePayRecord',
+        query: {
+          houseId: this.houseId
+        }
       })
     }
   },
@@ -157,7 +172,6 @@ export default {
 }
 // 列表
 .recordList {
-  height: calc(100% - 90px);
   padding-top: 40px;
   .pay-base-info {
     margin-left: 12px;
@@ -174,13 +188,16 @@ export default {
       font-size: 24px;
       line-height: 1;
       color: #8f8f94;
+      .tf-mr-sm {
+        margin-right: 20px;
+      }
     }
   }
 }
 // 月份费用列表
 .pay-list {
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   padding: 0 30px;
   background: #ffffff;
   border-radius: 10px;

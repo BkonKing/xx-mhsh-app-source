@@ -25,30 +25,28 @@
     <div class="tf-body-container">
       <div class="pay-container" v-if="payList && payList.length > 0">
         <ul class="pay-list-container">
-          <template v-for="item in payList">
-            <li
-              v-for="(li, i) in item.child"
-              class="pay-list-item"
-              @click="goCostDetail(li)"
-              :key="i"
-            >
-              <div class="pay-list-item-left">
-                <img class="pay-type-icon" :src="li.genre_icon" />
-                <span class="pay-title">{{ li.genre_name }}</span>
-              </div>
-              <div class="pay-list-item-right">
-                <span
-                  class="pay-number"
-                  :style="{
-                    color: li.order_status === '2' ? '#222' : '#EB5841'
-                  }"
-                >
-                  {{ li.order_status === "2" ? "" : "-" }}{{ li.money }}</span
-                >
-                <span class="tf-icon tf-icon-right"></span>
-              </div>
-            </li>
-          </template>
+          <li
+            v-for="(li, i) in payList"
+            class="pay-list-item"
+            @click="judgePay(li)"
+            :key="i"
+          >
+            <div class="pay-list-item-left">
+              <img class="pay-type-icon" :src="li.genre_icon" />
+              <span class="pay-title">{{ li.genre_name }}</span>
+            </div>
+            <div class="pay-list-item-right">
+              <span
+                class="pay-number"
+                :style="{
+                  color: li.z_balance < 0 ? '#EB5841' : '#222'
+                }"
+              >
+                {{ li.z_balance }}</span
+              >
+              <span class="tf-icon tf-icon-right"></span>
+            </div>
+          </li>
         </ul>
       </div>
       <template v-else>
@@ -62,7 +60,7 @@
 </template>
 
 <script>
-import { getLifePayList } from '@/api/butler'
+import { getHouseList, getLifePayList } from '@/api/butler/livepay'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
@@ -71,142 +69,118 @@ export default {
       selectedHouse: '', // 选中的房间，值为项目ID + 房间账单ID + 房间ID
       houseList: [], // 房间列表
       first: true,
-      payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
-      monthList: [] // 缴费月份列表
+      forceText: '' // 强制缴费名称
     }
   },
   computed: {
     ...mapGetters(['userInfo', 'currentProject'])
   },
   created () {
-    this.getLifePayList({}, true)
+    this.getHouseList()
   },
   activated () {
     if (this.first) {
+      this.first = false
       return
     }
-    const [project_id, expenses_house_id] = this.selectedHouse.split('-')
-    this.getLifePayList({
-      expenses_house_id,
-      project_id
-    })
+    this.searchLifePayList()
   },
   methods: {
+    // 获取房屋列表
+    getHouseList () {
+      getHouseList().then(({ data }) => {
+        let status = true
+        const houseId = this.$route.query.id || this.currentProject.house_id
+        this.houseList = data.map(obj => {
+          const {
+            project_name,
+            fc_info,
+            house_id,
+            expenses_house_id,
+            project_id
+          } = obj
+          // 项目ID + 房间账单ID + 房间ID
+          const value = `${project_id}-${expenses_house_id}-${house_id}`
+          // 如果是首次渲染，则默认设置选中当前房屋
+          if (houseId === house_id) {
+            this.selectedHouse = value
+          }
+          // 如果当前房屋没有账单id
+          if (this.selectedHouse === value && !expenses_house_id) {
+            status = false
+          }
+          return {
+            text: `${project_name} ${fc_info}`,
+            value
+          }
+        })
+        if (status) {
+          // 进入页面获取完房间后，请求一次当前账单数据
+          this.searchLifePayList()
+        }
+      })
+    },
     // 房屋切换获取生活缴费列表
-    searchLifePayList (date) {
+    searchLifePayList () {
       const [project_id, expenses_house_id] = this.selectedHouse.split('-')
       this.getLifePayList({
         expenses_house_id,
-        project_id,
-        setmeal_days: date
+        project_id
       })
     },
-    // 获取当前房屋下的生活缴费列表, first是否第一次进入页面刷新
-    getLifePayList (params, first) {
-      getLifePayList(params).then(
-        ({ house_data, table_data, month_data, month_name_text }) => {
-          const houseId = this.$route.query.id || this.currentProject.house_id
-          let status = false // 是否第一次进入，并且当前房间没有账号
-          this.houseList = house_data.map(obj => {
-            const {
-              project_name,
-              fc_info,
-              house_id,
-              expenses_house_id,
-              project_id
-            } = obj
-            // 项目ID + 房间账单ID + 房间ID
-            const value = `${project_id}-${expenses_house_id}-${house_id}`
-            // 如果是首次渲染，则默认设置选中当前房屋
-            if (houseId === house_id && first) {
-              this.selectedHouse = value
-              this.first = false
-            }
-            // 如果当前房屋没有账单id
-            if (this.selectedHouse === value && !expenses_house_id) {
-              status = true
-            }
-            return {
-              text: `${project_name} ${fc_info}`,
-              value
-            }
-          })
-          if (status) {
-            this.payList = []
-            this.monthList = []
-            this.payInfo = ''
-          } else if (first) {
-            // 第一次进入获取完房间后，拿到房间账单id需要重新请求一次当前账单数据
-            this.searchLifePayList()
-          } else {
-            // 正常数据赋值
-            this.monthList = month_data || []
-            this.payInfo = month_name_text
-            this.payList = table_data
-          }
-        }
-      )
+    // 获取当前房屋下的生活缴费列表
+    getLifePayList (params) {
+      getLifePayList(params).then(({ data, force_text }) => {
+        this.payList = data || []
+        this.forceText = force_text || ''
+      })
     },
-    // 跳转生活缴费记录页面
+    // 跳转充缴记录页面
     goLivePayList () {
+      const houseId = this.selectedHouse.split('-')[1]
       this.$router.push({
-        name: 'livePayRecord'
+        name: 'livePayRecord',
+        query: {
+          houseId
+        }
       })
     },
-    // 跳转生活缴费详情
-    goCostDetail ({ id: orderId, money }) {
-      const [projectId, id] = this.selectedHouse.split('-')
+    // 判断跳转到充值缴费页面
+    judgePay ({ genre_type: genreType, z_balance, balance }) {
+      const [projectId, houseId] = this.selectedHouse.split('-')
+      const query = {
+        genreType,
+        projectId,
+        houseId
+      }
       // 强制缴费只有其他费用可设置,如果存在强制缴费账单，则需要提醒先缴纳
-      var status = false
-      var text = '物业费、电梯费' // 需要缴纳的费用
-      if (status) {
+      if (this.forceText) {
         this.$dialog
           .alert({
-            title: `请先缴清${text}`
+            title: `请先缴清${this.forceText}`
           })
           .then(() => {
-            this.$router.push({
-              name: 'livePayPay',
-              query: {
-                orderId,
-                projectId,
-                id
-              }
+            this.goMainPay({
+              ...query,
+              type: 1
             })
           })
         return
       }
-      // 若余额<0，跳转的是缴费，若是余额>=0，跳转是充值页面
-      if (money < 0) {
-        this.$router.push({
-          name: 'livePayTopUp',
-          query: {
-            orderId,
-            projectId,
-            id
-          }
-        })
-      } else {
-        this.$router.push({
-          name: 'livemainPay',
-          query: {
-            orderId,
-            projectId,
-            id
-          }
-        })
-      }
+      // 若有待缴费金额，且余额>=0，跳转缴费页面(type = 1)
+      // 若余额<0，跳转的是缴费，若是余额>=0，跳转是充值页面(type = 2)
+      // balance 余额 z_balance 总金额
+      this.goMainPay({
+        ...query,
+        type: balance >= 0 && z_balance < 0 ? 1 : 2
+      })
     },
-    // 跳转缴费页面
-    goPay () {
-      const [projectId, id] = this.selectedHouse.split('-')
+    // 跳转缴费或充值页面
+    goMainPay (query) {
       this.$router.push({
-        name: 'livePayPay',
-        query: {
-          id,
-          projectId
-        }
+        name: 'livemainPay',
+        query
       })
     }
   },

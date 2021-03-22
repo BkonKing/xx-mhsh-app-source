@@ -23,8 +23,9 @@
               </span>
             </div>
           </div>
-          <div class="pay-money-info">
-            已缴30.00元,待缴70.00元
+          <div v-if="payInfo.pay_money && payInfo.qf_money" class="pay-money-info">
+            <span>已缴{{payInfo.pay_money}}元</span>
+            <span>待缴{{payInfo.qf_money}}元</span>
           </div>
         </div>
         <div class="pay-info-container">
@@ -53,7 +54,7 @@
         </div>
       </div>
       <div class="pay-detail pay-padding">
-        <div class="pay-info-box" v-if="payInfo.surface">
+        <div class="pay-info-box" v-if="['1','2'].includes(payInfo.genre_id) && payInfo.surface">
           <div class="pay-info-label"><span>表</span><span>号</span></div>
           <div class="pay-info-content">{{ payInfo.surface }}</div>
         </div>
@@ -63,7 +64,7 @@
         </div>
         <div class="pay-info-box" v-if="payInfo.disparity">
           <div class="pay-info-label"><span>使</span><span>用</span></div>
-          <div class="pay-info-content">{{ payInfo.disparity }}(单位)</div>
+          <div class="pay-info-content">{{ payInfo.disparity }}</div>
         </div>
         <div v-if="payInfo.pic && payInfo.pic.length" class="pay-images">
           <tf-image-list
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-import { getFeeDetails } from '@/api/butler'
+import { getFeeDetails } from '@/api/butler/livepay'
 import filters from './filters'
 import tfImageList from '@/components/tf-image-list'
 export default {
@@ -92,7 +93,6 @@ export default {
       id: '',
       projectId: '',
       orderId: '',
-      isChoicePay: false, // 是否从缴费页面进入
       payInfo: {
         order_status: 2
       }
@@ -102,7 +102,6 @@ export default {
     this.orderId = this.$route.query.orderId
     this.id = this.$route.query.id
     this.projectId = this.$route.query.projectId
-    this.isChoicePay = this.$route.query.isChoicePay
     this.getFeeDetails()
   },
   methods: {
@@ -154,6 +153,7 @@ export default {
         .pay-number {
           font-size: 52px;
           font-weight: 500;
+          line-height: 1;
         }
       }
       .penal-sum {
@@ -161,6 +161,7 @@ export default {
         color: #8f8f94;
       }
       .pay-money-info {
+        margin-top: 8px;
         margin-left: 160px;
         font-size: 24px;
         color: @primary;

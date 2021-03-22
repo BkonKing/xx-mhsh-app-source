@@ -1,131 +1,148 @@
-// 获取缴费列表
-export const lifePayList = [
-  /\/live\/live\/lifepay_list/,
+// 获取房屋数据
+export const houseLiveList = [
+  /\/live\/new_live\/house_list/,
   'post',
   {
     code: '200',
     success: true,
     message: 'OK',
-    month_name_text: '还需缴费¥222（本月¥201，往月¥21）',
-    table_data: [{
-      common_money: 201,
-      already_money: 0,
-      stay_money: 201,
-      child: [{
-        id: '36',
-        genre_name: '物业费',
-        genre_icon: 'http://xxxx.com/upload/image/20201203/20201203151548_94644.png',
-        money: 201,
-        order_status: '0',
-        order_status_name: '待缴费'
-      }],
-      month_name: '本月'
-    },
-    {
-      common_money: 21,
-      already_money: 0,
-      stay_money: 21,
-      child: [{
-        id: '39',
-        genre_name: '物业费',
-        genre_icon: 'http://xxxx.com/upload/image/20201203/20201203151548_94644.png',
-        money: 21,
-        order_status: '0',
-        order_status_name: '待缴费'
-      }],
-      month_name: '2020-11'
-    }
-    ],
     data: [{
-      project_name: '五凤兰庭',
-      fc_info: '测试1栋1单元201室',
-      project_id: '1',
-      house_id: '1296',
-      expenses_house_id: '10'
+      project_name: '武夷绿洲',
+      fc_info: '1号楼1单元101室',
+      project_id: '2',
+      house_id: '15738',
+      expenses_house_id: 1
     },
     {
       project_name: '五凤兰庭',
-      fc_info: '233栋B单元606室',
+      fc_info: '测试2栋1单元1101室',
       project_id: '1',
-      house_id: '13397',
-      expenses_house_id: '12'
+      house_id: '1298',
+      expenses_house_id: 2
     },
     {
       project_name: '五凤兰庭',
-      fc_info: '3号楼5单元202室',
+      fc_info: '1号楼1单元1801室',
       project_id: '1',
-      house_id: '13396',
-      expenses_house_id: '11'
+      house_id: '15737',
+      expenses_house_id: '8557'
+    }
+    ]
+  }
+]
+
+// 获取缴费列表
+export const lifePayList = [
+  /\/live\/new_live\/lifepay_list/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    force_text: '',
+    data: [{
+      qf_money: 0,
+      genre_name: '水费',
+      genre_type: 1,
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195107_99550.svg',
+      balance: 2,
+      z_balance: 2
+    },
+    {
+      qf_money: 13,
+      genre_name: '其他费用',
+      genre_type: 4,
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195207_60447.svg',
+      balance: 0,
+      z_balance: 13
+    },
+    {
+      qf_money: -1,
+      genre_name: '电费',
+      genre_type: 2,
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195119_97692.svg',
+      balance: 0,
+      z_balance: -1
+    },
+    {
+      qf_money: 0,
+      genre_name: '燃气费',
+      genre_type: 3,
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195155_60425.svg',
+      balance: 0,
+      z_balance: 0
     }
     ]
   }
 ]
 
 export const choiceLifePayList = [
-  /\/live\/live\/fee_details/,
+  /\/live\/new_live\/choice_lifepay_list/,
   'post',
   {
     code: '200',
     success: true,
     message: 'OK',
-    z_stay_money: 222,
-    month_name_text: '还需缴费¥222（往月¥21，本月¥201）',
     table_data: [{
-      stay_money: 21,
+      stay_money: 3,
+      already_money: 0,
+      month_name: '2020-08',
       child: [{
-        id: '39',
+        id: '61',
         project_genre_id: '3',
         is_force: '0',
-        genre_id: '3',
+        genre_id: '4',
         genre_name: '物业费',
-        genre_icon: 'http://xx.com/upload/image/20201203/20201203151548_94644.png',
-        money: 21,
+        genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195145_87070.svg',
+        money: 3,
         order_status: '0',
         order_status_name: '待缴费'
-      }],
-      month_name: '2020-11',
-      common_money: 21
+      }]
     },
     {
-      stay_money: 201,
+      stay_money: 40,
+      already_money: 0,
+      month_name: '2020-09',
       child: [{
-        id: '36',
+        id: '63',
         project_genre_id: '3',
         is_force: '0',
-        genre_id: '3',
+        genre_id: '4',
         genre_name: '物业费',
-        genre_icon: 'http://xx.com/upload/image/20201203/20201203151548_94644.png',
-        money: 201,
+        genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195145_87070.svg',
+        money: 40,
         order_status: '0',
         order_status_name: '待缴费'
-      }],
-      month_name: '本月'
+      }]
     }
     ]
   }
 ]
 
 export const feeDetails = [
-  /\/live\/live\/fee_details/,
+  /\/live\/new_live\/fee_details/,
   'post',
   {
     code: '200',
     success: true,
     message: 'OK',
     data: {
-      genre_id: '3',
-      genre_name: '物业费',
-      icon: 'http://meihaoshenghuo.com//upload/image/20201203/20201203151548_94644.png',
-      house_property_name: '五凤兰庭 1号楼-1单元-201室',
-      account_numb: null,
+      id: '55',
+      genre_id: '1',
+      genre_name: '水费',
+      icon: 'http://192.168.1.147/upload/image/20210115/20210115195107_99550.svg',
+      house_property_name: '五凤兰庭 1号楼-1单元-1801室',
       realname: '郑先生',
-      surface: null,
-      time: '2020-11-15~2020-12-15',
-      disparity: '0',
-      pic: false,
-      money: 201,
-      violations_money: 0,
-      order_status: '0'
+      time: '2021-03-01~2021-03-31',
+      qf_money: 0,
+      money: 0.33,
+      violations_money: 1,
+      pay_money: 0.33,
+      order_status: 1,
+      surface: '1',
+      account_numb: 'wwww',
+      disparity: '21（单位）',
+      pic: ''
     }
   }
 ]
@@ -317,5 +334,203 @@ export const editRecord = [
     code: '200',
     success: true,
     message: '成功'
+  }
+]
+
+export const rechargeJson = [
+  /\/live\/new_live\/recharge_json/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: {
+      project_name: '五凤兰庭',
+      genre_name: '水费',
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195107_99550.svg',
+      realname: '郑先生',
+      house_property_name: '1号楼-1单元-1801室',
+      account_numb: 'wwww',
+      z_balance: -1.07
+    }
+  }
+]
+
+export const genreBillList = [
+  /\/live\/new_live\/genre_bill_list/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: {
+      genre_name: '其他费用',
+      zz_qf_money: 1,
+      zz_yj_money: 13,
+      list: [{
+        name: '2021年01月',
+        z_qf_money: 0,
+        z_yj_money: 13,
+        child: [{
+          id: '55',
+          genre_id: '7',
+          pay_money: 5,
+          qf_money: 0,
+          order_status: '2',
+          name: '垃圾清运费'
+        },
+        {
+          id: '56',
+          genre_id: '6',
+          pay_money: 8,
+          qf_money: 1,
+          order_status: '1',
+          name: '水电公摊费'
+        }
+        ]
+      }]
+    }
+  }
+]
+
+export const monthList = [
+  /\/live\/new_live\/month_list/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: [{
+      text: '全部',
+      value: ''
+    },
+    {
+      text: '2021年03月',
+      value: '2021年03月'
+    }
+    ]
+  }
+]
+
+export const genreList = [
+  /\/live\/new_live\/genre_list/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    genre_id_data: [{
+      text: '全部',
+      value: ''
+    },
+    {
+      text: '水费',
+      value: '1'
+    },
+    {
+      text: '物业费',
+      value: '4'
+    },
+    {
+      text: '电费',
+      value: '2'
+    },
+    {
+      text: '燃气费',
+      value: '3'
+    },
+    {
+      text: '电梯费',
+      value: '5'
+    },
+    {
+      text: '水电公摊费',
+      value: '6'
+    },
+    {
+      text: '垃圾清运费',
+      value: '7'
+    }
+    ],
+    genre_type_data: [{
+      text: '全部',
+      value: ''
+    },
+    {
+      text: '水费',
+      value: '1'
+    },
+    {
+      text: '电费',
+      value: '2'
+    },
+    {
+      text: '燃气费',
+      value: '3'
+    },
+    {
+      text: '其他费用',
+      value: 4
+    }
+    ]
+  }
+]
+
+export const payLogList = [
+  /\/live\/new_live\/pay_log_list/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: [
+      {
+        month_name: '2021年03月',
+        z_recharge: 0,
+        z_renew: 53.93,
+        list: [
+          {
+            id: '178',
+            bill_type: '2',
+            genre_type: '4',
+            genre_id: '4',
+            money: 40,
+            balance: 0,
+            pay_time: '2021-03-17 11:02:26',
+            name: '缴费-物业费'
+          }
+        ]
+      }
+    ]
+  }
+]
+
+export const payLogDetails = [
+  /\/live\/new_live\/pay_log_details/,
+  'post',
+  {
+    code: '200',
+    success: true,
+    message: 'OK',
+    data: {
+      id: '165',
+      bill_type: 1,
+      genre_type: '4',
+      genre_id: '6',
+      money: '8.00',
+      balance: '0.00',
+      payable: '8.00',
+      pay_time: '2021-03-16 09:58:23',
+      realname: '郑先生',
+      mobile: '15959063868',
+      genre_icon: 'http://192.168.1.147/upload/image/20210115/20210115195217_94713.svg',
+      genre_name: '缴费 - 水电公摊费',
+      house_property_name: '1号楼-1单元-1801室',
+      project_name: '五凤兰庭',
+      account_numb: '',
+      owner_name: '郑先生',
+      days_time: '2021-01',
+      setmeal_days: '2021-01-01~2021-01-31'
+    }
   }
 ]
