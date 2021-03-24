@@ -84,15 +84,15 @@
               class="user-btn__text"
               :class="[
                 'user-btn',
-                userInfo.signin_today === '1'
-                  ? 'user-btn--unsign'
-                  : 'user-btn--signin'
+                userInfo.signin_status === 0
+                  ? 'user-btn--signin'
+                  : 'user-btn--unsign'
               ]"
               :loading="signLoading"
               @click="sign"
             >
-              <img v-if="userInfo.signin_today == '0'" class="sign-img" src="@/assets/imgs/my-sign.png" />{{
-                userInfo.signin_today | signText
+              <img v-if="userInfo.signin_status === 0" class="sign-img" src="@/assets/imgs/my-sign.png" />{{
+                userInfo.signin_status | signText
               }}
             </van-button>
           </div>
@@ -289,6 +289,7 @@
       </div>
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
+    <sign-rule-dialog v-model="signRuledialog"></sign-rule-dialog>
   </div>
 </template>
 
@@ -297,6 +298,7 @@ import { NavBar, Tag, Toast, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
+import SignRule from './happiness-coin/components/SignRule'
 import { signin } from '@/api/personage'
 import { mapGetters } from 'vuex'
 import { handlePermission } from '@/utils/permission'
@@ -306,6 +308,7 @@ export default {
     [NavBar.name]: NavBar,
     [Tag.name]: Tag,
     [Button.name]: Button,
+    [SignRule.name]: SignRule,
     tfList,
     tfListItem,
     tfCalendar
@@ -315,7 +318,8 @@ export default {
       signStatus: true, // 签到状态
       showCalendar: false, // 签到日历是否隐藏
       orderData: {}, // 订单数据
-      signLoading: false // 签到loading
+      signLoading: false, // 签到loading
+      signRuledialog: false // 签到规则弹窗
     }
   },
   computed: {
@@ -342,7 +346,7 @@ export default {
   methods: {
     /* 签到 */
     sign () {
-      if (this.userInfo.signin_today === '0') {
+      if (this.userInfo.signin_status === 0) {
         // 签到一定要开启定位
         handlePermission({
           name: 'location',
@@ -365,6 +369,9 @@ export default {
               this.signLoading = false
             })
         })
+      } else if (this.userInfo.signin_status === 2) {
+        // 不可签到，打开签到规则弹窗
+        this.signRuledialog = true
       } else {
         // 已签到，弹出签到日历
         this.showCalendar = true
