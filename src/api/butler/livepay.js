@@ -20,18 +20,15 @@ export function getLifePayList (data) {
 export function getChoicePayList (data) {
   return request.post('/live/new_live/choice_lifepay_list', data)
 }
-
-// 判断是否可以生成缴费账单
-export function canCreatePay (data) {
-  return request.post('/live/live/jforder', data, {
-    headers: {
-      noToast: true
-    }
-  })
-}
-// 生成缴费账单
+/**
+ * 其他费用 选择缴费订单 缴费操作
+ * @param {number} expenses_house_id 缴费房屋ID
+ * @param {number} money 付款金额 单位/元
+ * @param {number} genre_type 类型（1水；2电；3燃气；4其他）
+ * @param {string} order_ids 要缴费的 订单用逗号隔开
+ */
 export function createPay (data) {
-  return request.post('/live/live/create_jforder', data, {
+  return request.post('/live/new_live/live_order_ids_pay', data, {
     headers: {
       noToast: true
     }

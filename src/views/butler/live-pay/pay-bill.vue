@@ -85,11 +85,11 @@ export default {
   },
   computed: {
     multiplePayAble () {
-      return this.genreType === '4' && this.qfCount > 1
+      return this.genreType === 4 && this.qfCount > 1
     }
   },
   created () {
-    this.genreType = this.$route.query.genreType
+    this.genreType = parseInt(this.$route.query.genreType)
     this.houseId = this.$route.query.houseId
     this.projectId = this.$route.query.projectId
   },

@@ -50,7 +50,7 @@
         <span class="pay-sum"
           >合计：<span class="tf-text-primary">￥{{ payTotal }}</span></span
         >
-        <van-button class="btn" :disabled="!result.length" @click="handlePay"
+        <van-button class="btn" :disabled="!result.length" @click="showPaySwal = true"
           >缴费({{ result.length }}项)</van-button
         >
       </div>
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { getChoicePayList, createPay, canCreatePay } from '@/api/butler/livepay'
+import { getChoicePayList, createPay } from '@/api/butler/livepay'
 import paySwal from '@/views/life/components/pay-swal'
 import filters from './filters'
 import { makeCount } from '@/utils/util'
@@ -156,29 +156,6 @@ export default {
       // 精准度计算
       this.payTotal = makeCount(sum)
     },
-    // 发起缴费
-    handlePay () {
-      const order_ids = this.result.map(obj => obj.split('-')[0]).join(',')
-      canCreatePay({
-        order_ids,
-        expenses_house_id: this.expensesHouseId,
-        project_id: this.projectId,
-        z_money: this.payTotal
-      }).then(() => {
-        this.showPaySwal = true
-      }).catch((res) => {
-        const code = ['203', '204']
-        if (code.includes(res.code)) {
-          this.getPayInfo()
-          return
-        }
-        if (res.code == '202') {
-          this.getPayInfo().then(() => {
-            this.showPaySwal = true
-          })
-        }
-      })
-    },
     // 全选
     checkAll (type) {
       this.$refs.checkboxGroup.toggleAll({
@@ -205,8 +182,8 @@ export default {
       createPay({
         order_ids,
         expenses_house_id: this.expensesHouseId,
-        project_id: this.projectId,
-        z_money: this.payTotal,
+        genre_type: 4,
+        money: this.payTotal,
         pay_type: data.pay_type,
         bank_id: data.bank_id,
         bank_card: data.bank_card,
@@ -219,7 +196,13 @@ export default {
         }
       }).catch((res) => {
         const code = ['202', '203', '204']
-        if (!code.includes(res.code) && data.pay_type == 4) {
+        if (['203', '204'].includes(res.code)) {
+          this.getPayInfo()
+        } else if (res.code == '202') {
+          this.getPayInfo().then(() => {
+            this.showPaySwal = true
+          })
+        } else if (!code.includes(res.code) && data.pay_type == 4) {
           // 有身份证就跳到添加银行卡，否则是实名认证
           if (this.idcard) {
             this.$router.push({

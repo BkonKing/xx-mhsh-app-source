@@ -9,106 +9,107 @@
       @click-left="$router.go(-1)"
     >
     </van-nav-bar>
-    <div class="tf-body-container">
-      <van-dropdown-menu class="filtrate-dropdown-menu">
-        <van-dropdown-item ref="monthActive">
-          <ul class="filtrate-list month-filtrate">
+    <van-dropdown-menu class="filtrate-dropdown-menu">
+      <van-dropdown-item ref="monthActive">
+        <ul class="filtrate-list month-filtrate">
+          <li
+            class="filtrate-item"
+            :class="{
+              'filtrate-item-active': monthActive == item.value
+            }"
+            v-for="(item, i) in monthList"
+            :key="i"
+            @click="changeMonth(item)"
+          >
+            {{ item.text }}
+          </li>
+        </ul>
+        <template #title>
+          {{ monthActive === "" ? "账单月份" : monthName }}
+        </template>
+      </van-dropdown-item>
+      <van-dropdown-item ref="payType">
+        <div class="type-filtrate">
+          <ul class="filtrate-list">
             <li
               class="filtrate-item"
-              :class="{
-                'filtrate-item-active': monthActive == item.value
-              }"
-              v-for="(item, i) in monthList"
+              :class="{ 'filtrate-item-active': billType === item.value }"
+              v-for="(item, i) in billTypeList"
               :key="i"
-              @click="changeMonth(item)"
+              @click="changeBillType(item)"
             >
               {{ item.text }}
             </li>
           </ul>
-          <template #title>
-            {{ monthActive === "" ? "账单月份" : monthName }}
-          </template>
-        </van-dropdown-item>
-        <van-dropdown-item ref="payType">
-          <div class="type-filtrate">
-            <ul class="filtrate-list">
-              <li
-                class="filtrate-item"
-                :class="{ 'filtrate-item-active': billType === item.value }"
-                v-for="(item, i) in billTypeList"
-                :key="i"
-                @click="changeBillType(item)"
-              >
-                {{ item.text }}
-              </li>
-            </ul>
-            <ul class="filtrate-list">
-              <li
-                class="filtrate-item"
-                :class="{ 'filtrate-item-active': payType === item.value }"
-                v-for="(item, i) in showPayTypeList"
-                :key="i"
-                @click="changePayType(item)"
-              >
-                {{ item.text }}
-              </li>
-            </ul>
+          <ul class="filtrate-list">
+            <li
+              class="filtrate-item"
+              :class="{ 'filtrate-item-active': payType === item.value }"
+              v-for="(item, i) in showPayTypeList"
+              :key="i"
+              @click="changePayType(item)"
+            >
+              {{ item.text }}
+            </li>
+          </ul>
+        </div>
+        <template #title>
+          {{ detailType }}
+        </template>
+      </van-dropdown-item>
+      <van-dropdown-item ref="moneyFiltrate" @open="openMoneyFiltrate">
+        <div class="money-filtrate">
+          <div class="tf-flex">
+            <van-field
+              class="money-input"
+              v-model="lowestMoney"
+              type="number"
+              placeholder="最低金额"
+            >
+              <template v-slot:left-icon>
+                ￥
+              </template>
+            </van-field>
+            <span class="money-range"></span>
+            <van-field
+              class="money-input"
+              v-model="highestMoney"
+              type="number"
+              placeholder="最高金额"
+            >
+              <template v-slot:left-icon>
+                ￥
+              </template>
+            </van-field>
           </div>
-          <template #title>
-            {{ detailType }}
-          </template>
-        </van-dropdown-item>
-        <van-dropdown-item ref="moneyFiltrate" @open="openMoneyFiltrate">
-          <div class="money-filtrate">
-            <div class="tf-flex">
-              <van-field
-                class="money-input"
-                v-model="lowestMoney"
-                type="number"
-                placeholder="最低金额"
-              >
-                <template v-slot:left-icon>
-                  ￥
-                </template>
-              </van-field>
-              <span class="money-range"></span>
-              <van-field
-                class="money-input"
-                v-model="highestMoney"
-                type="number"
-                placeholder="最高金额"
-              >
-                <template v-slot:left-icon>
-                  ￥
-                </template>
-              </van-field>
-            </div>
-            <div class="flex-end">
-              <van-button
-                class="money-btn money-reset"
-                size="small"
-                round
-                @click="resetFiltrateMoney"
-                >重置</van-button
-              >
-              <van-button
-                class="money-btn"
-                size="small"
-                round
-                type="primary"
-                :disabled="!lowestMoney && !highestMoney"
-                @click="confirmFiltrateMoney"
-                >确定</van-button
-              >
-            </div>
+          <div class="flex-end">
+            <van-button
+              class="money-btn money-reset"
+              size="small"
+              round
+              @click="resetFiltrateMoney"
+              >重置</van-button
+            >
+            <van-button
+              class="money-btn"
+              size="small"
+              round
+              type="primary"
+              :disabled="!lowestMoney && !highestMoney"
+              @click="confirmFiltrateMoney"
+              >确定</van-button
+            >
           </div>
-          <template #title>
-            {{ moneyFiltrate }}
-          </template>
-        </van-dropdown-item>
-      </van-dropdown-menu>
+        </div>
+        <template #title>
+          {{ moneyFiltrate }}
+        </template>
+      </van-dropdown-item>
+    </van-dropdown-menu>
+    <div class="tf-body-container">
       <refreshList
         class="recordList"
+        ref="recordList"
         id="recordList"
         :list.sync="recordList"
         :load="getRecordList"
@@ -223,7 +224,8 @@ export default {
     this.getGenreList()
   },
   activated () {
-    this.scrollTop && (document.getElementById('recordList').scrollTop = this.scrollTop)
+    this.scrollTop &&
+      (document.getElementById('recordList').scrollTop = this.scrollTop)
   },
   methods: {
     // 获取月份记录月份列表
@@ -250,9 +252,12 @@ export default {
     },
     // 账单类型
     changeBillType ({ value, text }) {
+      // 切换到充值，并且当前缴费类型充值需要有
       if (
         value === 1 &&
-        this.genreList.findIndex(obj => obj.value === this.payType) !== -1
+        this.genreList.findIndex(
+          obj => obj.value === this.payType && obj.value !== '4'
+        ) !== -1
       ) {
         this.billType = value
         this.billTypeName = text
@@ -260,8 +265,10 @@ export default {
         value !== 1 &&
         this.payTypeList.findIndex(obj => obj.value === this.payType) !== -1
       ) {
-        this.billType = value
-        this.billTypeName = text
+        if (this.billType !== 1 || this.payType !== '4') {
+          this.billType = value
+          this.billTypeName = text
+        }
       }
     },
     // 缴费/充值种类
@@ -419,7 +426,7 @@ export default {
       .van-field__control {
         height: 100%;
         font-size: 34px;
-        &::placeholder{
+        &::placeholder {
           font-size: 24px;
         }
       }
@@ -471,7 +478,7 @@ export default {
 }
 // 缴费记录列表
 .recordList {
-  height: calc(100% - 90px);
+  height: 100%;
   padding-top: 40px;
 }
 // 月份费用列表
