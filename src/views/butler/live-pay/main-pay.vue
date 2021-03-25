@@ -119,6 +119,7 @@
       :pay-money="totalMoney"
       :wxzfbShow="false"
       @sureSwal="surePaySwal"
+      @closeSwal="(data) => (this.showPaySwal = data == 1)"
       @fyResult="fyResult"
     ></pay-swal>
   </div>
@@ -187,8 +188,6 @@ export default {
           title: '缴费金额必须大于等于欠费金额'
         })
       } else {
-        this.successShow = true
-        return
         this.showPaySwal = true
       }
     },
