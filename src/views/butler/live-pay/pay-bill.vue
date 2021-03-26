@@ -22,6 +22,7 @@
     <div class="tf-body-container">
       <refreshList
         class="recordList"
+        ref="billList"
         id="billList"
         :list.sync="recordList"
         :load="getGenreBillList"
@@ -80,7 +81,8 @@ export default {
       yjMoney: 0, // 已缴金额
       qfCount: 0, // 欠费类别数量
       recordList: [],
-      scrollTop: 0
+      scrollTop: 0,
+      goBackStatus: false // 是否从账单详情返回
     }
   },
   computed: {
@@ -95,6 +97,9 @@ export default {
   },
   activated () {
     this.scrollTop && (document.getElementById('billList').scrollTop = this.scrollTop)
+    if (this.qfCount && this.goBackStatus) {
+      this.$refs.billList.reload()
+    }
   },
   methods: {
     // 获取缴费记录列表
@@ -143,6 +148,14 @@ export default {
     }
   },
   filters,
+  beforeRouteEnter (to, from, next) {
+    if (from.name === 'livePayCostDetail') {
+      next((vm) => {
+        vm.goBackStatus = true
+      })
+    }
+    next()
+  },
   beforeRouteLeave (to, from, next) {
     this.scrollTop = document.getElementById('billList').scrollTop
     if (to.name !== 'livePayCostDetail') {

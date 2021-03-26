@@ -226,7 +226,9 @@ export default {
     fyResult () {
       this.$toast('缴费成功')
       this.showPaySwal = false
-      this.getPayInfo()
+      setTimeout(() => {
+        this.getPayInfo()
+      }, 10)
     }
   },
   watch: {
