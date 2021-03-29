@@ -12,25 +12,28 @@
       <van-tab title="全部">
         <list
           class="coin-list"
+          id="list1"
           key="list1"
           :data.sync="list1"
-          :load="({pages}) => getCreditsLog(pages, 0)"
+          :load="({ pages }) => getCreditsLog(pages, 0)"
         ></list>
       </van-tab>
       <van-tab title="获得">
         <list
           class="coin-list"
+          id="list2"
           key="list2"
           :data.sync="list2"
-          :load="({pages}) => getCreditsLog(pages, 1)"
+          :load="({ pages }) => getCreditsLog(pages, 1)"
         ></list>
       </van-tab>
       <van-tab title="使用">
         <list
           class="coin-list"
+          id="list3"
           key="list3"
           :data.sync="list3"
-          :load="({pages}) => getCreditsLog(pages, 2)"
+          :load="({ pages }) => getCreditsLog(pages, 2)"
         ></list>
       </van-tab>
     </van-tabs>
@@ -38,14 +41,11 @@
 </template>
 
 <script>
-import { NavBar, Tab, Tabs } from 'vant'
 import list from './components/list'
 import { getCreditsLog } from '@/api/personage'
 export default {
+  name: 'happinessCoinRecord',
   components: {
-    [NavBar.name]: NavBar,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
     list
   },
   data () {
@@ -53,8 +53,15 @@ export default {
       current: 0,
       list1: [],
       list2: [],
-      list3: []
+      list3: [],
+      scrollTop: 0
     }
+  },
+  activated () {
+    this.scrollTop &&
+      (document.getElementById(
+        'list' + (this.current + 1)
+      ).scrollTop = this.scrollTop)
   },
   methods: {
     getCreditsLog (pages, type) {
@@ -63,6 +70,16 @@ export default {
         trans_type: type
       })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.scrollTop = document.getElementById(
+      'list' + (this.current + 1)
+    ).scrollTop
+    if (to.name !== 'happinessCoinDetails') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

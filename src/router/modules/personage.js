@@ -209,7 +209,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "happinessCoinRecord" */
         '@/views/personage/happiness-coin/coin-record.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 购买记录 */
   {
