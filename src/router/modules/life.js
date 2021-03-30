@@ -127,6 +127,19 @@ const lifeRouter = [{
     keepAlive: true
   }
 },
+// 订单详情-幸福币使用
+{
+  path: '/order/coin-detail',
+  name: 'coinDetail',
+  component: () =>
+    import(
+      /* webpackChunkName: "orderDetail" */
+      '@/views/life/order/coin-order-detail'
+    ),
+  meta: {
+    keepAlive: true
+  }
+},
 {
   path: '/order/detail',
   name: 'orderDetail',
