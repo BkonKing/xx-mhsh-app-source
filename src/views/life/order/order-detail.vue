@@ -89,18 +89,19 @@
             </div>
           </div>
         </div>
-        <div v-if="goodsList[0].buy_type == 1" @click="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 ? logisticsLink : ''" class="cont-session order-message smzt-session">
-          <div class="order-message-item">
+        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && logisticsLink()" class="cont-session order-message smzt-session">
+          <div class="order-message-item th-type">
             <div class="order-message-item-left color-222 font-28">配送方式</div>
             <div class="color-222 font-28 order-message-item-right">上门自提</div>
           </div>
-          <div class="order-message-item">
+          <div class="order-message-item th-item">
             <div class="order-message-item-left color-222 font-28">提货地点</div>
             <div class="shipping-address-item-right">
               <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
             </div>
           </div>
-          <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" class="shipping-address-icon" src="@/assets/img/right.png" />
+          <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3" class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3" class="shipping-address-icon" src="@/assets/img/right.png" />
         </div>
         <div v-else class="cont-session address-logistics">
           <div @click="linkFunc(23)" class="shipping-address">
@@ -181,14 +182,15 @@
         </div>
       </div>
 
-      <template v-if="orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn">
+      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3)">
         <div class="fixed-empty"></div>
         <div class="btn-fixed-buttom">
           <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
           <template v-if="orderInfo.is_logistice_btn">
-            <div @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
+            <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" @click="getLogistics" class="order-border-btn paid-btn" hover-class="none">提货二维码</div>
+            <div v-else @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
           </template>
-          <div @click.stop="payFunc()" v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish">
+          <div @click.stop="payFunc()" v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish" @change="getChangeTime">
                 <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                 </template>
               </van-count-down>)</div>
@@ -201,10 +203,9 @@
       ></explain-swal>
       <pay-swal
       ref="payblock"
-      :show-swal="showPaySwal"
+      :showSwal.sync="showPaySwal"
       :pay-money="payMoney"
       :down-time="downTime"
-      @closeSwal="closePaySwal"
       @sureSwal="surePaySwal"
       @fyResult="fyResult"
       ></pay-swal>
@@ -213,6 +214,36 @@
       :remind-tit="remindTit"
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()">
+      </remind-swal>
+      <remind-swal
+      :showSwal.sync="thSwal"
+      :showFotter="false">
+        <div class="th-body" slot="body">
+          <div class="th-bg">
+            <div class="th-tit">提货二维码</div>
+            <div class="th-info flex-column-center">
+              <div class="flex-align-center">
+                <div>手机号码:</div>
+                <div>15600014246</div>
+              </div>
+              <div class="flex-align-center th-address">
+                <div>提货地点:</div>
+                <div>滑县美好生活家园-小区活动心</div>
+              </div>
+            </div>
+          </div>
+          <div class="th-cont flex-align-center">
+            <template v-if="infoData.l_status != 1">
+              <div class="th-tip">提货时请出示二维码给商家</div>
+              <img class="wx-code" :src="infoData.qrCode" />
+            </template>
+            <template v-else>
+              <div class="th-tip">{{infoData.s_txt}}</div>
+              <div class="th-time">{{infoData.s_time}}</div>
+              <img class="th-sucess-icon" src="@/assets/img/sucess.png" />
+            </template>
+          </div>
+        </div>
       </remind-swal>
     </div>
   </div>
@@ -224,7 +255,7 @@ import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
 import eventBus from '@/api/eventbus.js'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress } from '@/api/life.js'
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress, getLogisticsInfo } from '@/api/life.js'
 export default {
   name: 'orderDetail',
   components: {
@@ -252,7 +283,10 @@ export default {
       payMoney: 0, // 支付金额
       downTime: 0, // 支付结束时间
       is_toggle: false,
-      idcard: '' // 身份证
+      idcard: '', // 身份证
+      thSwal: false, // 自提弹窗
+      timer: '', // 定时器
+      infoData: '' // 自提物流信息
     }
   },
   mounted () {
@@ -268,22 +302,16 @@ export default {
       }
     })
   },
-  activated () {
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
-  },
   created () {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
     this.getData()
   },
   methods: {
+    // 到时间时间变化
+    getChangeTime (timeData) {
+      this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
+    },
     getData () {
       getOrderDetail({
         order_project_id: this.order_id
@@ -303,6 +331,17 @@ export default {
       }).then(res => {
         if (res.success) {
 
+        }
+      })
+    },
+    // 自提物流
+    getLogistics () {
+      getLogisticsInfo({
+        order_project_id: this.orderInfo.id
+      }).then(res => {
+        if (res.success) {
+          this.infoData = res.data[0]
+          this.thSwal = true
         }
       })
     },
@@ -330,13 +369,9 @@ export default {
     },
     // 再次付款
     payFunc () {
-      this.downTime = this.orderInfo.is_again_pay_time * 1000 - this.newTime
+      // this.downTime = this.orderInfo.is_again_pay_time * 1000 - this.newTime
       this.payMoney = this.orderInfo.pay_price / 100
       this.showPaySwal = true
-    },
-    // 关闭支付选择弹窗
-    closePaySwal (data) {
-      this.showPaySwal = data == 1
     },
     surePaySwal (callData) {
       payOrderUp({
@@ -364,7 +399,7 @@ export default {
         }
       }).catch((res) => {
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -544,18 +579,30 @@ export default {
       }
     }
   },
+  watch: {
+    thSwal (val) {
+      if (val) {
+        if (this.infoData.l_status != 1) {
+          this.timer = setInterval(() => {
+            this.getLogistics()
+          }, 2000)
+        }
+      } else {
+        clearInterval(this.timer)
+        if (this.infoData.l_status == 1) {
+          this.getData()
+        }
+      }
+    }
+  },
   beforeRouteLeave (to, from, next) {
+    clearInterval(this.timer)
     if (!this.clickGoods && (to.name == 'goodsDetail' || to.name == 'cart')) {
       this.$router.push('/order/list')
     }
     if (to.name != 'addressList' && to.name != 'addBankCard' && to.name != 'certification') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
-    }
-    if (to.name != 'addBankCard' && to.name != 'certification') {
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
     }
     next()
   }
@@ -564,7 +611,7 @@ export default {
 
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped  src="../../../styles/order.css"></style>
-<style scoped>
+<style lang="less" scoped>
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -575,5 +622,85 @@ export default {
 }
 .smzt-session .shipping-address-icon {
   right: 30px;
+}
+.th-code {
+  width: 52px;
+  height: 52px;
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  margin-top: -26px;
+  display: flex;
+}
+.th-type {
+  height: 56px;
+}
+.th-item {
+  align-items: flex-start;
+  height: auto;
+  padding-top: 10px;
+  .order-message-item-left {
+    line-height: 36px;
+  }
+  .shipping-address-item-right {
+    max-width: 390px;
+  }
+}
+.th-body {
+  border-radius: 10px;
+  overflow: hidden;
+  .th-bg {
+    background: linear-gradient(90deg, #F9866B, #EB5841);
+  }
+  .th-tit {
+    height: 88px;
+    line-height: 88px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    color: #FFFFFF;
+  }
+  .th-info {
+    font-size: 24px;
+    font-weight: 400;
+    color: #FFFFFF;
+    padding: 20px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    & > div {
+      min-height: 42px;
+      line-height: 42px;
+    }
+    .flex-align-center div:nth-child(1) {
+      width: 133px;
+      flex-shrink: 0;
+    }
+    .th-address {
+      align-items: flex-start;
+      padding-top: 10px;
+    }
+  }
+  .th-cont {
+    font-size: 24px;
+    color: #8F8F94;
+    flex-direction: column;
+    height: 543px;
+    .th-tip {
+      line-height: 46px;
+      margin: 38px auto 6px;
+    }
+    .th-time {
+      line-height: 46px;
+      margin-bottom: 86px;
+    }
+    img.wx-code {
+      width: 380px;
+      height: 380px;
+      margin-top: 13px;
+    }
+    img.th-sucess-icon {
+      width: 160px;
+      height: 160px;
+    }
+  }
 }
 </style>
