@@ -9,6 +9,7 @@ import butlerRouter from './modules/butler'
 import lifeRouter from './modules/life'
 import neighboursRouter from './modules/neighbours'
 import personageRouter from './modules/personage'
+import activityRouter from './modules/activity'
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push (location, onResolve, onReject) {
@@ -129,7 +130,8 @@ const routes = [{
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,
-...personageRouter
+...personageRouter,
+...activityRouter
 ]
 
 const router = new VueRouter({

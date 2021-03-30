@@ -1,6 +1,6 @@
 const activityRouter = [
   {
-    path: '/pages/activity/activity',
+    path: '/pages/activity',
     name: 'activity',
     component: () =>
       import(
