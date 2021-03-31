@@ -100,7 +100,10 @@
               <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
             </div>
           </div>
-          <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3" class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          <template v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3">
+            <div class="th-line"></div>
+            <div class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          </template>
           <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3" class="shipping-address-icon" src="@/assets/img/right.png" />
         </div>
         <div v-else class="cont-session address-logistics">
@@ -632,6 +635,15 @@ export default {
   margin-top: -26px;
   display: flex;
 }
+.th-line {
+  width: 1PX;
+  height: 60px;
+  position: absolute;
+  right: 112px;
+  top: 50%;
+  margin-top: -30px;
+  background-color: #F0F0F0;
+}
 .th-type {
   height: 56px;
 }
@@ -644,6 +656,7 @@ export default {
   }
   .shipping-address-item-right {
     max-width: 390px;
+    word-break: break-all;
   }
 }
 .th-body {
@@ -677,6 +690,9 @@ export default {
     .th-address {
       align-items: flex-start;
       padding-top: 10px;
+      div:nth-child(2) {
+        word-break: break-all;
+      }
     }
   }
   .th-cont {
