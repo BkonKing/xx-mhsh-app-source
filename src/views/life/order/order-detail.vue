@@ -15,7 +15,7 @@
           </template>
         </van-nav-bar>
       </div>
-      <div v-if="orderInfo" :class="[orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn ? 'scroll-body-btn' : '', 'order-session scroll-body']">
+      <div v-if="orderInfo" :class="[(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status==3) ? 'scroll-body-btn' : '', 'order-session scroll-body']">
         <div class="order-header-bg"></div>
         <div class="order-status-session">
           <div class="order-status-name">{{orderInfo.order_status_name}}</div>
@@ -89,18 +89,21 @@
             </div>
           </div>
         </div>
-        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && logisticsLink()" class="cont-session order-message smzt-session">
+        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && getLogistics()" class="cont-session order-message smzt-session">
           <div class="order-message-item th-type">
             <div class="order-message-item-left color-222 font-28">配送方式</div>
             <div class="color-222 font-28 order-message-item-right">上门自提</div>
           </div>
-          <div class="order-message-item th-item">
+          <div :class="[!(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3) ? 'th-item-log' : '', 'order-message-item th-item']">
             <div class="order-message-item-left color-222 font-28">提货地点</div>
             <div class="shipping-address-item-right">
               <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
             </div>
           </div>
-          <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3" class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          <template v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3">
+            <div class="th-line"></div>
+            <div class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          </template>
           <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3" class="shipping-address-icon" src="@/assets/img/right.png" />
         </div>
         <div v-else class="cont-session address-logistics">
@@ -182,7 +185,7 @@
         </div>
       </div>
 
-      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3)">
+      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status==3)">
         <div class="fixed-empty"></div>
         <div class="btn-fixed-buttom">
           <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
@@ -306,6 +309,16 @@ export default {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
     this.getData()
+  },
+  activated () {
+    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
+    if (bankCardInfo) {
+      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
+        this.idcard = bankCardInfo.idCard
+      }
+      bankCardInfo = JSON.parse(bankCardInfo)
+      this.$refs.payblock.newCard(bankCardInfo)
+    }
   },
   methods: {
     // 到时间时间变化
@@ -632,6 +645,15 @@ export default {
   margin-top: -26px;
   display: flex;
 }
+.th-line {
+  width: 1PX;
+  height: 60px;
+  position: absolute;
+  right: 112px;
+  top: 50%;
+  margin-top: -30px;
+  background-color: #F0F0F0;
+}
 .th-type {
   height: 56px;
 }
@@ -644,6 +666,15 @@ export default {
   }
   .shipping-address-item-right {
     max-width: 390px;
+    word-break: break-all;
+    div {
+      word-break: break-all;
+    }
+  }
+  &.th-item-log {
+    .shipping-address-item-right {
+      max-width: 430px;
+    }
   }
 }
 .th-body {
@@ -677,6 +708,9 @@ export default {
     .th-address {
       align-items: flex-start;
       padding-top: 10px;
+      div:nth-child(2) {
+        word-break: break-all;
+      }
     }
   }
   .th-cont {
