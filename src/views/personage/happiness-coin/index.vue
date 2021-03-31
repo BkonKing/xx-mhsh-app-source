@@ -95,7 +95,7 @@
                   <div v-if="yxlpNum" class="tf-row task-item__remarks">
                     获得
                     <div class="task-item__remarks--gold">
-                      {{ item.credits }}起幸福币
+                      {{ item.credits }}幸福币起
                     </div>
                   </div>
                 </div>
@@ -174,7 +174,7 @@
           @click="goCoinCommodity(item)"
         >
           <img class="commodity-image" :src="item.thumb" />
-          <div class="commodity-name">{{ item.goods_name }}</div>
+          <div class="commodity-name van-ellipsis">{{ item.goods_name }}</div>
           <div class="tf-row" style="align-items: flex-end;">
             <div class="commodity-current-price">￥{{ item.s_price }}</div>
             <div class="commodity-original-price">￥{{ item.y_price }}</div>
@@ -558,6 +558,7 @@ export default {
   border-radius: 10px;
 }
 .commodity-name {
+  width: 330px;
   font-size: 28px;
   margin: 20px 0;
 }

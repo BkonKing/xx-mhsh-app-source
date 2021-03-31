@@ -49,6 +49,7 @@ import {
   collectStatus
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
+import { queryActive } from '@/api/activity'
 import { handlePermission } from '@/utils/permission'
 export default {
   data () {
@@ -88,11 +89,11 @@ export default {
     this.footerHeight = document.getElementById('scan-tabs').clientHeight
   },
   methods: {
-    /* 切换tab */
+    // 切换tab
     switchTab (value) {
       this.current = value
     },
-    /* 获取付款码二维码 */
+    // 获取付款码二维码
     getPaymentCode () {
       getPaymentCode().then(res => {
         const { url, code_id } = res.data
@@ -101,7 +102,7 @@ export default {
         this.pollingPayment()
       })
     },
-    /* 获取收款码二维码 */
+    // 获取收款码二维码
     getCollectCode () {
       getCollectCode().then(res => {
         const { url, code_id } = res.data
@@ -110,7 +111,7 @@ export default {
         this.pollingCollect()
       })
     },
-    /* 轮询付款码当前状态 */
+    // 轮询付款码当前状态
     pollingPayment () {
       if (this.timer) {
         clearTimeout(this.timer)
@@ -119,7 +120,7 @@ export default {
         this.paymentStatus()
       }, 3000)
     },
-    /* 轮询收款码当前状态 */
+    // 轮询收款码当前状态
     pollingCollect () {
       if (this.timer) {
         clearTimeout(this.timer)
@@ -128,7 +129,7 @@ export default {
         this.collectStatus()
       }, 3000)
     },
-    /* 出示付款码请求获取码当前状态 */
+    // 出示付款码请求获取码当前状态
     paymentStatus () {
       paymentStatus({
         code_id: this.codeId
@@ -161,7 +162,7 @@ export default {
         }
       })
     },
-    /* 出示收款码请求获取码当前状态 */
+    // 出示收款码请求获取码当前状态
     collectStatus () {
       collectStatus({
         code_id: this.codeId
@@ -169,18 +170,20 @@ export default {
         if (data.is_pay != '1') {
           this.pollingCollect()
         } else {
-          this.$dialog.alert({
-            title: `获得${data.credits}幸福币`
-          }).then(() => {
-            this.getCollectCode()
-            this.mtjEvent({
-              eventId: 47
+          this.$dialog
+            .alert({
+              title: `获得${data.credits}幸福币`
             })
-          })
+            .then(() => {
+              this.getCollectCode()
+              this.mtjEvent({
+                eventId: 47
+              })
+            })
         }
       })
     },
-    /* 扫码成功 */
+    // 扫码成功
     scanSuccess (content) {
       const value = content
       const values = value.split('|')
@@ -200,11 +203,19 @@ export default {
         case 'smzt':
           this.takeCodeScan(value, values)
           break
+        case 'queryActive':
+          // queryActive|1|5第一个表示接口名称，第二个表示项目ID,第三个表示活动ID
+          this.joinActivity(values[1], values[2])
+          break
+        case 'jfhd_uid':
+          // 'jfhd_uid|100001'
+          this.goActivity(value)
+          break
         default:
           break
       }
     },
-    /* 付款人扫了收款码 */
+    // 付款人扫了收款码
     collectScan (value, values) {
       collectScan({
         code_info: value
@@ -230,7 +241,7 @@ export default {
           })
         })
     },
-    /* 收款人扫了付款码 */
+    // 收款人扫了付款码
     paymentScan (value, values) {
       paymentScan({
         code_info: value
@@ -264,7 +275,7 @@ export default {
           })
         })
     },
-    /* 扫了免费服务码 */
+    // 扫了免费服务码
     serverCodeScan (value, values) {
       serverCodeScan({
         code_info: value
@@ -286,7 +297,7 @@ export default {
           })
         })
     },
-    /* 扫了邀约码 */
+    // 扫了邀约码
     visitorCodeScan (value) {
       visitorCodeScan({
         code_info: value
@@ -302,7 +313,7 @@ export default {
           })
         })
     },
-    /* 扫了提货码 */
+    // 扫了提货码
     takeCodeScan (value) {
       takeCodeScan({
         code_info: value
@@ -324,7 +335,41 @@ export default {
           })
         })
     },
-    /* 打开扫码frame */
+    // 扫了项目方积分活动码，参与活动，跳转活动页面（项目id保存到本地）
+    joinActivity (projectId, activityId) {
+      // 判断积分活动是否开启
+      queryActive({
+        activity_id: activityId,
+        project_id: projectId
+      })
+        .then(() => {
+          api.setPrefs({
+            key: 'activity-projectId',
+            value: `${projectId}|${activityId}`
+          })
+          this.$router.push({
+            name: 'activity',
+            query: {
+              projectId
+            }
+          })
+        })
+        .catch(err => {
+          api.alert({
+            title: err.message
+          })
+        })
+    },
+    // 扫了用户积分活动码,跳转积分发放核销页面
+    goActivity (userId) {
+      this.$router.push({
+        name: 'activityService',
+        query: {
+          userId
+        }
+      })
+    },
+    // 打开扫码frame
     openFrame () {
       api.openFrame({
         name: 'scan',
@@ -344,7 +389,7 @@ export default {
       })
       this.scan()
     },
-    /* 关闭扫码frame */
+    // 关闭扫码frame
     closeFrame () {
       api.closeFrame({
         name: 'closebtn'
@@ -354,7 +399,7 @@ export default {
         name: 'scan'
       })
     },
-    /* 打开扫码 */
+    // 打开扫码
     scan () {
       this.FNScanner.openView(
         {
