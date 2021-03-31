@@ -62,7 +62,7 @@
                   <div class="order-btn-box">
                     <div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)" v-txAnalysis="{eventId: 51}">取消订单</div>
                     <div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
+                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)" @change="(time) => {getChangeTime(time, item.order_id)}">
                     <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                     </template>
                   </van-count-down>)</div>
@@ -86,10 +86,9 @@
     ></explain-swal>
     <pay-swal
     ref="payblock"
-    :show-swal="showPaySwal"
+    :showSwal.sync="showPaySwal"
     :pay-money="payMoney"
     :down-time="downTime"
-    @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     @fyResult="fyResult"
     ></pay-swal>
@@ -139,6 +138,7 @@ export default {
       isEmpty: false, // 是否为空
       loading: false,
       finished: false,
+      timeArr: [],
 
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
@@ -174,6 +174,12 @@ export default {
     }
   },
   methods: {
+    // 到时间时间变化
+    getChangeTime (time, id) {
+      this.timeArr[id] = (time.hours * 3600 + time.minutes * 60 + time.seconds) * 1000
+      // console.log(time, index, id)
+      // this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
+    },
     navFun (index) {
       this.flag = false
       this.typeVal = this.active
@@ -244,15 +250,13 @@ export default {
     },
     // 再次付款
     payFunc (index, id) {
-      this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
+      console.log(this.timeArr)
+      // this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
+      this.downTime = this.timeArr[id]
       this.payMoney = this.listData[index].pay_price / 100
       this.showPaySwal = true
       this.payOderdId = id
       this.tapId = this.listData[index].id
-    },
-    // 关闭支付选择弹窗
-    closePaySwal (data) {
-      this.showPaySwal = data == 1
     },
     surePaySwal (callData) {
       payOrderUp({

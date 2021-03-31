@@ -181,69 +181,16 @@
           </div>
         </div>
       </div>
-
-      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3)">
-        <div class="fixed-empty"></div>
-        <div class="btn-fixed-buttom">
-          <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
-          <template v-if="orderInfo.is_logistice_btn">
-            <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" @click="getLogistics" class="order-border-btn paid-btn" hover-class="none">提货二维码</div>
-            <div v-else @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
-          </template>
-          <div @click.stop="payFunc()" v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish" @change="getChangeTime">
-                <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-                </template>
-              </van-count-down>)</div>
-        </div>
-      </template>
       <explain-swal
       :show-swal="showExplainSwal"
       :swal-cont="swalCont"
       @closeSwal="closeExplainSwal"
       ></explain-swal>
-      <pay-swal
-      ref="payblock"
-      :showSwal.sync="showPaySwal"
-      :pay-money="payMoney"
-      :down-time="downTime"
-      @sureSwal="surePaySwal"
-      @fyResult="fyResult"
-      ></pay-swal>
       <remind-swal
       :show-swal="showSwal"
       :remind-tit="remindTit"
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()">
-      </remind-swal>
-      <remind-swal
-      :showSwal.sync="thSwal"
-      :showFotter="false">
-        <div class="th-body" slot="body">
-          <div class="th-bg">
-            <div class="th-tit">提货二维码</div>
-            <div class="th-info flex-column-center">
-              <div class="flex-align-center">
-                <div>手机号码:</div>
-                <div>{{ orderInfo.rece_mobile }}</div>
-              </div>
-              <div class="flex-align-center th-address">
-                <div>提货地点:</div>
-                <div>{{ infoData.take_address }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="th-cont flex-align-center">
-            <template v-if="infoData.l_status != 1">
-              <div class="th-tip">提货时请出示二维码给商家</div>
-              <img class="wx-code" :src="infoData.qrCode" />
-            </template>
-            <template v-else>
-              <div class="th-tip">{{infoData.s_txt}}</div>
-              <div class="th-time">{{infoData.s_time}}</div>
-              <img class="th-sucess-icon" src="@/assets/img/sucess.png" />
-            </template>
-          </div>
-        </div>
       </remind-swal>
     </div>
   </div>
@@ -254,10 +201,9 @@ import { NavBar, CountDown, Toast } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
-import eventBus from '@/api/eventbus.js'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress, getLogisticsInfo } from '@/api/life.js'
+import { getCoinOrderDetail } from '@/api/life.js'
 export default {
-  name: 'orderDetail',
+  name: 'coinDetail',
   components: {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
@@ -283,65 +229,26 @@ export default {
       payMoney: 0, // 支付金额
       downTime: 0, // 支付结束时间
       is_toggle: false,
-      idcard: '', // 身份证
-      thSwal: false, // 自提弹窗
       timer: '', // 定时器
       infoData: '' // 自提物流信息
     }
   },
   mounted () {
-    var that = this
-    // 根据key名获取传递回来的参数，data就是map
-    eventBus.$on('chooseAddress', function (data) {
-      if (data) {
-        that.addressInfo = JSON.parse(data)
-        that.orderInfo.rece_realname = that.addressInfo.realname
-        that.orderInfo.rece_mobile = that.addressInfo.mobile
-        that.orderInfo.rece_address = that.addressInfo.address_detail + that.addressInfo.address_name + that.addressInfo.address_house
-        that.orderAddress(that.addressInfo.id)
-      }
-    })
   },
   created () {
-    eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
     this.getData()
   },
   methods: {
-    // 到时间时间变化
-    getChangeTime (timeData) {
-      this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
-    },
     getData () {
-      getOrderDetail({
-        order_project_id: this.order_id
+      getCoinOrderDetail({
+        order_id: this.order_id
       }).then(res => {
         if (res.success) {
           this.goodsList = res.order_goods_specs_list
-          this.orderInfo = res.order_project_info
-          this.logisticsInfo = res.logistice_info
+          this.orderInfo = res.order_info
+          // this.logisticsInfo = res.logistice_info
           this.newTime = parseInt(new Date().getTime())
-        }
-      })
-    },
-    orderAddress (address_id) {
-      editOrderAddress({
-        order_id: this.orderInfo.order_id,
-        address_id: address_id
-      }).then(res => {
-        if (res.success) {
-
-        }
-      })
-    },
-    // 自提物流
-    getLogistics () {
-      getLogisticsInfo({
-        order_project_id: this.orderInfo.id
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data[0]
-          this.thSwal = true
         }
       })
     },
@@ -367,122 +274,9 @@ export default {
       this.closeSwal(0)
       this.cancelOrder()
     },
-    // 再次付款
-    payFunc () {
-      // this.downTime = this.orderInfo.is_again_pay_time * 1000 - this.newTime
-      this.payMoney = this.orderInfo.pay_price / 100
-      this.showPaySwal = true
-    },
-    surePaySwal (callData) {
-      payOrderUp({
-        order_id: this.orderInfo.order_id,
-        pay_type: callData.pay_type,
-        bank_id: callData.bank_id,
-        bank_card: callData.bank_card,
-        realname: callData.realname,
-        idcard: callData.idcard,
-        mobile: callData.mobile
-      }).then(res => {
-        if (res.success) {
-          if (res.data) {
-            this.payOrderInfo = res.data
-            if (callData.pay_type == 1) {
-              this.showPaySwal = false
-              this.wxPayUp()
-            } else if (callData.pay_type == 2) {
-              this.showPaySwal = false
-              this.aliPayUp()
-            } else if (callData.pay_type == 4) {
-              this.$refs.payblock.sendCode(res)
-            }
-          }
-        }
-      }).catch((res) => {
-        if (callData.pay_type == 4) {
-          if (callData.idcard) {
-            this.$router.push({
-              path: '/pages/personage/information/addBankCard',
-              query: {
-                message: res.message
-              }
-            })
-          } else {
-            this.$router.push({
-              path: '/pages/personage/information/certification',
-              query: {
-                message: res.message
-              }
-            })
-          }
-        }
-      })
-    },
-    // 支付宝支付
-    aliPayUp () {
-      const that = this
-      var aliPayPlus = api.require('aliPayPlus')
-      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
-        function (ret, err) {
-          that.getData()
-        }
-      )
-    },
-    // 微信支付
-    wxPayUp () {
-      const that = this
-      const wxPayPlus = api.require('wxPayPlus')
-      wxPayPlus.payOrder({
-        apiKey: that.payOrderInfo.appid,
-        mchId: that.payOrderInfo.partnerid,
-        orderId: that.payOrderInfo.prepayid,
-        nonceStr: that.payOrderInfo.noncestr,
-        timeStamp: that.payOrderInfo.timestamp,
-        package: that.payOrderInfo.package,
-        sign: that.payOrderInfo.paySign
-      }, function (ret, err) {
-        that.getData()
-      })
-    },
-    fyResult () {
-      this.showPaySwal = false
-      this.getData()
-    },
-    // 取消订单
-    cancelOrder () {
-      if (this.orderInfo.is_pay == 0) { // 未付款
-        cancelNoPayOrder({
-          order_project_id: this.orderInfo.id
-        }).then(res => {
-          if (res.success) {
-            this.getData()
-          }
-        })
-      } else {
-        cancelPayOrder({
-          order_project_id: this.orderInfo.id
-        }).then(res => {
-          if (res.success) {
-            this.getData()
-          }
-        })
-      }
-    },
     // 列表商品显示隐藏
     toggle (index) {
       this.is_toggle = !this.is_toggle
-    },
-    // 倒计时开始
-    start () {
-      this.$refs.countDown.start()
-    },
-    // 倒计时暂停
-    pause () {
-      this.$refs.countDown.pause()
-    },
-    // 倒计时结束
-    finish () {
-      this.cancelOrder()
-      // Toast('倒计时结束');
     },
     copy_cont (text_c) {
       var clipBoard = api.require('clipBoard')
@@ -544,55 +338,6 @@ export default {
           }
           break
       }
-    },
-    logisticsLink () {
-      if (this.orderInfo.project_logistice_count > 1 || (this.orderInfo.project_logistice_count = 1 && this.orderInfo.order_status == 1)) {
-        this.$router.push({
-          path: '/logistics/list',
-          query: {
-            id: this.orderInfo.id
-          }
-        })
-      } else {
-        if (this.orderInfo.project_logistice_buy_type == 0) { // 0快递 1自提 2商家配送
-          this.$router.push({
-            path: '/logistics/logistics-express',
-            query: {
-              id: this.orderInfo.id
-            }
-          })
-        } else if (this.orderInfo.project_logistice_buy_type == 1) {
-          this.$router.push({
-            path: '/logistics/logistics-self',
-            query: {
-              id: this.orderInfo.id
-            }
-          })
-        } else {
-          this.$router.push({
-            path: '/logistics/logistics-business',
-            query: {
-              id: this.orderInfo.id
-            }
-          })
-        }
-      }
-    }
-  },
-  watch: {
-    thSwal (val) {
-      if (val) {
-        if (this.infoData.l_status != 1) {
-          this.timer = setInterval(() => {
-            this.getLogistics()
-          }, 2000)
-        }
-      } else {
-        clearInterval(this.timer)
-        if (this.infoData.l_status == 1) {
-          this.getData()
-        }
-      }
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -617,90 +362,10 @@ export default {
   font-size: 28px;
   width: 100%;
 }
-.smzt-session .order-message-item {
-  padding-right: 20px;
+.order-status-session {
+  height: 20px;
 }
-.smzt-session .shipping-address-icon {
-  right: 30px;
-}
-.th-code {
-  width: 52px;
-  height: 52px;
-  position: absolute;
-  right: 30px;
-  top: 50%;
-  margin-top: -26px;
-  display: flex;
-}
-.th-type {
-  height: 56px;
-}
-.th-item {
-  align-items: flex-start;
-  height: auto;
-  padding-top: 10px;
-  .order-message-item-left {
-    line-height: 36px;
-  }
-  .shipping-address-item-right {
-    max-width: 390px;
-  }
-}
-.th-body {
-  border-radius: 10px;
-  overflow: hidden;
-  .th-bg {
-    background: linear-gradient(90deg, #F9866B, #EB5841);
-  }
-  .th-tit {
-    height: 88px;
-    line-height: 88px;
-    text-align: center;
-    font-size: 30px;
-    font-weight: 500;
-    color: #FFFFFF;
-  }
-  .th-info {
-    font-size: 24px;
-    font-weight: 400;
-    color: #FFFFFF;
-    padding: 20px 30px;
-    background: rgba(255, 255, 255, 0.1);
-    & > div {
-      min-height: 42px;
-      line-height: 42px;
-    }
-    .flex-align-center div:nth-child(1) {
-      width: 133px;
-      flex-shrink: 0;
-    }
-    .th-address {
-      align-items: flex-start;
-      padding-top: 10px;
-    }
-  }
-  .th-cont {
-    font-size: 24px;
-    color: #8F8F94;
-    flex-direction: column;
-    height: 543px;
-    .th-tip {
-      line-height: 46px;
-      margin: 38px auto 6px;
-    }
-    .th-time {
-      line-height: 46px;
-      margin-bottom: 86px;
-    }
-    img.wx-code {
-      width: 380px;
-      height: 380px;
-      margin-top: 13px;
-    }
-    img.th-sucess-icon {
-      width: 160px;
-      height: 160px;
-    }
-  }
+.order-header-bg {
+  height: 120px;
 }
 </style>

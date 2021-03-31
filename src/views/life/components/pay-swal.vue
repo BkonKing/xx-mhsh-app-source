@@ -138,15 +138,6 @@ export default {
       userTel: '' // 手机号脱敏
     }
   },
-  watch: {
-    showSwal (val, oldVal) {
-      if (val == true) {
-        this.$nextTick(() => {
-          this.start()
-        })
-      }
-    }
-  },
   created () {
     if (!this.wxzfbShow) {
       this.tapIndex = 2
@@ -275,6 +266,7 @@ export default {
     // 发送
     // payblock () {},
     calcel (val) {
+      this.$emit('update:showSwal', false)
       this.$emit('closeSwal', val)
     },
     sureSwal (index) {
@@ -346,6 +338,14 @@ export default {
     }
   },
   watch: {
+    showSwal (val, oldVal) {
+      console.log('showSwal', this.downTime)
+      if (val == true) {
+        this.$nextTick(() => {
+          this.start()
+        })
+      }
+    },
     $route (to, from) {
       let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
       if (bankCardInfo) {
