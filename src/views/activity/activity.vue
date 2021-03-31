@@ -1,11 +1,11 @@
 <template>
   <div class="activity">
-    <div class="content" ref="content" >
+    <div class="content" ref="content">
       <van-nav-bar
         :fixed="true"
         :border="false"
         left-arrow
-        title="参与活动领积分"
+        :title="pageTitle"
         @click-left="$router.go(-1)"
       />
       <img class="img1" src="@/assets/img/activite_bg.png" alt="" />
@@ -37,15 +37,15 @@
             }"
             v-for="(item, index) in userActiveInfo.integral_balance_list"
             :key="index"
-            @click="selectProject(index)"
+            @click="selectProject(index,item)"
           >
-            <div class="num">{{item.balance}}</div>
+            <div class="num">{{ item.balance }}</div>
             <div class="txt">当前积分</div>
-            <div class="projectname">{{item.project_name}}</div>
+            <div class="projectname">{{ item.project_name }}</div>
           </div>
         </div>
         <div class="effectTime">
-          积分有效时间：2021-03-01 00:00 ~ 2021-03-10 00:00
+          积分有效时间：{{integralObj.activity_time}}
         </div>
       </div>
       <!-- 下拉菜单 -->
@@ -100,22 +100,33 @@
       </div>
     </div>
     <!-- 积分记录 -->
-    <div class="recodContent" v-if="false" ref="recodContent">
-      <div class="item" v-for="item in 20" :key="item">
-        <div class="cellBox">
+    <div class="recodContent" v-show="integralObj !==''" ref="recodContent">
+      <div
+        class="item"
+        :class="{
+          itemLast: index === integralList.length - 1
+        }"
+        v-for="(item, index) in integralList"
+        :key="index"
+      >
+        <div class="cellBox" :class="{borderNone:index===integralList.length-1}">
           <div class="left">
-            <div class="t1">获得</div>
-            <div class="t2">2021-03-01 12:12:12</div>
+            <div class="t1" v-if="item.type === '1'">获得</div>
+            <div class="t1" v-else>使用</div>
+            <div class="t2">{{ item.ctime }}</div>
           </div>
           <div class="right">
-            <div class="t1">+50</div>
-            <div class="t2">剩余50</div>
+            <div class="t1 more0" v-if="item.type === '1'">
+              +{{ item.points }}
+            </div>
+            <div class="t1 less0" v-else>-{{ item.points }}</div>
+            <div class="t2">剩余{{ item.balance }}</div>
           </div>
         </div>
       </div>
     </div>
     <!-- 空状态 -->
-    <div v-else class="recodContent2" ref="recodContent2">
+    <div v-show="integralObj===''" class="recodContent2" ref="recodContent2">
       <img class="nothing_bg" src="@/assets/img/nothing_bg.png" alt="" />
       <div class="txt">暂无记录</div>
     </div>
@@ -138,6 +149,7 @@ export default {
   data () {
     return {
       iconBol: true,
+      integralObj: '', // 账户信息数据
       integralList: [],
       isShow: false,
       userActiveInfo: {}, // 用户活动信息
@@ -145,7 +157,8 @@ export default {
       typeTitle: '',
       typeArr: ['发放', '核销'],
       typeIndex: 0,
-      projectID: '' // 项目ID
+      projectID: '', // 项目ID
+      pageTitle: ''
     }
   },
   methods: {
@@ -153,66 +166,81 @@ export default {
     selectType (index) {
       this.typeIndex = index
       this.typeTitle = this.typeArr[index]
+      this.$refs.recodContent.scrollTop = '0px'
+      this.getData(index + 1)
       this.$refs.dropdown2.toggle(false)
     },
-    // 选择项目
-    selectProject (index) {
+    // 切换项目
+    selectProject (index, item) {
+      this.$refs.recodContent.scrollTop = '0px'
       this.currentIndex = index
+      this.typeIndex = 0
+      this.typeTitle = ''
+      // console.log(item)
+      this.pageTitle = item.activity_name
+      this.projectID = item.project_id
+      this.getData()
     },
     // 获取账户信息 列表
-    async getData () {
+    async getData (index) {
       const res = await integralActivityLog({
-        project_id: this.projectID
+        project_id: this.projectID,
+        type: index
       })
+      if (Object.prototype.toString.call(res.data) === '[object Array]') {
+        this.integralObj = ''
+      } else {
+        this.integralObj = res.data
+        this.integralList = res.data.activity_log_list
+      }
       console.log('账户信息 列表', res)
     },
     // 打开二维码
     openMa () {
       this.isShow = true
     },
-    // 下拉菜单改变事件
-    // dropdownChange (value) {
-    //   // console.log(value)
-    //   const obj = this.option2.find(item => {
-    //     return item.value === value
-    //   })
-    //   // console.log('obj', obj)
-    //   this.dropdownObj = obj
-    // },
+    // 打开下拉菜单
     openItem () {
       this.iconBol = false
     },
+    // 关闭下拉菜单
     coloseItem () {
       this.iconBol = true
     }
   },
   watch: {
+    // 设置积分记录的高度
     userActiveInfo () {
       this.$nextTick(() => {
+        console.log('this.$refs.recodContent', this.$refs.recodContent)
         if (this.$refs.recodContent) {
           this.$refs.recodContent.style.height =
-        document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
+            document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
         }
       })
     }
   },
   mounted () {
-    // this.$refs.recodContent.style.height =
-    //     document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
-
     if (this.$refs.recodContent2) {
       this.$refs.recodContent2.style.height =
         document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
     }
   },
   async created () {
+    // 获取用户活动信息
     const res = await integralActivity()
     this.userActiveInfo = res.data
     if (res.data.integral_balance_list.length === 1) {
       this.projectID = res.data.integral_balance_list[0].project_id
+      this.pageTitle = res.data.integral_balance_list[0].activity_name
     }
+    if (res.data.integral_balance_list.length > 1) {
+      this.projectID = res.data.integral_balance_list[0].project_id
+      this.pageTitle = res.data.integral_balance_list[0].activity_name
+    }
+    this.getData()
     console.log('用户活动信息', res)
-    this.projectID = this.$route.query.projectId ? this.$route.query.projectId : ''
+    this.projectID = this.$route.query.projectId ? this.$route.query.projectId : this.projectID
   }
 }
 </script>
@@ -329,7 +357,7 @@ export default {
           }
         }
         .active {
-         border-radius: 20px;
+          border-radius: 20px;
           width: 100% !important;
           height: 224px;
           background: url("~@/assets/img/activite_mid.png") no-repeat;
@@ -466,6 +494,14 @@ export default {
       align-items: center;
       border-bottom: 1px solid #dddddd;
     }
+    .itemLast {
+      overflow: hidden;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .borderNone {
+      border-bottom: none;
+    }
     .left {
       .t1 {
         font-size: 28px;
@@ -474,6 +510,7 @@ export default {
         color: #000000;
       }
       .t2 {
+        margin-top: 20px;
         font-size: 24px;
         font-family: PingFang SC;
         font-weight: 400;
@@ -494,6 +531,7 @@ export default {
         color: #000000;
       }
       .t2 {
+        margin-top: 20px;
         font-size: 24px;
         font-family: PingFang SC;
         font-weight: 400;
