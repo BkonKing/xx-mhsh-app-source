@@ -224,11 +224,11 @@
             <div class="th-info flex-column-center">
               <div class="flex-align-center">
                 <div>手机号码:</div>
-                <div>15600014246</div>
+                <div>{{ orderInfo.rece_mobile }}</div>
               </div>
               <div class="flex-align-center th-address">
                 <div>提货地点:</div>
-                <div>滑县美好生活家园-小区活动心</div>
+                <div>{{ infoData.take_address }}</div>
               </div>
             </div>
           </div>
