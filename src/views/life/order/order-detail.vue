@@ -218,36 +218,7 @@
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()">
       </remind-swal>
-      <remind-swal
-      :showSwal.sync="thSwal"
-      :showFotter="false">
-        <div class="th-body" slot="body">
-          <div class="th-bg">
-            <div class="th-tit">提货二维码</div>
-            <div class="th-info flex-column-center">
-              <div class="flex-align-center">
-                <div>手机号码:</div>
-                <div>{{ orderInfo.rece_mobile }}</div>
-              </div>
-              <div class="flex-align-center th-address">
-                <div>提货地点:</div>
-                <div>{{ infoData.take_address }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="th-cont flex-align-center">
-            <template v-if="infoData.l_status != 1">
-              <div class="th-tip">提货时请出示二维码给商家</div>
-              <img class="wx-code" :src="infoData.qrCode" />
-            </template>
-            <template v-else>
-              <div class="th-tip">{{infoData.s_txt}}</div>
-              <div class="th-time">{{infoData.s_time}}</div>
-              <img class="th-sucess-icon" src="@/assets/img/sucess.png" />
-            </template>
-          </div>
-        </div>
-      </remind-swal>
+      <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
     </div>
   </div>
 </template>
@@ -257,8 +228,9 @@ import { NavBar, CountDown, Toast } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
+import ztOrder from './../components/zt-order'
 import eventBus from '@/api/eventbus.js'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress, getLogisticsInfo } from '@/api/life.js'
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress } from '@/api/life.js'
 export default {
   name: 'orderDetail',
   components: {
@@ -267,7 +239,8 @@ export default {
     [Toast.name]: Toast,
     paySwal,
     explainSwal,
-    remindSwal
+    remindSwal,
+    ztOrder
   },
   data () {
     return {
@@ -349,14 +322,8 @@ export default {
     },
     // 自提物流
     getLogistics () {
-      getLogisticsInfo({
-        order_project_id: this.orderInfo.id
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data[0]
-          this.thSwal = true
-        }
-      })
+      this.$refs.ztswal.getLogistics(this.orderInfo.id)
+      this.thSwal = true
     },
     // 打开弹窗
     openExplainSwal () {
@@ -594,17 +561,14 @@ export default {
   },
   watch: {
     thSwal (val) {
+      console.log(val)
       if (val) {
-        if (this.infoData.l_status != 1) {
-          this.timer = setInterval(() => {
-            this.getLogistics()
-          }, 2000)
-        }
+        this.timer = setInterval(() => {
+          this.getLogistics()
+        }, 2000)
       } else {
         clearInterval(this.timer)
-        if (this.infoData.l_status == 1) {
-          this.getData()
-        }
+        this.getData()
       }
     }
   },
