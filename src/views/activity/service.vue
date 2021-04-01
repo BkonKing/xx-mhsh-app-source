@@ -108,7 +108,7 @@ export default {
     },
     // 完成
     confirm () {
-      if (!this.value) {
+      if (!this.value || parseFloat(this.value) < 1) {
         this.$toast('请输入数量')
         return
       }
