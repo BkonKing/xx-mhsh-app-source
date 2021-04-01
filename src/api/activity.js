@@ -78,3 +78,12 @@ export function getActivityPermission (data) {
     }
   })
 }
+
+// 通过轮播图进入活动
+export function enterBannerActivity (data) {
+  return request({
+    url: '/activity/activity/enterBannerActivity',
+    method: 'post',
+    data
+  })
+}

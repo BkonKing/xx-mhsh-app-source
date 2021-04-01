@@ -33,6 +33,7 @@
             <van-field
               class="payment-box__money-number"
               v-model="value"
+              :autofocus="true"
               type="digit"
             />
           </div>

@@ -21,7 +21,7 @@
           <img class="avatar" v-else src="@/assets/imgs/touxiang.png" alt="" />
           <div class="username">
             <div class="t1">
-              <span>{{ userActiveInfo.user_data.realname }}</span
+              <span>{{ userActiveInfo.user_data.nickname }}</span
               ><van-tag plain class="tag" type="warning">{{
                 userActiveInfo.user_data.user_role
               }}</van-tag>
@@ -163,7 +163,7 @@
       <img class="nothing_bg" src="@/assets/img/nothing_bg.png" alt="" />
       <div class="txt">暂无记录</div>
     </div>
-    <van-popup v-model="isShow" class="popup">
+    <van-popup v-model="isShow" class="popup" @closed="closedMa">
       <div class="top">
         <div class="title">二维码</div>
         <i class="tf-icon tf-icon-guanbi guanbi" @click="closeMa"></i>
@@ -181,10 +181,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   integralActivity,
   integralActivityLog,
-  surplusIntegralActivity
+  surplusIntegralActivity,
+  getUserActivity,
+  enterBannerActivity
 } from '@/api/activity.js'
 export default {
   data () {
@@ -193,7 +196,9 @@ export default {
       integralObj: '', // 账户信息数据
       integralList: [], // 积分记录列表
       isShow: false,
-      userActiveInfo: {}, // 用户活动信息
+      userActiveInfo: {
+        user_data: {}
+      }, // 用户活动信息
       currentIndex: 0,
       typeTitle: '', // 类型标题
       typeIndex: 0, // 类型下标
@@ -207,7 +212,24 @@ export default {
       totalIntegral: '' // 总积分
     }
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   methods: {
+    // 判断是否有参与中的项目
+    async getUserActivity () {
+      const { is_flag: isFlag } = await getUserActivity({
+        uid: this.userInfo.id
+      })
+      return isFlag
+    },
+    async enterBannerActivity () {
+      const { success } = await enterBannerActivity({
+        project_id: this.projectID,
+        uid: this.userInfo.id
+      })
+      return success
+    },
     // 选择类型
     selectType (index) {
       this.typeIndex = index
@@ -305,6 +327,9 @@ export default {
     // 关闭二维码
     closeMa () {
       this.isShow = false
+    },
+    // 二维码关闭
+    closedMa () {
       clearInterval(this.timeID)
     },
     // 打开下拉菜单
@@ -333,30 +358,30 @@ export default {
         document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
     }
   },
-  created () {
+  async created () {
+    const projectId = this.$route.query.projectId
+    if (projectId) {
+      // 如果有项目id，则判断是否有加入该项目，没有加入则会自动加入
+      this.projectID = projectId
+      const success = await this.enterBannerActivity()
+      if (!success) {
+        this.$toast('活动未开始')
+        return
+      }
+    } else {
+      // 判断是否有参与的项目
+      const isFlag = await this.getUserActivity()
+      if (!isFlag) {
+        this.$toast('活动未开始')
+        this.$router.go(-1)
+        return
+      }
+    }
     // 获取用户活动信息
     this.getUserActive()
-    this.projectID = this.$route.query.projectId
-      ? this.$route.query.projectId
-      : this.projectID
 
-    this.onLoad()
-    this.timeID = setInterval(async () => {
-      const res2 = await surplusIntegralActivity()
-      if (this.totalIntegral !== '') {
-        if (res2.z_balance !== this.totalIntegral) {
-          this.getUserActive()
-          this.onLoad()
-          clearInterval(this.timeID)
-        } else {
-          clearInterval(this.timeID)
-        }
-      }
-      this.totalIntegral = res2.z_balance
-      // console.log('surplusIntegralActivity', res2.z_balance)
-    }, 2000)
-    // console.log('用户活动信息', res)
-    // console.log(this.projectID)
+    const res2 = await surplusIntegralActivity()
+    this.totalIntegral = res2.z_balance
   }
 }
 </script>
