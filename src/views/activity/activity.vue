@@ -22,10 +22,20 @@
           <div class="username">
             <div class="t1">
               <span>{{ userActiveInfo.user_data.nickname }}</span
-              ><van-tag v-if="userInfo.user_type != '0'" plain class="tag" type="warning">{{
-                userActiveInfo.user_data.user_role
-              }}</van-tag>
-              <van-tag  v-if="userInfo.position" class="position-tag" plain type="success">{{userInfo.position}}</van-tag>
+              ><van-tag
+                v-if="userInfo.user_type != '0'"
+                plain
+                class="tag"
+                type="warning"
+                >{{ userActiveInfo.user_data.user_role }}</van-tag
+              >
+              <van-tag
+                v-if="userInfo.position"
+                class="position-tag"
+                plain
+                type="success"
+                >{{ userInfo.position }}</van-tag
+              >
             </div>
             <div class="t2">{{ userActiveInfo.user_data.fc_info }}</div>
           </div>
@@ -53,7 +63,12 @@
             <div class="projectname">{{ item.project_name }}</div>
           </div>
         </div>
-        <div class="effectTime" :class="{effectTime2:userActiveInfo.integral_balance_list.length===1}">
+        <div
+          class="effectTime"
+          :class="{
+            effectTime2: userActiveInfo.integral_balance_list.length === 1
+          }"
+        >
           积分有效时间：{{ integralObj.activity_time }}
         </div>
       </div>
@@ -415,7 +430,7 @@ export default {
       top: 286px;
       left: 50%;
       transform: translateX(-50%);
-      padding:20px 30px;
+      padding: 20px 30px;
       .userInfo {
         display: flex;
         align-items: center;
@@ -455,8 +470,8 @@ export default {
           }
           .position-tag {
             font-size: 20px;
-            border-color: #55B862;
-            color: #55B862 !important;
+            border-color: #55b862;
+            color: #55b862 !important;
           }
         }
         .ma {
@@ -591,7 +606,7 @@ export default {
         font-weight: 400;
         color: #8f8f94;
       }
-       .effectTime2 {
+      .effectTime2 {
         margin-top: 28px;
         text-align: center;
         font-size: 20px;
