@@ -33,7 +33,10 @@
             :class="{
               active: userActiveInfo.integral_balance_list.length === 1,
               active2: userActiveInfo.integral_balance_list.length > 1,
-              projectActive: index === currentIndex
+              projectActive: !$route.query.projectId && index === currentIndex,
+              projectActive2:
+                $route.query.projectId &&
+                $route.query.projectId === item.project_id
             }"
             v-for="(item, index) in userActiveInfo.integral_balance_list"
             :key="index"
@@ -118,12 +121,12 @@
       </div>
     </div>
     <!-- 积分记录 -->
-    <div class="recodContent" v-show="integralObj !== ''" ref="recodContent">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        @load="onLoad"
-      >
+    <div
+      class="recodContent"
+      v-show="integralList.length > 0"
+      ref="recodContent"
+    >
+      <van-list v-model="loading" :finished="finished" @load="onLoad">
         <div
           class="item"
           :class="{
@@ -153,7 +156,11 @@
       </van-list>
     </div>
     <!-- 空状态 -->
-    <div v-show="integralObj === ''" class="recodContent2" ref="recodContent2">
+    <div
+      v-show="integralList.length === 0"
+      class="recodContent2"
+      ref="recodContent2"
+    >
       <img class="nothing_bg" src="@/assets/img/nothing_bg.png" alt="" />
       <div class="txt">暂无记录</div>
     </div>
@@ -171,7 +178,7 @@
 </template>
 
 <script>
-import { integralActivity, integralActivityLog } from '@/api/activity.js'
+import { integralActivity, integralActivityLog, surplusIntegralActivity } from '@/api/activity.js'
 export default {
   data () {
     return {
@@ -189,7 +196,9 @@ export default {
       finished: false,
       loading: false,
       currentPage: 1, // 页码
-      isLoad: false // 是否加载下一次数据
+      isLoad: false, // 是否加载下一次数据
+      timeID: null,
+      totalIntegral: '' // 总积分
     }
   },
   methods: {
@@ -218,6 +227,7 @@ export default {
     },
     // 切换项目
     selectProject (index, item) {
+      this.$route.query.projectId = null
       this.typeIndex = 0
       this.typeTitle = ''
       this.currentPage = 1
@@ -243,25 +253,58 @@ export default {
         page: this.currentPage
       })
       this.isLoad = false
-      if (Object.prototype.toString.call(res.data) === '[object Array]') {
-        this.integralObj = ''
-      } else {
-        this.integralObj = res.data
-        this.integralList = [
-          ...this.integralList,
-          ...res.data.activity_log_list
-        ]
-        this.loading = false
-        this.currentPage++
-        if (res.data.activity_log_list.length === 0) {
-          this.finished = true
-        }
+      // if (Object.prototype.toString.call(res.data) === '[object Array]') {
+      //   this.integralObj = ''
+      // } else {
+      this.integralObj = res.data
+      this.integralList = [
+        ...this.integralList,
+        ...res.data.activity_log_list
+      ]
+      this.loading = false
+      this.currentPage++
+      if (res.data.activity_log_list.length === 0) {
+        this.finished = true
+        // }
       }
-      // console.log('账户信息 列表', res)
+      console.log('账户信息 列表', res)
+    },
+    // 获取用户活动信息
+    async getUserActive () {
+      const res = await integralActivity()
+      this.userActiveInfo = res.data
+      // 如果只有一个数据，就加载第一条记录
+      if (res.data.integral_balance_list.length === 1) {
+        this.projectID = res.data.integral_balance_list[0].project_id
+        this.pageTitle = res.data.integral_balance_list[0].activity_name
+      }
+      if (res.data.integral_balance_list.length > 1) {
+        // console.log(1111)
+        // console.log('11112222', res.data.integral_balance_list[0].project_id)
+        this.projectID = res.data.integral_balance_list[0].project_id
+        this.pageTitle = res.data.integral_balance_list[0].activity_name
+        this.onLoad()
+      }
     },
     // 打开二维码
     openMa () {
       this.isShow = true
+      this.timeID = setInterval(async () => {
+        const res2 = await surplusIntegralActivity()
+        if (this.totalIntegral !== '') {
+          if (res2.z_balance !== this.totalIntegral) {
+            this.getUserActive()
+            this.onLoad()
+            console.log('不同')
+            clearInterval(this.timeID)
+          } else {
+            console.log('相同')
+            clearInterval(this.timeID)
+          }
+        }
+        this.totalIntegral = res2.z_balance
+        console.log('surplusIntegralActivity', res2.z_balance)
+      }, 2000)
     },
     // 打开下拉菜单
     openItem () {
@@ -290,23 +333,31 @@ export default {
         document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
     }
   },
-  async created () {
+  created () {
     // 获取用户活动信息
-    const res = await integralActivity()
-    this.userActiveInfo = res.data
-    if (res.data.integral_balance_list.length === 1) {
-      this.projectID = res.data.integral_balance_list[0].project_id
-      this.pageTitle = res.data.integral_balance_list[0].activity_name
-    }
-    if (res.data.integral_balance_list.length > 1) {
-      this.projectID = res.data.integral_balance_list[0].project_id
-      this.pageTitle = res.data.integral_balance_list[0].activity_name
-    }
-    this.onLoad()
-    console.log('用户活动信息', res)
+    this.getUserActive()
     this.projectID = this.$route.query.projectId
       ? this.$route.query.projectId
       : this.projectID
+    this.onLoad()
+    this.timeID = setInterval(async () => {
+      const res2 = await surplusIntegralActivity()
+      if (this.totalIntegral !== '') {
+        if (res2.z_balance !== this.totalIntegral) {
+          this.getUserActive()
+          this.onLoad()
+          console.log('不同')
+          clearInterval(this.timeID)
+        } else {
+          console.log('相同')
+          clearInterval(this.timeID)
+        }
+      }
+      this.totalIntegral = res2.z_balance
+      console.log('surplusIntegralActivity', res2.z_balance)
+    }, 2000)
+    // console.log('用户活动信息', res)
+    // console.log(this.projectID)
   }
 }
 </script>
@@ -457,6 +508,28 @@ export default {
           }
         }
         .projectActive {
+          background-color: #2a334a;
+          .num {
+            font-size: 48px;
+            font-family: PingFang SC;
+            font-weight: 500;
+            color: #febf00;
+          }
+          .txt {
+            font-size: 24px;
+            font-family: PingFang SC;
+            font-weight: 400;
+            color: #ffffff;
+            opacity: 0.3;
+          }
+          .projectname {
+            font-size: 20px;
+            font-family: PingFang SC;
+            font-weight: 400;
+            color: #ffffff;
+          }
+        }
+        .projectActive2 {
           background-color: #2a334a;
           .num {
             font-size: 48px;

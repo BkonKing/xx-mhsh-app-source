@@ -46,3 +46,11 @@ export function queryActive (data) {
     }
   })
 }
+
+// 用户活动 总剩余 积分
+export function surplusIntegralActivity (params) {
+  return request({
+    url: '/activity/activity/surplus_integral_activity',
+    method: 'post'
+  })
+}
