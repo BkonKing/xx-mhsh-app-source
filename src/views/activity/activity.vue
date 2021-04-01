@@ -456,7 +456,7 @@ export default {
         .ma {
           width: 56px;
           height: 56px;
-          margin-right: 60px;
+          margin-right: 30px;
           line-height: 56px;
           img {
             width: 100%;
@@ -607,7 +607,7 @@ export default {
       padding: 0;
     }
     .dropdownTitle2 {
-      margin-left: 200px;
+      margin-left: 260px;
       font-size: 26px;
       font-family: PingFang SC;
       font-weight: 400;
