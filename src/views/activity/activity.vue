@@ -167,7 +167,7 @@
     <van-popup v-model="isShow" class="popup">
       <div class="top">
         <div class="title">二维码</div>
-        <i class="tf-icon tf-icon-guanbi guanbi" @click="isShow = false"></i>
+        <i class="tf-icon tf-icon-guanbi guanbi" @click="closeMa"></i>
       </div>
       <div class="txt">请出示二维码给工作人员，以便发放或核销积分</div>
       <div class="ma">
@@ -264,24 +264,35 @@ export default {
         this.finished = true
         // }
       }
-      console.log('账户信息 列表', res)
+      // console.log('账户信息 列表', res)
     },
     // 获取用户活动信息
     async getUserActive () {
       const res = await integralActivity()
       this.userActiveInfo = res.data
+      console.log('this.userActiveInfo', this.userActiveInfo)
       // 如果只有一个数据，就加载第一条记录
       if (res.data.integral_balance_list.length === 1) {
         this.projectID = res.data.integral_balance_list[0].project_id
         this.pageTitle = res.data.integral_balance_list[0].activity_name
       }
-      if (res.data.integral_balance_list.length > 1) {
-        // console.log(1111)
-        // console.log('11112222', res.data.integral_balance_list[0].project_id)
+      if (this.$route.query.projectId) {
+        const index = res.data.integral_balance_list.findIndex(item => {
+          return item.project_id === this.projectID
+        })
+        // console.log('下标', index)
+        this.pageTitle = res.data.integral_balance_list[index].activity_name
+        this.onLoad()
+      } else {
         this.projectID = res.data.integral_balance_list[0].project_id
         this.pageTitle = res.data.integral_balance_list[0].activity_name
         this.onLoad()
       }
+      // if (res.data.integral_balance_list.length > 1) {
+      //   this.projectID = res.data.integral_balance_list[0].project_id
+      //   this.pageTitle = res.data.integral_balance_list[0].activity_name
+      //   this.onLoad()
+      // }
     },
     // 打开二维码
     openMa () {
@@ -293,15 +304,18 @@ export default {
             this.getUserActive()
             this.onLoad()
             // console.log('不同')
-            clearInterval(this.timeID)
-          } else {
-            // console.log('相同')
+            this.isShow = false
             clearInterval(this.timeID)
           }
         }
         this.totalIntegral = res2.z_balance
-        console.log('surplusIntegralActivity', res2.z_balance)
+        // console.log('surplusIntegralActivity', res2.z_balance)
       }, 2000)
+    },
+    // 关闭二维码
+    closeMa () {
+      this.isShow = false
+      clearInterval(this.timeID)
     },
     // 打开下拉菜单
     openItem () {
@@ -316,7 +330,7 @@ export default {
     // 设置积分记录的高度
     userActiveInfo () {
       this.$nextTick(() => {
-        console.log('this.$refs.recodContent', this.$refs.recodContent)
+        // console.log('this.$refs.recodContent', this.$refs.recodContent)
         if (this.$refs.recodContent) {
           this.$refs.recodContent.style.height =
             document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
@@ -336,6 +350,7 @@ export default {
     this.projectID = this.$route.query.projectId
       ? this.$route.query.projectId
       : this.projectID
+
     this.onLoad()
     this.timeID = setInterval(async () => {
       const res2 = await surplusIntegralActivity()
@@ -343,15 +358,15 @@ export default {
         if (res2.z_balance !== this.totalIntegral) {
           this.getUserActive()
           this.onLoad()
-          console.log('不同')
+          // console.log('不同')
           clearInterval(this.timeID)
         } else {
-          console.log('相同')
+          // console.log('相同')
           clearInterval(this.timeID)
         }
       }
       this.totalIntegral = res2.z_balance
-      console.log('surplusIntegralActivity', res2.z_balance)
+      // console.log('surplusIntegralActivity', res2.z_balance)
     }, 2000)
     // console.log('用户活动信息', res)
     // console.log(this.projectID)
