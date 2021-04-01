@@ -415,7 +415,7 @@ export default {
       top: 286px;
       left: 50%;
       transform: translateX(-50%);
-      padding: 20px;
+      padding:20px 30px;
       .userInfo {
         display: flex;
         align-items: center;
@@ -578,7 +578,7 @@ export default {
         }
       }
       .effectTime {
-        margin-top: 15px;
+        margin-top: 20px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
@@ -649,6 +649,7 @@ export default {
     margin: 0 auto;
     margin-top: 20px;
     border-radius: 20px;
+    padding-bottom: 120px;
     .item {
       overflow: hidden;
       padding: 0 20px;
