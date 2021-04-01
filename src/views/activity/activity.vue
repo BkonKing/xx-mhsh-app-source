@@ -16,7 +16,7 @@
           <div class="username">
             <div class="t1">
               <span>{{ userActiveInfo.user_data.realname }}</span
-              ><van-tag plain class="tag" type="primary">{{
+              ><van-tag plain class="tag" type="warning">{{
                 userActiveInfo.user_data.user_role
               }}</van-tag>
               <!-- <van-tag class="tag" plain type="success">管理员</van-tag> -->
@@ -253,9 +253,6 @@ export default {
         page: this.currentPage
       })
       this.isLoad = false
-      // if (Object.prototype.toString.call(res.data) === '[object Array]') {
-      //   this.integralObj = ''
-      // } else {
       this.integralObj = res.data
       this.integralList = [
         ...this.integralList,
@@ -426,7 +423,7 @@ export default {
             font-size: 20px;
             font-family: PingFang SC;
             font-weight: 400;
-            color: #ffa110;
+            color: #ffa110 !important;
           }
         }
         .ma {
