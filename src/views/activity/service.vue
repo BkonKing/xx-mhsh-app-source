@@ -128,7 +128,10 @@ export default {
       }
       giveIntergral(params).then(res => {
         this.show = false
-        this.$toast(res.message)
+        this.$toast({
+          className: 'activity-toast',
+          message: res.message
+        })
         setTimeout(() => {
           this.$router.go(-1)
         }, 500)
@@ -279,5 +282,16 @@ export default {
 }
 /deep/ .van-key--large {
   height: 100%;
+}
+</style>
+
+<style>
+.activity-toast {
+  width: 500px;
+  height: 88px;
+  font-size: 26px;
+  color: #ffffff;
+  background: #00000099;
+  border-radius: 10px;
 }
 </style>

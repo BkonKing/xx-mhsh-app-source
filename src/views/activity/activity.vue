@@ -721,6 +721,7 @@ export default {
       margin-top: 50px;
       .title {
         flex: 1;
+        margin-left: 80px;
         font-size: 40px;
         font-family: PingFang SC;
         font-weight: 500;
