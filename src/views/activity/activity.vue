@@ -614,7 +614,7 @@ export default {
         }
       }
       .effectTime {
-        margin-top: 20px;
+        margin-top: 18px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
@@ -622,7 +622,7 @@ export default {
         color: #8f8f94;
       }
       .effectTime2 {
-        margin-top: 20px;
+        margin-top: 18px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
