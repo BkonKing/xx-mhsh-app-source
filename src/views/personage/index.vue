@@ -39,7 +39,7 @@
                   >{{ userType | houseRoleText }}</van-tag
                 >
                 <van-tag
-                  v-if="userInfo.role_dep"
+                  v-if="userInfo.position"
                   class="user-role"
                   plain
                   :color="5 | houseRoleColor"

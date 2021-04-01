@@ -25,7 +25,7 @@
               ><van-tag plain class="tag" type="warning">{{
                 userActiveInfo.user_data.user_role
               }}</van-tag>
-              <!-- <van-tag class="tag" plain type="success">管理员</van-tag> -->
+              <van-tag v-if="userInfo.position" class="position-tag" plain type="success">{{userInfo.position}}</van-tag>
             </div>
             <div class="t2">{{ userActiveInfo.user_data.fc_info }}</div>
           </div>
@@ -451,6 +451,11 @@ export default {
             font-family: PingFang SC;
             font-weight: 400;
             color: #ffa110 !important;
+          }
+          .position-tag {
+            font-size: 20px;
+            border-color: #55B862;
+            color: #55B862 !important;
           }
         }
         .ma {
