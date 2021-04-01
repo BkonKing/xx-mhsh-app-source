@@ -54,3 +54,27 @@ export function surplusIntegralActivity (params) {
     method: 'post'
   })
 }
+
+// 根据用户ID获取用户参加的活动
+export function getUserActivity (data) {
+  return request({
+    url: '/activity/activity/getUserActivity',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
+}
+
+// 根据项目ID 工作人员 是否有该项目 积分活动 权限
+export function getActivityPermission (data) {
+  return request({
+    url: '/activity/activity/integral_activity_jurisdiction',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
+}

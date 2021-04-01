@@ -49,8 +49,9 @@ import {
   collectStatus
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
-import { queryActive } from '@/api/activity'
+import { queryActive, getActivityPermission } from '@/api/activity'
 import { handlePermission } from '@/utils/permission'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
@@ -76,6 +77,9 @@ export default {
       timer: null,
       footerHeight: 0
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   created () {
     this.current = parseInt(this.$route.query.current) || 1
@@ -340,13 +344,10 @@ export default {
       // 判断积分活动是否开启
       queryActive({
         activity_id: activityId,
-        project_id: projectId
+        project_id: projectId,
+        uid: this.userInfo.id
       })
         .then(() => {
-          api.setPrefs({
-            key: 'activity-projectId',
-            value: `${projectId}|${activityId}`
-          })
           this.$router.push({
             name: 'activity',
             query: {
@@ -362,10 +363,20 @@ export default {
     },
     // 扫了用户积分活动码,跳转积分发放核销页面
     goActivity (userId) {
-      this.$router.push({
-        name: 'activityService',
-        query: {
-          userId
+      getActivityPermission({
+        project_id: this.userInfo.xm_project_id
+      }).then(({ data }) => {
+        this.$router.push({
+          name: 'activityService',
+          query: {
+            userId
+          }
+        })
+      }).catch((err) => {
+        if (err.code === '202') {
+          api.alert({
+            title: err.message
+          })
         }
       })
     },
