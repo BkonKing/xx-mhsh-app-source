@@ -5,14 +5,20 @@
         :fixed="true"
         :border="false"
         left-arrow
-        :title="pageTitle"
+        :title="pageTitle ? pageTitle : '参与活动领积分'"
         @click-left="$router.go(-1)"
       />
       <img class="img1" src="@/assets/img/activite_bg.png" alt="" />
 
       <div class="userBox">
         <div class="userInfo" v-if="userActiveInfo.user_data">
-          <img class="avatar"  :src="userActiveInfo.user_data.avatar" alt="" />
+          <img
+            class="avatar"
+            v-if="userActiveInfo.user_data.avatar"
+            :src="userActiveInfo.user_data.avatar"
+            alt=""
+          />
+          <img class="avatar" v-else src="@/assets/imgs/touxiang.png" alt="" />
           <div class="username">
             <div class="t1">
               <span>{{ userActiveInfo.user_data.realname }}</span
@@ -103,7 +109,7 @@
                   @click="selectType(0)"
                   :class="{ typeActive: typeIndex === 0 }"
                 >
-                  <span>全部({{integralObj.count_data.qb_count}})</span>
+                  <span>全部({{ integralObj.count_data.qb_count }})</span>
                   <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 0"></i>
                 </div>
                 <div
@@ -111,7 +117,7 @@
                   @click="selectType(1)"
                   :class="{ typeActive: typeIndex === 1 }"
                 >
-                  <span>获得({{integralObj.count_data.hq_count}})</span>
+                  <span>获得({{ integralObj.count_data.hq_count }})</span>
                   <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 1"></i>
                 </div>
                 <div
@@ -119,7 +125,7 @@
                   @click="selectType(2)"
                   :class="{ typeActive: typeIndex === 2 }"
                 >
-                  <span>使用({{integralObj.count_data.sy_count}})</span>
+                  <span>使用({{ integralObj.count_data.sy_count }})</span>
                   <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 2"></i>
                 </div>
               </div>
@@ -179,14 +185,22 @@
       </div>
       <div class="txt">请出示二维码给工作人员，以便发放或核销积分</div>
       <div class="ma">
-        <img v-if="userActiveInfo.user_data" :src="userActiveInfo.user_data.qrCode" alt="" />
+        <img
+          v-if="userActiveInfo.user_data"
+          :src="userActiveInfo.user_data.qrCode"
+          alt=""
+        />
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { integralActivity, integralActivityLog, surplusIntegralActivity } from '@/api/activity.js'
+import {
+  integralActivity,
+  integralActivityLog,
+  surplusIntegralActivity
+} from '@/api/activity.js'
 export default {
   data () {
     return {
@@ -268,10 +282,7 @@ export default {
       })
       this.isLoad = false
       this.integralObj = res.data
-      this.integralList = [
-        ...this.integralList,
-        ...res.data.activity_log_list
-      ]
+      this.integralList = [...this.integralList, ...res.data.activity_log_list]
       this.loading = false
       this.currentPage++
       if (res.data.activity_log_list.length === 0) {
@@ -301,11 +312,6 @@ export default {
         this.pageTitle = res.data.integral_balance_list[0].activity_name
         this.onLoad()
       }
-      // if (res.data.integral_balance_list.length > 1) {
-      //   this.projectID = res.data.integral_balance_list[0].project_id
-      //   this.pageTitle = res.data.integral_balance_list[0].activity_name
-      //   this.onLoad()
-      // }
     },
     // 打开二维码
     openMa () {
@@ -593,6 +599,9 @@ export default {
     }
     /deep/ .van-dropdown-menu__title::after {
       display: none;
+    }
+    /deep/ .van-dropdown-menu__bar {
+      box-shadow: none;
     }
     .dropdownTitle {
       margin-right: 500px;
