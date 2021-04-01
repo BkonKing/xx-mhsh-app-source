@@ -49,7 +49,7 @@ import {
   collectStatus
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
-import { queryActive, getActivityPermission } from '@/api/activity'
+import { queryActive, getActivityPermission, getActivityUserInfo } from '@/api/activity'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
@@ -363,14 +363,24 @@ export default {
     },
     // 扫了用户积分活动码,跳转积分发放核销页面
     goActivity (userId) {
+      // 有没有权限
       getActivityPermission({
         project_id: this.userInfo.xm_project_id
-      }).then(({ data }) => {
-        this.$router.push({
-          name: 'activityService',
-          query: {
-            userId
-          }
+      }).then((success) => {
+        getActivityUserInfo({
+          project_id: this.userInfo.xm_project_id,
+          code_info: userId
+        }).then(({ data }) => {
+          this.$router.push({
+            name: 'activityService',
+            query: {
+              userId
+            }
+          })
+        }).catch((e) => {
+          api.alert({
+            title: e.message
+          })
         })
       }).catch((err) => {
         api.alert({
