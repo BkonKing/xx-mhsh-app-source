@@ -25,7 +25,7 @@
               ><van-tag v-if="userInfo.user_type != '0'" plain class="tag" type="warning">{{
                 userActiveInfo.user_data.user_role
               }}</van-tag>
-              <van-tag v-if="userInfo.position" class="position-tag" plain type="success">{{userInfo.position}}</van-tag>
+              <van-tag  v-if="userInfo.position" class="position-tag" plain type="success">{{userInfo.position}}</van-tag>
             </div>
             <div class="t2">{{ userActiveInfo.user_data.fc_info }}</div>
           </div>
@@ -447,6 +447,7 @@ export default {
             line-height: 52px;
           }
           .tag {
+            margin-right: 10px !important;
             font-size: 20px;
             font-family: PingFang SC;
             font-weight: 400;
