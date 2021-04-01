@@ -621,7 +621,7 @@ export default {
         color: #8f8f94;
       }
       .effectTime2 {
-        margin-top: 18px;
+        margin-top: 20px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
