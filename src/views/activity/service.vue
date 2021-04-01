@@ -31,6 +31,7 @@
               class="payment-box__icon"
             />
             <van-field
+              id="input"
               class="payment-box__money-number"
               v-model="value"
               :autofocus="true"
@@ -101,6 +102,9 @@ export default {
       this.type = type
       this.typeShow = false
       this.show = true
+      this.$nextTick(() => {
+        document.getElementById('input').focus()
+      })
     },
     // 完成
     confirm () {
