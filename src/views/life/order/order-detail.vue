@@ -15,7 +15,7 @@
           </template>
         </van-nav-bar>
       </div>
-      <div v-if="orderInfo" :class="[(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status==3) ? 'scroll-body-btn' : '', 'order-session scroll-body']">
+      <div v-if="orderInfo" :class="[(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2) ? 'scroll-body-btn' : '', 'order-session scroll-body']">
         <div class="order-header-bg"></div>
         <div class="order-status-session">
           <div class="order-status-name">{{orderInfo.order_status_name}}</div>
@@ -185,7 +185,7 @@
         </div>
       </div>
 
-      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status==3)">
+      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2)">
         <div class="fixed-empty"></div>
         <div class="btn-fixed-buttom">
           <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
