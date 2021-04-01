@@ -27,7 +27,7 @@
           </div>
           <div class="distribution-item">
             <div>提货地点：</div>
-            <div>{{ infoData.take_address }}</div>
+            <div class="text-wrap">{{ infoData.take_address }}</div>
           </div>
           <div class="distribution-item">
             <div>订单备注：</div>
