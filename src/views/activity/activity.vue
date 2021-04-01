@@ -5,14 +5,20 @@
         :fixed="true"
         :border="false"
         left-arrow
-        :title="pageTitle"
+        :title="pageTitle ? pageTitle : '参与活动领积分'"
         @click-left="$router.go(-1)"
       />
       <img class="img1" src="@/assets/img/activite_bg.png" alt="" />
 
       <div class="userBox">
-        <div class="userInfo">
-          <img class="avatar" :src="userActiveInfo.user_data.avatar" alt="" />
+        <div class="userInfo" v-if="userActiveInfo.user_data">
+          <img
+            class="avatar"
+            v-if="userActiveInfo.user_data.avatar"
+            :src="userActiveInfo.user_data.avatar"
+            alt=""
+          />
+          <img class="avatar" v-else src="@/assets/imgs/touxiang.png" alt="" />
           <div class="username">
             <div class="t1">
               <span>{{ userActiveInfo.user_data.realname }}</span
@@ -97,21 +103,29 @@
                   ></i>
                 </div>
               </div> -->
-              <div class="itemBox">
+              <div class="itemBox" v-if="integralObj.count_data">
                 <div
                   class="item"
-                  @click="selectType"
+                  @click="selectType(0)"
+                  :class="{ typeActive: typeIndex === 0 }"
+                >
+                  <span>全部({{ integralObj.count_data.qb_count }})</span>
+                  <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 0"></i>
+                </div>
+                <div
+                  class="item"
+                  @click="selectType(1)"
                   :class="{ typeActive: typeIndex === 1 }"
                 >
-                  <span>发放</span>
+                  <span>获得({{ integralObj.count_data.hq_count }})</span>
                   <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 1"></i>
                 </div>
                 <div
                   class="item"
-                  @click="selectType2"
+                  @click="selectType(2)"
                   :class="{ typeActive: typeIndex === 2 }"
                 >
-                  <span>核销</span>
+                  <span>使用({{ integralObj.count_data.sy_count }})</span>
                   <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 2"></i>
                 </div>
               </div>
@@ -171,14 +185,22 @@
       </div>
       <div class="txt">请出示二维码给工作人员，以便发放或核销积分</div>
       <div class="ma">
-        <img :src="userActiveInfo.user_data.qrCode" alt="" />
+        <img
+          v-if="userActiveInfo.user_data"
+          :src="userActiveInfo.user_data.qrCode"
+          alt=""
+        />
       </div>
     </van-popup>
   </div>
 </template>
 
 <script>
-import { integralActivity, integralActivityLog, surplusIntegralActivity } from '@/api/activity.js'
+import {
+  integralActivity,
+  integralActivityLog,
+  surplusIntegralActivity
+} from '@/api/activity.js'
 export default {
   data () {
     return {
@@ -203,9 +225,15 @@ export default {
   },
   methods: {
     // 选择类型
-    selectType () {
-      this.typeIndex = 1
-      this.typeTitle = '发放'
+    selectType (index) {
+      this.typeIndex = index
+      if (index === 0) {
+        this.typeTitle = '全部'
+      } else if (index === 1) {
+        this.typeTitle = '获得'
+      } else {
+        this.typeTitle = '使用'
+      }
       this.$refs.recodContent.scrollTop = '0px'
       this.currentPage = 1
       this.loading = false
@@ -214,17 +242,17 @@ export default {
       this.onLoad()
       this.$refs.dropdown2.toggle(false)
     },
-    selectType2 () {
-      this.typeIndex = 2
-      this.typeTitle = '核销'
-      this.$refs.recodContent.scrollTop = '0px'
-      this.currentPage = 1
-      this.loading = false
-      this.finished = false
-      this.integralList = []
-      this.onLoad()
-      this.$refs.dropdown2.toggle(false)
-    },
+    // selectType2 () {
+    //   this.typeIndex = 2
+    //   this.typeTitle = '使用'
+    //   this.$refs.recodContent.scrollTop = '0px'
+    //   this.currentPage = 1
+    //   this.loading = false
+    //   this.finished = false
+    //   this.integralList = []
+    //   this.onLoad()
+    //   this.$refs.dropdown2.toggle(false)
+    // },
     // 切换项目
     selectProject (index, item) {
       this.$route.query.projectId = null
@@ -254,17 +282,13 @@ export default {
       })
       this.isLoad = false
       this.integralObj = res.data
-      this.integralList = [
-        ...this.integralList,
-        ...res.data.activity_log_list
-      ]
+      this.integralList = [...this.integralList, ...res.data.activity_log_list]
       this.loading = false
       this.currentPage++
       if (res.data.activity_log_list.length === 0) {
         this.finished = true
-        // }
       }
-      // console.log('账户信息 列表', res)
+      console.log('账户信息 列表', res)
     },
     // 获取用户活动信息
     async getUserActive () {
@@ -288,11 +312,6 @@ export default {
         this.pageTitle = res.data.integral_balance_list[0].activity_name
         this.onLoad()
       }
-      // if (res.data.integral_balance_list.length > 1) {
-      //   this.projectID = res.data.integral_balance_list[0].project_id
-      //   this.pageTitle = res.data.integral_balance_list[0].activity_name
-      //   this.onLoad()
-      // }
     },
     // 打开二维码
     openMa () {
@@ -444,6 +463,7 @@ export default {
         .ma {
           width: 56px;
           height: 56px;
+          margin-right: 60px;
           line-height: 56px;
           img {
             width: 100%;
@@ -579,6 +599,9 @@ export default {
     }
     /deep/ .van-dropdown-menu__title::after {
       display: none;
+    }
+    /deep/ .van-dropdown-menu__bar {
+      box-shadow: none;
     }
     .dropdownTitle {
       margin-right: 500px;
