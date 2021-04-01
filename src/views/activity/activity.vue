@@ -355,6 +355,19 @@ export default {
     // 关闭下拉菜单
     coloseItem () {
       this.iconBol = true
+    },
+    // 活动失效弹窗
+    openDialog () {
+      this.$dialog.alert({
+        className: 'hd-alert',
+        confirmButtonText: '确定',
+        message: '活动已失效',
+        closeOnClickOverlay: true
+      }).then(() => {
+        this.$router.go(-1)
+      }).catch(() => {
+        this.$router.go(-1)
+      })
     }
   },
   watch: {
@@ -381,26 +394,14 @@ export default {
       this.projectID = projectId
       const success = await this.enterBannerActivity()
       if (!success) {
-        this.$dialog.alert({
-          className: 'hd-alert',
-          confirmButtonText: '确定',
-          message: '活动已失效'
-        }).then(() => {
-          this.$router.go(-1)
-        })
+        this.openDialog()
         return
       }
     } else {
       // 判断是否有参与的项目
       const isFlag = await this.getUserActivity()
       if (!isFlag) {
-        this.$dialog.alert({
-          className: 'hd-alert',
-          confirmButtonText: '确定',
-          message: '活动已失效'
-        }).then(() => {
-          this.$router.go(-1)
-        })
+        this.openDialog()
         return
       }
     }
@@ -409,6 +410,10 @@ export default {
 
     const res2 = await surplusIntegralActivity()
     this.totalIntegral = res2.z_balance
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$dialog.close()
+    next()
   }
 }
 </script>

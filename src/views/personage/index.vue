@@ -546,6 +546,7 @@ export default {
 }
 
 .user-role {
+  min-height: 46px;
   margin-left: 10px;
   padding: 7px 8px;
 }
