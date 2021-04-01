@@ -53,7 +53,7 @@
             <div class="projectname">{{ item.project_name }}</div>
           </div>
         </div>
-        <div class="effectTime">
+        <div class="effectTime" :class="{effectTime2:userActiveInfo.integral_balance_list.length===1}">
           积分有效时间：{{ integralObj.activity_time }}
         </div>
       </div>
@@ -579,6 +579,14 @@ export default {
       }
       .effectTime {
         margin-top: 20px;
+        text-align: center;
+        font-size: 20px;
+        font-family: PingFang SC;
+        font-weight: 400;
+        color: #8f8f94;
+      }
+       .effectTime2 {
+        margin-top: 28px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
