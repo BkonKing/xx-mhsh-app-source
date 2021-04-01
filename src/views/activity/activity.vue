@@ -79,7 +79,7 @@
               </div>
             </template>
             <template>
-              <div class="itemBox">
+              <!-- <div class="itemBox">
                 <div
                   class="item"
                   :class="{ typeActive: typeIndex === index }"
@@ -93,6 +93,24 @@
                     v-if="typeIndex === index"
                   ></i>
                 </div>
+              </div> -->
+              <div class="itemBox">
+                <div
+                  class="item"
+                  @click="selectType"
+                  :class="{ typeActive: typeIndex === 1 }"
+                >
+                  <span>发放</span>
+                  <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 1"></i>
+                </div>
+                <div
+                  class="item"
+                  @click="selectType2"
+                  :class="{ typeActive: typeIndex === 2 }"
+                >
+                  <span>核销</span>
+                  <i class="tf-icon tf-icon-gou gou" v-if="typeIndex === 2"></i>
+                </div>
               </div>
             </template>
           </van-dropdown-item>
@@ -104,7 +122,6 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
         @load="onLoad"
       >
         <div
@@ -164,27 +181,39 @@ export default {
       isShow: false,
       userActiveInfo: {}, // 用户活动信息
       currentIndex: 0,
-      typeTitle: '',
-      typeArr: ['发放', '核销'],
-      typeIndex: 0,
+      typeTitle: '', // 类型标题
+      // typeArr: ['发放', '核销'],
+      typeIndex: 0, // 类型下标
       projectID: '', // 项目ID
       pageTitle: '', // 页面标题
       finished: false,
       loading: false,
-      currentPage: 1
+      currentPage: 1, // 页码
+      isLoad: false // 是否加载下一次数据
     }
   },
   methods: {
     // 选择类型
-    selectType (index) {
-      this.typeIndex = index
-      this.typeTitle = this.typeArr[index]
+    selectType () {
+      this.typeIndex = 1
+      this.typeTitle = '发放'
       this.$refs.recodContent.scrollTop = '0px'
       this.currentPage = 1
       this.loading = false
       this.finished = false
       this.integralList = []
-      this.onLoad(index + 1)
+      this.onLoad()
+      this.$refs.dropdown2.toggle(false)
+    },
+    selectType2 () {
+      this.typeIndex = 2
+      this.typeTitle = '核销'
+      this.$refs.recodContent.scrollTop = '0px'
+      this.currentPage = 1
+      this.loading = false
+      this.finished = false
+      this.integralList = []
+      this.onLoad()
       this.$refs.dropdown2.toggle(false)
     },
     // 切换项目
@@ -203,24 +232,32 @@ export default {
       this.onLoad()
     },
     // 获取账户信息 列表
-    async onLoad (index) {
+    async onLoad () {
+      if (this.isLoad) {
+        return
+      }
+      this.isLoad = true
       const res = await integralActivityLog({
         project_id: this.projectID,
-        type: index,
+        type: this.typeIndex,
         page: this.currentPage
       })
+      this.isLoad = false
       if (Object.prototype.toString.call(res.data) === '[object Array]') {
         this.integralObj = ''
       } else {
         this.integralObj = res.data
-        this.integralList = [...this.integralList, ...res.data.activity_log_list]
+        this.integralList = [
+          ...this.integralList,
+          ...res.data.activity_log_list
+        ]
         this.loading = false
         this.currentPage++
         if (res.data.activity_log_list.length === 0) {
           this.finished = true
         }
       }
-      console.log('账户信息 列表', res)
+      // console.log('账户信息 列表', res)
     },
     // 打开二维码
     openMa () {
