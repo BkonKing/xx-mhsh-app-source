@@ -32,10 +32,8 @@
             />
             <van-field
               class="payment-box__money-number"
-              readonly
-              clickable
-              :value="value"
-              @touchstart.native.stop="touchstart"
+              v-model="value"
+              type="digit"
             />
           </div>
           <van-button
@@ -129,13 +127,11 @@ export default {
         client_uid: this.info.client_uid
       }
       giveIntergral(params).then(res => {
-        this.$dialog
-          .alert({
-            title: res.message
-          })
-          .then(() => {
-            this.$router.go(-1)
-          })
+        this.show = false
+        this.$toast(res.message)
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 500)
       })
     },
     touchstart () {
@@ -246,6 +242,7 @@ export default {
       display: flex;
       align-items: flex-end;
       width: 100%;
+      margin-top: 20px;
       margin-bottom: 80px;
       border-bottom: 2px solid #dddddd;
     }
@@ -264,16 +261,23 @@ export default {
     &__icon {
       width: 36px;
       height: 36px;
-      margin-bottom: 42px;
+      margin-bottom: 36px;
     }
     &__money-number {
       font-size: 64px;
       color: #000;
-      border-bottom: 2px solid #dddddd;
+      // border-bottom: 2px solid #dddddd;
     }
   }
   /deep/ .van-dialog__footer {
     padding: 0;
   }
+}
+/deep/ .van-key {
+  height: 120px;
+  font-size: 36px;
+}
+/deep/ .van-key--large {
+  height: 100%;
 }
 </style>

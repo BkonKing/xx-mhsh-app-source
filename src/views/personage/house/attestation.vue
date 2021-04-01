@@ -10,7 +10,7 @@
     >
       <template #right>
         <span
-          v-if="mode && !editMode"
+          v-if="mode && !editMode && !(isBinding && type === 0 && mode === 1)"
           class="tf-icon tf-icon-bianji"
           @click="goEdit"
         ></span>
@@ -182,6 +182,7 @@ export default {
       house_role: '',
       realname: '',
       mobile: '',
+      isBinding: 0, // 该成员是否绑定
       items: [
         {
           value: '1',
@@ -218,13 +219,15 @@ export default {
         house_role,
         fc_info,
         project_name,
-        id
+        id,
+        is_binding
       } = JSON.parse(this.$route.query.info)
       this.id = id
       this.realname = realname
       this.mobile = mobile
       this.house_role = house_role
       this.house_name = project_name + fc_info
+      this.isBinding = is_binding
     } else if (this.type === 1) {
       if (this.mode === 1) {
         this.bindingId = this.$route.query.id

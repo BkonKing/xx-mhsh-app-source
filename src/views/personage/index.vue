@@ -307,7 +307,7 @@ import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import SignRule from './happiness-coin/components/SignRule'
 import { signin } from '@/api/personage'
-import { queryActive } from '@/api/activity'
+import { getUserActivity } from '@/api/activity'
 import { mapGetters } from 'vuex'
 import { handlePermission } from '@/utils/permission'
 export default {
@@ -349,22 +349,16 @@ export default {
     this.$store.dispatch('getMyAccount').then(({ order_data }) => {
       this.orderData = order_data
     })
-    // 是否有活动项目id
-    const activityInfo = api.getPrefs({
-      key: 'activity-projectId'
-    })
-    activityInfo && this.getActivityInfo(activityInfo)
+    this.getActivityInfo()
   },
   methods: {
     // 获取积分活动信息
-    getActivityInfo (activityInfo) {
-      const [projectId, activityId] = activityInfo.split('|')
-      queryActive({
-        activity_id: activityId,
-        project_id: projectId
-      }).then(({ title }) => {
-        this.isOpenActivity = true
-        title && (this.activityTitle = title)
+    getActivityInfo () {
+      getUserActivity({
+        uid: this.userInfo.id
+      }).then(({ activity_name: title, is_flag: isFlag }) => {
+        this.isOpenActivity = isFlag
+        isFlag && title && (this.activityTitle = title)
       })
     },
     // 签到
@@ -465,7 +459,7 @@ export default {
   },
   filters: {
     signText (value) {
-      return value === '1' ? '已签到' : '签到'
+      return value === 1 ? '已签到' : '签到'
     }
   }
 }
