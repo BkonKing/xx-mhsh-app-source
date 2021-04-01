@@ -212,7 +212,8 @@ export default {
       integralList: [], // 积分记录列表
       isShow: false,
       userActiveInfo: {
-        user_data: {}
+        user_data: {},
+        integral_balance_list: []
       }, // 用户活动信息
       currentIndex: 0,
       typeTitle: '', // 类型标题
@@ -239,11 +240,11 @@ export default {
       return isFlag
     },
     async enterBannerActivity () {
-      const { success } = await enterBannerActivity({
+      const { is_flag } = await enterBannerActivity({
         project_id: this.projectID,
         uid: this.userInfo.id
       })
-      return success
+      return is_flag
     },
     // 选择类型
     selectType (index) {
