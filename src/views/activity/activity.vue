@@ -37,7 +37,7 @@
             }"
             v-for="(item, index) in userActiveInfo.integral_balance_list"
             :key="index"
-            @click="selectProject(index,item)"
+            @click="selectProject(index, item)"
           >
             <div class="num">{{ item.balance }}</div>
             <div class="txt">当前积分</div>
@@ -45,7 +45,7 @@
           </div>
         </div>
         <div class="effectTime">
-          积分有效时间：{{integralObj.activity_time}}
+          积分有效时间：{{ integralObj.activity_time }}
         </div>
       </div>
       <!-- 下拉菜单 -->
@@ -100,33 +100,43 @@
       </div>
     </div>
     <!-- 积分记录 -->
-    <div class="recodContent" v-show="integralObj !==''" ref="recodContent">
-      <div
-        class="item"
-        :class="{
-          itemLast: index === integralList.length - 1
-        }"
-        v-for="(item, index) in integralList"
-        :key="index"
+    <div class="recodContent" v-show="integralObj !== ''" ref="recodContent">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
       >
-        <div class="cellBox" :class="{borderNone:index===integralList.length-1}">
-          <div class="left">
-            <div class="t1" v-if="item.type === '1'">获得</div>
-            <div class="t1" v-else>使用</div>
-            <div class="t2">{{ item.ctime }}</div>
-          </div>
-          <div class="right">
-            <div class="t1 more0" v-if="item.type === '1'">
-              +{{ item.points }}
+        <div
+          class="item"
+          :class="{
+            itemLast: index === integralList.length - 1
+          }"
+          v-for="(item, index) in integralList"
+          :key="index"
+        >
+          <div
+            class="cellBox"
+            :class="{ borderNone: index === integralList.length - 1 }"
+          >
+            <div class="left">
+              <div class="t1" v-if="item.type === '1'">获得</div>
+              <div class="t1" v-else>使用</div>
+              <div class="t2">{{ item.ctime }}</div>
             </div>
-            <div class="t1 less0" v-else>-{{ item.points }}</div>
-            <div class="t2">剩余{{ item.balance }}</div>
+            <div class="right">
+              <div class="t1 more0" v-if="item.type === '1'">
+                +{{ item.points }}
+              </div>
+              <div class="t1 less0" v-else>-{{ item.points }}</div>
+              <div class="t2">剩余{{ item.balance }}</div>
+            </div>
           </div>
         </div>
-      </div>
+      </van-list>
     </div>
     <!-- 空状态 -->
-    <div v-show="integralObj===''" class="recodContent2" ref="recodContent2">
+    <div v-show="integralObj === ''" class="recodContent2" ref="recodContent2">
       <img class="nothing_bg" src="@/assets/img/nothing_bg.png" alt="" />
       <div class="txt">暂无记录</div>
     </div>
@@ -150,7 +160,7 @@ export default {
     return {
       iconBol: true,
       integralObj: '', // 账户信息数据
-      integralList: [],
+      integralList: [], // 积分记录列表
       isShow: false,
       userActiveInfo: {}, // 用户活动信息
       currentIndex: 0,
@@ -158,7 +168,10 @@ export default {
       typeArr: ['发放', '核销'],
       typeIndex: 0,
       projectID: '', // 项目ID
-      pageTitle: ''
+      pageTitle: '', // 页面标题
+      finished: false,
+      loading: false,
+      currentPage: 1
     }
   },
   methods: {
@@ -167,31 +180,45 @@ export default {
       this.typeIndex = index
       this.typeTitle = this.typeArr[index]
       this.$refs.recodContent.scrollTop = '0px'
-      this.getData(index + 1)
+      this.currentPage = 1
+      this.loading = false
+      this.finished = false
+      this.integralList = []
+      this.onLoad(index + 1)
       this.$refs.dropdown2.toggle(false)
     },
     // 切换项目
     selectProject (index, item) {
-      this.$refs.recodContent.scrollTop = '0px'
-      this.currentIndex = index
       this.typeIndex = 0
       this.typeTitle = ''
+      this.currentPage = 1
+      this.loading = false
+      this.finished = false
+      this.integralList = []
+      this.$refs.recodContent.scrollTop = '0px'
+      this.currentIndex = index
       // console.log(item)
       this.pageTitle = item.activity_name
       this.projectID = item.project_id
-      this.getData()
+      this.onLoad()
     },
     // 获取账户信息 列表
-    async getData (index) {
+    async onLoad (index) {
       const res = await integralActivityLog({
         project_id: this.projectID,
-        type: index
+        type: index,
+        page: this.currentPage
       })
       if (Object.prototype.toString.call(res.data) === '[object Array]') {
         this.integralObj = ''
       } else {
         this.integralObj = res.data
-        this.integralList = res.data.activity_log_list
+        this.integralList = [...this.integralList, ...res.data.activity_log_list]
+        this.loading = false
+        this.currentPage++
+        if (res.data.activity_log_list.length === 0) {
+          this.finished = true
+        }
       }
       console.log('账户信息 列表', res)
     },
@@ -238,9 +265,11 @@ export default {
       this.projectID = res.data.integral_balance_list[0].project_id
       this.pageTitle = res.data.integral_balance_list[0].activity_name
     }
-    this.getData()
+    this.onLoad()
     console.log('用户活动信息', res)
-    this.projectID = this.$route.query.projectId ? this.$route.query.projectId : this.projectID
+    this.projectID = this.$route.query.projectId
+      ? this.$route.query.projectId
+      : this.projectID
   }
 }
 </script>
