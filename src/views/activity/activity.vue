@@ -22,7 +22,7 @@
           <div class="username">
             <div class="t1">
               <span>{{ userActiveInfo.user_data.nickname }}</span
-              ><van-tag plain class="tag" type="warning">{{
+              ><van-tag v-if="userInfo.user_type != '0'" plain class="tag" type="warning">{{
                 userActiveInfo.user_data.user_role
               }}</van-tag>
               <van-tag v-if="userInfo.position" class="position-tag" plain type="success">{{userInfo.position}}</van-tag>
