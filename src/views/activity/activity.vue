@@ -292,10 +292,10 @@ export default {
           if (res2.z_balance !== this.totalIntegral) {
             this.getUserActive()
             this.onLoad()
-            console.log('不同')
+            // console.log('不同')
             clearInterval(this.timeID)
           } else {
-            console.log('相同')
+            // console.log('相同')
             clearInterval(this.timeID)
           }
         }
