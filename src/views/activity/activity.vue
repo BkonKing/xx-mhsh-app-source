@@ -88,21 +88,6 @@
               </div>
             </template>
             <template>
-              <!-- <div class="itemBox">
-                <div
-                  class="item"
-                  :class="{ typeActive: typeIndex === index }"
-                  @click="selectType(index)"
-                  v-for="(item, index) in typeArr"
-                  :key="index"
-                >
-                  <span>{{ item }}</span>
-                  <i
-                    class="tf-icon tf-icon-gou gou"
-                    v-if="typeIndex === index"
-                  ></i>
-                </div>
-              </div> -->
               <div class="itemBox" v-if="integralObj.count_data">
                 <div
                   class="item"
@@ -211,7 +196,6 @@ export default {
       userActiveInfo: {}, // 用户活动信息
       currentIndex: 0,
       typeTitle: '', // 类型标题
-      // typeArr: ['发放', '核销'],
       typeIndex: 0, // 类型下标
       projectID: '', // 项目ID
       pageTitle: '', // 页面标题
@@ -242,17 +226,7 @@ export default {
       this.onLoad()
       this.$refs.dropdown2.toggle(false)
     },
-    // selectType2 () {
-    //   this.typeIndex = 2
-    //   this.typeTitle = '使用'
-    //   this.$refs.recodContent.scrollTop = '0px'
-    //   this.currentPage = 1
-    //   this.loading = false
-    //   this.finished = false
-    //   this.integralList = []
-    //   this.onLoad()
-    //   this.$refs.dropdown2.toggle(false)
-    // },
+
     // 切换项目
     selectProject (index, item) {
       this.$route.query.projectId = null
@@ -264,7 +238,6 @@ export default {
       this.integralList = []
       this.$refs.recodContent.scrollTop = '0px'
       this.currentIndex = index
-      // console.log(item)
       this.pageTitle = item.activity_name
       this.projectID = item.project_id
       this.onLoad()
@@ -304,7 +277,6 @@ export default {
         const index = res.data.integral_balance_list.findIndex(item => {
           return item.project_id === this.projectID
         })
-        // console.log('下标', index)
         this.pageTitle = res.data.integral_balance_list[index].activity_name
         this.onLoad()
       } else {
@@ -322,7 +294,6 @@ export default {
           if (res2.z_balance !== this.totalIntegral) {
             this.getUserActive()
             this.onLoad()
-            // console.log('不同')
             this.isShow = false
             clearInterval(this.timeID)
           }
@@ -349,7 +320,6 @@ export default {
     // 设置积分记录的高度
     userActiveInfo () {
       this.$nextTick(() => {
-        // console.log('this.$refs.recodContent', this.$refs.recodContent)
         if (this.$refs.recodContent) {
           this.$refs.recodContent.style.height =
             document.body.offsetHeight - this.$refs.content.offsetHeight + 'px'
@@ -377,10 +347,8 @@ export default {
         if (res2.z_balance !== this.totalIntegral) {
           this.getUserActive()
           this.onLoad()
-          // console.log('不同')
           clearInterval(this.timeID)
         } else {
-          // console.log('相同')
           clearInterval(this.timeID)
         }
       }
