@@ -434,6 +434,7 @@ export default {
       .userInfo {
         display: flex;
         align-items: center;
+        height: 100px;
         .avatar {
           margin-right: 20px;
           width: 80px;
@@ -607,7 +608,7 @@ export default {
         color: #8f8f94;
       }
       .effectTime2 {
-        margin-top: 28px;
+        margin-top: 20px;
         text-align: center;
         font-size: 20px;
         font-family: PingFang SC;
