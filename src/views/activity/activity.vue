@@ -380,15 +380,26 @@ export default {
       this.projectID = projectId
       const success = await this.enterBannerActivity()
       if (!success) {
-        this.$toast('活动未开始')
+        this.$dialog.alert({
+          className: 'hd-alert',
+          confirmButtonText: '确定',
+          message: '活动已失效'
+        }).then(() => {
+          this.$router.go(-1)
+        })
         return
       }
     } else {
       // 判断是否有参与的项目
       const isFlag = await this.getUserActivity()
       if (!isFlag) {
-        this.$toast('活动未开始')
-        this.$router.go(-1)
+        this.$dialog.alert({
+          className: 'hd-alert',
+          confirmButtonText: '确定',
+          message: '活动已失效'
+        }).then(() => {
+          this.$router.go(-1)
+        })
         return
       }
     }
@@ -463,12 +474,14 @@ export default {
           }
           .tag {
             margin-right: 10px !important;
+            height: 40px;
             font-size: 20px;
             font-family: PingFang SC;
             font-weight: 400;
             color: #ffa110 !important;
           }
           .position-tag {
+            height: 40px;
             font-size: 20px;
             border-color: #55b862;
             color: #55b862 !important;
@@ -797,6 +810,34 @@ export default {
         width: 100%;
         height: 100%;
       }
+    }
+  }
+}
+</style>
+
+<style lang="less">
+.hd-alert{
+   &.van-dialog {
+    width: 450px;
+    height: 300px;
+    background: #fff;
+    border-radius: 20px;
+    .van-dialog__footer .van-button.van-dialog__confirm {
+      width: 190px;
+      height: 72px;
+      background: #FEBF00;
+      border-radius: 10px;
+      margin: 0 auto;
+      display: block;
+      border: 0;
+      font-size: 32px;
+    }
+    .van-dialog__message {
+      font-size: 32px;
+      color: #000;
+      line-height: 44px;
+      margin: 74px 0 60px;
+      padding: 0;
     }
   }
 }

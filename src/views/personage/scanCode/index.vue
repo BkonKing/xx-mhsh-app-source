@@ -373,11 +373,9 @@ export default {
           }
         })
       }).catch((err) => {
-        if (err.code === '202') {
-          api.alert({
-            title: err.message
-          })
-        }
+        api.alert({
+          title: err.message
+        })
       })
     },
     // 打开扫码frame
