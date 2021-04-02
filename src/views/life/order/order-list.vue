@@ -61,8 +61,8 @@
                   </div>
                   <div class="order-btn-box">
                     <div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)" v-txAnalysis="{eventId: 51}">取消订单</div>
-                    <div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)" @change="(time) => {getChangeTime(time, item.order_id)}">
+                    <div v-if="(item.is_logistics && item.project_logistice_buy_type !=1) || (item.project_logistice_buy_type ==1 && item.order_status == 2)" class="order-border-btn" @click.stop="item.project_logistice_buy_type ==1 ? getLogistics(index) : logisticsLink(index)">{{ item.project_logistice_buy_type ==1 ? '提货码' : '物流详情' }}</div>
+                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
                     <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                     </template>
                   </van-count-down>)</div>
@@ -98,6 +98,7 @@
     @closeSwal="closeSwal"
     @sureSwal="sureSwal()">
     </remind-swal>
+    <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
   </div>
 </template>
 
@@ -106,6 +107,7 @@ import { NavBar, CountDown, List, Tab, Tabs } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
+import ztOrder from './../components/zt-order'
 import { getOrderList, getOrderOne, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
 export default {
   name: 'orderList',
@@ -117,6 +119,7 @@ export default {
     [Tabs.name]: Tabs,
     explainSwal,
     remindSwal,
+    ztOrder,
     paySwal
   },
   data () {
@@ -139,6 +142,8 @@ export default {
       loading: false,
       finished: false,
       timeArr: [],
+      thSwal: false, // 自提弹窗
+      tabIndex: 0, // 当前选中的index
 
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
@@ -437,6 +442,14 @@ export default {
           break
       }
     },
+    // 自提物流
+    getLogistics (index) {
+      this.tabIndex = index
+      this.tapId = this.listData[index].id
+      const ztId = this.listData[index].id
+      this.$refs.ztswal.getLogistics(ztId)
+      this.thSwal = true
+    },
     logisticsLink (index) {
       this.tapId = this.listData[index].id
       var _this = this.listData[index]
@@ -473,6 +486,18 @@ export default {
       }
     }
   },
+  watch: {
+    thSwal (val) {
+      if (val) {
+        this.timer = setInterval(() => {
+          this.getLogistics(this.tabIndex)
+        }, 2000)
+      } else {
+        clearInterval(this.timer)
+        this.updateOne()
+      }
+    }
+  },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       if (from.name == 'orderDetail' || from.name == 'specialDetail' || from.name == 'logisticsList' || from.name == 'logisticsSelf' || from.name == 'logisticsExpress' || from.name == 'logisticsBusiness') {
@@ -503,8 +528,11 @@ export default {
   position: relative;
 }
 .app-body {
-	background-color: #f2f2f4;
-	font-size: 28px;
+  background-color: #f2f2f4;
+  font-size: 28px;
+}
+.order-border-btn {
+  justify-content: center;
 }
 /* 导航 start */
 .nav-item.cur::after {
