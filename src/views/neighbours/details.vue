@@ -36,11 +36,22 @@
             </template>
           </userInfo>
         </div>
+        <!-- 资讯 -->
         <template v-if="articleType == 1">
           <div class="article-title">{{ info.title }}</div>
-          <div class="article-content" v-html="info.content"></div>
+          <div class="article-content-box">
+            <div class="article-content" v-html="info.content"></div>
+            <!-- 播放视屏  -->
+            <videoChild
+              v-if="info.video_url"
+              :url="info.video_url"
+              :poster="poster"
+              :style="{ order: info.video_site === '1' ? -1 : 2 }"
+            ></videoChild>
+          </div>
           <!-- <img class="activity-image" :src="info.thumbnail" /> -->
         </template>
+        <!-- 话题帖子 -->
         <template v-else-if="articleType == 3">
           <tf-alert
             v-if="info.status == 2"
@@ -64,11 +75,21 @@
             ></tf-image-list>
           </template>
         </template>
+        <!-- 活动 -->
         <template v-else-if="articleType == 2">
           <div class="article-title">{{ info.title }}</div>
           <div class="activity-content">
-            <div class="tf-text tf-mb-lg" v-html="info.content"></div>
-            <!-- <img class="activity-image" :src="info.thumbnail" /> -->
+            <div class="activity-content-box tf-text tf-mb-lg">
+              <div v-html="info.content"></div>
+              <!-- <img class="activity-image" :src="info.thumbnail" /> -->
+              <!-- 播放视屏  -->
+              <videoChild
+                v-if="info.video_url"
+                :url="info.video_url"
+                :poster="poster"
+                :style="{ order: info.video_site === '1' ? -1 : 2 }"
+              ></videoChild>
+            </div>
             <div class="apply-box" v-if="parseInt(info.joins) > 0">
               <div class="apply-title">
                 <strong>报名人员</strong>
@@ -140,12 +161,12 @@
 </template>
 
 <script>
-import { NavBar, Popup, Toast, PullRefresh, Dialog } from 'vant'
 import UserInfo from '@/components/user-info/index.vue'
 import TfAlert from '@/components/tf-alert'
 import reply from './components/reply'
 import morePopup from './components/morePopup'
 import tfImageList from '@/components/tf-image-list'
+import videoChild from '@/components/videoChild/videoChild'
 import { downloadPic } from '@/utils/util.js'
 import {
   getActivityInfo,
@@ -158,32 +179,20 @@ import {
 
 export default {
   components: {
-    [NavBar.name]: NavBar,
-    [Popup.name]: Popup,
-    [PullRefresh.name]: PullRefresh,
     UserInfo,
     TfAlert,
     reply,
     morePopup,
-    tfImageList
+    tfImageList,
+    videoChild
   },
   data () {
     return {
-      articleType: 3,
+      poster: '', // 视屏封面
+      articleType: 0, // 文章类型：1资讯，2活动，3话题
       id: '',
-      moreShow: false,
-      info: {
-        id: '',
-        content: '',
-        images: [],
-        category: '',
-        nickname: '',
-        avatar: '',
-        thumbsups: '',
-        comments: '',
-        ctime: '',
-        share_img: ''
-      },
+      moreShow: false, // 更多操作弹窗
+      info: {},
       isLoading: false,
       shareObj: {}
     }
@@ -214,104 +223,104 @@ export default {
           break
       }
     },
-    /* 保存分享图片 */
+    // 获取资讯详情
+    getArticleInfo () {
+      getArticleInfo({
+        id: this.id
+      }).then(({ data }) => {
+        this.setInfo(data, '活动')
+      })
+    },
+    // 获取小组帖子详情
+    getPostBarInfo () {
+      getPostBarInfo({
+        id: this.id
+      })
+        .then(({ data }) => {
+          this.setInfo(data, '贴')
+          this.info.id = this.id
+        })
+        .catch(({ message }) => {
+          this.$toast.clear()
+          this.$dialog
+            .alert({
+              title: message || '该贴不存在'
+            })
+            .then(() => {
+              this.$router.go(-1)
+            })
+        })
+    },
+    // 获取活动详情
+    getActivityInfo () {
+      getActivityInfo({
+        id: this.id
+      }).then(({ data }) => {
+        this.setInfo(data, '活动')
+      })
+    },
+    // 获取完文章成功后
+    setInfo (data, text) {
+      if (this.goBackByNonentity(data.is_del, text)) {
+        return
+      }
+      this.info = data
+      this.isLoading = false
+      this.downloadSharePic()
+    },
+    // 文章不存在回退
+    goBackByNonentity (del, text) {
+      if (del === 1) {
+        this.$dialog
+          .alert({
+            title: `该${text}已被删除`
+          })
+          .then(() => {
+            this.$router.go(-1)
+          })
+        return true
+      }
+    },
+    // 保存分享图片
     downloadSharePic () {
       const that = this
       const urlName = 'detail_' + this.articleType + '_' + this.id
       downloadPic(this.info.share_img, urlName)
-        .then((data) => {
+        .then(data => {
           that.sendShareParam(data)
         })
         .catch(() => {
           that.sendShareParam('')
         })
     },
+    // 设置分享配置
     sendShareParam (data) {
       this.shareObj = {
         title: this.articleType == 3 ? this.info.content : this.info.title,
-        description: this.articleType == 3 ? this.info.content : this.info.title,
+        description:
+          this.articleType == 3 ? this.info.content : this.info.title,
         pyqTitle: this.articleType == 3 ? this.info.content : this.info.title,
         thumb: data ? 'fs://' + data + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + this.articleType + '&id=' + this.id
+        contentUrl:
+          'http://live.tosolomo.com/wap/#/neighbours?articleType=' +
+          this.articleType +
+          '&id=' +
+          this.id
       }
     },
-    /* 获取资讯详情 */
-    getArticleInfo () {
-      getArticleInfo({
-        id: this.id
-      }).then(({ data }) => {
-        if (data.is_del === 1) {
-          Dialog.alert({
-            title: '该活动已被删除'
-          }).then(() => {
-            this.$router.go(-1)
-          })
-          return
-        }
-        this.info = data
-        this.isLoading = false
-        this.downloadSharePic()
-      })
-    },
-    /* 获取小组帖子详情 */
-    getPostBarInfo () {
-      getPostBarInfo({
-        id: this.id
-      })
-        .then(({ data }) => {
-          if (data.is_del === 1) {
-            Dialog.alert({
-              title: '该贴已被删除'
-            }).then(() => {
-              this.$router.go(-1)
-            })
-            return
-          }
-          this.info = data
-          this.info.id = this.id
-          this.isLoading = false
-          this.downloadSharePic()
-        })
-        .catch(({ message }) => {
-          Toast.clear()
-          Dialog.alert({
-            title: message || '该贴不存在'
-          }).then(() => {
-            this.$router.go(-1)
-          })
-        })
-    },
-    /* 获取活动详情 */
-    getActivityInfo () {
-      getActivityInfo({
-        id: this.id
-      }).then(({ data }) => {
-        if (data.is_del === 1) {
-          Dialog.alert({
-            title: '该活动已被删除'
-          }).then(() => {
-            this.$router.go(-1)
-          })
-          return
-        }
-        this.info = data
-        this.isLoading = false
-        this.downloadSharePic()
-      })
-    },
-    /* 加入活动 */
+    // 加入活动
     joinActivity () {
       joinActivity({
         id: this.id
-      }).then((res) => {
-        Toast.success('活动报名成功')
+      }).then(res => {
+        this.$toast.success('活动报名成功')
         this.getInfo()
         this.mtjEvent({
           eventId: 8
         })
       })
     },
-    /* 点赞 */
+    // 点赞
     thumbsUp (item) {
       // 判断是否点过赞，点过赞无法取消
       if (item.is_thumbsup) {
@@ -320,7 +329,7 @@ export default {
       thumbsUp({
         id: this.id,
         t_type: 1
-      }).then((res) => {
+      }).then(res => {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
@@ -333,19 +342,21 @@ export default {
     openArticleDialog () {
       this.moreShow = true
     },
-    /* 删除帖子 */
+    // 删除帖子
     deleteArticle () {
       deleteArticle({
         id: this.id
-      }).then((res) => {
-        Dialog.alert({
-          title: '删除成功'
-        }).then(() => {
-          this.$router.go(-1)
-          this.mtjEvent({
-            eventId: 44
+      }).then(res => {
+        this.$dialog
+          .alert({
+            title: '删除成功'
           })
-        })
+          .then(() => {
+            this.$router.go(-1)
+            this.mtjEvent({
+              eventId: 44
+            })
+          })
         this.moreShow = false
       })
     }
@@ -363,7 +374,7 @@ export default {
   },
   watch: {
     // 监听 this.$route.query
-    '$route.query': function (newVal, oldVal) {
+    '$route.query' (newVal) {
       this.articleType = newVal.articleType
       this.id = newVal.id
       this.getInfo()
@@ -429,15 +440,19 @@ export default {
   border-bottom: none;
 }
 .article-title {
-  font-size: 34px;
-  font-weight: bold;
   margin-top: 10px;
   margin-bottom: 30px;
+  font-size: 34px;
+  font-weight: bold;
   word-break: break-all;
 }
+.article-content-box {
+  display: flex;
+  flex-direction: column;
+  padding-top: 40px;
+  border-top: 2px solid @divider-color;
+}
 .article-content {
-  padding: 40px 0 10px;
-  border-top: 1px solid @divider-color;
   font-size: 28px;
   color: #666;
   word-break: break-all;
@@ -451,6 +466,10 @@ export default {
   border-top: 1px solid @divider-color;
   padding-top: 30px;
   word-break: break-all;
+  .activity-content-box {
+    @flex-column();
+    width: 100%;
+  }
   /deep/ img {
     max-width: 100% !important;
   }

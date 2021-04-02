@@ -64,7 +64,6 @@
 import { getMonthRecord, editRecord } from '@/api/personage'
 import eventBus from '@/api/eventbus'
 import meterForm from './form'
-import { Toast } from 'vant'
 export default {
   name: 'waterElectricityMeter',
   components: {
@@ -87,8 +86,6 @@ export default {
   created () {
     // 参数全部从上一个页面传入，请求完会更改
     this.params = this.$route.query
-    // this.openWater = parseInt(this.$route.query.water)
-    // this.openElectric = parseInt(this.$route.query.electric)
     this.meterActive = parseInt(this.$route.query.type)
     this.getMeterInfo()
     // 右滑切换水电表
@@ -115,7 +112,7 @@ export default {
         this.switchHouseStatus = 'prev'
         this.getMeterInfo()
       } else {
-        Toast('没有房间了')
+        this.$toast('没有房间了')
       }
     },
     // 下一个房间
@@ -127,18 +124,21 @@ export default {
     // 切换电水表
     switchMeter (type) {
       if (this.openElectric == 0 && type == 2) {
-        // this.$toast('该房间没有开启电表')
         return
       }
       if (this.openWater == 0 && type == 1) {
-        // this.$toast('该房间没有开启水表')
         return
       }
-      this.meterActive = type
+      this.getMeterInfo(type)
     },
     // 获取房屋水电信息
-    getMeterInfo () {
-      this.params.type = this.meterActive
+    getMeterInfo (type = this.meterActive) {
+      this.params.type = type
+      this.$toast.loading({
+        message: '加载中...',
+        forbidClick: true,
+        duration: 0
+      })
       getMonthRecord(this.params)
         .then(({ data }) => {
           this.houseName = data.house_property_name
@@ -146,13 +146,14 @@ export default {
           this.isBill = data.is_bill
           this.openWater = parseInt(data.is_water_fee)
           this.openElectric = parseInt(data.is_electric_fee)
+          this.meterActive = type
           // 切换房屋才执行，切换成功，如果水表开启则默认显示水表
           if (this.switchHouseStatus) {
             if (this.meterActive == 1 && this.openWater == 0) {
-              this.meterActive = 2
+              this.switchMeter(2)
             }
             if (this.meterActive == 2 && this.openElectric == 0) {
-              this.meterActive = 1
+              this.switchMeter(1)
             }
             this.switchHouseStatus = '' // 重置切换房屋状态
           }
@@ -162,30 +163,37 @@ export default {
             this.electricityInfo = data
           }
           // 第一次进来如果未生成账单，要弹起键盘
-          this.first && this.isBill && this.$nextTick(() => {
-            this.first = false
-            this.meterActive == 2 ? (this.$refs.electricity.focusMeter()) : (this.$refs.water.focusMeter())
-          })
+          this.first &&
+            this.isBill &&
+            this.$nextTick(() => {
+              this.first = false
+              this.meterActive == 2
+                ? this.$refs.electricity.focusMeter()
+                : this.$refs.water.focusMeter()
+            })
         })
         .catch(err => {
           // 没有上一家或者已经是最后一家报错203，排序号需要还原
           if (err.code == '203') {
             if (this.switchHouseStatus === 'prev') {
-              Toast('没有房间了')
+              this.$toast('没有房间了')
               this.params.subscript = this.params.subscript + 1
             } else if (this.switchHouseStatus === 'next') {
-              Toast('没有房间了')
+              this.$toast('没有房间了')
               this.params.subscript = this.params.subscript - 1
             }
           } else {
-            Toast(err.message)
+            this.$toast(err.message)
           }
           this.switchHouseStatus = ''
+        })
+        .finally(() => {
+          this.$toast.clear()
         })
     },
     // 抄水表保存
     saveWater (params) {
-      this.editRecord(params).then((result) => {
+      this.editRecord(params).then(result => {
         if (result) {
           this.$refs.water.switchEdit(false)
         }
@@ -193,7 +201,7 @@ export default {
     },
     // 抄电表保存
     saveElectricity (params) {
-      this.editRecord(params).then((result) => {
+      this.editRecord(params).then(result => {
         if (result) {
           this.$refs.electricity.switchEdit(false)
         }
@@ -215,13 +223,6 @@ export default {
           // this.$toast.fail('保存失败')
           return false
         })
-    }
-  },
-  watch: {
-    meterActive () {
-      if (!this.first) {
-        this.getMeterInfo()
-      }
     }
   }
 }

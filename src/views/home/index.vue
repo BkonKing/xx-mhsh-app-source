@@ -90,7 +90,7 @@
               src="@/assets/imgs/home-credits.png"
             />
             <van-button
-              v-if="userInfo.signin_today == '0'"
+              v-if="userInfo.signin_status === 0"
               v-preventReClick
               :loading="signLoading"
               class="sign-btn"

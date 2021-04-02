@@ -1091,3 +1091,22 @@
     height: calc(100% - 90px);
   }
 }
+
+// 列表筛选的选择菜单
+.filtrate-dropdown-menu {
+  /deep/ .van-dropdown-menu__bar {
+    height: 90px;
+  }
+  /deep/ .van-dropdown-menu__title::after {
+    right: 6px;
+    border: 6px solid;
+    border-color: transparent transparent #aaaaaa #aaaaaa;
+    opacity: 1;
+  }
+  /deep/ .van-dropdown-menu__title--active::after {
+    border-color: transparent transparent #eb5841 #eb5841;
+  }
+  /deep/ .van-dropdown-menu__item {
+    padding-right: 10px;
+  }
+}

@@ -127,6 +127,10 @@ export function getOrderOne (params) {
 export function getOrderDetail (params) {
   return request.post('/life/my_order/order_project_info', params)
 }
+// 订单详情-幸福币
+export function getCoinOrderDetail (params) {
+  return request.post('/life/my_order/order_info', params)
+}
 // 订单详情(未付款修改收货地址)
 export function editOrderAddress (params) {
   return request.post('/life/order/up_address_order', params)

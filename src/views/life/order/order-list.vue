@@ -62,7 +62,7 @@
                   <div class="order-btn-box">
                     <div v-if="item.is_cancel_btn" class="order-border-btn" @click.stop="openSwal(index,item.id)" v-txAnalysis="{eventId: 51}">取消订单</div>
                     <div v-if="item.is_logistics" class="order-border-btn" @click.stop="logisticsLink(index)">物流详情</div>
-                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)">
+                    <div @click.stop="payFunc(index,item.order_id)" v-if="item.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="item.is_again_pay_time*1000-newTime" @finish="finish(index,item.id)" @change="(time) => {getChangeTime(time, item.order_id)}">
                     <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
                     </template>
                   </van-count-down>)</div>
@@ -79,17 +79,16 @@
       </van-tabs>
     </div>
 
-		<explain-swal
+    <explain-swal
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
     ></explain-swal>
     <pay-swal
     ref="payblock"
-    :show-swal="showPaySwal"
+    :showSwal.sync="showPaySwal"
     :pay-money="payMoney"
     :down-time="downTime"
-    @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     @fyResult="fyResult"
     ></pay-swal>
@@ -99,7 +98,7 @@
     @closeSwal="closeSwal"
     @sureSwal="sureSwal()">
     </remind-swal>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -128,20 +127,18 @@ export default {
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
       showSwal: false, // 提醒弹窗
       remindTit: '确定取消订单', // 提醒标题
-
       active: 0,
       typeVal: 0, // tab切换index
       navHide: false,
-
       time: 11 * 60 * 60 * 1000,
       newTime: '', // 当前时间
-
       listData: [], // 数据列表
       page: 1, // 页码
       pageSize: 10, // 分页条数
       isEmpty: false, // 是否为空
       loading: false,
       finished: false,
+      timeArr: [],
 
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
@@ -175,16 +172,14 @@ export default {
           'van-tabs__content'
         )[0].scrollTop = this.scrollTop
     }
-    let bankCardInfo = api.getPrefs({ sync: true, key: 'realNameInfo' }) || ''
-    if (bankCardInfo) {
-      if (typeof bankCardInfo.idcard === 'undefined' || !bankCardInfo.idcard) {
-        this.idcard = bankCardInfo.idCard
-      }
-      bankCardInfo = JSON.parse(bankCardInfo)
-      this.$refs.payblock.newCard(bankCardInfo)
-    }
   },
   methods: {
+    // 到时间时间变化
+    getChangeTime (time, id) {
+      this.timeArr[id] = (time.hours * 3600 + time.minutes * 60 + time.seconds) * 1000
+      // console.log(time, index, id)
+      // this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
+    },
     navFun (index) {
       this.flag = false
       this.typeVal = this.active
@@ -255,15 +250,13 @@ export default {
     },
     // 再次付款
     payFunc (index, id) {
-      this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
+      console.log(this.timeArr)
+      // this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
+      this.downTime = this.timeArr[id]
       this.payMoney = this.listData[index].pay_price / 100
       this.showPaySwal = true
       this.payOderdId = id
       this.tapId = this.listData[index].id
-    },
-    // 关闭支付选择弹窗
-    closePaySwal (data) {
-      this.showPaySwal = data == 1
     },
     surePaySwal (callData) {
       payOrderUp({
@@ -291,7 +284,7 @@ export default {
         }
       }).catch((res) => {
         if (callData.pay_type == 4) {
-          if (this.idcard) {
+          if (callData.idcard) {
             this.$router.push({
               path: '/pages/personage/information/addBankCard',
               query: {
@@ -491,11 +484,6 @@ export default {
     if (to.name == 'personage' || to.name == 'goodsDetail' || to.name == 'cart') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
-    }
-    if (to.name != 'addBankCard' && to.name != 'certification') {
-      api.removePrefs({
-        key: 'realNameInfo'
-      })
     }
     const el = document
       .getElementById('order-list-body')
