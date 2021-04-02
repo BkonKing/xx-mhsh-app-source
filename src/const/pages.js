@@ -119,5 +119,7 @@ export const pagesArr = {
   movieOrder: 118, // 我的影票
   movieTicket: 119, // 电影票
   recomBuyHouse: 120, // 推荐购房
-  recomRecord: 121 // 推荐记录
+  recomRecord: 121, // 推荐记录
+  activity: 122, // 积分活动
+  activityService: 123 // 积分发放/核销
 }

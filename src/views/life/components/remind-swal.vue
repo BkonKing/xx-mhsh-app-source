@@ -4,13 +4,17 @@
       <div class="mask-close">
         <img class="img-100" src="@/assets/img/close.png" @click.stop="calcel(0)" />
       </div>
-      <div class="mask-tit flex-center">
-        {{remindTit}}
-      </div>
-      <div class="mask-btn flex-between">
-        <div class="mask-cancel-btn flex-center" @click.stop="calcel(0)">取消</div>
-        <div class="mask-sure-btn flex-center" @click.stop="sureSwal">确定</div>
-      </div>
+      <slot name="body">
+        <div class="mask-body">
+          <div class="mask-tit flex-center">
+            {{remindTit}}
+          </div>
+          <div v-if="showFotter" class="mask-btn flex-between">
+            <div class="mask-cancel-btn flex-center" @click.stop="calcel(0)">取消</div>
+            <div class="mask-sure-btn flex-center" @click.stop="sureSwal">确定</div>
+          </div>
+        </div>
+      </slot>
     </div>
   </div>
 </template>
@@ -26,6 +30,10 @@ export default {
     remindTit: {
       type: String,
       default: ''
+    },
+    showFotter: {
+      type: Boolean,
+      default: true
     }
     // mode: {
     //   type: String,
@@ -45,11 +53,14 @@ export default {
     // }
   },
   methods: {
-    calcel(val) {
-      this.$emit('closeSwal',val);
+    calcel (val) {
+      this.$emit('closeSwal', val)
+      if (val == 0) {
+        this.$emit('update:showSwal', false)
+      }
     },
-    sureSwal() {
-      this.$emit('sureSwal','0');
+    sureSwal () {
+      this.$emit('sureSwal', '0')
     }
   }
 }
@@ -59,8 +70,12 @@ export default {
 @import '../../../styles/life.css';
 /*弹窗*/
 .mask-block {
-  height: 273px;
-  padding: 0 50px;
+  min-height: 3.64rem;
+  height: auto;
+  padding: 0;
+  .mask-body {
+    padding: 0 50px;
+  }
 }
 .mask-tit {
   height: 147px;

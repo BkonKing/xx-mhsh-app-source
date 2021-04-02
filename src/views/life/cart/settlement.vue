@@ -36,7 +36,7 @@
     </div>
 
     <div class="cont-session goods-session">
-      <div v-for="(item,index) in carts" class="order-goods-info">
+      <div v-for="(item,index) in carts" :key="index" class="order-goods-info">
         <div class="order-pic-block">
           <img class="img-100" mode="aspectFill" :src="item.specs_img"></img>
         </div>
@@ -155,6 +155,21 @@
       </div>
     </div>
 
+    <div v-if="order_type == 3" class="cont-session common-list" @click="userInfo.user_type>0 && (psShow = true)">
+      <div class="common-item">
+        <div class="common-item-left">
+          <div class="color-222 font-28 width-146">配送方式</div>
+        </div>
+        <div class="common-item-right ps-type">
+          <div v-if="selectType == 0 || selectType == 2" class="color-222 font-28 p-nowrap">{{ selectType == 0 ? '快递配送' : '商家配送' }}</div>
+          <div v-else class="color-222 font-28 p-nowrap">{{ psList[selectType].psName + '-' + psList[selectType].psCont }}</div>
+          <div v-if="userInfo.user_type>0" class="link-icon">
+            <img class="img-100" src="@/assets/img/right.png" mode=""/>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="cont-session order-remarks">
       <div class="order-remarks-item">
         <div class="order-remarks-item-left color-222 font-28">订单备注:</div>
@@ -187,13 +202,47 @@
     ></explain-swal>
     <pay-swal
     ref="payblock"
-    :show-swal="showPaySwal"
+    :showSwal.sync="showPaySwal"
     :pay-money="payMoney"
     :down-time="downTime"
     @closeSwal="closePaySwal"
     @sureSwal="surePaySwal"
     @fyResult="fyResult"
     ></pay-swal>
+    <div v-show="psShow" class="mask-bg" @click="psShow = false"></div>
+    <div v-show="psShow" class="swal-session bottom-fixed">
+      <div class="close-block" @click.stop="psShow = false">
+        <div class="close-btn flex-center"><img class="img-100" src="@/assets/img/close.png" /></div>
+      </div>
+      <div class="swal-session-cont">
+        <div class="swal-tit">配送方式</div>
+        <div class="swal-list">
+          <template v-if="psType == 0 || psType == 2">
+            <div class="swal-item flex-between">
+              <div class="swal-label">
+                <div>{{ psList[psType].psName }}</div>
+                <div>{{ psList[psType].psCont }}</div>
+              </div>
+              <div class="swal-tick"><img class="tick-pic" src="@/assets/img/tick.png" /></div>
+            </div>
+          </template>
+          <template v-else>
+            <div v-for="(item, index) in psList" :key="index" class="swal-item flex-between" @click="selectType=item.psType">
+              <template v-if="item.psType!=2">
+                <div class="swal-label">
+                  <div>{{ item.psName }}</div>
+                  <div class="text-wrap">{{ item.psCont }}</div>
+                </div>
+                <div v-if="selectType == item.psType" class="swal-tick"><img class="tick-pic" src="@/assets/img/tick.png" /></div>
+              </template>
+            </div>
+          </template>
+        </div>
+        <div class="submit-btn swal-sure" @click="psShow = false">
+          <div class="color-fff font-30">确定</div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -203,6 +252,7 @@ import explainSwal from './../components/explain-swal'
 import paySwal from './../components/pay-swal'
 import eventBus from '@/api/eventbus.js'
 import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate, payOrderUp } from '@/api/life.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'settlement',
   components: {
@@ -249,8 +299,31 @@ export default {
       flashInfo: '', // 闪购结算信息
       settlementInfo: '',
       idcard: '', // 身份证
-      cartClear: false // 是否清除购物车
+      cartClear: false, // 是否清除购物车
+      psShow: false, // 配送方式弹窗
+      psType: 0, // 配送方式 0快递配送   1上门自提   2商家配送
+      selectType: 0, // 选中的配送方式
+      psList: [
+        {
+          psType: '0',
+          psName: '快递',
+          psCont: '快递公司配送'
+        },
+        {
+          psType: '1',
+          psName: '上门自提',
+          psCont: ''
+        },
+        {
+          psType: '2',
+          psName: '商家配送',
+          psCont: '商家自行配送'
+        }
+      ]
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted () {
     var that = this
@@ -329,6 +402,11 @@ export default {
         getExchangeInfo(this.flashParam).then(res => {
           if (res.success) {
             this.settlementInfo = res.data.pay
+            this.psType = res.data.info_data.distribution_type
+            this.selectType = res.data.info_data.distribution_type
+            if (this.psType == 1) {
+              this.psList[1].psCont = res.data.info_data.take_address
+            }
             if (!this.isSelectAddress) {
               this.addressInfo = res.data.address_info
             }
@@ -463,6 +541,7 @@ export default {
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
         this.flashParam.old_pay_credits = this.settlementInfo.pay_credits
+        this.flashParam.is_change = this.psType == this.selectType ? 0 : 1
         exchangeCreate(Object.assign({ user_explain: this.remarks }, this.flashParam)).then(res => { // 幸福币兑换
           if (res.success) {
             this.order_id = res.order_id
@@ -716,7 +795,7 @@ export default {
 
 <style scoped  src="../../../styles/life.css"></style>
 <style scoped  src="../../../styles/order.css"></style>
-<style scoped>
+<style lang="less" scoped>
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -920,4 +999,71 @@ input.order-remarks-text {
   background: #aaa;
 }
 
+/* 选择配送方式 */
+.ps-type {
+  flex-grow: 1;
+  justify-content: space-between;
+  div:nth-child(1) {
+    max-width: 480px;
+  }
+}
+  /*选择配送方式弹窗*/
+.swal-session {
+  animation: translateMove 0.5s;
+  -webkit-animation: translateMove 0.5s;
+  z-index: 188;
+  .close-block {
+    height: 110px;
+    position: relative;
+  }
+  .close-btn {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    top: 0;
+    right: 0;
+    padding: 30px;
+  }
+  .swal-session-cont {
+    padding: 0 30px 40px;
+    background-color: #fff;
+  }
+  .swal-tit {
+    height: 110px;
+    line-height: 110px;
+    text-align: center;
+    font-size: 30px;
+    color: #222;
+    font-weight: bold;
+  }
+  .swal-item {
+    padding: 15px 0;
+    .swal-label {
+      max-width: 640px;
+      div:nth-child(1) {
+        line-height: 50px;
+        color: #222;
+      }
+      div:nth-child(2) {
+        line-height: 40px;
+        color: #8f8f94;
+      }
+    }
+    .swal-tick {
+      width: 44px;
+      height: 80px;
+      padding: 18px 0;
+    }
+    .tick-pic {
+      width: 44px;
+      height: 44px;
+    }
+  }
+  .swal-item + .swal-item {
+    border-top: 1PX solid #E5E5E5;
+  }
+  .swal-sure {
+    margin-top: 30px;
+  }
+}
 </style>

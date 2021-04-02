@@ -184,8 +184,22 @@ export default {
       res.bank_name = res.bank_name.replace(/\s*/g, '')
       res.bank_card = res.bank_card.replace(/\s*/g, '')
       res.cardFour = res.bank_card.slice(-4)
-      this.cardList.push(res)
-      this.selectCard(this.cardList.length - 1)
+      let flag = 0
+      for (let i = 0; i < this.cardList.length; i++) {
+        if (this.cardList[i].bank_card.slice(-4) == res.cardFour) {
+          flag = 1
+          break
+        }
+      }
+      if (!flag) {
+        this.cardList.push(res)
+        this.selectCard(this.cardList.length - 1)
+      }
+      setTimeout(() => {
+        api.removePrefs({
+          key: 'realNameInfo'
+        })
+      }, 0)
     },
     // 银行卡支付
     cardPay () {

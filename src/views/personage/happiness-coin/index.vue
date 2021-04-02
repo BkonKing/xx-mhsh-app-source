@@ -20,9 +20,9 @@
           v-preventReClick
           :loading="signLoading"
           class="sign-tag"
-          :class="{ 'sign-tag--complete': signinToday == '1' }"
+          :class="{ 'sign-tag--complete': signinToday !== 0 }"
           @click="signIn()"
-          >{{ signinToday == "1" ? "已签到" : "签到" }}</van-button
+          >{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
         >
       </div>
     </div>
@@ -87,6 +87,7 @@
               />
               <div class="tf-space-between">
                 <div class="task-item__title">{{ item.task_name }}</div>
+                <!-- 朋友到访、购房奖励 -->
                 <div v-if="item.task_type == 7">
                   <div class="task-item__remarks">
                     {{ item.task_type | taskText }}
@@ -94,17 +95,48 @@
                   <div v-if="yxlpNum" class="tf-row task-item__remarks">
                     获得
                     <div class="task-item__remarks--gold">
-                      {{ item.credits }}起幸福币
+                      {{ item.credits }}幸福币起
                     </div>
                   </div>
                 </div>
+                <!-- 其他 -->
                 <div class="tf-row" v-else>
-                  <div class="task-item__remarks">
-                    {{ item.task_type | taskText }}获得
-                  </div>
-                  <div class="task-item__remarks--gold">
-                    {{ item.credits }}幸福币
-                  </div>
+                  <!-- 签到 -->
+                  <template v-if="item.task_type === '1'">
+                    <div class="task-item__remarks">
+                      <!-- 游客 -->
+                      <template v-if="userType == 0">
+                        每日签到获得
+                      </template>
+                      <!-- 有认证用户 -->
+                      <template v-else>
+                        <span
+                          class="tf-icon tf-icon-zhushishuoming"
+                          @click="signRuledialog = true"
+                        ></span>
+                        <!-- 签到幸福币已达上限，不可签到 -->
+                        <template v-if="signinToday === 2"
+                          >明天要早点来哦</template
+                        >
+                        <template v-else>签到可获得</template>
+                      </template>
+                    </div>
+                    <div
+                      v-if="signinToday !== 2"
+                      class="task-item__remarks--gold"
+                    >
+                      {{ item.credits }}幸福币
+                    </div>
+                  </template>
+                  <!-- 其他 -->
+                  <template v-else>
+                    <div class="task-item__remarks">
+                      {{ item.task_type | taskText }}获得
+                    </div>
+                    <div class="task-item__remarks--gold">
+                      {{ item.credits }}幸福币
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -117,8 +149,15 @@
               :loading="signLoading && item.task_type == 1"
               class="task-item__btn"
               v-txAnalysis="{ eventId: 48 }"
+              :disabled="signinToday === 2 && item.task_type == 1"
               @click="complete(item)"
-              >{{ item.task_type == 7 ? "去推荐" : "去完成" }}</van-button
+              >{{
+                item.task_type == 7
+                  ? "去推荐"
+                  : signinToday === 2 && item.task_type == 1
+                  ? "签到"
+                  : "去完成"
+              }}</van-button
             >
           </div>
         </div>
@@ -135,7 +174,7 @@
           @click="goCoinCommodity(item)"
         >
           <img class="commodity-image" :src="item.thumb" />
-          <div class="commodity-name">{{ item.goods_name }}</div>
+          <div class="commodity-name van-ellipsis">{{ item.goods_name }}</div>
           <div class="tf-row" style="align-items: flex-end;">
             <div class="commodity-current-price">￥{{ item.s_price }}</div>
             <div class="commodity-original-price">￥{{ item.y_price }}</div>
@@ -145,33 +184,37 @@
       </div>
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
+    <sign-rule-dialog v-model="signRuledialog"></sign-rule-dialog>
   </div>
 </template>
 
 <script>
 import tfCalendar from '@/components/tf-calendar'
+import SignRule from './components/SignRule'
 import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
   components: {
-    tfCalendar
+    tfCalendar,
+    [SignRule.name]: SignRule
   },
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
-      signinToday: '1', // 今日是否签到
+      signinToday: 1, // 今日是否签到
       credits: 0, // 当前幸福币
-      taskList: [], // 任务列表
+      taskList: [], // 任务列表  task_type： 1: 签到 2：认证成功 3：首次开门 7:朋友到访、购房奖励
       creditsGoods: [], // 幸福币商品列表
       signLoading: false, // 签到按钮loading
       mj_status: true, // 是否有门禁
-      yxlpNum: 0 // 推荐购房楼盘列表
+      yxlpNum: 0, // 推荐购房楼盘列表
+      signRuledialog: false
     }
   },
   computed: {
-    ...mapGetters(['userType'])
+    ...mapGetters(['userType']) // 1业主、2业主成员、3租户、4租户成员
   },
   created () {
     this.getCreditsAccount()
@@ -181,7 +224,7 @@ export default {
     /* 获取幸福币信息 */
     getCreditsAccount () {
       getCreditsAccount().then(({ data }) => {
-        this.signinToday = data.signin_today
+        this.signinToday = data.signin_status
         this.taskList = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
@@ -191,15 +234,33 @@ export default {
     },
     /* 签到事件 */
     signIn () {
-      // 已签到，则打开签到日历
-      if (this.signinToday == '1') {
+      if (this.signinToday === 1) {
+        // 已签到，则打开签到日历
         this.showCalendar = true
+      } else if (this.signinToday === 2) {
+        // 不可签到，打开签到规则弹窗
+        this.signRuledialog = true
       } else {
         this.signin()
       }
     },
     /* 签到请求 */
     signin () {
+      this.signLoading = true
+      signin()
+        .then(res => {
+          this.signLoading = false
+          this.$toast({
+            message: res.message
+          })
+          this.getCreditsAccount()
+          this.mtjEvent({
+            eventId: 4
+          })
+        })
+        .catch(() => {
+          this.signLoading = false
+        })
       handlePermission({
         name: 'location',
         title: '定位服务未开启',
@@ -444,6 +505,9 @@ export default {
 .task-item__remarks {
   font-size: 24px;
   color: @gray-7;
+  .tf-icon-zhushishuoming {
+    margin-right: 10px;
+  }
 }
 .task-item__remarks--gold {
   margin-left: 6px;
@@ -494,6 +558,7 @@ export default {
   border-radius: 10px;
 }
 .commodity-name {
+  width: 330px;
   font-size: 28px;
   margin: 20px 0;
 }
