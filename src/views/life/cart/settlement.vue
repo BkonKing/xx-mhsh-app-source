@@ -756,7 +756,8 @@ export default {
           this.$router.push({
             path: '/address/list',
             query: {
-              isSelect: 1
+              isSelect: 1,
+              addressId: this.addressInfo.id
             }
           })
           break

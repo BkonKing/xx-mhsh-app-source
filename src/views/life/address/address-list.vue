@@ -14,7 +14,7 @@
               @load="onLoad">
       <div v-if="listData.length"
            class="address-list">
-        <div v-for="(item,index) in listData"
+        <div v-for="(item,index) in listData" :key="index"
              @click="selectFunc(index)"
              class="address-item">
           <div class="address-label flex-center">
@@ -82,20 +82,35 @@ export default {
       pageSize: 10, // 分页条数
       isEmpty: false, // 是否为空
       loading: false,
-      finished: false
+      finished: false,
+      selectIndex: -1 // 结算传递的地址id所在地址列表的index
     }
   },
   created () {
     this.isSelect = this.$route.query.isSelect
+    this.addressId = this.$route.query.addressId
     console.log(this.isSelect)
+  },
+  beforeRouteLeave (to, from, next) {
+    console.log(to.name, from.name)
+    if (to.name == 'settlement' && this.isSelect) {
+      this.updataAddress(this.selectIndex)
+    }
+    next()
   },
   methods: {
     selectFunc (index) {
       if (!this.isSelect) return
       // 传递一个map，chooseAddress是key，id是value
-      eventBus.$emit('chooseAddress', JSON.stringify(this.listData[index]))
+      this.selectIndex = index
+      // eventBus.$emit('chooseAddress', JSON.stringify(this.listData[index]))
       // 调用router回退页面
       this.$router.go(-1)
+    },
+    updataAddress (index) {
+      if (this.isSelect) {
+        eventBus.$emit('chooseAddress', JSON.stringify(this.listData[index]))
+      }
     },
     onLoad () {
       // 异步更新数据
@@ -112,6 +127,9 @@ export default {
             for (let i = 0; i < res.data.length; i++) {
               res.data[i].address_cont = getArea(res.data[i].address_detail)
               // res.data[i].address_name = getArea(res.data[i].address_detail) + res.data[i].address_name
+              if (this.addressId && this.addressId == res.data[i].id) {
+                this.selectIndex = i
+              }
             }
             this.listData = this.page == 1 ? res.data : this.listData.concat(res.data)
             this.isEmpty = !!(this.page == 1 && res.data.length == 0)
