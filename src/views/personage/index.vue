@@ -39,7 +39,7 @@
                   >{{ userType | houseRoleText }}</van-tag
                 >
                 <van-tag
-                  v-if="userInfo.role_dep"
+                  v-if="userInfo.position"
                   class="user-role"
                   plain
                   :color="5 | houseRoleColor"
@@ -91,14 +91,17 @@
               :loading="signLoading"
               @click="sign"
             >
-              <img v-if="userInfo.signin_status === 0" class="sign-img" src="@/assets/imgs/my-sign.png" />{{
-                userInfo.signin_status | signText
-              }}
+              <img
+                v-if="userInfo.signin_status === 0"
+                class="sign-img"
+                src="@/assets/imgs/my-sign.png"
+              />{{ userInfo.signin_status | signText }}
             </van-button>
           </div>
         </div>
       </div>
       <div class="functional-box">
+        <!-- 事务处理 -->
         <div v-if="isSwRole || isSdcbRole" class="tansaction-box">
           <div class="tansaction-header" @click="handleTransaction">
             <div class="tansaction-title">
@@ -177,6 +180,7 @@
             </template>
           </div>
         </div>
+        <!-- 我的订单 -->
         <div class="module-box">
           <div class="module-title">我的订单</div>
           <div class="tf-row">
@@ -237,6 +241,10 @@
             </div>
           </div>
         </div>
+        <!-- 积分活动 -->
+        <div v-if="isOpenActivity" class="activity-banner" @click="goActivity">
+          {{activityTitle}}
+        </div>
         <tf-list class="personage-list tf-mb-lg">
           <tf-list-item border title="我的订单" @click="goOrderList(undefined)">
             <template v-slot:image>
@@ -294,20 +302,17 @@
 </template>
 
 <script>
-import { NavBar, Tag, Toast, Button } from 'vant'
 import tfCalendar from '@/components/tf-calendar'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import SignRule from './happiness-coin/components/SignRule'
 import { signin } from '@/api/personage'
+import { getUserActivity } from '@/api/activity'
 import { mapGetters } from 'vuex'
 import { handlePermission } from '@/utils/permission'
 export default {
   name: 'personage',
   components: {
-    [NavBar.name]: NavBar,
-    [Tag.name]: Tag,
-    [Button.name]: Button,
     [SignRule.name]: SignRule,
     tfList,
     tfListItem,
@@ -319,7 +324,9 @@ export default {
       showCalendar: false, // 签到日历是否隐藏
       orderData: {}, // 订单数据
       signLoading: false, // 签到loading
-      signRuledialog: false // 签到规则弹窗
+      signRuledialog: false, // 签到规则弹窗
+      isOpenActivity: false, // 是否开启积分活动
+      activityTitle: '参与活动领积分'
     }
   },
   computed: {
@@ -342,9 +349,19 @@ export default {
     this.$store.dispatch('getMyAccount').then(({ order_data }) => {
       this.orderData = order_data
     })
+    this.getActivityInfo()
   },
   methods: {
-    /* 签到 */
+    // 获取积分活动信息
+    getActivityInfo () {
+      getUserActivity({
+        uid: this.userInfo.id
+      }).then(({ activity_name: title, is_flag: isFlag }) => {
+        this.isOpenActivity = isFlag
+        isFlag && title && (this.activityTitle = title)
+      })
+    },
+    // 签到
     sign () {
       if (this.userInfo.signin_status === 0) {
         // 签到一定要开启定位
@@ -357,7 +374,7 @@ export default {
           signin()
             .then(res => {
               this.signLoading = false
-              Toast({
+              this.$toast({
                 message: res.message
               })
               this.$store.dispatch('getMyAccount')
@@ -377,19 +394,19 @@ export default {
         this.showCalendar = true
       }
     },
-    /* 设置 */
+    // 设置
     goSetting () {
       this.$router.push('/pages/personage/setting/index')
     },
-    /* 消息 */
+    // 消息
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
-    /* 我的资料 */
+    // 我的资料
     goInformation () {
       this.$router.push('/pages/personage/information/index')
     },
-    /* 点击事务处理 */
+    // 点击事务处理
     handleTransaction () {
       let type
       if (this.isSwRole) {
@@ -419,26 +436,30 @@ export default {
         }
       })
     },
-    /* 意见反馈 */
+    // 意见反馈
     goFeedback () {
       this.$router.push('/pages/personage/feedback/index')
     },
-    /* 幸福币 */
+    // 幸福币
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
-    /* 我的互动 */
+    // 我的互动
     goInteraction () {
       this.$router.push('/pages/personage/interaction/index')
     },
-    /* 常见问题 */
+    // 常见问题
     goQuestion () {
       this.$router.push('/pages/personage/question/index')
+    },
+    // 用户积分活动专区
+    goActivity () {
+      this.$router.push({ name: 'activity' })
     }
   },
   filters: {
     signText (value) {
-      return value === '1' ? '已签到' : '签到'
+      return value === 1 ? '已签到' : '签到'
     }
   }
 }
@@ -525,6 +546,7 @@ export default {
 }
 
 .user-role {
+  min-height: 46px;
   margin-left: 10px;
   padding: 7px 8px;
 }
@@ -716,5 +738,18 @@ export default {
       color: #fff;
     }
   }
+}
+.activity-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 140px;
+  margin-bottom: 30px;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+  color: #000000;
+  background: url("~@/assets/imgs/personage_activity_banner.png");
+  background-size: contain;
 }
 </style>

@@ -15,7 +15,7 @@
           </template>
         </van-nav-bar>
       </div>
-      <div v-if="orderInfo" :class="[orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn ? 'scroll-body-btn' : '', 'order-session scroll-body']">
+      <div v-if="orderInfo" :class="[(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2) ? 'scroll-body-btn' : '', 'order-session scroll-body']">
         <div class="order-header-bg"></div>
         <div class="order-status-session">
           <div class="order-status-name">{{orderInfo.order_status_name}}</div>
@@ -89,18 +89,21 @@
             </div>
           </div>
         </div>
-        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && logisticsLink()" class="cont-session order-message smzt-session">
+        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && getLogistics()" class="cont-session order-message smzt-session">
           <div class="order-message-item th-type">
             <div class="order-message-item-left color-222 font-28">配送方式</div>
             <div class="color-222 font-28 order-message-item-right">上门自提</div>
           </div>
-          <div class="order-message-item th-item">
+          <div :class="[!(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3) ? 'th-item-log' : '', 'order-message-item th-item']">
             <div class="order-message-item-left color-222 font-28">提货地点</div>
             <div class="shipping-address-item-right">
               <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
             </div>
           </div>
-          <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3" class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          <template v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3">
+            <div class="th-line"></div>
+            <div class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+          </template>
           <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3" class="shipping-address-icon" src="@/assets/img/right.png" />
         </div>
         <div v-else class="cont-session address-logistics">
@@ -182,7 +185,7 @@
         </div>
       </div>
 
-      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3)">
+      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2)">
         <div class="fixed-empty"></div>
         <div class="btn-fixed-buttom">
           <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
@@ -215,36 +218,7 @@
       @closeSwal="closeSwal"
       @sureSwal="sureSwal()">
       </remind-swal>
-      <remind-swal
-      :showSwal.sync="thSwal"
-      :showFotter="false">
-        <div class="th-body" slot="body">
-          <div class="th-bg">
-            <div class="th-tit">提货二维码</div>
-            <div class="th-info flex-column-center">
-              <div class="flex-align-center">
-                <div>手机号码:</div>
-                <div>{{ orderInfo.rece_mobile }}</div>
-              </div>
-              <div class="flex-align-center th-address">
-                <div>提货地点:</div>
-                <div>{{ infoData.take_address }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="th-cont flex-align-center">
-            <template v-if="infoData.l_status != 1">
-              <div class="th-tip">提货时请出示二维码给商家</div>
-              <img class="wx-code" :src="infoData.qrCode" />
-            </template>
-            <template v-else>
-              <div class="th-tip">{{infoData.s_txt}}</div>
-              <div class="th-time">{{infoData.s_time}}</div>
-              <img class="th-sucess-icon" src="@/assets/img/sucess.png" />
-            </template>
-          </div>
-        </div>
-      </remind-swal>
+      <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
     </div>
   </div>
 </template>
@@ -254,6 +228,7 @@ import { NavBar, CountDown, Toast } from 'vant'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
+import ztOrder from './../components/zt-order'
 import eventBus from '@/api/eventbus.js'
 import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress, getLogisticsInfo } from '@/api/life.js'
 export default {
@@ -264,7 +239,8 @@ export default {
     [Toast.name]: Toast,
     paySwal,
     explainSwal,
-    remindSwal
+    remindSwal,
+    ztOrder
   },
   data () {
     return {
@@ -336,14 +312,8 @@ export default {
     },
     // 自提物流
     getLogistics () {
-      getLogisticsInfo({
-        order_project_id: this.orderInfo.id
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data[0]
-          this.thSwal = true
-        }
-      })
+      this.$refs.ztswal.getLogistics(this.orderInfo.id)
+      this.thSwal = true
     },
     // 打开弹窗
     openExplainSwal () {
@@ -581,17 +551,14 @@ export default {
   },
   watch: {
     thSwal (val) {
+      console.log(val)
       if (val) {
-        if (this.infoData.l_status != 1) {
-          this.timer = setInterval(() => {
-            this.getLogistics()
-          }, 2000)
-        }
+        this.timer = setInterval(() => {
+          this.getLogistics()
+        }, 2000)
       } else {
         clearInterval(this.timer)
-        if (this.infoData.l_status == 1) {
-          this.getData()
-        }
+        this.getData()
       }
     }
   },
@@ -632,6 +599,15 @@ export default {
   margin-top: -26px;
   display: flex;
 }
+.th-line {
+  width: 1PX;
+  height: 60px;
+  position: absolute;
+  right: 112px;
+  top: 50%;
+  margin-top: -30px;
+  background-color: #F0F0F0;
+}
 .th-type {
   height: 56px;
 }
@@ -644,6 +620,15 @@ export default {
   }
   .shipping-address-item-right {
     max-width: 390px;
+    word-break: break-all;
+    div {
+      word-break: break-all;
+    }
+  }
+  &.th-item-log {
+    .shipping-address-item-right {
+      max-width: 430px;
+    }
   }
 }
 .th-body {
@@ -677,6 +662,9 @@ export default {
     .th-address {
       align-items: flex-start;
       padding-top: 10px;
+      div:nth-child(2) {
+        word-break: break-all;
+      }
     }
   }
   .th-cont {

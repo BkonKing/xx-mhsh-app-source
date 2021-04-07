@@ -231,7 +231,7 @@
               <template v-if="item.psType!=2">
                 <div class="swal-label">
                   <div>{{ item.psName }}</div>
-                  <div>{{ item.psCont }}</div>
+                  <div class="text-wrap">{{ item.psCont }}</div>
                 </div>
                 <div v-if="selectType == item.psType" class="swal-tick"><img class="tick-pic" src="@/assets/img/tick.png" /></div>
               </template>
@@ -756,7 +756,8 @@ export default {
           this.$router.push({
             path: '/address/list',
             query: {
-              isSelect: 1
+              isSelect: 1,
+              addressId: this.addressInfo.id
             }
           })
           break
