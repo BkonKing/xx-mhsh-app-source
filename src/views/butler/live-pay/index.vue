@@ -13,14 +13,23 @@
       </template>
     </van-nav-bar>
     <div class="house-dropdown">
-      <van-dropdown-menu>
-        <van-dropdown-item
-          v-model="selectedHouse"
-          :disabled="houseList.length < 2"
-          :options="houseList"
-          @change="searchLifePayList"
-        />
-      </van-dropdown-menu>
+      <div class="van-dropdown-menu">
+        <div
+          class="van-dropdown-menu__bar"
+          :class="{ 'van-dropdown-menu__bar--opened': housePopup }"
+          @click="openHousePopup"
+        >
+          <div role="button" tabindex="0" class="van-dropdown-menu__item">
+            <span
+              class="van-dropdown-menu__title"
+              :class="{
+                'van-dropdown-menu__title--down': housePopup
+              }"
+              ><div class="van-ellipsis">{{ houseName }}</div></span
+            >
+          </div>
+        </div>
+      </div>
     </div>
     <div class="tf-body-container">
       <div class="pay-container" v-if="payList && payList.length > 0">
@@ -56,6 +65,17 @@
         </div>
       </template>
     </div>
+    <van-popup class="house-popup--top" safe-area-inset-bottom get-container="body" v-model="housePopup" :style="{'transform': 'translate3d(-50%, ' + safeArea + 'px, 0)'}">
+      <div
+        v-for="(house, index) in houseList"
+        :key="index"
+        class="house-popup--top__option"
+        :class="{'house-popup--top__option--active': house.value === selectedHouse}"
+        @click="selectHouse(house)"
+      >
+        {{house.text}}
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -67,10 +87,13 @@ export default {
   data () {
     return {
       selectedHouse: '', // 选中的房间，值为项目ID + 房间账单ID + 房间ID
+      houseName: '', // 选中的房间名称
       houseList: [], // 房间列表
       first: true,
       payList: [], // 待缴费列表
-      forceText: '' // 强制缴费名称
+      forceText: '', // 强制缴费名称
+      housePopup: false,
+      safeArea: 0
     }
   },
   computed: {
@@ -78,6 +101,9 @@ export default {
   },
   created () {
     this.getHouseList()
+  },
+  mounted () {
+    this.safeArea = api.safeArea.top
   },
   activated () {
     if (this.first) {
@@ -102,16 +128,18 @@ export default {
           } = obj
           // 项目ID + 房间账单ID + 房间ID
           const value = `${project_id}-${expenses_house_id}-${house_id}`
+          const text = `${project_name} ${fc_info}`
           // 如果是首次渲染，则默认设置选中当前房屋
           if (houseId === house_id) {
             this.selectedHouse = value
+            this.houseName = text
           }
           // 如果当前房屋没有账单id
           if (this.selectedHouse === value && !expenses_house_id) {
             status = false
           }
           return {
-            text: `${project_name} ${fc_info}`,
+            text,
             value
           }
         })
@@ -120,6 +148,19 @@ export default {
           this.searchLifePayList()
         }
       })
+    },
+    // 打开房屋弹窗
+    openHousePopup () {
+      if (this.houseList && this.houseList.length > 1) {
+        this.housePopup = true
+      }
+    },
+    // 选择房屋
+    selectHouse ({ value, text }) {
+      this.houseName = text
+      this.selectedHouse = value
+      this.searchLifePayList()
+      this.housePopup = false
     },
     // 房屋切换获取生活缴费列表
     searchLifePayList () {
@@ -269,7 +310,7 @@ export default {
 .house-dropdown {
   padding: 30px 20px;
   background: #fff;
-  /deep/ .van-dropdown-menu__bar {
+  .van-dropdown-menu__bar {
     border-radius: 33px;
     background: #f2f2f4;
     box-shadow: initial;
@@ -290,35 +331,30 @@ export default {
         margin-top: -4px;
       }
     }
-    .van-dropdown-item__option {
-      height: 88px;
-    }
   }
 }
 // 房屋选择窗
-/deep/ .van-popup--top {
+.house-popup--top {
   width: 650px;
-  top: 40px;
-  left: 50px;
   padding: 0 30px;
   border-radius: 10px;
-  .van-dropdown-item__option {
+  top: 218px;
+  .house-popup--top__option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     height: 110px;
     color: #8f8f94;
-    .van-cell__title {
-      width: 100%;
-      justify-content: center;
-    }
+    font-size: 28px;
+    color: #8F8F94;
   }
-  .van-dropdown-item__option + .van-dropdown-item__option {
-    border-top: 1px solid #f0f0f0;
+  .house-popup--top__option + .house-popup--top__option {
+    border-top: 1px solid #F0F0F0;
   }
-  .van-dropdown-item__option--active {
+  .house-popup--top__option--active {
     font-weight: 500;
     color: #222;
-  }
-  .van-cell__value {
-    display: none;
   }
 }
 // 房屋选择遮罩层

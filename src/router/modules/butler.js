@@ -247,19 +247,6 @@ const butlerRouter = [
         '@/views/butler/live-pay/index.vue'
       )
   },
-  // 充值页面
-  {
-    path: '/pages/butler/live-pay/topUp',
-    name: 'livePayTopUp',
-    meta: {
-      keepAlive: true
-    },
-    component: () =>
-      import(
-        /* webpackChunkName: "livePayTopUp" */
-        '@/views/butler/live-pay/top-up.vue'
-      )
-  },
   /* 主要缴费页面 */
   {
     path: '/pages/butler/live-pay/mainPay',
