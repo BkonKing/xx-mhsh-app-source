@@ -65,15 +65,24 @@
         </div>
       </template>
     </div>
-    <van-popup class="house-popup--top" safe-area-inset-bottom get-container="body" v-model="housePopup" :style="{'transform': 'translate3d(-50%, ' + safeArea + 'px, 0)'}">
+    <van-popup
+      class="house-popup--top"
+      safe-area-inset-bottom
+      get-container="body"
+      v-model="housePopup"
+      :style="{ transform: 'translate3d(-50%, ' + safeArea + 'px, 0)' }"
+      :overlay-style="{'background-color': 'rgba(0, 0, 0, 0.3)'}"
+    >
       <div
         v-for="(house, index) in houseList"
         :key="index"
         class="house-popup--top__option"
-        :class="{'house-popup--top__option--active': house.value === selectedHouse}"
+        :class="{
+          'house-popup--top__option--active': house.value === selectedHouse
+        }"
         @click="selectHouse(house)"
       >
-        {{house.text}}
+        {{ house.text }}
       </div>
     </van-popup>
   </div>
@@ -347,19 +356,14 @@ export default {
     height: 110px;
     color: #8f8f94;
     font-size: 28px;
-    color: #8F8F94;
+    color: #8f8f94;
   }
   .house-popup--top__option + .house-popup--top__option {
-    border-top: 1px solid #F0F0F0;
+    border-top: 1px solid #f0f0f0;
   }
   .house-popup--top__option--active {
     font-weight: 500;
     color: #222;
   }
-}
-// 房屋选择遮罩层
-/deep/ .van-overlay {
-  top: 30px;
-  background-color: rgba(0, 0, 0, 0.3);
 }
 </style>
