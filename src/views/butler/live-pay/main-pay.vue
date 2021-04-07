@@ -54,7 +54,7 @@
           <div class="pay-info-box">
             <div class="pay-info-label"><span>户</span><span>名</span></div>
             <div class="pay-info-content">
-              {{ payInfo.realname || "-" }}
+              {{ payInfo.realname | privacyName }}
             </div>
           </div>
         </div>
