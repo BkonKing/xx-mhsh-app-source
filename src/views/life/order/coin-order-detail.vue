@@ -83,9 +83,9 @@
             </div>
           </div>
           <div class="order-total order-total-detail">
-            <div class="color-8f8f94 font-24">共 {{orderInfo.goods_num}} 件</div>
+            <div class="color-8f8f94 font-24">共 {{goodsList.length}} 件</div>
             <div class="order-price-total">
-              合计:<span>￥{{orderInfo.pay_type==1 ? orderInfo.happiness_price/100 : orderInfo.pay_price/100}}</span>
+              合计:<span>￥{{goodsList[0].pay_type==1 ? orderInfo.happiness_price/100 : orderInfo.pay_price/100}}</span>
             </div>
           </div>
         </div>
@@ -198,9 +198,9 @@
 
 <script>
 import { NavBar, CountDown, Toast } from 'vant'
-import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
+import NP from 'number-precision'
 import { getCoinOrderDetail } from '@/api/life.js'
 export default {
   name: 'coinDetail',
@@ -208,7 +208,6 @@ export default {
     [NavBar.name]: NavBar,
     [CountDown.name]: CountDown,
     [Toast.name]: Toast,
-    paySwal,
     explainSwal,
     remindSwal
   },
@@ -247,6 +246,7 @@ export default {
         if (res.success) {
           this.goodsList = res.order_goods_specs_list
           this.orderInfo = res.order_info
+          this.orderInfo.goods_price_total = NP.plus(res.order_info.pay_price, res.order_info.happiness_price, res.order_info.coupon_money)
           // this.logisticsInfo = res.logistice_info
           this.newTime = parseInt(new Date().getTime())
         }

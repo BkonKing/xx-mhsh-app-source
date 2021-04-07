@@ -230,7 +230,7 @@ import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
 import ztOrder from './../components/zt-order'
 import eventBus from '@/api/eventbus.js'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress, getLogisticsInfo } from '@/api/life.js'
+import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress } from '@/api/life.js'
 export default {
   name: 'orderDetail',
   components: {

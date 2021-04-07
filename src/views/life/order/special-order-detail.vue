@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="order-total order-total-detail">
-            <div class="color-8f8f94 font-24">共 1 件</div>
+            <div class="color-8f8f94 font-24">共 {{orderInfo.goods_num}} 件</div>
             <div class="order-price-total">
               合计:<span>￥{{orderInfo.pay_price/100}}</span>
             </div>
