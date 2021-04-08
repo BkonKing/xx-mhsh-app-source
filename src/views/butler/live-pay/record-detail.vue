@@ -39,7 +39,7 @@
               <span>主</span>
             </div>
             <div class="pay-info-content">
-              {{ payInfo.realname }}
+              {{ payInfo.realname | privacyName }}
             </div>
           </div>
           <template v-if="payInfo.bill_type == 2">

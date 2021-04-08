@@ -13,7 +13,7 @@
     >
       <div class="container-inner">
         <div class="integral-dialog-header">
-          <span class="integral-dialog-title">发放积分</span>
+          <span class="integral-dialog-title">{{ type | text }}积分</span>
           <div class="tf-icon tf-icon-guanbi" @click="$router.go(-1)" />
         </div>
         <userInfo
@@ -23,7 +23,7 @@
           :time="info.mobile"
         ></userInfo>
         <div class="payment-box">
-          <div class="payment-box__text">{{ type | text }}</div>
+          <div class="payment-box__text">{{ type | text }}数量</div>
           <div class="payment-box__money">
             <img
               src="@/assets/imgs/activity-dialog-icon.png"
@@ -87,7 +87,7 @@ export default {
       userId: '',
       info: {},
       value: '',
-      typeShow: true,
+      typeShow: false,
       show: false,
       showKeyboard: false
     }
@@ -114,13 +114,19 @@ export default {
       }
       this.grantNumber()
     },
-    // 获取发放/核销用户信息
+    // 获取发放/核销用户信息和当前权限
     getActivityUserInfo () {
       getActivityUserInfo({
         project_id: this.userInfo.xm_project_id,
         code_info: this.userId
-      }).then(({ data }) => {
+      }).then(({ data, is_qx_data: qxData }) => {
         this.info = data
+        if (qxData.ff_is_qx && qxData.hx_is_qx) {
+          this.typeShow = true
+        } else {
+          this.type = qxData.ff_is_qx ? 1 : 2
+          this.show = true
+        }
       })
     },
     // 发放/核销积分
@@ -149,8 +155,8 @@ export default {
   filters: {
     text (value) {
       const textList = {
-        1: '发放数量',
-        2: '核销数量'
+        1: '发放',
+        2: '核销'
       }
       return textList[value]
     }

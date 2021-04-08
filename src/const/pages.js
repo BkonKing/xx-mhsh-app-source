@@ -121,5 +121,7 @@ export const pagesArr = {
   recomBuyHouse: 120, // 推荐购房
   recomRecord: 121, // 推荐记录
   activity: 122, // 积分活动
-  activityService: 123 // 积分发放/核销
+  activityService: 123, // 积分发放/核销
+  livemainPay: 124, // 生活缴费主要缴费页面
+  livePayPayBill: 125 // 生活缴费缴费账单
 }

@@ -13,7 +13,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container pay-cost-detail">
-      <img class="pay-type-icon" :src="payInfo.icon" />
+      <img class="pay-type-icon" :src="payInfo.genre_icon" />
       <div class="pay-title">{{ payInfo.genre_name }}</div>
       <div class="pay-detail">
         <div class="pay-header">
@@ -54,7 +54,7 @@
           <div class="pay-info-box">
             <div class="pay-info-label"><span>户</span><span>名</span></div>
             <div class="pay-info-content">
-              {{ payInfo.realname || "-" }}
+              {{ payInfo.realname | privacyName }}
             </div>
           </div>
         </div>
