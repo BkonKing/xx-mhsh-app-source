@@ -33,13 +33,13 @@
               {{ payInfo.account_numb }}
             </div>
           </div>
-          <div class="pay-info-box" v-if="payInfo.realname">
+          <div class="pay-info-box" v-if="payInfo.owner_name">
             <div class="pay-info-label">
               <span>户</span>
               <span>主</span>
             </div>
             <div class="pay-info-content">
-              {{ payInfo.realname | privacyName }}
+              {{ payInfo.owner_name | privacyName }}
             </div>
           </div>
           <template v-if="payInfo.bill_type == 2">
