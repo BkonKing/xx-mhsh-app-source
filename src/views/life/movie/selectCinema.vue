@@ -1,6 +1,6 @@
 <template>
   <div class="tf-bg-white">
-    <select-cinema-item v-for="i in layerNumber" :key="i" v-show="i === layerNumber"></select-cinema-item>
+    <select-cinema-item v-for="i in layerNumber" :key="i" v-show="i === layerNumber" :ref="`item${i}`"></select-cinema-item>
   </div>
 </template>
 
@@ -22,17 +22,25 @@ export default {
   mounted () {
 
   },
+  methods: {
+    scrollPage () {
+      this.$refs[`item${this.layerNumber}`][0].scroll()
+    }
+  },
   beforeRouteEnter (to, from, next) {
     next(vm => {
       // 判断不是从原本下一层级返回，是则新增一层嵌套
       // 代表当前不是返回，是进入
       if (from.name !== 'movieCinemaDetails') {
         vm.layerNumber++
+      } else if (vm.layerNumber) {
+        vm.scrollPage()
       }
     })
   },
   beforeRouteLeave (to, from, next) {
     if (from.name !== 'movieCinemaDetails') {
+      this.$refs[`item${this.layerNumber}`][0].getScroll()
       // 正常返回的页面数组（则退出一层循环）
       const backNames = ['movieFilmDetails', 'movieList', 'movieIndex', 'home', 'search']
       if (backNames.includes(to.name) && this.layerNumber) {
