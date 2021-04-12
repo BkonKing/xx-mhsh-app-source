@@ -14,7 +14,6 @@
         fit="cover"
         :src="img"
         v-lazy="img"
-        v-imageCach="img"
         @click="preview(i)"
       />
       <template v-else>
@@ -23,7 +22,6 @@
           fit="cover"
           :src="img | imgsrc(srcKey)"
           v-lazy="img"
-          v-imageCach="img[srcKey] || img"
           @click="onclick(img, i)"
         />
         <div class="tf-image--shade" v-if="data.length > 3 && i === 2" @click="onclick(img, 2)">
