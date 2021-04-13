@@ -32,11 +32,11 @@ export default {
     }
   },
   methods: {
-    calcel(val) {
-      this.$emit('closeSwal',val);
+    calcel (val) {
+      this.$emit('closeSwal', val)
     },
-    sureSwal(index) {
-      this.$emit('sureSwal',index);
+    sureSwal (index) {
+      this.$emit('sureSwal', index)
     }
   }
 }

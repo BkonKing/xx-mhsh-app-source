@@ -25,14 +25,16 @@
       style="-webkit-overflow-scrolling: auto;overflow: initial;"
     >
       <i
-        class="van-icon van-icon-close van-popup__close-icon van-popup__close-icon--top-right"
+        class="tf-icon tf-icon-guanbi van-popup__close-icon van-popup__close-icon--top-right"
         @click="complainShow = false"
       ></i>
       <div class="complain-title">投诉</div>
-      <div class="complain-content van-multi-ellipsis--l2">
-        投诉
-        <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
-        ：{{ complainInfo.content && complainInfo.content.replace(/<.*?>/ig,"") }}
+      <div class="complain-content">
+        <div class="van-multi-ellipsis--l2">
+          投诉
+          <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
+          ：{{ complainInfo.content && complainInfo.content.replace(/<.*?>/ig,"") }}
+        </div>
       </div>
       <tf-radio-btn
         class="complain-radio"
@@ -42,11 +44,11 @@
       ></tf-radio-btn>
       <div
         v-preventReClick
-        class="complain-footer"
-        :class="{ 'primary-btn': com_type }"
+        class="task-btn"
+        :class="{ 'unable-btn': !com_type }"
         @click="submitComplain"
       >
-        提交
+        投诉
       </div>
     </van-popup>
     <!-- 屏蔽选择 -->
@@ -369,38 +371,44 @@ export default {
 
 /* 投诉弹窗 */
 .complain-dialog {
-  padding: 0 30px;
   .complain-title {
     height: 90px;
     line-height: 90px;
-    font-size: @font-size-md;
+    font-size: 32px;
     text-align: center;
-    border-bottom: 1px solid @divider-color;
+    font-weight: 500;
+    color: #000;
   }
   .complain-content {
-    margin: 30px 0;
-    font-size: 28px;
+    padding: 27px 35px 27px 26px;
+    font-size: 26px;
+    color: #8F8F94;
+    background: #F7F7F7;
+    margin-bottom: 40px;
   }
-  .complain-footer {
-    padding: 30px 0;
-    margin-top: 10px;
-    border-top: 1px solid @divider-color;
-    font-size: 28px;
-    color: @gray-7;
-    text-align: center;
+  .task-btn {
+    margin: 30px auto;
   }
   .primary-btn {
     color: @red-dark;
   }
   /deep/ .radio-btn-group {
+    padding-left: 25px;
+    margin-right: -4px;
     .radio-btn__item {
-      height: 66px;
+      height: 64px;
+      line-height: 64px;
+      padding: 0 26px;
+      margin: 0 34px 30px 0;
+      border: 0;
+      .radio-btn__text {
+        color: #333333;
+      }
     }
     .radio-btn--active {
-      border-color: #222;
-      background: #222;
+      background: #FFEDEB;
       .radio-btn__text {
-        color: #fff;
+        color: #FF5240;
       }
     }
     .radio-btn__text {
@@ -460,6 +468,17 @@ export default {
       font-size: 28px;
       color: #666;
     }
+  }
+}
+
+.complain-dialog {
+  .tf-icon-guanbi {
+    margin-top: 0;
+    color: #aaa;
+    font-size: 30px;
+    padding: 20px;
+    top: 6px;
+    right: 10px;
   }
 }
 </style>
