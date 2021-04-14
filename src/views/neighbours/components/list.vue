@@ -2,120 +2,84 @@
   <div style="height: 100%;">
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
-        <div
-          v-if="item.article_type == 2 || article_type == 2"
-          class="activity-cell"
-        >
-          <div @click="goDetails('2', item)">
-            <div class="activity-image-box">
-              <img
-                class="activity-image"
-                :src="item.thumbnail"
-                v-imageCach="item.thumbnail"
-              />
-              <div v-if="item.joins != '0'" class="activity-join">{{ item.joins || 0 }}人已报名</div>
-            </div>
-            <div class="tf-status-tag">活动</div>
-            <div class="activity-title">{{ item.title }}</div>
-            <div class="activity-time">{{ item.ctime }}</div>
-          </div>
-          <operation
-            :item="item"
-            :article-type="item.article_type || article_type"
-            :key="item.id"
-          >
-            <div
-              class="van-icon van-icon-ellipsis"
-              @click.stop="onPostOperation(item, index)"
-            ></div>
-          </operation>
-        </div>
-        <div v-else-if="item.article_type == 3 || article_type == 3">
-          <div class="tf-card">
-            <div class="tf-card-header" @click="goDetails('3', item)">
-              <userInfo
-                :ellipsis="true"
-                :avatar="item.avatar"
-                :name="item.nickname"
-                :time="item.ctime"
-              >
-                <template v-slot:right>
-                  <div class="group-tag">{{ item.category }}</div>
-                </template>
-              </userInfo>
-            </div>
-            <div
-              v-if="item.content"
-              class="tf-card-content text-multiple-ellipsis-3"
-              @click="goDetails('3', item)"
-            >
-              {{ item.content }}
-            </div>
-            <template v-if="item.images">
-              <img
-                width="33%"
-                :src="item.images[0]"
-                v-if="item.images.length === 1"
-                v-imageCach="item.images[0]"
-                @click.stop="preview(item.images[0])"
-              />
-              <tf-image-list
-                class="tf-mt-base"
-                mode="shadeShow"
-                v-else-if="item.images.length > 1"
-                :data="item.images"
-              ></tf-image-list>
-            </template>
-            <operation
-              :item="item"
-              :article-type="item.article_type || article_type"
-              :key="item.id"
-            >
-              <div
-                class="van-icon van-icon-ellipsis"
-                @click.stop="onPostOperation(item, index)"
-              ></div>
-            </operation>
-          </div>
-        </div>
-        <div
-          class="activity-cell"
-          v-else-if="item.article_type == 1 || article_type == 1"
-        >
-          <div @click="goDetails('1', item)">
+        <div class="article-cell">
+          <div @click="goDetails(item.article_type, item)">
+          <!-- 活动 -->
+          <template v-if="item.article_type == 2">
             <img
-              class="activity-image tf-mb-sm"
+              class="article-image"
+              v-imageCach="item.thumbnail"
+              :src="item.thumbnail"
+            />
+            <div class="article-tag activity-tag">活动</div>
+            <div class="article-title">{{ item.title }}</div>
+            <div class="article-time">
+              <span>{{ item.ctime }}</span>
+              <div v-if="item.joins != '0'" class="article-join">
+                {{ item.joins || 0 }}人已报名
+              </div>
+            </div>
+          </template>
+          <!-- 帖子 -->
+          <template v-else-if="item.article_type == 3">
+            <div class="tf-card">
+              <div class="tf-card-header">
+                <userInfo
+                  :ellipsis="true"
+                  :avatar="item.avatar"
+                  :name="item.nickname"
+                  :time="item.ctime"
+                >
+                  <template v-slot:right>
+                    <div class="group-tag">{{ item.category }}</div>
+                  </template>
+                </userInfo>
+              </div>
+              <div
+                v-if="item.content"
+                class="tf-card-content text-multiple-ellipsis-3"
+              >
+                {{ item.content }}
+              </div>
+              <template v-if="item.images">
+                <img
+                  class="tf-mt-base"
+                  width="33%"
+                  :src="item.images[0]"
+                  v-if="item.images.length === 1"
+                  v-imageCach="item.images[0]"
+                  @click.stop="preview(item.images[0])"
+                />
+                <tf-image-list
+                  class="tf-mt-base"
+                  mode="shadeShow"
+                  v-else-if="item.images.length > 1"
+                  :data="item.images"
+                ></tf-image-list>
+              </template>
+            </div>
+          </template>
+          <!-- 资讯 -->
+          <template v-else-if="item.article_type == 1">
+            <img
+              class="article-image"
               :src="item.thumbnail"
               v-imageCach="item.thumbnail"
             />
-            <div class="tf-status-tag">资讯</div>
-            <div class="activity-title">{{ item.title }}</div>
+            <div class="article-tag">资讯</div>
+            <div class="article-title">{{ item.title }}</div>
+          </template>
           </div>
           <operation
             :item="item"
-            :article-type="item.article_type || article_type"
+            :article-type="item.article_type"
             :key="item.id"
+            @delete="list.splice(index, 1)"
           >
-            <div
-              class="van-icon van-icon-ellipsis"
-              @click.stop="onPostOperation(item, index)"
-            ></div>
           </operation>
         </div>
       </template>
     </refreshList>
-    <more-popup
-      v-model="postMoreShow"
-      :deleteProp="status"
-      :complain="!status"
-      :shield="!status"
-      :complainInfo="active"
-      :complainType="1"
-      :share="true"
-      :shareObj="shareObj"
-      :class="{'ios-share': systemType === 'ios' && article_type != 3}"
-      @delete="deleteArticle"
-    ></more-popup>
   </div>
 </template>
 
@@ -123,19 +87,15 @@
 import tfImageList from '@/components/tf-image-list'
 import refreshList from '@/components/tf-refresh-list'
 import UserInfo from '@/components/user-info/index.vue'
-import morePopup from './morePopup'
 import operation from './operation'
-import { deleteComment, deleteArticle, addComplaint } from '@/api/neighbours'
 import { mapGetters } from 'vuex'
-import { Toast } from 'vant'
-import { imagePreview, downloadPic } from '@/utils/util'
+import { imagePreview } from '@/utils/util'
 
 export default {
   components: {
     tfImageList,
     refreshList,
     UserInfo,
-    morePopup,
     operation
   },
   props: {
@@ -151,65 +111,16 @@ export default {
   },
   data () {
     return {
-      postMoreShow: false,
-      list: this.data,
-      active: {},
-      activeIndex: undefined,
-      status: true, // 是否是本人发的帖
-      shareObj: {},
-      systemType: api.systemType || ''
+      list: this.data
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    /* 保存分享图片 */
-    downloadSharePic (item) {
-      const { article_type, id, share_img } = item
-      const urlName = 'detail_' + article_type + '_' + id
-      downloadPic(share_img, urlName)
-        .then((data) => {
-          this.sendShareParam(item, data)
-        })
-        .catch(() => {
-          this.sendShareParam(item, '')
-        })
-    },
-    sendShareParam (data, img) {
-      const content = data.article_type == 3 || this.article_type == 3 ? data.content : data.title
-      this.shareObj = {
-        title: content,
-        description: content,
-        pyqTitle: content,
-        thumb: img ? 'fs://' + img + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + data.article_type + '&id=' + data.id
-      }
-    },
-    /* 帖子操作 */
-    onPostOperation (item, index) {
-      this.downloadSharePic(item)
-      this.active = item
-      this.status = item.is_mine
-      this.activeIndex = index
-      this.postMoreShow = true
-    },
-    /* 删除帖子 */
-    deleteArticle () {
-      deleteArticle({
-        id: this.active.id
-      }).then(res => {
-        this.list.splice(this.activeIndex, 1)
-        Toast.success('删除成功')
-        this.postMoreShow = false
-        this.mtjEvent({
-          eventId: 44
-        })
-      })
-    },
     goDetails (articleType, { id, is_del }) {
       if (is_del == '1') {
-        Toast('该贴已被删除')
+        this.$toast('该贴已被删除')
         return
       }
       this.$router.push({
@@ -241,83 +152,107 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-card-header {
-  border-bottom: none;
-  padding-bottom: 0;
+/deep/ .tf-list-refresh {
+  padding: 30px 20px;
+  .tf-van-cell {
+    margin-bottom: 30px;
+  }
 }
-.activity-cell {
+// 资讯/活动
+.article-cell {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   background: #fff;
   border-radius: 10px;
-  padding: 30px 30px 0;
-  .activity-image-box {
-    display: flex;
-    position: relative;
+  // 文章图片
+  .article-image {
     width: 100%;
-    height: 365px;
-    line-height: 1;
-    margin-bottom: 10px;
-  }
-  .activity-image {
-    display: block;
-    width: 100%;
-    height: 365px;
+    height: 300px;
     object-fit: cover;
+    border-radius: 10px 10px 0px 0px;
   }
-  .tf-mb-sm {
-    margin-bottom: 10px;
-  }
-  .activity-join {
-    width: 100%;
+  .article-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 66px;
-    line-height: 66px;
-    text-align: center;
+    top: 30px;
+    right: 30px;
+    width: 120px;
+    height: 44px;
+    font-size: 24px;
     color: #fff;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 0 0 4px 4px;
-    font-size: 24px;
+    border-radius: 4px;
+    background-color: #ff5240cc;
   }
-  .activity-title {
-    font-size: 30px;
-    font-weight: 500;
+  .activity-tag {
+    // width: 100px;
+    // height: 40px;
+    background-color: #febf00cc;
+  }
+  // 文章标题
+  .article-title {
+    margin-top: 24px;
+    padding: 0 30px;
+    font-size: 32px;
+    font-weight: 600;
+    color: #000;
     @text-ellipsis();
-    margin-bottom: 10px;
   }
-  .activity-time {
+  .article-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    margin-top: 26px;
     font-size: 24px;
-    color: @gray-7;
-    margin-bottom: 10px;
+    color: #aaaaaa;
+  }
+  .article-join {
+    font-size: 24px;
+    color: #ff6555;
   }
 }
-.tf-status-tag {
-  top: 50px;
-  right: 20px;
-  width: 120px;
-  background-image: linear-gradient(
-    to right,
-    rgba(249, 134, 107, 1),
-    rgba(235, 88, 65, 1)
-  );
+// 帖子
+.tf-card-header {
+  border-bottom: none;
+  padding-bottom: 0;
+  /deep/ .tf-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  /deep/ .user-info--name {
+    font-size: 28px;
+    line-height: 1;
+    color: #000;
+  }
+  /deep/ .user-info-time {
+    color: #aaa;
+  }
+}
+.tf-card-content {
+  color: #333;
 }
 .group-tag {
-  height: 34px;
-  line-height: 34px;
-  padding: 0 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px;
   text-align: center;
-  border: 2px solid @orange-dark;
-  border-radius: 10px 0px 10px 10px;
-  color: @orange-dark;
-  font-size: 22px;
-}
-.ios-share /deep/ .mask-block {
-  bottom: 98px;
+  font-size: 24px;
+  color: #FF6555;
+  background: #FFEDEB;
+  border-radius: 4px;
 }
 .text-multiple-ellipsis-3 {
   padding: 0;
   margin: 30px 0;
   .text-multiple-ellipsis(3);
+}
+
+.ios-share /deep/ .mask-block {
+  bottom: 98px;
 }
 </style>
