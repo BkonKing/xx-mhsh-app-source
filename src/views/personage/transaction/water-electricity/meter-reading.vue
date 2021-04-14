@@ -190,6 +190,9 @@ export default {
         .finally(() => {
           this.$toast.clear()
         })
+      setTimeout(() => {
+        this.$toast.clear()
+      }, 10000)
     },
     // 抄水表保存
     saveWater (params) {
@@ -224,6 +227,10 @@ export default {
           return false
         })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.$toast.clear()
+    next()
   }
 }
 </script>

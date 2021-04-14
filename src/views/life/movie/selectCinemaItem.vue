@@ -13,7 +13,7 @@
         <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-body-container">
+    <div class="tf-body-container" ref="container">
       <!-- 影片信息 -->
       <film-details :info="filmInfo"></film-details>
       <van-loading v-if="loading" type="spinner" color="#eb5841" size="24px" />
@@ -44,7 +44,7 @@
         >
         </van-tab>
         <!-- 当前排期影院列表 -->
-        <div class="cinema-list">
+        <div class="cinema-list" id="cinema-list">
           <!-- 切换排期loading -->
           <van-loading
             v-if="cinemaLoading"
@@ -110,7 +110,8 @@ export default {
       countyId: '',
       hallNo: '',
       sortType: 2,
-      layerNumber: 0 // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
+      layerNumber: 0, // 影片详情 => 选择影院 => 影院详情 => 影片详情，路由嵌套的层数
+      scrollTop: 0
     }
   },
   components: {
@@ -263,6 +264,14 @@ export default {
     scrollTabs ({ isFixed }) {
       // 滚动到tab固定到顶部，则头部导航栏背景色更改，title更改为影片名称
       this.isFixedTabs = isFixed
+    },
+    // 滚动
+    scroll () {
+      this.$refs.container.scrollTop = this.scrollTop
+    },
+    // 保存当前滚动位置
+    getScroll () {
+      this.scrollTop = this.$refs.container.scrollTop
     },
     closeShare (data) {
       this.shareShow = data == 1
