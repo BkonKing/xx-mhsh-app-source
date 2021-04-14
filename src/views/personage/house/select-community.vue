@@ -61,9 +61,6 @@
 </template>
 
 <script>
-import { NavBar, Search, Toast } from 'vant'
-import tfList from '@/components/tf-list/index'
-import tfListItem from '@/components/tf-list/item.vue'
 import {
   searchProject,
   searchBuilding,
@@ -71,12 +68,6 @@ import {
   searchHouse
 } from '@/api/personage'
 export default {
-  components: {
-    [NavBar.name]: NavBar,
-    [Search.name]: Search,
-    tfList,
-    tfListItem
-  },
   data () {
     return {
       transitionName: '',
@@ -99,7 +90,7 @@ export default {
       switch (this.step) {
         // 选择小区
         case 0:
-          Toast.loading({
+          this.$toast.loading({
             message: '加载中...'
           })
           this.activeProject = item
@@ -108,7 +99,7 @@ export default {
           break
         // 选择楼栋单元
         case 1:
-          Toast.loading({
+          this.$toast.loading({
             message: '加载中...'
           })
           this.activeBuild = item
@@ -130,7 +121,7 @@ export default {
     getProject () {
       searchProject().then((res) => {
         this.projectList = res.data
-        Toast.clear()
+        this.$toast.clear()
       })
     },
     // 获取小区下单元
@@ -139,7 +130,7 @@ export default {
         projectId: item.id
       }).then((res) => {
         this.buildList = res.data
-        Toast.clear()
+        this.$toast.clear()
       })
     },
     // 获取单元下房屋
@@ -150,7 +141,7 @@ export default {
         unitId: item.id
       }).then((res) => {
         this.houseList = res.data
-        Toast.clear()
+        this.$toast.clear()
       })
     },
     // 选中房屋
