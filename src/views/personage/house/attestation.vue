@@ -258,10 +258,10 @@ export default {
         house_id,
         project_id,
         building_id,
-        unit_id,
-        project_name
+        unit_id
+        // project_name
       } = houseSelected
-      this.house_name = project_name + house_name
+      this.house_name = house_name
       this.house_id = house_id
       this.project_id = project_id
       this.building_id = building_id
