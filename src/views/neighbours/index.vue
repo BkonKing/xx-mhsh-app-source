@@ -10,7 +10,7 @@
           v-if="userInfo.user_type !== '0'"
           @click.stop="showIsAll = true"
         >
-          <span class="header-select-text">全部</span>
+          <span class="header-select-text">{{isAll ? '全部' : '小区'}}</span>
           <img
             class="header-select-icon"
             :class="{ 'header-select-icon-flip': showIsAll }"
@@ -70,36 +70,12 @@
         id="neighboursList1"
         :class="{ 'group-open-box': groupDropdown }"
       >
-        <div class="group-box">
-          <div class="group-container">
-            <div
-              class="group-item"
-              v-for="item in group"
-              :key="item.id"
-              :class="{ 'group-active': item.id === categoryId }"
-              @click="goGroupList(item)"
-            >
-              {{ item.category }}
-            </div>
-          </div>
-          <img
-            v-if="groupDropdown"
-            class="group-dropdown"
-            src="@/assets/neighbours/shouqi.png"
-            @click="groupDropdown = false"
-          />
-          <img
-            v-else
-            class="group-dropdown"
-            src="@/assets/neighbours/zhankai.png"
-            @click="groupDropdown = true"
-          />
-        </div>
-        <div
-          v-if="groupDropdown"
-          class="group-open-overlay"
-          @click="groupDropdown = false"
-        ></div>
+        <select-dropdown
+          v-model="categoryId"
+          :visible.sync="groupDropdown"
+          :group="group"
+          @change="getFilterGroup"
+        ></select-dropdown>
         <list
           class="postBarList"
           key="postBarList"
@@ -122,6 +98,25 @@
           ref="articleList"
           :data.sync="articleList"
           :load="getArticleList"
+        ></list>
+      </van-tab>
+      <van-tab
+        title="任务"
+        id="neighboursList4"
+        :class="{ 'group-open-box': taskDropdown }"
+      >
+        <select-dropdown
+          v-model="taskId"
+          :visible.sync="taskDropdown"
+          :group="taskTypes"
+          @change="getFilterTasks"
+        ></select-dropdown>
+        <list
+          key="taskList"
+          ref="taskList"
+          class="taskList"
+          :data.sync="taskList"
+          :load="getTaskList"
         ></list>
       </van-tab>
     </van-tabs>
@@ -162,14 +157,16 @@ import {
   getPostBarList
 } from '@/api/neighbours'
 import { getNeighboursAgreement } from '@/api/home'
-import tfDialog from '@/components/tf-dialog/index.vue'
+import tfDialog from '@/components/tf-dialog/index'
+import selectDropdown from '@/views/neighbours/components/selectDropdown'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'neighbours',
   components: {
     list,
-    tfDialog
+    tfDialog,
+    selectDropdown
   },
   data () {
     return {
@@ -180,12 +177,16 @@ export default {
       newestList: [],
       activityList: [],
       articleList: [],
+      taskList: [],
       agreementDialog: false,
       agreementTitle: '',
       scrollTop: 0,
       postBarList: [],
       categoryId: '',
-      groupDropdown: false
+      groupDropdown: false,
+      taskId: '',
+      taskDropdown: false,
+      taskTypes: []
     }
   },
   computed: {
@@ -206,6 +207,7 @@ export default {
       })
     }
     this.getPostBarCategoryList()
+    this.getTaskTypes()
   },
   activated () {
     if (this.scrollTop && this.current !== 1) {
@@ -254,13 +256,9 @@ export default {
       })
     },
     // 筛选小组
-    goGroupList ({ id, category }) {
-      this.groupDropdown = false
+    getFilterGroup ({ id }) {
       this.categoryId = id
       this.$refs.postBarList.reload()
-      this.$nextTick(() => {
-        document.getElementsByClassName('group-container')[0].scrollLeft = document.getElementsByClassName('group-active')[0].offsetLeft - 14
-      })
     },
     // 获取帖子列表
     getPostBarList (params) {
@@ -278,6 +276,29 @@ export default {
       params.is_all = this.isAll
       return getArticleList(params)
     },
+    // 获取任务类型
+    getTaskTypes () {
+      getPostBarCategoryList().then(res => {
+        this.taskTypes = [
+          {
+            category: '全部',
+            id: ''
+          },
+          ...res.data
+        ]
+      })
+    },
+    // 筛选任务类型
+    getFilterTasks ({ id }) {
+      this.taskId = id
+      this.$refs.taskList.reload()
+    },
+    // 获取任务列表
+    getTaskList (params) {
+      params.is_all = this.isAll
+      params.taskId = this.taskId
+      return getArticleList(params)
+    },
     // 邻里使用协议
     getNeighboursAgreement () {
       getNeighboursAgreement().then(({ data }) => {
@@ -291,6 +312,7 @@ export default {
       this.$refs.activityList && this.$refs.activityList.reload()
       this.$refs.articleList && this.$refs.articleList.reload()
       this.$refs.postBarList && this.$refs.postBarList.reload()
+      this.$refs.taskList && this.$refs.taskList.reload()
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -447,77 +469,41 @@ export default {
   }
 }
 // 小组
-.group-box {
-  display: flex;
-  height: 124px;
-  padding: 30px 20px;
-  background: #ffffff;
-  .group-container {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    overflow: auto;
-  }
-  .group-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    min-width: 140px;
-    height: 64px;
-    padding: 0 20px;
-    margin-right: 28px;
-    background: #f7f7f7;
-    border: 1px solid #f7f7f7;
-    border-radius: 10px;
-    font-size: 24px;
-    color: #8f8f94;
-  }
-  .group-active {
-    border: 1px solid #cccccc;
-    font-weight: 500;
-    color: #000000;
-  }
-  .group-dropdown {
-    width: 38px;
-    height: 64px;
-    margin-left: 20px;
-  }
-}
 .group-open-box {
-  .group-box {
-    position: absolute;
-    top: 100px;
-    z-index: 4;
-    height: auto;
-    padding-bottom: 0;
-    animation-duration: 0.2s;
+  /deep/ .select-dropdown {
+    .group-box {
+      position: absolute;
+      top: 98px;
+      z-index: 4;
+      height: auto;
+      padding-bottom: 0;
+      animation-duration: 0.2s;
+    }
+    .group-container {
+      flex-wrap: wrap;
+    }
+    .group-item {
+      margin-bottom: 30px;
+    }
+    .group-dropdown {
+      margin-left: 0;
+    }
+    .group-open-overlay {
+      position: absolute;
+      top: 198px;
+      left: 0;
+      bottom: 0;
+      z-index: 3;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      animation-duration: 0.2s;
+    }
   }
-  .group-container {
-    flex-wrap: wrap;
-  }
-  .group-item {
-    margin-bottom: 30px;
-  }
-  .group-dropdown {
-    margin-left: 0;
-  }
-  .group-open-overlay {
-    position: absolute;
-    top: 198px;
-    left: 0;
-    bottom: 0;
-    z-index: 3;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    animation-duration: 0.2s;
-  }
-  .postBarList {
+  .postBarList, .taskList {
     padding-top: 124px;
   }
 }
-.postBarList {
+.postBarList, .taskList {
   height: calc(100% - 124px) !important;
 }
 // 发布按钮

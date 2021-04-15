@@ -2,73 +2,114 @@
   <div style="height: 100%;">
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
-        <div class="article-cell">
-          <div @click="goDetails(item.article_type, item)">
-          <!-- 活动 -->
-          <template v-if="item.article_type == 2">
-            <img
-              class="article-image"
-              v-imageCach="item.thumbnail"
-              :src="item.thumbnail"
-            />
-            <div class="article-tag activity-tag">活动</div>
-            <div class="article-title">{{ item.title }}</div>
-            <div class="article-time">
-              <span>{{ item.ctime }}</span>
-              <div v-if="item.joins != '0'" class="article-join">
-                {{ item.joins || 0 }}人已报名
-              </div>
+        <!-- 任务 -->
+        <div v-if="item.article_type == 1" class="task-item article-cell">
+          <div class="task-header">
+            <div class="task-header-left">是的发送到发到付</div>
+            <div class="task-header-right">
+              <img class="task-header-img" src="@/assets/neighbours/xfb.png" />
+              <div class="task-header-text">100000</div>
             </div>
-          </template>
-          <!-- 帖子 -->
-          <template v-else-if="item.article_type == 3">
-            <div class="tf-card">
-              <div class="tf-card-header">
-                <userInfo
-                  :ellipsis="true"
-                  :avatar="item.avatar"
-                  :name="item.nickname"
-                  :time="item.ctime"
-                >
-                  <template v-slot:right>
-                    <div class="group-tag">{{ item.category }}</div>
-                  </template>
-                </userInfo>
-              </div>
-              <div
-                v-if="item.content"
-                class="tf-card-content text-multiple-ellipsis-3"
-              >
-                {{ item.content }}
-              </div>
-              <template v-if="item.images">
-                <img
-                  class="tf-mt-base"
-                  width="33%"
-                  :src="item.images[0]"
-                  v-if="item.images.length === 1"
-                  v-imageCach="item.images[0]"
-                  @click.stop="preview(item.images[0])"
-                />
-                <tf-image-list
-                  class="tf-mt-base"
-                  mode="shadeShow"
-                  v-else-if="item.images.length > 1"
-                  :data="item.images"
-                ></tf-image-list>
+          </div>
+          <div class="task-content">
+            <userInfo
+              class="task-userinfo"
+              :ellipsis="true"
+              :avatar="item.avatar"
+              :name="item.nickname"
+            >
+              <template v-slot:right>
+                <span class="userinfo-text">剩余人</span>
               </template>
+            </userInfo>
+            <ul class="task-tags">
+              <li class="task-tag">剩余人</li>
+              <li class="task-tag">剩余人</li>
+              <li class="task-tag">剩余人</li>
+              <li class="task-tag">剩余人</li>
+            </ul>
+            <div class="task-time">2020-03-10 12:00 ~ 2020-03-31 12:00</div>
+            <div class="task-address">
+              <img class="task-ditu-img" src="@/assets/neighbours/ditu.png" />
+              <div class="task-address-text">福州市线下科技</div>
             </div>
-          </template>
-          <!-- 资讯 -->
-          <template v-else-if="item.article_type == 1">
-            <img
-              class="article-image"
-              :src="item.thumbnail"
-              v-imageCach="item.thumbnail"
-            />
-            <div class="article-tag">资讯</div>
-            <div class="article-title">{{ item.title }}</div>
-          </template>
+          </div>
+          <operation
+            class="taks-footer"
+            :item="item"
+            :article-type="item.article_type"
+            :key="item.id"
+            @delete="list.splice(index, 1)"
+          >
+          </operation>
+        </div>
+        <div v-else class="article-cell">
+          <div @click="goDetails(item.article_type, item)">
+            <!-- 活动 -->
+            <template v-if="item.article_type == 2">
+              <img
+                class="article-image"
+                v-imageCach="item.thumbnail"
+                :src="item.thumbnail"
+              />
+              <div class="article-tag activity-tag">活动</div>
+              <div class="article-title">{{ item.title }}</div>
+              <div class="article-time">
+                <span>{{ item.ctime }}</span>
+                <div v-if="item.joins != '0'" class="article-join">
+                  {{ item.joins || 0 }}人已报名
+                </div>
+              </div>
+            </template>
+            <!-- 帖子 -->
+            <template v-else-if="item.article_type == 3">
+              <div class="tf-card">
+                <div class="tf-card-header">
+                  <userInfo
+                    :ellipsis="true"
+                    :avatar="item.avatar"
+                    :name="item.nickname"
+                    :time="item.ctime"
+                  >
+                    <template v-slot:right>
+                      <div class="group-tag">{{ item.category }}</div>
+                    </template>
+                  </userInfo>
+                </div>
+                <div
+                  v-if="item.content"
+                  class="tf-card-content text-multiple-ellipsis-3"
+                >
+                  {{ item.content }}
+                </div>
+                <template v-if="item.images">
+                  <img
+                    class="tf-mt-base"
+                    width="33%"
+                    :src="item.images[0]"
+                    v-if="item.images.length === 1"
+                    v-imageCach="item.images[0]"
+                    @click.stop="preview(item.images[0])"
+                  />
+                  <tf-image-list
+                    class="tf-mt-base"
+                    mode="shadeShow"
+                    v-else-if="item.images.length > 1"
+                    :data="item.images"
+                  ></tf-image-list>
+                </template>
+              </div>
+            </template>
+            <!-- 资讯 值为1后续改回来 -->
+            <template v-else-if="item.article_type == 1">
+              <img
+                class="article-image"
+                :src="item.thumbnail"
+                v-imageCach="item.thumbnail"
+              />
+              <div class="article-tag">资讯</div>
+              <div class="article-title">{{ item.title }}</div>
+            </template>
           </div>
           <operation
             :item="item"
@@ -78,6 +119,9 @@
           >
           </operation>
         </div>
+      </template>
+      <template slot:nodata>
+        <img src="@/assets/neighbours/notask.png" alt="">
       </template>
     </refreshList>
   </div>
@@ -242,10 +286,118 @@ export default {
   padding: 0 14px;
   text-align: center;
   font-size: 24px;
-  color: #FF6555;
-  background: #FFEDEB;
+  color: #ff6555;
+  background: #ffedeb;
   border-radius: 4px;
 }
+// 任务
+.task-item {
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 143px;
+    padding: 0 30px;
+    background: url(~@/assets/neighbours/activity-bg.png);
+    background-size: cover;
+    border-radius: 10px 10px 0px 0px;
+    .task-header-left {
+      font-size: 32px;
+      font-weight: 500;
+      color: #000000;
+    }
+    .task-header-right {
+      display: flex;
+      align-items: center;
+    }
+    .task-header-img {
+      width: 32px;
+      height: 32px;
+    }
+    .task-header-text {
+      margin-top: 4px;
+      margin-left: 20px;
+      font-size: 32px;
+      font-weight: 500;
+      color: #ffffff;
+      line-height: 1;
+    }
+  }
+  .task-content {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 30px 0;
+  }
+  .task-userinfo {
+    /deep/ .user-info__left-box {
+      height: 48px;
+    }
+    /deep/ .user-info__right-box {
+      display: flex;
+    }
+    /deep/ .tf-avatar {
+      width: 48px;
+      height: 48px;
+    }
+    /deep/ .user-info--name {
+      font-size: 24px;
+      color: #000;
+    }
+    .userinfo-text {
+      font-size: 24px;
+      color: #ff6555;
+    }
+  }
+  .task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    .task-tag {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 80px;
+      height: 48px;
+      padding: 0 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      background: #f7f7f7;
+      border-radius: 10px;
+      font-size: 24px;
+      color: #8f8f94;
+    }
+  }
+  .task-time {
+    margin-top: 14px;
+    font-size: 24px;
+    color: #000000;
+  }
+  .task-address {
+    display: flex;
+    height: 44px;
+    margin-top: 30px;
+    .task-ditu-img {
+      width: 44px;
+      height: 44px;
+    }
+    .task-address-text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 44px;
+      padding: 0 18px;
+      background: #f7f7f7;
+      border-radius: 4px;
+      font-size: 24px;
+      color: #8f8f94;
+      line-height: 1;
+    }
+  }
+  .taks-footer {
+    // margin-top: 20px;
+  }
+}
+
 .text-multiple-ellipsis-3 {
   padding: 0;
   margin: 30px 0;

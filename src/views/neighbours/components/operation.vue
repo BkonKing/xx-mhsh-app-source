@@ -6,61 +6,48 @@
           <img class="operation-icon" src="@/assets/neighbours/share.png" />
           <span class="operation-text">分享</span>
         </div>
-        <div class="operation-item" @click="goDetails">
-          <img class="operation-icon" src="@/assets/neighbours/comment.png" />
-          <span class="operation-text">{{
-            item.comments | numberText("评论")
-          }}</span>
-        </div>
-        <div class="operation-item" @click="thumbsUp(item)">
-          <img
-            v-if="item.is_thumbsup"
-            class="operation-icon"
-            src="@/assets/neighbours/dianzan.png"
-          />
-          <img
-            v-else
-            class="operation-icon"
-            src="@/assets/neighbours/weidianzan.png"
-          />
-          <span class="operation-text">{{
-            item.thumbsups | numberText("点赞")
-          }}</span>
-        </div>
+        <!-- 任务 -->
+        <template v-if="articleType == 1">
+          <div class="operation-item" @click="goDetails">
+            <img
+              class="operation-icon"
+              src="@/assets/neighbours/question.png"
+            />
+            <span class="operation-text">{{
+              item.comments | numberText("提问")
+            }}</span>
+          </div>
+        </template>
+        <template v-else>
+          <div class="operation-item" @click="goDetails">
+            <img class="operation-icon" src="@/assets/neighbours/comment.png" />
+            <span class="operation-text">{{
+              item.comments | numberText("评论")
+            }}</span>
+          </div>
+          <div class="operation-item" @click="thumbsUp(item)">
+            <img
+              v-if="item.is_thumbsup"
+              class="operation-icon"
+              src="@/assets/neighbours/dianzan.png"
+            />
+            <img
+              v-else
+              class="operation-icon"
+              src="@/assets/neighbours/weidianzan.png"
+            />
+            <span class="operation-text">{{
+              item.thumbsups | numberText("点赞")
+            }}</span>
+          </div>
+        </template>
       </div>
-      <div class="more-container">
-        <img
-          class="operation-icon"
-          src="@/assets/neighbours/more.png"
-          @click="onPostOperation"
-        />
-        <div
-          v-if="postMoreShow"
-          v-click-out-side="closeOperation"
-          class="more-popup"
-        >
-          <template v-if="status">
-            <span class="more-btn" @click="deleteArticle">删除</span>
-          </template>
-          <template v-else>
-            <span class="more-btn" @click="shieldShow = true">屏蔽</span>
-            <span class="more-btn" @click="complainShow = true">投诉</span>
-          </template>
-        </div>
-      </div>
+      <more-btn
+        :item="item"
+        :type="articleType"
+        @delete="deleteArticle"
+      ></more-btn>
     </div>
-    <!-- 投诉 -->
-    <complain-popup
-      v-model="complainShow"
-      :complainInfo="item"
-      :complainType="articleType"
-    ></complain-popup>
-    <!-- 屏蔽 -->
-    <shield-popup
-      v-model="shieldShow"
-      :shieldInfo="item"
-      :shieldType="articleType"
-    ></shield-popup>
     <tf-share
       :class="{ 'ios-share': systemType === 'ios' }"
       :share-show="showShare"
@@ -73,18 +60,12 @@
 <script>
 import { thumbsUp, deleteArticle } from '@/api/neighbours'
 import { downloadPic } from '@/utils/util'
-import ClickOutSide from '@/directive/ClickOutSide'
 import tfShare from '@/components/tf-share'
-import ComplainPopup from './complainPopup'
-import ShieldPopup from './shieldPopup'
+import MoreBtn from './moreBtn'
 export default {
   components: {
     tfShare,
-    ComplainPopup,
-    ShieldPopup
-  },
-  directives: {
-    ClickOutSide
+    MoreBtn
   },
   props: {
     item: {
@@ -97,13 +78,8 @@ export default {
   },
   data () {
     return {
-      activeIndex: undefined,
-      postMoreShow: false,
-      complainShow: false,
-      shieldShow: false,
       shareObj: {},
       systemType: api.systemType || '',
-      status: this.item.is_mine, // 是否是本人发的帖
       showShare: false
     }
   },
@@ -171,22 +147,15 @@ export default {
     },
     // 删除帖子
     deleteArticle () {
-      this.$dialog
-        .confirm({
-          title: '提示',
-          message: '是否确认删除该贴？'
+      deleteArticle({
+        id: this.item.id
+      }).then(res => {
+        this.$emit('delete')
+        this.$toast.success('删除成功')
+        this.mtjEvent({
+          eventId: 44
         })
-        .then(() => {
-          deleteArticle({
-            id: this.item.id
-          }).then(res => {
-            this.$emit('delete')
-            this.$toast.success('删除成功')
-            this.mtjEvent({
-              eventId: 44
-            })
-          })
-        })
+      })
     },
     goDetails () {
       this.$router.push({
@@ -240,47 +209,6 @@ export default {
       font-size: 24px;
       color: #8f8f94;
     }
-  }
-  .tf-icon,
-  .van-icon {
-    width: 33.3%;
-    font-size: 36px;
-    color: #aaa;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .tf-text-sm {
-      margin-left: 10px;
-    }
-  }
-}
-.more-container {
-  position: relative;
-}
-.more-popup {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  left: -256px;
-  top: -16px;
-  z-index: 2;
-  width: 235px;
-  height: 72px;
-  padding-right: 10px;
-  background: url("~@/assets/neighbours/dialog.png");
-  background-size: contain;
-  .more-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50%;
-    font-size: 28px;
-    color: #ffffff;
-    line-height: 1;
-  }
-  .more-btn + .more-btn {
-    border-left: 1px solid #8f8f94;
   }
 }
 .like-active::before {
