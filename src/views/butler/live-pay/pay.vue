@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-body">
     <van-nav-bar
-      title="生活缴费"
+      title="其他费用"
       :fixed="true"
       :border="false"
       placeholder

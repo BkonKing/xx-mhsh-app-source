@@ -17,12 +17,12 @@
           {{ payInfo.bill_type == 1 ? "+" : "-" }}￥{{ payInfo.money }}
         </div>
         <div class="pay-info-container">
-          <div class="pay-info-box">
+          <div class="pay-info-box" style="align-items: flex-start;">
             <div class="pay-info-label">
               住址信息
             </div>
             <div class="pay-info-content">
-              {{ payInfo.house_property_name }}
+              {{payInfo.project_name}} {{ payInfo.house_property_name }}
             </div>
           </div>
           <div class="pay-info-box" v-if="payInfo.account_numb">
@@ -88,7 +88,7 @@
             <div class="pay-info-label">
               账户余额
             </div>
-            <div class="pay-info-content">￥{{ payInfo.balance }}</div>
+            <div class="pay-info-content">￥{{ parseFloat(payInfo.balance) }}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">{{ billName }}单号</div>
@@ -96,7 +96,7 @@
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">{{ billName }}用户</div>
-            <div class="pay-info-content">{{ payInfo.realname }}</div>
+            <div class="pay-info-content">{{ payInfo.realname }} {{payInfo.mobile}}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">{{ billName }}时间</div>
