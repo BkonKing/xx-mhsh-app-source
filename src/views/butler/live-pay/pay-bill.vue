@@ -56,7 +56,7 @@
     </div>
     <div v-if="multiplePayAble" class="tf-padding">
       <van-button v-preventReClick size="large" type="danger" @click="goPay"
-        >立即缴费</van-button
+        >选择缴费</van-button
       >
     </div>
   </div>
