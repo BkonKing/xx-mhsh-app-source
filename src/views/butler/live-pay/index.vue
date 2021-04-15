@@ -211,6 +211,7 @@ export default {
             title: `请先缴清${this.forceText}`
           })
           .then(() => {
+            query.genreType = '4'
             this.goMainPay({
               ...query,
               type: 1
