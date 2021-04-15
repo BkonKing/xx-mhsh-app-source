@@ -204,14 +204,14 @@ export default {
         projectId,
         houseId
       }
-      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，则需要提醒先缴纳
-      if (this.forceText) {
+      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，点击水电燃则需要提醒先缴纳
+      if (this.forceText && query.genreType !== 4) {
         this.$dialog
           .alert({
             title: `请先缴清${this.forceText}`
           })
           .then(() => {
-            query.genreType = '4'
+            query.genreType = 4
             this.goMainPay({
               ...query,
               type: 1
