@@ -220,11 +220,11 @@ export default {
         return
       }
       // 若有待缴费金额，且余额>=0，跳转缴费页面(type = 1)
-      // 若余额<0，跳转的是缴费，若是余额>=0，跳转是充值页面(type = 2)
+      // 若没有待缴费金额，且余额>=0,或者余额<0，跳转是充值页面(type = 2)
       // balance 余额 z_balance 总金额
       this.goMainPay({
         ...query,
-        type: balance >= 0 && z_balance < 0 ? 1 : 2
+        type: (balance >= 0 && z_balance < 0) ? 1 : 2
       })
     },
     // 跳转缴费或充值页面

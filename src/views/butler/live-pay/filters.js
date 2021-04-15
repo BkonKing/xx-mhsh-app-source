@@ -26,5 +26,15 @@ export default {
       return '本月'
     }
     return `${date.getFullYear()}年${date.getMonth() + 1}月`
+  },
+  date (val) {
+    const date = new Date(val)
+    const year = date.getFullYear()
+    const currentYear = new Date().getFullYear()
+    const month = date.getMonth() + 1
+    if (currentYear === year) {
+      return `${month}月`
+    }
+    return `${year}年${month}月`
   }
 }

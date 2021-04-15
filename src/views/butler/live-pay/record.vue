@@ -117,7 +117,7 @@
         <template v-slot="{ item }">
           <div class="pay-base-info">
             <div class="record-date">
-              {{ item.month_name }}
+              {{ item.month_name | date }}
             </div>
             <div class="record-paynum">
               <span v-if="item.z_renew" class="tf-mr-sm"
@@ -254,27 +254,33 @@ export default {
     changeBillType ({ value, text }) {
       // 切换到充值，并且当前缴费类型充值需要有
       if (
-        value === 1 &&
-        this.genreList.findIndex(
-          obj => obj.value === this.payType && obj.value !== '4'
-        ) !== -1
+        !(
+          value === 1 &&
+          this.genreList.findIndex(
+            obj => obj.value === this.payType && obj.value !== '4'
+          ) !== -1
+        ) &&
+        !(
+          value !== 1 &&
+          this.payTypeList.findIndex(obj => obj.value === this.payType) !==
+            -1 &&
+          (this.billType !== 1 || this.payType !== '4')
+        )
       ) {
-        this.billType = value
-        this.billTypeName = text
-      } else if (
-        value !== 1 &&
-        this.payTypeList.findIndex(obj => obj.value === this.payType) !== -1
-      ) {
-        if (this.billType !== 1 || this.payType !== '4') {
-          this.billType = value
-          this.billTypeName = text
-        }
+        this.payType = ''
+        this.payTypeName = '全部'
       }
+      this.billType = value
+      this.billTypeName = text
+      this.listReload()
+      this.closeMenu('payType')
     },
     // 缴费/充值种类
     changePayType ({ value, text }) {
       this.payType = value
       this.payTypeName = text
+      this.listReload()
+      this.closeMenu('payType')
     },
     // 金额筛选打开事件
     openMoneyFiltrate () {
@@ -340,14 +346,6 @@ export default {
     monthActive () {
       this.listReload()
       this.closeMenu('monthActive')
-    },
-    billType () {
-      this.listReload()
-      this.closeMenu('payType')
-    },
-    payType () {
-      this.listReload()
-      this.closeMenu('payType')
     }
   },
   filters,
@@ -520,13 +518,22 @@ export default {
 }
 // 下拉菜单
 /deep/ .van-dropdown-menu__bar {
+  height: 90px;
+  box-shadow: initial;
   .van-dropdown-menu__title {
+    font-size: 28px;
     &:after {
       margin-top: -9px;
+      right: 4px;
+      border: 6px solid;
+      border-color: transparent transparent #aaaaaa #aaaaaa;
     }
     &.van-dropdown-menu__title--down:after {
       margin-top: -3px;
     }
+  }
+  .van-dropdown-menu__title--active:after {
+    border-color: transparent transparent #eb5841 #eb5841;
   }
 }
 </style>
