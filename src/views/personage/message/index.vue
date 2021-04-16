@@ -205,11 +205,12 @@ export default {
           })
           break
         case '20':
-          if (item.isSelfPay) {
-            this.$router.push({
-              name: 'livePayRecord'
-            })
-          }
+          this.$router.push({
+            name: 'livePayRecord',
+            query: {
+              houseId: item.source_id
+            }
+          })
           break
         // 观影-电影票订单详情
         case '21':
@@ -299,6 +300,18 @@ export default {
             name: 'livePayIndex',
             query: {
               id: item.source_id
+            }
+          })
+          break
+        // 生活缴费-充值/缴费页面
+        case '22':
+          this.$router.push({
+            name: 'livePayIndex',
+            query: {
+              type: item.source_id,
+              genreType: 1,
+              projectId: 1,
+              houseId: 1
             }
           })
           break

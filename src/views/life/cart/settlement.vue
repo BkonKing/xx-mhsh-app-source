@@ -497,7 +497,11 @@ export default {
             this.order_list = res.order_project_list
             // that.cartInit()
             this.cartClear = true
-            this.openPaySwal()
+            if (res.no_pay == 1) {
+              this.goDetail()
+            } else {
+              this.openPaySwal()
+            }
           } else {
             // if (this.prev_page == 1){
             //   api.setPrefs({ key: 'cart2', value: JSON.stringify(that.backCarts) });
@@ -556,7 +560,11 @@ export default {
             this.order_list = res.order_project_list
             // this.cartInit()
             this.cartClear = true
-            this.openPaySwal()
+            if (res.no_pay == 1) {
+              this.goDetail()
+            } else {
+              this.openPaySwal()
+            }
           } else {
             if (res.code_val == 2) {
               this.getData()

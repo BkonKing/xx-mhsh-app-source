@@ -40,7 +40,7 @@
               住址信息
             </div>
             <div class="pay-info-content">
-              {{ payInfo.house_property_name }}
+              {{payInfo.project_name}} {{ payInfo.house_property_name }}
             </div>
           </div>
           <div class="pay-info-box" v-if="payInfo.account_numb">
@@ -339,7 +339,7 @@ export default {
 
     .pay-info-box {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       padding: 10px 0;
       .pay-info-label {
         display: flex;
@@ -350,6 +350,7 @@ export default {
         color: #949494;
       }
       .pay-info-content {
+        flex: 1;
         font-size: 28px;
         color: #222;
       }

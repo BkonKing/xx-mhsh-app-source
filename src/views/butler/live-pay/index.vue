@@ -204,14 +204,14 @@ export default {
         projectId,
         houseId
       }
-      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，点击水电燃则需要提醒先缴纳
-      if (this.forceText && query.genreType !== 4) {
+      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，则需要提醒先缴纳
+      if (this.forceText) {
         this.$dialog
           .alert({
             title: `请先缴清${this.forceText}`
           })
           .then(() => {
-            query.genreType = 4
+            query.genreType = '4'
             this.goMainPay({
               ...query,
               type: 1
@@ -220,11 +220,11 @@ export default {
         return
       }
       // 若有待缴费金额，且余额>=0，跳转缴费页面(type = 1)
-      // 若余额<0，跳转的是缴费，若是余额>=0，跳转是充值页面(type = 2)
+      // 若没有待缴费金额，且余额>=0,或者余额<0，跳转是充值页面(type = 2)
       // balance 余额 z_balance 总金额
       this.goMainPay({
         ...query,
-        type: balance >= 0 && z_balance < 0 ? 1 : 2
+        type: (balance >= 0 && z_balance < 0) ? 1 : 2
       })
     },
     // 跳转缴费或充值页面
