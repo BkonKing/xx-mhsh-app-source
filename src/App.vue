@@ -54,7 +54,8 @@ export default {
       'waterElectricityMeter',
       'movieCinemaDetails',
       'movieSeat',
-      'movieIndex'
+      'movieIndex',
+      'livePayCostDetail'
     ]
     api.addEventListener(
       {
