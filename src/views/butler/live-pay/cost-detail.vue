@@ -165,6 +165,9 @@ export default {
         margin-left: 160px;
         font-size: 24px;
         color: @primary;
+        span {
+          margin-right: 16px;
+        }
       }
     }
 

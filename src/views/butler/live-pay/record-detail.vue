@@ -78,7 +78,7 @@
             <div class="pay-info-label">{{ billName }}金额</div>
             <div class="pay-info-content">
               <span
-                v-if="payInfo.bill_type == 2 && payInfo.payable > payInfo.money"
+                v-if="payInfo.bill_type == 2 && parseFloat(payInfo.payable) >= parseFloat(payInfo.money)"
                 class="tf-text-sm tf-text-grey"
                 >（自动缴费）</span
               >￥{{ payInfo.money }}

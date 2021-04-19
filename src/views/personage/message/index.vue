@@ -306,12 +306,11 @@ export default {
         // 生活缴费-充值/缴费页面
         case '22':
           this.$router.push({
-            name: 'livePayIndex',
+            name: 'livemainPay',
             query: {
-              type: item.source_id,
-              genreType: 1,
-              projectId: 1,
-              houseId: 1
+              genreType: item.genre_type,
+              projectId: item.project_id,
+              houseId: item.expenses_house_id
             }
           })
           break

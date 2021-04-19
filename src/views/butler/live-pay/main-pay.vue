@@ -176,6 +176,7 @@ export default {
         expenses_house_id: this.houseId
       }).then(({ data }) => {
         this.payInfo = data
+        this.type = (data.balance >= 0 && data.z_balance < 0) ? 1 : 2
       })
     },
     // 缴费
