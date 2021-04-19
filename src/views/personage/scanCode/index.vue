@@ -436,7 +436,13 @@ export default {
       this.FNScanner.openView(
         {
           fixedOn: 'scan',
-          autorotation: true
+          autorotation: true,
+          rect: {
+            x: 0,
+            y: 0,
+            w: api.frameWidth,
+            h: api.frameHeight - this.footerHeight
+          }
         },
         (ret, err) => {
           if (ret) {
