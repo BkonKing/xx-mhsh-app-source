@@ -19,6 +19,16 @@ const taskRouter = [
         '@/views/task/release/edit'
       )
   },
+  // 选择任务群
+  {
+    path: '/pages/task/release/group',
+    name: 'releaseGroup',
+    component: () =>
+      import(
+        /* webpackChunkName: "releaseGroup" */
+        '@/views/task/release/group'
+      )
+  },
   // 交易规则
   {
     path: '/pages/task/release/rule',
@@ -31,24 +41,24 @@ const taskRouter = [
   },
   // 任务详情-任务方
   {
-    path: '/pages/task/detail/initiator',
-    name: 'detailInitiator',
+    path: '/pages/task/detail',
+    name: 'taskDetail',
     component: () =>
       import(
         /* webpackChunkName: "detailInitiator" */
-        '@/views/task/detail/initiator'
+        '@/views/task/detail/index'
       )
   },
   // 任务详情-接单方
-  {
-    path: '/pages/task/detail/receiver',
-    name: 'detailReceiver',
-    component: () =>
-      import(
-        /* webpackChunkName: "detailReceiver" */
-        '@/views/task/detail/receiver'
-      )
-  },
+  // {
+  //   path: '/pages/task/detail/receiver',
+  //   name: 'detailReceiver',
+  //   component: () =>
+  //     import(
+  //       /* webpackChunkName: "detailReceiver" */
+  //       '@/views/task/detail/receiver'
+  //     )
+  // },
   // 任务进度-任务方
   {
     path: '/pages/task/schedule/initiator',

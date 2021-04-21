@@ -2,12 +2,14 @@
   <div>
     <van-popup v-model="isShow">
       <div class="model-block">
-        <div v-if="nameShow" class="model-name">{{ modelName }}</div>
-        <div v-if="titShow" class="model-tit">{{ modelTit }}</div>
-        <div class="model-subtit">提示</div>
+        <div class="model-body">
+          <div v-if="modelName" class="model-name">{{ modelName }}</div>
+          <div v-if="modelTit" class="model-tit">{{ modelTit }}</div>
+          <div v-if="modelSubTit" class="model-subtit">{{ modelSubTit }}</div>
+        </div>
         <div class="model-btn tf-row-space-between">
-          <div class="cancel-btn">否</div>
-          <div class="sure-btn">是</div>
+          <div v-if="cancel" class="cancel-btn" @click="closeModel">{{ cancelTxt }}</div>
+          <div v-if="yes" class="sure-btn" @click="confirmSure">{{ yesTxt }}</div>
         </div>
       </div>
     </van-popup>
@@ -29,19 +31,31 @@ export default {
     },
     modelName: {
       type: String,
-      default: '提示'
-    },
-    nameShow: {
-      type: Boolean,
-      default: true
+      default: ''
     },
     modelTit: {
       type: String,
       default: ''
     },
-    titShow: {
+    modelSubTit: {
+      type: String,
+      default: ''
+    },
+    cancelTxt: {
+      type: String,
+      default: '取消'
+    },
+    cancel: {
       type: Boolean,
-      default: false
+      default: true
+    },
+    yesTxt: {
+      type: String,
+      default: '确认'
+    },
+    yes: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -50,10 +64,15 @@ export default {
     }
   },
   created () {
-    console.log(21212)
   },
   methods: {
-
+    closeModel () {
+      this.isShow = false
+    },
+    confirmSure () {
+      this.closeModel()
+      this.$emit('sure')
+    }
   },
   watch: {
     value (val) {
@@ -75,6 +94,12 @@ export default {
   @flex-column();
   font-size: 30px;
   color: #333333;
+  overflow: hidden;
+  .model-body {
+    @flex-column();
+    justify-content: center;
+    min-height: 232px;
+  }
   .model-name {
     font-weight: 500;
     line-height: 36px;
@@ -82,7 +107,19 @@ export default {
     text-align: center;
   }
   .model-tit {
-
+    width: 380px;
+    line-height: 1.5;
+    margin: 20px auto;
+    text-align: center;
+    font-size: 30px;
+  }
+  .model-subtit {
+    width: 440px;
+    margin: 0 auto 50px;
+    text-align: center;
+    font-size: 24px;
+    line-height: 1.5;
+    color: @gray-7;
   }
   .model-btn {
     height: 88px;

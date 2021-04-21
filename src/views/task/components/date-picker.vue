@@ -1,21 +1,38 @@
 <template>
-  <div v-show="dateShow" class="date-body">
-    <van-calendar ref="calendar" :show-subtitle="false" v-model="show" :min-date="minDate" :max-date="maxDate">
-      <div class="flex-between" slot="title">
-        <div @click="prev">prev</div>
-        <div>2021</div>
-        <div @click="next">next</div>
+  <div v-show="dateShow" class="date-cont">
+    <van-calendar ref="calendar" :show-subtitle="false" v-model="show" :min-date="minDate" :max-date="maxDate" :show-confirm="false" :show-mark="false" :default-date="defaultDate" @confirm="onConfirm">
+      <div class="date-header-block" slot="title">
+        <div class="date-header tf-row-vertical-center">
+          <div class="date-tit">完成时间</div>
+          <div @click="close" class="date-close tf-row-vertical-center van-icon van-icon-cross">
+          </div>
+        </div>
+        <div class="time-field tf-row-center">
+          <van-field @click="timeBlur(0)" v-model="startTime" placeholder="开始时间" disabled  />
+          <div class="time-hr tf-row-vertical-center"></div>
+          <van-field @click="timeBlur(1)" v-model="endTime" placeholder="结束时间" disabled  />
+        </div>
+        <div class="tf-row-center opera-block">
+          <div @click="prev" class="opera-btn van-icon van-icon-arrow-left"></div>
+          <div class="year-month">{{ yearmonth }}</div>
+          <div @click="next" class="opera-btn van-icon van-icon-arrow"></div>
+        </div>
       </div>
       <div slot="footer">
         <van-datetime-picker
           :show-toolbar="false"
           :visible-item-count="3"
+          :item-height="26"
           v-model="currentTime"
+          @change="timeChange"
           type="time"
           title="选择时间"
           :min-hour="0"
           :max-hour="23"
         />
+        <div class="date-sure">
+          <div @click="dateSure" class="task-btn">确定</div>
+        </div>
       </div>
     </van-calendar>
   </div>
@@ -24,13 +41,15 @@
 <script>
 import {
   Calendar,
-  DatetimePicker
+  DatetimePicker,
+  Field
 } from 'vant'
 
 export default {
   components: {
     [Calendar.name]: Calendar,
-    [DatetimePicker.name]: DatetimePicker
+    [DatetimePicker.name]: DatetimePicker,
+    [Field.name]: Field
   },
   props: {
     dateShow: {
@@ -41,8 +60,15 @@ export default {
   data () {
     return {
       show: true,
+      timeIndex: 0, // 0开始日期 1结束日期
+      startTime: '', // 开始时间
+      endTime: '', // 结束时间
+      dateVal: '', // 日期
+      timeVal: '12:00', // 时间
       minDate: new Date(2021, 0, 1),
       maxDate: new Date(2021, 0, 31),
+      defaultDate: new Date(),
+      yearmonth: '', // 年月
       currentTime: '12:00',
       nowTime: '',
       nowYear: 0,
@@ -57,7 +83,7 @@ export default {
     this.nowTime = nowTime
     this.nowYear = nowTime.getFullYear()
     this.nowMonth = nowTime.getMonth() + 1
-
+    this.getMonthDay()
     // this.nowMonth = getDate()
   },
   methods: {
@@ -79,6 +105,7 @@ export default {
       this.getMonthDay()
       // this.$refs.calendar.reset()
     },
+    // 获取选中月份的最小最大日期
     getMonthDay () {
       const firstDay = new Date(this.nowYear, this.nowMonth - 1)
       const lastDay = new Date(new Date(this.nowYear, this.nowMonth).valueOf() - 60 * 60 * 1000 * 24)
@@ -86,17 +113,200 @@ export default {
       const endDate = lastDay.getFullYear() + ',' + (lastDay.getMonth() + 1) + ',' + lastDay.getDate()
       this.minDate = new Date(startDate)
       this.maxDate = new Date(endDate)
+      this.yearmonth = this.nowYear + '年' + this.nowMonth + '月'
       // this.startDay = firstDay.getFullYear() + '-' + (firstDay.getMonth() + 1) + '-' + firstDay.getDate()
       // this.endDay = lastDay.getFullYear() + '-' + (lastDay.getMonth() + 1) + '-' + lastDay.getDate()
       // console.log(this.startDay, this.endDay)
-    }
+    },
+    // 选择了日历
+    onConfirm (date) {
+      this.dateVal = this.formatDate(date)
+      this.setTime()
+    },
+    // 选择了时间
+    timeChange (picker) {
+      this.timeVal = this.currentTime
+      this.setTime()
+    },
+    // 点击时间输入框
+    timeBlur (index) {
+      this.timeIndex = index
+      console.log(this.startTime)
+      // const nowTime = new Date(this.startTime)
+      // this.nowTime = nowTime
+      // this.nowYear = nowTime.getFullYear()
+      // this.nowMonth = nowTime.getMonth() + 1
+      // this.getMonthDay()
+      // this.defaultDate = new Date(2021, 3, 12)
+    },
+    // 时间赋值
+    setTime () {
+      if (this.timeIndex === 0) {
+        this.startTime = this.dateVal + ' ' + this.timeVal
+      } else {
+        this.endTime = this.dateVal + ' ' + this.timeVal
+      }
+    },
+    formatDate (date) {
+      return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    },
+    close () {
+      this.dateShow = false
+    },
+    dateSure () {}
   }
 }
 </script>
 
 <style lang="less" scoped>
-.flex-between {
-  display: flex;
-  justify-content: space-between;
+.date-cont {
+  .van-popup--bottom.van-popup--round {
+    background: #F7F7F7;
+    border-radius: 20px 20px 0px 0px;
+    height: auto;
+  }
+  /deep/.van-popup {
+    .van-icon.van-popup__close-icon--top-right {
+      display: none;
+    }
+    .van-calendar {
+      background: #F7F7F7;
+    }
+    .van-calendar__header {
+      box-shadow: none;
+    }
+    .van-calendar__month-title {
+      display: none;
+    }
+    .van-calendar__weekdays,.van-calendar__body {
+      width: 710px;
+      margin: 0 auto;
+      background-color: #fff;
+    }
+    .van-calendar__weekdays {
+      height: 40px;
+      padding-bottom: 10px;
+      span {
+        line-height: 40px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #AAAAAA;
+      }
+    }
+    .van-calendar__body {
+      margin-bottom: 30px;
+      .van-calendar__day {
+        height: 62px;
+        font-size: 24px;
+        font-weight: 400;
+        color: #000000;
+      }
+      .van-calendar__selected-day {
+        width: 56px;
+        height: 56px;
+        background: #FEBF00;
+        border-radius: 10px;
+        color: #000000;
+      }
+    }
+    .van-picker__columns {
+      &::after {
+        content: ':';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 36px;
+        font-weight: 500;
+        color: #000000;
+      }
+      .van-picker-column:nth-child(1) {
+        padding-left: 180px;
+      }
+      .van-picker-column:nth-child(2) {
+        padding-right: 180px;
+      }
+    }
+  }
+}
+/deep/.van-calendar__header-title {
+  height: auto;
+}
+.date-header-block {
+  height: auto;
+}
+.date-header {
+  height: 90px;
+  line-height: 90px;
+  .date-tit {
+    font-size: 32px;
+    font-weight: 500;
+    color: #000000;
+    flex-grow: 1;
+    text-align: center;
+    padding-left: 76px;
+  }
+  .date-close {
+    width: 50px;
+    height: 50px;
+    padding: 10px;
+    margin-right: 26px;
+    font-size: 40px;
+    justify-content: center;
+    color: #AAAAAA;
+  }
+}
+/deep/.time-field {
+  height: 88px;
+  margin-bottom: 30px;
+  .van-field {
+    width: 324px;
+    height: 88px;
+    background: #FFFFFF;
+    border-radius: 10px;
+  }
+  .time-hr {
+    width: 62px;
+    justify-content: center;
+    &::after {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: #AAAAAA;
+      border-radius: 1px;
+    }
+  }
+  .van-field__body {
+    height: 100%;
+    .van-field__control {
+      text-align: center;
+      font-weight: 500;
+      color: #000000;
+    }
+  }
+}
+.opera-block {
+  height: 106px;
+  align-items: center;
+  width: 710px;
+  background: #FFFFFF;
+  border-radius: 10px 10px 0 0;
+  margin: 0 auto;
+  .opera-btn {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background: #EEEEEE;
+    border-radius: 50%;
+    color: #333333;
+    font-size: 24px;
+  }
+  .year-month {
+    width: 208px;
+  }
+}
+.date-sure {
+  padding: 30px 0;
 }
 </style>
