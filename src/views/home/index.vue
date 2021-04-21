@@ -65,11 +65,7 @@
           :key="index"
           @click="goApp(item)"
         >
-          <img
-            class="app-box__image"
-            :src="item.icon_image"
-            v-imageCach="item.icon_image"
-          />
+          <img class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{ item.application }}</span>
         </van-grid-item>
         <van-grid-item key="all" to="/applist">
