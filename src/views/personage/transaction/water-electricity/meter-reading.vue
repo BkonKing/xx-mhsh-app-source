@@ -137,10 +137,11 @@ export default {
       this.$toast.loading({
         message: '加载中...',
         forbidClick: true,
-        duration: 0
+        duration: 5000
       })
       getMonthRecord(this.params)
         .then(({ data }) => {
+          this.$toast.clear()
           this.houseName = data.house_property_name
           this.params.month_record_id = data.id
           this.isBill = data.is_bill
@@ -173,6 +174,7 @@ export default {
             })
         })
         .catch(err => {
+          this.$toast.clear()
           // 没有上一家或者已经是最后一家报错203，排序号需要还原
           if (err.code == '203') {
             if (this.switchHouseStatus === 'prev') {
@@ -187,12 +189,6 @@ export default {
           }
           this.switchHouseStatus = ''
         })
-        .finally(() => {
-          this.$toast.clear()
-        })
-      setTimeout(() => {
-        this.$toast.clear()
-      }, 10000)
     },
     // 抄水表保存
     saveWater (params) {

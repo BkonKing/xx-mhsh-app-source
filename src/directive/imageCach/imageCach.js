@@ -1,7 +1,8 @@
 function imgLoad (el, binding) {
   api.imageCache({
     url: binding.value,
-    policy: 'cache_only'
+    policy: 'cache_only',
+    thumbnail: false
   },
   function (ret, err) {
     if (ret && ret.status) {

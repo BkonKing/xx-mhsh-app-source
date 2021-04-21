@@ -47,7 +47,7 @@
         v-if="swipeImages && swipeImages.length"
         class="home-swipe"
         :autoplay="6000"
-        :lazy-render="true"
+        :lazy-render="false"
         indicator-color="#fff"
         @change="swipeChange"
       >
@@ -56,11 +56,7 @@
           :key="i"
           @click="$router.push(item.url)"
         >
-          <van-image
-            class="swipe-item__image"
-            :src="item.img"
-            v-imageCach="item.img"
-          />
+          <van-image class="swipe-item__image" :src="item.img" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
@@ -542,12 +538,14 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      bMapGetLocationInfo().then(data => {
-        const { adCode } = data
-        this.getfilmlist(String(adCode).substring(0, 4) + '00')
-      }).catch(() => {
-        this.getfilmlist()
-      })
+      bMapGetLocationInfo()
+        .then(data => {
+          const { adCode } = data
+          this.getfilmlist(String(adCode).substring(0, 4) + '00')
+        })
+        .catch(() => {
+          this.getfilmlist()
+        })
     },
     // 跳转电影页面
     goMovie () {
@@ -736,11 +734,12 @@ export default {
   padding-top: 88px;
 }
 .home-swipe {
-  height: 344.4px;
+  width: 100%;
+  height: 345.4px;
 }
 .swipe-item__image {
   width: 100%;
-  height: 344.4px;
+  height: 345.4px;
 }
 /* app列表 */
 .app-box {

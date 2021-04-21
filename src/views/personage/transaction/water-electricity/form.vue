@@ -77,6 +77,7 @@
       @delete="handleDelete"
       @blur="showKeyboard = false"
       @close="handleConfirm"
+      @hide="handleConfirm"
     />
   </div>
 </template>
@@ -121,6 +122,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    id: {
+      type: [Array, String],
+      default: ''
     }
   },
   data () {
@@ -218,10 +223,14 @@ export default {
     }
   },
   watch: {
+    id () {
+      this.editStatus = !this.record
+      this.meterNum = this.record
+      this.images = this.pic || []
+    },
     record (val) {
       this.editStatus = !val
       this.meterNum = val
-      this.images = this.pic || []
     },
     pic (val) {
       this.images = val || []

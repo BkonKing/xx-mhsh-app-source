@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="pay-info-box">
-            <div class="pay-info-label"><span>户</span><span>名</span></div>
+            <div class="pay-info-label" style="padding-right: 2px;"><span>户</span><span>名</span></div>
             <div class="pay-info-content">
               {{ payInfo.realname | privacyName }}
             </div>
@@ -331,7 +331,7 @@ export default {
     }
 
     .pay-number-label {
-      width: 112px;
+      width: 116px;
       margin-right: 46px;
       font-size: 28px;
       color: #222;
@@ -345,7 +345,7 @@ export default {
       .pay-info-label {
         display: flex;
         justify-content: space-between;
-        width: 112px;
+        width: 116px;
         margin-right: 46px;
         font-size: 28px;
         color: #949494;

@@ -46,7 +46,7 @@
         v-model="checked"
         >全选</van-checkbox
       >
-      <div>
+      <div class="tf-flex">
         <span class="pay-sum"
           >合计：<span class="tf-text-primary">￥{{ payTotal }}</span></span
         >
@@ -343,9 +343,14 @@ export default {
   height: 120px;
   padding: 0 20px 0 30px;
   background: #ffffff;
+  .tf-flex {
+    align-items: center;
+    line-height: 1;
+  }
   .pay-sum {
     font-size: 24px;
     color: #8f8f94;
+    line-height: 1;
     .tf-text-primary {
       font-size: 34px;
       margin-right: 30px;
@@ -355,9 +360,10 @@ export default {
     width: 200px;
     height: 88px;
     background: linear-gradient(-90deg, #eb5841, #f9866b);
+    border: none;
     border-radius: 10px;
     color: #fff;
-    border: none;
+    line-height: 1;
   }
 }
 /deep/ .pay-checkbox {
