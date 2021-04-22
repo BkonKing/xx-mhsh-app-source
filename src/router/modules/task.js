@@ -138,6 +138,36 @@ const taskRouter = [
         /* webpackChunkName: "operateLocale" */
         '@/views/task/operate/locale'
       )
+  },
+  // 我的任务
+  {
+    path: '/pages/task/personage/index',
+    name: 'PersonageTaskIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "PersonageTaskIndex" */
+        '@/views/task/personage/index'
+      )
+  },
+  // 我的任务详情
+  {
+    path: '/pages/task/personage/task',
+    name: 'PersonageTaskDetails',
+    component: () =>
+      import(
+        /* webpackChunkName: "PersonageTaskDetails" */
+        '@/views/task/personage/task'
+      )
+  },
+  // 任务投诉详情
+  {
+    path: '/pages/task/personage/complaint',
+    name: 'TaskComplaintDetails',
+    component: () =>
+      import(
+        /* webpackChunkName: "TaskComplaintDetails" */
+        '@/views/task/personage/complaint'
+      )
   }
 ]
 export default taskRouter

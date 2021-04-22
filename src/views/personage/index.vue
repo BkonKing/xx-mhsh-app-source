@@ -246,7 +246,7 @@
           {{activityTitle}}
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item border title="我的订单" @click="goOrderList(undefined)">
+          <tf-list-item border title="我的任务" @click="goMyTask">
             <template v-slot:image>
               <img
                 class="tf-clist-cell__image"
@@ -455,6 +455,10 @@ export default {
     // 用户积分活动专区
     goActivity () {
       this.$router.push({ name: 'activity' })
+    },
+    // 我的任务
+    goMyTask () {
+      this.$router.push({ name: 'PersonageTaskIndex' })
     }
   },
   filters: {
