@@ -77,7 +77,6 @@
       @delete="handleDelete"
       @blur="showKeyboard = false"
       @close="handleConfirm"
-      @hide="handleConfirm"
     />
   </div>
 </template>
@@ -234,6 +233,9 @@ export default {
     },
     pic (val) {
       this.images = val || []
+    },
+    showKeyboard (val) {
+      !val && this.handleConfirm()
     }
   }
 }
