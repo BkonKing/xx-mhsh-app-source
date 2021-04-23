@@ -8,9 +8,9 @@
           </div>
         </div>
         <div class="time-field tf-row-center">
-          <van-field @click="timeBlur(0)" v-model="startTime" placeholder="开始时间" disabled  />
+          <div @click="timeBlur(0)" :class="{'active': timeIndex == 0}"><van-field v-model="startTime" placeholder="开始时间" disabled  /></div>
           <div class="time-hr tf-row-vertical-center"></div>
-          <van-field @click="timeBlur(1)" v-model="endTime" placeholder="结束时间" disabled  />
+          <div @click="timeBlur(1)" :class="{'active': timeIndex == 1}"><van-field v-model="endTime" placeholder="结束时间" disabled  /></div>
         </div>
         <div class="tf-row-center opera-block">
           <div @click="prev" class="opera-btn van-icon van-icon-arrow-left"></div>
@@ -131,13 +131,30 @@ export default {
     // 点击时间输入框
     timeBlur (index) {
       this.timeIndex = index
-      console.log(this.startTime)
-      // const nowTime = new Date(this.startTime)
-      // this.nowTime = nowTime
-      // this.nowYear = nowTime.getFullYear()
-      // this.nowMonth = nowTime.getMonth() + 1
-      // this.getMonthDay()
-      // this.defaultDate = new Date(2021, 3, 12)
+      // console.log(this.startTime, this.dateVal)
+      console.log(this.dateVal.split('-').join(','))
+      let timeVal = ''
+      if (index == 0) {
+        if (this.startTime) {
+          timeVal = this.startTime
+        }
+      } else {
+        if (this.endTime) {
+          timeVal = this.endTime
+        }
+      }
+      if (timeVal) {
+        const nowTime = new Date(timeVal)
+        this.nowTime = nowTime
+        this.nowYear = nowTime.getFullYear()
+        this.nowMonth = nowTime.getMonth() + 1
+        this.getMonthDay()
+        const dateArr = timeVal.split(' ')[0].split('-')
+        dateArr[1] = dateArr[1] - 1
+        // const dateStr = dateArr.join(',')
+        console.log(timeVal, dateArr)
+        this.defaultDate = new Date(dateArr[0], dateArr[1], dateArr[2])
+      }
     },
     // 时间赋值
     setTime () {
@@ -254,6 +271,11 @@ export default {
     font-size: 40px;
     justify-content: center;
     color: #AAAAAA;
+  }
+}
+.active {
+  /deep/.van-field {
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
   }
 }
 /deep/.time-field {

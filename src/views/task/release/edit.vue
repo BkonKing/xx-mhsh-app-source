@@ -176,7 +176,7 @@ export default {
           text: '指定人群'
         }
       ],
-      dateShow: true, // 时间筛选
+      dateShow: false, // 时间筛选
       completeTime: '', // 完成时间
       ableLookVal: '不限',
       selectShow: false, // 可见范围

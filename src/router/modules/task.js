@@ -9,6 +9,16 @@ const taskRouter = [
         '@/views/task/release/select-type'
       )
   },
+  // 发布帖子
+  {
+    path: '/pages/task/release/pubuish',
+    name: 'postPubuish',
+    component: () =>
+      import(
+        /* webpackChunkName: "postPubuish" */
+        '@/views/task/release/pubuish'
+      )
+  },
   // 发布/修改任务
   {
     path: '/pages/task/release/edit',

@@ -68,9 +68,10 @@ export default {
   methods: {
     closeModel () {
       this.isShow = false
+      this.$emit('cancel')
     },
     confirmSure () {
-      this.closeModel()
+      this.isShow = false
       this.$emit('sure')
     }
   },

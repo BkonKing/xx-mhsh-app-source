@@ -1,10 +1,9 @@
 <template>
   <div class="type-list tf-row-wrap">
-    <div :class="[selectIndex === 0 ? 'cur': '', 'type-item']">生活分享</div>
+    <div @click="radioSelect(index)" v-for="(item, index) in radioList" :key="index" :class="[selectIndex === index ? 'cur': '', 'type-item']">{{ item.text }}</div>
+    <!-- <div class="type-item">生活分享</div>
     <div class="type-item">知识分享</div>
-    <div class="type-item">生活分享</div>
-    <div class="type-item">知识分享</div>
-    <div class="type-item">生活分享</div>
+    <div class="type-item">生活分享</div> -->
   </div>
 </template>
 
@@ -34,7 +33,10 @@ export default {
   created () {
   },
   methods: {
-
+    radioSelect (index) {
+      this.selectIndex = index
+      this.$emit('selectCall', index)
+    }
   },
   watch: {
     value (val) {

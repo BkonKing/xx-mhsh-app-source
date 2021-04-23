@@ -9,13 +9,13 @@
       <div class="type-name">选择发布类型</div>
       <div class="type-block" :class="{ 'cur' : teamIndex > -1 }">
         <div class="type-tit">小组</div>
-        <radio-list v-model="teamIndex"></radio-list>
+        <radio-list v-model="teamIndex" :radioList="postTypeList" @selectCall="postCall"></radio-list>
       </div>
       <div class="type-block" :class="{ 'cur' : taskIndex > -1 }">
         <div class="type-tit">任务</div>
-        <radio-list v-model="taskIndex"></radio-list>
+        <radio-list v-model="taskIndex" :radioList="taskTypeList" @selectCall="taskCall"></radio-list>
       </div>
-      <div class="task-btn type-btn" :class="{ 'unable-btn': !selectId }">下一步</div>
+      <div @click="goLink" class="task-btn type-btn" :class="{ 'unable-btn': !selectId }">下一步</div>
     </div>
   </div>
 </template>
@@ -25,6 +25,8 @@ import {
   NavBar
 } from 'vant'
 import radioList from '../components/radio-list'
+import { getPostBarCategoryList } from '@/api/neighbours'
+import { getTaskTypeList } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -32,19 +34,76 @@ export default {
   },
   data () {
     return {
+      postTypeList: [], // 小组类型
+      taskTypeList: [], // 任务类型
       selectType: 0, // 选中的类型 1小组 2任务
       selectId: 0, // 选择的id
       teamIndex: -1, // 小组选中项
-      taskIndex: 0 // 任务选中项
+      taskIndex: -1 // 任务选中项
     }
   },
   created () {
-
+    this.getPostType()
+    this.getTaskType()
   },
   mounted () {
-
   },
   methods: {
+    // 小组类型
+    getPostType () {
+      getPostBarCategoryList().then(res => {
+        this.postTypeList = res.data.map(item => {
+          return {
+            id: item.id,
+            text: item.category
+          }
+        })
+      })
+    },
+    // 任务类型
+    getTaskType () {
+      getTaskTypeList().then(res => {
+        this.taskTypeList = res.data.map(item => {
+          return {
+            id: item.id,
+            text: item.type_name
+          }
+        })
+      })
+    },
+    // 选择小组类型
+    postCall (index) {
+      if (this.taskIndex > -1) {
+        this.taskIndex = -1
+      }
+      this.selectId = this.postTypeList[index].id
+    },
+    // 选择任务类型
+    taskCall (index) {
+      if (this.teamIndex > -1) {
+        this.teamIndex = -1
+      }
+      this.selectId = this.taskTypeList[index].id
+    },
+    goLink () {
+      if (this.teamIndex > -1) {
+        this.$router.push({
+          name: 'postPubuish',
+          query: {
+            typeId: this.selectId
+          }
+        })
+      } else if (this.taskIndex > -1) {
+        console.log(this.taskTypeList, this.taskIndex)
+        this.$router.push({
+          name: 'releaseEdit',
+          query: {
+            typeId: this.selectId
+          }
+        })
+      }
+    },
+    // 关闭
     closePage () {
       this.$router.go(-1)
     }
