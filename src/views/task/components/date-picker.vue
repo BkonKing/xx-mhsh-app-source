@@ -1,6 +1,6 @@
 <template>
-  <div v-show="dateShow" class="date-cont">
-    <van-calendar ref="calendar" :show-subtitle="false" v-model="show" :min-date="minDate" :max-date="maxDate" :show-confirm="false" :show-mark="false" :default-date="defaultDate" @confirm="onConfirm">
+  <div class="date-cont">
+    <van-calendar ref="calendar" :show-subtitle="false" v-model="dateShow" :min-date="minDate" :max-date="maxDate" :show-confirm="false" :show-mark="false" :default-date="defaultDate" @confirm="onConfirm">
       <div class="date-header-block" slot="title">
         <div class="date-header tf-row-vertical-center">
           <div class="date-tit">完成时间</div>
@@ -52,14 +52,14 @@ export default {
     [Field.name]: Field
   },
   props: {
-    dateShow: {
+    value: {
       type: Boolean,
       default: false
     }
   },
   data () {
     return {
-      show: true,
+      dateShow: this.value,
       timeIndex: 0, // 0开始日期 1结束日期
       startTime: '', // 开始时间
       endTime: '', // 结束时间
@@ -170,7 +170,19 @@ export default {
     close () {
       this.dateShow = false
     },
-    dateSure () {}
+    dateSure () {
+      this.$emit('dateSure', { startTime: this.startTime, endTime: this.endTime })
+      this.close()
+      console.log(this.startTime, this.endTime)
+    }
+  },
+  watch: {
+    value (val) {
+      this.dateShow = val
+    },
+    dateShow (val) {
+      this.$emit('input', val)
+    }
   }
 }
 </script>

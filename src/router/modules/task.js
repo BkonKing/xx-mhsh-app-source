@@ -27,7 +27,10 @@ const taskRouter = [
       import(
         /* webpackChunkName: "releaseEdit" */
         '@/views/task/release/edit'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 选择任务群
   {

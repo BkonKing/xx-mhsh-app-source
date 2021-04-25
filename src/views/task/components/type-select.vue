@@ -1,5 +1,5 @@
 <template>
-  <task-card cardTit="小组类型">
+  <task-card :cardTit="cardTit">
     <div slot="content">
       <div v-if="radioIndex > -1" class="label-block">
         <div @click="radioToggle" class="lable-tit tf-row-space-between">
@@ -25,7 +25,7 @@ export default {
   props: {
     cardTit: {
       type: String,
-      default: ''
+      default: '小组类型'
     },
     radioList: {
       type: Array,

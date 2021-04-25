@@ -19,7 +19,7 @@
           </div>
         </div>
       </task-card> -->
-      <type-select ref="typeRadio" :radioList="postTypeList" @selectCall="postCall"></type-select>
+      <type-select ref="typeRadio" :radioList="typeList" @selectCall="postCall"></type-select>
       <graphic
         :cardTit="cardTit"
         :phTxt="phTxt"
@@ -53,7 +53,7 @@ export default {
   },
   data () {
     return {
-      postTypeList: [], // 类型
+      typeList: [], // 类型
       textNum: 0, // textarea 长度
       formData: {
         content: '',
@@ -79,7 +79,7 @@ export default {
     // 小组类型
     getPostType () {
       getPostBarCategoryList().then(res => {
-        this.postTypeList = res.data.map((item, key) => {
+        this.typeList = res.data.map((item, key) => {
           if (item.id == this.typeId) {
             this.typeIndex = key
             this.typeName = item.category
@@ -95,8 +95,8 @@ export default {
     // 选择小组类型
     postCall (index) {
       this.typeIndex = index
-      this.typeId = this.postTypeList[index].id
-      this.typeName = this.postTypeList[index].text
+      this.typeId = this.typeList[index].id
+      this.typeName = this.typeList[index].text
     },
     // 图文信息
     getForm (val) {
@@ -105,7 +105,7 @@ export default {
     },
     // 提交
     submit () {
-      const typeId = this.postTypeList[this.typeIndex].id
+      const typeId = this.typeList[this.typeIndex].id
       const validator = [
         {
           value: this.formData.content,

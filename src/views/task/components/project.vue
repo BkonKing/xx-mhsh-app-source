@@ -12,8 +12,8 @@
         </van-search>
       </div>
       <div class="project-list">
-        <div @click="onSelect(index)" v-for="(item ,index) in projectList" :key="index" class="project-item tf-row-space-between cur">
-          <div class="itme-name van-ellipsis">新乡好生活家园</div>
+        <div @click="onSelect(index)" v-for="(item ,index) in projectList" :key="index" class="project-item tf-row-space-between" :class="{'cur': tabIndex == index}">
+          <div class="itme-name van-ellipsis">{{ item.project_name }}</div>
           <div class="check-block"><span class="tf-icon tf-icon-gou"></span></div>
         </div>
       </div>
@@ -29,6 +29,7 @@ import {
   Popup,
   Search
 } from 'vant'
+import { searchProjectList } from '@/api/task'
 export default {
   components: {
     [Popup.name]: Popup,
@@ -49,9 +50,20 @@ export default {
     }
   },
   created () {
+    this.searchProjectList()
   },
   methods: {
-    onSelect (index) {},
+    searchProjectList () {
+      searchProjectList({
+        projectName: this.searchVal
+      }).then(res => {
+        this.projectList = res.data
+        console.log(res)
+      })
+    },
+    onSelect (index) {
+      this.tabIndex = index
+    },
     close () {
       this.projectShow = false
     },

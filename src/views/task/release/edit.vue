@@ -6,7 +6,7 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
-      <type-select></type-select>
+      <type-select cardTit="任务类型" ref="typeRadio" :radioList="typeList" @selectCall="typeCall"></type-select>
       <task-card cardTit="任务标题" :required="true">
         <div class="card-cont" slot="content">
           <div class="area-block bottom-line tf-row-space-between">
@@ -25,7 +25,7 @@
             <div class="card-tit">奖励幸福币(每人)<span class="tit-icon">*</span></div>
             <van-field v-model="formData.coin" type="number" />
           </div>
-          <div class="card-tip">同类型任务参考价<span>500~1000</span>幸福币，请参考此价格设置奖励</div>
+          <div v-if="typeIndex > -1" class="card-tip">同类型任务参考价<span>{{ typeList[typeIndex].start_price }}~{{ typeList[typeIndex].close_price }}</span>幸福币，请参考此价格设置奖励</div>
         </div>
       </task-card>
       <task-card cardTit="任务标签">
@@ -50,7 +50,7 @@
           <div class="cell-item tf-row">
             <div class="item-left">需要人数</div>
             <div class="item-cont num-step">
-              <van-stepper v-model="value" />
+              <van-stepper v-model="formData.need_people" max="100" />
             </div>
           </div>
           <div @click="dateShow=true" class="cell-item tf-row">
@@ -100,7 +100,7 @@
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
-    <date-picker :dateShow="dateShow"></date-picker>
+    <date-picker v-model="dateShow" @dateSure="dateSure"></date-picker>
     <area-picker v-model="areaShow" @areaSure="areaSure"></area-picker>
     <list-select v-model="selectShow" @selectCall="selectCall" :selectList="selectList"></list-select>
     <list-select v-model="telShow" @selectCall="telCall" :selectList="telList"></list-select>
@@ -116,12 +116,14 @@ import datePicker from '../components/date-picker'
 import areaPicker from '../components/area-picker'
 import listSelect from '../components/list-select'
 import project from '../components/project'
+import { getTaskTypeList } from '@/api/task'
 import {
   NavBar,
   Stepper
 } from 'vant'
 
 export default {
+  name: 'releaseEdit',
   components: {
     [NavBar.name]: NavBar,
     [Stepper.name]: Stepper,
@@ -182,7 +184,11 @@ export default {
       selectShow: false, // 可见范围
       areaShow: false, // 可见范围-指定地区
       projectShow: false, // 小区
-      telLimt: '公开'
+      telLimt: '公开',
+      typeList: [], // 类型
+      typeIndex: -1, // 选中项
+      typeName: '', // 类型选择项内容
+      typeId: '' // 类型选择项id
     }
   },
   computed: {
@@ -191,10 +197,35 @@ export default {
     }
   },
   created () {
-    // this.category_id = this.$route.query.category_id || ''
-    // this.getPostBarCategoryList()
+    this.typeId = this.$route.query.typeId
+    this.getTaskType()
   },
   methods: {
+    // 任务类型
+    getTaskType () {
+      getTaskTypeList().then(res => {
+        this.typeList = res.data.map((item, key) => {
+          if (item.id == this.typeId) {
+            this.typeIndex = key
+            this.typeName = item.category
+            this.$refs.typeRadio.setType(key)
+          }
+          return {
+            id: item.id,
+            text: item.type_name,
+            start_price: item.start_price,
+            close_price: item.close_price
+          }
+        })
+        console.log(this.typeList)
+      })
+    },
+    // 选择任务类型
+    typeCall (index) {
+      this.typeIndex = index
+      this.typeId = this.typeList[index].id
+      this.typeName = this.typeList[index].text
+    },
     // 图文信息
     getForm (val) {
       this.formData = Object.assign(this.formData, val)
@@ -211,12 +242,31 @@ export default {
     labelDel (index) {
       this.labelList.splice(index, 1)
     },
+    // 时间选择
+    dateSure (obj) {
+      this.formData.task_stime = obj.startTime
+      this.formData.task_etime = obj.endTime
+      if (!obj.startTime && !obj.endTime) {
+        this.completeTime = ''
+      } else {
+        if (obj.startTime && obj.endTime) {
+          this.completeTime = obj.startTime + ' ~ ' + obj.endTime
+        } else {
+          this.completeTime = '截止 ' + obj.endTime
+        }
+      }
+    },
     // 弹窗选择-可见范围
     selectCall (callData) {
       if (callData.value == 1) { // 指定地区
         this.areaShow = true
-      } else if (callData.value == 2) {
+      } else if (callData.value == 2) { // 指定小区
         this.projectShow = true
+      } else if (callData.value == 3) { // 指定人群
+        this.selectShow = false
+        this.$router.push({
+          name: 'releaseGroup'
+        })
       }
     },
     // 地区选择
