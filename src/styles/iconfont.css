@@ -12,6 +12,62 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-dizhi:before {
+  content: "\e65f";
+}
+
+.tf-icon-pingjia:before {
+  content: "\e663";
+}
+
+.tf-icon-didian:before {
+  content: "\e669";
+}
+
+.tf-icon-lianxi:before {
+  content: "\e660";
+}
+
+.tf-icon-xiaoxi1:before {
+  content: "\e666";
+}
+
+.tf-icon-tiwen:before {
+  content: "\e668";
+}
+
+.tf-icon-fenxiang:before {
+  content: "\e661";
+}
+
+.tf-icon-fenxiang2:before {
+  content: "\e662";
+}
+
+.tf-icon-pinglun1:before {
+  content: "\e665";
+}
+
+.tf-icon-dianzan1:before {
+  content: "\e66a";
+}
+
+.tf-icon-gengduo1:before {
+  content: "\e66c";
+}
+
+.tf-icon-tupian1:before {
+  content: "\e66d";
+}
+
+.tf-icon-yiwancheng:before {
+  content: "\e65e";
+}
+
+.tf-icon-xingfubi1:before {
+  content: "\e65d";
+}
+
 .tf-icon-lifepaymessage:before {
   content: "\e600";
 }

@@ -8,19 +8,22 @@
       placeholder
       @click-left="$router.go(-1)"
     >
+      <template #right>
+        <span
+          class="van-icon van-icon-ellipsis"
+          @click="openMoreDialog"
+        ></span>
+      </template>
     </van-nav-bar>
     <div class="tf-main-container">
-      <div class="task-wrapper">
+      <div class="task-wrapper" @click="goDetails">
         <div class="task-header">
           <span class="task-caption">五凤兰庭清洁志愿者招募</span>
           <span class="task-title">进行中</span>
         </div>
         <div class="task-body">
           <div class="task-view">
-            <img
-              class="task-icon"
-              src="https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ac2d12f0a28411eb91bf2b62ae51e7f0.png"
-            />
+            <span class="tf-icon tf-icon-xingfubi1 task-icon"></span>
             <span class="task-num">1000</span>
             <span class="task-text">(100幸福币/人)</span>
           </div>
@@ -29,7 +32,7 @@
           <span class="task-title-1">完成地点：三盛滨江国际1号楼 线下科技</span>
         </div>
       </div>
-      <div class="task-schedule">
+      <div class="task-schedule" @click="goSchedule">
         <div class="task-schedule-caption">任务进度</div>
         <div class="task-schedule-info">
           <span class="task-schedule-text">2人待确认完成</span>
@@ -46,7 +49,24 @@ export default {
   data () {
     return {}
   },
-  methods: {}
+  methods: {
+    // 打开更多
+    openMoreDialog () {
+
+    },
+    // 任务进度
+    goSchedule () {
+      this.$router.push({
+        name: 'scheduleReceiver'
+      })
+    },
+    // 邻里-任务详情
+    goDetails () {
+      this.$router.push({
+        name: 'taskDetail'
+      })
+    }
+  }
 }
 </script>
 
@@ -80,8 +100,9 @@ export default {
 
 .task-icon {
   margin-right: 20px;
-  width: 32px;
-  height: 32px;
+  font-size: 32px;
+  color: #febf00;
+  line-height: 1;
 }
 
 .task-num {
@@ -161,7 +182,7 @@ export default {
       margin-left: 12px;
       font-size: 28px;
       line-height: 1;
-      color: #8F8F94;
+      color: #8f8f94;
     }
   }
 }

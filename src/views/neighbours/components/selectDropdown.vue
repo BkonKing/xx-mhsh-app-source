@@ -60,21 +60,24 @@ export default {
     handleChange (item) {
       this.groupDropdown = false
       this.$emit('change', item)
+    },
+    scrollCenter () {
+      this.$nextTick(() => {
+        const el = this.$refs.container.getElementsByClassName('group-active')[0]
+        this.$refs.container.scrollLeft = el.offsetLeft - (api.winWidth || 375 - el.offsetWidth) / 2 + 7
+      })
     }
   },
   watch: {
     categoryId (val) {
       this.$emit('input', val)
+      this.scrollCenter()
     },
     value (val) {
       this.categoryId = val
     },
     groupDropdown (val) {
-      if (!val) {
-        this.$nextTick(() => {
-          this.$refs.container.scrollLeft = this.$refs.container.getElementsByClassName('group-active')[0].offsetLeft - 14
-        })
-      }
+      !val && this.scrollCenter()
       this.$emit('update:visible', val)
     },
     visible (val) {

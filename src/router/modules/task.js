@@ -160,7 +160,10 @@ const taskRouter = [
       import(
         /* webpackChunkName: "PersonageTaskIndex" */
         '@/views/task/personage/index'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 我的任务详情
   {

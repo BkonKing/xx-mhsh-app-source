@@ -26,7 +26,7 @@
         </div>
         <tf-image-list
           class="image-list"
-          v-if="images"
+          v-if="images && images.length"
           :data="images"
           :column="4"
           mode="show"
@@ -49,15 +49,10 @@ export default {
   },
   data () {
     return {
-      images: [
-        'https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png',
-        'https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png',
-        'https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png',
-        'https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png',
-        'https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png'
-      ]
+      images: []
     }
   },
+  created () {},
   methods: {}
 }
 </script>
@@ -68,6 +63,8 @@ export default {
 }
 
 .complaint-container {
+  display: flex;
+  flex-direction: column;
   padding: 0 30px;
   border-radius: 10px;
   /deep/ .van-cell {
@@ -82,7 +79,7 @@ export default {
       line-height: 1;
     }
     .van-cell__value {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 500;
       color: #000000;
       line-height: 1;
@@ -97,11 +94,12 @@ export default {
   font-size: 28px;
   color: #000000;
   line-height: 48px;
+  word-break: break-all;
 }
 
 .image-list {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .complaint-group-2 {
@@ -113,6 +111,7 @@ export default {
   line-height: 48px;
   color: #8f8f94;
   font-size: 26px;
+  word-break: break-all;
 }
 
 .complaint-text {

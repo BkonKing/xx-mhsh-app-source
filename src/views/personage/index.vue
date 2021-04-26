@@ -243,15 +243,18 @@
         </div>
         <!-- 积分活动 -->
         <div v-if="isOpenActivity" class="activity-banner" @click="goActivity">
-          {{activityTitle}}
+          {{ activityTitle }}
         </div>
         <tf-list class="personage-list tf-mb-lg">
           <tf-list-item border title="我的任务" @click="goMyTask">
             <template v-slot:image>
               <img
                 class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_dingdan.png"
+                src="@/assets/imgs/personage_task.png"
               />
+            </template>
+            <template v-slot:right>
+              <span class="num-tag">2</span>
             </template>
           </tf-list-item>
           <tf-list-item border title="我的互动" @click="goInteraction">
@@ -755,5 +758,16 @@ export default {
   color: #000000;
   background: url("~@/assets/imgs/personage_activity_banner.png");
   background-size: contain;
+}
+.num-tag {
+  @flex-center();
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  background: #ff6555;
+  border-radius: 50%;
+  font-size: 26px;
+  font-weight: 500;
+  color: #ffffff;
 }
 </style>

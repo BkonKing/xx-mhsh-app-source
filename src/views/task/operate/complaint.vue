@@ -37,8 +37,8 @@
             <div class="complaint-info-item-label">
               <span>任</span><span>务</span>
             </div>
-            <div class="complaint-info-item-value">
-              任务标题任务标题任务标题任务标…
+            <div class="complaint-info-item-value van-ellipsis">
+              任务标题任务标题任务标题任务标任务标题任务标任务标题任务标
             </div>
           </div>
         </div>
@@ -47,8 +47,8 @@
             <span class="complaint-form-text">投诉类型</span>
             <span class="complaint-form-tag">*</span>
           </div>
-          <div class="complaint-form-select">
-            <span class="complaint-form-text">请选择</span>
+          <div class="complaint-form-select" @click="typeVisible = true">
+            <span class="complaint-form-text">{{ aText || "请选择" }}</span>
             <span class="tf-icon tf-icon-right"></span>
           </div>
           <div class="complaint-form-label">
@@ -56,7 +56,7 @@
             <span class="complaint-form-tag">*</span>
           </div>
           <van-field
-            v-model="content"
+            v-model="b"
             autosize
             rows="4"
             type="textarea"
@@ -77,11 +77,26 @@
         v-preventReClick
         size="large"
         type="danger"
-        :disabled="saveDisabled"
+        :disabled="!(a && b)"
         @click="save"
         >确认</van-button
       >
     </div>
+    <van-popup
+      v-model="typeVisible"
+      safe-area-inset-bottom
+      get-container="body"
+      class="type-dialog"
+    >
+      <div
+        v-for="item in typeList"
+        :key="item.value"
+        class="type-item van-ellipsis"
+        @click="selectType(item)"
+      >
+        {{ item.text }}
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -93,9 +108,45 @@ export default {
     tfUploader
   },
   data () {
-    return {}
+    return {
+      a: '', // 投诉类型值
+      aText: '', // 投诉类型文本
+      b: '', // 投诉描述
+      images: [],
+      typeList: [
+        {
+          value: 1,
+          text: '侵权'
+        },
+        {
+          value: 2,
+          text: '侵权'
+        },
+        {
+          value: 3,
+          text: '侵权'
+        },
+        {
+          value: 4,
+          text: '侵权'
+        },
+        {
+          value: 5,
+          text: '侵权'
+        }
+      ],
+      typeVisible: false
+    }
   },
-  methods: {}
+  methods: {
+    // 选择类型
+    selectType ({ value, text }) {
+      this.a = value
+      this.aText = text
+      this.typeVisible = false
+    },
+    save () {}
+  }
 }
 </script>
 
@@ -251,6 +302,10 @@ export default {
       width: 150px;
       height: 150px;
     }
+    /deep/ .van-uploader__upload {
+      border: 2px dashed #8F8F94;
+      background: #fff;
+    }
   }
 }
 
@@ -258,5 +313,23 @@ export default {
   margin: 60px 20px 30px;
   width: 710px;
   border-radius: 44px !important;
+}
+
+.type-dialog {
+  width: 550px;
+  padding: 0 30px;
+  border-radius: 10px;
+  .type-item {
+    width: 100%;
+    height: 109px;
+    line-height: 109px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    color: #333333;
+  }
+  .type-item + .type-item {
+    border-top: 1px solid #eeeeee;
+  }
 }
 </style>

@@ -49,8 +49,9 @@
         v-preventReClick
         type="primary"
         size="large"
+        :disabled="!evaluate_stars"
         @click="submit"
-        >匿名提交</van-button
+        >提交</van-button
       >
     </div>
   </div>
@@ -137,7 +138,7 @@ export default {
     this.launchEvaluate()
   },
   methods: {
-    /* 提交 */
+    // 提交
     submit () {
       const validator = [
         {
@@ -149,7 +150,7 @@ export default {
         this.evaluate()
       })
     },
-    /* 提交评价请求 */
+    // 提交评价请求
     evaluate () {
       evaluate({
         repair_id: this.repairId,
@@ -160,7 +161,7 @@ export default {
         this.$router.go(-1)
       })
     },
-    /* 获取相关信息 */
+    // 获取相关信息
     launchEvaluate () {
       launchEvaluate({
         repairId: this.repairId
@@ -280,5 +281,14 @@ export default {
   margin-top: 60px;
   margin-bottom: 30px;
   border-radius: 44px !important;
+}
+/deep/ .van-button--primary {
+  background-color: #FF6555;
+  border-color:  #FF6555;
+}
+/deep/ .van-button--disabled {
+  background-color: #F9CBC6;
+  border-color: #F9CBC6;
+  opacity: 1;
 }
 </style>

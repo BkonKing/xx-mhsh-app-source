@@ -16,18 +16,23 @@
                 src="https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png"
               />
             </div>
-            <div class="complaint-view-1">
+            <div class="complaint-view-1" @click="goDetails">
               <span class="complaint-nick-name">王晓红</span>
               <span class="complaint-caption-1"
                 >五凤兰庭小区清洁志愿者招募</span
               >
             </div>
           </div>
-          <div class="complaint-group-2">
-            <span class="complaint-text">回复：</span
-            >投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内投诉描述内容内容投诉描述内容内容投诉描述内投诉描述内容内容投诉描述内容内容投诉描述
+          <div v-if="item.content" class="complaint-group-2">
+            <span class="complaint-text">回复：</span>{{ item.content }}
           </div>
         </div>
+      </div>
+    </template>
+    <template v-slot:nodata>
+      <div class="no-data-box">
+        <img class="no-data-img" src="@/assets/neighbours/notask.png" />
+        <div class="no-data-text">暂无内容</div>
       </div>
     </template>
   </refreshList>
@@ -55,11 +60,17 @@ export default {
       return getRepairList({
         repairId: id
       })
+    },
+    // 邻里-任务详情
+    goDetails () {
+      this.$router.push({
+        name: 'taskDetail'
+      })
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-@import url('./complaint.less');
+@import url("./complaint.less");
 </style>

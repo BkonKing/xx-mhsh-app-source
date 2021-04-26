@@ -81,7 +81,7 @@ export default {
     return {
       bankCardArr: [],
       isShow: false,
-      type: api.systemType
+      type: api.systemType || 'ios'
     }
   },
   methods: {

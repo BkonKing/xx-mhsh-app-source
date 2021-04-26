@@ -120,6 +120,30 @@
           </div>
         </div>
       </div>
+      <!-- 任务专区 -->
+      <div class="task-box">
+        <div class="task-bg2"></div>
+        <div class="task-box__header">
+          <div ref="sign" class="task-box__title" @click="goHappiness">
+            <img
+              class="task-box__header-logo"
+              src="@/assets/imgs/home_task.png"
+            />
+            <span class="tf-icon tf-icon-right"></span>
+          </div>
+        </div>
+        <div class="task-ul">
+          <li class="task-item" v-for="i in 3" :key="i">
+            <span class="tf-icon tf-icon-xingfubi1"></span>
+            <span class="task-num">+{{ i }}000</span>
+            <span class="task-text task-username">王小明王小明</span>
+            <span class="task-text">发布了</span>
+            <span class="task-title"
+              >任务标题任务标题任务任标题任务任题任务任</span
+            >
+          </li>
+        </div>
+      </div>
       <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
         <!-- 9.9特卖 -->
         <div
@@ -542,12 +566,14 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      bMapGetLocationInfo().then(data => {
-        const { adCode } = data
-        this.getfilmlist(String(adCode).substring(0, 4) + '00')
-      }).catch(() => {
-        this.getfilmlist()
-      })
+      bMapGetLocationInfo()
+        .then(data => {
+          const { adCode } = data
+          this.getfilmlist(String(adCode).substring(0, 4) + '00')
+        })
+        .catch(() => {
+          this.getfilmlist()
+        })
     },
     // 跳转电影页面
     goMovie () {
@@ -831,6 +857,73 @@ export default {
   }
   /deep/ .van-notice-bar__content.van-ellipsis {
     width: 100%;
+  }
+}
+// 任务专区
+.task-box {
+  padding: 0 30px;
+  margin: 0 20px 40px;
+  padding-bottom: 30px;
+  background: #ffefc0;
+  background-image: url('~@/assets/imgs/home_task_bg.png');
+  background-size: 100% 160px;
+  background-repeat: no-repeat;
+  border-radius: 10px;
+  overflow: hidden;
+  &__header {
+    padding: 30px 0;
+    &-logo {
+      height: 36px;
+    }
+  }
+  &__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .tf-icon-right {
+      font-size: 24px;
+      color: #38383866;
+    }
+  }
+  .task-ul {
+    padding: 30px 30px 0;
+    background: #ffffff;
+    border-radius: 10px;
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding-bottom: 30px;
+    }
+    .tf-icon-xingfubi1 {
+      font-size: 28px;
+      line-height: 1;
+      color: #febf00;
+    }
+    .task-num {
+      width: 91px;
+      margin-left: 10px;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1;
+      color: #febf00;
+    }
+    .task-text {
+      font-size: 24px;
+      line-height: 1;
+      color: #8f8f94;
+    }
+    .task-username {
+      width: 126px;
+      @text-ellipsis();
+    }
+    .task-title {
+      flex: 1;
+      margin-left: 10px;
+      font-size: 24px;
+      line-height: 1;
+      color: #333;
+      @text-ellipsis();
+    }
   }
 }
 /* 专区容器 */

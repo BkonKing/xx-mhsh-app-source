@@ -8,7 +8,7 @@
         </div>
         <!-- 任务 -->
         <template v-if="articleType == 1">
-          <div class="operation-item" @click="goDetails">
+          <div class="operation-item" @click="goQuiz()">
             <img
               class="operation-icon"
               src="@/assets/neighbours/question.png"
@@ -157,6 +157,15 @@ export default {
         })
       })
     },
+    // 跳转到任务提问
+    goQuiz () {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          id: this.item.id
+        }
+      })
+    },
     goDetails () {
       this.$router.push({
         path: '/pages/neighbours/details',
@@ -203,6 +212,9 @@ export default {
     .operation-icon {
       width: 36px;
       height: 36px;
+      font-size: 36px;
+      line-height: 1;
+      color: #8F8F94;
     }
     .operation-text {
       margin-left: 10px;

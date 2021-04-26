@@ -12,9 +12,12 @@
         @click-right="goCoinRecord"
       ></van-nav-bar>
       <div class="sign-box tf-row-space-between">
-        <div class="tf-row-center tf-flex-item">
-          <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
-          <div class="coin-number">{{ credits }}</div>
+        <div class="coin-box">
+          <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
+          <div class="">
+            <span class="coin-number">{{ credits }}</span>
+            <div class="coin-freeze">可用800 不可用800</div>
+          </div>
         </div>
         <van-button
           v-preventReClick
@@ -392,9 +395,10 @@ export default {
 }
 .page-bg {
   width: 750px;
-  height: 378px;
+  height: 428px;
   background: url("../../../assets/imgs/credits_header.png") no-repeat;
   background-size: cover;
+  background-repeat: no-repeat;
 }
 .nav-bar {
   flex-direction: row;
@@ -434,26 +438,38 @@ export default {
   background-color: @gray-2;
 }
 .sign-box {
-  height: 290px;
-  align-items: center;
+  height: 300px;
+  padding-top: 94px;
 }
 .coin-main-box {
   flex: 1;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+.coin-box {
+  display: flex;
+  flex: 1;
+  padding-top: 12px;
+  margin-left: 59px;
+}
 .coin-number {
   font-size: 72px;
-  line-height: 72px;
+  line-height: 1;
   font-weight: 500;
-  color: @gold-color;
+  color: #fff;
+}
+.coin-freeze {
+  margin-top: 20px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+  color: #ffffff;
 }
 .coin-icon {
-  @flex-column();
-  font-size: 36px;
-  color: @gold-color;
-  justify-content: flex-end;
   margin-right: 20px;
+  font-size: 64px;
+  line-height: 1;
+  color: #fff;
 }
 .function-box {
   padding: 0 46px;
@@ -586,7 +602,7 @@ export default {
   .van-icon,
   .van-nav-bar__title,
   .van-nav-bar__text {
-    color: @gold-color;
+    color: #fff;
   }
 }
 </style>

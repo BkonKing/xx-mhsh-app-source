@@ -92,7 +92,7 @@
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">{{ billName }}单号</div>
-            <div class="pay-info-content">{{ payInfo.id }}</div>
+            <div class="pay-info-content">{{ payInfo.id_no }}</div>
           </div>
           <div class="pay-info-box">
             <div class="pay-info-label">{{ billName }}用户</div>

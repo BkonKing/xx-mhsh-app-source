@@ -10,7 +10,7 @@
           v-if="userInfo.user_type !== '0'"
           @click.stop="showIsAll = true"
         >
-          <span class="header-select-text">{{isAll ? '全部' : '小区'}}</span>
+          <span class="header-select-text">{{ isAll ? "全部" : "小区" }}</span>
           <img
             class="header-select-icon"
             :class="{ 'header-select-icon-flip': showIsAll }"
@@ -54,6 +54,7 @@
     </div>
     <van-tabs
       class="tf-body-container tf-column"
+      :class="{ 'tabs-5': isOpenTask }"
       v-model="current"
       @change="tabsChange"
     >
@@ -71,6 +72,7 @@
         :class="{ 'group-open-box': groupDropdown }"
       >
         <select-dropdown
+          ref="groupDropdown"
           v-model="categoryId"
           :visible.sync="groupDropdown"
           :group="group"
@@ -101,9 +103,11 @@
         ></list>
       </van-tab>
       <van-tab
+        v-if="isOpenTask"
+        ref="taskDropdown"
         title="任务"
         id="neighboursList4"
-        :class="{ 'group-open-box': taskDropdown }"
+        :class="[{ 'group-open-box': taskDropdown }]"
       >
         <select-dropdown
           v-model="taskId"
@@ -160,6 +164,7 @@ import { getNeighboursAgreement } from '@/api/home'
 import tfDialog from '@/components/tf-dialog/index'
 import selectDropdown from '@/views/neighbours/components/selectDropdown'
 import { mapGetters } from 'vuex'
+import { bMapGetLocationInfo } from '@/utils/util'
 
 export default {
   name: 'neighbours',
@@ -186,7 +191,8 @@ export default {
       groupDropdown: false,
       taskId: '',
       taskDropdown: false,
-      taskTypes: []
+      taskTypes: [],
+      isOpenTask: false // 是否开启任务模块
     }
   },
   computed: {
@@ -217,6 +223,8 @@ export default {
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
     }
+    this.$refs.groupDropdown && this.$refs.groupDropdown.scrollCenter()
+    this.$refs.taskDropdown && this.$refs.taskDropdown.scrollCenter()
   },
   methods: {
     // 切换全部/小区筛选
@@ -226,7 +234,7 @@ export default {
     },
     // 发布
     goEdit () {
-      this.$router.push('/pages/neighbours/publish')
+      this.$router.push({ name: 'releaseType' })
     },
     // 跳转消息
     goMessage () {
@@ -241,6 +249,10 @@ export default {
     tabsChange (name) {
       if (name === 0) {
         this.$refs.list && this.$refs.list.reload()
+      } else if (name === 1) {
+        this.$refs.groupDropdown && this.$refs.groupDropdown.scrollCenter()
+      } else if (name === 4) {
+        this.$refs.taskDropdown && this.$refs.taskDropdown.scrollCenter()
       }
     },
     // 获取话题小组
@@ -303,6 +315,18 @@ export default {
     getNeighboursAgreement () {
       getNeighboursAgreement().then(({ data }) => {
         this.agreementTitle = data.title
+      })
+    },
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      return bMapGetLocationInfo().then(data => {
+        const { adCode, lon, lat } = data
+        // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
+        this.adCode = String(adCode)
+        this.cityId = String(adCode).substring(0, 4) + '00'
+        this.lon = lon
+        this.lat = lat
       })
     }
   },
@@ -499,11 +523,13 @@ export default {
       animation-duration: 0.2s;
     }
   }
-  .postBarList, .taskList {
+  .postBarList,
+  .taskList {
     padding-top: 124px;
   }
 }
-.postBarList, .taskList {
+.postBarList,
+.taskList {
   height: calc(100% - 124px) !important;
 }
 // 发布按钮
@@ -517,5 +543,8 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+.tabs-5 /deep/ .van-tab {
+  flex-basis: 20% !important;
 }
 </style>

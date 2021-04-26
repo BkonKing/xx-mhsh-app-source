@@ -4,14 +4,14 @@
       <template v-slot="{ item, index }">
         <!-- 任务 -->
         <div v-if="item.article_type == 1" class="task-item article-cell">
-          <div class="task-header">
+          <div class="task-header" @click="goTask(item)">
             <div class="task-header-left">是的发送到发到付</div>
             <div class="task-header-right">
-              <img class="task-header-img" src="@/assets/neighbours/xfb.png" />
+              <span class="tf-icon tf-icon-xingfubi1 task-header-img"></span>
               <div class="task-header-text">100000</div>
             </div>
           </div>
-          <div class="task-content">
+          <div class="task-content" @click="goTask(item)">
             <userInfo
               class="task-userinfo"
               :ellipsis="true"
@@ -180,6 +180,12 @@ export default {
         images: [src]
       })
     },
+    // 任务详情页
+    goTask (item) {
+      this.$router.push({
+        name: 'taskDetail'
+      })
+    },
     reload () {
       this.$refs.list.reload()
     }
@@ -296,12 +302,13 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 143px;
-    padding: 0 30px;
+    min-height: 143px;
+    padding: 30px;
     background: url(~@/assets/neighbours/activity-bg.png);
     background-size: cover;
     border-radius: 10px 10px 0px 0px;
     .task-header-left {
+      max-width: 380px;
       font-size: 32px;
       font-weight: 500;
       color: #000000;
@@ -311,8 +318,9 @@ export default {
       align-items: center;
     }
     .task-header-img {
-      width: 32px;
-      height: 32px;
+      font-size: 32px;
+      line-height: 1;
+      color: #fff;
     }
     .task-header-text {
       margin-top: 4px;
@@ -345,6 +353,7 @@ export default {
     }
     .userinfo-text {
       font-size: 24px;
+      line-height: 1;
       color: #ff6555;
     }
   }

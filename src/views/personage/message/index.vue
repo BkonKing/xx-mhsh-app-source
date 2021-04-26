@@ -59,6 +59,15 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
+      <van-tab id="message-list-6" title="任务" :badge="badgeList[5]">
+        <message-list
+          ref="activity"
+          type="activity"
+          :load="({ pages }) => getMessageList(pages, 5)"
+          @click="onActivity"
+          @mark="messageRead"
+        ></message-list>
+      </van-tab>
       <van-tab id="message-list-5" title="系统" :badge="badgeList[6]">
         <message-list
           ref="system"
