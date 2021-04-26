@@ -11,7 +11,7 @@
             ></div>
             <div
               v-else-if="item.sub_type == 20"
-              class="list-icon-box tf-icon tf-icon-shuibiao"
+              class="list-icon-box tf-icon tf-icon-lifepaymessage"
             ></div>
             <img v-else class="tf-list-image" :src="item.thumb" />
           </template>
@@ -148,7 +148,8 @@ export default {
         14: 'tf-icon-guihuan',
         15: 'tf-icon-biaoyangtousu',
         16: 'tf-icon-baoshibaoxiu',
-        19: 'tf-icon-shuibiao'
+        19: 'tf-icon-lifepaymessage',
+        22: 'tf-icon-lifepaymessage'
       }
       return icon[value]
     },
@@ -247,7 +248,11 @@ export default {
 .tf-icon-huodongkaishi {
   background: #fd7d6f;
 }
-.tf-icon-shuibiao {
-  background: #877ded;
+.tf-icon-lifepaymessage {
+  font-size: 44px;
+  background: #FF6551;
+}
+.tf-list-image {
+  object-fit: cover;
 }
 </style>

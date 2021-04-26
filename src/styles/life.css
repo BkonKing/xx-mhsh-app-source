@@ -254,7 +254,8 @@ div.no-top-border {
   border-radius: 4px;
   overflow: hidden;
   font-size: 22px;
-  color: #fff;
+	color: #fff;
+	flex-shrink: 0;
 }
 .label-item-block.label-item-tm {
 	background: linear-gradient(90deg, #EB5841, #FFA45A);

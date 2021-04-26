@@ -38,12 +38,14 @@ export default {
     },
     shareFunc (type) {
       let eventId = ''
-      if (this.shareObj.contentUrl.indexOf('neighbours') > 0) {
-        eventId = 45
-      } else if (this.shareObj.contentUrl.indexOf('goodsDetail') > 0) {
-        eventId = 18
-      } else if (this.shareObj.contentUrl.indexOf('invite') > 0) {
-        eventId = 33
+      if (this.shareObj.contentUrl) {
+        if (this.shareObj.contentUrl.indexOf('neighbours') > 0) {
+          eventId = 45
+        } else if (this.shareObj.contentUrl.indexOf('goodsDetail') > 0) {
+          eventId = 18
+        } else if (this.shareObj.contentUrl.indexOf('invite') > 0) {
+          eventId = 33
+        }
       }
       setStatisticsData(3, { event_id: eventId })
       const that = this

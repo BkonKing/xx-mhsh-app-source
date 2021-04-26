@@ -177,10 +177,10 @@ export default {
     this.addrId = this.$route.query.id
     this.mapVal = api.require('bMap')
     if (this.addrId) {
-      this.titName = "编辑地址"
+      this.titName = '编辑地址'
       this.getData()
     } else {
-      this.titName = "添加地址"
+      this.titName = '添加地址'
     }
   },
   activated () {
@@ -247,7 +247,7 @@ export default {
     onSubmit: function (e) {
       const that = this
       // console.log(adds);return;
-      that.btnDisabled = true;
+      that.btnDisabled = true
       var obj = {
         id: that.addrId,
         realname: that.realname,
@@ -259,20 +259,20 @@ export default {
         label: that.labelValPost,
         is_default: that.switchChecked ? 1 : 0,
         lat: that.lat,
-        lng: that.lng,
+        lng: that.lng
       }
-      if(that.addrId){
+      if (that.addrId) {
         updateAddress(obj).then(res => {
           if (res.success) {
             // Toast(res.message);
-            this.$router.go(-1);
+            this.$router.go(-1)
           }
         })
-      }else {
+      } else {
         addAddress(obj).then(res => {
           if (res.success) {
             // Toast(res.message);
-            this.$router.go(-1);
+            this.$router.go(-1)
           }
         })
       }
@@ -285,8 +285,8 @@ export default {
         address_id: this.addrId
       }).then(res => {
         if (res.success) {
-          if(res.data) {
-            let info = res.data
+          if (res.data) {
+            const info = res.data
             this.btnDisabled = false
             this.realname = info.realname
             this.mobile = info.mobile
@@ -295,7 +295,7 @@ export default {
             this.address_house = info.address_house
             this.labelIndex = info.label_id
             this.swalIndex = info.label_id
-            this.switchChecked = info.is_default==1 ? true : false
+            this.switchChecked = info.is_default == 1
             this.labelVal = info.label
             this.labelValPost = info.label
             this.lat = info.lat
@@ -303,13 +303,12 @@ export default {
             if (info.label_id === 0) {
               this.customVal = info.label
             }
-            if (info.label_id !== "" && info.label !== "") {
+            if (info.label_id !== '' && info.label !== '') {
               this.isLabel = 1
             }
           }
         }
       })
-      return;
     },
     getadd: function (e) {
       var that = this
@@ -359,20 +358,19 @@ export default {
 			*/
     delAddress: function (e) {
       Dialog.confirm({
-        title: '确认删除吗？',
+        title: '确认删除吗？'
       }).then(() => {
         deleteAddress({
           id: this.addrId
         }).then(res => {
           if (res.success) {
-            Toast(res.message);
-            this.$router.go(-1);
+            Toast(res.message)
+            this.$router.go(-1)
           }
         })
       }).catch(() => {
         // on cancel
-      });
-      return
+      })
     },
     /**
 			 * 自定义标签弹窗
@@ -436,13 +434,13 @@ export default {
         that.labelIndex = that.swalIndex
       }
     },
-    linkFunc (type,obj={}) {
-      switch (type){
+    linkFunc (type, obj = {}) {
+      switch (type) {
         case 25:
-        this.$router.push('/address/map');
-        break;
+          this.$router.push('/address/map')
+          break
       }
-    },
+    }
   },
   beforeRouteLeave (to, from, next) {
     // eventBus.$off('chooseMap');
@@ -521,6 +519,9 @@ export default {
 .two-text div {
   max-width: 488px;
 }*/
+.two-text {
+  max-width: 488px;
+}
 .itemt-icon {
   width: 44px;
   height: 100px;

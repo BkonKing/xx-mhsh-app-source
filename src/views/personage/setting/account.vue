@@ -134,8 +134,8 @@ export default {
 }
 .checked-tag {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: -1px;
+  bottom: -1px;
   width: 0px;
   height: 0px;
   border-width: 44px;
@@ -147,6 +147,7 @@ export default {
   border-right-color: @red-dark;
   border-bottom-color: @red-dark;
   border-left-color: transparent;
+  border-bottom-right-radius: 10px;
 }
 .tf-icon-gou {
   position: absolute;

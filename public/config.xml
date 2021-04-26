@@ -63,6 +63,9 @@
 		<param name="appKey_android" value="AV5571MSZPWZ"/>
 	</feature>
 
+	<!-- 配置可被检测的URL Scheme -->
+	<preference name="querySchemes" value="baidumap,qqmap,http://maps.apple.com,iosamap" />
+
 	<!-- window.navigation.userAgent追加标识,识别环境。 -->
 
 	<preference name="urlScheme" value="mhshjyscheme" />

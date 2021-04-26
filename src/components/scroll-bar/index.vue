@@ -1,6 +1,7 @@
 <template>
   <div class="scrollBarWrapper" :style="scrollBarWrapperStyle">
     <div
+      @scroll="scrollEvent" @touchend="touchEnd"
       class="scrollBarContent"
       :class="direction === 'y' ? 'directionY' : 'directionX'"
       ref="scrollBarContent"
@@ -15,83 +16,94 @@ export default {
   props: {
     direction: {
       type: String,
-      default: "x",
-      validator(value) {
-        return value === "x" || value === "y";
+      default: 'x',
+      validator (value) {
+        return value === 'x' || value === 'y'
       }
     },
     activeIndex: {
       type: Number,
       default: 0,
-      validator(value) {
-        return value >= 0;
+      validator (value) {
+        return value >= 0
       }
     }
   },
   watch: {
-    activeIndex(newVal, oldVal) {
-      this.handleChange();
+    activeIndex (newVal, oldVal) {
+      this.handleChange()
     }
   },
   computed: {
-    scrollBarWrapperStyle() {
-      return this.direction === "y"
+    scrollBarWrapperStyle () {
+      return this.direction === 'y'
         ? {
-            height: "100%"
-          }
+          height: '100%'
+        }
         : {
-            width: "100%"
-          };
+          width: '100%'
+        }
     }
   },
-  mounted() {
-    this.initItemDisplay();
-    this.handleChange();
+  mounted () {
+    this.initItemDisplay()
+    this.handleChange()
   },
   methods: {
-    initItemDisplay() {
-      const content = this.$refs.scrollBarContent;
+    // 特卖横向滚动
+    scrollEvent () {
+      this.$emit('scrollEvent')
+    },
+    // 结束横向滚动
+    touchEnd () {
+      this.$emit('touchEnd')
+    },
+    initItemDisplay () {
+      const content = this.$refs.scrollBarContent
       const contentItem = content.children;
       [].forEach.call(contentItem, item => {
-        if (this.direction === "y") {
-          item.style.display = "block";
+        if (this.direction === 'y') {
+          item.style.display = 'block'
         } else {
-          item.style.display = "inline-block";
+          item.style.display = 'inline-block'
         }
-      });
+      })
     },
-    handleChange() {
+    handleChange () {
       this.$nextTick(() => {
-        const content = this.$refs.scrollBarContent; // 发生滑动的元素
-        const activeItem = content.children[this.activeIndex]; // 当前选中的元素
-        if(!activeItem) return false;
-        
+        const content = this.$refs.scrollBarContent // 发生滑动的元素
+        const activeItem = content.children[this.activeIndex] // 当前选中的元素
+        if (!activeItem) return false
+
         const scrollOption = {
           top: 0,
           left: 0,
-          behavior: "smooth"
-        };
-
-        if (this.direction === "y") {
-          const contentHeight = content.offsetHeight;
-          const activeItemHeight = activeItem.offsetHeight;
-          const activeItemTop = activeItem.offsetTop;
-          const offset = activeItemTop - (contentHeight - activeItemHeight) / 2; // 需要移动的位置
-          scrollOption.top = offset;
-        } else {
-          const contentWidth = content.offsetWidth; // 发生滑动元素的宽
-          const activeItemWidth = activeItem.offsetWidth; // 当前元素的宽
-          const activeItemLeft = activeItem.offsetLeft; // 当前元素的到他父盒子左侧的距离
-          const offset = activeItemLeft - (contentWidth - activeItemWidth) / 2; // 需要移动的位置
-          scrollOption.left = offset;
+          behavior: 'smooth'
         }
-        console.log(scrollOption);
 
-        content.scrollTo(scrollOption);
-      });
+        if (this.direction === 'y') {
+          const contentHeight = content.offsetHeight
+          const activeItemHeight = activeItem.offsetHeight
+          const activeItemTop = activeItem.offsetTop
+          const offset = activeItemTop - (contentHeight - activeItemHeight) / 2 // 需要移动的位置
+          scrollOption.top = offset
+        } else {
+          const contentWidth = content.offsetWidth // 发生滑动元素的宽
+          const activeItemWidth = activeItem.offsetWidth // 当前元素的宽
+          const activeItemLeft = activeItem.offsetLeft // 当前元素的到他父盒子左侧的距离
+          const offset = activeItemLeft - (contentWidth - activeItemWidth) / 2 // 需要移动的位置
+          scrollOption.left = offset
+        }
+        console.log(scrollOption)
+
+        content.scrollTo(scrollOption)
+        setTimeout(() => {
+          this.touchEnd()
+        }, 1200)
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

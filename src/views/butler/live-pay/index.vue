@@ -13,226 +13,228 @@
       </template>
     </van-nav-bar>
     <div class="house-dropdown">
-      <van-dropdown-menu>
-        <van-dropdown-item
-          v-model="selectedHouse"
-          :disabled="houseList.length < 2"
-          :options="houseList"
-          @change="houseChange"
-        />
-      </van-dropdown-menu>
-    </div>
-    <div class="tf-body-container">
-      <van-notice-bar
-        v-if="payInfo"
-        class="swiper-nav"
-        left-icon="warning"
-        mode="link"
-        background="rgba(249,134,107,0.2)"
-        :scrollable="false"
-        @click="goPay"
-      >
-        {{ payInfo }}
-      </van-notice-bar>
-      <div class="pay-container">
-        <template v-if="payList && payList.length > 0">
-          <template v-for="(item, index) in payList">
-            <tf-picker
-              class="date-time-box"
-              v-model="item.month_name"
-              title="选择时间"
-              :key="index"
-              :columns="monthList"
-              @confirm="queryMonthPay"
+      <div class="van-dropdown-menu">
+        <div
+          class="van-dropdown-menu__bar"
+          :class="{ 'van-dropdown-menu__bar--opened': housePopup }"
+          @click="openHousePopup"
+        >
+          <div role="button" tabindex="0" class="van-dropdown-menu__item">
+            <span
+              class="van-dropdown-menu__title"
+              :class="{
+                'van-dropdown-menu__title--down': housePopup
+              }"
+              ><div class="van-ellipsis">{{ houseName }}</div></span
             >
-              <template v-slot="{ valueText }">
-                <div class="tf-text selected-date">
-                  {{ valueText
-                  }}<span class="tf-icon tf-icon-caret-down"></span>
-                </div>
-                <div class="pay-info">
-                  费用共￥{{ item.common_money
-                  }}<span class="tf-ml-sm" v-if="item.already_money"
-                    >已缴费￥{{ item.already_money }}</span
-                  ><span class="tf-ml-sm" v-if="item.stay_money"
-                    >待缴费￥{{ item.stay_money }}</span
-                  >
-                </div>
-              </template>
-            </tf-picker>
-            <ul class="pay-list-container" :key="`ul${index}`">
-              <li
-                v-for="(li, i) in item.child"
-                class="pay-list-item"
-                @click="goCostDetail(li)"
-                :key="i"
-              >
-                <div class="pay-list-item-left">
-                  <img class="pay-type-icon" :src="li.genre_icon" />
-                  <span class="pay-title">{{ li.genre_name }}</span>
-                </div>
-                <div class="pay-list-item-right">
-                  <div
-                    class="pay-number"
-                    :style="{
-                      color: li.order_status == '2' ? '#222' : '#EB5841'
-                    }"
-                  >
-                    ￥{{ li.money }}
-                  </div>
-                  <div class="pay-status">
-                    {{ li.order_status | orderStatusText }}
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </template>
-        </template>
-        <template v-else>
-          <div class="pay-detail-container">
-            <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png" />
-            <div class="pay-detail-text">暂无待缴费用</div>
           </div>
-        </template>
+        </div>
       </div>
     </div>
-    <div v-if="payInfo" class="tf-padding">
-      <van-button v-preventReClick size="large" type="danger" @click="goPay"
-        >缴费</van-button
-      >
+    <div class="tf-body-container">
+      <div class="pay-container" v-if="payList && payList.length > 0">
+        <ul class="pay-list-container">
+          <li
+            v-for="(li, i) in payList"
+            class="pay-list-item"
+            @click="judgePay(li)"
+            :key="i"
+          >
+            <div class="pay-list-item-left">
+              <img class="pay-type-icon" :src="li.genre_icon" />
+              <span class="pay-title">{{ li.genre_name }}</span>
+            </div>
+            <div class="pay-list-item-right">
+              <span
+                class="pay-number"
+                :style="{
+                  color: li.z_balance < 0 ? '#EB5841' : '#222'
+                }"
+              >
+                {{ li.z_balance }}</span
+              >
+              <span class="tf-icon tf-icon-right"></span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <template v-else>
+        <div class="pay-detail-container">
+          <img class="pay-detail-img" src="@/assets/imgs/no-live-pay.png" />
+          <div class="pay-detail-text">暂无待缴费用</div>
+        </div>
+      </template>
     </div>
+    <van-popup
+      class="house-popup--top"
+      safe-area-inset-bottom
+      get-container="body"
+      v-model="housePopup"
+      :style="{ transform: 'translate3d(-50%, ' + safeArea + 'px, 0)' }"
+      :overlay-style="{'background-color': 'rgba(0, 0, 0, 0.3)'}"
+    >
+      <div
+        v-for="(house, index) in houseList"
+        :key="index"
+        class="house-popup--top__option"
+        :class="{
+          'house-popup--top__option--active': house.value === selectedHouse
+        }"
+        @click="selectHouse(house)"
+      >
+        {{ house.text }}
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script>
-import tfPicker from '@/components/tf-picker/index'
-import { getLifePayList } from '@/api/butler'
-import filters from './filters'
+import { getHouseList, getLifePayList } from '@/api/butler/livepay'
 import { mapGetters } from 'vuex'
 export default {
   name: 'livePayIndex',
-  components: {
-    tfPicker
-  },
   data () {
     return {
       selectedHouse: '', // 选中的房间，值为项目ID + 房间账单ID + 房间ID
+      houseName: '', // 选中的房间名称
       houseList: [], // 房间列表
       first: true,
-      payInfo: '', // 缴费信息
       payList: [], // 待缴费列表
-      monthList: [] // 缴费月份列表
+      forceText: '', // 强制缴费名称
+      housePopup: false,
+      safeArea: 0
     }
   },
   computed: {
     ...mapGetters(['userInfo', 'currentProject'])
   },
+  created () {
+    this.getHouseList()
+  },
+  mounted () {
+    this.safeArea = api.safeArea.top
+  },
   activated () {
     if (this.first) {
-      this.getLifePayList({}, true)
+      this.first = false
       return
     }
-    const [project_id, expenses_house_id] = this.selectedHouse.split('-')
-    this.getLifePayList({
-      expenses_house_id,
-      project_id
-    })
+    this.searchLifePayList()
   },
   methods: {
-    // 房屋切换
-    houseChange () {
+    // 获取房屋列表
+    getHouseList () {
+      getHouseList().then(({ data }) => {
+        let status = true
+        const houseId = this.$route.query.id || this.currentProject.house_id
+        this.houseList = data.map(obj => {
+          const {
+            project_name,
+            fc_info,
+            house_id,
+            expenses_house_id,
+            project_id
+          } = obj
+          // 项目ID + 房间账单ID + 房间ID
+          const value = `${project_id}-${expenses_house_id}-${house_id}`
+          const text = `${project_name} ${fc_info}`
+          // 如果是首次渲染，则默认设置选中当前房屋
+          if (houseId === house_id) {
+            this.selectedHouse = value
+            this.houseName = text
+          }
+          // 如果当前房屋没有账单id
+          if (this.selectedHouse === value && !expenses_house_id) {
+            status = false
+          }
+          return {
+            text,
+            value
+          }
+        })
+        if (status) {
+          // 进入页面获取完房间后，请求一次当前账单数据
+          this.searchLifePayList()
+        }
+      })
+    },
+    // 打开房屋弹窗
+    openHousePopup () {
+      if (this.houseList && this.houseList.length > 1) {
+        this.housePopup = true
+      }
+    },
+    // 选择房屋
+    selectHouse ({ value, text }) {
+      this.houseName = text
+      this.selectedHouse = value
       this.searchLifePayList()
+      this.housePopup = false
     },
-    // 查询时间缴费
-    queryMonthPay (value) {
-      this.searchLifePayList(value)
-    },
-    // 条件搜索生活缴费列表
-    searchLifePayList (date) {
+    // 房屋切换获取生活缴费列表
+    searchLifePayList () {
       const [project_id, expenses_house_id] = this.selectedHouse.split('-')
       this.getLifePayList({
         expenses_house_id,
-        project_id,
-        setmeal_days: date
+        project_id
       })
     },
-    // 获取当前房屋下的生活缴费列表, first是否第一次进入页面刷新
-    getLifePayList (params, first) {
-      getLifePayList(params).then(
-        ({ house_data, table_data, month_data, month_name_text }) => {
-          const houseId = this.$route.query.id || this.currentProject.house_id
-          let status = false // 是否第一次进入，并且当前房间没有账号
-          this.houseList = house_data.map(obj => {
-            const {
-              project_name,
-              fc_info,
-              house_id,
-              expenses_house_id,
-              project_id
-            } = obj
-            // 项目ID + 房间账单ID + 房间ID
-            const value = `${project_id}-${expenses_house_id}-${house_id}`
-            // 如果是首次渲染，则默认设置选中当前房屋
-            if (houseId === house_id && first) {
-              this.selectedHouse = value
-              this.first = false
-            }
-            // 如果当前房屋没有账单id
-            if (this.selectedHouse === value && !expenses_house_id) {
-              status = true
-            }
-            return {
-              text: `${project_name} ${fc_info}`,
-              value
-            }
-          })
-          if (status) {
-            this.payList = []
-            this.monthList = []
-            this.payInfo = ''
-          } else if (first) {
-            // 第一次进入获取完房间后，拿到房间账单id需要重新请求一次当前账单数据
-            this.searchLifePayList()
-          } else {
-            // 正常数据赋值
-            this.monthList = month_data || []
-            this.payInfo = month_name_text
-            this.payList = table_data
-          }
-        }
-      )
+    // 获取当前房屋下的生活缴费列表
+    getLifePayList (params) {
+      getLifePayList(params).then(({ data, force_text }) => {
+        this.payList = data || []
+        this.forceText = force_text || ''
+      })
     },
-    // 跳转生活缴费记录页面
+    // 跳转充缴记录页面
     goLivePayList () {
+      const houseId = this.selectedHouse.split('-')[1]
       this.$router.push({
-        name: 'livePayRecord'
-      })
-    },
-    // 跳转费用详情
-    goCostDetail ({ id: orderId }) {
-      const [projectId, id] = this.selectedHouse.split('-')
-      this.$router.push({
-        name: 'livePayCostDetail',
+        name: 'livePayRecord',
         query: {
-          orderId,
-          projectId,
-          id
+          houseId
         }
       })
     },
-    // 跳转缴费页面
-    goPay () {
-      const [projectId, id] = this.selectedHouse.split('-')
+    // 判断跳转到充值缴费页面
+    judgePay ({ genre_type: genreType, z_balance, balance }) {
+      const [projectId, houseId] = this.selectedHouse.split('-')
+      const query = {
+        genreType,
+        projectId,
+        houseId
+      }
+      // 强制缴费只有其他费用可设置,如果存在强制缴费账单，则需要提醒先缴纳
+      if (this.forceText && query.genreType !== 4) {
+        this.$dialog
+          .alert({
+            title: `请先缴清${this.forceText}`
+          })
+          .then(() => {
+            query.genreType = 4
+            this.goMainPay({
+              ...query,
+              type: 1
+            })
+          })
+        return
+      }
+      // 若有待缴费金额，且余额>=0，跳转缴费页面(type = 1)
+      // 若没有待缴费金额，且余额>=0,或者余额<0，跳转是充值页面(type = 2)
+      // balance 余额 z_balance 总金额
+      this.goMainPay({
+        ...query,
+        type: (balance >= 0 && z_balance < 0) ? 1 : 2
+      })
+    },
+    // 跳转缴费或充值页面
+    goMainPay (query) {
       this.$router.push({
-        name: 'livePayPay',
-        query: {
-          id,
-          projectId
-        }
+        name: 'livemainPay',
+        query
       })
     }
   },
-  filters: filters,
   beforeRouteLeave (to, from, next) {
     const names = ['butler']
     if (names.includes(to.name)) {
@@ -252,77 +254,18 @@ export default {
 /deep/ .van-nav-bar__right {
   padding-right: 0;
 }
-.swiper-nav {
-  height: 66px;
-  margin: 30px 20px 0;
-  border-radius: 10px;
-  /deep/ .van-notice-bar__left-icon {
-    margin-right: 10px;
-  }
-  /deep/ .van-notice-bar__content {
-    color: #eb5841;
-    font-size: 24px;
-  }
-  .notice-swipe {
-    height: 66px;
-    /deep/ .van-swipe-item {
-      line-height: 66px;
-    }
-  }
-  /deep/ .van-icon-arrow {
-    font-size: 24px !important;
-    margin-right: 0;
-    &::before {
-      font-family: tficonfont;
-      content: "\e85d";
-    }
-  }
-}
-.house-dropdown {
-  padding: 30px 20px;
-  background: #fff;
-  /deep/ .van-dropdown-menu__bar {
-    border-radius: 33px;
-    background: #f2f2f4;
-    .van-dropdown-menu__item {
-      padding-right: 20px;
-    }
-    .van-dropdown-menu__title {
-      color: #222222;
-      font-size: 28px;
-      &:after {
-        margin-top: -10px;
-        border-width: 8px;
-        border-color: transparent transparent #383838 #383838;
-      }
-    }
-    .van-dropdown-item__option {
-      height: 88px;
-    }
-  }
-}
+// 列表
 .pay-container {
-  padding: 30px 20px;
-  .selected-date {
-    font-size: 28px;
-    color: #222;
-  }
-  .pay-info {
-    font-size: 24px;
-    color: #8f8f94;
-    margin-top: 10px;
-  }
+  padding: 40px 20px;
   .pay-list-container {
     width: 100%;
-    padding: 10px 30px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    padding: 0 30px;
     background: #ffffff;
     border-radius: 10px;
     .pay-list-item {
       display: flex;
       justify-content: space-between;
-      height: 135px;
+      height: 148px;
       .pay-list-item-left {
         display: flex;
         align-items: center;
@@ -332,71 +275,96 @@ export default {
           line-height: 1;
         }
         .pay-title {
-          font-size: 30px;
           margin-left: 27px;
+          font-size: 30px;
+          color: #222;
         }
       }
       .pay-list-item-right {
         display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: center;
+        align-items: center;
+        justify-content: flex-end;
         .pay-number {
-          font-size: 34px;
+          font-size: 42px;
           font-weight: 600;
         }
-        .pay-status {
-          font-size: 24px;
-          color: #8f8f94;
+        .tf-icon-right {
+          margin-left: 28px;
+          color: #aaaaaa;
         }
       }
     }
     .pay-list-item + .pay-list-item {
-      border-top: 1px solid #f0f0f0;
-    }
-  }
-  .pay-detail-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .pay-detail-img {
-      width: 483px;
-      margin-top: 170px;
-      margin-bottom: 120px;
-    }
-    .pay-detail-text {
-      font-size: 28px;
+      border-top: 2px solid #f0f0f0;
+      border-radius: 1px;
     }
   }
 }
-/deep/ .van-popup--top {
-  width: 650px;
-  top: 40px;
-  left: 50px;
-  padding: 0 30px;
-  border-radius: 10px;
-  .van-dropdown-item__option {
-    height: 110px;
-    color: #8f8f94;
-    .van-cell__title {
-      width: 100%;
-    }
+// 暂无数据
+.pay-detail-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  .pay-detail-img {
+    width: 483px;
+    margin-top: 165px;
+    margin-bottom: 108px;
   }
-  .van-dropdown-item__option + .van-dropdown-item__option {
-    border-top: 1px solid #f0f0f0;
-  }
-  .van-dropdown-item__option--active {
+  .pay-detail-text {
+    font-size: 28px;
     color: #222;
   }
-  .van-cell__value {
-    display: none;
+}
+// 房屋选择内容
+.house-dropdown {
+  padding: 30px 20px;
+  background: #fff;
+  .van-dropdown-menu__bar {
+    border-radius: 33px;
+    background: #f2f2f4;
+    box-shadow: initial;
+    .van-dropdown-menu__item {
+      padding-right: 20px;
+    }
+    .van-dropdown-menu__title {
+      position: initial;
+      color: #222222;
+      font-size: 28px;
+      &:after {
+        right: 32px;
+        margin-top: -12px;
+        border-width: 8px;
+        border-color: transparent transparent #383838 #383838;
+      }
+      &.van-dropdown-menu__title--down:after {
+        margin-top: -4px;
+      }
+    }
   }
 }
-/deep/ .van-overlay {
-  top: 30px;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-.tf-ml-sm {
-  margin-left: 20px;
+// 房屋选择窗
+.house-popup--top {
+  width: 650px;
+  padding: 0 30px;
+  border-radius: 10px;
+  top: 218px;
+  .house-popup--top__option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 110px;
+    color: #8f8f94;
+    font-size: 28px;
+    color: #8f8f94;
+  }
+  .house-popup--top__option + .house-popup--top__option {
+    border-top: 1px solid #f0f0f0;
+  }
+  .house-popup--top__option--active {
+    font-weight: 500;
+    color: #222;
+  }
 }
 </style>

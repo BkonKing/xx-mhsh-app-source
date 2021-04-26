@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg-white">
     <van-nav-bar
       :title="title"
       :fixed="true"
@@ -9,31 +9,46 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-main-container">
-      <div class="tf-bg-white">
+      <!-- 头部问卷投票信息 -->
+      <div class="qustion-header">
         <userInfo
           :avatar="wjtp_info.avatar"
           :name="wjtp_info.nickname"
           :time="wjtp_info.ptime"
         ></userInfo>
-        <div class="finish-tag-box" v-if="wjtp_info.status == 3">
-          <div class="finish-tag">
-            <div class="finish-text">已结束</div>
-          </div>
-        </div>
+        <!-- 已结束 -->
+        <img
+          v-if="wjtp_info.status == 3"
+          class="finish-tag-box"
+          src="@/assets/imgs/butler_questionnaire_ending.png"
+        />
+        <!-- 已提交 -->
+        <img
+          v-else-if="wjtp_info.is_answer"
+          class="finish-tag-box"
+          src="@/assets/imgs/butler_questionnaire_complete.png"
+        />
+        <!-- 标题 -->
         <div class="tf-article-title">
           {{ wjtp_info.title }}
-          <div v-if="wjtp_info.content" class="info-content">
-            {{ wjtp_info.content }}
+          <!-- 说明，没有不显示 -->
+          <div v-if="wjtp_info.remarks" class="info-remarks">
+            {{ wjtp_info.remarks }}
           </div>
         </div>
-        <div class="tf-row-space-between">
+        <div class="tf-row-space-between" :class="{'tf-row-center': !(parseInt(wjtp_info.virtual_coin) > 0)}">
+          <!-- 参与能获得的幸福币，有才显示 -->
           <div
             class="tf-gradient-tag--warning"
-            v-if="wjtp_info.virtual_coin > 0"
+            v-if="parseInt(wjtp_info.virtual_coin) > 0"
           >
             参与得{{ wjtp_info.virtual_coin }}幸福币
           </div>
-          <div class="people-number" :class="{ 'tf-text-grey': finishStatus }">
+          <!-- 现有参与人数，红色--正在进行中的；灰色--已结束 -->
+          <div
+            class="people-number"
+            :class="{ 'people-number-end': wjtp_info.status === 3 }"
+          >
             {{ wjtp_info.joins }}人参加
           </div>
         </div>
@@ -41,16 +56,17 @@
       <div class="vote-padding">
         <!-- 问卷 -->
         <template v-if="wjtp_info.wjtp_type == 1">
+          <!-- 题数 -->
           <div class="tf-text-grey tf-center tf-mb-lg">
             (共{{ wjtp_info.item_num }}题)
           </div>
           <div class="question-container">
             <div class="question-box" v-for="(item, i) in voteList" :key="i">
-              <div
-                class="question__text"
-                :class="{ required: item.is_required == 1 }"
-              >
-                Q{{ i + 1 }}：{{ item.question }}
+              <!-- 问卷题目名称 -->
+              <div class="question__text">
+                <span v-if="item.is_required == 1" class="tf-text-primary"
+                  >*</span
+                >{{ i + 1 }}、{{ item.question }}
               </div>
               <!-- 问卷-单选 -->
               <template v-if="item.item_type == 1">
@@ -65,7 +81,6 @@
                   >
                     {{ radio.content }}
                     <template #icon="props">
-                      <!-- <div class="van-radio__icon van-radio__icon--round"></div> -->
                       <div
                         class="van-icon"
                         :class="{ 'radio-checked-box': props.checked }"
@@ -102,6 +117,7 @@
               </template>
             </div>
           </div>
+          <!-- 提交按钮 -->
           <div v-if="!finishStatus" class="confirm-btn-placeholder">
             <van-button
               v-preventReClick
@@ -114,84 +130,90 @@
             >
           </div>
         </template>
+        <!-- 投票 -->
         <template v-else-if="wjtp_info.wjtp_type == 2">
           <div class="tf-text-grey tf-center tf-mb-lg">
             投票选项({{ wjtp_info.tp_type == 1 ? "单选" : "多选" }})
           </div>
-          <div
-            class="vote-box tf-row-space-between"
-            v-for="(item, i) in voteList.option"
-            :key="i"
-            :class="{
-              'vote-active':
-                answer.indexOf(item.id) > -1 &&
-                wjtp_info.tp_type == 2 &&
-                !finishStatus
-            }"
-          >
-            <!--  投票统计进度条-->
-            <div class="vote-progress-placeholder">
-              <div
-                v-if="
-                  finishStatus && answerCountList && answerCountList[item.id]
-                "
-                class="vote-progress"
-                :style="{
-                  width: `${(parseInt(answerCountList[item.id]) /
-                    parseInt(totalNum)) *
-                    100}%`
+          <!-- 已答-->
+          <template v-if="finishStatus">
+            <div
+              v-for="(item, i) in voteList.option"
+              :key="i"
+              class="vote-box finish-vote-box"
+            >
+              <div class="vote-result">
+                <div class="vote-title">
+                  <!-- 投票结果打钩图标 -->
+                  <span
+                    v-if="voteList.answer && voteList.answer.indexOf(item.id) > -1"
+                    class="tf-icon tf-icon-gou tf-text-sm"
+                  ></span>
+                  {{ item.content }}
+                </div>
+                <div class="tf-text-grey">
+                  {{ answerCountList[item.id] || 0 }}票
+                </div>
+              </div>
+              <!-- 票数比例 -->
+              <van-progress
+                stroke-width="11px"
+                :show-pivot="false"
+                :percentage="(answerCountList[item.id] / totalNum) * 100 || 0"
+              />
+            </div>
+          </template>
+          <!-- 未答-->
+          <template v-else>
+            <!-- 单选 -->
+            <van-radio-group
+              v-if="wjtp_info.tp_type === '1'"
+              v-model="radioAnswer"
+            >
+              <van-radio
+                v-for="(item, i) in voteList.option"
+                :key="i"
+                :name="item.id"
+                :class="{
+                  'vote-active': radioAnswer === item.id
                 }"
-              ></div>
-            </div>
-            <div class="vote-title">
-              {{ item.content }}
-              <span v-if="voteList.answer && voteList.answer.indexOf(item.id) > -1" class="tf-text-sm">（已投）</span>
-            </div>
-            <!-- 已答-->
-            <div class="vote-result" v-if="finishStatus">
-              {{ (answerCountList && answerCountList[item.id]) || 0 }}票
-            </div>
-            <!-- 未答-->
-            <template v-else>
-              <!-- 单选 -->
+                class="vote-box tf-row-space-between"
+                label-position="left"
+              >
+                <div class="vote-title">
+                  {{ item.content }}
+                </div>
+              </van-radio>
+            </van-radio-group>
+            <!-- 多选 -->
+            <van-checkbox-group v-else v-model="voteAnswer" :max="5">
+              <van-checkbox
+                v-for="(item, i) in voteList.option"
+                :key="i"
+                :name="item.id"
+                class="vote-box tf-row-space-between"
+                label-position="left"
+                :class="{
+                  'vote-active': voteAnswer.indexOf(item.id) > -1
+                }"
+              >
+                <div class="vote-title">
+                  {{ item.content }}
+                </div>
+              </van-checkbox>
+            </van-checkbox-group>
+            <div class="confirm-btn-placeholder">
               <van-button
-                v-if="wjtp_info.tp_type == 1"
                 v-preventReClick
                 :loading="submitLoading"
-                class="vote-btn"
-                @click="changeValue(item)"
+                class="confirm-btn vote-btn"
+                size="large"
+                :disabled="disabledVote"
+                @click="confirm"
+                >确定投票</van-button
               >
-                <span class="tf-text-white">投票</span>
-              </van-button>
-              <!-- 多选 -->
-              <button
-                v-else
-                class="tf-icon vote-btn vote-btn--multiple"
-                @click="changeValue(item)"
-              >
-                <div
-                  class="tf-text-white tf-icon"
-                  :class="{ 'tf-icon-gou': answer.indexOf(item.id) > -1 }"
-                >
-                  {{ answer.indexOf(item.id) > -1 ? "" : "投票" }}
-                </div>
-              </button>
-            </template>
-          </div>
-          <div
-            v-if="!finishStatus && wjtp_info.tp_type == 2"
-            class="confirm-btn-placeholder"
-          >
-            <van-button
-              v-preventReClick
-              :loading="submitLoading"
-              class="confirm-btn"
-              size="large"
-              type="danger"
-              @click="confirm"
-              >确定</van-button
-            >
-          </div>
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -199,48 +221,34 @@
 </template>
 
 <script>
-import {
-  NavBar,
-  Toast,
-  Button,
-  RadioGroup,
-  Radio,
-  Checkbox,
-  CheckboxGroup,
-  Field
-} from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import { addWjtp, getWjtpInfo } from '@/api/butler.js'
 export default {
   components: {
-    [NavBar.name]: NavBar,
-    [Button.name]: Button,
-    [RadioGroup.name]: RadioGroup,
-    [Radio.name]: Radio,
-    [Checkbox.name]: Checkbox,
-    [CheckboxGroup.name]: CheckboxGroup,
-    [Field.name]: Field,
     userInfo
   },
   data () {
     return {
       title: '',
       wjtpId: '',
-      wjtp_info: {},
-      voteList: [],
-      answer: [],
-      submitLoading: false
+      wjtp_info: {}, // 问卷投票基础信息
+      voteList: {}, // 转化过的问题对象
+      radioAnswer: '', // 投票单选值
+      voteAnswer: [], // 投票选中值
+      submitLoading: false // 提交loading
     }
   },
   created () {
-    const { id } = this.$route.query
-    this.wjtpId = id
+    this.wjtpId = this.$route.query.id
     this.getWjtpInfo()
   },
   computed: {
+    // 是否完成或结束
     finishStatus () {
-      return this.wjtp_info.is_answer || this.wjtp_info.status == 3
+      // 已经做过调查或者结束状态
+      return this.wjtp_info.is_answer || this.wjtp_info.status === 3
     },
+    // 投票总票数
     totalNum () {
       let num = 0
       this.voteList.answer_count.forEach(obj => {
@@ -252,13 +260,22 @@ export default {
     answerCountList () {
       const countObj = {}
       this.voteList.answer_count.forEach(obj => {
-        countObj[obj.answer] = obj.num
+        countObj[obj.answer] = parseInt(obj.num)
       })
       return countObj
+    },
+    // 投票按钮是否不可点击，是否没有选择一个选项
+    disabledVote () {
+      return (
+        (this.wjtp_info.tp_type === '1' && !this.radioAnswer) ||
+        (this.wjtp_info.tp_type === '2' &&
+          this.voteAnswer &&
+          !this.voteAnswer.length)
+      )
     }
   },
   methods: {
-    /* 获取投票详情 */
+    // 获取投票详情
     getWjtpInfo () {
       getWjtpInfo({
         wjtpId: this.wjtpId
@@ -266,40 +283,24 @@ export default {
         const { wjtp_info, item } = res.data
         this.wjtp_info = wjtp_info
         this.title = this.wjtp_info.wjtp_type == '1' ? '问卷' : '投票'
-        // 遍历将答案为''转为[]
+        // 遍历将可能答案为''的转为[]
         this.voteList = item.map(obj => {
-          if (obj.item_type == 2) {
+          // 多选，空则返回空数组
+          if (obj.item_type === '2') {
             obj.answer = obj.answer ? obj.answer : []
-          } else {
-            if (Array.isArray(obj.answer)) {
-              obj.answer = obj.answer[0]
-            }
+          } else if (Array.isArray(obj.answer)) {
+            // 单选和文本答案是数组，则只取第一个值
+            obj.answer = obj.answer[0]
           }
           return obj
         })
-        // 如果是投票只需取第一个
-        if (this.wjtp_info.wjtp_type == 2) {
+        // 如果是投票只需取第一个问题
+        if (this.wjtp_info.wjtp_type === '2') {
           this.voteList = this.voteList[0]
         }
       })
     },
-    /* 投票选中 */
-    changeValue ({ id: value }) {
-      // 是否为单选
-      if (this.wjtp_info.tp_type == 1) {
-        this.addWjtp({
-          [this.voteList.item_id]: value
-        })
-      } else {
-        const index = this.answer.indexOf(value)
-        if (index === -1) {
-          this.answer.push(value)
-        } else {
-          this.answer.splice(index, 1)
-        }
-      }
-    },
-    /* 投票提交 */
+    // 投票提交
     confirm () {
       const isEmpty = val =>
         typeof val === 'undefined' ||
@@ -310,10 +311,13 @@ export default {
       if (this.wjtp_info.wjtp_type == 1) {
         const params = {}
         const status = this.voteList.every(obj => {
+          // 判断必填项是否都已经填写
           if (obj.is_required == '1' && isEmpty(obj.answer)) {
-            Toast('请填写未回答的问题')
+            this.$toast('请填写未回答的问题')
             return false
           }
+          // 如果有答案，将item_id做key，答案做value，多选要将答案转化为字符串
+          // [] => ','
           if (obj.answer) {
             params[obj.item_id] =
               obj.item_type == 2
@@ -324,20 +328,34 @@ export default {
         })
         status && this.addWjtp(params)
       } else {
-        // 投票多选
-        if (this.answer.length > 0) {
-          const params = {
-            [this.voteList.item_id]: this.answer.join(',')
+        // 投票答案参数也需要用item_id为key
+        // 投票单选
+        if (this.wjtp_info.tp_type === '1') {
+          if (this.radioAnswer) {
+            this.addWjtp({
+              [this.voteList.item_id]: this.radioAnswer
+            })
+          } else {
+            this.$toast({
+              message: '请选择要投票的选项'
+            })
           }
-          this.addWjtp(params)
         } else {
-          Toast({
-            message: '请选择要投票的选项'
-          })
+          // 投票多选
+          if (this.voteAnswer.length > 0) {
+            const params = {
+              [this.voteList.item_id]: this.voteAnswer.join(',')
+            }
+            this.addWjtp(params)
+          } else {
+            this.$toast({
+              message: '请选择要投票的选项'
+            })
+          }
         }
       }
     },
-    /* 上传问卷投票 */
+    // 上传问卷投票
     addWjtp (answer) {
       this.submitLoading = true
       addWjtp({
@@ -347,17 +365,15 @@ export default {
         .then(res => {
           this.submitLoading = false
           if (res.success) {
-            const message =
-              this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
-            Toast.success({
-              message
+            this.$toast.success({
+              message: this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
             })
             this.getWjtpInfo()
             this.mtjEvent({
               eventId: this.wjtp_info.wjtp_type == 1 ? 36 : 37
             })
           } else {
-            Toast.fail({
+            this.$toast.fail({
               message: '提交失败'
             })
           }
@@ -371,235 +387,196 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-bg-white {
-  position: relative;
-  padding: 30px;
-  overflow: hidden;
+.tf-main-container {
+  padding: 0 30px;
 }
-
-.tf-article-title {
-  margin-top: 60px;
-  margin-bottom: 30px;
-  padding-bottom: 30px;
-  border-bottom-width: 2px;
-  border-bottom-style: dashed;
-  border-bottom-color: #aaa;
-}
-
-.info-content {
-  font-size: 24px;
-  color: @gray-7;
-  margin-top: 20px;
-}
-
-.people-number {
-  font-size: 24px;
-  color: @red-dark;
-}
-
 .tf-text-grey {
   font-size: 24px;
 }
-
-.vote-box {
+.qustion-header {
+  padding: 30px 0;
   position: relative;
-  z-index: 1;
-  padding: 10px;
-  margin-bottom: 30px;
-  background-color: #fff;
-  border-radius: @border-radius-md;
-}
-
-.vote-progress-placeholder {
-  width: calc(100% - 20px);
-  position: absolute;
-  top: 10px;
-  bottom: 10px;
-  z-index: 0;
-}
-
-.vote-progress {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 0;
-  // height: 120px;
-  background-color: @red;
-  opacity: 0.2;
-  border-top-left-radius: @border-radius-md;
-  border-bottom-left-radius: @border-radius-md;
-}
-
-.vote-title {
-  flex: 1;
-  justify-content: center;
-  font-size: @font-size-lg;
-  padding: 31px 30px;
-  // height: 120px;
-  line-height: 58px;
-}
-
-.vote-result {
-  @flex-column();
-  font-size: 30px;
-  padding-right: 30px;
-  color: @gray-7;
-  justify-content: center;
-  text-align: right;
-}
-
-.vote-btn {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 120px;
-  height: auto;
-  justify-content: center;
-  text-align: center;
-  margin: 0;
-  border-radius: 10px;
-  border-width: 0px !important;
-  font-size: 30px;
-  color: #fff;
-  background-image: linear-gradient(to bottom right, @red, @red-dark);
-  .tf-text-white {
-    font-size: 28px;
+  border-bottom: 2px dashed #aaa;
+  .tf-article-title {
+    margin-top: 60px;
+    margin-bottom: 30px;
   }
-  .tf-icon-gou {
-    font-size: 44px;
+  .info-remarks {
+    margin-top: 20px;
+    font-size: 24px;
+    color: @gray-7;
   }
-}
-
-.vote-btn--multiple {
-  background-image: linear-gradient(to bottom right, @orange, @orange-dark);
-}
-
-.vote-active {
-  border-width: 2px;
-  border-style: solid;
-  border-color: @orange;
+  .people-number {
+    font-size: 24px;
+    color: @red-dark;
+  }
+  .people-number-end {
+    color: @gray-7;
+  }
+  .finish-tag-box {
+    position: absolute;
+    top: 0;
+    right: -30px;
+    width: 160px;
+    height: 150px;
+  }
 }
 
 .vote-padding {
-  padding: 30px 20px;
+  padding-top: 30px;
 }
 
+.vote-box {
+  margin-bottom: 30px;
+  .vote-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 30px;
+    color: @gray-7;
+  }
+  .vote-title {
+    flex: 1;
+    font-size: @font-size-lg;
+    color: #222;
+  }
+  &.tf-row-space-between {
+    padding: 30px;
+    border: 2px solid #f0f0f0;
+    border-radius: 10px;
+  }
+  &.vote-active {
+    border: 2px solid #55b862;
+  }
+  /deep/ .van-radio__icon .van-icon,
+  /deep/ .van-checkbox__icon .van-icon {
+    width: 36px;
+    height: 36px;
+    background: #d4d4d4;
+    border-color: #d4d4d4;
+  }
+  /deep/ .van-radio__icon--checked .van-icon,
+  /deep/ .van-checkbox__icon--checked .van-icon {
+    background-color: #55b862;
+    border-color: #55b862;
+  }
+}
+
+// 投票完成
+.finish-vote-box {
+  margin-bottom: 50px;
+  .vote-result {
+    margin-bottom: 18px;
+  }
+  .vote-title {
+    position: relative;
+    padding-left: 30px;
+  }
+  .tf-icon-gou {
+    position: absolute;
+    left: 0;
+    top: 8px;
+    font-size: 24px;
+    color: #55b862;
+  }
+  /deep/ .van-progress {
+    border-radius: 11px;
+    .van-progress__portion {
+      background: linear-gradient(90deg, #55b862, #63ce71);
+    }
+  }
+}
+
+// 问卷
 .question-container {
   width: 100%;
-  padding: 30px;
   background: #fff;
   border-radius: 10px;
   .question-box {
     margin-bottom: 40px;
     .question__text {
-      font-size: 28px;
       margin-bottom: 20px;
+      font-size: 30px;
+      color: #222;
     }
-    .radio-checked-box {
-      &::before {
-        content: "";
-        width: 14px;
-        height: 14px;
-        background: @red-dark;
-        border-radius: 50%;
-      }
-    }
-    /deep/ .van-radio {
-      height: 46px;
-      margin-bottom: 10px;
-      .van-radio__icon {
-        height: 22px;
-        .van-icon {
-          width: 22px;
-          height: 22px;
+    // 单选
+    /deep/ .van-radio-group {
+      border: 2px solid #f0f0f0;
+      border-radius: 10px;
+      .van-radio {
+        min-height: 80px;
+        padding-left: 30px;
+        .van-radio__icon {
+          height: 26px;
+          .van-icon {
+            width: 26px;
+            height: 26px;
+          }
+        }
+        .van-radio__icon--checked .van-icon {
+          background: none;
+          border: 6px solid #448fe4;
+        }
+        .van-radio__label {
+          margin-left: 20px;
+          font-size: 28px;
+          color: #666;
         }
       }
-      .van-radio__icon--checked .van-icon {
-        background: none;
-        border-color: #c8c7cc;
-      }
-      .van-radio__label {
-        font-size: 24px;
-        margin-left: 20px;
+      .van-radio + .van-radio {
+        border-top: 2px solid #f0f0f0;
       }
     }
-    /deep/ .van-checkbox {
-      height: 46px;
-      margin-bottom: 10px;
-      .van-checkbox__icon {
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .van-icon {
-          width: 30px;
-          height: 30px;
+    // 多选
+    /deep/ .van-checkbox-group {
+      border: 2px solid #f0f0f0;
+      border-radius: 10px;
+      .van-checkbox {
+        min-height: 80px;
+        padding-left: 30px;
+        .van-checkbox__icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 26px;
+          .van-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 4px;
+          }
+        }
+        .van-checkbox__icon--checked .van-icon {
+          background: #448fe4;
+          border-color: #448fe4;
+          color: #fff;
+          font-size: 24px;
+          line-height: 1;
+        }
+        .van-checkbox__label {
+          margin-left: 20px;
+          font-size: 28px;
+          color: #666;
         }
       }
-      .van-checkbox__icon--checked .van-icon {
-        background: none;
-        color: @red-dark;
-        border-color: #c8c7cc;
-        font-size: 24px;
-      }
-      .van-checkbox__label {
-        font-size: 24px;
-        margin-left: 20px;
+      .van-checkbox + .van-checkbox {
+        border-top: 2px solid #f0f0f0;
       }
     }
-    /deep/ .van-checkbox__icon--disabled .van-icon,
-    /deep/ .van-radio__icon--disabled .van-icon {
-      background-color: #fff;
-    }
-    /deep/
-      .van-checkbox
-      .van-checkbox__icon--disabled.van-checkbox__icon--checked
-      .van-icon {
-      color: #fff;
-      background-color: #c8c7cc;
-    }
-    /deep/
-      .van-radio
-      .van-radio__icon--disabled.van-radio__icon--checked
-      .van-icon::before {
-      background: #c8c7cc;
-    }
   }
-}
-.question__textarea {
-  padding-left: 0;
-  padding-right: 0;
-  border-bottom: 1px solid #aaa;
-}
-.finish-tag-box {
-  position: absolute;
-  top: -44px;
-  right: -44px;
-  padding: 15px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 5px solid rgba(170, 170, 170, 1);
-  text-align: center;
-  .finish-tag {
-    width: 100%;
-    height: 100%;
-    border: 2px solid rgba(170, 170, 170, 1);
-    border-radius: 50%;
-    color: #8f8f94;
-    font-size: 38px;
-    line-height: 170px;
-    font-weight: 500;
-    transform: rotate(-12deg);
-  }
-  .finish-text {
-    position: absolute;
-    top: 56px;
-    right: 30px;
+  .question__textarea {
+    padding: 19px 30px;
+
+    border: 2px solid #f0f0f0;
+    border-radius: 10px;
+    /deep/ .van-field__control {
+      font-size: 28px;
+      color: #666;
+    }
   }
 }
 
+// 投票、提交按钮
 .confirm-btn-placeholder {
   height: 110px;
   display: flex;
@@ -609,6 +586,15 @@ export default {
     right: 20px;
     bottom: 30px;
     width: calc(100% - 40px);
+    color: #fff;
+    background-color: #448fe4;
+    border: none;
+  }
+  .vote-btn {
+    background-color: #55b862;
+  }
+  /deep/ .van-button--disabled {
+    background: #aaaaaa;
   }
 }
 </style>

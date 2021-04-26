@@ -205,11 +205,21 @@ export default {
           })
           break
         case '20':
-          if (item.isSelfPay) {
-            this.$router.push({
-              name: 'livePayRecord'
-            })
-          }
+          this.$router.push({
+            name: 'livePayRecord',
+            query: {
+              houseId: item.source_id
+            }
+          })
+          break
+        // 观影-电影票订单详情
+        case '21':
+          this.$router.push({
+            name: 'movieTicket',
+            query: {
+              id: item.source_id
+            }
+          })
           break
       }
       // 幸福币详情
@@ -293,12 +303,31 @@ export default {
             }
           })
           break
+        // 生活缴费-充值/缴费页面
+        case '22':
+          this.$router.push({
+            name: 'livemainPay',
+            query: {
+              genreType: item.genre_type,
+              projectId: item.project_id,
+              houseId: item.expenses_house_id
+            }
+          })
+          break
       }
     },
     // 系统操作
     onSystem (item) {
       if (item.is_read == 0) {
         this.messageRead(item)
+      }
+      if (item.sub_type == 8) {
+        this.$router.push({
+          name: 'sysMsgInfo',
+          query: {
+            id: item.source_id
+          }
+        })
       }
       if (item.sub_type == 9) {
         this.$router.push({

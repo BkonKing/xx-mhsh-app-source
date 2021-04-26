@@ -3,6 +3,7 @@
     class="tf-list-refresh"
     v-model="refreshing"
     success-text="刷新成功"
+    :disabled="disabled"
     @refresh="onRefresh"
   >
     <slot v-if="!loading && listChild.length === 0" name="nodata">
@@ -44,6 +45,14 @@ export default {
     dataKey: {
       type: String,
       default: 'data'
+    },
+    pagination: {
+      type: Boolean,
+      default: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -76,9 +85,13 @@ export default {
             if (data && data.length > 0) {
               this.listChild.push(...data)
               this.$emit('update:list', this.listChild)
-              this.pageNum++
-              if (data.length >= 10) {
-                this.isEndNum = 0
+              if (this.pagination) {
+                this.pageNum++
+                if (data.length >= 10) {
+                  this.isEndNum = 0
+                } else {
+                  this.isEndNum = 1
+                }
               } else {
                 this.isEndNum = 1
               }
@@ -104,7 +117,7 @@ export default {
       this.isEndNum = 0
       this.pageNum = 1
       this.listChild = []
-      // this.$emit('update:list', this.listChild)
+      this.$emit('refresh')
       this.onLoad()
     },
     reload () {

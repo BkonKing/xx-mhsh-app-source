@@ -47,7 +47,7 @@
         v-if="swipeImages && swipeImages.length"
         class="home-swipe"
         :autoplay="6000"
-        :lazy-render="true"
+        :lazy-render="false"
         indicator-color="#fff"
         @change="swipeChange"
       >
@@ -56,11 +56,7 @@
           :key="i"
           @click="$router.push(item.url)"
         >
-          <van-image
-            class="swipe-item__image"
-            :src="item.img"
-            v-imageCach="item.img"
-          />
+          <van-image class="swipe-item__image" :src="item.img" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
@@ -69,11 +65,7 @@
           :key="index"
           @click="goApp(item)"
         >
-          <img
-            class="app-box__image"
-            :src="item.icon_image"
-            v-imageCach="item.icon_image"
-          />
+          <img class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{ item.application }}</span>
         </van-grid-item>
         <van-grid-item key="all" to="/applist">
@@ -90,7 +82,7 @@
               src="@/assets/imgs/home-credits.png"
             />
             <van-button
-              v-if="userInfo.signin_today == '0'"
+              v-if="userInfo.signin_status === 0"
               v-preventReClick
               :loading="signLoading"
               class="sign-btn"
@@ -187,33 +179,20 @@
           </van-swipe>
         </div>
       </div>
-      <!-- 美好头条 -->
-      <div class="front-page-container">
-        <van-notice-bar class="front-page" :scrollable="false">
-          <template v-slot:left-icon>
-            <img
-              class="front-page__tag"
-              src="@/assets/imgs/home_toutiao.png"
-              @click="$router.push('/neighbours?active=3')"
-            />
-          </template>
-          <van-swipe
-            v-if="frontList.length"
-            class="notice-swipe"
-            vertical
-            :autoplay="3000"
-            :show-indicators="false"
-          >
-            <van-swipe-item v-for="(item, i) in frontList" :key="i">
-              <div
-                class="front-page__text van-multi-ellipsis--l2"
-                @click="clickFront(item)"
-              >
-                {{ item.title }}
-              </div>
-            </van-swipe-item>
-          </van-swipe>
-        </van-notice-bar>
+      <!-- 热映电影 -->
+      <div class="community-box" v-if="filmlist && filmlist.length">
+        <div class="community-box__title" @click="goMovie">
+          热映电影
+          <span class="tf-icon tf-icon-right"></span>
+        </div>
+        <div class="film-list">
+          <film-box
+            v-for="(film, i) in filmlist"
+            :key="i"
+            :data="film"
+            :type="3"
+          ></film-box>
+        </div>
       </div>
       <!-- 社区活动 -->
       <div class="community-box" v-if="activityList && activityList.length">
@@ -262,6 +241,34 @@
           </div>
         </div>
       </div>
+      <!-- 美好头条 -->
+      <div class="front-page-container">
+        <van-notice-bar class="front-page" :scrollable="false">
+          <template v-slot:left-icon>
+            <img
+              class="front-page__tag"
+              src="@/assets/imgs/home_toutiao.png"
+              @click="$router.push('/neighbours?active=3')"
+            />
+          </template>
+          <van-swipe
+            v-if="frontList.length"
+            class="notice-swipe"
+            vertical
+            :autoplay="3000"
+            :show-indicators="false"
+          >
+            <van-swipe-item v-for="(item, i) in frontList" :key="i">
+              <div
+                class="front-page__text van-multi-ellipsis--l2"
+                @click="clickFront(item)"
+              >
+                {{ item.title }}
+              </div>
+            </van-swipe-item>
+          </van-swipe>
+        </van-notice-bar>
+      </div>
     </div>
     <!-- 新手引导 -->
     <div
@@ -288,18 +295,10 @@
 </template>
 
 <script>
-import {
-  Swipe,
-  SwipeItem,
-  Grid,
-  GridItem,
-  Image,
-  NoticeBar,
-  Toast,
-  Button
-} from 'vant'
+import { Toast } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
+import FilmBox from '@/views/life/movie/components/FilmBox'
 import {
   getMyApp,
   getBannerIndex,
@@ -311,21 +310,17 @@ import {
 import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
+import { getfilmlist } from '@/api/movie'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
+import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   name: 'home',
   components: {
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem,
-    [Grid.name]: Grid,
-    [GridItem.name]: GridItem,
-    [Image.name]: Image,
-    [NoticeBar.name]: NoticeBar,
-    [Button.name]: Button,
     pageNavBar,
-    tfImageList
+    tfImageList,
+    FilmBox
   },
   data () {
     return {
@@ -339,6 +334,7 @@ export default {
       ollageGoods: [], // 闪购商品
       creditsGoods: [], // 幸福币商品
       frontList: [],
+      filmlist: [], // 热映电影列表
       activityList: [],
       signLoading: false,
       guideShow: false, // 是否显示新手引导图
@@ -414,6 +410,7 @@ export default {
     this.getNoticeLbList()
     this.getCreditsGoodsList()
     this.getBargainGoods()
+    this.getLocationInfo()
     this.getActivityList()
     this.getOllageGoods()
     this.getMhttList()
@@ -522,6 +519,35 @@ export default {
     /* 跳转限时闪购详情 */
     clickTimeLimit ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
+    },
+    // 获取热映影片资料(列表)
+    getfilmlist (cityId = '') {
+      getfilmlist({
+        type: 1,
+        page_index: 1,
+        page_size: 3,
+        city_id: cityId
+      }).then(({ data }) => {
+        this.filmlist = data
+      })
+    },
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      bMapGetLocationInfo()
+        .then(data => {
+          const { adCode } = data
+          this.getfilmlist(String(adCode).substring(0, 4) + '00')
+        })
+        .catch(() => {
+          this.getfilmlist()
+        })
+    },
+    // 跳转电影页面
+    goMovie () {
+      this.$router.push({
+        name: 'movieIndex'
+      })
     },
     /* 获取活动列表 */
     getActivityList () {
@@ -704,11 +730,12 @@ export default {
   padding-top: 88px;
 }
 .home-swipe {
-  height: 344.4px;
+  width: 100%;
+  height: 345.4px;
 }
 .swipe-item__image {
   width: 100%;
-  height: 344.4px;
+  height: 345.4px;
 }
 /* app列表 */
 .app-box {
@@ -885,6 +912,34 @@ export default {
     color: #fff;
   }
 }
+// 电影专区
+.film-list {
+  display: flex;
+  /deep/ .film-box {
+    flex: 1;
+    padding-right: 20px;
+    .film-info {
+      flex: 1;
+      width: auto;
+      height: 310px;
+    }
+    .film-name {
+      width: auto;
+      font-size: 30px;
+      text-align: center;
+    }
+    .tf-text-lg {
+      font-size: 28px;
+      margin: 0 2px;
+    }
+    .ticket-btn .tf-icon-right {
+      margin-left: 4px;
+    }
+    .ticket-btn {
+      margin-top: 14px;
+    }
+  }
+}
 /* 社区活动 */
 .community-box {
   padding-left: 20px;
@@ -977,7 +1032,7 @@ export default {
   }
 }
 .front-page-container {
-  padding: 40px 20px 76px;
+  padding: 20px 20px 76px;
 }
 .front-page {
   padding: 30px;

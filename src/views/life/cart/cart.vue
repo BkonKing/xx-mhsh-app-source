@@ -25,10 +25,10 @@
               <div @click.stop="SelectSku(item.goods_id, index)" class="product-specs">
                 <div>{{item.specs_name}}<img src="@/assets/img/down.png" /></div>
               </div>
-              <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="product-icon flex-center">特卖</div></div> -->
-              <div class="flex-align-center">
-                <div v-if="item.goods_type == 2" class="product-icon goods-type flex-center">特卖</div>
-                <!-- <div class="product-icon flex-center product-label">顺丰</div> -->
+              <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="label-item-block flex-center">特卖</div></div> -->
+              <div class="flex-align-center cart-label-list">
+                <div v-if="item.goods_type == 2" :class="[item.goods_type == 2 ? 'label-item-tm' : '','label-item-block goods-type flex-center']">特卖</div>
+                <div v-for="(val, j) in item.tag" :key="j" class="label-item-block flex-center label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
               </div>
               <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
             </div>
@@ -376,29 +376,13 @@ export default {
   height: 10px;
   margin-left: 12px;
 }
-.product-icon {
-  padding: 0 10px;
-  height: 36px;
-  line-height: 36px;
-  border-radius: 4px;
+.cart-label-list {
+  max-width: 422px;
   overflow: hidden;
-  font-size: 24px;
+}
+.label-item-block {
   margin-bottom: 10px;
   margin-right: 10px;
-}
-.cart-item-tm .product-icon.goods-type {
-  color: #fff;
-  background: linear-gradient(90deg, #EB5841, #FFA45A);
-}
-.cart-item-sg .product-icon.goods-type {
-  color: #fff;
-  background: linear-gradient(90deg, #FFA110, #FFC017);
-}
-.product-label {
-  color: #55b862;
-  border: 1PX solid #55b862;
-  line-height: 34px;
-  /* display: none; */
 }
 .product-price {
   line-height: 42px;

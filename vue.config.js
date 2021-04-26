@@ -6,14 +6,15 @@ const {
 } = require('child_process')
 
 const appname = 'dist' // 项目文件名
-const appPort = 8111 // 真机同步端口,浏览器打开端口。
+const appPort = 8111 // 浏览器打开端口。
+const apicloudPort = 9999 // 真机同步端口
 const scriptActive = process.env.npm_lifecycle_event
 
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : './',
   outputDir: './' + appname, // 运行时生成的生产环境构建文件的目录(默认""dist""，构建之前会被清除)
   indexPath: 'index.html', // 指定生成的 index.html 的输出路径(相对于 outputDir)也可以是一个绝对路径。
-  filenameHashing: process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */ ,
+  filenameHashing: process.env.NODE_ENV === 'production' /** 开发环境关闭文件哈希值 */,
   productionSourceMap: false,
   pages: {
     // pages 里配置的路径和文件名在你的文档目录必须存在 否则启动服务会报错
@@ -64,7 +65,8 @@ module.exports = {
         if (scriptActive === 'watch-build') {
           /** 插件初始化后开启wifi服务 */
           compiler.hooks.afterPlugins.tap('apicloud', () => {
-            const wifiWorker = spawn(`apicloud wifiStart --port ${appPort}`, {
+            // 在子进程运行命令行，提供监听事件
+            const wifiWorker = spawn(`apicloud wifiStart --port ${apicloudPort}`, {
               shell: true
             })
             wifiWorker.stdout.on('data', function (chunk) {
@@ -77,16 +79,16 @@ module.exports = {
           })
           /** 生成资源后,删除重复热更新文件 */
           compiler.hooks.afterEmit.tap('apicloud', compilation => {
-            const assets = compilation.assets
-            const unlinked = []
+            const assets = compilation.assets // assets资源文件列表
+            const unlinked = [] // 被删除文件列表
             const files = fs.readdirSync(
-              path.join(__dirname, `../${appname}/`)
+              path.join(__dirname, `./${appname}/`)
             )
             if (files.length) {
               let jsFiles = files.filter(f => /.*(\.js|\.json)$/.test(f))
               jsFiles.forEach(file => {
                 if (!assets[file]) {
-                  fs.unlinkSync(path.resolve(`../${appname}/${file}`))
+                  fs.unlinkSync(path.resolve(`./${appname}/${file}`)) // 删除文件
                   unlinked.push(file)
                 }
               })
@@ -97,8 +99,9 @@ module.exports = {
           })
           /** 编译完成，真机同步 */
           compiler.hooks.done.tap('apicloud', () => {
+            // 在子进程运行命令行，提供回调函数
             exec(
-              `apicloud wifiSync --project ../${appname} --updateAll false --port ${appPort}`,
+              `apicloud wifiSync --project ./${appname} --updateAll false --port ${apicloudPort}`,
               (error, stdout) => {
                 if (error) {
                   console.error(`exec error: ${error}`)
@@ -119,7 +122,6 @@ module.exports = {
   devServer: {
     // 环境配置
     host: 'localhost',
-    // host: '192.168.1.158',
     hot: false,
     port: appPort,
     https: false,
@@ -134,7 +136,9 @@ module.exports = {
         }
       },
       '/api': {
-        target: 'https://test.tosolomo.com/app/api/v1',
+        // target: 'http://meihaoshenghuo.com/app/api/v1',
+        // target: 'https://test.tosolomo.com/app/api/v1', 
+        target: 'https://develop.mhshjy.com/app/api/v1',
         pathRewrite: {
           '^/api': ''
         }
@@ -146,7 +150,7 @@ module.exports = {
   pluginOptions: {}
 }
 
-function addStyleResource(rule) {
+function addStyleResource (rule) {
   rule.use('style-resource')
     .loader('style-resources-loader')
     .options({

@@ -254,6 +254,34 @@ export function getCreditsInfo (params) {
 export function getCreditsOrderList (data) {
   return request.post('/life/order/credits_order_list', data)
 }
+// 意向楼盘列表
+export function getYxlpList () {
+  return request({
+    url: '/hkt/tjgf/yxlpList'
+  })
+}
+// 推荐客户
+export function recommendClient (data) {
+  return request({
+    url: '/hkt/tjgf/recommendClient',
+    method: 'post',
+    data
+  })
+}
+
+// 推荐客户列表
+export function clientList (params) {
+  return request({
+    url: '/hkt/tjgf/clientList',
+    params
+  })
+}
+// 统计客户
+export function clientCount () {
+  return request({
+    url: '/hkt/tjgf/clientCount'
+  })
+}
 
 /* 幸福币 end */
 
@@ -298,6 +326,10 @@ export function messageRead (data) {
 // 消息全部已读
 export function messageAllRead (data) {
   return request.post('/my/message/messageAllRead', data)
+}
+// 获取APP系统消息详情接口
+export function getAppMsgDetail (data) {
+  return request.post('/messagepush/app/getAppDetail', data)
 }
 
 /* 我的消息 end */

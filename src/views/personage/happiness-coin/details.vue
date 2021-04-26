@@ -102,10 +102,13 @@ export default {
           break
         case '3':
           if (this.info.order_type == 1) {
-            path = `/order/detail?id=${order_id}`
+            path = `/order/coin-detail?id=${order_id}`
           } else {
             path = `/order/special-detail?id=${order_id}`
           }
+          break
+        case '4':
+          path = `/life/movie/ticket?id=${order_id}`
           break
       }
       this.$router.push({

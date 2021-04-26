@@ -181,6 +181,16 @@ const personageRouter = [
       keepAlive: true
     }
   },
+  /* app系统消息详情 */
+  {
+    path: '/pages/personage/message/sysMsgInfo',
+    name: 'sysMsgInfo',
+    component: () =>
+      import(
+        /* webpackChunkName: "sysMsgInfo" */
+        '@/views/personage/message/sysMsgInfo.vue'
+      )
+  },
   /* 签到 */
   {
     path: '/pages/personage/happiness-coin/index',
@@ -199,7 +209,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "happinessCoinRecord" */
         '@/views/personage/happiness-coin/coin-record.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 购买记录 */
   {
@@ -408,6 +421,26 @@ const personageRouter = [
       import(
         /* webpackChunkName: "waterElectricityMeter" */
         '@/views/personage/transaction/water-electricity/meter-reading.vue'
+      )
+  },
+  /* 幸福币-推荐购房 */
+  {
+    path: '/pages/personage/happiness-coin/recomBuyHouse',
+    name: 'recomBuyHouse',
+    component: () =>
+      import(
+        /* webpackChunkName: "recomBuyHouse" */
+        '@/views/personage/happiness-coin/recom-buy-house.vue'
+      )
+  },
+  /** 幸福币-推荐记录 */
+  {
+    path: '/pages/personage/happiness-coin/recomRecord',
+    name: 'recomRecord',
+    component: () =>
+      import(
+        /* webpackChunkName: "recomRecord" */
+        '@/views/personage/happiness-coin/recom-record.vue'
       )
   }
 ]
