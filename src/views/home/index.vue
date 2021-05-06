@@ -132,8 +132,29 @@
             <span class="tf-icon tf-icon-right"></span>
           </div>
         </div>
-        <div class="task-ul">
-          <li class="task-item" v-for="i in 3" :key="i">
+        <van-swipe
+          v-if="0"
+          class="task-swipe"
+          vertical
+          :autoplay="6000"
+          :show-indicators="false"
+        >
+          <van-swipe-item v-for="i in 1" :key="i">
+            <ul class="task-ul">
+              <li class="task-item" v-for="i in 4" :key="i">
+                <span class="tf-icon tf-icon-xingfubi1"></span>
+                <span class="task-num">+{{ i }}000</span>
+                <span class="task-text task-username">王小明王小明</span>
+                <span class="task-text">发布了</span>
+                <span class="task-title"
+                  >任务标题任务标题任务任标题任务任题任务任</span
+                >
+              </li>
+            </ul>
+          </van-swipe-item>
+        </van-swipe>
+        <ul class="task-swipe" style="height: auto;" v-else>
+          <li class="task-item" v-for="i in 4" :key="i">
             <span class="tf-icon tf-icon-xingfubi1"></span>
             <span class="task-num">+{{ i }}000</span>
             <span class="task-text task-username">王小明王小明</span>
@@ -142,7 +163,7 @@
               >任务标题任务标题任务任标题任务任题任务任</span
             >
           </li>
-        </div>
+        </ul>
       </div>
       <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
         <!-- 9.9特卖 -->
@@ -865,13 +886,13 @@ export default {
   margin: 0 20px 40px;
   padding-bottom: 30px;
   background: #ffefc0;
-  background-image: url('~@/assets/imgs/home_task_bg.png');
+  background-image: url("~@/assets/imgs/home_task_bg.png");
   background-size: 100% 160px;
   background-repeat: no-repeat;
   border-radius: 10px;
   overflow: hidden;
   &__header {
-    padding: 30px 0;
+    padding: 38px 0 40px;
     &-logo {
       height: 36px;
     }
@@ -885,10 +906,16 @@ export default {
       color: #38383866;
     }
   }
-  .task-ul {
+  .task-swipe {
+    height: 320px;
     padding: 30px 30px 0;
     background: #ffffff;
     border-radius: 10px;
+    .task-ul {
+      display: flex;
+      flex-direction: column;
+      height: 290px;
+    }
     .task-item {
       display: flex;
       align-items: center;
@@ -900,7 +927,7 @@ export default {
       color: #febf00;
     }
     .task-num {
-      width: 91px;
+      min-width: 91px;
       margin-left: 10px;
       font-size: 24px;
       font-weight: 500;
