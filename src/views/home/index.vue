@@ -101,7 +101,6 @@
               v-for="(item, i) in creditsGoods"
               :key="i"
               :src="item.thumb"
-              v-imageCach="item.thumb"
               @click="goCoinCommodity(item)"
             >
               <div class="coin-tag">
@@ -207,11 +206,7 @@
             class="activity-item"
             @click="goActivity(item)"
           >
-            <van-image
-              class="activity-item__image"
-              :src="item.thumbnail"
-              v-imageCach="item.thumbnail"
-            >
+            <van-image class="activity-item__image" :src="item.thumbnail">
             </van-image>
             <div class="activity-info">
               <div class="activity-info__date">
