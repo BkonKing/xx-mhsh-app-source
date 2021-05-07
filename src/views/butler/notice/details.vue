@@ -11,7 +11,7 @@
     <div class="page-container">
       <div class="tf-article-title">{{title}}</div>
       <div class="tf-article-info">{{ctime}}</div>
-      <div class="tf-article-content">{{content}}</div>
+      <div class="tf-article-content" v-html="content"></div>
     </div>
   </div>
 </template>
