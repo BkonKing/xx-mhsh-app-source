@@ -56,11 +56,7 @@
           :key="i"
           @click="$router.push(item.url)"
         >
-          <van-image
-            class="swipe-item__image"
-            :src="item.img"
-            v-imageCach="item.img"
-          />
+          <van-image class="swipe-item__image" :src="item.img" />
         </van-swipe-item>
       </van-swipe>
       <van-grid class="app-box" :border="false" :column-num="5">
@@ -69,11 +65,7 @@
           :key="index"
           @click="goApp(item)"
         >
-          <img
-            class="app-box__image"
-            :src="item.icon_image"
-            v-imageCach="item.icon_image"
-          />
+          <img class="app-box__image" :src="item.icon_image" />
           <span class="app-box__text">{{ item.application }}</span>
         </van-grid-item>
         <van-grid-item key="all" to="/applist">
@@ -109,7 +101,6 @@
               v-for="(item, i) in creditsGoods"
               :key="i"
               :src="item.thumb"
-              v-imageCach="item.thumb"
               @click="goCoinCommodity(item)"
             >
               <div class="coin-tag">
@@ -260,11 +251,7 @@
             class="activity-item"
             @click="goActivity(item)"
           >
-            <van-image
-              class="activity-item__image"
-              :src="item.thumbnail"
-              v-imageCach="item.thumbnail"
-            >
+            <van-image class="activity-item__image" :src="item.thumbnail">
             </van-image>
             <div class="activity-info">
               <div class="activity-info__date">
