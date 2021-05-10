@@ -64,4 +64,22 @@ export default {
   padding-bottom: 30px;
   border-bottom: 2px solid @divider-color;
 }
+.tf-article-content {
+  word-break: break-all;
+  /deep/ img {
+    max-width: 100% !important;
+  }
+  /deep/ strong {
+    font-weight: bold;
+  }
+  /deep/ ol {
+    list-style-type: decimal;
+  }
+  /deep/ ul {
+    list-style-type: disc;
+  }
+  /deep/ li {
+    list-style: inherit;
+  }
+}
 </style>
