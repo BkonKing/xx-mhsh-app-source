@@ -22,7 +22,7 @@
         </div>
       </graphic>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">确定</div>
+        <div @click="submit" :class="[ formData.content.length > 200 ? 'unable-btn' : '', 'task-btn']">确定</div>
       </div>
       <confirm-model v-model="confirmShow"></confirm-model>
     </div>
@@ -35,7 +35,7 @@ import {
 } from 'vant'
 import graphic from '../components/graphic'
 import confirmModel from '../components/confirm-model'
-import { validForm } from '@/utils/util'
+import { deliverTask } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -44,10 +44,12 @@ export default {
   },
   data () {
     return {
+      taskId: '',
+      userTaskId: '',
       textNum: 0, // textarea 长度
       formData: {
         content: '',
-        images: []
+        image_url: []
       },
       phTxt: '和对方说点什么',
       maxNum: 200,
@@ -55,7 +57,8 @@ export default {
     }
   },
   created () {
-
+    this.userTaskId = this.$route.query.userTaskId
+    this.taskId = this.$route.query.taskId
   },
   mounted () {
 
@@ -64,40 +67,26 @@ export default {
     // 图文信息
     getForm (val) {
       this.formData = val
+      this.formData.image_url = val.images
       this.textNum = val.content.length
     },
     // 提交
     submit () {
-      const validator = [
-        {
-          value: typeId,
-          message: '请选择发布类型'
-        },
-        {
-          value: this.formData.content,
-          message: '请输入要发布的内容'
-        }
-      ]
-      validForm(validator).then((res) => {
-        if (this.textNum > 500) {
-          Toast('字数太多啦，分享的内容最多500字')
-        } else {
-          // addPostBar({
-          //   category_id: typeId,
-          //   content: this.content,
-          //   images: this.images.join(',')
-          // }).then((res) => {
-          //   Dialog.alert({
-          //     title: res.message
-          //   }).then(res => {
-          //     this.$router.go(-1)
-          //   })
-          //   this.mtjEvent({
-          //     eventId: 42
-          //   })
-          // })
-        }
-      })
+      if (this.textNum > 200) {
+        Toast('交付说明 最多输入200字')
+      } else {
+        const params = Object.assign({}, this.formData, { user_task_id: this.userTaskId })
+        deliverTask(params).then((res) => {
+          Toast({
+            message: '提交成功',
+            onClose: () => {
+              this.$router.go(-1)
+            }
+          })
+        }).catch(() => {
+          Toast('提交失败 请重试')
+        })
+      }
     }
   }
 }

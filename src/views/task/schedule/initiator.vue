@@ -9,17 +9,14 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <div class="tel-btn"><img src="@/assets/img/task_10.png" /></div>
+        <a :href="'tel: ' + maskTel" class="tel-btn"><img src="@/assets/img/task_10.png" /></a>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="status-block tf-row-space-between">
         <div class="status-list tf-row-vertical-center">
-          <div class="status-item">待交付(2)</div>
-          <div class="status-item">暂停中(1)</div>
-          <div class="status-item">已完成(1)</div>
+          <div v-for="(item, index) in statusNumList" :key="index" class="status-item">{{ item.text }}({{ item.value }})</div>
         </div>
-        <!-- <div class="status-select">已接单 (3)</div><img src="" /> -->
         <van-dropdown-menu active-color="#8F8F94">
           <van-dropdown-item :title="statusName" ref="item">
             <div class="status-option">
@@ -31,29 +28,58 @@
           </van-dropdown-item>
         </van-dropdown-menu>
       </div>
-      <div class="user-list">
-        <div class="user-item tf-column active">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-          <div class="van-ellipsis user-name">我我我我我我我我我我</div>
-          <div class="user-status color-FF5240">已接单</div>
-        </div>
-        <div class="user-item tf-column">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-          <div class="van-ellipsis user-name">我我我我我我我我我我</div>
-          <div class="user-status">已接单</div>
-        </div>
-        <div class="user-item tf-column">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-          <div class="van-ellipsis user-name">我我我我我我我我我我</div>
-          <div class="user-status">已接单</div>
-        </div>
-        <div class="user-item tf-column">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-          <div class="van-ellipsis user-name">我我我我我我我我我我</div>
-          <div class="user-status">已接单</div>
+      <div v-if="userList.length > 1" class="user-list">
+        <div v-for="(item, index) in userList" :key="index" class="user-item tf-column" :class="{ 'active': userIndex == index }" @click="userSelect(index)">
+          <img :src="item.avatar" />
+          <div class="van-ellipsis user-name">{{ item.nickname }}</div>
+          <div class="user-status" :class="{ 'color-FF5240': item.is_stop == 1, 'opacity-gray': item.progress_status > 1 }">{{ item.progress_status_name }}</div>
         </div>
       </div>
-      <op></op>
+      <div v-if="userList.length == 1" class="release-header">
+        <div class="release-user tf-row">
+          <img :src="infoData.avatar" />
+          <div class="tf-row-space-between">
+            <div class="release-name van-ellipsis">{{ userList[0].nickname }}</div>
+            <div class="release-time color-ccc" :class="{ 'color-FF5240': userList[0].is_stop == 1, 'color-ccc': userList[0].progress_status > 1 }">{{ userList[0].progress_status_name }}</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="infoData && infoData.taskflow_list" class="list-cont">
+        <schedule-list :listData="infoData.taskflow_list"></schedule-list>
+      </div>
+      <template v-else>
+        <div v-if="!isLoading" class="empty-session">
+          <img src="@/assets/img/empty_quiz.png" />
+        </div>
+      </template>
+      <div class="op-block">
+        <div class="bottom-fiex tf-row">
+          <div class="op-left tf-row">
+            <div @click="quiz" class="tf-column">
+              <img src="@/assets/img/task_05.png" />
+              <div>提问</div>
+            </div>
+            <a :href="'tel: ' + infoData.contact_number" class="tf-column">
+              <img src="@/assets/img/task_06.png" />
+              <div>联系</div>
+            </a>
+            <div v-if="infoData.is_show_complain == 1" @click="infoData.is_can_complain == 1 && complaint()" class="tf-column" :class="{'opacity-gray': infoData.is_can_complain == 0}">
+              <img src="@/assets/img/task_18.png" />
+              <div>投诉</div>
+            </div>
+            <div v-if="infoData.is_show_eliminate == 1" @click="infoData.is_can_eliminate == 1 && endTask()" class="tf-column" :class="{'opacity-gray': infoData.is_can_eliminate == 0}">
+              <img src="@/assets/img/task_19.png" />
+              <div>淘汰</div>
+            </div>
+            <div v-if="infoData.is_can_evaluate == 1" @click="evaluate" class="tf-column" :class="{'opacity-gray': infoData.is_can_abandon == 0}">
+              <img src="@/assets/img/task_20.png" />
+              <div>评价</div>
+            </div>
+          </div>
+          <div v-if="infoData.is_can_confirm == 1" class="op-right" @click="completeTask()">确认完成</div>
+          <div v-if="infoData.is_can_delay == 1" class="op-right" @click="overtimeTask">是否延期</div>
+        </div>
+      </div>
     </div>
     <task-popup v-model="popupShow" :titName="overTit" :subTitName="overSubTit">
       <div slot="content" class="popup-cont">
@@ -73,34 +99,34 @@
             </div>
           </div>
           <div class="coin-tip">
-            <div v-show="coinIndex == 0" class="all-tip">奖励每人1000幸福币</div>
-            <van-field v-show="coinIndex == 1" v-model="digit" type="digit" placeholder="奖励每人数量，需小于1000幸福币">
+            <div v-show="coinIndex == 0" class="all-tip">奖励每人{{ overtimeInfo.reward_happiness }}幸福币</div>
+            <van-field v-show="coinIndex == 1" v-model="formData2.new_reward_happiness" type="digit" :placeholder="`奖励每人数量，需小于${overtimeInfo.reward_happiness}幸福币`">
               <div slot="extra" class="coin-unit">币</div>
             </van-field>
           </div>
         </div>
         <div v-show="overIndex == 0" class="select-block tf-row">
-          <div class="popup-select tf-row-space-between">
-            请选择
+          <div @click="timeSelect(1)" class="popup-select tf-row-space-between">
+            {{ formData2.day_num ? this.formData2.day_num+'天' : '请选择' }}
             <img src="@/assets/img/task_14.png" />
           </div>
           <div class="select-lable">天</div>
-          <div class="popup-select tf-row-space-between">
-            请选择
+          <div @click="timeSelect(2)" class="popup-select tf-row-space-between">
+            {{ formData2.hour_num ? this.formData2.hour_num+'小时' : '请选择' }}
             <img src="@/assets/img/task_14.png" />
           </div>
           <div class="select-lable">小时</div>
         </div>
-        <div class="task-btn">确定</div>
+        <div class="task-btn" @click="ableClick||delayTask()" :class="{'unable-btn': ableClick}">确定</div>
       </div>
     </task-popup>
-    <task-picker v-model="pcikerShow" :list="[1,23,4]"></task-picker>
+    <task-picker v-model="pcikerShow" :list="pickerList" @pickerCall="pickerCall"></task-picker>
     <task-popup v-model="endShow" :titName="endTit" :subTitName="endSubTit">
       <div slot="content" class="popup-cont end-cont">
         <div class="form-label">淘汰原因<span>*</span></div>
-        <div class="select-block tf-row">
+        <div @click="reasonShow = true" class="select-block tf-row">
           <div class="popup-select tf-row-space-between">
-            请选择
+            {{ formData.reason || '请选择' }}
             <img src="@/assets/img/task_09.png" />
           </div>
         </div>
@@ -109,10 +135,16 @@
           phTxt="请输入"
           :maxNum="200"
           @getForm="getForm"
+          ref="graphic"
         ></graphic>
-        <div class="task-btn">确定</div>
+        <div @click="submitEliminate" :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']">确定</div>
       </div>
     </task-popup>
+    <list-select
+      v-model="reasonShow"
+      @selectCall="selectCall"
+      :selectList="reasonList"
+    ></list-select>
   </div>
 </template>
 
@@ -121,52 +153,81 @@ import {
   NavBar,
   DropdownMenu,
   DropdownItem,
-  Picker
+  Picker,
+  Toast
 } from 'vant'
-import op from '../components/op'
 import taskPopup from '../components/task-popup'
 import taskPicker from '../components/task-picker'
 import graphic from '../components/graphic'
+import scheduleList from './schedule-list'
+import listSelect from '../components/list-select'
+import { getTaskSchedule, getReasonList, submitEliminate, getOvertimeTask, submitDelayTash } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
     [DropdownMenu.name]: DropdownMenu,
     [DropdownItem.name]: DropdownItem,
     [Picker.name]: Picker,
-    op,
     taskPopup,
     taskPicker,
-    graphic
+    graphic,
+    scheduleList,
+    listSelect
   },
   data () {
     return {
+      taskId: '',
+      isLoading: true,
+      userList: [], // 接单者
+      userIndex: 0, // 选中的接单者
+      infoData: '', // 当前选中的接单者信息
       endShow: false, // 淘汰弹窗
       endTit: '淘汰接单者', // 淘汰标题
       endSubTit: '请先与对方沟通协商', // 淘汰标题
-      popupShow: true, // 超时弹窗
+      popupShow: false, // 超时弹窗
+      statusNumList: [],
       status: 0,
       statusName: '状态',
       statusIndex: -1,
-      statusList: [
-        { text: '全部', value: 0 },
-        { text: '已接单', value: 1 },
-        { text: '进行中', value: 2 },
-        { text: '暂停中', value: 0 },
-        { text: '已完成', value: 1 },
-        { text: '已终止', value: 2 },
-        { text: '已放弃', value: 0 },
-        { text: '已淘汰', value: 1 }
-      ],
+      statusList: [],
       overTit: '任务超时', // 超时标题
       overSubTit: '超时1小时10分钟 剩余3人未交付', // 超时标题
       pcikerShow: false, // 超时延迟时间选择
       overList: ['延期', '终止任务'],
       overIndex: 0, // 0延期 1终止任务
+      overtimeInfo: '',
+      timeType: 1, // 1 天 2 小时
+      pickerList: [],
       coinList: ['奖励全部', '奖励部分', '不奖励'],
-      coinIndex: 0 // 0奖励全部 1奖励部分 2不奖励
+      coinIndex: 1, // 0奖励全部 1奖励部分 2不奖励
+      maskTel: '', // 联系电话
+      reasonList: [], // 淘汰原因
+      reasonShow: false,
+      formData2: {
+        type: 1,
+        day_num: '',
+        hour_num: '',
+        reward_type: 2,
+        new_reward_happiness: null
+      },
+      formData: {
+        reason: '',
+        content: ''
+      }
+    }
+  },
+  computed: {
+    ableClick () {
+      if ((this.overIndex == 0 && (!this.formData2.day_num && !this.formData2.hour_num)) || (this.overIndex == 1 && this.coinIndex == 1 && !this.formData2.new_reward_happiness)) {
+        return true
+      } else {
+        return false
+      }
     }
   },
   created () {
+    this.taskId = this.$route.query.taskId
+    this.formData2.task_id = this.taskId
     this.getData()
   },
   mounted () {
@@ -174,16 +235,196 @@ export default {
   },
   methods: {
     getData () {
-
+      const params = {
+        linli_task_id: this.taskId
+      }
+      if (this.statusIndex > -1) {
+        Object.assign(params, { select_type: this.statusList[this.statusIndex].text })
+      }
+      getTaskSchedule(params).then((res) => {
+        this.isLoading = false
+        this.userIndex = 0
+        this.statusNumList = []
+        this.statusList = []
+        if (res.is_cen_yq == 1 && this.statusIndex < 0) {
+          this.overtimeTask()
+        }
+        for (const key in res.data_tab) {
+          if (res.data_tab[key] > 0) {
+            const obj = {
+              text: key,
+              value: res.data_tab[key]
+            }
+            this.statusNumList.push(obj)
+          }
+        }
+        for (const key in res.select_data) {
+          const obj = {
+            text: key,
+            value: res.select_data[key]
+          }
+          this.statusList.push(obj)
+        }
+        this.userList = res.data
+        if (res.data.length) {
+          if (!this.maskTel) {
+            this.maskTel = this.userList[0].customer_service
+          }
+          this.infoData = this.userList[0]
+        } else {
+          this.infoData = []
+        }
+      })
     },
     statusChange (index) {
       this.statusIndex = index
       this.statusName = `${this.statusList[this.statusIndex].text} (${this.statusList[this.statusIndex].value})`
+      this.$refs.item.toggle()
+      this.getData()
+    },
+    // 选择接单者
+    userSelect (index) {
+      this.userIndex = index
+      this.infoData = this.userList[index]
+    },
+    // 选择原因
+    selectCall (obj) {
+      this.formData.reason = obj.text
+      console.log(obj)
+    },
+    getForm (val) {
+      this.formData.content = val.content
+      this.formData.image_url = val.images
+    },
+    // 淘汰
+    endTask () {
+      this.formData.reason = ''
+      this.formData.content = ''
+      this.formData.image_url = []
+      if (!this.reasonList.length) {
+        getReasonList({ type: 1 }).then((res) => {
+          this.reasonList = res.data.map(item => {
+            return {
+              value: item.id,
+              text: item.reason
+            }
+          })
+          this.endShow = true
+        })
+      } else {
+        this.endShow = true
+        this.$refs.graphic.setVal({ content: '', images: [] })
+      }
+    },
+    // 淘汰提交
+    submitEliminate () {
+      if (!this.formData.reason) return
+      this.formData.user_task_id = this.infoData.id
+      submitEliminate(this.formData).then((res) => {
+        this.endShow = false
+        this.getData()
+      })
+    },
+    // 延期
+    overtimeTask () {
+      getOvertimeTask({ task_id: this.taskId }).then((res) => {
+        this.overtimeInfo = res.data
+        this.overSubTit = res.data.tab_text
+        this.popupShow = true
+      })
+    },
+    // 延期时间
+    timeSelect (type) {
+      this.timeType = type
+      let listLength = 0
+      this.pickerList = []
+      if (type == 1) {
+        listLength = 11
+        this.pickerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      } else {
+        listLength = 24
+      }
+      for (let i = 1; i < listLength; i++) {
+        this.pickerList.push(i)
+      }
+      this.pcikerShow = true
+    },
+    pickerCall (value) {
+      if (this.timeType == 1) {
+        this.formData2.day_num = value
+      } else {
+        this.formData2.hour_num = value
+      }
+    },
+    // 延期
+    delayTask () {
+      if (this.overIndex == 1 && this.coinIndex == 1 && this.formData2.new_reward_happiness >= this.overtimeInfo.reward_happiness) {
+        Toast(`奖励必须小于${this.overtimeInfo.reward_happiness}幸福币`)
+      } else {
+        this.formData2.type = this.overIndex + 1
+        this.formData2.reward_type = this.coinIndex + 1
+        submitDelayTash(this.formData2).then((res) => {
+          this.popupShow = false
+          this.getData()
+        })
+      }
+    },
+    // 确认完成
+    completeTask () {
+      this.$router.push({
+        name: 'operateFinish',
+        query: {
+          userTaskId: this.infoData.id
+        }
+      })
+    },
+    // 提问
+    quiz () {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          isOwn: 0,
+          taskId: this.taskId
+        }
+      })
+    },
+    // 投诉
+    complaint () {
+      this.$router.push({
+        name: 'operateComplaint',
+        query: {
+          taskId: this.taskId,
+          complaintUid: this.infoData.uid
+        }
+      })
+    },
+    // 评价
+    evaluate () {
+      this.$router.push({
+        name: 'operateEvaluate',
+        query: {
+          userTaskId: this.infoData.id
+        }
+      })
+    },
+    // 查看任务
+    taskDetail () {
+      if (this.prevName == 'taskDetail') {
+        this.$router.go(-1)
+      } else {
+        this.$router.push({
+          name: 'taskDetail',
+          query: {
+            taskId: this.taskId
+          }
+        })
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+@import url(../../../styles/task.less);
 .tf-body-container{
   font-size: 28px;
   color: #333;
@@ -324,8 +565,14 @@ export default {
       &.color-FF5240 {
         color: #FF5240;
       }
+      &.opacity-gray {
+        opacity: 0.6;
+      }
     }
   }
+}
+.list-cont {
+  padding: 30px 20px 60px;
 }
 .radio-block {
   // margin-bottom: 40px;
@@ -464,6 +711,58 @@ export default {
         margin: 0 16px 20px 0;
       }
     }
+  }
+}
+
+.release-header {
+  height: 160px;
+  width: 710px;
+  background: linear-gradient(90deg, #FFD34D 0%, #FEBF00 100%);
+  border-radius: 10px 10px 0 0;
+  padding: 30px;
+  margin: 0 auto;
+  & + .list-cont {
+    padding-top: 0;
+  }
+}
+.release-user {
+  height: 80px;
+  align-items: center;
+  color: #000000;
+  & > img {
+    width: 80px;
+    height: 100%;
+    border-radius: 50%;
+    margin-right: 30px;
+  }
+  & > div.tf-row-space-between {
+    max-width: 398px;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+  }
+  .release-name {
+    font-weight: 500;
+    line-height: 36px;
+  }
+  .release-time {
+    font-size: 24px;
+    line-height: 30px;
+    &.color-FF5240 {
+      color: #FF5240;
+    }
+    &.color-ccc {
+      opacity: 0.6;
+    }
+  }
+}
+
+.empty-session {
+  padding-top: 300px;
+  align-items: center;
+  img {
+    width: 209px;
+    height: 240px;
   }
 }
 </style>

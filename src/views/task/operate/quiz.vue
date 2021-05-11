@@ -12,54 +12,58 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
-      <div v-show="false" class="empty-session">
+      <div v-if="!listData.length" class="empty-session">
         <img src="@/assets/img/empty_quiz.png" />
         <div>暂无内容</div>
       </div>
-      <div class="quiz-list">
-        <div class="quiz-item">
-          <div class="operate-ellipsis van-icon van-icon-ellipsis"></div>
-          <div class="item-header">
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-            <div class="name-time tf-column">
-              <div class="user-name van-ellipsis">月亮照常落下</div>
-              <div class="itme-time">2021-3-25 12:35:26</div>
-            </div>
-          </div>
-          <div class="item-cont">月亮升起，有雕归巢的声音，有鱼儿越出碧光，有琴 声演绎古老传说。</div>
-          <div class="reply-cont">
-            <div :class="{'test-over': isOver}" ref="test">
-              <span>任务方：</span>{{ text }}
-            </div>
-            <div v-show="isOver" class="more-down"><i class="tf-icon tf-icon-caret-down"></i>展开</div>
-          </div>
-          <div v-show="false" class="reply-btn tf-row-center">回复TA</div>
-        </div>
-        <div class="quiz-item">
-          <div class="operate-ellipsis van-icon van-icon-ellipsis">
-            <div class="operate-btn">
-              <div>屏蔽</div>
-              <div class="line"></div>
-              <div>投诉</div>
-            </div>
+      <div v-else class="quiz-list">
+        <div v-for="(item, index) in listData" :key="index" class="quiz-item">
+          <div @click="operate(item.id)" class="operate-ellipsis">
+            <img class="img-100" src="@/assets/neighbours/more.png" />
           </div>
           <div class="item-header">
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+            <img :src="item.avatar" />
             <div class="name-time tf-column">
-              <div class="user-name van-ellipsis">月亮照常落下</div>
-              <div class="itme-time">2021-3-25 12:35:26</div>
+              <div class="user-name van-ellipsis">{{ item.nickname }}</div>
+              <div class="itme-time">{{ item.ctime }}</div>
             </div>
           </div>
-          <div class="item-cont">月亮升起，有雕归巢的声音，有鱼儿越出碧光，有琴 声演绎古老传说。</div>
-          <div class="reply-btn tf-row-center">回复TA</div>
+          <div class="item-cont">{{ item.content }}</div>
+          <div v-if="item.is_reply == 1 && item.reply_text" class="reply-cont">
+            <div :class="{'test-hidden': item.isOver&&!item.isDown}" :ref="'text_'+index">
+              <span>任务方：</span>{{ item.reply_text }}
+            </div>
+            <div @click="showToggle(index)" v-show="item.isOver" class="more-down" :class="{'down-up' : item.isDown}">{{ item.isDown ? '收起' : '展开' }}</div>
+          </div>
+          <div v-if="item.is_reply == 0 && isOwn == 1" @click="replyQuiz(index)" class="reply-btn tf-row-center">回复TA</div>
         </div>
       </div>
-      <div class="quiz-input"></div>
+      <!-- <div class="quiz-item">
+        <div class="operate-ellipsis van-icon van-icon-ellipsis">
+          <div class="operate-btn">
+            <div>屏蔽</div>
+            <div class="line"></div>
+            <div>投诉</div>
+          </div>
+        </div>
+        <div class="item-header">
+          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+          <div class="name-time tf-column">
+            <div class="user-name van-ellipsis">月亮照常落下</div>
+            <div class="itme-time">2021-3-25 12:35:26</div>
+          </div>
+        </div>
+        <div class="item-cont">月亮升起，有雕归巢的声音，有鱼儿越出碧光，有琴 声演绎古老传说。</div>
+        <div class="reply-btn tf-row-center">回复TA</div>
+      </div> -->
+      <!-- <div class="quiz-input"></div> -->
     </div>
     <comment
       ref="comment"
       v-model="commentShow"
-
+      :parentId="parentId"
+      :replyType="replyType"
+      @quizCall="quizCall"
     ></comment>
   </div>
 </template>
@@ -69,6 +73,7 @@ import {
   NavBar
 } from 'vant'
 import comment from '../components/comment'
+import { getQuizList } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -76,31 +81,71 @@ export default {
   },
   data () {
     return {
+      taskId: '',
+      isOwn: 0,
+      listData: [],
+      parentId: '', // 提交的id
+      replyType: '', // 提问、回复
       commentShow: false,
       text: '',
       isOver: false
     }
   },
   created () {
+    this.isOwn = this.$route.query.isOwn
+    this.taskId = this.$route.query.taskId
+    if (this.isOwn == 0) {
+      this.parentId = this.taskId
+      this.replyType = 'quiz'
+    } else {
+      this.replyType = 'reply'
+    }
     this.getData()
   },
   mounted () {
-
   },
   methods: {
     getData () {
-      this.text = '哦哦哦哦哦哦~哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦哦'
-      this.$nextTick(() => {
-        this.test = this.$refs.test
-        console.log(this.test.clientHeight)
-        const textHeight = this.test.clientHeight * 750 / document.documentElement.clientWidth
-        console.log(textHeight)
-        if (textHeight > 60) {
-          this.isOver = true
+      getQuizList({ linli_task_id: this.taskId }).then((res) => {
+        this.listData = res.data
+        if (this.listData.length) {
+          this.$nextTick(() => {
+            this.listData.forEach((item, index) => {
+              const ref = 'text_' + index
+              this.$set(item, 'isOver', this.getTextOver(ref))
+              this.$set(item, 'isDown', false)
+            })
+          })
+          console.log(this.listData)
         }
-        // this.showDetailBtn = this.detailDom.clientHeight < this.detailDom.scrollHeight;
       })
-    }
+    },
+    showToggle (index) {
+      this.listData[index].isDown = !this.listData[index].isDown
+    },
+    // 判断文字是否超过3行
+    getTextOver (ref) {
+      const textCont = this.$refs[ref][0]
+      // console.log(this.$refs, ref, textCont)
+      const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
+      console.log(textCont, textCont.clientHeight)
+      if (textHeight > 44 * 3) {
+        return true
+      } else {
+        return false
+      }
+    },
+    // 回复ta
+    replyQuiz (index) {
+      this.parentId = this.listData[index].id
+      this.commentShow = true
+    },
+    // 回复、问题提交回调
+    quizCall () {
+      this.getData()
+    },
+    // 屏蔽投诉
+    operate (id) {}
   }
 }
 </script>
@@ -169,49 +214,51 @@ export default {
     text-align: center;
     line-height: 36px;
     color: #8F8F94;
-    // transform: rotate(90deg);
-    .operate-btn {
-      position: absolute;
-      top: 50%;
-      left: -255px;
-      margin-top: -36px;
-      width: 225px;
-      height: 72px;
-      line-height: 72px;
-      background-color: #333333;
-      border-radius: 10px;
-      @flex();
-      align-items: center;
-      color: #FFFFFF;
-      &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        right: -10px;
-        margin-top: -5px;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 5px 0 5px 10px;
-        border-color: transparent transparent transparent #333333;
-      }
-      & > div {
-        flex-grow: 1;
-        text-align: center;
-      }
-      .line {
-        width: 2pX;
-        flex-grow: 0;
-        height: 30px;
-        background: #8F8F94;
-      }
-    }
+    // .operate-btn {
+    //   position: absolute;
+    //   top: 50%;
+    //   left: -255px;
+    //   margin-top: -36px;
+    //   width: 225px;
+    //   height: 72px;
+    //   line-height: 72px;
+    //   background-color: #333333;
+    //   border-radius: 10px;
+    //   @flex();
+    //   align-items: center;
+    //   color: #FFFFFF;
+    //   &::after {
+    //     content: '';
+    //     position: absolute;
+    //     top: 50%;
+    //     right: -10px;
+    //     margin-top: -5px;
+    //     width: 0;
+    //     height: 0;
+    //     border-style: solid;
+    //     border-width: 5px 0 5px 10px;
+    //     border-color: transparent transparent transparent #333333;
+    //   }
+    //   & > div {
+    //     flex-grow: 1;
+    //     text-align: center;
+    //   }
+    //   .line {
+    //     width: 2pX;
+    //     flex-grow: 0;
+    //     height: 30px;
+    //     background: #8F8F94;
+    //   }
+    // }
   }
   .item-cont {
     font-size: 28px;
     color: #333333;
     line-height: 44px;
-    margin-bottom: 22px;
+    // margin-bottom: 22px;
+    & + div {
+      margin-top: 22px;
+    }
   }
   .reply-btn {
     width: 650px;
@@ -230,23 +277,20 @@ export default {
     position: relative;
     & > div {
       line-height: 44px;
-      max-height: 132px;
       overflow: hidden;
+    }
+    & > div.test-hidden {
+      height: 132px;
     }
     span {
       color: #E98400;
     }
     .more-down {
-      position: absolute;
       right: 30px;
-      bottom: 30px;
+      bottom: 20px;
       font-size: 24px;
-      line-height: 24px;
-      color: #0089C9;
+      line-height: 44px;
       background-color: #F7F7F7;
-      i {
-        padding: 0 10px 0 6px;
-      }
     }
   }
 }

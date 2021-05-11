@@ -3,7 +3,7 @@
     <van-popup v-model="popupShow">
       <div class="popup-header">
         {{ titName }}
-        <div class="popup-close">
+        <div @click="close" class="popup-close">
           <img src="@/assets/img/task_13.png" />
         </div>
       </div>
@@ -43,7 +43,9 @@ export default {
   created () {
   },
   methods: {
-
+    close () {
+      this.popupShow = false
+    }
   },
   watch: {
     value (val) {

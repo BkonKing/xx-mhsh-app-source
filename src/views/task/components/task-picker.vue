@@ -2,7 +2,7 @@
   <div>
     <van-popup v-model="pcikerShow" position="bottom">
       <van-picker
-        title="标题"
+        :title="title"
         show-toolbar
         :columns="list"
         @confirm="onConfirm"
@@ -23,12 +23,16 @@ export default {
   },
   props: {
     value: {
-      type: Boolean,
+      type: [Boolean],
       default: false
     },
+    title: {
+      type: String,
+      default: '标题'
+    },
     list: {
-      type: Object,
-      default: () => {}
+      type: Array,
+      default: () => []
     }
   },
   data () {
@@ -39,7 +43,14 @@ export default {
   created () {
   },
   methods: {
-
+    onConfirm (value) {
+      this.$emit('pickerCall', value)
+      this.pcikerShow = false
+    },
+    onCancel () {
+      this.pcikerShow = false
+    },
+    onChange () {}
   },
   watch: {
     value (val) {

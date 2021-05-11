@@ -2,28 +2,29 @@
   <div class="tf-bg-white tf-body">
     <van-nav-bar :fixed="true" placeholder :border="false">
       <template #left>
-        <span class="tf-icon tf-icon-guanbi" @click="closePage"></span>
+        <span class="tf-icon tf-icon-guanbi" @click="confirmShow = true"></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <type-select cardTit="任务类型" ref="typeRadio" :radioList="typeList" @selectCall="typeCall"></type-select>
+      <div id="task_title"></div>
       <task-card cardTit="任务标题" :required="true">
         <div class="card-cont" slot="content">
           <div class="area-block bottom-line tf-row-space-between">
             <van-field
-              v-model.trim="formData.title"
+              v-model.trim="formData.task_title"
               autosize
               rows="1"
               :border="false"
               type="textarea"
             />
             <div class="text-num tf-row">
-              <div><span :class="{'red': formData.title.length > 10}">{{ formData.title.length }}</span>/20</div>
+              <div><span :class="{'red': formData.task_title.length > 20}">{{ formData.task_title.length }}</span>/20</div>
             </div>
           </div>
-          <div class="reward-block bottom-line">
+          <div id="reward_happiness" class="reward-block bottom-line">
             <div class="card-tit">奖励幸福币(每人)<span class="tit-icon">*</span></div>
-            <van-field v-model="formData.coin" type="number" />
+            <van-field v-model="formData.reward_happiness" type="number" />
           </div>
           <div v-if="typeIndex > -1" class="card-tip">同类型任务参考价<span>{{ typeList[typeIndex].start_price }}~{{ typeList[typeIndex].close_price }}</span>幸福币，请参考此价格设置奖励</div>
         </div>
@@ -39,8 +40,8 @@
             </div>
             <div @click="labelAdd" class="task-btn label-add" :class="{'label-unable': !addStatus}">添加</div>
           </div>
-          <div v-if="labelList.length" class="label-list tf-row">
-            <div class="label-item tf-row" v-for="(item, index) in labelList" :key="index">{{ item.value }}<img @click="labelDel(index)" src="@/assets/img/close_04.png" /></div>
+          <div v-if="formData.task_tag.length" class="label-list tf-row">
+            <div class="label-item tf-row" v-for="(item, index) in formData.task_tag" :key="index">{{ item }}<img @click="labelDel(index)" src="@/assets/img/close_04.png" /></div>
           </div>
           <div class="card-tip">最多可添加5个标签</div>
         </div>
@@ -53,7 +54,7 @@
               <van-stepper v-model="formData.need_people" max="100" />
             </div>
           </div>
-          <div @click="dateShow=true" class="cell-item tf-row">
+          <div id="task_etime" @click="dateShow=true" class="cell-item tf-row">
             <div class="item-left">完成时间<span class="tit-icon">*</span></div>
             <div class="item-cont">{{ completeTime }}</div>
             <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
@@ -61,10 +62,13 @@
           <div class="cell-item tf-row">
             <div class="item-left">完成地点</div>
             <div class="item-cont p-30">
-              <div>三盛滨江国际1号楼 线下科技</div>
-              <div>福建省 福州市 仓山区</div>
+              <template v-if="!formData.udpate_address">不限{{formData.udpate_address}}</template>
+              <template v-else>
+                <div class="address-name"><van-field v-model="formData.udpate_address" type="text" /></div>
+                <div>{{ formData.address_province + ' ' + formData.address_city + ' ' + formData.address_area + ' '}}</div>
+              </template>
             </div>
-            <div class="item-arrow"><i class="van-icon van-icon-location"></i></div>
+            <div @click="goMap" class="item-arrow"><i class="van-icon van-icon-location"></i></div>
           </div>
           <div class="cell-item">
             <div @click="selectShow=true" class="tf-row cell-limit">
@@ -79,24 +83,32 @@
       <task-card :required="true">
         <div class="card-cont" slot="content">
           <div @click="telShow=true" class="cell-item cell-tel tf-row">
-            <div class="item-left">联系电话<span class="tit-icon">*</span></div>
+            <div id="mobile" class="item-left">联系电话<span class="tit-icon">*</span></div>
             <div class="item-cont">{{ telLimt }}</div>
             <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
           </div>
           <div class="area-block bottom-line tf-row-space-between">
-            <van-field v-model="formData.tel" type="tel" />
+            <van-field v-model="formData.mobile" type="tel" />
           </div>
           <div class="card-tip">请填写有效的手机号码，以便联系</div>
         </div>
       </task-card>
+      <div id="task_desc"></div>
       <graphic
+        ref="graphic"
         :cardTit="cardTit"
         :phTxt="phTxt"
         :maxNum="maxNum"
         @getForm="getForm"
       ></graphic>
+      <div id="isAgree" class="agree-rule tf-flex-center">
+        <div class="tf-flex-center agree-check" @click="agreeToggle">
+          <div :class="{'active': isAgree}"><span class="tf-icon tf-icon-gou"></span></div>我已阅读并同意
+        </div>
+        <div class="color-0E80E1">《交易规则》</div>
+      </div>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ radioIndex > -1 && formData.content ? '' : 'unable-btn', 'task-btn']">发布</div>
+        <div @click="submit" :class="[ radioIndex > -1 && formData.task_desc ? '' : 'unable-btn', 'task-btn']">发布</div>
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
@@ -104,7 +116,8 @@
     <area-picker v-model="areaShow" @areaSure="areaSure"></area-picker>
     <list-select v-model="selectShow" @selectCall="selectCall" :selectList="selectList"></list-select>
     <list-select v-model="telShow" @selectCall="telCall" :selectList="telList"></list-select>
-    <project v-model="projectShow"></project>
+    <project v-model="projectShow" @projectSure="projectCall"></project>
+    <confirm-model v-model="confirmShow" modelTit="确定放弃编辑内容？" cancelTxt="放弃" yesTxt="保存草稿" @cancel="cancel" @sure="sure"></confirm-model>
   </div>
 </template>
 
@@ -116,10 +129,14 @@ import datePicker from '../components/date-picker'
 import areaPicker from '../components/area-picker'
 import listSelect from '../components/list-select'
 import project from '../components/project'
-import { getTaskTypeList } from '@/api/task'
+import confirmModel from '../components/confirm-model'
+import { getTaskTypeList, submitTask, saveTask, editTaskInfo } from '@/api/task'
+import { mapGetters } from 'vuex'
+import { taskValidForm, ValidNumForm } from '@/utils/util'
 import {
   NavBar,
-  Stepper
+  Stepper,
+  Toast
 } from 'vant'
 
 export default {
@@ -127,25 +144,35 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [Stepper.name]: Stepper,
+    [Toast.name]: Toast,
     taskCard,
     typeSelect,
     graphic,
     datePicker,
     areaPicker,
     listSelect,
-    project
+    project,
+    confirmModel
   },
   data () {
     return {
+      taskId: '', // 任务id
+      editType: '', // edit修改 publish发布 anew重新发布
       radioIndex: 0, // 类型选中项
       userNum: 1, // 人数
       labelVal: '', // 标签
-      labelList: [], // 标签列表
       cardTit: '任务说明',
       phTxt: '请输入任务说明',
       maxNum: 1000, // 任务说明最大长度
       formData: {
-        title: ''
+        task_title: '',
+        task_tag: [],
+        location_limit: 0,
+        mobile: '',
+        province: '不限',
+        city: '不限',
+        area: '不限',
+        task_desc: ''
       },
       telList: [
         {
@@ -180,27 +207,94 @@ export default {
       ],
       dateShow: false, // 时间筛选
       completeTime: '', // 完成时间
+      ableIndex: 0, // 0不限 1指定地区 2指定小区 3指定人群（临时）
+      sureAbleIndex: 0, // 0不限 1指定地区 2指定小区 3指定人群（确认）
       ableLookVal: '不限',
+      groupInfo: '', // 选中群信息
       selectShow: false, // 可见范围
       areaShow: false, // 可见范围-指定地区
-      projectShow: false, // 小区
+      projectShow: false, // 可见范围-小区
+      projectInfo: '', // 选中的小区信息
       telLimt: '公开',
       typeList: [], // 类型
       typeIndex: -1, // 选中项
       typeName: '', // 类型选择项内容
-      typeId: '' // 类型选择项id
+      typeId: '', // 类型选择项id
+      confirmShow: false, // 关闭提示弹窗
+      isAgree: false // 同意规则
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     addStatus () {
-      return (this.labelVal.length > 0 && this.labelVal.length < 11 && this.labelList.length < 5)
+      return (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5)
     }
+  },
+  activated () {
+    const groupInfo = this.$store.state.groupInfo
+    this.groupInfo = groupInfo
+    if (this.ableIndex == 3 && groupInfo) {
+      this.sureAbleIndex = this.ableIndex
+      this.formData.range_type = this.ableIndex
+      this.formData.group_id = groupInfo.id
+      this.ableLookVal = `${groupInfo.group_name}(${groupInfo.member_num}人)`
+      // console.log(groupInfo)
+    }
+    this.getMap()
   },
   created () {
     this.typeId = this.$route.query.typeId
-    this.getTaskType()
+    this.taskId = this.$route.query.taskId
+    this.editType = this.$route.query.type
+    this.formData.task_type = this.typeId
+    if (this.taskId) {
+      this.formData.linli_task_id = this.taskId
+      this.getData()
+    } else {
+      if (!this.formData.mobile) {
+        this.formData.mobile = this.userInfo.mobile
+      }
+      this.getTaskType()
+    }
   },
   methods: {
+    // 获取任务详情
+    getData () {
+      editTaskInfo({ linli_task_id: this.taskId }).then((res) => {
+        this.typeId = res.data.task_type
+        const info = res.data
+        this.ableIndex = info.range_type
+        this.sureAbleIndex = info.range_type
+        this.ableLookVal = info.range_type_name
+        this.telLimt = info.mobile_open == 0 ? '隐藏' : '公开'
+        // const obj = {
+        //   task_title: info.task_title,
+        //   task_type: info.task_type,
+        //   reward_happiness: info.reward_happiness,
+        //   task_tag: info.task_tag,
+        //   need_people: info.need_people,
+        //   task_stime: info.task_stime,
+        //   task_etime: info.task_etime,
+        //   address: info.task_etime,
+        //   project_id: info.project_id,
+        //   location_limit: 0,
+        //   province: '不限',
+        //   city: '不限',
+        //   area: '不限'
+        // }
+        if (this.editType === 'anew') {
+          info.task_stime = ''
+          info.task_etime = ''
+        }
+        info.task_stime = info.task_stime == '0' ? '' : info.task_stime
+        this.dateSure({ startTime: info.task_stime, endTime: info.task_etime })
+        console.log(info.task_image)
+        this.$refs.graphic.setVal({ content: info.task_desc, images: info.task_image })
+        this.formData = Object.assign({}, this.formData, info)
+        // this.formData = Object.assign({}, this.formData, info, this.addressObj)
+        this.getTaskType()
+      })
+    },
     // 任务类型
     getTaskType () {
       getTaskTypeList().then(res => {
@@ -225,22 +319,25 @@ export default {
       this.typeIndex = index
       this.typeId = this.typeList[index].id
       this.typeName = this.typeList[index].text
+      this.formData.task_type = this.typeId
     },
     // 图文信息
     getForm (val) {
-      this.formData = Object.assign(this.formData, val)
+      console.log(val)
+      this.formData.task_desc = val.content
+      this.formData.task_image = val.images
       this.textNum = val.content.length
     },
     // 添加标签
     labelAdd () {
-      if (this.labelVal.length > 0 && this.labelVal.length < 11 && this.labelList.length < 5) {
-        this.labelList.push({ value: this.labelVal })
+      if (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5) {
+        this.formData.task_tag.push(this.labelVal)
         this.labelVal = ''
       }
     },
     // 删除标签
     labelDel (index) {
-      this.labelList.splice(index, 1)
+      this.formData.task_tag.splice(index, 1)
     },
     // 时间选择
     dateSure (obj) {
@@ -256,8 +353,55 @@ export default {
         }
       }
     },
+    // 完成地点
+    getMap () {
+      console.log(this.$router)
+      const addressData = this.$store.state.map_info || ''
+      if (addressData) {
+        const bMap = api.require('bMap')
+        bMap.getNameFromCoords({
+          lon: addressData.lon,
+          lat: addressData.lat
+        }, function (ret, err) {
+          if (ret.status) {
+            const obj = {
+              location_limit: 1,
+              longitude: addressData.lon,
+              latitude: addressData.lat,
+              address: addressData.name,
+              udpate_address: addressData.name,
+              address_province: ret.province,
+              address_city: ret.city,
+              address_area: ret.district
+            }
+            Object.assign(this.formData, obj)
+          }
+        })
+      }
+      // const addressData = {
+      //   name: '三盛滨江',
+      //   address: '福州市产生器刘泽想与南江滨溪大道顶顶顶顶',
+      //   lon: '119.340659',
+      //   lat: '26.052951'
+      // }
+      // const obj = {
+      //   location_limit: 1,
+      //   longitude: addressData.lon,
+      //   latitude: addressData.lat,
+      //   address: addressData.name,
+      //   udpate_address: addressData.name,
+      //   address_province: '福建省',
+      //   address_city: '福州市',
+      //   address_area: '仓山区'
+      // }
+      // Object.assign(this.formData, obj)
+      // this.addressObj = obj
+      // console.log(111, this.formData)
+    },
     // 弹窗选择-可见范围
     selectCall (callData) {
+      console.log(callData.value)
+      this.ableIndex = callData.value
       if (callData.value == 1) { // 指定地区
         this.areaShow = true
       } else if (callData.value == 2) { // 指定小区
@@ -269,61 +413,160 @@ export default {
         })
       }
     },
+    // 项目选择(小区)
+    projectCall (callData) {
+      this.projectInfo = callData
+      this.ableLookVal = callData.project_name
+      this.formData.project_id = callData.id
+      this.ableLookSure()
+    },
     // 地区选择
     areaSure (callData) {
       console.log(callData)
       let value = '不限'
       if (callData[0] && callData[0].name) {
         value = callData[0].name
+        this.formData.province = callData[0].name
         if (callData[1] && callData[1].name) {
           value += ('-' + callData[1].name)
+          this.formData.city = callData[1].name
           if (callData[2] && callData[2].name) {
             value += ('-' + callData[2].name)
+            this.formData.area = callData[2].name
           }
         }
       }
-      console.log(value)
       this.ableLookVal = value
+      this.ableLookSure()
+    },
+    ableLookSure () {
+      this.$store.commit('setGroupInfo', '')
+      this.sureAbleIndex = this.ableIndex
+      this.formData.range_type = this.ableIndex
     },
     // 弹窗选择-可见范围
     telCall (callData) {
+      this.formData.mobile_open = callData.value == 1 ? 0 : 1
       this.telLimt = callData.text
+    },
+    // 同意规则
+    agreeToggle () {
+      this.isAgree = !this.isAgree
     },
     // 提交
     submit () {
-      // const typeId = this.radioIndex
-      // const validator = [
-      //   {
-      //     value: typeId,
-      //     message: '请选择发布类型'
-      //   },
-      //   {
-      //     value: this.formData.content,
-      //     message: '请输入要发布的内容'
-      //   }
-      // ]
-      // validForm(validator).then((res) => {
-      //   if (this.textNum > 500) {
-      //     Toast('字数太多啦，分享的内容最多500字')
-      //   } else {
-      //   }
-      // })
+      console.log(this.formData)
+      const validator = [
+        {
+          value: this.formData.task_title,
+          id: 'task_title',
+          message: '请填写任务标题'
+        },
+        {
+          value: this.formData.reward_happiness,
+          id: 'reward_happiness',
+          message: '请填写奖励幸福币数量'
+        },
+        {
+          value: this.formData.task_etime,
+          id: 'task_etime',
+          message: '请选择任务完成时间'
+        },
+        {
+          value: this.formData.mobile,
+          id: 'mobile',
+          message: '请填写联系电话'
+        },
+        {
+          value: this.formData.task_desc,
+          id: 'task_desc',
+          message: '请填写任务说明'
+        },
+        {
+          value: this.isAgree ? '1' : '',
+          id: 'isAgree',
+          message: '请同意《交易规则》'
+        }
+      ]
+      taskValidForm(validator).then((res) => {
+        const validatorNum = [
+          {
+            min: 0,
+            max: 20,
+            value: this.formData.task_title.length,
+            id: 'task_title',
+            message: '任务标题 最多输入20字'
+          },
+          {
+            min: parseInt(this.typeList[this.typeIndex].start_price),
+            max: parseInt(this.typeList[this.typeIndex].close_price),
+            value: parseInt(this.formData.reward_happiness),
+            id: 'reward_happiness',
+            message: '奖励幸福币数量需在参考价内'
+          },
+          {
+            min: 0,
+            max: 1000,
+            value: this.formData.task_desc.length,
+            id: 'task_desc',
+            message: '任务说明 最多输入1000字'
+          }
+        ]
+        ValidNumForm(validatorNum).then((res) => {
+          this.formData.linli_task_id = this.taskId
+          // this.formData.location_limit = this.formData.address ? 0 : 1
+          if (this.editType === 'edit' || this.editType === 'publish') {
+            this.formData.is_modify = this.editType === 'edit' ? 1 : 0
+          } else if (this.editType === 'anew') {
+            this.formData.id = 0
+            this.formData.linli_task_id = 0
+          }
+          submitTask(this.formData).then((res) => {
+            Toast('提交成功')
+          }).catch((res) => {
+            Toast('提交失败 请重试')
+          })
+        }).catch((res) => {
+          this.goScroll(res)
+        })
+      }).catch((res) => {
+        this.goScroll(res)
+      })
     },
-    closePage () {
-      // console.log(this.radioIndex > -1, this.formData.content, this.images.length)
-      // if (this.radioIndex > -1 || this.formData.content || this.images.length) {
-      //   this.confirmShow = true
-      // } else {
-      //   this.$router.go(-1)
-      // }
+    // 放弃
+    cancel () {},
+    // 保存草稿
+    sure () {
+      saveTask(this.formData).then((res) => {
+        // Toast('提交成功')
+      }).catch((res) => {
+        Toast('提交失败 请重试')
+      })
+    },
+    // 锚点滚动
+    goScroll (selector) {
+      document.getElementById(selector).scrollIntoView()
+    },
+    goMap () {
+      this.$router.push({
+        name: 'addressMap'
+      })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['releaseGroup', 'addressMap']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
 
 <style lang="less" scoped>
 .tf-body-container{
-  padding: 20px;
+  padding: 20px 20px 30px;
   background-color: #F7F7F7;
 }
 /deep/ .van-nav-bar {
@@ -441,12 +684,20 @@ export default {
     &.p-30 {
       padding: 30px 0;
     }
-    div:nth-child(1) {
+    .address-name {
+      /deep/.van-cell {
+        padding: 0;
+        input {
+          text-align: right;
+        }
+      }
+    }
+    & > div:nth-child(1) {
       line-height: 28px;
       margin-bottom: 20px;
       padding-top: 10px;
     }
-    div:nth-child(2) {
+    & > div:nth-child(2) {
       line-height: 24px;
       font-size: 24px;
       color: #8F8F94;
@@ -502,5 +753,34 @@ export default {
 }
 span.red {
   color: #FF6555;
+}
+.agree-rule {
+  height: 100px;
+  margin-bottom: 30px;
+  font-size: 26px;
+  .color-0E80E1 {
+    color: #0E80E1;
+  }
+  .agree-check div {
+    width: 40px;
+    height: 40px;
+    background: #EEEEEE;
+    border: 1px solid #CCCCCC;
+    border-radius: 20px;
+    margin-right: 20px;
+    span {
+      display: none;
+    }
+    &.active {
+      border: 0;
+      line-height: 40px;
+      background: #FF5240;
+      color: #fff;
+      text-align: center;
+      span {
+        display: inline;
+      }
+    }
+  }
 }
 </style>

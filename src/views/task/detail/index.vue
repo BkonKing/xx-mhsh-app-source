@@ -11,112 +11,184 @@
       <template #right>
         <span
           class="van-icon van-icon-ellipsis"
-          @click="openArticleDialog"
+          @click="selectShow = true"
         ></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="header-block">
-        <!-- <div class="task-status">审核中</div> -->
-        <!-- <div class="task-status bg-ccc">已失效</div> -->
-        <!-- <div class="task-status bg-FF6555">审核失败</div> -->
-        <div class="task-status bg-FEBF00">已完成</div>
+        <div class="task-status bg-FEBF00" :class="{'bg-FE8900': infoData.task_status < 3, 'bg-FF6555' : infoData.task_status == 4, 'bg-ccc' : infoData.task_status > 4}">{{ infoData.task_status_name }}</div>
         <img class="header-bg" src="@/assets/img/task_01.png" />
-        <div class="task-tit">小区清洁志愿者小区清洁 志愿者小区清洁志愿</div>
+        <div class="task-tit">{{ infoData.task_title }}</div>
         <div class="task-coin tf-row-vertical-center">
           <img src="@/assets/img/task_02.png" />
-          <div class="coin-num">100</div>
+          <div class="coin-num">{{ infoData.reward_happiness }}</div>
           <div class="coin-unit">幸福币/人</div>
         </div>
         <div class="task-label tf-row">
-          <div class="lable-item">日结</div>
-          <div class="lable-item">日结日结日结日结日结</div>
-          <div class="lable-item">日结日结日结</div>
+          <div v-for="(item, index) in infoData.task_tag" :key="index" class="lable-item">{{ item }}</div>
         </div>
       </div>
       <div class="body-cont">
         <div class="task-session">
           <div class="session-tit">任务来源</div>
           <div class="release-user tf-row">
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+            <img :src="infoData.rwf_avatar" />
             <div class="tf-row-space-between">
-              <div class="release-name van-ellipsis">美好生活物业</div>
-              <div class="release-time">2021-03-21 12:00</div>
+              <div class="release-name van-ellipsis">{{ infoData.rwf_nickname }}</div>
+              <div class="release-time">{{ infoData.task_ctime }}</div>
             </div>
           </div>
-          <div class="complain-tip tf-row-space-between">
+          <div v-if="!isOwn" class="complain-tip tf-row-space-between">
             <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
-            <div>投诉</div>
+            <div @click="complaint">投诉</div>
           </div>
         </div>
-        <div class="task-session">
-          <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center">查看<img src="@/assets/img/task_09.png" /></div></div>
+        <div v-if="!isOwn && receiverInfo && receiverInfo.is_already == 1" class="task-session">
+          <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
           <div class="release-user tf-row">
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+            <img :src="receiverInfo.jdf_avatar" />
             <div class="tf-row-space-between">
-              <div class="release-name van-ellipsis">美好生活物业</div>
-              <div class="release-time color-FF5240">进行中</div>
+              <div class="release-name van-ellipsis">{{ receiverInfo.jdf_nickname }}</div>
+              <div class="release-time" :class="{'color-FF5240' : receiverInfo.progress_status != 2}">{{ receiverInfo.progress_status_name }}</div>
             </div>
-            <div class="finish-btn">交付任务</div>
+            <div @click="deliverTask" v-if="receiverInfo.is_deliver == 1" class="finish-btn">交付任务</div>
           </div>
-          <div class="progress-step">
-            <div>03-21  12:00 已完成</div>
-            <div>03-21 12:00 接单成功，任务进行中</div>
+          <div v-if="receiverInfo.taskflow_list.length" class="progress-step">
+            <div v-for="(item, index) in receiverInfo.taskflow_list" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
+            <!-- <div>03-21 12:00 接单成功，任务进行中</div> -->
           </div>
         </div>
         <div class="task-session">
           <div class="session-tit">任务要求</div>
           <div class="ask-list">
-            <div class="ask-item">需要人数：2人（1人已接单）</div>
-            <div class="ask-item">完成时间：截止 2021-03-10 12:00</div>
-            <div class="ask-item">可见范围：不限</div>
+            <div class="ask-item">需要人数：{{ infoData.need_people_text }}</div>
+            <div class="ask-item">完成时间：{{ infoData.task_time }}</div>
+            <div v-if="isOwn" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
           </div>
         </div>
-        <div class="task-session">
+        <div v-if="infoData.address" class="task-session">
           <div class="session-tit">完成地点</div>
-          <div class="task-address tf-vertical-center">
-            <div class="van-ellipsis">三盛滨江国际1号楼 线下科技</div>
-            <div class="van-ellipsis">福建省 福州市 仓山区</div>
+          <div @click="openMap" class="task-address tf-vertical-center">
+            <div class="van-ellipsis">{{ infoData.address }}</div>
+            <div class="van-ellipsis">{{ infoData.address_province + ' ' + infoData.address_city + ' ' + infoData.address_area }}</div>
             <img class="address-arrow" src="@/assets/img/task_04.png" />
             <img class="address-bg" src="@/assets/img/task_03.png" />
           </div>
         </div>
         <div class="task-session">
-          <div class="session-tit tf-row-space-between">任务说明<span class="tit-right">更新：1天前</span></div>
+          <div class="session-tit tf-row-space-between">任务说明<span class="tit-right" v-if="infoData.renew_day > 0">更新：{{ infoData.renew_day }}天前</span></div>
           <div class="detai-cont">
-            <div class="cont-text">在深渊的边缘上，你守护我每一个孤独的梦---那风啊吹动草叶的喧响。太阳在远方白白地燃烧，你在水洼旁，投进自己的影子微波荡荡，沉淀了昨日的时光。 假如有一天你也不免凋残，我只有个简单的希望：保持着初放时的安祥。</div>
-            <div class="cont-pic tf-row-wrap">
-              <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-              <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-              <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-              <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-              <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+            <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.task_desc }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
+            <div v-if="infoData.task_image && infoData.task_image.length" class="cont-pic tf-row-wrap">
+              <img @click="previewPic(index)" v-for="(item, index) in infoData.task_image" :key="index" :src="item" />
             </div>
           </div>
         </div>
       </div>
-      <op></op>
+      <div v-if="!isOwn" class="op-block">
+        <div class="bottom-fiex tf-row">
+          <div class="op-left tf-row">
+            <div @click="quiz" class="tf-column">
+              <img src="@/assets/img/task_05.png" />
+              <div>提问</div>
+            </div>
+            <a v-if="infoData.mobile_open == 1 || receiverInfo.is_already == 1" :href="'tel: ' + infoData.mobile" class="tf-column">
+              <img src="@/assets/img/task_06.png" />
+              <div>联系</div>
+            </a>
+            <div v-if="receiverInfo.is_can_share == 1" class="tf-column">
+              <img src="@/assets/img/task_07.png" />
+              <div>分享</div>
+            </div>
+            <div v-if="receiverInfo.is_already == 1" @click="goSchedule" class="tf-column">
+              <img src="@/assets/img/task_08.png" />
+              <div>进度</div>
+            </div>
+          </div>
+          <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
+        </div>
+      </div>
+      <template v-else>
+        <div v-if="infoData.task_status!=0 && infoData.task_status!=4 && infoData.task_status!=6" class="op-block">
+          <div class="bottom-fiex tf-row">
+            <div class="op-left tf-row">
+              <template v-if="(infoData.task_status > 0 && infoData.task_status < 4) || infoData.task_status == 5">
+                <div @click="quiz" class="tf-column">
+                  <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
+                  <img src="@/assets/img/task_05.png" />
+                  <div>提问</div>
+                </div>
+                <a :href="'tel: ' + infoData.mobile" class="tf-column">
+                  <img src="@/assets/img/task_06.png" />
+                  <div>联系</div>
+                </a>
+              </template>
+              <div v-if="infoData.task_status == 1 && infoData.task_status == 2" class="tf-column">
+                <img src="@/assets/img/task_07.png" />
+                <div>分享</div>
+              </div>
+              <div v-if="infoData.task_status == 1 && infoData.task_status == 5" @click="goSchedule" class="tf-column">
+                <img src="@/assets/img/task_08.png" />
+                <div>进度</div>
+              </div>
+            </div>
+            <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">编辑</div>
+          </div>
+        </div>
+      </template>
+      <template v-if="infoData.task_image && infoData.task_image.length">
+        <van-image-preview v-model="picShow" :images="infoData.task_image" :startPosition="picIndex">
+        </van-image-preview>
+      </template>
+      <task-op v-model="selectShow" :taskId="taskId" @updateTask="updateTask"></task-op>
+      <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
     </div>
   </div>
 </template>
 
 <script>
 import {
-  NavBar
+  NavBar,
+  ImagePreview
 } from 'vant'
 import op from '../components/op'
+import { getTaskInfo, receivingMask } from '@/api/task'
+import taskOp from '../components/task-op'
+import confirmModel from '../components/confirm-model'
+import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    op
+    [ImagePreview.name]: ImagePreview,
+    op,
+    taskOp,
+    confirmModel
   },
   data () {
     return {
-      text: '',
-      isOver: false
+      taskId: '',
+      isOver: false, // 内容是否超出行数
+      isDown: false,
+      infoData: '',
+      receiverInfo: '',
+      isOwn: false, // 是否是发布者
+      selectShow: false, // 操作选择弹窗
+      confirmShow: false,
+      confirm: {
+        modelTit: '是否确定接单？',
+        modelSubTit: '',
+        cancelTxt: '取消',
+        yesTxt: '接单',
+        cancel: true
+      },
+      isBack: false,
+      picIndex: 0, // 图片预览起始位置索引
+      picShow: false // 查看大图
     }
   },
   created () {
+    this.taskId = this.$route.query.taskId
     this.getData()
   },
   mounted () {
@@ -124,13 +196,158 @@ export default {
   },
   methods: {
     getData () {
-
+      getTaskInfo({ linli_task_id: this.taskId }).then(res => {
+        this.infoData = res.data
+        this.isOwn = res.data.is_task_party
+        if (!this.isOwn) {
+          this.receiverInfo = res.data.user_task_data
+        }
+        if (!this.isOwn && res.popup_data.is_popup == 1) {
+          this.isBack = true
+          this.confirmShow = true
+          this.confirm.modelTit = res.popup_data.popup_text
+          this.confirm.modelSubTit = res.popup_data.popup_text2
+          this.confirm.yesTxt = '我知道了'
+          this.confirm.cancel = false
+        }
+        this.$nextTick(() => {
+          this.getTextOver()
+        })
+      })
+    },
+    getTextOver () {
+      const textCont = this.$refs.textCont
+      const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
+      console.log(textHeight)
+      if (textHeight > 48 * 6) {
+        this.isOver = true
+      }
+    },
+    showToggle () {
+      this.isDown = !this.isDown
+    },
+    // 操作选择回调
+    updateTask (opType) {
+      this.getData()
+    },
+    // 预览大图
+    previewPic (index) {
+      this.picIndex = index
+      this.picShow = true
+    },
+    // 底部按钮
+    opCall () {
+      if (this.isOwn) {
+        this.editTask()
+      } else {
+        this.confirmShow = true
+      }
+    },
+    // 立即接单
+    receiveOrder () {
+      if (this.isBack) return
+      bMapGetLocationInfo(1).then((res) => {
+        alert(JSON.stringify(res))
+        const obj = {
+          province: res.province,
+          city: res.city,
+          area: res.district
+        }
+        this.receivingMask(obj)
+      }).catch((res) => {
+        this.receivingMask({})
+      })
+      // api.getLocation(function (ret, err) {
+      //   if (ret && ret.status) {
+      //     // alert(JSON.stringify(ret))
+      //   // 获取位置信息成功
+      //   } else {
+      //     // alert(JSON.stringify(err))
+      //   }
+      // })
+    },
+    receivingMask (obj) {
+      const params = Object.assign(obj, { linli_task_id: this.taskId })
+      receivingMask(params).then((res) => {
+        this.getData()
+      })
+    },
+    // 编辑
+    editTask () {
+      this.$router.push({
+        name: 'releaseEdit',
+        query: {
+          taskId: this.infoData.task_id
+        }
+      })
+    },
+    // 提问
+    quiz () {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          isOwn: this.isOwn,
+          taskId: this.taskId
+        }
+      })
+    },
+    // 任务进度
+    goSchedule () {
+      const routerName = this.isOwn ? 'scheduleInitiator' : 'scheduleReceiver'
+      this.$router.push({
+        name: routerName,
+        query: {
+          taskId: this.infoData.task_id
+        }
+      })
+    },
+    // 交付任务
+    deliverTask () {
+      this.$router.push({
+        name: 'operateDeliver',
+        query: {
+          taskId: this.taskId,
+          userTaskId: this.receiverInfo.user_task_id
+        }
+      })
+    },
+    // 打开地图
+    openMap () {
+      this.$router.push({
+        name: 'taskMap',
+        query: {
+          name: '',
+          address: '',
+          lon: this.infoData,
+          lat: 22
+        }
+      })
+    },
+    // 投诉
+    complaint () {
+      this.$router.push({
+        name: 'operateComplaint',
+        query: {
+          taskId: this.taskId,
+          complaintUid: this.infoData.uid
+        }
+      })
+    }
+  },
+  watch: {
+    confirmShow (val) {
+      if (!val) {
+        if (this.isBack) {
+          this.$router.go(-1)
+        }
+      }
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@import url(../../../styles/task.less);
 .tf-body-container{
   font-size: 28px;
   color: #333;
@@ -204,7 +421,6 @@ export default {
     height: 64px;
     line-height: 64px;
     text-align: center;
-    background: #FE8900;
     border-radius: 32px 0px 0px 32px;
     font-size: 26px;
     font-weight: 500;
@@ -218,6 +434,9 @@ export default {
     }
     &.bg-FEBF00 {
       background: #FEBF00;
+    }
+    &.bg-FE8900 {
+      background: #FE8900;
     }
   }
 }
@@ -341,6 +560,10 @@ export default {
     font-size: 30px;
     position: relative;
     margin-bottom: 30px;
+    &.text-hidden {
+      height: 288px;
+      overflow: hidden;
+    }
   }
   .cont-pic {
     img {

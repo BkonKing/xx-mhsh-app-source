@@ -42,7 +42,8 @@
 import {
   Calendar,
   DatetimePicker,
-  Field
+  Field,
+  Toast
 } from 'vant'
 
 export default {
@@ -64,12 +65,12 @@ export default {
       startTime: '', // 开始时间
       endTime: '', // 结束时间
       dateVal: '', // 日期
-      timeVal: '12:00', // 时间
+      timeVal: '00:00', // 时间
       minDate: new Date(2021, 0, 1),
       maxDate: new Date(2021, 0, 31),
       defaultDate: new Date(),
       yearmonth: '', // 年月
-      currentTime: '12:00',
+      currentTime: '00:00',
       nowTime: '',
       nowYear: 0,
       nowMonth: 0
@@ -171,6 +172,10 @@ export default {
       this.dateShow = false
     },
     dateSure () {
+      if (this.startTime && !this.endTime) {
+        Toast('请选择结束时间')
+        return
+      }
       this.$emit('dateSure', { startTime: this.startTime, endTime: this.endTime })
       this.close()
       console.log(this.startTime, this.endTime)

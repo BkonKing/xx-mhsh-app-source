@@ -52,7 +52,7 @@ const taskRouter = [
         '@/views/task/release/rule'
       )
   },
-  // 任务详情-任务方
+  // 任务详情
   {
     path: '/pages/task/detail',
     name: 'taskDetail',
@@ -62,16 +62,16 @@ const taskRouter = [
         '@/views/task/detail/index'
       )
   },
-  // 任务详情-接单方
-  // {
-  //   path: '/pages/task/detail/receiver',
-  //   name: 'detailReceiver',
-  //   component: () =>
-  //     import(
-  //       /* webpackChunkName: "detailReceiver" */
-  //       '@/views/task/detail/receiver'
-  //     )
-  // },
+  // 完成地点
+  {
+    path: '/pages/task/map',
+    name: 'taskMap',
+    component: () =>
+      import(
+        /* webpackChunkName: "detailInitiator" */
+        '@/views/task/detail/map'
+      )
+  },
   // 任务进度-任务方
   {
     path: '/pages/task/schedule/initiator',

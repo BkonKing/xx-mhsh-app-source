@@ -61,6 +61,65 @@ export function validForm (arr) {
   })
 }
 
+export function taskValidEmpty (obj) {
+  const status = typeof obj.value === 'undefined' || obj.value === null || obj.value === ''
+  if (status) {
+    Toast(obj.message || '值不能为空')
+  }
+  Object.assign(obj, { status: status })
+  return obj
+}
+
+export function taskValidForm (arr) {
+  let res = {}
+  let flag = 0
+  for (let i = 0; i < arr.length; i++) {
+    const obj = arr[i]
+    res = taskValidEmpty(obj)
+    if (res.status) {
+      flag = 1
+      break
+    }
+  }
+  return new Promise((resolve, reject) => {
+    console.log('callObj', flag, res)
+    if (!flag) {
+      resolve(res.status)
+    } else {
+      reject(res.id)
+    }
+  })
+}
+
+export function ValidNum (obj) {
+  const status = (obj.value >= obj.min && obj.value <= obj.max)
+  if (!status) {
+    Toast(obj.message || '')
+  }
+  console.log('obj', obj, obj.value > obj.min && obj.value <= obj.max)
+  return Object.assign(obj, { status: status })
+}
+
+export function ValidNumForm (arr) {
+  let res = {}
+  let flag = 0
+  for (let i = 0; i < arr.length; i++) {
+    const obj = arr[i]
+    res = ValidNum(obj)
+    if (!res.status) {
+      flag = 1
+      break
+    }
+  }
+  return new Promise((resolve, reject) => {
+    if (!flag) {
+      resolve(res.status)
+    } else {
+      reject(res.id)
+    }
+  })
+}
+
 export function imagePreview (options) {
   const params = Object.assign({
     onClose () {

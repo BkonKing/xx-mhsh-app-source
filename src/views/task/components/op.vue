@@ -2,7 +2,7 @@
   <div class="op-block">
     <div class="bottom-fiex tf-row">
       <div class="op-left tf-row">
-        <div class="tf-column">
+        <div @click="quiz" class="tf-column">
           <img src="@/assets/img/task_05.png" />
           <div>提问</div>
         </div>
@@ -14,12 +14,12 @@
           <img src="@/assets/img/task_07.png" />
           <div>分享</div>
         </div>
-        <div class="tf-column">
+        <div @click="schedule" class="tf-column">
           <img src="@/assets/img/task_08.png" />
           <div>进度</div>
         </div>
       </div>
-      <div class="op-right">编辑</div>
+      <div v-if="rightShow" class="op-right" @click="opCall()">{{ rightTxt }}</div>
     </div>
   </div>
 </template>
@@ -27,9 +27,23 @@
 <script>
 
 export default {
-
   props: {
-
+    taskId: {
+      type: String,
+      default: ''
+    },
+    rightTxt: {
+      type: String,
+      default: ''
+    },
+    rightShow: {
+      type: Boolean,
+      default: false
+    },
+    isOwn: {
+      type: [Boolean, Number],
+      default: false
+    }
   },
   data () {
     return {
@@ -39,7 +53,28 @@ export default {
   created () {
   },
   methods: {
-
+    opCall () {
+      this.$emit('opCall')
+    },
+    // 提问
+    quiz () {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          isOwn: this.isOwn,
+          taskId: this.taskId
+        }
+      })
+    },
+    schedule () {
+      const routerName = this.isOwn ? 'scheduleInitiator' : 'scheduleReceiver'
+      this.$router.push({
+        name: routerName,
+        query: {
+          isOwn: this.isOwn
+        }
+      })
+    }
   }
 }
 </script>

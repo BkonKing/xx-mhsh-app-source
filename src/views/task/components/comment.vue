@@ -1,6 +1,6 @@
 <template>
   <div class="comment-container">
-    <div class="comment-box">
+    <div v-if="replyType == 'quiz'" class="comment-box">
       <van-field placeholder="我要提问" @click="showPopup" />
     </div>
     <van-popup v-model="show" position="bottom">
@@ -13,11 +13,11 @@
             maxlength="100"
             show-word-limit
             v-model="content"
-            :placeholder="回复TA"
+            :placeholder="'回复TA'"
           />
         </div>
         <div class="comment-popup-right">
-          <div v-preventReClick class="send-btn" :class="{'able-send': content}" @click="addComment">发送</div>
+          <div v-preventReClick class="send-btn" :class="{'able-send': content}" @click="submit">发送</div>
         </div>
       </div>
     </van-popup>
@@ -26,7 +26,7 @@
 
 <script>
 import { Field, Popup, Toast } from 'vant'
-import { addComment } from '@/api/neighbours'
+import { submitQuiz, replyQuiz } from '@/api/task'
 import { uImages } from '@/api/user'
 export default {
   components: {
@@ -38,20 +38,12 @@ export default {
       type: [Boolean, Number],
       default: false
     },
-    articleId: {
-      type: String,
+    replyType: {
+      type: [String],
       default: ''
     },
     parentId: {
       type: [String, Number],
-      default: ''
-    },
-    thumbsupStatus: {
-      type: [Boolean, Number],
-      default: false
-    },
-    reply_nickname: {
-      type: String,
       default: ''
     }
   },
@@ -78,28 +70,27 @@ export default {
     showPopup () {
       this.show = true
     },
-    thumbsup () {
-      this.$emit('thumbsup')
-    },
-    /* 新增评论 */
-    addComment () {
+    /* 新增提问 */
+    submit () {
       if (!this.content) {
         return
       }
-      const params = {
-        article_id: this.articleId,
-        content: this.content,
-        images: this.images,
-        parent_id: this.parentId
+      if (this.replyType === 'quiz') {
+        submitQuiz({ content: this.content, linli_task_id: this.parentId }).then(res => {
+          this.initData()
+          this.$emit('quizCall', res.data)
+        })
+      } else if (this.replyType === 'reply') {
+        replyQuiz({ content: this.content, question_id: this.parentId }).then(res => {
+          this.initData()
+          this.$emit('quizCall', res.data)
+        })
       }
-      if (this.reply_nickname) {
-        params.reply_nickname = this.reply_nickname
-      }
-      addComment(params).then(res => {
-        this.content = ''
-        this.images = ''
-        this.$emit('commentSuccess', res.data)
-      })
+    },
+    initData () {
+      this.show = false
+      this.content = ''
+      this.images = ''
     }
   },
   watch: {

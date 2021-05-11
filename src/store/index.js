@@ -45,7 +45,8 @@ const store = {
     temporaryType: undefined,
     mobile_info: '',
     map_info: '',
-    share_params: ''
+    share_params: '',
+    groupInfo: ''
   },
   mutations: {
     setUser_info (state, value) {
@@ -120,6 +121,9 @@ const store = {
     },
     setShare_params (state, value) {
       state.share_params = value
+    },
+    setGroupInfo (state, value) {
+      state.groupInfo = value
     }
   },
   getters: {

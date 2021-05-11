@@ -14,13 +14,9 @@
         <div class="card-cont" slot="content">
           <div class="session-tit">接单方 已确认完成任务</div>
           <div class="divider-line"></div>
-          <div class="receiver-cont">在深渊的边缘上，你守护我每一个孤独的梦--- 那风啊吹动草叶的喧响。太阳在远方白白地燃烧， 你在水洼旁，投进自己的影子微波荡荡，沉淀了 昨日的时光。假如有一天你也不免凋残，我只有 个简单的希望：保持着初放时的安…<div v-show="true" class="more-down"><i class="tf-icon tf-icon-caret-down"></i>展开</div></div>
+          <div class="receiver-cont" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.content }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
           <div class="receiver-pic tf-row-wrap">
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-            <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+            <img @click="previewPic(index)" v-for="(item, index) in infoData.image_url_data" :key="index" :src="item" />
           </div>
         </div>
       </task-card>
@@ -45,81 +41,124 @@
         </div>
       </graphic>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">发布</div>
+        <div @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">确认</div>
       </div>
-      <confirm-model v-model="confirmShow" modelTit="确定已经完成任务？" modelSubTit="确定将结算幸福币给接单方"></confirm-model>
+      <confirm-model v-model="confirmShow" modelTit="确定已经完成任务？" modelSubTit="确定将结算幸福币给接单方" @sure="sure"></confirm-model>
     </div>
+    <template v-if="infoData.image_url_data && infoData.image_url_data.length">
+      <van-image-preview v-model="picShow" :images="infoData.image_url_data" :startPosition="picIndex">
+      </van-image-preview>
+    </template>
   </div>
 </template>
 
 <script>
 import {
-  NavBar, Toast
+  NavBar,
+  Toast,
+  ImagePreview
 } from 'vant'
 import graphic from '../components/graphic'
 import confirmModel from '../components/confirm-model'
 import taskCard from '../components/task-card'
+import { getCompleteInfo, submitCompleteInfo } from '@/api/task'
 import { validForm } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
+    [ImagePreview.name]: ImagePreview,
     graphic,
     confirmModel,
     taskCard
   },
   data () {
     return {
-      textNum: 0, // textarea 长度
+      userTaskId: '',
+      infoData: '',
+      isOver: false, // 内容是否超出行数
+      isDown: false,
       formData: {
+        type: '',
         content: '',
         images: []
       },
       phTxt: '和对方说点什么',
-      maxNum: 200,
+      maxNum: 500,
       confirmShow: false,
       statusList: ['已完成', '未完成'],
-      statusIndex: -1 // 0已完成 1未完成
+      statusIndex: null, // 0已完成 1未完成
+      picIndex: 0, // 图片预览起始位置索引
+      picShow: false // 查看大图
     }
   },
   created () {
-
+    this.userTaskId = this.$route.query.userTaskId
+    this.getData()
   },
   mounted () {
 
   },
   methods: {
+    getData () {
+      getCompleteInfo({ user_task_id: this.userTaskId }).then((res) => {
+        console.log(res)
+        this.infoData = res.data
+        this.$nextTick(() => {
+          this.getTextOver()
+        })
+      })
+    },
+    getTextOver () {
+      const textCont = this.$refs.textCont
+      const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
+      if (textHeight > 48 * 5) {
+        this.isOver = true
+      }
+    },
+    showToggle () {
+      this.isDown = !this.isDown
+    },
+    // 预览大图
+    previewPic (index) {
+      this.picIndex = index
+      this.picShow = true
+    },
     // 图文信息
     getForm (val) {
-      this.formData = val
-      this.textNum = val.content.length
+      this.formData.content = val.content
+      this.formData.image_url = val.images
     },
     // 提交
     submit () {
+      this.formData.type = this.statusIndex
+      console.log(this.formData)
       const validator = [
         {
-          value: this.formData.content,
-          message: '请输入要发布的内容'
+          value: this.formData.type,
+          message: '请选择任务是否完成'
         }
       ]
       validForm(validator).then((res) => {
-        if (this.textNum > 500) {
-          Toast('字数太多啦，分享的内容最多500字')
+        if (this.formData.content.length > 500) {
+          Toast('内容最多输入500字')
         } else {
-          // addPostBar({
-          //   category_id: typeId,
-          //   content: this.content,
-          //   images: this.images.join(',')
-          // }).then((res) => {
-          //   Dialog.alert({
-          //     title: res.message
-          //   }).then(res => {
-          //     this.$router.go(-1)
-          //   })
-          //   this.mtjEvent({
-          //     eventId: 42
-          //   })
-          // })
+          if (this.statusIndex == 1) {
+            this.sure()
+          } else {
+            this.confirmShow = true
+          }
         }
+      })
+    },
+    sure () {
+      this.formData.user_task_id = this.userTaskId
+      submitCompleteInfo(this.formData).then((res) => {
+        Toast({
+          message: '提交成功',
+          onClose: () => {
+            this.$router.go(-1)
+          }
+        })
       })
     }
   }
@@ -181,17 +220,13 @@ export default {
   padding: 0 30px;
   position: relative;
   margin: 16px 0 20px;
+  &.text-hidden {
+    height: 240px;
+    overflow: hidden;
+  }
   .more-down {
-    position: absolute;
     right: 30px;
-    bottom: 10px;
-    font-size: 24px;
-    line-height: 24px;
-    color: #0089C9;
     background-color: #fff;
-    i {
-      padding: 0 20px 0 6px;
-    }
   }
 }
 .receiver-pic {

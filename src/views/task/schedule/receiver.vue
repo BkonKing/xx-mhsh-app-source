@@ -12,56 +12,49 @@
         <div class="tel-btn"><img src="@/assets/img/task_10.png" /></div>
       </template>
     </van-nav-bar>
-    <div class="tf-body-container">
+    <div v-if="infoData" class="tf-body-container">
       <div class="release-header">
         <div class="release-user tf-row">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
+          <img :src="infoData.avatar" />
           <div class="tf-row-space-between">
-            <div class="release-name van-ellipsis">美好生活物业</div>
-            <!-- <div class="release-time color-FF5240">进行中</div> -->
-            <div class="release-time color-ccc">进行中</div>
+            <div class="release-name van-ellipsis">{{ infoData.nickname }}</div>
+            <div class="release-time color-ccc" :class="{ 'color-FF5240': infoData.is_stop == 1, 'color-ccc': infoData.progress_status > 1 }">{{ infoData.progress_status_name }}</div>
           </div>
-          <div class="finish-btn">查看任务</div>
+          <div @click="taskDetail" class="finish-btn tf-flex-center">查看任务<img src="@/assets/img/task_17.png" /></div>
         </div>
       </div>
-      <div class="schedule-list">
-        <div class="schedule-item">
-          <div class="line"></div>
-          <div class="time">
-            <div class="mask tf-row"><img class="img-100" src="@/assets/img/task_11.png" /></div>
-            2021-03-01 12:00:00
+      <schedule-list :listData="infoData.taskflow_list"></schedule-list>
+
+      <div class="op-block">
+        <div class="bottom-fiex tf-row">
+          <div class="op-left tf-row">
+            <div @click="quiz" class="tf-column">
+              <img src="@/assets/img/task_05.png" />
+              <div>提问</div>
+            </div>
+            <a :href="'tel: ' + infoData.contact_number" class="tf-column">
+              <img src="@/assets/img/task_06.png" />
+              <div>联系</div>
+            </a>
+            <div @click="infoData.is_can_complain == 1 && complaint()" class="tf-column" :class="{'opacity-gray': infoData.is_can_complain == 0}">
+              <img src="@/assets/img/task_18.png" />
+              <div>投诉</div>
+            </div>
+            <div v-if="infoData.is_show_abandon == 1" @click="infoData.is_can_abandon == 1 && endTask()" class="tf-column" :class="{'opacity-gray': infoData.is_can_abandon == 0}">
+              <img src="@/assets/img/task_19.png" />
+              <div>放弃</div>
+            </div>
           </div>
-          <div class="cont tf-column">
-            <div>接单方放弃任务</div>
-            <div>放弃说明：接单方放弃任务放弃说明</div>
-          </div>
-        </div>
-        <div class="schedule-item">
-          <div class="line"></div>
-          <div class="time">2021-03-01 12:00:00</div>
-          <div class="cont tf-column">
-            <div>接单方放弃任务</div>
-          </div>
-        </div>
-        <div class="schedule-item">
-          <div class="line"></div>
-          <div class="time">
-            <div class="mask tf-row"><span>2</span><img class="img-100" src="@/assets/img/task_12.png" /></div>
-            2021-03-01 12:00:00
-          </div>
-          <div class="cont tf-column">
-            <div>接单方放弃任务</div>
-          </div>
+          <div v-if="infoData.is_can_submit == 1" class="op-right" @click="deliverTask()">交付任务</div>
         </div>
       </div>
-      <op></op>
     </div>
     <task-popup v-model="endShow" :titName="endTit" :subTitName="endSubTit">
       <div slot="content" class="popup-cont end-cont">
         <div class="form-label">取消原因<span>*</span></div>
-        <div class="select-block tf-row">
+        <div @click="reasonShow = true" class="select-block tf-row">
           <div class="popup-select tf-row-space-between">
-            请选择
+            {{ formData.reason || '请选择' }}
             <img src="@/assets/img/task_09.png" />
           </div>
         </div>
@@ -71,10 +64,15 @@
           :maxNum="200"
           @getForm="getForm"
         ></graphic>
-        <div class="task-btn">确定</div>
+        <div @click="submit" :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']">确定</div>
       </div>
     </task-popup>
-    <task-popup v-model="evaluateShow" :titName="evaluateTit">
+    <list-select
+      v-model="reasonShow"
+      @selectCall="selectCall"
+      :selectList="reasonList"
+    ></list-select>
+    <!-- <task-popup v-model="evaluateShow" :titName="evaluateTit">
       <div slot="content" class="evaluate-cont">
         <div class="evaluate-header tf-row-vertical-center">
           <img src="@/assets/img/task_15.png" />
@@ -96,7 +94,8 @@
         </div>
         <div class="evaluate-cont">其他补充：噢噢噢噢噢噢噢噢哦哦哦哦哦哦哦哦哦</div>
       </div>
-    </task-popup>
+    </task-popup> -->
+
   </div>
 </template>
 
@@ -104,39 +103,136 @@
 import {
   NavBar
 } from 'vant'
-import op from '../components/op'
 import taskPopup from '../components/task-popup'
+import listSelect from '../components/list-select'
 import graphic from '../components/graphic'
+import scheduleList from './schedule-list'
+import { getTaskSchedule, getReasonList, submitGiveUp } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    op,
     taskPopup,
-    graphic
+    listSelect,
+    graphic,
+    scheduleList
   },
   data () {
     return {
-      endShow: false, // 淘汰弹窗
-      endTit: '放弃任务', // 淘汰标题
-      endSubTit: '请先与对方沟通协商', // 淘汰标题
-      evaluateShow: true, // 评价
-      evaluateTit: '评价'
+      taskId: '',
+      infoData: '',
+      endShow: false, // 放弃弹窗
+      reasonShow: false,
+      endTit: '放弃任务', // 放弃标题
+      endSubTit: '请先与对方沟通协商', // 放弃标题
+      formData: {
+        reason: '',
+        content: ''
+      },
+      reasonList: [],
+      prevName: '',
+      complaintUid: ''
     }
   },
   created () {
+    this.taskId = this.$route.query.taskId
+    this.formData.user_task_id = this.taskId
     this.getData()
   },
   mounted () {
 
   },
+  beforeRouteEnter (to, from, next) {
+    next((vm) => {
+      vm.prevName = from.name
+    })
+  },
   methods: {
     getData () {
-
+      getTaskSchedule({ linli_task_id: this.taskId }).then((res) => {
+        this.complaintUid = res.uid
+        this.infoData = res.data[0]
+      })
+    },
+    // 放弃
+    endTask () {
+      if (!this.reasonList.length) {
+        getReasonList({ type: 2 }).then((res) => {
+          this.reasonList = res.data.map(item => {
+            return {
+              value: item.id,
+              text: item.reason
+            }
+          })
+          this.endShow = true
+        })
+      } else {
+        this.endShow = true
+      }
+    },
+    // 选择原因
+    selectCall (obj) {
+      this.formData.reason = obj.text
+      console.log(obj)
+    },
+    getForm (val) {
+      this.formData.content = val.content
+      this.formData.image_url = val.images
+    },
+    // 提交
+    submit () {
+      submitGiveUp(this.formData).then((res) => {
+        this.endShow = false
+        this.getData()
+      })
+    },
+    // 交付任务
+    deliverTask () {
+      this.$router.push({
+        name: 'operateDeliver',
+        query: {
+          taskId: this.taskId,
+          userTaskId: this.infoData.id
+        }
+      })
+    },
+    // 提问
+    quiz () {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          isOwn: 0,
+          taskId: this.taskId
+        }
+      })
+    },
+    // 投诉
+    complaint () {
+      this.$router.push({
+        name: 'operateComplaint',
+        query: {
+          taskId: this.taskId,
+          complaintUid: this.complaintUid
+        }
+      })
+    },
+    // 查看任务
+    taskDetail () {
+      if (this.prevName == 'taskDetail') {
+        this.$router.go(-1)
+      } else {
+        this.$router.push({
+          name: 'taskDetail',
+          query: {
+            taskId: this.taskId
+          }
+        })
+      }
     }
   }
 }
 </script>
 <style lang="less" scoped>
+@import url(../../../styles/task.less);
 .tf-body-container{
   padding: 30px 20px;
   font-size: 28px;
@@ -164,7 +260,7 @@ export default {
   height: 80px;
   align-items: center;
   color: #000000;
-  img {
+  & > img {
     width: 80px;
     height: 100%;
     border-radius: 50%;
@@ -200,84 +296,10 @@ export default {
     font-size: 24px;
     color: #816100;
     flex-shrink: 0;
-  }
-}
-.schedule-list {
-  background: #FFFFFF;
-  border-radius: 10px;
-  margin-top: -20px;
-  padding: 20px 0;
-  .schedule-item {
-    position: relative;
-    .line {
-      width: 1PX;
-      position: absolute;
-      left: 68px;
-      top: 0;
-      bottom: 0;
-      background-color: #8F8F94;
-    }
-    &:first-child {
-      .line {
-        top: 30px;
-      }
-    }
-    &:last-child {
-      .line {
-        height: 30px;
-        bottom: auto;
-      }
-    }
-  }
-  .time {
-    height: 60px;
-    line-height: 60px;
-    padding-left: 104px;
-    font-size: 24px;
-    color: #8F8F94;
-    position: relative;
-    &::before {
-      content: '';
-      position: absolute;
-      left: 64px;
-      top: 50%;
-      transform: translate(0, -50%);
+    img {
       width: 10px;
-      height: 10px;
-      background: #8F8F94;
-      border-radius: 50%
-    }
-    .mask {
-      position: absolute;
-      width: 36px;
-      height: 36px;
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translate(0, -50%);
-      span {
-        position: absolute;
-        width: 28px;
-        height: 28px;
-        background: #FEBF00;
-        border-radius: 14px;
-        text-align: center;
-        line-height: 28px;
-        color: #FFFFFF;
-        font-size: 24px;
-        top: -14px;
-        right: -14px;
-      }
-    }
-  }
-  .cont {
-    max-width: 586px;
-    color: #000000;
-    padding-left: 104px;
-    word-break: break-all;
-    padding-bottom: 10px;
-    div {
-      line-height: 44px;
+      height: 18px;
+      margin-left: 12px;
     }
   }
 }
@@ -337,89 +359,6 @@ export default {
         margin: 0 16px 20px 0;
       }
     }
-  }
-}
-.evaluate-cont {
-  .evaluate-header {
-    height: 283px;
-    background: #FEBF00;
-    margin-top: -106px;
-    position: relative;
-    flex-direction: column;
-    img {
-      position: absolute;
-    }
-    img:nth-child(1) {
-      width: 133px;
-      height: 135px;
-      top: 0;
-      right: 0;
-    }
-    img:nth-child(2) {
-      width: 156px;
-      height: 167px;
-      left: 0;
-      bottom: 0;
-    }
-    .evaluate-user {
-      z-index: 4;
-      font-size: 28px;
-      line-height: 44px;
-      margin: 116px 0 10px 0;
-      max-width: 100%;
-      span {
-        font-weight: bold;
-        padding-left: 20px;
-      }
-    }
-    .evaluate-score {
-      z-index: 4;
-      font-size: 24px;
-      line-height: 44px;
-    }
-  }
-  .score-star {
-    width: 430px;
-    height: 100px;
-    background: #FFFFFF;
-    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.05);
-    border-radius: 50px;
-    margin: -50px auto 50px;
-    position: relative;
-    z-index: 15;
-    align-items: center;
-    padding: 0 60px;
-    div {
-      font-size: 40px;
-      color: #ccc;
-      &.active {
-        color: #FEBF00;
-      }
-    }
-  }
-  .evaluate-label {
-    flex-wrap: wrap;
-    margin: 0 30px 14px;
-    div {
-      width: 240px;
-      height: 64px;
-      line-height: 64px;
-      text-align: center;
-      color: #8F8F94;
-      margin-bottom: 16px;
-    }
-  }
-  .evaluate-label div,.evaluate-cont {
-    background: #F7F7F7;
-    border-radius: 10px;
-    font-size: 24px;
-  }
-  .evaluate-cont {
-    width: 500px;
-    height: 260px;
-    line-height: 44px;
-    margin: 0 auto 30px;
-    padding: 20px 30px;
   }
 }
 </style>

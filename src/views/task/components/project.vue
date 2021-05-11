@@ -7,12 +7,12 @@
         </div>
       </div>
       <div class="search-block">
-        <van-search v-model="searchVal" :clearable="false" placeholder="搜一搜">
+        <van-search v-model="searchVal" @input="searchProjectList" :clearable="false" placeholder="搜一搜">
           <div slot="left-icon" class="tf-icon tf-icon-sousuo1"></div>
         </van-search>
       </div>
       <div class="project-list">
-        <div @click="onSelect(index)" v-for="(item ,index) in projectList" :key="index" class="project-item tf-row-space-between" :class="{'cur': tabIndex == index}">
+        <div @click="onSelect(index, item.id)" v-for="(item ,index) in projectList" :key="index" class="project-item tf-row-space-between" :class="{'cur': selectProjcetId == item.id}">
           <div class="itme-name van-ellipsis">{{ item.project_name }}</div>
           <div class="check-block"><span class="tf-icon tf-icon-gou"></span></div>
         </div>
@@ -46,7 +46,8 @@ export default {
       projectShow: this.value,
       searchVal: '',
       tabIndex: -1,
-      projectList: [2, 34]
+      selectProjcetId: '',
+      projectList: []
     }
   },
   created () {
@@ -61,8 +62,9 @@ export default {
         console.log(res)
       })
     },
-    onSelect (index) {
+    onSelect (index, id) {
       this.tabIndex = index
+      this.selectProjcetId = id
     },
     close () {
       this.projectShow = false

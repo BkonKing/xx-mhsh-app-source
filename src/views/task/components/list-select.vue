@@ -3,7 +3,7 @@
     <van-popup v-model="selectShow">
       <div class="select-list">
         <div @click="onSelect(index)" v-for="(item ,index) in selectList" :key="index" class="select-item tf-vertical-center" :class="{'item-big': item.detail}">
-          <div>{{ item.text }}</div>
+          <div :class="{'color-FF5240': item.name == 'delete'}">{{ item.text }}</div>
           <span v-if="item.detail">{{ item.detail }}</span>
         </div>
       </div>
@@ -83,6 +83,9 @@ export default {
     }
     div {
       line-height: 48px;
+    }
+    .color-FF5240 {
+      color: #FF5240;
     }
     span {
       line-height: 44px;

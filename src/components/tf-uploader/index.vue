@@ -79,8 +79,11 @@ export default {
     }
   },
   watch: {
-    data (value) {
-      this.images = value
+    value (val) {
+      this.images = val
+      this.fileList = val.map(obj => ({
+        url: obj
+      }))
     },
     images (value) {
       this.$emit('input', value)

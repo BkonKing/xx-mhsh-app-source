@@ -9,30 +9,26 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <div class="sure-btn able">确定</div>
+        <div @click="sure" class="sure-btn able">确定</div>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="group-list">
-        <div class="group-item">
-          <div class="check-block tf-row-center">
-            <div class="cur"><span class="tf-icon tf-icon-gou"></span></div>
+        <div v-for="(item, index) in listData" :key="index" class="group-item">
+          <div @click="selectGroup(index)" class="check-block tf-row-center">
+            <div :class="{'cur': groupIndex == index}"><span class="tf-icon tf-icon-gou"></span></div>
           </div>
           <div class="group-cont">
-            <div class="group-name van-ellipsis">天福家园</div>
+            <div class="group-name van-ellipsis">{{ item.group_name }}</div>
             <div class="group-user tf-row-vertical-center">
-              <div class="user-pic tf-row">
-                <div><img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" /></div>
-                <div><img src="https://test.tosolomo.com/upload/images/202103/18/1616052619_590334.jpg" /></div>
-                <div><img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" /></div>
-                <div><img src="https://test.tosolomo.com/upload/images/202009/14/1600052648_479689.jpg" /></div>
-                <div><img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" /></div>
+              <div v-for="(item2, index2) in item.user_list" :key="index2" class="user-pic tf-row">
+                <div><img :src="item2.avatar" /></div>
               </div>
-              <div class="group-num">(20人)</div>
+              <div class="group-num">({{ item.member_num }}人)</div>
             </div>
           </div>
         </div>
-        <div class="group-item">
+        <!-- <div class="group-item">
           <div class="check-block tf-row-center">
             <div><span class="tf-icon tf-icon-gou"></span></div>
           </div>
@@ -48,7 +44,7 @@
               <div class="group-num">(20人)</div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="test" :class="{'test-over': isOver}" ref="test">{{text}}</div>
     </div>
@@ -59,12 +55,15 @@
 import {
   NavBar
 } from 'vant'
+import { getGroupList } from '@/api/task.js'
 export default {
   components: {
     [NavBar.name]: NavBar
   },
   data () {
     return {
+      listData: [],
+      groupIndex: -1, // 选中项
       text: '',
       isOver: false
     }
@@ -77,17 +76,42 @@ export default {
   },
   methods: {
     getData () {
-      this.text = '天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园'
-      this.$nextTick(() => {
-        this.test = this.$refs.test
-        console.log(this.test.clientHeight)
-        const textHeight = this.test.clientHeight * 750 / document.documentElement.clientWidth
-        console.log(textHeight)
-        if (textHeight > 60) {
-          this.isOver = true
+      getGroupList().then(res => {
+        this.listData = res.data
+        const groupInfo = this.$store.state.groupInfo
+        if (groupInfo) {
+          if (this.listData.length) {
+            for (let i = 0; i < this.listData.length; i++) {
+              if (this.listData[i].id == groupInfo.id) {
+                this.groupIndex = i
+                break
+              }
+            }
+          } else {
+            this.$store.commit('setGroupInfo', '')
+          }
         }
-        // this.showDetailBtn = this.detailDom.clientHeight < this.detailDom.scrollHeight;
       })
+      // this.text = '天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园天福家园'
+      // this.$nextTick(() => {
+      //   this.test = this.$refs.test
+      //   console.log(this.test.clientHeight)
+      //   const textHeight = this.test.clientHeight * 750 / document.documentElement.clientWidth
+      //   console.log(textHeight)
+      //   if (textHeight > 60) {
+      //     this.isOver = true
+      //   }
+      // this.showDetailBtn = this.detailDom.clientHeight < this.detailDom.scrollHeight;
+      // })
+    },
+    // 选择群组
+    selectGroup (index) {
+      this.groupIndex = index
+    },
+    // 确认
+    sure () {
+      this.$store.commit('setGroupInfo', this.listData[this.groupIndex])
+      this.$router.go(-1)
     }
   }
 }

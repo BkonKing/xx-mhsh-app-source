@@ -17,7 +17,7 @@
       </div>
       <div class="divider-line"></div>
       <div class="pic-block">
-        <tf-uploader v-model="formData.images" max-count="9"></tf-uploader>
+        <tf-uploader ref="uploader" v-model="formData.images" max-count="9"></tf-uploader>
       </div>
     </div>
   </task-card>
@@ -56,7 +56,10 @@ export default {
   created () {
   },
   methods: {
-
+    // 设置初始值
+    setVal (obj) {
+      this.formData = obj
+    }
   },
   watch: {
     formData: {

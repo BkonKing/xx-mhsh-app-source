@@ -60,7 +60,122 @@ export function getTaskTypeList (params) {
   return request.post('/linli/linli/linli_task_type', params)
 }
 
-// 选择发布类型-获取任务类型
+// 搜素项目
 export function searchProjectList (params) {
   return request.post('/linli/linli/searchProject', params)
+}
+
+// 获取群组
+export function getGroupList (params) {
+  return request.post('/linli/linli/user_group', params)
+}
+
+// 任务提交
+export function submitTask (params) {
+  return request.post('/linli/linli/create_task', params)
+}
+
+// 保存任务到草稿
+export function saveTask (params) {
+  return request.post('/linli/linli/create_task_draft', params)
+}
+
+// 任务编辑
+export function editTaskInfo (params) {
+  return request.post('/linli/linli/task_info', params)
+}
+
+// 任务详情
+export function getTaskInfo (params) {
+  return request.post('/linli/linli/linli_task_info', params)
+}
+
+// 接单
+export function receivingMask (params) {
+  return request.post('/linli/linli/meet_task', params)
+}
+
+// 任务操作状态
+export function getOpStatus (params) {
+  return request.post('/linli/linli/task_operation', params)
+}
+
+// 任务删除
+export function deleteTask (params) {
+  return request.post('/linli/linli/del_task', params)
+}
+
+// 任务暂停
+export function stopTask (params) {
+  return request.post('/linli/linli/stop_task', params)
+}
+
+// 任务进度
+export function getTaskSchedule (params) {
+  return request.post('/linli/linli/task_longitude', params)
+}
+
+// 任务提问列表
+export function getQuizList (params) {
+  return request.post('/linli/question/task_question_list', params)
+}
+
+// 任务-提交提问
+export function submitQuiz (params) {
+  return request.post('/linli/question/put_questions_to', params)
+}
+
+// 任务-回复提问
+export function replyQuiz (params) {
+  return request.post('/linli/question/reply_question', params)
+}
+
+// 放弃、淘汰原因
+export function getReasonList (params) {
+  return request.post('/linli/linli/eliminate_give_data', params)
+}
+
+// 放弃提交
+export function submitGiveUp (params) {
+  return request.post('/linli/linli/abandon_task', params)
+}
+
+// 淘汰提交
+export function submitEliminate (params) {
+  return request.post('/linli/linli/eliminate_task', params)
+}
+
+// 交付任务
+export function deliverTask (params) {
+  return request.post('/linli/linli/deliver_task', params)
+}
+
+// 任务完成
+export function getCompleteInfo (params) {
+  return request.post('/linli/linli/task_confirm_json', params)
+}
+
+// 任务完成
+export function submitCompleteInfo (params) {
+  return request.post('/linli/linli/task_confirm', params)
+}
+
+// 任务超时
+export function getOvertimeTask (params) {
+  return request.post('/linli/linli/task_overtime_json', params)
+}
+
+// 任务超时
+export function submitDelayTash (params) {
+  return request.post('/linli/linli/task_overtime', params)
+}
+
+// 下架任务
+export function closeTask (params) {
+  return request.post('/linli/linli/task_close', params)
+}
+
+// 评价详情
+export function getEvaluateInfo (params) {
+  return request.post('/linli/linli/evaluate_info', params)
 }
