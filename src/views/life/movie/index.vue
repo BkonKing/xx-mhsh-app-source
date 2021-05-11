@@ -265,9 +265,9 @@ export default {
         next(false)
       } else {
         const names = ['home', 'life']
-        this.scrollTop = this.$refs.el.scrollTop || 0
-        this.nowFilmLeft = this.$refs.nowFilm.scrollLeft || 0
-        this.startFilmLeft = this.$refs.startFilm.scrollLeft || 0
+        this.scrollTop = (this.$refs.el && this.$refs.el.scrollTop) || 0
+        this.nowFilmLeft = (this.$refs.nowFilm && this.$refs.nowFilm.scrollLeft) || 0
+        this.startFilmLeft = (this.$refs.startFilm && this.$refs.startFilm.scrollLeft) || 0
         if (names.includes(to.name)) {
           this.$destroy()
           this.$store.commit('deleteKeepAlive', from.name)
