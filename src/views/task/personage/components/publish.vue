@@ -5,18 +5,24 @@
         <div class="order-header">
           <div class="order-view">
             <span class="tf-icon tf-icon-xingfubi1 order-icon"></span>
-            <span class="order-num">{{ item.id }}</span>
-            <span class="order-text">(100幸福币/人)</span>
+            <span class="order-num">{{ item.z_reward_happiness }}</span>
+            <span class="order-text"
+              >({{ item.reward_happiness }}幸福币/人)</span
+            >
           </div>
-          <span class="order-title">进行中</span>
+          <span class="order-title">{{ item.task_status_name }}</span>
         </div>
         <div class="order-body">
-          <span class="order-caption">五凤兰庭清洁志愿者招募</span>
-          <span class="order-title-1">需要人数：10人（1人已接单）</span>
-          <span class="order-title-1">完成时间：截止2021-03-10 12:00</span>
+          <span class="order-caption">{{ item.task_title }}</span>
           <span class="order-title-1"
-            >完成地点：三盛滨江国际1号楼 线下科技</span
+            >需要人数：{{ item.need_people_text }}人（1人已接单）</span
           >
+          <span v-if="item.task_time" class="order-title-1"
+            >完成时间：{{ item.task_time }}</span
+          >
+          <span v-if="item.address_text" class="order-title-1">{{
+            item.address_text
+          }}</span>
         </div>
         <div class="order-footer">
           <div class="order-footer-item">
@@ -24,16 +30,16 @@
               <span class="tf-icon tf-icon-gengduo1 order-icon-1"></span>
               <span class="order-tag">更多</span>
             </div>
-            <div class="order-view-1" @click.stop="goSchedule(item)">
-              <img
-                class="order-icon-1"
-                src="https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/abe90510a28411eb87dd518891254080.png"
-              />
+            <div v-if="+item.is_schedule" class="order-view-1" @click.stop="goSchedule(item)">
+              <span class="tf-icon tf-icon-zhiyuan2 order-icon-1"></span>
               <span class="order-tag">进度</span>
             </div>
           </div>
-          <div class="order-footer-item">
-            <span class="order-title">2人待确认完成</span>
+          <div v-if="item.text" class="order-footer-item">
+            <span class="order-caption-1"
+              >剩余<van-count-down :time="item.task_etime" @finish="reload"
+            /></span>
+            <span class="order-title">{{item.text}}</span>
           </div>
         </div>
       </div>
@@ -50,7 +56,7 @@
 <script>
 // /pages/task/personage/index
 import refreshList from '@/components/tf-refresh-list'
-import { getRepairList } from '@/api/butler.js'
+import { getMyTaskList } from '@/api/task'
 export default {
   components: {
     refreshList
@@ -62,18 +68,12 @@ export default {
   },
   created () {},
   methods: {
-    // 获取我的报事报修
+    // 获取我的发布任务
     getList (params) {
-      const len = this.list.length
-      const id = len && params.pages !== 1 ? this.list[len - 1].id : ''
-      return getRepairList({
-        repairId: id
-      })
+      return getMyTaskList(params)
     },
     // 打开更多
-    openMoreDialog () {
-
-    },
+    openMoreDialog () {},
     // 任务进度
     goSchedule () {
       this.$router.push({

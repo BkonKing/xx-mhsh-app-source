@@ -9,7 +9,7 @@
           :class="{ 'group-active': item.id === categoryId }"
           @click="handleChange(item)"
         >
-          {{ item.category }}
+          {{ item[label] }}
         </div>
       </div>
       <img
@@ -48,6 +48,10 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    label: {
+      type: String,
+      default: 'category'
     }
   },
   data () {

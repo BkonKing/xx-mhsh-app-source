@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     ></van-nav-bar>
     <div class="evaluate-info">
-      <div class="evaluate-info-name">接单方：{{ designee }}</div>
+      <div class="evaluate-info-name">接单方：{{ nickname }}</div>
       <div class="evaluate-info-text">对接单方还满意吗?</div>
     </div>
     <div class="tf-main-container">
@@ -26,15 +26,34 @@
             {{ rateText[evaluate_stars] }}
           </div>
         </div>
-        <tf-radio-btn
-          class="evaluate-list"
-          v-model="evaluate_reason"
-          :radius="5"
-          :data="items"
-          multiple
-        ></tf-radio-btn>
+        <div class="evaluate-list">
+          <template v-for="(item, i) in evaluateTagList">
+            <div
+              class="radio-btn__item"
+              :key="i"
+              :class="{
+                'radio-btn--active':
+                  evaluate_reason.indexOf(item.bad_tag_name) !== -1
+              }"
+              @click="handleSelectType(item.bad_tag_name, item.id)"
+            >
+              <div class="radio-btn__text">{{ item.bad_tag_name }}</div>
+            </div>
+            <div
+              class="radio-btn__item"
+              :key="`good${i}`"
+              :class="{
+                'radio-btn--active':
+                  evaluate_reason.indexOf(item.good_tag_name) !== -1
+              }"
+              @click="handleSelectType(item.good_tag_name, item.id)"
+            >
+              <div class="radio-btn__text">{{ item.good_tag_name }}</div>
+            </div>
+          </template>
+        </div>
         <van-field
-          v-model="evaluate_content"
+          v-model="evaluate_supplement"
           autosize
           rows="4"
           type="textarea"
@@ -59,70 +78,18 @@
 
 <script>
 // /pages/task/operate/evaluate
-import tfRadioBtn from '@/components/tf-radio-btn'
+import { getEvaluateData, evaluateTask } from '@/api/task'
 import { validForm } from '@/utils/util'
-import { evaluate, launchEvaluate } from '@/api/butler.js'
 export default {
-  components: {
-    tfRadioBtn
-  },
   data () {
     return {
-      repairId: '',
+      taskId: '',
       evaluate_stars: undefined, // 评分
       evaluate_reason: [],
-      evaluate_content: '',
-      designee: '',
-      items: [
-        {
-          value: '不够专业',
-          name: '不够专业'
-        },
-        {
-          value: '专业',
-          name: '专业'
-        },
-        {
-          value: '速度慢',
-          name: '速度慢'
-        },
-        {
-          value: '速度快',
-          name: '速度快'
-        },
-        {
-          value: '服务态度恶劣',
-          name: '服务态度恶劣'
-        },
-        {
-          value: '态度友好',
-          name: '态度友好'
-        },
-        {
-          value: '脏乱不卫生',
-          name: '脏乱不卫生'
-        },
-        {
-          value: '干净整洁',
-          name: '干净整洁'
-        },
-        {
-          value: '不诚信',
-          name: '不诚信'
-        },
-        {
-          value: '诚信',
-          name: '诚信'
-        },
-        {
-          value: '价格不合理',
-          name: '价格不合理'
-        },
-        {
-          value: '价格合理',
-          name: '价格合理'
-        }
-      ],
+      evaluateIdList: [],
+      evaluate_supplement: '',
+      nickname: '',
+      evaluateTagList: [],
       // 评分对应内容
       rateText: {
         1: '非常不满意',
@@ -134,10 +101,39 @@ export default {
     }
   },
   created () {
-    this.repairId = this.$route.query.repairId
-    this.launchEvaluate()
+    this.taskId = this.$route.query.taskId
+    this.getEvaluateData()
   },
   methods: {
+    // 获取任务方对接单方评价页面数据
+    getEvaluateData () {
+      getEvaluateData({
+        user_task_id: this.taskId
+      }).then(({ data }) => {
+        const { nickname, evaluate_tag_list } = data
+        this.nickname = nickname
+        this.evaluateTagList = evaluate_tag_list
+      })
+    },
+    // 评价
+    handleSelectType (value, id) {
+      const index = this.evaluateIdList.indexOf(id)
+      // 当前组合没有任何选择，则插入所有
+      if (index === -1) {
+        this.evaluateIdList.push(id)
+        this.evaluate_reason.push(value)
+      } else {
+        const i = this.evaluate_reason.indexOf(value)
+        // 切换到组合的另一个选项
+        if (i === -1) {
+          this.$set(this.evaluate_reason, index, value)
+        } else {
+          // 取消选中的选项
+          this.evaluateIdList.splice(index, 1)
+          this.evaluate_reason.splice(i, 1)
+        }
+      }
+    },
     // 提交
     submit () {
       const validator = [
@@ -152,21 +148,13 @@ export default {
     },
     // 提交评价请求
     evaluate () {
-      evaluate({
-        repair_id: this.repairId,
+      evaluateTask({
+        user_task_id: this.taskId,
         evaluate_stars: this.evaluate_stars,
-        evaluate_content: this.evaluate_content,
-        evaluate_reason: this.evaluate_reason.join(',')
+        evaluate_supplement: this.evaluate_supplement,
+        evaluate_tags: this.evaluate_reason
       }).then(res => {
         this.$router.go(-1)
-      })
-    },
-    // 获取相关信息
-    launchEvaluate () {
-      launchEvaluate({
-        repairId: this.repairId
-      }).then(res => {
-        this.designee = res.data.designee
       })
     }
   }
@@ -175,7 +163,7 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .van-nav-bar {
-  background: #FEBF00;
+  background: #febf00;
 }
 .evaluate-info {
   display: flex;
@@ -231,21 +219,24 @@ export default {
 }
 // 评价标签
 .evaluate-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   width: 710px;
   padding: 30px 10px 0 30px;
   margin-top: 30px;
   background: #ffffff;
   border-radius: 10px;
-}
-/deep/ .radio-btn-group {
-  justify-content: space-between;
   .radio-btn__item {
     @flex-center();
     width: 300px;
     height: 64px;
-    text-align: center;
+    margin-right: 20px;
+    margin-bottom: 30px;
+    padding: 0 20px;
     background: #f7f7f7;
     border: none;
+    border-radius: 10px;
     .radio-btn__text {
       font-size: 28px;
       color: #8f8f94;
@@ -283,12 +274,12 @@ export default {
   border-radius: 44px !important;
 }
 /deep/ .van-button--primary {
-  background-color: #FF6555;
-  border-color:  #FF6555;
+  background-color: #ff6555;
+  border-color: #ff6555;
 }
 /deep/ .van-button--disabled {
-  background-color: #F9CBC6;
-  border-color: #F9CBC6;
+  background-color: #f9cbc6;
+  border-color: #f9cbc6;
   opacity: 1;
 }
 </style>

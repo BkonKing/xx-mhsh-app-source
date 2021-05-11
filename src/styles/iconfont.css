@@ -12,6 +12,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-ziyuan2:before {
+  content: "\e664";
+}
+
 .tf-icon-dizhi:before {
   content: "\e65f";
 }

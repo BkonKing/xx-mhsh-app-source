@@ -3,12 +3,12 @@
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
         <!-- 任务 -->
-        <div v-if="item.article_type == 1" class="task-item article-cell">
+        <div v-if="article_type == 4" class="task-item article-cell">
           <div class="task-header" @click="goTask(item)">
-            <div class="task-header-left">是的发送到发到付</div>
+            <div class="task-header-left">{{ item.task_title }}</div>
             <div class="task-header-right">
               <span class="tf-icon tf-icon-xingfubi1 task-header-img"></span>
-              <div class="task-header-text">100000</div>
+              <div class="task-header-text">{{ item.reward_happiness }}</div>
             </div>
           </div>
           <div class="task-content" @click="goTask(item)">
@@ -19,19 +19,24 @@
               :name="item.nickname"
             >
               <template v-slot:right>
-                <span class="userinfo-text">剩余人</span>
+                <span v-if="item.surplus_num" class="userinfo-text"
+                  >剩余{{ item.surplus_num }}人</span
+                >
               </template>
             </userInfo>
-            <ul class="task-tags">
-              <li class="task-tag">剩余人</li>
-              <li class="task-tag">剩余人</li>
-              <li class="task-tag">剩余人</li>
-              <li class="task-tag">剩余人</li>
+            <ul v-if="item.task_tag_text" class="task-tags">
+              <li
+                v-for="(tag, index) in item.task_tag_text.split('|')"
+                class="task-tag"
+                :key="index"
+              >
+                {{tag}}
+              </li>
             </ul>
-            <div class="task-time">2020-03-10 12:00 ~ 2020-03-31 12:00</div>
-            <div class="task-address">
+            <div class="task-time">{{ item.task_time }}</div>
+            <div v-if="item.address_text" class="task-address">
               <img class="task-ditu-img" src="@/assets/neighbours/ditu.png" />
-              <div class="task-address-text">福州市线下科技</div>
+              <div class="task-address-text">{{item.address_text}}</div>
             </div>
           </div>
           <operation
@@ -39,6 +44,7 @@
             :item="item"
             :article-type="item.article_type"
             :key="item.id"
+            articleType="4"
             @delete="list.splice(index, 1)"
           >
           </operation>
@@ -121,7 +127,7 @@
         </div>
       </template>
       <template slot:nodata>
-        <img src="@/assets/neighbours/notask.png" alt="">
+        <img src="@/assets/neighbours/notask.png" alt="" />
       </template>
     </refreshList>
   </div>

@@ -28,6 +28,8 @@
       v-model="com_type"
       :data="types"
       :radius="2"
+      :labelKey="labelKey"
+      :valueKey="valueKey"
     ></tf-radio-btn>
     <div
       v-preventReClick
@@ -43,6 +45,7 @@
 <script>
 import tfRadioBtn from '@/components/tf-radio-btn/index'
 import { addComplaint } from '@/api/neighbours'
+import { complaintTaskQuestions } from '@/api/task'
 export default {
   components: {
     tfRadioBtn
@@ -57,17 +60,15 @@ export default {
       type: Object,
       default: () => ({})
     },
-    // 如果是投诉，类型 1贴子、2评论、3回复
+    // 如果是投诉，类型 1贴子、2评论、3回复、4任务提问
     complainType: {
       type: [Number, String],
       default: 0
-    }
-  },
-  data () {
-    return {
-      complainShow: this.value,
-      // 投诉类型
-      types: [
+    },
+    // 投诉类型
+    types: {
+      type: Array,
+      default: () => [
         {
           value: '1',
           name: '垃圾营销'
@@ -100,7 +101,20 @@ export default {
           value: '8',
           name: '泄露隐私'
         }
-      ],
+      ]
+    },
+    labelKey: {
+      type: String,
+      default: 'name'
+    },
+    valueKey: {
+      type: String,
+      default: 'value'
+    }
+  },
+  data () {
+    return {
+      complainShow: this.value,
       com_type: ''
     }
   },
@@ -108,16 +122,28 @@ export default {
     // 提交投诉
     submitComplain () {
       if (this.com_type) {
+        // 1贴子、2评论、3回复投诉
         const complainType = {
           1: '4',
           2: '5',
           3: '1'
         }
-        addComplaint({
-          com_type: this.com_type,
-          info_type: this.complainType == '1' ? complainType[this.complainInfo.article_type] : this.complainType,
-          info_id: this.complainInfo.id
-        }).then((resr) => {
+        const complaintReq =
+          this.complainType == 4
+            ? complaintTaskQuestions({
+              task_id: this.complainInfo.task_id,
+              task_question_id: this.task_question_id.id,
+              complaint_type: this.com_type
+            }) // 任务提问投诉
+            : addComplaint({
+              com_type: this.com_type,
+              info_type:
+                  this.complainType == '1'
+                    ? complainType[this.complainInfo.article_type]
+                    : this.complainType,
+              info_id: this.complainInfo.id
+            })
+        complaintReq.then(resr => {
           this.$toast.success('投诉成功')
           this.complainShow = false
           this.valueChild = false

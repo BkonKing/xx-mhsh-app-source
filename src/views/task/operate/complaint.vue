@@ -8,9 +8,6 @@
       placeholder
       @click-left="$router.go(-1)"
     >
-      <template #right>
-        <span class="tf-icon tf-icon-time-circle"></span>
-      </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="tabbar">
@@ -31,14 +28,14 @@
         <div class="complaint-info">
           <div class="complaint-info-item">
             <div class="complaint-info-item-label">投诉用户</div>
-            <div class="complaint-info-item-value">用户昵称（186****1234）</div>
+            <div class="complaint-info-item-value">{{ nickName }}</div>
           </div>
           <div class="complaint-info-item">
             <div class="complaint-info-item-label">
               <span>任</span><span>务</span>
             </div>
             <div class="complaint-info-item-value van-ellipsis">
-              任务标题任务标题任务标题任务标任务标题任务标任务标题任务标
+              {{ taskTitle }}
             </div>
           </div>
         </div>
@@ -48,7 +45,9 @@
             <span class="complaint-form-tag">*</span>
           </div>
           <div class="complaint-form-select" @click="typeVisible = true">
-            <span class="complaint-form-text">{{ aText || "请选择" }}</span>
+            <span class="complaint-form-text">{{
+              complaintTypeText || "请选择"
+            }}</span>
             <span class="tf-icon tf-icon-right"></span>
           </div>
           <div class="complaint-form-label">
@@ -56,7 +55,7 @@
             <span class="complaint-form-tag">*</span>
           </div>
           <van-field
-            v-model="b"
+            v-model="content"
             autosize
             rows="4"
             type="textarea"
@@ -77,8 +76,8 @@
         v-preventReClick
         size="large"
         type="danger"
-        :disabled="!(a && b)"
-        @click="save"
+        :disabled="!(complaintType && content)"
+        @click="complaintTask"
         >确认</van-button
       >
     </div>
@@ -90,11 +89,11 @@
     >
       <div
         v-for="item in typeList"
-        :key="item.value"
+        :key="item.id"
         class="type-item van-ellipsis"
         @click="selectType(item)"
       >
-        {{ item.text }}
+        {{ item.complaint_type }}
       </div>
     </van-popup>
   </div>
@@ -103,49 +102,62 @@
 <script>
 // pages/task/operate/complaint
 import tfUploader from '@/components/tf-uploader/index'
+import { getTaskComplaint, complaintTask } from '@/api/task'
 export default {
   components: {
     tfUploader
   },
   data () {
     return {
-      a: '', // 投诉类型值
-      aText: '', // 投诉类型文本
-      b: '', // 投诉描述
+      taskId: '',
+      complaintUid: '', // 被投诉用户id
+      nickName: '',
+      taskTitle: '',
+      complaintType: '', // 投诉类型值
+      complaintTypeText: '', // 投诉类型文本
+      content: '', // 投诉描述
       images: [],
-      typeList: [
-        {
-          value: 1,
-          text: '侵权'
-        },
-        {
-          value: 2,
-          text: '侵权'
-        },
-        {
-          value: 3,
-          text: '侵权'
-        },
-        {
-          value: 4,
-          text: '侵权'
-        },
-        {
-          value: 5,
-          text: '侵权'
-        }
-      ],
+      typeList: [],
       typeVisible: false
     }
   },
+  created () {
+    this.taskId = this.$route.query.taskId
+    this.complaintUid = this.$route.query.complaintUid
+    this.getTaskComplaint()
+  },
   methods: {
+    // 获取任务投诉 页面数据
+    getTaskComplaint () {
+      getTaskComplaint({
+        type: 1,
+        task_id: this.taskId,
+        complaint_uid: this.complaintUid
+      }).then(({ data }) => {
+        const { bts_nickname, type_list, task_title } = data
+        this.nickName = bts_nickname
+        this.taskTitle = task_title
+        this.typeList = type_list
+      })
+    },
     // 选择类型
-    selectType ({ value, text }) {
-      this.a = value
-      this.aText = text
+    selectType ({ id, complaint_type }) {
+      this.complaintType = id
+      this.complaintTypeText = complaint_type
       this.typeVisible = false
     },
-    save () {}
+    // 投诉提交
+    complaintTask () {
+      complaintTask({
+        task_id: this.taskId,
+        complaint_uid: this.complaintUid,
+        complaint_type: this.complaintType,
+        content: this.content,
+        image_url: this.images
+      }).then(({ success }) => {
+        success && this.$router.go(-1)
+      })
+    }
   }
 }
 </script>
@@ -303,7 +315,7 @@ export default {
       height: 150px;
     }
     /deep/ .van-uploader__upload {
-      border: 2px dashed #8F8F94;
+      border: 2px dashed #8f8f94;
       background: #fff;
     }
   }

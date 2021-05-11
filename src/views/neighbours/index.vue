@@ -54,7 +54,7 @@
     </div>
     <van-tabs
       class="tf-body-container tf-column"
-      :class="{ 'tabs-5': isOpenTask }"
+      :class="{ 'tabs-5': isOpeningTask }"
       v-model="current"
       @change="tabsChange"
     >
@@ -103,7 +103,7 @@
         ></list>
       </van-tab>
       <van-tab
-        v-if="isOpenTask"
+        v-if="isOpeningTask"
         ref="taskDropdown"
         title="任务"
         id="neighboursList4"
@@ -113,6 +113,7 @@
           v-model="taskId"
           :visible.sync="taskDropdown"
           :group="taskTypes"
+          label="type_name"
           @change="getFilterTasks"
         ></select-dropdown>
         <list
@@ -121,6 +122,7 @@
           class="taskList"
           :data.sync="taskList"
           :load="getTaskList"
+          article_type="4"
         ></list>
       </van-tab>
     </van-tabs>
@@ -161,6 +163,7 @@ import {
   getPostBarList
 } from '@/api/neighbours'
 import { getNeighboursAgreement } from '@/api/home'
+import { getTaskSwitch, getTaskList, getTaskTypeList } from '@/api/task'
 import tfDialog from '@/components/tf-dialog/index'
 import selectDropdown from '@/views/neighbours/components/selectDropdown'
 import { mapGetters } from 'vuex'
@@ -192,7 +195,10 @@ export default {
       taskId: '',
       taskDropdown: false,
       taskTypes: [],
-      isOpenTask: false // 是否开启任务模块
+      isOpeningTask: false, // 是否开启任务模块
+      province: '', // 省
+      city: '', // 市
+      area: '' // 县
     }
   },
   computed: {
@@ -213,7 +219,7 @@ export default {
       })
     }
     this.getPostBarCategoryList()
-    this.getTaskTypes()
+    this.getTaskSwitch()
   },
   activated () {
     if (this.scrollTop && this.current !== 1) {
@@ -300,16 +306,41 @@ export default {
         ]
       })
     },
+    // 获取任务开关
+    getTaskSwitch () {
+      getTaskSwitch().then(({ alluser_open }) => {
+        this.isOpeningTask = 1 || +alluser_open
+        if (this.isOpeningTask) {
+          this.getTaskTypeList()
+          this.getLocationInfo()
+        }
+      })
+    },
+    // 获取任务列表
+    getTaskList (params) {
+      // params.is_all = this.isAll
+      params.task_type = this.taskId
+      params.province = this.province
+      params.city = this.city
+      params.area = this.area
+      return getTaskList(params)
+    },
+    // 获取任务类型
+    getTaskTypeList () {
+      getTaskTypeList().then(({ data }) => {
+        this.taskTypes = [
+          {
+            type_name: '全部',
+            id: ''
+          },
+          ...data
+        ]
+      })
+    },
     // 筛选任务类型
     getFilterTasks ({ id }) {
       this.taskId = id
       this.$refs.taskList.reload()
-    },
-    // 获取任务列表
-    getTaskList (params) {
-      params.is_all = this.isAll
-      params.taskId = this.taskId
-      return getArticleList(params)
     },
     // 邻里使用协议
     getNeighboursAgreement () {
@@ -320,13 +351,14 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
+      this.province = '福建省'
+      this.city = '福州市'
+      this.area = '仓山区'
       return bMapGetLocationInfo().then(data => {
-        const { adCode, lon, lat } = data
-        // 百度获取的cityCode不同，需要将行政区编码的后两位转为0才是当前城市编码
-        this.adCode = String(adCode)
-        this.cityId = String(adCode).substring(0, 4) + '00'
-        this.lon = lon
-        this.lat = lat
+        const { province, city, district } = data
+        this.province = province || '福建省'
+        this.city = city || '福州市'
+        this.area = district || '仓山区'
       })
     }
   },
@@ -499,6 +531,7 @@ export default {
       position: absolute;
       top: 98px;
       z-index: 4;
+      width: 100%;
       height: auto;
       padding-bottom: 0;
       animation-duration: 0.2s;

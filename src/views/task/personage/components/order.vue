@@ -5,15 +5,15 @@
         <div class="order-header">
           <div class="order-view">
             <span class="tf-icon tf-icon-xingfubi1 order-icon"></span>
-            <span class="order-num">{{ item.id }}</span>
+            <span class="order-num">{{ item.reward_happiness }}</span>
           </div>
-          <span class="order-title">进行中</span>
+          <span class="order-title">{{ item.progress_status_name }}</span>
         </div>
         <div class="order-body">
-          <span class="order-caption">五凤兰庭清洁志愿者招募</span>
-          <span class="order-title-1">完成时间：截止2021-03-10 12:00</span>
-          <span class="order-title-1"
-            >完成地点：三盛滨江国际1号楼 线下科技</span
+          <span class="order-caption">{{ item.task_title }}</span>
+          <span v-if="item.task_time" class="order-title-1">完成时间：{{ item.task_time }}</span>
+          <span v-if="item.address_text" class="order-title-1"
+            >完成地点：{{ item.item.address_text }}</span
           >
         </div>
         <div class="order-footer">
@@ -23,22 +23,18 @@
               <span class="order-tag">联系</span>
             </div>
             <div class="order-view-1" @click.stop="goSchedule(item)">
-              <img
-                class="order-icon-1"
-                src="https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/abe90510a28411eb87dd518891254080.png"
-              />
+              <span class="tf-icon tf-icon-zhiyuan2 order-icon-1"></span>
               <span class="order-tag">进度</span>
             </div>
           </div>
           <div class="order-footer-item">
             <span class="order-caption-1"
-              >剩余<van-count-down
-                :time="30 * 60 * 60 * parseInt(item.id)"
-                @finish="reload"
+              >剩余<van-count-down :time="item.task_etime" @finish="reload"
             /></span>
             <van-button
+              v-if="+item.is_can_submit"
               class="order-button-wrapper"
-              @click.stop="goDetails(item)"
+              @click.stop="goTask(item)"
               >交付任务</van-button
             >
           </div>
@@ -57,7 +53,7 @@
 <script>
 // /pages/task/personage/index
 import refreshList from '@/components/tf-refresh-list'
-import { getRepairList } from '@/api/butler.js'
+import { getUserTaskList } from '@/api/task'
 export default {
   components: {
     refreshList
@@ -71,11 +67,7 @@ export default {
   methods: {
     // 获取我的报事报修
     getList (params) {
-      const len = this.list.length
-      const id = len && params.pages !== 1 ? this.list[len - 1].id : ''
-      return getRepairList({
-        repairId: id
-      })
+      return getUserTaskList(params)
     },
     // 联系
     makePhoneCall (phoneNumber) {
@@ -88,12 +80,6 @@ export default {
     goSchedule (item) {
       this.$router.push({
         name: 'scheduleReceiver'
-      })
-    },
-    // 邻里-任务详情
-    goDetails () {
-      this.$router.push({
-        name: 'taskDetail'
       })
     },
     // 我的任务详情

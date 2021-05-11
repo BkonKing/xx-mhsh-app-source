@@ -43,17 +43,28 @@
 <script>
 // pages/task/personage/complaint
 import tfImageList from '@/components/tf-image-list'
+import { getEvaluateInfo } from '@/api/task'
+
 export default {
   components: {
     tfImageList
   },
   data () {
     return {
+      evaluateId: '',
       images: []
     }
   },
-  created () {},
-  methods: {}
+  created () {
+    this.evaluateId = this.$route.query.evaluateId
+  },
+  methods: {
+    getEvaluateInfo () {
+      getEvaluateInfo({
+        evaluate_id: this.evaluateId
+      })
+    }
+  }
 }
 </script>
 

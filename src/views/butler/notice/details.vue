@@ -9,9 +9,9 @@
       @click-left="goBack"
     />
     <div class="page-container">
-      <div class="tf-article-title">{{title}}</div>
-      <div class="tf-article-info">{{ctime}}</div>
-      <div class="tf-article-content">{{content}}</div>
+      <div class="tf-article-title">{{ title }}</div>
+      <div class="tf-article-info">{{ ctime }}</div>
+      <div class="tf-article-content" v-html="content"></div>
     </div>
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
     getNoticInfo (noticeId) {
       getNoticInfo({
         noticeId
-      }).then((res) => {
+      }).then(res => {
         if (res.success) {
           const { title, content, ctime } = res.data
           this.title = title
@@ -63,5 +63,23 @@ export default {
   margin-bottom: 30px;
   padding-bottom: 30px;
   border-bottom: 2px solid @divider-color;
+}
+.tf-article-content {
+  word-break: break-all;
+  /deep/ img {
+    max-width: 100% !important;
+  }
+  /deep/ strong {
+    font-weight: bold;
+  }
+  /deep/ ol {
+    list-style-type: decimal;
+  }
+  /deep/ ul {
+    list-style-type: disc;
+  }
+  /deep/ li {
+    list-style: inherit;
+  }
 }
 </style>

@@ -3,28 +3,21 @@
     <template v-slot="{ item }">
       <div class="complaint-wrapper">
         <div class="complaint-header">
-          <span class="complaint-title">投诉时间：2021-03-10 12:00:00</span>
+          <span class="complaint-title">投诉时间：{{ item.ctime }}</span>
         </div>
         <div class="complaint-body">
-          <span class="complaint-summary"
-            >投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内容诉描述内容内容投诉描述内容内容投诉描述内容内容</span
-          >
+          <span class="complaint-summary">{{ item.content }}</span>
           <div class="complaint-group-1">
             <div class="complaint-view">
-              <img
-                class="complaint-large-icon"
-                src="https://ai-sample.oss-cn-hangzhou.aliyuncs.com/test/ceb195f0a30911eb87dd518891254080.png"
-              />
+              <img class="complaint-large-icon" :src="item.avatar" />
             </div>
-            <div class="complaint-view-1" @click="goDetails">
-              <span class="complaint-nick-name">王晓红</span>
-              <span class="complaint-caption-1"
-                >五凤兰庭小区清洁志愿者招募</span
-              >
+            <div class="complaint-view-1" @click="goDetails(item)">
+              <span class="complaint-nick-name">{{ item.nickname }}</span>
+              <span class="complaint-caption-1">{{ item.task_title }}</span>
             </div>
           </div>
-          <div v-if="item.content" class="complaint-group-2">
-            <span class="complaint-text">回复：</span>{{ item.content }}
+          <div v-if="item.hf_content" class="complaint-group-2">
+            <span class="complaint-text">回复：</span>{{ item.hf_content }}
           </div>
         </div>
       </div>
@@ -41,7 +34,7 @@
 <script>
 // /pages/task/personage/index
 import refreshList from '@/components/tf-refresh-list'
-import { getRepairList } from '@/api/butler.js'
+import { getMyQuestionList } from '@/api/task'
 export default {
   components: {
     refreshList
@@ -55,16 +48,15 @@ export default {
   methods: {
     // 获取我的报事报修
     getList (params) {
-      const len = this.list.length
-      const id = len && params.pages !== 1 ? this.list[len - 1].id : ''
-      return getRepairList({
-        repairId: id
-      })
+      return getMyQuestionList(params)
     },
     // 邻里-任务详情
-    goDetails () {
+    goDetails ({ task_id }) {
       this.$router.push({
-        name: 'taskDetail'
+        name: 'taskDetail',
+        query: {
+          taskId: task_id
+        }
       })
     }
   }

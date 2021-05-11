@@ -7,14 +7,14 @@
           <span class="operation-text">分享</span>
         </div>
         <!-- 任务 -->
-        <template v-if="articleType == 1">
+        <template v-if="articleType == 4">
           <div class="operation-item" @click="goQuiz()">
             <img
               class="operation-icon"
               src="@/assets/neighbours/question.png"
             />
             <span class="operation-text">{{
-              item.comments | numberText("提问")
+              item.question_num | numberText("提问")
             }}</span>
           </div>
         </template>

@@ -112,50 +112,11 @@
         </div>
       </div>
       <!-- 任务专区 -->
-      <div class="task-box">
-        <div class="task-bg2"></div>
-        <div class="task-box__header">
-          <div ref="sign" class="task-box__title" @click="goHappiness">
-            <img
-              class="task-box__header-logo"
-              src="@/assets/imgs/home_task.png"
-            />
-            <span class="tf-icon tf-icon-right"></span>
-          </div>
-        </div>
-        <van-swipe
-          v-if="0"
-          class="task-swipe"
-          vertical
-          :autoplay="6000"
-          :show-indicators="false"
-        >
-          <van-swipe-item v-for="i in 1" :key="i">
-            <ul class="task-ul">
-              <li class="task-item" v-for="i in 4" :key="i">
-                <span class="tf-icon tf-icon-xingfubi1"></span>
-                <span class="task-num">+{{ i }}000</span>
-                <span class="task-text task-username">王小明王小明</span>
-                <span class="task-text">发布了</span>
-                <span class="task-title"
-                  >任务标题任务标题任务任标题任务任题任务任</span
-                >
-              </li>
-            </ul>
-          </van-swipe-item>
-        </van-swipe>
-        <ul class="task-swipe" style="height: auto;" v-else>
-          <li class="task-item" v-for="i in 4" :key="i">
-            <span class="tf-icon tf-icon-xingfubi1"></span>
-            <span class="task-num">+{{ i }}000</span>
-            <span class="task-text task-username">王小明王小明</span>
-            <span class="task-text">发布了</span>
-            <span class="task-title"
-              >任务标题任务标题任务任标题任务任题任务任</span
-            >
-          </li>
-        </ul>
-      </div>
+      <home-task
+        v-if="isOpeningTask && taskList.length"
+        :data="taskList"
+      ></home-task>
+      <!-- 生活专区 -->
       <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
         <!-- 9.9特卖 -->
         <div
@@ -335,10 +296,10 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 import FilmBox from '@/views/life/movie/components/FilmBox'
+import homeTask from './components/task'
 import {
   getMyApp,
   getBannerIndex,
@@ -351,6 +312,7 @@ import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { getfilmlist } from '@/api/movie'
+import { getTaskSwitch } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
@@ -360,7 +322,8 @@ export default {
   components: {
     pageNavBar,
     tfImageList,
-    FilmBox
+    FilmBox,
+    homeTask
   },
   data () {
     return {
@@ -386,7 +349,9 @@ export default {
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
       ],
-      guideTop: 0
+      guideTop: 0,
+      isOpeningTask: true, // 是否显示任务专区
+      taskList: [] // 任务列表
     }
   },
   computed: {
@@ -449,6 +414,7 @@ export default {
     this.getBannerIndex()
     this.getNoticeLbList()
     this.getCreditsGoodsList()
+    this.getTaskSwitch()
     this.getBargainGoods()
     this.getLocationInfo()
     this.getActivityList()
@@ -457,7 +423,7 @@ export default {
     this.swipeChange(0)
   },
   methods: {
-    /* 新手引导步骤 */
+    // 新手引导步骤
     guideStep () {
       this.guideIndex = this.guideIndex + 1
       this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0
@@ -466,26 +432,26 @@ export default {
         api.setPrefs({ key: 'guidetype', value: 1 })
       }
     },
-    /* 获取通知轮播列表 */
+    // 获取通知轮播列表
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {
         this.noticeList = data
       })
     },
-    /* 获取轮播图 */
+    // 获取轮播图
     getBannerIndex () {
       getBannerIndex().then(res => {
         this.swipeImages = res.data
         this.swipeChange(0)
       })
     },
-    /* 获取我的app列表，并手动打入一个全部 */
+    // 获取我的app列表，并手动打入一个全部
     getMyApp () {
       getMyApp().then(res => {
         this.myAppList = res.data
       })
     },
-    /* 轮播图change事件 */
+    // 轮播图change事件
     swipeChange (index) {
       this.activeIndex = index
       if (!this.scrollStatus) {
@@ -494,7 +460,7 @@ export default {
           '#eb5841'
       }
     },
-    /* 签到 */
+    // 签到
     sign () {
       handlePermission({
         name: 'location',
@@ -505,7 +471,7 @@ export default {
         signin()
           .then(res => {
             this.signLoading = false
-            Toast({
+            this.$toast({
               message: res.message
             })
             this.$store.dispatch('getMyAccount')
@@ -518,45 +484,58 @@ export default {
           })
       })
     },
-    /* 获取幸福币专区 */
+    // 获取幸福币专区
     getCreditsGoodsList () {
       getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
-    /* 跳转幸福币 */
+    // 跳转幸福币
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
-    /* 幸福币专区商品详情 */
+    // 幸福币专区商品详情
     goCoinCommodity (item) {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
-    /* 获取9.9特卖区 */
+    // 获取任务开关
+    getTaskSwitch () {
+      getTaskSwitch().then(({ alluser_open }) => {
+        this.isOpeningTask = +alluser_open
+        // 开启则获取任务列表
+        this.isOpeningTask && this.getTaskList()
+      })
+    },
+    // 获取任务列表
+    getTaskList () {
+      const params = {}
+      this.taskList = []
+    },
+    // 获取9.9特卖区
     getBargainGoods () {
       getBargainGoods().then(res => {
         this.bargainList = res.data
       })
     },
-    /* 跳转9.9特卖专区 */
+    // 跳转9.9特卖专区
     goSpecialSale () {
       this.$router.push('/store/special-sale')
     },
-    /* 9.9特卖专区图片点击 */
+    // 9.9特卖专区图片点击
     clickSpecialSale ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
-    /* 获取闪购专区 */
+    // 获取闪购专区
     getOllageGoods () {
       getOllageGoods().then(res => {
         this.ollageGoods = res.data
       })
     },
-    /* 跳转限时闪购列表 */
+    // 跳转限时闪购列表
     goTimeLimit () {
       this.$router.push('/store/flash-purchase')
     },
-    /* 跳转限时闪购详情 */
+    // 跳转限时闪购详情
     clickTimeLimit ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
@@ -577,9 +556,11 @@ export default {
       bMapGetLocationInfo()
         .then(data => {
           const { adCode } = data
+          this.getTaskList()
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
         })
         .catch(() => {
+          this.getTaskList()
           this.getfilmlist()
         })
     },
@@ -589,17 +570,17 @@ export default {
         name: 'movieIndex'
       })
     },
-    /* 获取活动列表 */
+    // 获取活动列表
     getActivityList () {
       getActivityList().then(res => {
         this.activityList = res.data
       })
     },
-    /* 跳转活动详情 */
+    // 跳转活动详情
     goActivity ({ id }) {
       this.$router.push(`/pages/neighbours/details?articleType=2&id=${id}`)
     },
-    /* 跳转社区活动 */
+    // 跳转社区活动
     goCommunity () {
       this.$router.push({
         path: '/neighbours',
@@ -608,7 +589,7 @@ export default {
         }
       })
     },
-    /* 跳转公告详情页 */
+    // 跳转公告详情页
     goNotice ({ id }) {
       this.$router.push({
         name: 'noticeDetails',
@@ -617,17 +598,17 @@ export default {
         }
       })
     },
-    /* 点击头条跳转相应内容 */
+    // 点击头条跳转相应内容
     clickFront ({ id }) {
       this.$router.push(`/pages/neighbours/details?articleType=1&id=${id}`)
     },
-    /* 获取美好头条 */
+    // 获取美好头条
     getMhttList () {
       getMhttList().then(res => {
         this.frontList = res.data || []
       })
     },
-    /* 滚动行为 */
+    // 滚动行为
     onScroll ({ target }) {
       const el = document.getElementById('home-notice-box')
       const height = (el && el.clientHeight) || 0
@@ -642,7 +623,7 @@ export default {
     // 跳转到应用
     goApp ({ url, mj_status }) {
       if (url === '/pages/butler/entrance/index' && mj_status == '0') {
-        Toast('小区暂未开放此功能')
+        this.$toast('小区暂未开放此功能')
       } else {
         this.$router.push(url)
       }
@@ -867,79 +848,7 @@ export default {
     width: 100%;
   }
 }
-// 任务专区
-.task-box {
-  padding: 0 30px;
-  margin: 0 20px 40px;
-  padding-bottom: 30px;
-  background: #ffefc0;
-  background-image: url("~@/assets/imgs/home_task_bg.png");
-  background-size: 100% 160px;
-  background-repeat: no-repeat;
-  border-radius: 10px;
-  overflow: hidden;
-  &__header {
-    padding: 38px 0 40px;
-    &-logo {
-      height: 36px;
-    }
-  }
-  &__title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .tf-icon-right {
-      font-size: 24px;
-      color: #38383866;
-    }
-  }
-  .task-swipe {
-    height: 320px;
-    padding: 30px 30px 0;
-    background: #ffffff;
-    border-radius: 10px;
-    .task-ul {
-      display: flex;
-      flex-direction: column;
-      height: 290px;
-    }
-    .task-item {
-      display: flex;
-      align-items: center;
-      padding-bottom: 30px;
-    }
-    .tf-icon-xingfubi1 {
-      font-size: 28px;
-      line-height: 1;
-      color: #febf00;
-    }
-    .task-num {
-      min-width: 91px;
-      margin-left: 10px;
-      font-size: 24px;
-      font-weight: 500;
-      line-height: 1;
-      color: #febf00;
-    }
-    .task-text {
-      font-size: 24px;
-      line-height: 1;
-      color: #8f8f94;
-    }
-    .task-username {
-      width: 126px;
-      @text-ellipsis();
-    }
-    .task-title {
-      flex: 1;
-      margin-left: 10px;
-      font-size: 24px;
-      line-height: 1;
-      color: #333;
-      @text-ellipsis();
-    }
-  }
-}
+
 /* 专区容器 */
 .goods-container {
   display: flex;
