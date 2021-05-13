@@ -56,10 +56,10 @@
                    :disabled="userInfo.idcard"
                    @change="setRealname" />
             <i v-if="userInfo.idcard"
-               class="font_family icon-yishiming n1">
+               class="tf-icon tf-icon-yishiming n1">
             </i>
             <!-- <i v-else
-               class="font_family icon-weishiming n2"></i> -->
+               class="tf-icon tf-icon-weishiming n2"></i> -->
           </template>
         </tf-list-item>
         <tf-list-item title="生日"

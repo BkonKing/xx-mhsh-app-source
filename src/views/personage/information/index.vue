@@ -39,9 +39,9 @@
                   <div class="t1">{{ phone }}</div>
                   <div class="t2">
                     <i v-if="userInfo.gender == 2"
-                       class="font_family icon-xingbie nv"></i>
+                       class="tf-icon tf-icon-xingbie nv"></i>
                     <i v-if="userInfo.gender == 1"
-                       class="font_family icon-xingbie1 nan"></i>
+                       class="tf-icon tf-icon-xingbie1 nan"></i>
                     {{ userInfo.birthday }}
                   </div>
                 </div>
@@ -49,7 +49,7 @@
                   <div class="name">
                     {{ userInfo.realname }}
                     <i v-if="userInfo.idcard"
-                       class="font_family icon-yishiming n1">
+                       class="tf-icon tf-icon-yishiming n1">
                     </i>
                   </div>
                 </div>
@@ -70,10 +70,10 @@
                 <div class="name">
                   {{ userInfo.realname }}
                   <i v-if="userInfo.realname"
-                     class="font_family icon-yishiming n1">
+                     class="tf-icon tf-icon-yishiming n1">
                   </i>
                   <i v-else
-                     class="font_family icon-weishiming n2"></i>
+                     class="tf-icon tf-icon-weishiming n2"></i>
                 </div>
               </div>
             </template>
