@@ -162,7 +162,7 @@ export default {
       this.$router.push({
         name: 'operateQuiz',
         query: {
-          id: this.item.id
+          taskId: this.item.task_id
         }
       })
     },

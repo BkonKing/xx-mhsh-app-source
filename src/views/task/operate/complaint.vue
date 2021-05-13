@@ -45,9 +45,11 @@
             <span class="complaint-form-tag">*</span>
           </div>
           <div class="complaint-form-select" @click="typeVisible = true">
-            <span class="complaint-form-text">{{
-              complaintTypeText || "请选择"
-            }}</span>
+            <span
+              class="complaint-form-text"
+              :class="{ 'complain-type': complaintTypeText }"
+              >{{ complaintTypeText || "请选择" }}</span
+            >
             <span class="tf-icon tf-icon-right"></span>
           </div>
           <div class="complaint-form-label">
@@ -163,6 +165,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .van-nav-bar {
+  background-color: #ff6555;
+  .van-icon,
+  .van-nav-bar__title {
+    color: #fff;
+  }
+}
 .tabbar {
   display: flex;
   flex-direction: column;
@@ -170,6 +179,10 @@ export default {
   height: 300px;
   padding: 50px;
   background-color: #ff6555;
+  background-image: url("~@/assets/neighbours/task-complaint.png");
+  background-size: 220px 300px;
+  background-repeat: no-repeat;
+  background-position-x: 530px;
   overflow: hidden;
   color: #ffffff;
   line-height: 24px;
@@ -188,7 +201,7 @@ export default {
     color: #ffffffcc;
     li {
       display: flex;
-      line-height: 42px;
+      line-height: 44px;
       &::before {
         content: "";
         display: block;
@@ -291,6 +304,9 @@ export default {
     color: #8f8f94;
     font-size: 28px;
   }
+  .complain-type {
+    color: #000000;
+  }
   .complaint-form-textarea {
     width: 650px;
     height: 260px;
@@ -322,8 +338,9 @@ export default {
 }
 
 .confirm-btn {
-  margin: 60px 20px 30px;
   width: 710px;
+  margin: 60px 20px 30px;
+  font-size: 28px;
   border-radius: 44px !important;
 }
 

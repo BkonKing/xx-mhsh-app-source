@@ -11,30 +11,26 @@
     </van-nav-bar>
     <div class="tf-main-container">
       <van-cell-group class="complaint-container">
-        <van-cell title="投诉用户" center value="用户昵称（150****5124）" />
         <van-cell
-          title="任务名称"
+          title="投诉用户"
           center
-          value="标题标题标题标题标题标题标题标题标题标题标题标"
-          is-link
+          :value="`${info.nickname}（${info.mobile}）`"
         />
-        <van-cell title="完成地点" center value="不合理要求" />
+        <van-cell title="任务名称" center :value="info.task_title" is-link @click="goTask" />
+        <van-cell title="投诉类型" center :value="info.complaint_type_name" />
         <div class="content">
-          投诉描述内容投诉描述内容投诉描述内容投诉描述内
-          容投诉描述内容投诉描述内容投诉描述内容投诉描述内容投诉描述内
-          容投诉描述内容 容投诉描述内容
+          {{ info.complaint_desc }}
         </div>
         <tf-image-list
           class="image-list"
-          v-if="images && images.length"
-          :data="images"
+          v-if="info.complaint_image_data && info.complaint_image_data.length"
+          :data="info.complaint_image_data"
           :column="4"
           mode="show"
         ></tf-image-list>
       </van-cell-group>
-      <div class="complaint-group-2">
-        <span class="complaint-text">处理回复：</span
-        >投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内容投诉描述内容内投诉描述内容内容投诉描述内容内容投诉描述内投诉描述内容内容投诉描述内容内容投诉描述
+      <div v-if="info.handle_content" class="complaint-group-2">
+        <span class="complaint-text">处理回复：</span>{{info.handle_content}}
       </div>
     </div>
   </div>
@@ -43,7 +39,7 @@
 <script>
 // pages/task/personage/complaint
 import tfImageList from '@/components/tf-image-list'
-import { getEvaluateInfo } from '@/api/task'
+import { getComplaintInfo } from '@/api/task'
 
 export default {
   components: {
@@ -51,17 +47,30 @@ export default {
   },
   data () {
     return {
-      evaluateId: '',
-      images: []
+      taskId: '',
+      complaintId: '',
+      info: {}
     }
   },
   created () {
-    this.evaluateId = this.$route.query.evaluateId
+    this.taskId = this.$route.query.taskId
+    this.complaintId = this.$route.query.complaintId
+    this.getComplaintInfo()
   },
   methods: {
-    getEvaluateInfo () {
-      getEvaluateInfo({
-        evaluate_id: this.evaluateId
+    getComplaintInfo () {
+      getComplaintInfo({
+        complaint_id: this.complaintId
+      }).then(({ data }) => {
+        this.info = data
+      })
+    },
+    goTask () {
+      this.$router.push({
+        name: 'taskDetail',
+        query: {
+          taskId: this.taskId
+        }
       })
     }
   }

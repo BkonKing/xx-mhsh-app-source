@@ -2,7 +2,7 @@
   <div class="schedule-list">
     <div v-for="(item, index) in listData" :key="index" class="schedule-item">
       <div v-if="listData.length > 1" class="line"></div>
-      <div class="time">
+      <div class="time" :class="{'red-point': +item.is_red}">
         <div v-if="item.evaluate_id > 0" @click="evaluate(item.evaluate_id)" class="mask tf-row"><img class="img-100" src="@/assets/img/task_11.png" /></div>
         <div @click="previewPic(index)" v-if="item.image_url && item.image_url.length" class="mask tf-row"><img class="img-100" src="@/assets/img/task_12.png" /></div>
         {{ item.ctime }}
@@ -153,6 +153,9 @@ export default {
         right: -14px;
       }
     }
+  }
+  .red-point::before {
+    background: #FF6555;
   }
   .cont {
     max-width: 586px;

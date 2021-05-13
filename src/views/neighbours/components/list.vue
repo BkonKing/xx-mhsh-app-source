@@ -106,7 +106,7 @@
                 </template>
               </div>
             </template>
-            <!-- 资讯 值为1后续改回来 -->
+            <!-- 资讯 -->
             <template v-else-if="item.article_type == 1">
               <img
                 class="article-image"
@@ -128,6 +128,7 @@
       </template>
       <template slot:nodata>
         <img src="@/assets/neighbours/notask.png" alt="" />
+        <div v-if="article_type == 4" class="mo-data-text">暂无任务</div>
       </template>
     </refreshList>
   </div>
@@ -187,9 +188,12 @@ export default {
       })
     },
     // 任务详情页
-    goTask (item) {
+    goTask ({ task_id }) {
       this.$router.push({
-        name: 'taskDetail'
+        name: 'taskDetail',
+        query: {
+          taskId: task_id
+        }
       })
     },
     reload () {
@@ -421,5 +425,11 @@ export default {
 
 .ios-share /deep/ .mask-block {
   bottom: 98px;
+}
+.mo-data-text {
+  margin-top: 50px;
+  font-size: 26px;
+  line-height: 1;
+  color: #8F8F94;
 }
 </style>

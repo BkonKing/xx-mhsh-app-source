@@ -17,16 +17,16 @@
       v-model="current"
       @change="tabsChange"
     >
-      <van-tab title="我接单的" id="neighboursList0">
+      <van-tab title="我接单的" id="taskList0">
         <order-list></order-list>
       </van-tab>
-      <van-tab title="我发布的" id="neighboursList1">
+      <van-tab title="我发布的" id="taskList1">
         <publish-list></publish-list>
       </van-tab>
-      <van-tab title="我的投诉" id="neighboursList2">
+      <van-tab title="我的投诉" id="taskList2">
         <complaint-list></complaint-list>
       </van-tab>
-      <van-tab title="我的提问" id="neighboursList3">
+      <van-tab title="我的提问" id="taskList3">
         <question-list></question-list>
       </van-tab>
     </van-tabs>
@@ -60,9 +60,9 @@ export default {
   },
   created () {},
   activated () {
-    if (this.scrollTop && this.current !== 1) {
+    if (this.scrollTop) {
       document
-        .getElementById(`neighboursList${this.current}`)
+        .getElementById(`taskList${this.current}`)
         .getElementsByClassName(
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
@@ -80,22 +80,14 @@ export default {
       }
     }
   },
-  beforeRouteEnter (to, from, next) {
-    const { active } = to.query
-    next(vm => {
-      if (active && active !== vm.current) {
-        vm.scrollTop = 0
-        vm.current = parseInt(active)
-        vm.$router.push('/neighbours')
-      }
-    })
-  },
   beforeRouteLeave (to, from, next) {
-    if (this.current !== 1) {
-      const el = document
-        .getElementById(`neighboursList${this.current}`)
-        .getElementsByClassName('tf-list-refresh')
-      this.scrollTop = (el.length && el[0].scrollTop) || 0
+    const el = document
+      .getElementById(`taskList${this.current}`)
+      .getElementsByClassName('tf-list-refresh')
+    this.scrollTop = (el.length && el[0].scrollTop) || 0
+    if (to.name === 'personage') {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
     }
     next()
   }

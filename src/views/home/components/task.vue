@@ -9,49 +9,29 @@
     </div>
     <template>
       <van-swipe
-        v-if="0"
+        v-if="data.length > 1"
         class="task-swipe"
         vertical
         :autoplay="6000"
         :show-indicators="false"
       >
         <van-swipe-item v-for="(item, i) in data" :key="i">
-          <ul class="task-ul">
-            <li
-              class="task-item"
-              v-for="i in 4"
-              :key="i"
-              @click="goTaskDetail()"
-            >
-              <span class="tf-icon tf-icon-xingfubi1"></span>
-              <span class="task-num">+{{ i }}000</span>
-              <span class="task-text task-username">王小明王小明</span>
-              <span class="task-text">发布了</span>
-              <span class="task-title"
-                >任务标题任务标题任务任标题任务任题任务任</span
-              >
-            </li>
-          </ul>
+          <task-ul class="task-ul" :data="item"></task-ul>
         </van-swipe-item>
       </van-swipe>
-      <ul class="task-swipe" style="height: auto;" v-else>
-        <li class="task-item" v-for="i in 4" :key="i" @click="goTask">
-          <span class="tf-icon tf-icon-xingfubi1"></span>
-          <span class="task-num">+{{ i }}000</span>
-          <span class="task-text task-username">王小明王小明</span>
-          <span class="task-text">发布了</span>
-          <span class="task-title"
-            >任务标题任务标题任务任标题任务任题任务任</span
-          >
-        </li>
-      </ul>
+      <task-ul v-else class="task-swipe" :data="item"></task-ul>
     </template>
   </div>
 </template>
 
 <script>
+import taskUl from './task-ul'
+
 export default {
   name: 'homeTask',
+  components: {
+    taskUl
+  },
   props: {
     data: {
       type: Array,
@@ -63,15 +43,6 @@ export default {
     goTask () {
       this.$router.push({
         path: '/neighbours',
-        query: {
-          active: 4
-        }
-      })
-    },
-    // 跳转任务详情
-    goTaskDetail ({ id }) {
-      this.$router.push({
-        name: 'taskDetail',
         query: {
           active: 4
         }
@@ -117,41 +88,6 @@ export default {
       display: flex;
       flex-direction: column;
       height: 290px;
-    }
-    .task-item {
-      display: flex;
-      align-items: center;
-      padding-bottom: 30px;
-    }
-    .tf-icon-xingfubi1 {
-      font-size: 28px;
-      line-height: 1;
-      color: #febf00;
-    }
-    .task-num {
-      min-width: 91px;
-      margin-left: 10px;
-      font-size: 24px;
-      font-weight: 500;
-      line-height: 1;
-      color: #febf00;
-    }
-    .task-text {
-      font-size: 24px;
-      line-height: 1;
-      color: #8f8f94;
-    }
-    .task-username {
-      width: 126px;
-      @text-ellipsis();
-    }
-    .task-title {
-      flex: 1;
-      margin-left: 10px;
-      font-size: 24px;
-      line-height: 1;
-      color: #333;
-      @text-ellipsis();
     }
   }
 }

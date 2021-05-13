@@ -1,17 +1,17 @@
 <template>
   <refreshList :list.sync="list" :load="getList">
     <template v-slot="{ item }">
-      <div class="complaint-wrapper">
+      <div class="complaint-wrapper" @click="goQuiz(item)">
         <div class="complaint-header">
-          <span class="complaint-title">投诉时间：{{ item.ctime }}</span>
+          <span class="complaint-title">提问时间：{{ item.ctime }}</span>
         </div>
         <div class="complaint-body">
           <span class="complaint-summary">{{ item.content }}</span>
-          <div class="complaint-group-1">
+          <div class="complaint-group-1" @click.stop="goDetails(item)">
             <div class="complaint-view">
               <img class="complaint-large-icon" :src="item.avatar" />
             </div>
-            <div class="complaint-view-1" @click="goDetails(item)">
+            <div class="complaint-view-1">
               <span class="complaint-nick-name">{{ item.nickname }}</span>
               <span class="complaint-caption-1">{{ item.task_title }}</span>
             </div>
@@ -46,9 +46,18 @@ export default {
   },
   created () {},
   methods: {
-    // 获取我的报事报修
+    // 获取我的提问
     getList (params) {
       return getMyQuestionList(params)
+    },
+    // 跳转到任务提问
+    goQuiz ({ task_id }) {
+      this.$router.push({
+        name: 'operateQuiz',
+        query: {
+          taskId: task_id
+        }
+      })
     },
     // 邻里-任务详情
     goDetails ({ task_id }) {

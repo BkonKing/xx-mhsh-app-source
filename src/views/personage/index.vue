@@ -246,7 +246,7 @@
           {{ activityTitle }}
         </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item border title="我的任务" @click="goMyTask">
+          <tf-list-item v-if="isShowTask" border title="我的任务" @click="goMyTask">
             <template v-slot:image>
               <img
                 class="tf-clist-cell__image"
@@ -254,7 +254,7 @@
               />
             </template>
             <template v-slot:right>
-              <span class="num-tag">2</span>
+              <span class="num-tag">{{taskNum}}</span>
             </template>
           </tf-list-item>
           <tf-list-item border title="我的互动" @click="goInteraction">
@@ -311,6 +311,7 @@ import tfListItem from '@/components/tf-list/item.vue'
 import SignRule from './happiness-coin/components/SignRule'
 import { signin } from '@/api/personage'
 import { getUserActivity } from '@/api/activity'
+import { getMyTaskNum } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { handlePermission } from '@/utils/permission'
 export default {
@@ -329,6 +330,8 @@ export default {
       signLoading: false, // 签到loading
       signRuledialog: false, // 签到规则弹窗
       isOpenActivity: false, // 是否开启积分活动
+      isShowTask: false, // 是否显示任务
+      taskNum: '', // 任务数量
       activityTitle: '参与活动领积分'
     }
   },
@@ -353,6 +356,7 @@ export default {
       this.orderData = order_data
     })
     this.getActivityInfo()
+    this.getMyTaskNum()
   },
   methods: {
     // 获取积分活动信息
@@ -362,6 +366,13 @@ export default {
       }).then(({ activity_name: title, is_flag: isFlag }) => {
         this.isOpenActivity = isFlag
         isFlag && title && (this.activityTitle = title)
+      })
+    },
+    // 获取我的任务数量
+    getMyTaskNum () {
+      getMyTaskNum().then(({ data }) => {
+        this.isShowTask = data.is_show_task
+        this.taskNum = data.num
       })
     },
     // 签到
@@ -765,7 +776,7 @@ export default {
   height: 40px;
   padding: 0 12px;
   background: #ff6555;
-  border-radius: 50%;
+  border-radius: 20px;
   font-size: 26px;
   font-weight: 500;
   color: #ffffff;

@@ -12,6 +12,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.tf-icon-renwushenhe:before {
+  content: "\e66b";
+}
+
+.tf-icon-renwushixiao:before {
+  content: "\e66e";
+}
+
+.tf-icon-renwutousu:before {
+  content: "\e66f";
+}
+
+.tf-icon-yijiaofu:before {
+  content: "\e670";
+}
+
+.tf-icon-renwuchaoshi:before {
+  content: "\e671";
+}
+
+.tf-icon-renwufabu:before {
+  content: "\e672";
+}
+
 .tf-icon-ziyuan2:before {
   content: "\e664";
 }

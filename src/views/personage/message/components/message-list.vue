@@ -19,7 +19,7 @@
           <div
             v-else-if="type !== 'system'"
             class="list-icon-box tf-icon"
-            :class="item.sub_type | iconClass"
+            :class="item.sub_type | iconClass(item.title)"
           ></div>
           <!-- 右边内容 -->
           <div class="tf-space-around">
@@ -125,7 +125,28 @@ export default {
   },
   filters: {
     // 1=交易退款成功、2=订单已发货、3=限时闪购活动开始提醒、4换货寄出提醒、5=退货寄出提醒、6=幸福币使用、7=幸福币获得、8=系统通知、9=意见反馈、10=我收到的赞、11=我发布的文章收到的评论、12=我评论的内容收到回复、13=公告通知、14=归还通知、15=投诉表扬、16=报事报修、17=活动报名通知、18=活动开始通知
-    iconClass (value) {
+    iconClass (value, title) {
+      if (value === '23' || value === '24') {
+        const icon = {
+          任务已发布: 'tf-icon-renwufabu', // 任务已发布
+          任务已超时: 'tf-icon-renwuchaoshi', // 任务已超时
+          任务已交付: 'tf-icon-yijiaofu', // 任务已交付
+          任务投诉: 'tf-icon-renwutousu', // 任务投诉
+          任务已失效: 'tf-icon-renwushixiao', // 任务已失效
+          任务审核失败: 'tf-icon-renwushenhe', // 任务审核失败
+          任务已接单: 'tf-icon-yijiedan', // 任务已接单
+          任务未完成: 'tf-icon-weiwancheng', // 任务未完成
+          任务已完成: 'tf-icon-yiwancheng', // 任务已完成
+          任务已淘汰: 'tf-icon-yitaotai', // 任务已淘汰
+          任务已放弃: 'tf-icon-yifangqi', // 任务已放弃
+          任务提问: 'tf-icon-renwutiwen', // 任务提问
+          任务已终止: 'tf-icon-yizhongzhi', // 任务已终止
+          任务已延期: 'tf-icon-renwuyanqi', // 任务已延期
+          任务已评价: 'tf-icon-renwupingjia', // 任务已评价
+          任务已暂停: 'tf-icon-renwuzanting' // 任务已暂停
+        }
+        return icon[title]
+      }
       const icon = {
         6: 'tf-icon-xingfubi1 xingfubi1-use',
         7: 'tf-icon-xingfubi1',
@@ -138,16 +159,7 @@ export default {
         19: 'tf-icon-lifepaymessage',
         20: 'tf-icon-lifepaymessage',
         22: 'tf-icon-lifepaymessage',
-        30: 'tf-icon-yijiedan', // 任务已接单
-        31: 'tf-icon-weiwancheng', // 任务未完成
-        32: 'tf-icon-yiwancheng', // 任务已完成
-        33: 'tf-icon-yitaotai', // 任务已淘汰
-        34: 'tf-icon-yifangqi', // 任务已放弃
-        35: 'tf-icon-renwutiwen', // 任务提问
-        36: 'tf-icon-yizhongzhi', // 任务已终止
-        37: 'tf-icon-renwuyanqi', // 任务已延期
-        38: 'tf-icon-renwupingjia', // 任务已评价
-        39: 'tf-icon-renwuzanting' // 任务已暂停
+        25: 'tf-icon-renwutiwen' // 任务提问
       }
       return icon[value]
     },
@@ -237,7 +249,10 @@ export default {
 .tf-icon-yiwancheng,
 .tf-icon-renwuyanqi,
 .tf-icon-renwupingjia,
-.tf-icon-renwuzanting {
+.tf-icon-renwuzanting,
+.tf-icon-renwufabu,
+.tf-icon-yijiaofu,
+.tf-icon-renwushixiao {
   background: #ffa110;
 }
 .tf-icon-daifenpai,
@@ -259,7 +274,10 @@ export default {
 }
 .xingfubi1-use,
 .tf-icon-yitaotai,
-.tf-icon-yizhongzhi {
+.tf-icon-yizhongzhi,
+.tf-icon-renwuchaoshi,
+.tf-icon-renwushenhe,
+.tf-icon-renwutousu {
   background: #ff6555;
 }
 .tf-icon-yifangqi {

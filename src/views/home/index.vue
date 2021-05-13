@@ -312,7 +312,7 @@ import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { getfilmlist } from '@/api/movie'
-import { getTaskSwitch } from '@/api/task'
+import { getTaskSwitch, getHomeTaskList } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
@@ -411,16 +411,30 @@ export default {
       this.scrollStatus = false
     }
     this.getMyApp()
-    this.getBannerIndex()
-    this.getNoticeLbList()
-    this.getCreditsGoodsList()
-    this.getTaskSwitch()
-    this.getBargainGoods()
-    this.getLocationInfo()
-    this.getActivityList()
-    this.getOllageGoods()
-    this.getMhttList()
-    this.swipeChange(0)
+    // this.getBannerIndex()
+    // this.getNoticeLbList()
+    // this.getCreditsGoodsList()
+    // this.getTaskSwitch()
+    // this.getBargainGoods()
+    // this.getLocationInfo()
+    // this.getActivityList()
+    // this.getOllageGoods()
+    // this.getMhttList()
+    // this.swipeChange(0)
+    api.openFrame({
+      name: 'activity',
+      url: 'https://develop.mhshjy.com/slognin',
+      useWKWebView: true,
+      bgColor: 'rgba(0, 0, 0)',
+      rect: {
+        x: 0,
+        y: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        marginTop: 0,
+        marginBottom: 0
+      }
+    })
   },
   methods: {
     // 新手引导步骤
@@ -501,15 +515,18 @@ export default {
     // 获取任务开关
     getTaskSwitch () {
       getTaskSwitch().then(({ alluser_open }) => {
-        this.isOpeningTask = +alluser_open
-        // 开启则获取任务列表
-        this.isOpeningTask && this.getTaskList()
+        this.isOpeningTask = !+alluser_open
       })
     },
     // 获取任务列表
-    getTaskList () {
-      const params = {}
-      this.taskList = []
+    getTaskList ({ province, city, district }) {
+      getHomeTaskList({
+        province,
+        city,
+        area: district
+      }).then(({ data }) => {
+        this.taskList = data
+      })
     },
     // 获取9.9特卖区
     getBargainGoods () {
@@ -556,11 +573,13 @@ export default {
       bMapGetLocationInfo()
         .then(data => {
           const { adCode } = data
-          this.getTaskList()
+          // 开启则获取任务列表
+          this.isOpeningTask && this.getTaskList(data)
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
         })
         .catch(() => {
-          this.getTaskList()
+          // 开启则获取任务列表
+          this.isOpeningTask && this.getTaskList({})
           this.getfilmlist()
         })
     },

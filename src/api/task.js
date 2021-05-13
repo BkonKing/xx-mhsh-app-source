@@ -5,6 +5,11 @@ export function getTaskSwitch (params) {
   return request.post('/linli/linli/task_switch', params)
 }
 
+// 获取首页任务列表
+export function getHomeTaskList (params) {
+  return request.post('/linli/linli/lift_task_lisk', params)
+}
+
 // 获取任务列表
 export function getTaskList (params) {
   return request.post('/linli/linli/task_lisk', params)
@@ -35,6 +40,11 @@ export function complaintTaskQuestions (params) {
   return request.post('/linli/question/questions_complaint', params)
 }
 
+// 获取我的任务 数量
+export function getMyTaskNum (params) {
+  return request.post('/linli/my_linli/my_task_data', params)
+}
+
 // 获取我的 我接单的任务 列表
 export function getUserTaskList (params) {
   return request.post('/linli/my_linli/user_task_lisk', params)
@@ -53,6 +63,16 @@ export function getMyComplaintList (params) {
 // 获取我的 我的提问 列表
 export function getMyQuestionList (params) {
   return request.post('/linli/my_linli/my_question_lisk', params)
+}
+
+// 获取投诉详情
+export function getComplaintInfo (params) {
+  return request.post('/linli/my_linli/complaint_info', params)
+}
+
+// 获取我的任务详情
+export function getMyTaskInfo (params) {
+  return request.post('/linli/my_linli/my_task_info', params)
 }
 
 // 选择发布类型-获取任务类型

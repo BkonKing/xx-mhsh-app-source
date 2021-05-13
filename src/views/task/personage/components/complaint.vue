@@ -7,7 +7,7 @@
           <span
             class="complaint-caption"
             :class="{ 'complaint-caption-ing': +item.is_handle }"
-            >已处理</span
+            >{{item.is_handle_name}}</span
           >
         </div>
         <div class="complaint-body">
@@ -70,9 +70,13 @@ export default {
       })
     },
     // 任务投诉详情
-    goTask () {
+    goTask ({ task_id, complaint_id }) {
       this.$router.push({
-        name: 'TaskComplaintDetails'
+        name: 'TaskComplaintDetails',
+        query: {
+          taskId: task_id,
+          complaintId: complaint_id
+        }
       })
     }
   }

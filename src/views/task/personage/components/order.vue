@@ -1,36 +1,43 @@
 <template>
   <refreshList ref="list" :list.sync="list" :load="getList">
     <template v-slot="{ item }">
-      <div class="order-wrapper" @click="goTask">
+      <div class="order-wrapper" @click="goTask(item)">
         <div class="order-header">
           <div class="order-view">
             <span class="tf-icon tf-icon-xingfubi1 order-icon"></span>
             <span class="order-num">{{ item.reward_happiness }}</span>
           </div>
-          <span class="order-title">{{ item.progress_status_name }}</span>
+          <span
+            class="order-title"
+            :class="{ 'order-title-grey': +item.progress_status < 2 }"
+            >{{ item.progress_status_name }}</span
+          >
         </div>
         <div class="order-body">
           <span class="order-caption">{{ item.task_title }}</span>
-          <span v-if="item.task_time" class="order-title-1">完成时间：{{ item.task_time }}</span>
+          <span v-if="item.task_time" class="order-title-1"
+            >完成时间：{{ item.task_time }}</span
+          >
           <span v-if="item.address_text" class="order-title-1"
             >完成地点：{{ item.item.address_text }}</span
           >
         </div>
         <div class="order-footer">
           <div class="order-footer-item">
-            <div class="order-view-1" @click.stop="makePhoneCall(item)">
+            <div class="order-view-1" @click.stop="makePhoneCall(item.task_mobile)">
               <span class="tf-icon tf-icon-lianxi order-icon-1"></span>
               <span class="order-tag">联系</span>
             </div>
             <div class="order-view-1" @click.stop="goSchedule(item)">
-              <span class="tf-icon tf-icon-zhiyuan2 order-icon-1"></span>
+              <span class="tf-icon tf-icon-ziyuan2 order-icon-1"></span>
               <span class="order-tag">进度</span>
             </div>
           </div>
           <div class="order-footer-item">
-            <span class="order-caption-1"
+            <span v-if="item.task_etime" class="order-caption-1"
               >剩余<van-count-down :time="item.task_etime" @finish="reload"
             /></span>
+            <span class="order-caption-text" v-else>{{item.text}}</span>
             <van-button
               v-if="+item.is_can_submit"
               class="order-button-wrapper"
@@ -60,6 +67,7 @@ export default {
   },
   data () {
     return {
+      // 0已接单、1进行中、2已完成、3已淘汰、4已放弃、5已终止
       list: []
     }
   },
@@ -77,15 +85,21 @@ export default {
       })
     },
     // 任务进度
-    goSchedule (item) {
+    goSchedule ({ task_id }) {
       this.$router.push({
-        name: 'scheduleReceiver'
+        name: 'scheduleReceiver',
+        query: {
+          taskId: task_id
+        }
       })
     },
-    // 我的任务详情
-    goTask () {
+    // 任务详情
+    goTask ({ task_id }) {
       this.$router.push({
-        name: 'PersonageTaskDetails'
+        name: 'taskDetail',
+        query: {
+          taskId: task_id
+        }
       })
     },
     reload () {
@@ -102,7 +116,6 @@ export default {
   display: flex;
   align-items: center;
   margin-top: -2px;
-  margin-right: 20px;
   line-height: 28px;
   color: #000000;
   font-size: 28px;
@@ -113,6 +126,7 @@ export default {
   align-items: center;
   justify-content: center;
   margin-top: -1px;
+  margin-left: 20px;
   border-radius: 10px;
   border: none;
   background-color: #ff6555;
