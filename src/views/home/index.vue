@@ -411,30 +411,16 @@ export default {
       this.scrollStatus = false
     }
     this.getMyApp()
-    // this.getBannerIndex()
-    // this.getNoticeLbList()
-    // this.getCreditsGoodsList()
-    // this.getTaskSwitch()
-    // this.getBargainGoods()
-    // this.getLocationInfo()
-    // this.getActivityList()
-    // this.getOllageGoods()
-    // this.getMhttList()
-    // this.swipeChange(0)
-    api.openFrame({
-      name: 'activity',
-      url: 'https://develop.mhshjy.com/slognin',
-      useWKWebView: true,
-      bgColor: 'rgba(0, 0, 0)',
-      rect: {
-        x: 0,
-        y: 0,
-        marginLeft: 0,
-        marginRight: 0,
-        marginTop: 0,
-        marginBottom: 0
-      }
-    })
+    this.getBannerIndex()
+    this.getNoticeLbList()
+    this.getCreditsGoodsList()
+    this.getTaskSwitch()
+    this.getBargainGoods()
+    this.getLocationInfo()
+    this.getActivityList()
+    this.getOllageGoods()
+    this.getMhttList()
+    this.swipeChange(0)
   },
   methods: {
     // 新手引导步骤
