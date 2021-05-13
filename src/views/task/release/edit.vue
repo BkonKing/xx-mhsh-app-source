@@ -105,10 +105,10 @@
         <div class="tf-flex-center agree-check" @click="agreeToggle">
           <div :class="{'active': isAgree}"><span class="tf-icon tf-icon-gou"></span></div>我已阅读并同意
         </div>
-        <div class="color-0E80E1">《交易规则》</div>
+        <div @click="releaseRule" class="color-0E80E1">《交易规则》</div>
       </div>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ radioIndex > -1 && formData.task_desc ? '' : 'unable-btn', 'task-btn']">发布</div>
+        <div @click="submit" :class="[ ableSubmit ? '' : 'unable-btn', 'task-btn']">发布</div>
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
@@ -228,6 +228,13 @@ export default {
     ...mapGetters(['userInfo']),
     addStatus () {
       return (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5)
+    },
+    ableSubmit () {
+      if (!this.formData.task_title || !this.formData.reward_happiness || !this.formData.task_etime || !this.formData.mobile || !this.formData.task_desc || !this.isAgree) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   activated () {
@@ -522,7 +529,12 @@ export default {
             this.formData.linli_task_id = 0
           }
           submitTask(this.formData).then((res) => {
-            Toast('提交成功')
+            Toast({
+              message: '提交成功',
+              onClose: () => {
+                this.taskOrder(res.task_id)
+              }
+            })
           }).catch((res) => {
             Toast('提交失败 请重试')
           })
@@ -547,9 +559,25 @@ export default {
     goScroll (selector) {
       document.getElementById(selector).scrollIntoView()
     },
+    // 任务订单
+    taskOrder (id) {
+      this.$router.push({
+        name: 'PersonageTaskDetails',
+        query: {
+          taskId: id
+        }
+      })
+    },
+    // 地址选择
     goMap () {
       this.$router.push({
         name: 'addressMap'
+      })
+    },
+    // 交易规则
+    releaseRule () {
+      this.$router.push({
+        name: 'releaseRule'
       })
     }
   },
@@ -726,29 +754,35 @@ export default {
     margin-top: -30px;
   }
 }
-.num-step {
-  /deep/ button {
+/deep/.num-step {
+  button {
     width: 56px;
     height: 56px;
     background: #F7F7F7;
     border-radius: 4px;
   }
-  /deep/ input {
+  input {
     width: 80px;
     height: 56px;
     background-color: #fff;
     margin: 0;
   }
-  /deep/.van-stepper__minus::before,
-  /deep/.van-stepper__plus::before {
+  button.van-stepper__minus--disabled,
+  button.van-stepper__plus--disabled {
+    &::before,&::after {
+      background-color: #ccc;
+    }
+  }
+  .van-stepper__minus::before,
+  .van-stepper__plus::before {
     width: 20px;
     height: 1PX;
-    background-color: #8F8F94;
+    background-color: #000;
   }
-  /deep/.van-stepper__plus::after {
+  .van-stepper__plus::after {
     width: 1PX;
     height: 20px;
-    background-color: #8F8F94;
+    background-color: #000;
   }
 }
 span.red {

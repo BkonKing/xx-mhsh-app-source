@@ -26,6 +26,7 @@
 import listSelect from '../components/list-select'
 import confirmModel from '../components/confirm-model'
 import tfShare from '@/components/tf-share'
+import clonedeep from 'lodash.clonedeep'
 import { getOpStatus, deleteTask, stopTask, closeTask } from '@/api/task'
 export default {
   components: {
@@ -94,6 +95,7 @@ export default {
           name: 'delete'
         }
       ],
+      copyList: [],
       statusName: '', // 选中操作的name
       confirmShow: false,
       modelTit: '你确定？',
@@ -103,6 +105,7 @@ export default {
     }
   },
   created () {
+    this.copyList = clonedeep(this.selectList)
     this.getData()
   },
   methods: {
@@ -110,7 +113,7 @@ export default {
       getOpStatus({ linli_task_id: this.taskId }).then((res) => {
         const statusInfo = res.data
         const list = []
-        this.selectList.forEach((item, index) => {
+        this.copyList.forEach((item, index) => {
           switch (index) {
             case 0:
               if (statusInfo.is_can_share) {

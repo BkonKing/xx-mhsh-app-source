@@ -51,8 +51,8 @@ export function getOtherAgreement () {
   return request.get('/ulogin/agreement/other_agreement')
 }
 // 邻里使用协议
-export function getNeighboursAgreement () {
-  return request.get('/ulogin/agreement/neighbours_agreement')
+export function getNeighboursAgreement (data) {
+  return request.post('/ulogin/agreement/neighbours_agreement', data)
 }
 // 所有协议列表接口
 export function getAllAgreement () {

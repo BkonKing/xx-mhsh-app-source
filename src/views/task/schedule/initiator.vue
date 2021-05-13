@@ -383,7 +383,7 @@ export default {
       this.$router.push({
         name: 'operateQuiz',
         query: {
-          isOwn: 0,
+          isUp: 0,
           taskId: this.taskId
         }
       })

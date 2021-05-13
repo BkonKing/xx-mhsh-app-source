@@ -135,7 +135,6 @@ export default {
   },
   created () {
     this.taskId = this.$route.query.taskId
-    this.formData.user_task_id = this.taskId
     this.getData()
   },
   mounted () {
@@ -180,6 +179,7 @@ export default {
     },
     // 提交
     submit () {
+      this.formData.user_task_id = this.infoData.id
       submitGiveUp(this.formData).then((res) => {
         this.endShow = false
         this.getData()
@@ -200,7 +200,7 @@ export default {
       this.$router.push({
         name: 'operateQuiz',
         query: {
-          isOwn: 0,
+          isUp: 0,
           taskId: this.taskId
         }
       })

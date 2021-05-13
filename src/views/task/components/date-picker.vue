@@ -175,10 +175,21 @@ export default {
       if (this.startTime && !this.endTime) {
         Toast('请选择结束时间')
         return
+      } else {
+        const now = new Date().getTime()
+        const start = this.startTime ? new Date(this.startTime).getTime() : ''
+        const end = new Date(this.endTime).getTime()
+        if (end < now) {
+          Toast('结束时间不能小于当前时间')
+          return
+        }
+        if (start && end < start) {
+          Toast('结束时间不能小于开始时间')
+          return
+        }
       }
       this.$emit('dateSure', { startTime: this.startTime, endTime: this.endTime })
       this.close()
-      console.log(this.startTime, this.endTime)
     }
   },
   watch: {

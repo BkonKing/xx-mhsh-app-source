@@ -40,7 +40,7 @@ export default {
       type: Boolean,
       default: false
     },
-    isOwn: {
+    isUp: {
       type: [Boolean, Number],
       default: false
     }
@@ -61,17 +61,17 @@ export default {
       this.$router.push({
         name: 'operateQuiz',
         query: {
-          isOwn: this.isOwn,
+          isUp: this.isUp,
           taskId: this.taskId
         }
       })
     },
     schedule () {
-      const routerName = this.isOwn ? 'scheduleInitiator' : 'scheduleReceiver'
+      const routerName = this.isUp ? 'scheduleInitiator' : 'scheduleReceiver'
       this.$router.push({
         name: routerName,
         query: {
-          isOwn: this.isOwn
+          isUp: this.isUp
         }
       })
     }

@@ -19,7 +19,8 @@
       <div v-else class="quiz-list">
         <div v-for="(item, index) in listData" :key="index" class="quiz-item">
           <div @click="operate(item.id)" class="operate-ellipsis">
-            <img class="img-100" src="@/assets/neighbours/more.png" />
+            <more-btn :item="item"></more-btn>
+            <!-- <img class="img-100" src="@/assets/neighbours/more.png" /> -->
           </div>
           <div class="item-header">
             <img :src="item.avatar" />
@@ -35,34 +36,16 @@
             </div>
             <div @click="showToggle(index)" v-show="item.isOver" class="more-down" :class="{'down-up' : item.isDown}">{{ item.isDown ? '收起' : '展开' }}</div>
           </div>
-          <div v-if="item.is_reply == 0 && isOwn == 1" @click="replyQuiz(index)" class="reply-btn tf-row-center">回复TA</div>
+          <div v-if="item.is_reply == 0 && isUp == 1" @click="replyQuiz(index)" class="reply-btn tf-row-center">回复TA</div>
         </div>
       </div>
-      <!-- <div class="quiz-item">
-        <div class="operate-ellipsis van-icon van-icon-ellipsis">
-          <div class="operate-btn">
-            <div>屏蔽</div>
-            <div class="line"></div>
-            <div>投诉</div>
-          </div>
-        </div>
-        <div class="item-header">
-          <img src="http://develop.mhshjy.com/library/bootstrap/img/user/user-13.jpg" />
-          <div class="name-time tf-column">
-            <div class="user-name van-ellipsis">月亮照常落下</div>
-            <div class="itme-time">2021-3-25 12:35:26</div>
-          </div>
-        </div>
-        <div class="item-cont">月亮升起，有雕归巢的声音，有鱼儿越出碧光，有琴 声演绎古老传说。</div>
-        <div class="reply-btn tf-row-center">回复TA</div>
-      </div> -->
-      <!-- <div class="quiz-input"></div> -->
     </div>
     <comment
       ref="comment"
       v-model="commentShow"
       :parentId="parentId"
       :replyType="replyType"
+      :shieldType="6"
       @quizCall="quizCall"
     ></comment>
   </div>
@@ -73,16 +56,18 @@ import {
   NavBar
 } from 'vant'
 import comment from '../components/comment'
+import moreBtn from '../../neighbours/components/moreBtn'
 import { getQuizList } from '@/api/task'
 export default {
   components: {
     [NavBar.name]: NavBar,
-    comment
+    comment,
+    moreBtn
   },
   data () {
     return {
       taskId: '',
-      isOwn: 0,
+      isUp: 0,
       listData: [],
       parentId: '', // 提交的id
       replyType: '', // 提问、回复
@@ -92,14 +77,8 @@ export default {
     }
   },
   created () {
-    this.isOwn = this.$route.query.isOwn
+    this.isUp = this.$route.query.isUp
     this.taskId = this.$route.query.taskId
-    if (this.isOwn == 0) {
-      this.parentId = this.taskId
-      this.replyType = 'quiz'
-    } else {
-      this.replyType = 'reply'
-    }
     this.getData()
   },
   mounted () {
@@ -107,6 +86,13 @@ export default {
   methods: {
     getData () {
       getQuizList({ linli_task_id: this.taskId }).then((res) => {
+        this.isUp = res.is_task
+        if (this.isUp == 0) {
+          this.parentId = this.taskId
+          this.replyType = 'quiz'
+        } else {
+          this.replyType = 'reply'
+        }
         this.listData = res.data
         if (this.listData.length) {
           this.$nextTick(() => {

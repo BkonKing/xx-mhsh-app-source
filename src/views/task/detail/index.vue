@@ -11,7 +11,7 @@
       <template #right>
         <span
           class="van-icon van-icon-ellipsis"
-          @click="selectShow = true"
+          @click="isUp ? selectShow = true : opShow = true"
         ></span>
       </template>
     </van-nav-bar>
@@ -39,12 +39,12 @@
               <div class="release-time">{{ infoData.task_ctime }}</div>
             </div>
           </div>
-          <div v-if="!isOwn" class="complain-tip tf-row-space-between">
+          <div v-if="!isUp" class="complain-tip tf-row-space-between">
             <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
             <div @click="complaint">投诉</div>
           </div>
         </div>
-        <div v-if="!isOwn && receiverInfo && receiverInfo.is_already == 1" class="task-session">
+        <div v-if="!isUp && receiverInfo && receiverInfo.is_already == 1" class="task-session">
           <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
           <div class="release-user tf-row">
             <img :src="receiverInfo.jdf_avatar" />
@@ -64,7 +64,7 @@
           <div class="ask-list">
             <div class="ask-item">需要人数：{{ infoData.need_people_text }}</div>
             <div class="ask-item">完成时间：{{ infoData.task_time }}</div>
-            <div v-if="isOwn" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
+            <div v-if="isUp" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
           </div>
         </div>
         <div v-if="infoData.address" class="task-session">
@@ -86,7 +86,7 @@
           </div>
         </div>
       </div>
-      <div v-if="!isOwn" class="op-block">
+      <div v-if="!isUp" class="op-block">
         <div class="bottom-fiex tf-row">
           <div class="op-left tf-row">
             <div @click="quiz" class="tf-column">
@@ -143,6 +143,13 @@
       </template>
       <task-op v-model="selectShow" :taskId="taskId" @updateTask="updateTask"></task-op>
       <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
+      <receiver-op
+        v-model="opShow"
+        :canShare="canShare"
+        :item="shieldInfo"
+        @selectCall="complaint"
+      ></receiver-op>
+
     </div>
   </div>
 </template>
@@ -152,7 +159,7 @@ import {
   NavBar,
   ImagePreview
 } from 'vant'
-import op from '../components/op'
+import receiverOp from './receiver-op'
 import { getTaskInfo, receivingMask } from '@/api/task'
 import taskOp from '../components/task-op'
 import confirmModel from '../components/confirm-model'
@@ -161,7 +168,7 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [ImagePreview.name]: ImagePreview,
-    op,
+    receiverOp,
     taskOp,
     confirmModel
   },
@@ -172,7 +179,7 @@ export default {
       isDown: false,
       infoData: '',
       receiverInfo: '',
-      isOwn: false, // 是否是发布者
+      isUp: false, // 是否是发布者
       selectShow: false, // 操作选择弹窗
       confirmShow: false,
       confirm: {
@@ -183,6 +190,9 @@ export default {
         cancel: true
       },
       isBack: false,
+      opShow: false,
+      canShare: false,
+      shieldInfo: {}, // 屏蔽信息
       picIndex: 0, // 图片预览起始位置索引
       picShow: false // 查看大图
     }
@@ -197,12 +207,19 @@ export default {
   methods: {
     getData () {
       getTaskInfo({ linli_task_id: this.taskId }).then(res => {
-        this.infoData = res.data
-        this.isOwn = res.data.is_task_party
-        if (!this.isOwn) {
-          this.receiverInfo = res.data.user_task_data
+        this.shieldInfo = {
+          uid: res.data.uid,
+          nickname: res.data.rwf_nickname,
+          content: res.data.task_title,
+          id: res.data.task_id
         }
-        if (!this.isOwn && res.popup_data.is_popup == 1) {
+        this.infoData = res.data
+        this.isUp = res.data.is_task_party
+        if (!this.isUp) {
+          this.receiverInfo = res.data.user_task_data
+          this.canShare = this.receiverInfo.is_can_share == 1
+        }
+        if (!this.isUp && res.popup_data.is_popup == 1) {
           this.isBack = true
           this.confirmShow = true
           this.confirm.modelTit = res.popup_data.popup_text
@@ -237,7 +254,7 @@ export default {
     },
     // 底部按钮
     opCall () {
-      if (this.isOwn) {
+      if (this.isUp) {
         this.editTask()
       } else {
         this.confirmShow = true
@@ -286,14 +303,14 @@ export default {
       this.$router.push({
         name: 'operateQuiz',
         query: {
-          isOwn: this.isOwn,
+          isUp: this.isUp,
           taskId: this.taskId
         }
       })
     },
     // 任务进度
     goSchedule () {
-      const routerName = this.isOwn ? 'scheduleInitiator' : 'scheduleReceiver'
+      const routerName = this.isUp ? 'scheduleInitiator' : 'scheduleReceiver'
       this.$router.push({
         name: routerName,
         query: {
@@ -316,10 +333,10 @@ export default {
       this.$router.push({
         name: 'taskMap',
         query: {
-          name: '',
-          address: '',
-          lon: this.infoData,
-          lat: 22
+          name: this.infoData.address,
+          address: this.infoData.address_province + this.infoData.address_city + this.infoData.address_area + this.infoData.address,
+          lon: this.infoData.longitude,
+          lat: this.infoData.latitude
         }
       })
     },
@@ -336,6 +353,7 @@ export default {
   },
   watch: {
     confirmShow (val) {
+      console.log(111, val, this.isBack)
       if (!val) {
         if (this.isBack) {
           this.$router.go(-1)
@@ -572,7 +590,7 @@ export default {
       margin: 0 16px 16px 0;
       object-fit: cover;
     }
-    img:nth-child(4) {
+    img:nth-child(4n) {
       margin-right: 0;
     }
     margin-bottom: 24px;

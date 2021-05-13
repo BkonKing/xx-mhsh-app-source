@@ -1,6 +1,9 @@
 <template>
   <div>
-    <tf-map></tf-map>
+    <tf-map
+      btnText="任务完成地点"
+      :destinationInfo="mapInfo"
+    ></tf-map>
   </div>
 </template>
 
@@ -10,19 +13,13 @@ export default {
   components: {
     tfMap
   },
-  props: {
-    listData: {
-      type: Array,
-      default: () => []
-    }
-  },
   data () {
     return {
-      images: []
+      mapInfo: ''
     }
   },
   created () {
-
+    this.mapInfo = this.$route.query
   },
   methods: {
 
