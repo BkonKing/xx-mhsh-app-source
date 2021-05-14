@@ -765,7 +765,7 @@ export default {
             path: '/address/list',
             query: {
               isSelect: 1,
-              addressId: this.addressInfo.id
+              addressId: this.addressInfo ? this.addressInfo.id : ''
             }
           })
           break
