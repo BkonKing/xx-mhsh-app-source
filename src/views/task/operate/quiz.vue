@@ -31,7 +31,7 @@
           </div>
           <div class="item-cont">{{ item.content }}</div>
           <div v-if="item.is_reply == 1 && item.reply_text" class="reply-cont">
-            <div :class="{'test-hidden': item.isOver&&!item.isDown}" :ref="'text_'+index">
+            <div :class="{'test-hidden': item.isOver&&!item.isDown}" :ref="`text_${index}`">
               <span>任务方：</span>{{ item.reply_text }}
             </div>
             <div @click="showToggle(index)" v-show="item.isOver" class="more-down" :class="{'down-up' : item.isDown}">{{ item.isDown ? '收起' : '展开' }}</div>
@@ -45,7 +45,7 @@
       v-model="commentShow"
       :parentId="parentId"
       :replyType="replyType"
-      :shieldType="6"
+      :shieldType="7"
       @quizCall="quizCall"
     ></comment>
   </div>
@@ -97,9 +97,11 @@ export default {
         if (this.listData.length) {
           this.$nextTick(() => {
             this.listData.forEach((item, index) => {
-              const ref = 'text_' + index
-              this.$set(item, 'isOver', this.getTextOver(ref))
-              this.$set(item, 'isDown', false)
+              if (item.is_reply == 1) {
+                const ref = 'text_' + index
+                this.$set(item, 'isOver', this.getTextOver(ref))
+                this.$set(item, 'isDown', false)
+              }
             })
           })
           console.log(this.listData)
@@ -112,9 +114,7 @@ export default {
     // 判断文字是否超过3行
     getTextOver (ref) {
       const textCont = this.$refs[ref][0]
-      // console.log(this.$refs, ref, textCont)
       const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
-      console.log(textCont, textCont.clientHeight)
       if (textHeight > 44 * 3) {
         return true
       } else {

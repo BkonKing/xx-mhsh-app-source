@@ -58,7 +58,8 @@ export default {
     return {
       opShow: this.value,
       showShare: false, // 分享弹窗
-      selectList: [
+      selectList: [],
+      opList: [
         {
           value: 0,
           text: '分享',
@@ -105,11 +106,12 @@ export default {
     }
   },
   created () {
-    this.copyList = clonedeep(this.selectList)
+    this.copyList = clonedeep(this.opList)
     this.getData()
   },
   methods: {
     getData () {
+      if (!this.taskId) return
       getOpStatus({ linli_task_id: this.taskId }).then((res) => {
         const statusInfo = res.data
         const list = []
@@ -153,7 +155,6 @@ export default {
           }
         })
         this.selectList = list
-        console.log(this.selectList)
       })
     },
     // 操作选择
@@ -293,6 +294,9 @@ export default {
     },
     opShow (val) {
       this.$emit('input', val)
+    },
+    taskId () {
+      this.getData()
     }
   }
 }

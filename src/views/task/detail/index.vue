@@ -97,7 +97,7 @@
               <img src="@/assets/img/task_06.png" />
               <div>联系</div>
             </a>
-            <div v-if="receiverInfo.is_can_share == 1" class="tf-column">
+            <div @click="share" v-if="receiverInfo.is_can_share == 1" class="tf-column">
               <img src="@/assets/img/task_07.png" />
               <div>分享</div>
             </div>
@@ -124,7 +124,7 @@
                   <div>联系</div>
                 </a>
               </template>
-              <div v-if="infoData.task_status == 1 && infoData.task_status == 2" class="tf-column">
+              <div @click="share" v-if="infoData.task_status == 1 && infoData.task_status == 2" class="tf-column">
                 <img src="@/assets/img/task_07.png" />
                 <div>分享</div>
               </div>
@@ -141,12 +141,19 @@
         <van-image-preview v-model="picShow" :images="infoData.task_image" :startPosition="picIndex">
         </van-image-preview>
       </template>
-      <task-op v-model="selectShow" :taskId="taskId" @updateTask="updateTask"></task-op>
+      <task-op
+        ref="taskop"
+        v-model="selectShow"
+        :taskId="taskId"
+        :shareObj="shareObj"
+        @updateTask="updateTask"
+      ></task-op>
       <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
       <receiver-op
         v-model="opShow"
         :canShare="canShare"
         :item="shieldInfo"
+        :shareObj="shareObj"
         @selectCall="complaint"
       ></receiver-op>
 
@@ -163,7 +170,7 @@ import receiverOp from './receiver-op'
 import { getTaskInfo, receivingMask } from '@/api/task'
 import taskOp from '../components/task-op'
 import confirmModel from '../components/confirm-model'
-import { bMapGetLocationInfo } from '@/utils/util'
+import { bMapGetLocationInfo, downloadPic } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -192,6 +199,7 @@ export default {
       isBack: false,
       opShow: false,
       canShare: false,
+      shareObj: {},
       shieldInfo: {}, // 屏蔽信息
       picIndex: 0, // 图片预览起始位置索引
       picShow: false // 查看大图
@@ -214,6 +222,7 @@ export default {
           id: res.data.task_id
         }
         this.infoData = res.data
+        this.getShareInfo()
         this.isUp = res.data.is_task_party
         if (!this.isUp) {
           this.receiverInfo = res.data.user_task_data
@@ -242,6 +251,20 @@ export default {
     },
     showToggle () {
       this.isDown = !this.isDown
+    },
+    getShareInfo () {
+      // process.env.VUE_APP_DOMAIN_NAME
+      this.shareObj = {
+        title: this.infoData.task_title,
+        description: this.infoData.task_desc,
+        pyqTitle: this.infoData.task_title,
+        thumb: '',
+        contentUrl: `http://live.tosolomo.com/wap/#/pages/task/detail?taskId=${this.taskId}`
+      }
+      downloadPic(process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/task_share.jpg', 'task_share')
+        .then((data) => {
+          this.shareObj.thumb = data
+        })
     },
     // 操作选择回调
     updateTask (opType) {
@@ -288,6 +311,10 @@ export default {
       receivingMask(params).then((res) => {
         this.getData()
       })
+    },
+    // 分享
+    share () {
+      this.$refs.taskop.share()
     },
     // 编辑
     editTask () {

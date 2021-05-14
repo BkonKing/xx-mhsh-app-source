@@ -142,16 +142,6 @@ const taskRouter = [
         '@/views/task/operate/evaluate'
       )
   },
-  // 完成地点
-  {
-    path: '/pages/task/operate/locale',
-    name: 'operateLocale',
-    component: () =>
-      import(
-        /* webpackChunkName: "operateLocale" */
-        '@/views/task/operate/locale'
-      )
-  },
   // 我的任务
   {
     path: '/pages/task/personage/index',

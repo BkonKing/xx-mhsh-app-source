@@ -3,6 +3,7 @@
     <tf-map
       btnText="任务完成地点"
       :destinationInfo="mapInfo"
+      @init="getMapInfo"
     ></tf-map>
   </div>
 </template>
@@ -15,14 +16,16 @@ export default {
   },
   data () {
     return {
-      mapInfo: ''
+      mapInfo: {}
     }
   },
-  created () {
-    this.mapInfo = this.$route.query
+  mounted () {
+
   },
   methods: {
-
+    getMapInfo () {
+      this.mapInfo = this.$route.query
+    }
   }
 }
 </script>

@@ -76,7 +76,7 @@ export default {
       ],
       list: [],
       shieldShow: false,
-      type: 5
+      type: 6
     }
   },
   created () {

@@ -168,10 +168,12 @@ export default {
         task_title: '',
         task_tag: [],
         location_limit: 0,
+        task_etime: '',
         mobile: '',
         province: '不限',
         city: '不限',
         area: '不限',
+        // udpate_address: '',
         task_desc: ''
       },
       telList: [
@@ -362,7 +364,7 @@ export default {
     },
     // 完成地点
     getMap () {
-      console.log(this.$router)
+      const that = this
       const addressData = this.$store.state.map_info || ''
       if (addressData) {
         const bMap = api.require('bMap')
@@ -381,7 +383,7 @@ export default {
               address_city: ret.city,
               address_area: ret.district
             }
-            Object.assign(this.formData, obj)
+            that.formData = Object.assign({}, that.formData, obj)
           }
         })
       }
@@ -409,7 +411,12 @@ export default {
     selectCall (callData) {
       console.log(callData.value)
       this.ableIndex = callData.value
-      if (callData.value == 1) { // 指定地区
+      if (callData.value == 0) { // 不限
+        this.formData.range_type = 0
+        this.ableLookVal = '不限'
+        this.ableIndex = 0
+        this.sureAbleIndex = 0
+      } else if (callData.value == 1) { // 指定地区
         this.areaShow = true
       } else if (callData.value == 2) { // 指定小区
         this.projectShow = true
@@ -546,7 +553,11 @@ export default {
       })
     },
     // 放弃
-    cancel () {},
+    cancel () {
+      this.$router.push({
+        name: 'neighbours'
+      })
+    },
     // 保存草稿
     sure () {
       saveTask(this.formData).then((res) => {

@@ -570,10 +570,10 @@ export default {
     linkFunc (type, obj = {}) {
       switch (type) {
         case 1:
-          this.$router.push({
-            name: 'releaseType'
-          })
-          // this.$router.push('/store/goods-classify')
+          // this.$router.push({
+          //   name: 'releaseType'
+          // })
+          this.$router.push('/store/goods-classify')
           break
         case 2:
           this.$router.push('/store/flash-purchase')

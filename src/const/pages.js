@@ -123,5 +123,22 @@ export const pagesArr = {
   activity: 122, // 积分活动
   activityService: 123, // 积分发放/核销
   livemainPay: 124, // 生活缴费主要缴费页面
-  livePayPayBill: 125 // 生活缴费缴费账单
+  livePayPayBill: 125, // 生活缴费缴费账单
+  releaseType: 126, // 邻里任务选择发布类型
+  postPubuish: 127, // 邻里任务发布帖子
+  releaseEdit: 128, // 邻里任务发布/修改任务
+  releaseGroup: 129, // 邻里任务选择任务群
+  releaseRule: 130, // 邻里任务交易规则
+  taskDetail: 131, // 邻里任务任务详情
+  taskMap: 132, // 邻里任务完成地点
+  scheduleInitiator: 133, // 邻里任务任务进度-任务方
+  scheduleReceiver: 134, // 邻里任务任务进度-接单方
+  operateDeliver: 135, // 邻里任务交付任务
+  operateFinish: 136, // 邻里任务确认完成
+  operateQuiz: 137, // 邻里任务提问
+  operateComplaint: 138, // 邻里任务投诉-任务
+  operateEvaluate: 139, // 邻里任务评价-任务
+  PersonageTaskIndex: 140, // 邻里任务我的任务
+  PersonageTaskDetails: 141, // 邻里任务我的任务详情
+  TaskComplaintDetails: 142 // 邻里任务任务投诉详情
 }

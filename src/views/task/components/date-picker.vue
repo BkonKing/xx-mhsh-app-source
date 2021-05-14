@@ -64,8 +64,10 @@ export default {
       timeIndex: 0, // 0开始日期 1结束日期
       startTime: '', // 开始时间
       endTime: '', // 结束时间
-      dateVal: '', // 日期
-      timeVal: '00:00', // 时间
+      startYmd: '', // 开始时间（年月日）
+      endYmd: '', // 结束时间（年月日）
+      startHi: '00:00', // 开始时间（时分）
+      endHi: '00:00', // 结束时间（时分）
       minDate: new Date(2021, 0, 1),
       maxDate: new Date(2021, 0, 31),
       defaultDate: new Date(),
@@ -121,25 +123,33 @@ export default {
     },
     // 选择了日历
     onConfirm (date) {
-      this.dateVal = this.formatDate(date)
+      if (this.timeIndex == 0) {
+        this.startYmd = this.formatDate(date)
+      } else {
+        this.endYmd = this.formatDate(date)
+      }
       this.setTime()
     },
     // 选择了时间
     timeChange (picker) {
-      this.timeVal = this.currentTime
+      if (this.timeIndex === 0) {
+        this.startHi = this.currentTime
+      } else {
+        this.endHi = this.currentTime
+      }
       this.setTime()
     },
     // 点击时间输入框
     timeBlur (index) {
       this.timeIndex = index
-      // console.log(this.startTime, this.dateVal)
-      console.log(this.dateVal.split('-').join(','))
       let timeVal = ''
       if (index == 0) {
+        this.currentTime = this.startHi
         if (this.startTime) {
           timeVal = this.startTime
         }
       } else {
+        this.currentTime = this.endHi
         if (this.endTime) {
           timeVal = this.endTime
         }
@@ -159,10 +169,11 @@ export default {
     },
     // 时间赋值
     setTime () {
+      // 修改
       if (this.timeIndex === 0) {
-        this.startTime = this.dateVal + ' ' + this.timeVal
+        this.startTime = this.startYmd + ' ' + this.startHi
       } else {
-        this.endTime = this.dateVal + ' ' + this.timeVal
+        this.endTime = this.endYmd + ' ' + this.endHi
       }
     },
     formatDate (date) {
