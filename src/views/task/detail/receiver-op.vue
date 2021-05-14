@@ -7,7 +7,7 @@
     ></list-select>
     <tf-share
       :share-show="showShare"
-      :share-obj="shareObj"
+      :share-obj="shareinfo"
       @closeSwal="closeShare"
     ></tf-share>
     <shield-popup
@@ -50,6 +50,14 @@ export default {
         pyqTitle: '',
         thumb: '',
         contentUrl: ''
+      })
+    }
+  },
+  computed: {
+    shareinfo () {
+      return Object.assign({}, this.shareObj, {
+        thumb: 'widget://res/task_share.jpg',
+        contentUrl: `http://live.tosolomo.com/wap/#/pages/task/detail?taskId=${this.taskId}`
       })
     }
   },

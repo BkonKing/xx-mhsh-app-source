@@ -253,18 +253,11 @@ export default {
       this.isDown = !this.isDown
     },
     getShareInfo () {
-      // process.env.VUE_APP_DOMAIN_NAME
       this.shareObj = {
         title: this.infoData.task_title,
         description: this.infoData.task_desc,
-        pyqTitle: this.infoData.task_title,
-        thumb: '',
-        contentUrl: `http://live.tosolomo.com/wap/#/pages/task/detail?taskId=${this.taskId}`
+        pyqTitle: this.infoData.task_title
       }
-      downloadPic(process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/task_share.jpg', 'task_share')
-        .then((data) => {
-          this.shareObj.thumb = data
-        })
     },
     // 操作选择回调
     updateTask (opType) {

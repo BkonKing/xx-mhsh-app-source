@@ -16,7 +16,7 @@
     ></confirm-model>
     <tf-share
       :share-show="showShare"
-      :share-obj="shareObj"
+      :share-obj="shareinfo"
       @closeSwal="closeShare"
     ></tf-share>
   </div>
@@ -48,9 +48,7 @@ export default {
       default: () => ({
         title: '',
         description: '',
-        pyqTitle: '',
-        thumb: '',
-        contentUrl: ''
+        pyqTitle: ''
       })
     }
   },
@@ -107,11 +105,20 @@ export default {
   },
   created () {
     this.copyList = clonedeep(this.opList)
-    this.getData()
+    if (this.taskId) {
+      this.getData()
+    }
+  },
+  computed: {
+    shareinfo () {
+      return Object.assign({}, this.shareObj, {
+        thumb: 'widget://res/task_share.jpg',
+        contentUrl: `http://live.tosolomo.com/wap/#/pages/task/detail?taskId=${this.taskId}`
+      })
+    }
   },
   methods: {
     getData () {
-      if (!this.taskId) return
       getOpStatus({ linli_task_id: this.taskId }).then((res) => {
         const statusInfo = res.data
         const list = []

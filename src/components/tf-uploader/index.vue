@@ -81,6 +81,7 @@ export default {
   watch: {
     value (val) {
       this.images = val
+      if (!val) return
       this.fileList = val.map(obj => ({
         url: obj
       }))

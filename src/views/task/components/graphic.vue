@@ -59,6 +59,7 @@ export default {
     // 设置初始值
     setVal (obj) {
       this.formData = obj
+      this.formData.images = this.formData.images || []
     }
   },
   watch: {
