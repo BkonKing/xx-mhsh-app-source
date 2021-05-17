@@ -444,6 +444,9 @@ export default {
     areaSure (callData) {
       console.log(callData)
       let value = '不限'
+      this.formData.province = '不限'
+      this.formData.city = '不限'
+      this.formData.area = '不限'
       if (callData[0] && callData[0].name) {
         value = callData[0].name
         this.formData.province = callData[0].name
