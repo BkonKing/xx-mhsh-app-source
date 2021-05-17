@@ -122,7 +122,7 @@
           class="taskList"
           :data.sync="taskList"
           :load="getTaskList"
-          article_type="4"
+          article_type="5"
         ></list>
       </van-tab>
     </van-tabs>
@@ -218,6 +218,7 @@ export default {
         value: 1
       })
     }
+    this.getLocationInfo()
     this.getPostBarCategoryList()
     this.getTaskSwitch()
   },
@@ -248,6 +249,9 @@ export default {
     },
     // 获取最新列表
     getNewestList (params) {
+      params.province = this.province
+      params.city = this.city
+      params.area = this.area
       params.is_all = this.isAll
       return getNewestList(params)
     },
@@ -312,7 +316,6 @@ export default {
         this.isOpeningTask = 1 || +alluser_open
         if (this.isOpeningTask) {
           this.getTaskTypeList()
-          this.getLocationInfo()
         }
       })
     },

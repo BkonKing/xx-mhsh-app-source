@@ -3,7 +3,7 @@
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
         <!-- 任务 -->
-        <div v-if="article_type == 4" class="task-item article-cell">
+        <div v-if="article_type == 5 || item.article_type == 5" class="task-item article-cell">
           <div class="task-header" @click="goTask(item)">
             <div class="task-header-left">{{ item.task_title }}</div>
             <div class="task-header-right">

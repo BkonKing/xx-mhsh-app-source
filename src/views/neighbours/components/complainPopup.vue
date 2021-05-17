@@ -19,7 +19,7 @@
         投诉
         <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
         ：{{
-          complainInfo.content && complainInfo.content.replace(/<.*?>/gi, "")
+          complainInfo[contentKey] && complainInfo[contentKey].replace(/<.*?>/gi, "")
         }}
       </div>
     </div>
@@ -110,6 +110,10 @@ export default {
     valueKey: {
       type: String,
       default: 'value'
+    },
+    contentKey: {
+      type: String,
+      default: 'content'
     }
   },
   data () {
