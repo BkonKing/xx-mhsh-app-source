@@ -57,7 +57,7 @@ export default {
     shareinfo () {
       return Object.assign({}, this.shareObj, {
         thumb: 'widget://res/task_share.jpg',
-        contentUrl: `http://live.tosolomo.com/wap/#/pages/task/detail?taskId=${this.taskId}`
+        contentUrl: `http://live.tosolomo.com/wap/#/taskDetail?taskId=${this.taskId}`
       })
     }
   },

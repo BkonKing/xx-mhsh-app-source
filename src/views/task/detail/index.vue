@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg-white tf-body">
     <van-nav-bar
-      title="社区义工"
+      :title="infoData.type_name"
       :fixed="true"
       placeholder
       :border="false"
@@ -170,7 +170,7 @@ import receiverOp from './receiver-op'
 import { getTaskInfo, receivingMask } from '@/api/task'
 import taskOp from '../components/task-op'
 import confirmModel from '../components/confirm-model'
-import { bMapGetLocationInfo, downloadPic } from '@/utils/util'
+import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   components: {
     [NavBar.name]: NavBar,

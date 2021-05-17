@@ -223,6 +223,13 @@ export default {
               name: share_params.name
             }
           })
+        } else if (share_params.page_type == 5) {
+          this.$router.replace({
+            path: '/pages/task/detail',
+            query: {
+              taskId: share_params.taskId
+            }
+          })
         }
       } else {
         this.$router.replace({

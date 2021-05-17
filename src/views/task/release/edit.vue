@@ -307,11 +307,13 @@ export default {
     // 任务类型
     getTaskType () {
       getTaskTypeList().then(res => {
+        let flag = false
         this.typeList = res.data.map((item, key) => {
+          console.log('typeId', item.id, this.typeId)
           if (item.id == this.typeId) {
             this.typeIndex = key
             this.typeName = item.category
-            this.$refs.typeRadio.setType(key)
+            flag = true
           }
           return {
             id: item.id,
@@ -320,7 +322,11 @@ export default {
             close_price: item.close_price
           }
         })
-        console.log(this.typeList)
+        if (flag == true) {
+          this.$refs.typeRadio.setType(this.typeIndex)
+        } else {
+          this.$refs.typeRadio.setType(0)
+        }
       })
     },
     // 选择任务类型
@@ -561,6 +567,7 @@ export default {
     // 保存草稿
     sure () {
       saveTask(this.formData).then((res) => {
+        this.myTask()
         // Toast('提交成功')
       }).catch((res) => {
         Toast('提交失败 请重试')
@@ -569,6 +576,12 @@ export default {
     // 锚点滚动
     goScroll (selector) {
       document.getElementById(selector).scrollIntoView()
+    },
+    // 我的任务
+    myTask () {
+      this.$router.push({
+        name: 'PersonageTaskIndex'
+      })
     },
     // 任务订单
     taskOrder (id) {

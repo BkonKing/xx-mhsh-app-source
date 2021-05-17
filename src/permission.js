@@ -138,6 +138,13 @@ router.beforeEach(async (to, from, next) => {
             name: params.name
           }
         })
+      } else if (params.page_type == 5) {
+        router.push({
+          path: '/pages/task/detail',
+          query: {
+            taskId: params.taskId
+          }
+        })
       }
     })
   }
