@@ -24,7 +24,10 @@
         </div>
         <div class="order-footer">
           <div class="order-footer-item">
-            <div class="order-view-1" @click.stop="makePhoneCall(item.task_mobile)">
+            <div
+              class="order-view-1"
+              @click.stop="makePhoneCall(item.task_mobile)"
+            >
               <span class="tf-icon tf-icon-lianxi order-icon-1"></span>
               <span class="order-tag">联系</span>
             </div>
@@ -34,14 +37,18 @@
             </div>
           </div>
           <div class="order-footer-item">
-            <span v-if="item.task_etime" class="order-caption-1"
-              >剩余<van-count-down :time="item.task_etime" @finish="reload"
+            <span
+              v-if="item.task_etime && countDownTime(item.task_etime)"
+              class="order-caption-1"
+              >剩余<van-count-down
+                :time="countDownTime(item.task_etime)"
+                @finish="reload"
             /></span>
-            <span class="order-caption-text" v-else>{{item.text}}</span>
+            <span class="order-caption-text" v-else>{{ item.text }}</span>
             <van-button
               v-if="+item.is_can_submit"
               class="order-button-wrapper"
-              @click.stop="goTask(item)"
+              @click.stop="goDeliverTask(item)"
               >交付任务</van-button
             >
           </div>
@@ -101,6 +108,20 @@ export default {
           taskId: task_id
         }
       })
+    },
+    // 交付任务
+    goDeliverTask ({ task_id, user_task_id }) {
+      this.$router.push({
+        name: 'operateDeliver',
+        query: {
+          taskId: task_id,
+          userTaskId: user_task_id
+        }
+      })
+    },
+    countDownTime (endTime) {
+      const time = +endTime * 1000 - new Date().getTime()
+      return time < 0 ? 0 : time
     },
     reload () {
       this.$refs.list.reload()

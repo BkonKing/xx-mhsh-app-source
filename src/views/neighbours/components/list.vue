@@ -3,7 +3,7 @@
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
         <!-- 任务 -->
-        <div v-if="article_type == 5 || item.article_type == 5" class="task-item article-cell">
+        <div v-if="article_type == 6 || item.article_type == 5" class="task-item article-cell">
           <div class="task-header" @click="goTask(item)">
             <div class="task-header-left">{{ item.task_title }}</div>
             <div class="task-header-right">
@@ -42,7 +42,6 @@
           <operation
             class="taks-footer"
             :item="item"
-            :article-type="item.article_type"
             :key="item.id"
             articleType="6"
             @delete="list.splice(index, 1)"
@@ -128,7 +127,7 @@
       </template>
       <template slot:nodata>
         <img src="@/assets/neighbours/notask.png" alt="" />
-        <div v-if="article_type == 4" class="mo-data-text">暂无任务</div>
+        <div v-if="article_type == 6" class="mo-data-text">暂无任务</div>
       </template>
     </refreshList>
   </div>

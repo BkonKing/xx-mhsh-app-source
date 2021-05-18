@@ -122,7 +122,7 @@
           class="taskList"
           :data.sync="taskList"
           :load="getTaskList"
-          article_type="5"
+          article_type="6"
         ></list>
       </van-tab>
     </van-tabs>
@@ -313,7 +313,7 @@ export default {
     // 获取任务开关
     getTaskSwitch () {
       getTaskSwitch().then(({ alluser_open }) => {
-        this.isOpeningTask = 1 || +alluser_open
+        this.isOpeningTask = +alluser_open
         if (this.isOpeningTask) {
           this.getTaskTypeList()
         }

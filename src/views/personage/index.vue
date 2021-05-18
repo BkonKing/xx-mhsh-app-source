@@ -254,7 +254,7 @@
               />
             </template>
             <template v-slot:right>
-              <span class="num-tag">{{taskNum}}</span>
+              <span v-if="taskNum" class="num-tag">{{taskNum}}</span>
             </template>
           </tf-list-item>
           <tf-list-item border title="我的互动" @click="goInteraction">

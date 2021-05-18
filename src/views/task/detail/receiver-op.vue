@@ -13,7 +13,7 @@
     <shield-popup
       v-model="shieldShow"
       :shieldInfo="item"
-      :type="type"
+      :shieldType="type"
     ></shield-popup>
   </div>
 </template>

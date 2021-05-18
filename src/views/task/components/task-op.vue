@@ -204,17 +204,19 @@ export default {
         this.yesTxt = confirmObj.yesTxt
         this.confirmShow = true
       } else {
-        switch (this.statusName) {
-          case 'share':
-            this.share()
-            break
-          case 'edit':
-            this.edit()
-            break
-          case 'publish':
-            this.publish()
-            break
-        }
+        this.$nextTick(() => {
+          switch (this.statusName) {
+            case 'share':
+              this.share()
+              break
+            case 'edit':
+              this.edit()
+              break
+            case 'publish':
+              this.publish()
+              break
+          }
+        })
       }
     },
     // 分享

@@ -501,7 +501,7 @@ export default {
     // 获取任务开关
     getTaskSwitch () {
       getTaskSwitch().then(({ alluser_open }) => {
-        this.isOpeningTask = !+alluser_open
+        this.isOpeningTask = +alluser_open
       })
     },
     // 获取任务列表

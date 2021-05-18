@@ -215,6 +215,10 @@ export default {
           // 'jfhd_uid|100001'
           this.goActivity(value)
           break
+        case 'task':
+          // 'jfhd_uid|100001'
+          this.goTask(value)
+          break
         default:
           break
       }
@@ -386,6 +390,15 @@ export default {
         api.alert({
           title: err.message
         })
+      })
+    },
+    // 扫了任务码
+    goTask (taskId) {
+      this.$router.push({
+        name: 'taskDetail',
+        query: {
+          taskId
+        }
       })
     },
     // 打开扫码frame

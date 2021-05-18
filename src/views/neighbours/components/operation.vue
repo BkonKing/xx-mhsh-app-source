@@ -43,6 +43,7 @@
         </template>
       </div>
       <more-btn
+        v-if="!(articleType == 6 && item.is_mine)"
         :item="item"
         :type="articleType"
         :complainKey="articleType == 6 ? 'task_title' : ''"

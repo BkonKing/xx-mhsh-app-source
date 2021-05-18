@@ -33,9 +33,11 @@
               :key="i"
               :class="{
                 'radio-btn--active':
-                  evaluate_reason.indexOf(item.bad_tag_name) !== -1
+                evaluateIdList.findIndex((obj) => {
+                  return obj && obj.id === item.id && obj.type === 'bad'
+                }) !== -1
               }"
-              @click="handleSelectType(item.bad_tag_name, item.id)"
+              @click="handleSelectType(item.bad_tag_name, item.id, 'bad')"
             >
               <div class="radio-btn__text">{{ item.bad_tag_name }}</div>
             </div>
@@ -44,9 +46,11 @@
               :key="`good${i}`"
               :class="{
                 'radio-btn--active':
-                  evaluate_reason.indexOf(item.good_tag_name) !== -1
+                evaluateIdList.findIndex((obj) => {
+                  return obj && obj.id === item.id && obj.type === 'good'
+                }) !== -1
               }"
-              @click="handleSelectType(item.good_tag_name, item.id)"
+              @click="handleSelectType(item.good_tag_name, item.id, 'good')"
             >
               <div class="radio-btn__text">{{ item.good_tag_name }}</div>
             </div>
@@ -116,21 +120,27 @@ export default {
       })
     },
     // 评价
-    handleSelectType (value, id) {
-      const index = this.evaluateIdList.indexOf(id)
+    handleSelectType (value, id, type) {
+      // 加入type是为了排除同组标签内容一模一样
+      const index = this.evaluateIdList.findIndex((obj) => {
+        return obj && obj.id === id
+      })
       // 当前组合没有任何选择，则插入所有
       if (index === -1) {
-        this.evaluateIdList.push(id)
+        this.evaluateIdList.push({
+          id,
+          type
+        })
         this.evaluate_reason.push(value)
       } else {
-        const i = this.evaluate_reason.indexOf(value)
-        // 切换到组合的另一个选项
-        if (i === -1) {
-          this.$set(this.evaluate_reason, index, value)
-        } else {
+        if (this.evaluate_reason[index] === value && this.evaluateIdList[index].type === type) {
           // 取消选中的选项
           this.evaluateIdList.splice(index, 1)
-          this.evaluate_reason.splice(i, 1)
+          this.evaluate_reason.splice(index, 1)
+        } else {
+          // 切换选项
+          this.$set(this.evaluateIdList[index], 'type', type)
+          this.$set(this.evaluate_reason, index, value)
         }
       }
     },

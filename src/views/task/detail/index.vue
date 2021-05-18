@@ -219,7 +219,7 @@ export default {
           uid: res.data.uid,
           nickname: res.data.rwf_nickname,
           content: res.data.task_title,
-          id: res.data.task_id
+          task_id: res.data.task_id
         }
         this.infoData = res.data
         this.getShareInfo()
