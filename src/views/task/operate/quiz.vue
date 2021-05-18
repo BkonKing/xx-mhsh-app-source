@@ -19,7 +19,7 @@
       <div v-else class="quiz-list">
         <div v-for="(item, index) in listData" :key="index" class="quiz-item">
           <div @click="operate(item.id)" class="operate-ellipsis">
-            <more-btn :item="item" :type="7"></more-btn>
+            <more-btn :item="item" type="7" contentKey="content"></more-btn>
             <!-- <img class="img-100" src="@/assets/neighbours/more.png" /> -->
           </div>
           <div class="item-header">

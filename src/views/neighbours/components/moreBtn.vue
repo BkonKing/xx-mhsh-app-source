@@ -15,7 +15,7 @@
       </template>
       <template v-else>
         <span class="more-btn" @click="shieldShow = true">屏蔽</span>
-        <span class="more-btn" @click="complainShow = true">投诉</span>
+        <span class="more-btn" @click="handleComplain">投诉</span>
       </template>
     </div>
     <!-- 投诉 -->
@@ -23,12 +23,14 @@
       v-model="complainShow"
       :complainInfo="item"
       :complainType="type"
+      :complainKey="complainKey"
     ></complain-popup>
     <!-- 屏蔽 -->
     <shield-popup
       v-model="shieldShow"
       :shieldInfo="item"
       :shieldType="type"
+      :contentKey="contentKey"
     ></shield-popup>
   </div>
 </template>
@@ -52,6 +54,14 @@ export default {
     },
     type: {
       default: ''
+    },
+    contentKey: {
+      type: String,
+      default: ''
+    },
+    complainKey: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -70,6 +80,19 @@ export default {
     // 关闭更多操作
     closeOperation () {
       this.postMoreShow = false
+    },
+    // 投诉
+    handleComplain () {
+      if (this.type == 6) {
+        this.$router.push({
+          name: 'operateComplaint',
+          query: {
+            taskId: this.item.task_id
+          }
+        })
+      } else {
+        this.complainShow = true
+      }
     },
     // 删除
     deleteArticle () {

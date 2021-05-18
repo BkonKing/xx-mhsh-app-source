@@ -19,7 +19,7 @@
             >完成时间：{{ item.task_time }}</span
           >
           <span v-if="item.address_text" class="order-title-1"
-            >完成地点：{{ item.item.address_text }}</span
+            >完成地点：{{ item.address_text }}</span
           >
         </div>
         <div class="order-footer">

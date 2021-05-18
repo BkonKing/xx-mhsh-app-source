@@ -7,7 +7,7 @@
           <span class="operation-text">分享</span>
         </div>
         <!-- 任务 -->
-        <template v-if="articleType == 4">
+        <template v-if="articleType == 6">
           <div class="operation-item" @click="goQuiz()">
             <img
               class="operation-icon"
@@ -45,6 +45,8 @@
       <more-btn
         :item="item"
         :type="articleType"
+        :complainKey="articleType == 6 ? 'task_title' : ''"
+        :contentKey="articleType == 6 ? 'task_title' : ''"
         @delete="deleteArticle"
       ></more-btn>
     </div>

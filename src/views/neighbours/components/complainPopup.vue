@@ -133,10 +133,10 @@ export default {
           3: '1'
         }
         const complaintReq =
-          this.complainType == 4
+          this.complainType == 6
             ? complaintTaskQuestions({
               task_id: this.complainInfo.task_id,
-              task_question_id: this.task_question_id.id,
+              task_question_id: this.complainInfo.id,
               complaint_type: this.com_type
             }) // 任务提问投诉
             : addComplaint({

@@ -82,6 +82,10 @@ export default {
     },
     // 任务进度
     goSchedule () {
+      // 未提交（保存草稿）则不能跳转
+      if (this.info.task_status === '0') {
+        return
+      }
       this.$router.push({
         name: 'scheduleInitiator',
         query: {
@@ -91,6 +95,10 @@ export default {
     },
     // 邻里-任务详情
     goDetails () {
+      // 未提交（保存草稿）则不能跳转
+      if (this.info.task_status === '0') {
+        return
+      }
       this.$router.push({
         name: 'taskDetail',
         query: {

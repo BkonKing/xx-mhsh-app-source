@@ -44,7 +44,7 @@
             :item="item"
             :article-type="item.article_type"
             :key="item.id"
-            articleType="4"
+            articleType="6"
             @delete="list.splice(index, 1)"
           >
           </operation>

@@ -57,7 +57,7 @@
     >
       <div class="tf-text van-multi-ellipsis--l2">
         <span class="tf-text-blue">@{{ shieldInfo.nickname }}</span>
-        ：{{ shieldInfo.content && shieldInfo.content.replace(/<.*?>/gi, "") }}
+        ：{{ shieldInfo[contentKey] && shieldInfo[contentKey].replace(/<.*?>/gi, "") }}
       </div>
       <div class="shield-confirm-footer">
         <van-button
@@ -92,10 +92,14 @@ export default {
       type: Object,
       default: () => ({})
     },
-    // 如果是投诉，类型 1贴子、2评论、3回复
+    // 如果是投诉，类型 1贴子、2评论、3回复、6任务、7提问
     shieldType: {
       type: [Number, String],
       default: 0
+    },
+    contentKey: {
+      type: String,
+      default: 'content'
     }
   },
   data () {
@@ -133,12 +137,12 @@ export default {
       this.addShielding({
         shielding_type: 1,
         sub_type:
-          this.shieldType > 2
+          this.shieldType == 2 || this.shieldType == 3 // 类型为评论回复则都为2
             ? 2
             : this.shieldType == 1
-              ? sub_type[this.shieldInfo.article_type]
-              : this.shieldType,
-        shielding_infoid: this.shieldInfo.id
+              ? sub_type[this.shieldInfo.article_type] // 帖子分为帖子、活动、资讯三种情况
+              : this.shieldType, // 其他则不变
+        shielding_infoid: this.shieldType == 6 ? this.shieldInfo.task_id : this.shieldInfo.id
       })
     },
     /* 提交屏蔽设置 */

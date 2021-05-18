@@ -37,9 +37,10 @@
           :load="getShieldingInfoList"
         >
           <template v-slot="{ item, index }">
+            <!-- 帖子 -->
             <div
               class="tf-card"
-              v-if="item.sub_type == 1"
+              v-if="item.sub_type == 1 || item.sub_type == 6 || item.sub_type == 7"
               @click="openRemove(item, index)"
             >
               <div class="tf-card-header">
@@ -79,6 +80,7 @@
                 ></tf-image-list>
               </template>
             </div>
+            <!-- 评论回复 -->
             <div
               v-else
               class="reply-cell-content"
