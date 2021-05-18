@@ -118,8 +118,8 @@
           </div>
           <operation
             :item="item"
-            :article-type="item.article_type"
             :key="item.id"
+            :articleType="item.article_type"
             @delete="list.splice(index, 1)"
           >
           </operation>

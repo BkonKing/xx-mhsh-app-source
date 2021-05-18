@@ -33,7 +33,7 @@
           >
         </div>
       </div>
-      <div v-if="+info.task_status" class="task-schedule" @click="goSchedule">
+      <div v-if="info.is_schedule" class="task-schedule" @click="goSchedule">
         <div class="task-schedule-caption">任务进度</div>
         <div class="task-schedule-info">
           <span class="task-schedule-text">{{ info.text }}</span>

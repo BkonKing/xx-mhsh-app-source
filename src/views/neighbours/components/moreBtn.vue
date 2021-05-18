@@ -22,7 +22,7 @@
     <complain-popup
       v-model="complainShow"
       :complainInfo="item"
-      :complainType="type"
+      :complainType="+type < 4 ? 1 : type"
       :complainKey="complainKey"
     ></complain-popup>
     <!-- 屏蔽 -->
