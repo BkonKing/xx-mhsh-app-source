@@ -108,7 +108,7 @@
         <div @click="releaseRule" class="color-0E80E1">《交易规则》</div>
       </div>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ ableSubmit ? '' : 'unable-btn', 'task-btn']">发布</div>
+        <div v-preventReClick @click="submit" :class="[ ableSubmit ? '' : 'unable-btn', 'task-btn']">发布</div>
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
@@ -582,13 +582,13 @@ export default {
     },
     // 我的任务
     myTask () {
-      this.$router.push({
+      this.$router.replace({
         name: 'PersonageTaskIndex'
       })
     },
     // 任务订单
     taskOrder (id) {
-      this.$router.push({
+      this.$router.replace({
         name: 'PersonageTaskDetails',
         query: {
           taskId: id

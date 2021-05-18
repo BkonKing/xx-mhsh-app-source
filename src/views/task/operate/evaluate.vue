@@ -83,7 +83,7 @@ import { validForm } from '@/utils/util'
 export default {
   data () {
     return {
-      taskId: '',
+      userTaskId: '',
       evaluate_stars: undefined, // 评分
       evaluate_reason: [],
       evaluateIdList: [],
@@ -101,14 +101,14 @@ export default {
     }
   },
   created () {
-    this.taskId = this.$route.query.taskId
+    this.userTaskId = this.$route.query.userTaskId
     this.getEvaluateData()
   },
   methods: {
     // 获取任务方对接单方评价页面数据
     getEvaluateData () {
       getEvaluateData({
-        user_task_id: this.taskId
+        user_task_id: this.userTaskId
       }).then(({ data }) => {
         const { nickname, evaluate_tag_list } = data
         this.nickname = nickname
@@ -149,7 +149,7 @@ export default {
     // 提交评价请求
     evaluate () {
       evaluateTask({
-        user_task_id: this.taskId,
+        user_task_id: this.userTaskId,
         evaluate_stars: this.evaluate_stars,
         evaluate_supplement: this.evaluate_supplement,
         evaluate_tags: this.evaluate_reason
