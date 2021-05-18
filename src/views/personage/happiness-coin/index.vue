@@ -16,7 +16,7 @@
           <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
           <div class="">
             <span class="coin-number">{{ credits }}</span>
-            <div class="coin-freeze">可用800 不可用800</div>
+            <div class="coin-freeze">可用{{ky_credits}} 不可用{{sd_credits}}</div>
           </div>
         </div>
         <van-button
@@ -213,7 +213,9 @@ export default {
       signLoading: false, // 签到按钮loading
       mj_status: true, // 是否有门禁
       yxlpNum: 0, // 推荐购房楼盘列表
-      signRuledialog: false
+      signRuledialog: false,
+      sd_credits: '', // 锁定幸福币
+      ky_credits: '' // 可用幸福币
     }
   },
   computed: {
@@ -231,6 +233,8 @@ export default {
         this.taskList = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
+        this.ky_credits = data.ky_credits
+        this.sd_credits = data.sd_credits
         this.getYxlpList()
         // console.log('任务列表', data.task_list)
       })

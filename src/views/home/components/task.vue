@@ -19,7 +19,7 @@
           <task-ul class="task-ul" :data="item"></task-ul>
         </van-swipe-item>
       </van-swipe>
-      <task-ul v-else class="task-swipe" :data="data[0]"></task-ul>
+      <task-ul v-else class="task-swipe" :data="data[0]" style="height: auto;"></task-ul>
     </template>
   </div>
 </template>

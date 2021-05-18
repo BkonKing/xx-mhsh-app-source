@@ -60,7 +60,7 @@ export default {
       type: Object,
       default: () => ({})
     },
-    // 如果是投诉，类型 1贴子、2评论、3回复、4任务提问
+    // 如果是投诉，类型 1贴子、2评论、3回复、7任务提问
     complainType: {
       type: [Number, String],
       default: 0
@@ -133,7 +133,7 @@ export default {
           3: '1'
         }
         const complaintReq =
-          this.complainType == 6
+          this.complainType == 7
             ? complaintTaskQuestions({
               task_id: this.complainInfo.task_id,
               task_question_id: this.complainInfo.id,
