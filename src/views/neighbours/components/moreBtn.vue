@@ -87,7 +87,8 @@ export default {
         this.$router.push({
           name: 'operateComplaint',
           query: {
-            taskId: this.item.task_id
+            taskId: this.item.task_id,
+            complaintUid: this.item.uid
           }
         })
       } else {
