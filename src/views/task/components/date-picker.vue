@@ -134,10 +134,11 @@ export default {
     timeChange (picker) {
       if (this.timeIndex === 0) {
         this.startHi = this.currentTime
+        if (this.startYmd) this.setTime()
       } else {
         this.endHi = this.currentTime
+        if (this.endYmd) this.setTime()
       }
-      this.setTime()
     },
     // 点击时间输入框
     timeBlur (index) {

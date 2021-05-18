@@ -134,7 +134,7 @@ export default {
       getTaskComplaint({
         type: 1,
         task_id: this.taskId,
-        complaint_uid: this.complaintUid
+        complainted_uid: this.complaintUid
       }).then(({ data }) => {
         const { bts_nickname, type_list, task_title } = data
         this.nickName = bts_nickname
@@ -152,7 +152,7 @@ export default {
     complaintTask () {
       complaintTask({
         task_id: this.taskId,
-        complaint_uid: this.complaintUid,
+        complainted_uid: this.complaintUid,
         complaint_type: this.complaintType,
         content: this.content,
         image_url: this.images

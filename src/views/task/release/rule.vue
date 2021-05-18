@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg-white tf-body">
     <van-nav-bar
-      title="社区义工"
+      :title="infoData.title"
       :fixed="true"
       placeholder
       :border="false"
