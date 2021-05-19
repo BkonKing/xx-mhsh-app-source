@@ -1,7 +1,7 @@
 <template>
   <div class="schedule-list">
     <div v-for="(item, index) in listData" :key="index" class="schedule-item">
-      <div v-if="listData.length > 1" class="line"></div>
+      <div v-if="listData.length > 1" class="line" :class="{'small-line': index == listData.length-1}"></div>
       <div class="time" :class="{'red-point': +item.is_red}">
         <div v-if="item.evaluate_id > 0" @click="evaluate(item.evaluate_id)" class="mask tf-row"><img class="img-100" src="@/assets/img/task_11.png" /></div>
         <div @click="previewPic(index)" v-if="item.image_url && item.image_url.length" class="mask tf-row"><img class="img-100" src="@/assets/img/task_12.png" /></div>
@@ -97,6 +97,10 @@ export default {
       top: 0;
       bottom: 0;
       background-color: #8F8F94;
+      &.small-line {
+        height: 30px;
+        bottom: auto;
+      }
     }
     &:first-child {
       .line {

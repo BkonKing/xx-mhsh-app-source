@@ -70,7 +70,7 @@
         <div v-if="infoData.address" class="task-session">
           <div class="session-tit">完成地点</div>
           <div @click="openMap" class="task-address tf-vertical-center">
-            <div class="van-ellipsis">{{ infoData.address }}</div>
+            <div class="van-ellipsis">{{ infoData.udpate_address || infoData.address }}</div>
             <div class="van-ellipsis">{{ infoData.address_province + ' ' + infoData.address_city + ' ' + infoData.address_area }}</div>
             <img class="address-arrow" src="@/assets/img/task_04.png" />
             <img class="address-bg" src="@/assets/img/task_03.png" />
@@ -202,11 +202,15 @@ export default {
       shareObj: {},
       shieldInfo: {}, // 屏蔽信息
       picIndex: 0, // 图片预览起始位置索引
-      picShow: false // 查看大图
+      picShow: false, // 查看大图
+      province: '', // 省
+      city: '', // 市
+      area: '' // 县
     }
   },
   created () {
     this.taskId = this.$route.query.taskId
+    this.getLocationInfo()
     this.getData()
   },
   mounted () {
@@ -214,7 +218,7 @@ export default {
   },
   methods: {
     getData () {
-      getTaskInfo({ linli_task_id: this.taskId }).then(res => {
+      getTaskInfo({ linli_task_id: this.taskId, province: this.province, city: this.city, area: this.area }).then(res => {
         this.shieldInfo = {
           uid: res.data.uid,
           nickname: res.data.rwf_nickname,
@@ -259,6 +263,19 @@ export default {
         pyqTitle: this.infoData.task_title
       }
     },
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      this.province = '福建省'
+      this.city = '福州市'
+      this.area = '仓山区'
+      return bMapGetLocationInfo().then(data => {
+        const { province, city, district } = data
+        this.province = province || '福建省'
+        this.city = city || '福州市'
+        this.area = district || '仓山区'
+      })
+    },
     // 操作选择回调
     updateTask (opType) {
       this.getData()
@@ -280,7 +297,6 @@ export default {
     receiveOrder () {
       if (this.isBack) return
       bMapGetLocationInfo(1).then((res) => {
-        alert(JSON.stringify(res))
         const obj = {
           province: res.province,
           city: res.city,

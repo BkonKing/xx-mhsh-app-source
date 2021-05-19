@@ -56,6 +56,7 @@
         <div class="bottom-fiex tf-row">
           <div class="op-left tf-row">
             <div @click="quiz" class="tf-column">
+              <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
               <img src="@/assets/img/task_05.png" />
               <div>提问</div>
             </div>

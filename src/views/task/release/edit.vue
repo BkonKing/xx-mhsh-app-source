@@ -428,8 +428,10 @@ export default {
         this.projectShow = true
       } else if (callData.value == 3) { // 指定人群
         this.selectShow = false
-        this.$router.push({
-          name: 'releaseGroup'
+        this.$nextTick(() => {
+          this.$router.push({
+            name: 'releaseGroup'
+          })
         })
       }
     },
@@ -563,12 +565,20 @@ export default {
     },
     // 放弃
     cancel () {
-      this.$router.push({
-        name: 'neighbours'
-      })
+      if (this.taskId) {
+        this.$router.go(-1)
+      } else {
+        this.$router.push({
+          name: 'neighbours'
+        })
+      }
     },
     // 保存草稿
     sure () {
+      if (this.editType === 'anew') {
+        this.formData.id = 0
+        this.formData.linli_task_id = 0
+      }
       saveTask(this.formData).then((res) => {
         this.myTask()
         // Toast('提交成功')
@@ -609,7 +619,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['releaseGroup', 'addressMap']
+    const names = ['releaseGroup', 'addressMap', 'releaseRule']
     if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
