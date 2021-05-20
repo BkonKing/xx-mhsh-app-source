@@ -266,14 +266,12 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      this.province = '福建省'
-      this.city = '福州市'
-      this.area = '仓山区'
       return bMapGetLocationInfo().then(data => {
         const { province, city, district } = data
         this.province = province || '福建省'
         this.city = city || '福州市'
         this.area = district || '仓山区'
+        this.getData()
       })
     },
     // 操作选择回调

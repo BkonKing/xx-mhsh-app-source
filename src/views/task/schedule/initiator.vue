@@ -359,7 +359,7 @@ export default {
     },
     // 延期
     delayTask () {
-      if (this.overIndex == 1 && this.coinIndex == 1 && this.formData2.new_reward_happiness >= this.overtimeInfo.reward_happiness) {
+      if (this.overIndex == 1 && this.coinIndex == 1 && this.formData2.new_reward_happiness - this.overtimeInfo.reward_happiness >= 0) {
         Toast(`奖励必须小于${this.overtimeInfo.reward_happiness}幸福币`)
       } else {
         this.formData2.type = this.overIndex + 1

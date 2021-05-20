@@ -162,7 +162,7 @@ export default {
     background: #FF6555;
   }
   .cont {
-    max-width: 586px;
+    max-width: 660px;
     color: #000000;
     padding-left: 104px;
     word-break: break-all;

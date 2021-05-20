@@ -154,7 +154,7 @@ export default {
       this.formData.user_task_id = this.userTaskId
       submitCompleteInfo(this.formData).then((res) => {
         Toast({
-          message: '提交成功',
+          message: `已奖励${this.infoData.reward_happiness}幸福币给接单方`,
           onClose: () => {
             this.$router.go(-1)
           }

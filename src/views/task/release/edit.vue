@@ -223,6 +223,7 @@ export default {
       typeName: '', // 类型选择项内容
       typeId: '', // 类型选择项id
       confirmShow: false, // 关闭提示弹窗
+      isLoading: false,
       isAgree: false // 同意规则
     }
   },
@@ -546,7 +547,10 @@ export default {
             this.formData.id = 0
             this.formData.linli_task_id = 0
           }
+          if (this.isLoading) return
+          this.isLoading = true
           submitTask(this.formData).then((res) => {
+            this.isLoading = false
             Toast({
               message: '提交成功',
               onClose: () => {
@@ -554,6 +558,7 @@ export default {
               }
             })
           }).catch((res) => {
+            this.isLoading = false
             Toast('提交失败 请重试')
           })
         }).catch((res) => {
