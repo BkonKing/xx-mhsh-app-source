@@ -127,6 +127,7 @@ export default {
   padding-right: 10px;
   background: url("~@/assets/neighbours/dialog.png");
   background-size: contain;
+  background-repeat: no-repeat;
   .more-btn {
     display: flex;
     justify-content: center;

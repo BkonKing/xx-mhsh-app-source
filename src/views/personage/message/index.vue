@@ -370,7 +370,7 @@ export default {
       }
       const routeName = {
         // 接单方 - 任务进度
-        23: 'scheduleInitiator',
+        23: 'scheduleReceiver',
         // 任务方 - 我的任务详情
         24: 'PersonageTaskDetails',
         // 任务提问

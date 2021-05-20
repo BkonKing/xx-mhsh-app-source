@@ -60,6 +60,7 @@
     >
       <van-tab title="最新" id="neighboursList0">
         <list
+          v-if="isLocation"
           key="list"
           ref="list"
           :data.sync="newestList"
@@ -198,7 +199,8 @@ export default {
       isOpeningTask: false, // 是否开启任务模块
       province: '', // 省
       city: '', // 市
-      area: '' // 县
+      area: '', // 县
+      isLocation: false
     }
   },
   computed: {
@@ -218,7 +220,9 @@ export default {
         value: 1
       })
     }
-    this.getLocationInfo()
+    this.getLocationInfo().finally(() => {
+      this.isLocation = true
+    })
     this.getPostBarCategoryList()
     this.getTaskSwitch()
   },

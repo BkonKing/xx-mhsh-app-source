@@ -176,7 +176,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  height: 300px;
+  min-height: 300px;
   padding: 50px;
   background-color: #ff6555;
   background-image: url("~@/assets/neighbours/task-complaint.png");
@@ -235,7 +235,7 @@ export default {
       &-label {
         display: flex;
         justify-content: space-between;
-        width: 112px;
+        width: 114px;
         margin-right: 88px;
         font-size: 28px;
         color: #000000;

@@ -95,7 +95,7 @@ export default {
 // 小组
 .group-box {
   display: flex;
-  height: 124px;
+  height: 126px;
   padding: 30px 20px;
   background: #ffffff;
   .group-container {

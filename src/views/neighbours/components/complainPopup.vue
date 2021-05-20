@@ -19,7 +19,8 @@
         投诉
         <span class="tf-text-blue">@{{ complainInfo.nickname }}</span>
         ：{{
-          complainInfo[contentKey] && complainInfo[contentKey].replace(/<.*?>/gi, "")
+          complainInfo[contentKey] &&
+            complainInfo[contentKey].replace(/<.*?>/gi, "")
         }}
       </div>
     </div>
@@ -184,10 +185,16 @@ export default {
   }
   .complain-content {
     padding: 27px 35px 27px 26px;
+    margin-bottom: 40px;
     font-size: 26px;
     color: #8f8f94;
+    word-break: break-all;
     background: #f7f7f7;
-    margin-bottom: 40px;
+  }
+  .tf-icon-guanbi {
+    font-size: 30px;
+    top: 24px;
+    right: 30px;
   }
   .task-btn {
     margin: 30px auto;
@@ -196,13 +203,15 @@ export default {
     color: @red-dark;
   }
   /deep/ .radio-btn-group {
-    padding-left: 25px;
+    padding-left: 24px;
     margin-right: -4px;
     .radio-btn__item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 150px;
       height: 64px;
-      line-height: 64px;
-      padding: 0 26px;
-      margin: 0 34px 30px 0;
+      margin: 0 30px 30px 0;
       border: 0;
       .radio-btn__text {
         color: #333333;

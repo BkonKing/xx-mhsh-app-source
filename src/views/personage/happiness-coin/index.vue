@@ -16,7 +16,10 @@
           <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
           <div class="">
             <span class="coin-number">{{ credits }}</span>
-            <div class="coin-freeze">可用{{ky_credits}} 不可用{{sd_credits}}</div>
+            <div class="coin-freeze">
+              <span>可用{{ky_credits}}</span>
+              <span>不可用{{sd_credits}}</span>
+            </div>
           </div>
         </div>
         <van-button
@@ -463,11 +466,16 @@ export default {
   color: #fff;
 }
 .coin-freeze {
+  display: flex;
+  align-items: center;
   margin-top: 20px;
   font-size: 28px;
   font-weight: 500;
   line-height: 1;
   color: #ffffff;
+  span + span {
+    margin-left: 26px;
+  }
 }
 .coin-icon {
   margin-right: 20px;
