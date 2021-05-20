@@ -40,9 +40,17 @@
           <span class="tf-icon tf-icon-right"></span>
         </div>
       </div>
-      <schedule-list class="schedule" :listData="info.tasksideflow_list"></schedule-list>
+      <schedule-list
+        class="schedule"
+        :listData="info.tasksideflow_list"
+      ></schedule-list>
     </div>
-    <task-op v-model="selectShow" :taskId="taskId" @updateTask="getMyTaskInfo"></task-op>
+    <task-op
+      v-model="selectShow"
+      :taskId="taskId"
+      :shareObj="shareObj"
+      @updateTask="getMyTaskInfo"
+    ></task-op>
   </div>
 </template>
 
@@ -61,6 +69,7 @@ export default {
     return {
       taskId: '',
       info: {},
+      shareObj: {},
       selectShow: false
     }
   },
@@ -74,6 +83,11 @@ export default {
         task_id: this.taskId
       }).then(({ data }) => {
         this.info = data
+        this.shareObj = {
+          title: data.task_title,
+          description: data.task_desc,
+          pyqTitle: data.task_title
+        }
       })
     },
     // 打开更多
@@ -92,7 +106,10 @@ export default {
     // 邻里-任务详情
     goDetails () {
       // 未提交（保存草稿）则不能跳转
-      if (this.info.task_status === '0' && this.info.task_status_name === '未提交') {
+      if (
+        this.info.task_status === '0' &&
+        this.info.task_status_name === '未提交'
+      ) {
         return
       }
       this.$router.push({

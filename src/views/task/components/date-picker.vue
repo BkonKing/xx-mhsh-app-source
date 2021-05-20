@@ -81,7 +81,7 @@ export default {
     }
   },
   created () {
-    console.log(new Date(2021, 0, 1))
+    // console.log(new Date(2021, 0, 1))
     const nowTime = new Date()
     this.nowTime = nowTime
     this.nowYear = nowTime.getFullYear()
@@ -112,8 +112,8 @@ export default {
     getMonthDay () {
       const firstDay = new Date(this.nowYear, this.nowMonth - 1)
       const lastDay = new Date(new Date(this.nowYear, this.nowMonth).valueOf() - 60 * 60 * 1000 * 24)
-      const startDate = firstDay.getFullYear() + ',' + (firstDay.getMonth() + 1) + ',' + firstDay.getDate()
-      const endDate = lastDay.getFullYear() + ',' + (lastDay.getMonth() + 1) + ',' + lastDay.getDate()
+      const startDate = firstDay.getFullYear() + '/' + (firstDay.getMonth() + 1) + '/' + firstDay.getDate()
+      const endDate = lastDay.getFullYear() + '/' + (lastDay.getMonth() + 1) + '/' + lastDay.getDate()
       this.minDate = new Date(startDate)
       this.maxDate = new Date(endDate)
       this.yearmonth = this.nowYear + '年' + this.nowMonth + '月'

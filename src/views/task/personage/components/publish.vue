@@ -67,6 +67,7 @@
     <task-op
       v-model="selectShow"
       :taskId="taskId"
+      :shareObj="shareObj"
       @updateTask="reload"
     ></task-op>
   </div>
@@ -88,6 +89,7 @@ export default {
       list: [],
       selectShow: false,
       taskId: '',
+      shareObj: {},
       modelSubTit: '下架后其他用户将看不见'
     }
   },
@@ -102,8 +104,13 @@ export default {
       return time < 0 ? 0 : time
     },
     // 打开更多
-    openMoreDialog ({ task_id }) {
+    openMoreDialog ({ task_id, task_title, task_desc }) {
       this.taskId = task_id
+      this.shareObj = {
+        title: task_title,
+        description: task_desc,
+        pyqTitle: task_title
+      }
       this.selectShow = true
     },
     // 任务进度

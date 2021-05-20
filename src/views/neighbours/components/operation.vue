@@ -97,7 +97,17 @@ export default {
     },
     // 分享
     share () {
-      this.downloadSharePic(this.item)
+      if (this.articleType == 6) {
+        this.shareObj = {
+          title: this.item.task_title,
+          description: this.item.task_desc,
+          pyqTitle: this.item.task_title,
+          thumb: 'widget://res/task_share.jpg',
+          contentUrl: `http://live.tosolomo.com/wap/#/taskDetail?taskId=${this.taskId}`
+        }
+      } else {
+        this.downloadSharePic(this.item)
+      }
       this.showShare = true
     },
     // 保存分享图片
