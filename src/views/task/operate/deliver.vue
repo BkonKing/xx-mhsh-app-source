@@ -22,7 +22,7 @@
         </div>
       </graphic>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ formData.content.length > 200 ? 'unable-btn' : '', 'task-btn']">确定</div>
+        <div v-preventReClick @click="submit" :class="[ formData.content.length > 200 ? 'unable-btn' : '', 'task-btn']">确定</div>
       </div>
       <confirm-model v-model="confirmShow"></confirm-model>
     </div>

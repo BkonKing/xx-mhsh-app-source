@@ -17,7 +17,7 @@
           />
         </div>
         <div class="comment-popup-right">
-          <div v-preventReClick class="send-btn" :class="{'able-send': content}" @click="submit">发送</div>
+          <van-button :loading="isLoading" v-preventReClick class="send-btn" :class="{'able-send': content}" @click="submit">发送</van-button>
         </div>
       </div>
     </van-popup>
@@ -51,7 +51,8 @@ export default {
     return {
       content: '',
       show: this.value,
-      images: ''
+      images: '',
+      isLoading: false
     }
   },
   methods: {
@@ -75,14 +76,17 @@ export default {
       if (!this.content) {
         return
       }
+      this.isLoading = true
       if (this.replyType === 'quiz') {
         submitQuiz({ content: this.content, linli_task_id: this.parentId }).then(res => {
           this.initData()
+          this.isLoading = false
           this.$emit('quizCall', res.data)
         })
       } else if (this.replyType === 'reply') {
         replyQuiz({ content: this.content, question_id: this.parentId }).then(res => {
           this.initData()
+          this.isLoading = false
           this.$emit('quizCall', res.data)
         })
       }
@@ -167,6 +171,9 @@ export default {
       font-size: 24px;
       border-radius: 10px;
       background: #CCCCCC;
+      width: 72px;
+      padding: 0;
+      border: 0;
       &.able-send {
         background-color: #FF6555;
       }

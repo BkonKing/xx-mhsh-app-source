@@ -106,7 +106,7 @@
               <div>进度</div>
             </div>
           </div>
-          <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
+          <div v-preventReClick v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
         </div>
       </div>
       <template v-else>

@@ -41,7 +41,7 @@
         </div>
       </graphic>
       <div class="task-btn-block">
-        <div @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">确认</div>
+        <div v-preventReClick @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">确认</div>
       </div>
       <confirm-model v-model="confirmShow" modelTit="确定已经完成任务？" modelSubTit="确定将结算幸福币给接单方" @sure="sure"></confirm-model>
     </div>
