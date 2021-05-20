@@ -42,7 +42,13 @@
           <div>{{info.source_var}}</div>
         </div>
       </div>
-      <div v-if="info.jy_type != '0'" class="module-box">
+      <div v-if="info.jy_type === '5'" class="module-box">
+        <div class="tf-row-space-between" @click="goOrderDefail">
+          <div>任务详情</div>
+          <span class="tf-icon tf-icon-right"></span>
+        </div>
+      </div>
+      <div v-else-if="info.jy_type != '0'" class="module-box">
         <div class="clist-item">
           <div class="clist-item__label">商品说明</div>
           <div class="van-ellipsis">{{info.sp_description}}</div>
@@ -109,6 +115,9 @@ export default {
           break
         case '4':
           path = `/life/movie/ticket?id=${order_id}`
+          break
+        case '5':
+          path = `/pages/task/detail?taskId=${order_id}`
           break
       }
       this.$router.push({

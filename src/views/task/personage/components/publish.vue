@@ -11,7 +11,11 @@
                 >({{ item.reward_happiness }}幸福币/人)</span
               >
             </div>
-            <span class="order-title">{{ item.task_status_name }}</span>
+            <span
+              class="order-title"
+              :class="{ 'order-title-grey': +item.task_status > 2 }"
+              >{{ item.task_status_name }}</span
+            >
           </div>
           <div class="order-body">
             <span class="order-caption">{{ item.task_title }}</span>
@@ -60,7 +64,11 @@
         </div>
       </template>
     </refreshList>
-    <task-op v-model="selectShow" :taskId="taskId" @updateTask="reload"></task-op>
+    <task-op
+      v-model="selectShow"
+      :taskId="taskId"
+      @updateTask="reload"
+    ></task-op>
   </div>
 </template>
 

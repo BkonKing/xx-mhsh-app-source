@@ -6,7 +6,7 @@
           <span class="complaint-title">投诉时间：{{ item.ctime }}</span>
           <span
             class="complaint-caption"
-            :class="{ 'complaint-caption-ing': +item.is_handle }"
+            :class="{ 'complaint-caption-ing': !+item.is_handle }"
             >{{item.is_handle_name}}</span
           >
         </div>
@@ -15,11 +15,11 @@
             >投诉类型：{{ item.complaint_type_name }}</span
           >
           <span class="complaint-summary">{{ item.complaint_desc }}</span>
-          <div class="complaint-group-1">
+          <div class="complaint-group-1" @click.stop="goTaskDetails(item)">
             <div class="complaint-view">
               <img class="complaint-large-icon" :src="item.avatar" />
             </div>
-            <div class="complaint-view-1" @click.stop="goTaskDetails(item)">
+            <div class="complaint-view-1">
               <span class="complaint-nick-name">{{item.nickname}}</span>
               <span class="complaint-caption-1"
                 >{{item.complaint_content}}</span
