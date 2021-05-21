@@ -86,17 +86,20 @@
 
 .complaint-group-2 {
   display: flex;
-  align-self: center;
-  flex-direction: column;
+  width: 100%;
   padding: 20px 30px;
   margin-top: 30px;
   border-radius: 0px 10px 10px 10px;
   background-color: #ffedeb;
-  width: 100%;
-  line-height: 48px;
-  color: #8f8f94;
-  font-size: 26px;
-  .text-multiple-ellipsis(3);
+  .complaint-group-div {
+    display: flex;
+    height: 100%;
+    word-break: break-all;
+    line-height: 48px;
+    color: #8f8f94;
+    font-size: 26px;
+    .text-multiple-ellipsis(3);
+  }
 }
 
 .complaint-text {

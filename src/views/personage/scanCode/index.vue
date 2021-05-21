@@ -217,7 +217,7 @@ export default {
           break
         case 'task':
           // 'jfhd_uid|100001'
-          this.goTask(value)
+          this.goTask(values[1])
           break
         default:
           break

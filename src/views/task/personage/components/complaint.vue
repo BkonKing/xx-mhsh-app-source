@@ -7,7 +7,7 @@
           <span
             class="complaint-caption"
             :class="{ 'complaint-caption-ing': !+item.is_handle }"
-            >{{item.is_handle_name}}</span
+            >{{ item.is_handle_name }}</span
           >
         </div>
         <div class="complaint-body">
@@ -20,14 +20,17 @@
               <img class="complaint-large-icon" :src="item.avatar" />
             </div>
             <div class="complaint-view-1">
-              <span class="complaint-nick-name">{{item.nickname}}</span>
-              <span class="complaint-caption-1"
-                >{{item.complaint_content}}</span
-              >
+              <span class="complaint-nick-name">{{ item.nickname }}</span>
+              <span class="complaint-caption-1">{{
+                item.complaint_content
+              }}</span>
             </div>
           </div>
-          <div v-if="item.content" class="complaint-group-2">
-            <span class="complaint-text">处理回复：</span>{{ item.content }}
+          <div v-if="item.handle_content" class="complaint-group-2">
+            <div class="complaint-group-div">
+              <span class="complaint-text">处理回复：</span
+              >{{ item.handle_content }}
+            </div>
           </div>
         </div>
       </div>

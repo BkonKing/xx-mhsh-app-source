@@ -17,7 +17,7 @@
             </div>
           </div>
           <div v-if="item.hf_content" class="complaint-group-2">
-            <span class="complaint-text">回复：</span>{{ item.hf_content }}
+            <div class="complaint-group-div"><span class="complaint-text">回复：</span>{{ item.hf_content }}</div>
           </div>
         </div>
       </div>

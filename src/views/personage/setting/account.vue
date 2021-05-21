@@ -75,6 +75,12 @@ export default {
         }
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')
+        // 清除路由记录
+        // const routeHistory = history.length - 1
+        // this.$router.go(-routeHistory)
+        // setTimeout(() => {
+        //   this.$router.replace('/')
+        // }, 0)
         this.mtjEvent({
           eventId: 79
         })
