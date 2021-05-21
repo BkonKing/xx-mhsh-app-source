@@ -67,6 +67,7 @@ export default {
         key: 'access_token',
         value: tokenList[item.id]
       })
+      this.$store.commit('clearKeepAlive')
       this.$store.dispatch('getMyAccount').then(async () => {
         Toast.clear()
         if (process.env.VUE_APP_IS_APP === '1') {

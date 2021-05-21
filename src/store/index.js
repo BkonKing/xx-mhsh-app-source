@@ -101,6 +101,9 @@ const store = {
         state.keepAliveList.splice(index, 1)
       }
     },
+    clearKeepAlive (state) {
+      state.keepAliveList = []
+    },
     setPaddingTop (state, value) {
       state.paddingTop = value
     },
@@ -235,6 +238,7 @@ const store = {
           loadingToast.clear()
           if (res.success) {
             clearUserInfo()
+            commit('clearKeepAlive')
             resolve()
           } else {
             reject(res)
