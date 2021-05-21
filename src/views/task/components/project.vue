@@ -30,6 +30,7 @@ import {
   Search
 } from 'vant'
 import { searchProjectList } from '@/api/task'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     [Popup.name]: Popup,
@@ -50,6 +51,9 @@ export default {
       projectList: []
     }
   },
+  computed: {
+    ...mapGetters(['currentProject'])
+  },
   created () {
     this.searchProjectList()
   },
@@ -59,7 +63,11 @@ export default {
         projectName: this.searchVal
       }).then(res => {
         this.projectList = res.data
-        console.log(res)
+        res.data.forEach((item, key) => {
+          if (item.id == this.currentProject.project_id) {
+            this.onSelect(key, item.id)
+          }
+        })
       })
     },
     onSelect (index, id) {
@@ -141,6 +149,8 @@ export default {
 }
 
 .project-list {
+  max-height: 1080px;
+  overflow-y: auto;
   .project-item {
     height: 108px;
     font-size: 28px;

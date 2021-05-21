@@ -271,7 +271,7 @@ export default {
     // 删除
     delete () {
       deleteTask({ linli_task_id: this.taskId }).then((res) => {
-        this.$router.go(-1)
+        this.$emit('updateTask', this.statusName)
       })
     },
     cancel () {

@@ -276,7 +276,11 @@ export default {
     },
     // 操作选择回调
     updateTask (opType) {
-      this.getData()
+      if (opType === 'delete') {
+        this.$router.go(-1)
+      } else {
+        this.getData()
+      }
     },
     // 预览大图
     previewPic (index) {
