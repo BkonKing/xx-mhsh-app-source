@@ -1,8 +1,8 @@
 <template>
   <div class="publist-task-list">
-    <refreshList :list.sync="list" :load="getList">
-      <template v-slot="{ item }">
-        <div class="order-wrapper" @click="goTask(item)">
+    <refreshList ref="list" :list.sync="list" :load="getList">
+      <template v-slot="{ item, index }">
+        <div class="order-wrapper" @click="goTask(item, index)">
           <div class="order-header">
             <div class="order-view">
               <span class="tf-icon tf-icon-xingfubi1 order-icon"></span>
@@ -31,14 +31,14 @@
           </div>
           <div class="order-footer">
             <div class="order-footer-item">
-              <div class="order-view-1" @click.stop="openMoreDialog(item)">
+              <div class="order-view-1" @click.stop="openMoreDialog(item, index)">
                 <span class="tf-icon tf-icon-gengduo1 order-icon-1"></span>
                 <span class="order-tag">更多</span>
               </div>
               <div
                 v-if="+item.is_schedule"
                 class="order-view-1"
-                @click.stop="goSchedule(item)"
+                @click.stop="goSchedule(item, index)"
               >
                 <span class="tf-icon tf-icon-ziyuan2 order-icon-1"></span>
                 <span class="order-tag">进度</span>
@@ -50,7 +50,7 @@
                 class="order-caption-1"
                 >剩余<van-count-down
                   :time="countDownTime(item.task_etime)"
-                  @finish="reload"
+                  @finish="countDownFinish(item, index)"
               /></span>
               <span v-else class="order-title">{{ item.text }}</span>
             </div>
@@ -77,7 +77,7 @@
 // /pages/task/personage/index
 import refreshList from '@/components/tf-refresh-list'
 import taskOp from '../../components/task-op'
-import { getMyTaskList } from '@/api/task'
+import { getMyTaskList, reMyTask } from '@/api/task'
 export default {
   components: {
     refreshList,
@@ -90,6 +90,7 @@ export default {
       selectShow: false,
       taskId: '',
       shareObj: {},
+      activeIndex: '',
       modelSubTit: '下架后其他用户将看不见'
     }
   },
@@ -99,13 +100,33 @@ export default {
     getList (params) {
       return getMyTaskList(params)
     },
+    // 刷新单条数据
+    reSingleTask () {
+      if (this.activeIndex !== '' && this.taskId !== '') {
+        reMyTask({
+          task_id: this.taskId
+        }).then(({ data }) => {
+          if (Array.isArray(data)) {
+            this.list.splice(this.activeIndex, 1)
+            return
+          }
+          this.$set(this.list, this.activeIndex, data)
+        })
+      }
+    },
+    countDownFinish ({ task_id }, index) {
+      this.taskId = task_id
+      this.activeIndex = index
+      this.reSingleTask()
+    },
     countDownTime (endTime) {
       const time = +endTime * 1000 - new Date().getTime()
       return time < 0 ? 0 : time
     },
     // 打开更多
-    openMoreDialog ({ task_id, task_title, task_desc }) {
+    openMoreDialog ({ task_id, task_title, task_desc }, index) {
       this.taskId = task_id
+      this.activeIndex = index
       this.shareObj = {
         title: task_title,
         description: task_desc,
@@ -114,7 +135,9 @@ export default {
       this.selectShow = true
     },
     // 任务进度
-    goSchedule ({ task_id }) {
+    goSchedule ({ task_id }, index) {
+      this.taskId = task_id
+      this.activeIndex = index
       this.$router.push({
         name: 'scheduleInitiator',
         query: {
@@ -122,17 +145,10 @@ export default {
         }
       })
     },
-    // 邻里-任务详情
-    goDetails ({ task_id }) {
-      this.$router.push({
-        name: 'taskDetail',
-        query: {
-          taskId: task_id
-        }
-      })
-    },
     // 我的任务详情
-    goTask ({ task_id }) {
+    goTask ({ task_id }, index) {
+      this.taskId = task_id
+      this.activeIndex = index
       this.$router.push({
         name: 'PersonageTaskDetails',
         query: {
@@ -140,8 +156,12 @@ export default {
         }
       })
     },
-    reload () {
-      this.$refs.list.reload()
+    reload (type) {
+      if (type === 'delete') {
+        this.list.splice(this.activeIndex, 1)
+      } else {
+        this.reSingleTask()
+      }
     }
   }
 }

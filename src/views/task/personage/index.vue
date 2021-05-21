@@ -18,10 +18,10 @@
       @change="tabsChange"
     >
       <van-tab title="我接单的" id="taskList0">
-        <order-list></order-list>
+        <order-list ref="taskList0"></order-list>
       </van-tab>
       <van-tab title="我发布的" id="taskList1">
-        <publish-list></publish-list>
+        <publish-list ref="taskList1"></publish-list>
       </van-tab>
       <van-tab title="我的投诉" id="taskList2">
         <complaint-list></complaint-list>
@@ -66,6 +66,9 @@ export default {
         .getElementsByClassName(
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
+    }
+    if (+this.current < 2 && this.$refs[`taskList${this.current}`]) {
+      this.$refs[`taskList${this.current}`].reSingleTask()
     }
   },
   methods: {

@@ -49,7 +49,7 @@
       v-model="selectShow"
       :taskId="taskId"
       :shareObj="shareObj"
-      @updateTask="getMyTaskInfo"
+      @updateTask="updateTask"
     ></task-op>
   </div>
 </template>
@@ -89,6 +89,13 @@ export default {
           pyqTitle: data.task_title
         }
       })
+    },
+    updateTask (type) {
+      if (type === 'delete') {
+        this.$router.go(-1)
+      } else {
+        this.getMyTaskInfo()
+      }
     },
     // 打开更多
     openMoreDialog () {

@@ -50,9 +50,19 @@ export function getUserTaskList (params) {
   return request.post('/linli/my_linli/user_task_lisk', params)
 }
 
+// 获取我的 我接单的任务 单条
+export function reUserTask (params) {
+  return request.post('/linli/my_linli/user_task_one_info', params)
+}
+
 // 获取我的 我发布的任务 列表
 export function getMyTaskList (params) {
   return request.post('/linli/my_linli/my_task_lisk', params)
+}
+
+// 获取我的 我发布的任务 单条
+export function reMyTask (params) {
+  return request.post('/linli/my_linli/my_task_one_info', params)
 }
 
 // 获取我的 我的投诉 列表

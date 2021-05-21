@@ -1,7 +1,7 @@
 <template>
   <refreshList ref="list" :list.sync="list" :load="getList">
-    <template v-slot="{ item }">
-      <div class="order-wrapper" @click="goTask(item)">
+    <template v-slot="{ item, index }">
+      <div class="order-wrapper" @click="goTask(item, index)">
         <div class="order-header">
           <div class="order-view">
             <span class="tf-icon tf-icon-xingfubi1 order-icon"></span>
@@ -31,7 +31,7 @@
               <span class="tf-icon tf-icon-lianxi order-icon-1"></span>
               <span class="order-tag">联系</span>
             </div>
-            <div class="order-view-1" @click.stop="goSchedule(item)">
+            <div class="order-view-1" @click.stop="goSchedule(item, index)">
               <span class="tf-icon tf-icon-ziyuan2 order-icon-1"></span>
               <span class="order-tag">进度</span>
             </div>
@@ -42,13 +42,13 @@
               class="order-caption-1"
               >剩余<van-count-down
                 :time="countDownTime(item.task_etime)"
-                @finish="reload"
+                @finish="countDownFinish(item, index)"
             /></span>
             <span class="order-caption-text" v-else>{{ item.text }}</span>
             <van-button
               v-if="+item.is_can_submit"
               class="order-button-wrapper"
-              @click.stop="goDeliverTask(item)"
+              @click.stop="goDeliverTask(item, index)"
               >交付任务</van-button
             >
           </div>
@@ -67,7 +67,7 @@
 <script>
 // /pages/task/personage/index
 import refreshList from '@/components/tf-refresh-list'
-import { getUserTaskList } from '@/api/task'
+import { getUserTaskList, reUserTask } from '@/api/task'
 export default {
   components: {
     refreshList
@@ -75,7 +75,9 @@ export default {
   data () {
     return {
       // 0已接单、1进行中、2已完成、3已淘汰、4已放弃、5已终止
-      list: []
+      list: [],
+      taskId: '',
+      activeIndex: ''
     }
   },
   created () {},
@@ -83,6 +85,16 @@ export default {
     // 获取我的报事报修
     getList (params) {
       return getUserTaskList(params)
+    },
+    // 刷新单条数据
+    reSingleTask () {
+      if (this.activeIndex !== '' && this.taskId !== '') {
+        reUserTask({
+          user_task_id: this.taskId
+        }).then(({ data }) => {
+          this.$set(this.list, this.activeIndex, data)
+        })
+      }
     },
     // 联系
     makePhoneCall (phoneNumber) {
@@ -92,7 +104,9 @@ export default {
       })
     },
     // 任务进度
-    goSchedule ({ task_id }) {
+    goSchedule ({ task_id, user_task_id }, index) {
+      this.taskId = user_task_id
+      this.activeIndex = index
       this.$router.push({
         name: 'scheduleReceiver',
         query: {
@@ -101,7 +115,9 @@ export default {
       })
     },
     // 任务详情
-    goTask ({ task_id }) {
+    goTask ({ task_id, user_task_id }, index) {
+      this.taskId = user_task_id
+      this.activeIndex = index
       this.$router.push({
         name: 'taskDetail',
         query: {
@@ -110,7 +126,9 @@ export default {
       })
     },
     // 交付任务
-    goDeliverTask ({ task_id, user_task_id }) {
+    goDeliverTask ({ task_id, user_task_id }, index) {
+      this.taskId = user_task_id
+      this.activeIndex = index
       this.$router.push({
         name: 'operateDeliver',
         query: {
@@ -118,6 +136,11 @@ export default {
           userTaskId: user_task_id
         }
       })
+    },
+    countDownFinish ({ user_task_id }, index) {
+      this.taskId = user_task_id
+      this.activeIndex = index
+      this.reSingleTask()
     },
     countDownTime (endTime) {
       const time = +endTime * 1000 - new Date().getTime()
