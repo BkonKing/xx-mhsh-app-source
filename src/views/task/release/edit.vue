@@ -113,7 +113,7 @@
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
     <date-picker v-model="dateShow" @dateSure="dateSure"></date-picker>
-    <area-picker v-model="areaShow" @areaSure="areaSure"></area-picker>
+    <area-picker v-model="areaShow" :province="province" @areaSure="areaSure"></area-picker>
     <list-select v-model="selectShow" @selectCall="selectCall" :selectList="selectList"></list-select>
     <list-select v-model="telShow" @selectCall="telCall" :selectList="telList"></list-select>
     <project v-model="projectShow" @projectSure="projectCall"></project>
@@ -132,7 +132,7 @@ import project from '../components/project'
 import confirmModel from '../components/confirm-model'
 import { getTaskTypeList, submitTask, saveTask, editTaskInfo } from '@/api/task'
 import { mapGetters } from 'vuex'
-import { taskValidForm, ValidNumForm } from '@/utils/util'
+import { taskValidForm, ValidNumForm, bMapGetLocationInfo } from '@/utils/util'
 import {
   NavBar,
   Stepper,
@@ -224,6 +224,7 @@ export default {
       typeId: '', // 类型选择项id
       confirmShow: false, // 关闭提示弹窗
       isLoading: false,
+      province: '', // 省份
       isAgree: false // 同意规则
     }
   },
@@ -266,8 +267,17 @@ export default {
       }
       this.getTaskType()
     }
+    this.getLocationInfo()
   },
   methods: {
+    // 获取当前地址信息
+    getLocationInfo () {
+      // adCode:行政区编码
+      return bMapGetLocationInfo().then(data => {
+        const { province } = data
+        this.province = province
+      })
+    },
     // 获取任务详情
     getData () {
       editTaskInfo({ linli_task_id: this.taskId }).then((res) => {
@@ -543,6 +553,12 @@ export default {
           // this.formData.location_limit = this.formData.address ? 0 : 1
           if (this.editType === 'edit' || this.editType === 'publish') {
             this.formData.is_modify = this.editType === 'edit' ? 1 : 0
+            const now = new Date().getTime()
+            const end = new Date(this.formData.task_etime).getTime()
+            if (end < now) {
+              Toast('结束时间不能小于当前时间')
+              return
+            }
           } else if (this.editType === 'anew') {
             this.formData.id = 0
             this.formData.linli_task_id = 0
@@ -559,7 +575,8 @@ export default {
             })
           }).catch((res) => {
             this.isLoading = false
-            Toast('提交失败 请重试')
+            const message = res.message || '提交失败 请重试'
+            Toast(message)
           })
         }).catch((res) => {
           this.goScroll(res)

@@ -42,7 +42,11 @@ export default {
     },
     defaultVal: {
       type: String,
-      default: '110101'
+      default: ''
+    },
+    province: {
+      type: String,
+      default: ''
     }
   },
   data () {
@@ -77,6 +81,15 @@ export default {
     },
     areaShow (val) {
       this.$emit('input', val)
+    },
+    province (val) {
+      const provinceList = this.areaList.province_list
+      for (const key in provinceList) {
+        if (provinceList[key] === this.province) {
+          this.defaultVal = key
+          this.selectVal.push({ code: key, name: this.province })
+        }
+      }
     }
   }
 }
