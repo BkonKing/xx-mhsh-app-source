@@ -15,7 +15,9 @@
         <van-field class="field"
                    v-model="personName"
                    placeholder="姓名"
-                   @change="setRealname">
+                   @change="setRealname"
+                   :disabled='personName!==""?true:false'
+                   >
           <template #label>
             <div class="label">
               持卡人

@@ -121,6 +121,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    id: {
+      type: [Array, String],
+      default: ''
     }
   },
   data () {
@@ -218,6 +222,11 @@ export default {
     }
   },
   watch: {
+    id () {
+      this.editStatus = !this.record
+      this.meterNum = this.record
+      this.images = this.pic || []
+    },
     record (val) {
       this.editStatus = !val
       this.meterNum = val
@@ -225,6 +234,9 @@ export default {
     },
     pic (val) {
       this.images = val || []
+    },
+    showKeyboard (val) {
+      !val && this.handleConfirm()
     }
   }
 }
