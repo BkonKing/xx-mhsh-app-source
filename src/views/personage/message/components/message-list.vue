@@ -129,6 +129,7 @@ export default {
       if (value === '23' || value === '24') {
         const icon = {
           任务已发布: 'tf-icon-renwufabu', // 任务已发布
+          任务审核通过: 'tf-icon-renwufabu', // 任务审核通过
           任务已超时: 'tf-icon-renwuchaoshi', // 任务已超时
           任务已交付: 'tf-icon-yijiaofu', // 任务已交付
           任务投诉: 'tf-icon-renwutousu', // 任务投诉
