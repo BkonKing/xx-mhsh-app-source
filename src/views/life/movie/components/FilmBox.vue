@@ -9,7 +9,8 @@
           <span class="film-version-tag">{{ version }}</span>
         </div>
       </div>
-      <img class="film-img" :src="data.cover" />
+      <img v-if="data.cover" class="film-img" :src="data.cover" />
+      <img v-else class="film-img" src="@/assets/imgs/movie_nocover.png" />
       <div class="film-footer" :class="{ 'film-flex-end': data.score == '0' }">
         <div v-if="data.score != '0'" class="film-score">
           {{ parseFloat(data.score) / 10 }}

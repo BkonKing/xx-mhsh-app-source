@@ -1,7 +1,8 @@
 <template>
   <div class="film-container">
     <div class="film-header">
-      <img class="film-cover" :src="info.cover" alt="影片封面" />
+      <img v-if="info.cover" class="film-cover" :src="info.cover" alt="影片封面" />
+      <img v-else class="film-cover" src="@/assets/imgs/movie_nocover.png" alt="影片封面" />
       <div class="film-info">
         <!-- 名称 -->
         <div class="film-title">{{ info.film_name }}</div>

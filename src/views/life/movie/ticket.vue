@@ -25,7 +25,8 @@
         </div>
         <!-- 影片详情 -->
         <div class="film-box">
-          <img class="film-cover" :src="info.cover" />
+          <img v-if="info.cover" class="film-cover" :src="info.cover" />
+          <img v-else class="film-cover" src="@/assets/imgs/movie_nocover.png" />
           <div class="film-info">
             <div class="film-name">{{ info.film_name }}</div>
             <div class="film-type">

@@ -8,7 +8,8 @@
         {{ item.time }}
       </div>
       <div class="film-box" @click="goFilmDetails(item)">
-        <img class="film-cover" :src="item.cover" alt="" />
+        <img v-if="item.cover" class="film-cover" :src="item.cover" alt="" />
+        <img v-else class="film-cover" src="@/assets/imgs/movie_nocover.png" alt="" />
         <div class="film-info">
           <div class="film-title">
             {{ item.film_name }}

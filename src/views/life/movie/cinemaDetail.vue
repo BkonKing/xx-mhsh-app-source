@@ -52,7 +52,8 @@
                 flex: `0 0 ${filmItemWidth}px`
               }"
             >
-              <img class="film-cover" :src="item.cover" />
+              <img v-if="item.cover" class="film-cover" :src="item.cover" />
+              <img v-else class="film-cover" src="@/assets/imgs/movie_nocover.png" />
             </div>
           </div>
         </div>

@@ -44,7 +44,8 @@
                 </div>
               </div>
               <div class="order-content">
-                <img class="order-cover" :src="item.cover" />
+                <img v-if="item.cover" class="order-cover" :src="item.cover" />
+                <img v-else class="order-cover" src="@/assets/imgs/movie_nocover.png" />
                 <div class="order-content-right">
                   <div class="order-film-name">{{ item.film_name }}</div>
                   <div class="tf-flex">
