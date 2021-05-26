@@ -105,13 +105,13 @@
       </van-tab>
       <van-tab
         v-if="isOpeningTask"
-        ref="taskDropdown"
         title="任务"
         id="neighboursList4"
         :class="[{ 'group-open-box': taskDropdown }]"
       >
         <select-dropdown
           v-model="taskId"
+          ref="taskDropdown"
           :visible.sync="taskDropdown"
           :group="taskTypes"
           label="type_name"
@@ -234,10 +234,10 @@ export default {
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
     }
-    this.$refs.groupDropdown && this.$refs.groupDropdown.scrollCenter()
-    this.$refs.taskDropdown && this.$refs.taskDropdown.scrollCenter()
     this.getPostBarCategoryList()
     this.getTaskSwitch()
+    this.$refs.groupDropdown && this.$refs.groupDropdown.scrollCenter()
+    this.$refs.taskDropdown && this.$refs.taskDropdown.scrollCenter()
   },
   methods: {
     // 切换全部/小区筛选
