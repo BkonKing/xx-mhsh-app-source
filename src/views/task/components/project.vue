@@ -2,7 +2,7 @@
   <div class="project-cont">
     <van-popup v-model="projectShow" position="bottom">
       <div class="project-header tf-row-vertical-center">
-        <div class="project-tit">选择地区</div>
+        <div class="project-tit">小区名称</div>
         <div @click="close" class="project-close tf-row-vertical-center van-icon van-icon-cross">
         </div>
       </div>
@@ -64,7 +64,7 @@ export default {
       }).then(res => {
         this.projectList = res.data
         res.data.forEach((item, key) => {
-          if (item.id == this.currentProject.project_id) {
+          if (this.currentProject && item.id == this.currentProject.project_id) {
             this.onSelect(key, item.id)
           }
         })

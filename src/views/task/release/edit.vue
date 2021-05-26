@@ -5,7 +5,7 @@
         <span class="tf-icon tf-icon-guanbi" @click="confirmShow = true"></span>
       </template>
     </van-nav-bar>
-    <div class="tf-body-container">
+    <div class="tf-body-container" id="body-container">
       <type-select cardTit="任务类型" ref="typeRadio" :radioList="typeList" @selectCall="typeCall"></type-select>
       <div id="task_title"></div>
       <task-card cardTit="任务标题" :required="true">
@@ -31,8 +31,8 @@
       </task-card>
       <task-card cardTit="任务标签">
         <div class="card-cont" slot="content">
-          <div class="label-block tf-row-space-between">
-            <div class="area-block bottom-line tf-row-space-between">
+          <div v-if="formData.task_tag.length < 5" class="label-block tf-row-space-between">
+            <div class="area-block label-input bottom-line tf-row-space-between">
               <van-field v-model="labelVal" type="text" />
               <div class="text-num tf-row">
                 <div><span :class="{'red': labelVal.length > 10}">{{ labelVal.length }}</span>/10</div>
@@ -59,7 +59,7 @@
             <div class="item-cont">{{ completeTime }}</div>
             <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
           </div>
-          <div class="cell-item tf-row">
+          <div @click="!formData.udpate_address && goMap()" class="cell-item tf-row">
             <div class="item-left">完成地点</div>
             <div class="item-cont p-30">
               <template v-if="!formData.udpate_address">不限{{formData.udpate_address}}</template>
@@ -68,7 +68,7 @@
                 <div>{{ formData.address_province + ' ' + formData.address_city + ' ' + formData.address_area + ' '}}</div>
               </template>
             </div>
-            <div @click="goMap" class="item-arrow"><i class="van-icon van-icon-location"></i></div>
+            <div @click="formData.udpate_address && goMap()" class="item-arrow"><i class="van-icon van-icon-location"></i></div>
           </div>
           <div class="cell-item">
             <div @click="selectShow=true" class="tf-row cell-limit">
@@ -88,7 +88,7 @@
             <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
           </div>
           <div class="area-block bottom-line tf-row-space-between">
-            <van-field v-model="formData.mobile" type="tel" />
+            <van-field maxlength="11" v-model="formData.mobile" type="tel" />
           </div>
           <div class="card-tip">请填写有效的手机号码，以便联系</div>
         </div>
@@ -130,7 +130,7 @@ import areaPicker from '../components/area-picker'
 import listSelect from '../components/list-select'
 import project from '../components/project'
 import confirmModel from '../components/confirm-model'
-import { getTaskTypeList, submitTask, saveTask, editTaskInfo } from '@/api/task'
+import { getTaskTypeList, getGroupList, submitTask, saveTask, editTaskInfo } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { taskValidForm, ValidNumForm, bMapGetLocationInfo } from '@/utils/util'
 import {
@@ -225,7 +225,8 @@ export default {
       confirmShow: false, // 关闭提示弹窗
       isLoading: false,
       province: '', // 省份
-      isAgree: false // 同意规则
+      isAgree: false, // 同意规则
+      scrollTop: 0
     }
   },
   computed: {
@@ -242,6 +243,7 @@ export default {
     }
   },
   activated () {
+    this.scrollTop && (document.getElementById('body-container').scrollTop = this.scrollTop)
     const groupInfo = this.$store.state.groupInfo
     this.groupInfo = groupInfo
     if (this.ableIndex == 3 && groupInfo) {
@@ -268,6 +270,7 @@ export default {
       this.getTaskType()
     }
     this.getLocationInfo()
+    this.getGroupList()
   },
   methods: {
     // 获取当前地址信息
@@ -276,6 +279,13 @@ export default {
       return bMapGetLocationInfo().then(data => {
         const { province } = data
         this.province = province
+      })
+    },
+    getGroupList () {
+      getGroupList().then(res => {
+        if (!res.data || res.data.length === 0) {
+          this.selectList.splice(3, 1)
+        }
       })
     },
     // 获取任务详情
@@ -357,6 +367,8 @@ export default {
     // 添加标签
     labelAdd () {
       if (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5) {
+        console.log(document.getElementsByClassName('label-input')[0])
+        document.getElementsByClassName('label-input')[0].getElementsByTagName('input')[0].focus()
         this.formData.task_tag.push(this.labelVal)
         this.labelVal = ''
       }
@@ -641,6 +653,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
+    this.scrollTop = document.getElementById('body-container').scrollTop || 0
     const names = ['releaseGroup', 'addressMap', 'releaseRule']
     if (!names.includes(to.name)) {
       this.$destroy()
@@ -799,7 +812,7 @@ export default {
     color: #AAAAAA;
     align-items: center;
     display: flex;
-    margin-left: 18px;
+    padding-left: 18px;
     line-height: 106px;
     height: 106px;
     .van-icon-location {

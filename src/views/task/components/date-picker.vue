@@ -315,7 +315,8 @@ export default {
 }
 .active {
   /deep/.van-field {
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+    border: 1PX solid #FF6555;
+    // box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
   }
 }
 /deep/.time-field {
