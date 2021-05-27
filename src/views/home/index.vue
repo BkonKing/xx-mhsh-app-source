@@ -352,7 +352,8 @@ export default {
       ],
       guideTop: 0,
       isOpeningTask: true, // 是否显示任务专区
-      taskList: [] // 任务列表
+      taskList: [], // 任务列表
+      isfirst: true // 保存用户信息只执行一次状态
     }
   },
   computed: {
@@ -562,11 +563,16 @@ export default {
           const { adCode, address, lon, lat } = data
           // 开启则获取任务列表
           this.isOpeningTask && this.getTaskList(data)
-          setUserPostion({
-            longitude: lon,
-            latitude: lat,
-            address
-          })
+          // 保存当前定位信息，只执行一次
+          if (this.isfirst) {
+            setUserPostion({
+              longitude: lon,
+              latitude: lat,
+              address
+            }).then(() => {
+              this.isfirst = false
+            })
+          }
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
         })
         .catch(() => {
