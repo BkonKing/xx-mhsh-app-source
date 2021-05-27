@@ -16,148 +16,146 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
-      <template v-if="infoData">
-        <div class="header-block">
-          <div class="task-status bg-FEBF00" :class="{'bg-FE8900': infoData.task_status < 3, 'bg-FF6555' : infoData.task_status == 4, 'bg-ccc' : infoData.task_status > 4}">{{ infoData.task_status_name }}</div>
-          <img class="header-bg" src="@/assets/img/task_01.png" />
-          <div class="task-tit">{{ infoData.task_title }}</div>
-          <div class="task-coin tf-row-vertical-center">
-            <img src="@/assets/img/task_02.png" />
-            <div class="coin-num">{{ infoData.reward_happiness }}</div>
-            <div class="coin-unit">幸福币/人</div>
+      <div class="header-block">
+        <div class="task-status bg-FEBF00" :class="{'bg-FE8900': infoData.task_status < 3, 'bg-FF6555' : infoData.task_status == 4, 'bg-ccc' : infoData.task_status > 4}">{{ infoData.task_status_name }}</div>
+        <img class="header-bg" src="@/assets/img/task_01.png" />
+        <div class="task-tit">{{ infoData.task_title }}</div>
+        <div class="task-coin tf-row-vertical-center">
+          <img src="@/assets/img/task_02.png" />
+          <div class="coin-num">{{ infoData.reward_happiness }}</div>
+          <div class="coin-unit">幸福币/人</div>
+        </div>
+        <div class="task-label tf-row">
+          <div v-for="(item, index) in infoData.task_tag" :key="index" class="lable-item">{{ item }}</div>
+        </div>
+      </div>
+      <div class="body-cont">
+        <div class="task-session">
+          <div class="session-tit">任务来源</div>
+          <div class="release-user tf-row">
+            <img :src="infoData.rwf_avatar" />
+            <div class="tf-row-space-between">
+              <div class="release-name van-ellipsis">{{ infoData.rwf_nickname }}</div>
+              <div class="release-time">{{ infoData.task_ctime }}</div>
+            </div>
           </div>
-          <div class="task-label tf-row">
-            <div v-for="(item, index) in infoData.task_tag" :key="index" class="lable-item">{{ item }}</div>
+          <div v-if="!isUp" class="complain-tip tf-row-space-between">
+            <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
+            <div @click="complaint">投诉</div>
           </div>
         </div>
-        <div class="body-cont">
-          <div class="task-session">
-            <div class="session-tit">任务来源</div>
-            <div class="release-user tf-row">
-              <img :src="infoData.rwf_avatar" />
-              <div class="tf-row-space-between">
-                <div class="release-name van-ellipsis">{{ infoData.rwf_nickname }}</div>
-                <div class="release-time">{{ infoData.task_ctime }}</div>
-              </div>
+        <div v-if="!isUp && receiverInfo && receiverInfo.is_already == 1" class="task-session">
+          <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
+          <div class="release-user tf-row">
+            <img :src="receiverInfo.jdf_avatar" />
+            <div class="tf-row-space-between">
+              <div class="release-name van-ellipsis">{{ receiverInfo.jdf_nickname }}</div>
+              <div class="release-time" :class="{'color-FF5240' : receiverInfo.progress_status != 2}">{{ receiverInfo.progress_status_name }}</div>
             </div>
-            <div v-if="!isUp" class="complain-tip tf-row-space-between">
-              <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
-              <div @click="complaint">投诉</div>
-            </div>
+            <div @click="deliverTask" v-if="receiverInfo.is_deliver == 1" class="finish-btn">交付任务</div>
           </div>
-          <div v-if="!isUp && receiverInfo && receiverInfo.is_already == 1" class="task-session">
-            <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
-            <div class="release-user tf-row">
-              <img :src="receiverInfo.jdf_avatar" />
-              <div class="tf-row-space-between">
-                <div class="release-name van-ellipsis">{{ receiverInfo.jdf_nickname }}</div>
-                <div class="release-time" :class="{'color-FF5240' : receiverInfo.progress_status != 2}">{{ receiverInfo.progress_status_name }}</div>
-              </div>
-              <div @click="deliverTask" v-if="receiverInfo.is_deliver == 1" class="finish-btn">交付任务</div>
-            </div>
-            <div v-if="receiverInfo.taskflow_list.length" class="progress-step">
-              <div v-for="(item, index) in receiverInfo.taskflow_list" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
-              <!-- <div>03-21 12:00 接单成功，任务进行中</div> -->
-            </div>
+          <div @click="goSchedule" v-if="receiverInfo.taskflow_list.length" class="progress-step">
+            <div v-for="(item, index) in receiverInfo.taskflow_list" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
+            <!-- <div>03-21 12:00 接单成功，任务进行中</div> -->
           </div>
-          <div class="task-session">
-            <div class="session-tit">任务要求</div>
-            <div class="ask-list">
-              <div class="ask-item">需要人数：{{ infoData.need_people_text }}</div>
-              <div class="ask-item">完成时间：{{ infoData.task_time }}</div>
-              <div v-if="isUp" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
-            </div>
+        </div>
+        <div class="task-session">
+          <div class="session-tit">任务要求</div>
+          <div class="ask-list">
+            <div class="ask-item">需要人数：{{ infoData.need_people_text }}</div>
+            <div class="ask-item">完成时间：{{ infoData.task_time }}</div>
+            <div v-if="isUp" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
           </div>
-          <div v-if="infoData.address" class="task-session">
-            <div class="session-tit">完成地点</div>
-            <div @click="openMap" class="task-address tf-vertical-center">
-              <div class="van-ellipsis">{{ infoData.udpate_address || infoData.address }}</div>
-              <div class="van-ellipsis">{{ infoData.address_province + ' ' + infoData.address_city + ' ' + infoData.address_area }}</div>
-              <img class="address-arrow" src="@/assets/img/task_04.png" />
-              <img class="address-bg" src="@/assets/img/task_03.png" />
-            </div>
+        </div>
+        <div v-if="infoData.address" class="task-session">
+          <div class="session-tit">完成地点</div>
+          <div @click="openMap" class="task-address tf-vertical-center">
+            <div class="van-ellipsis">{{ infoData.udpate_address || infoData.address }}</div>
+            <div class="van-ellipsis">{{ infoData.address_province + ' ' + infoData.address_city + ' ' + infoData.address_area }}</div>
+            <img class="address-arrow" src="@/assets/img/task_04.png" />
+            <img class="address-bg" src="@/assets/img/task_03.png" />
           </div>
-          <div class="task-session">
-            <div class="session-tit tf-row-space-between">任务说明<span class="tit-right" v-if="infoData.renew_day > 0">更新：{{ infoData.renew_day }}天前</span></div>
-            <div class="detai-cont">
-              <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.task_desc }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
-              <div v-if="infoData.task_image && infoData.task_image.length" class="cont-pic tf-row-wrap">
-                <img @click="previewPic(index)" v-for="(item, index) in infoData.task_image" :key="index" :src="item" />
-              </div>
+        </div>
+        <div class="task-session">
+          <div class="session-tit tf-row-space-between">任务说明<span class="tit-right" v-if="infoData.renew_day > 0">更新：{{ infoData.renew_day }}天前</span></div>
+          <div class="detai-cont">
+            <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.task_desc }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
+            <div v-if="infoData.task_image && infoData.task_image.length" class="cont-pic tf-row-wrap">
+              <img @click="previewPic(index)" v-for="(item, index) in infoData.task_image" :key="index" :src="item" />
             </div>
           </div>
         </div>
-        <div v-if="!isUp" class="op-block">
+      </div>
+      <div v-if="!isUp" class="op-block">
+        <div class="bottom-fiex tf-row">
+          <div class="op-left tf-row">
+            <div @click="quiz" class="tf-column">
+              <img src="@/assets/img/task_05.png" />
+              <div>提问</div>
+            </div>
+            <a v-if="infoData.mobile_open == 1 || receiverInfo.is_already == 1" :href="'tel: ' + infoData.mobile" class="tf-column">
+              <img src="@/assets/img/task_06.png" />
+              <div>联系</div>
+            </a>
+            <div @click="share" v-if="receiverInfo.is_can_share == 1" class="tf-column">
+              <img src="@/assets/img/task_07.png" />
+              <div>分享</div>
+            </div>
+            <div v-if="receiverInfo.is_already == 1" @click="goSchedule" class="tf-column">
+              <img src="@/assets/img/task_08.png" />
+              <div>进度</div>
+            </div>
+          </div>
+          <div v-preventReClick v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
+        </div>
+      </div>
+      <template v-else>
+        <div v-if="infoData.task_status!=0 && infoData.task_status!=4 && infoData.task_status!=6" class="op-block">
           <div class="bottom-fiex tf-row">
             <div class="op-left tf-row">
-              <div @click="quiz" class="tf-column">
-                <img src="@/assets/img/task_05.png" />
-                <div>提问</div>
-              </div>
-              <a v-if="infoData.mobile_open == 1 || receiverInfo.is_already == 1" :href="'tel: ' + infoData.mobile" class="tf-column">
-                <img src="@/assets/img/task_06.png" />
-                <div>联系</div>
-              </a>
-              <div @click="share" v-if="receiverInfo.is_can_share == 1" class="tf-column">
+              <template v-if="(infoData.task_status > 0 && infoData.task_status < 4) || infoData.task_status == 5">
+                <div @click="quiz" class="tf-column">
+                  <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
+                  <img src="@/assets/img/task_05.png" />
+                  <div>提问</div>
+                </div>
+                <a :href="'tel: ' + infoData.mobile" class="tf-column">
+                  <img src="@/assets/img/task_06.png" />
+                  <div>联系</div>
+                </a>
+              </template>
+              <div @click="share" v-if="infoData.task_status == 1 || infoData.task_status == 2" class="tf-column">
                 <img src="@/assets/img/task_07.png" />
                 <div>分享</div>
               </div>
-              <div v-if="receiverInfo.is_already == 1" @click="goSchedule" class="tf-column">
+              <div v-if="infoData.task_status == 1 && infoData.task_status == 5" @click="goSchedule" class="tf-column">
                 <img src="@/assets/img/task_08.png" />
                 <div>进度</div>
               </div>
             </div>
-            <div v-preventReClick v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
+            <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">编辑</div>
           </div>
         </div>
-        <template v-else>
-          <div v-if="infoData.task_status!=0 && infoData.task_status!=4 && infoData.task_status!=6" class="op-block">
-            <div class="bottom-fiex tf-row">
-              <div class="op-left tf-row">
-                <template v-if="(infoData.task_status > 0 && infoData.task_status < 4) || infoData.task_status == 5">
-                  <div @click="quiz" class="tf-column">
-                    <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
-                    <img src="@/assets/img/task_05.png" />
-                    <div>提问</div>
-                  </div>
-                  <a :href="'tel: ' + infoData.mobile" class="tf-column">
-                    <img src="@/assets/img/task_06.png" />
-                    <div>联系</div>
-                  </a>
-                </template>
-                <div @click="share" v-if="infoData.task_status == 1 || infoData.task_status == 2" class="tf-column">
-                  <img src="@/assets/img/task_07.png" />
-                  <div>分享</div>
-                </div>
-                <div v-if="infoData.task_status == 1 && infoData.task_status == 5" @click="goSchedule" class="tf-column">
-                  <img src="@/assets/img/task_08.png" />
-                  <div>进度</div>
-                </div>
-              </div>
-              <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">编辑</div>
-            </div>
-          </div>
-        </template>
-        <template v-if="infoData.task_image && infoData.task_image.length">
-          <van-image-preview v-model="picShow" :images="infoData.task_image" :startPosition="picIndex">
-          </van-image-preview>
-        </template>
-        <task-op
-          ref="taskop"
-          v-model="selectShow"
-          :taskId="taskId"
-          :shareObj="shareObj"
-          @updateTask="updateTask"
-        ></task-op>
-        <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
-        <receiver-op
-          v-model="opShow"
-          :canShare="canShare"
-          :item="shieldInfo"
-          :shareObj="shareObj"
-          @selectCall="complaint"
-        ></receiver-op>
       </template>
+      <template v-if="infoData.task_image && infoData.task_image.length">
+        <van-image-preview v-model="picShow" :images="infoData.task_image" :startPosition="picIndex">
+        </van-image-preview>
+      </template>
+      <task-op
+        ref="taskop"
+        v-model="selectShow"
+        :taskId="taskId"
+        :shareObj="shareObj"
+        @updateTask="updateTask"
+      ></task-op>
+      <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
+      <receiver-op
+        v-model="opShow"
+        :canShare="canShare"
+        :item="shieldInfo"
+        :shareObj="shareObj"
+        @selectCall="complaint"
+      ></receiver-op>
     </div>
   </div>
 </template>
@@ -165,7 +163,8 @@
 <script>
 import {
   NavBar,
-  ImagePreview
+  ImagePreview,
+  Toast
 } from 'vant'
 import receiverOp from './receiver-op'
 import { getTaskInfo, receivingMask } from '@/api/task'
@@ -176,6 +175,7 @@ export default {
   components: {
     [NavBar.name]: NavBar,
     [ImagePreview.name]: ImagePreview,
+    [Toast.name]: Toast,
     receiverOp,
     taskOp,
     confirmModel
@@ -219,6 +219,11 @@ export default {
   },
   methods: {
     getData () {
+      Toast.loading({
+        message: '加载中...',
+        duration: 0,
+        forbidClick: true
+      })
       getTaskInfo({ linli_task_id: this.taskId, province: this.province, city: this.city, area: this.area }).then(res => {
         this.shieldInfo = {
           uid: res.data.uid,
@@ -244,6 +249,7 @@ export default {
         this.$nextTick(() => {
           this.getTextOver()
         })
+        Toast.clear()
       })
     },
     getTextOver () {
@@ -424,7 +430,7 @@ export default {
   margin-bottom: 30px;
   .task-tit {
     font-size: 44px;
-    font-weight: 500;
+    font-weight: bold;
     color: #2A334A;
     line-height: 60px;
     width: 486px;
@@ -442,7 +448,7 @@ export default {
     }
     .coin-num {
       font-size: 40px;
-      font-weight: 500;
+      font-weight: bold;
       margin-right: 10px;
     }
     .coin-unit {
@@ -481,7 +487,7 @@ export default {
     text-align: center;
     border-radius: 32px 0px 0px 32px;
     font-size: 26px;
-    font-weight: 500;
+    font-weight: bold;
     color: #FFFFFF;
     z-index: 3;
     &.bg-ccc {
@@ -507,7 +513,7 @@ export default {
   border-radius: 10px;
   .session-tit {
     font-size: 32px;
-    font-weight: 500;
+    font-weight: bold;
     color: #000000;
     height: 100px;
     padding-top: 10px;
@@ -540,7 +546,7 @@ export default {
     flex-direction: column;
   }
   .release-name {
-    font-weight: 500;
+    font-weight: bold;
     color: #000000;
     line-height: 36px;
   }

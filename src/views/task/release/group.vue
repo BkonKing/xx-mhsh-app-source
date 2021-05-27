@@ -119,7 +119,7 @@ export default {
 
 <style lang="less" scoped>
 .tf-body-container{
-  padding: 20px;
+  padding: 0 20px 20px;
   font-size: 28px;
   color: #333;
   background-color: #F7F7F7;

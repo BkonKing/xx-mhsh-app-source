@@ -11,12 +11,13 @@
           <div slot="left-icon" class="tf-icon tf-icon-sousuo1"></div>
         </van-search>
       </div>
-      <div class="project-list">
+      <div v-if="projectList.length" class="project-list">
         <div @click="onSelect(index, item.id)" v-for="(item ,index) in projectList" :key="index" class="project-item tf-row-space-between" :class="{'cur': selectProjcetId == item.id}">
           <div class="itme-name van-ellipsis">{{ item.project_name }}</div>
           <div class="check-block"><span class="tf-icon tf-icon-gou"></span></div>
         </div>
       </div>
+      <div v-else class="project-empty">暂无内容</div>
       <div class="project-sure">
         <div @click="projectSure" class="task-btn">确定</div>
       </div>
@@ -105,7 +106,7 @@ export default {
   line-height: 90px;
   .project-tit {
     font-size: 32px;
-    font-weight: 500;
+    font-weight: bold;
     color: #000000;
     flex-grow: 1;
     text-align: center;
@@ -143,7 +144,7 @@ export default {
       margin-right: 20px;
     }
     .van-field__control {
-      font-size: 24px;
+      font-size: 28px;
     }
   }
 }
@@ -199,5 +200,15 @@ export default {
       }
     }
   }
+}
+.project-empty {
+  height: 102px;
+  font-size: 28px;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #8F8F94;
+  line-height: 36px;
+  padding-top: 46px;
+  text-align: center;
 }
 </style>

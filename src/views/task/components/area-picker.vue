@@ -142,7 +142,7 @@ export default {
   line-height: 96px;
   .area-tit {
     font-size: 32px;
-    font-weight: 500;
+    font-weight: bold;
     color: #000000;
     flex-grow: 1;
     text-align: center;

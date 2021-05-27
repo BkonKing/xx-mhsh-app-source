@@ -657,6 +657,7 @@ export default {
     const names = ['releaseGroup', 'addressMap', 'releaseRule']
     if (!names.includes(to.name)) {
       this.$destroy()
+      this.$store.commit('setMap_info', '')
       this.$store.commit('deleteKeepAlive', from.name)
     }
     next()

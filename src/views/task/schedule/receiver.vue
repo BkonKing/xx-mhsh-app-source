@@ -9,7 +9,7 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <div class="tel-btn"><img src="@/assets/img/task_10.png" /></div>
+        <a :href="'tel: ' + maskTel" class="tel-btn"><img src="@/assets/img/task_10.png" /></a>
       </template>
     </van-nav-bar>
     <div v-if="infoData" class="tf-body-container">
@@ -130,6 +130,7 @@ export default {
       },
       reasonList: [],
       prevName: '',
+      maskTel: '', // 联系电话
       complaintUid: ''
     }
   },
@@ -150,6 +151,9 @@ export default {
       getTaskSchedule({ linli_task_id: this.taskId }).then((res) => {
         this.complaintUid = res.uid
         this.infoData = res.data[0]
+        if (!this.maskTel) {
+          this.maskTel = this.infoData.customer_service
+        }
       })
     },
     // 放弃

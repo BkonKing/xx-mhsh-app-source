@@ -44,7 +44,7 @@
           <div class="order-name-price">
             <div class="order-name p-nowrap">{{item.goods_name}}</div>
             <div v-if="order_type!=3" class="order-price">￥{{item.s_price/100}}</div>
-            <div v-else class="order-price"><img src="@/assets/img/icon_26.png" />{{settlementInfo.credits/item.count}}</div>
+            <div v-else class="order-price"><img src="@/assets/img/icon_36.png" />{{settlementInfo.credits/item.count}}</div>
           </div>
           <div class="order-sku-num">
             <div class="order-sku p-nowrap">{{item.specs_name}}</div>
@@ -139,18 +139,18 @@
       <div class="detail-price-list">
         <div class="detail-price-item">
           <div>商品总价</div>
-          <div><img src="@/assets/img/icon_26.png" />{{settlementInfo.credits}}</div>
+          <div><img src="@/assets/img/icon_36.png" />{{settlementInfo.credits}}</div>
         </div>
         <div class="detail-price-item">
           <div>运费</div>
-          <div><img src="@/assets/img/icon_26.png" />{{settlementInfo.freight/10}}</div>
+          <div><img src="@/assets/img/icon_36.png" />{{settlementInfo.freight/10}}</div>
         </div>
 
       </div>
       <div class="order-total order-total-detail">
         <div class="color-8f8f94 font-24">共 1 件</div>
         <div class="order-price-total">
-          合计:<span><img src="@/assets/img/icon_26.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</span>
+          合计:<span><img src="@/assets/img/icon_36.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</span>
         </div>
       </div>
     </div>
@@ -185,7 +185,7 @@
         <div v-if="order_type==0" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.total_price) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.total_pay_price) + parseInt(settlementInfo.freight))/100}}</div>
         <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
         <template v-else>
-          <div v-if="settlementInfo.is_ok" class="all-price"><span>合计：</span><img src="@/assets/img/icon_24.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
+          <div v-if="settlementInfo.is_ok" class="all-price all-price-credits"><span>合计：</span><img src="@/assets/img/icon_37.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
         </template>
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc" v-preventReClick v-txAnalysis="{eventId: 16}">付款</div>
@@ -799,6 +799,16 @@ export default {
 .detail-price-list .detail-price-item {
   font-size: 28px;
 }
+.order-name-price .order-price img {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+.order-price-total span img {
+  width: 32px;
+  height: 32px;
+  margin: 0 10px 0 12px;
+}
 /* 收货地址 start */
 .address-session {
   min-height: 183px;
@@ -971,6 +981,14 @@ input.order-remarks-text {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+.all-price-credits.all-price {
+  color: #FEBF00;
+  font-size: 36px;
+}
+.all-price-credits.all-price img {
+  width: 36px;
+  height: 36px;
 }
 .all-price img {
   width: 28px;

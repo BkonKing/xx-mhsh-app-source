@@ -109,6 +109,9 @@ export default {
       .time::before {
         background: #FEBF00;
       }
+      .cont div {
+        font-weight: bold;
+      }
     }
     &:last-child {
       .line {

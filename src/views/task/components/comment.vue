@@ -13,7 +13,8 @@
             maxlength="100"
             show-word-limit
             v-model="content"
-            :placeholder="'回复TA'"
+            autosize="true"
+            :placeholder="placeholder"
           />
         </div>
         <div class="comment-popup-right">
@@ -52,7 +53,8 @@ export default {
       content: '',
       show: this.value,
       images: '',
-      isLoading: false
+      isLoading: false,
+      placeholder: ''
     }
   },
   methods: {
@@ -108,6 +110,13 @@ export default {
     },
     value (value) {
       this.show = value
+      if (value) {
+        if (this.replyType === 'quiz') {
+          this.placeholder = '我要提问'
+        } else {
+          this.placeholder = '回复TA'
+        }
+      }
     }
   }
 }
