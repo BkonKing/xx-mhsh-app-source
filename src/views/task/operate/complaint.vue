@@ -63,6 +63,7 @@
             :maxlength="200"
             placeholder="请填写10字以上的投诉原因以便我们核实情况"
             show-word-limit
+            autosize
             class="complaint-form-textarea"
           />
           <tf-uploader
@@ -72,16 +73,16 @@
           ></tf-uploader>
         </div>
       </div>
-      <van-button
-        class="confirm-btn"
-        v-preventReClick
-        size="large"
-        type="danger"
-        :disabled="!(complaintType && content)"
-        @click="complaintTask"
-        >确认</van-button
-      >
     </div>
+    <van-button
+      class="confirm-btn"
+      v-preventReClick
+      size="large"
+      type="danger"
+      :disabled="!(complaintType && content)"
+      @click="complaintTask"
+      >确认</van-button
+    >
     <van-popup
       v-model="typeVisible"
       safe-area-inset-bottom
@@ -265,6 +266,7 @@ export default {
 
 .complaint-form {
   padding: 0 30px 20px;
+  margin-bottom: 30px;
   .complaint-form-label {
     display: flex;
     align-items: flex-start;
@@ -308,7 +310,7 @@ export default {
   }
   .complaint-form-textarea {
     width: 650px;
-    height: 260px;
+    min-height: 260px;
     padding: 30px 30px 0;
     margin-top: 30px;
     font-size: 28px;
@@ -338,7 +340,7 @@ export default {
 
 .confirm-btn {
   width: 710px;
-  margin: 60px 20px 30px;
+  margin: 30px 20px 30px;
   font-size: 28px;
   border-radius: 44px !important;
 }

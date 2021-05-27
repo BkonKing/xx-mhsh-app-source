@@ -53,11 +53,26 @@ export default {
       (ret, err) => {
         if (
           this.$route.matched.length === 1 &&
-          swiperightWhiteList.indexOf(this.$route.name) === -1
+          swiperightWhiteList.indexOf(this.$route.name) === -1 &&
+          !haveImgPreview()
         ) {
           this.$router.go(-1)
         } else {
           eventBus.$emit('swiperight', ret, err)
+        }
+        // 查看是否有图片预览
+        function haveImgPreview () {
+          // 图片预览
+          const imgPreviewEle = document.getElementsByClassName(
+            'van-image-preview'
+          )
+          let imgPreviewStatus = false
+          imgPreviewEle.forEach((el) => {
+            if (el.style.display !== 'none') {
+              imgPreviewStatus = true
+            }
+          })
+          return imgPreviewStatus
         }
       }
     )

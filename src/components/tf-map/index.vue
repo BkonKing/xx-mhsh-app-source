@@ -277,7 +277,7 @@ export default {
           h: '100px',
           marginLeft: 0,
           marginRight: 0,
-          marginTop: 0,
+          marginTop: api.safeArea.top,
           marginBottom: 0
         }
       })
