@@ -300,6 +300,7 @@ import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 import FilmBox from '@/views/life/movie/components/FilmBox'
 import homeTask from './components/task'
+import { setUserPostion } from '@/api/user'
 import {
   getMyApp,
   getBannerIndex,
@@ -558,14 +559,24 @@ export default {
       // adCode:行政区编码
       bMapGetLocationInfo()
         .then(data => {
-          const { adCode } = data
+          const { adCode, address, lon, lat } = data
           // 开启则获取任务列表
           this.isOpeningTask && this.getTaskList(data)
+          setUserPostion({
+            longitude: lon,
+            latitude: lat,
+            address
+          })
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
         })
         .catch(() => {
           // 开启则获取任务列表
           this.isOpeningTask && this.getTaskList({})
+          // setUserPostion({
+          //   longitude: 119.3408126,
+          //   latitude: 26.053068,
+          //   address: '福建省福州市仓山区工农路481号'
+          // })
           this.getfilmlist()
         })
     },

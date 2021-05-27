@@ -7,7 +7,7 @@
       :fixed="true"
       placeholder
       left-arrow
-      @click-left="$router.go(-1)"
+      @click-left="goBack"
     >
       <template #right>
         <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
@@ -275,6 +275,9 @@ export default {
     },
     closeShare (data) {
       this.shareShow = data == 1
+    },
+    goBack () {
+      this.$router.go(-1)
     }
   }
 }

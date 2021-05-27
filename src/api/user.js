@@ -56,3 +56,8 @@ export function uImages (data) {
 export function sendSaveDownload (data) {
   return request.post('/download/install/save_download', data)
 }
+
+/* 设置游客定位信息 */
+export function setUserPostion (data) {
+  return request.post('/user/user/setUserPostion', data)
+}
