@@ -1,6 +1,9 @@
 import {
   Dialog
 } from 'vant'
+import { setUserPostion } from '@/api/user'
+import { bMapGetLocationInfo } from '@/utils/util'
+
 // camera               //相机/拍照/录像
 // contacts             //联系人读取/写入
 // contacts-r           //仅联系人读取
@@ -57,28 +60,64 @@ export function handlePermission ({
           overlayStyle
         })
           .then(res => {
-            reqPermission(name, ({ list }) => {
-              if (list[0].granted) {
-                resolve()
-              } else {
-                reject(new Error(false))
-              }
-            })
+            setPer(resolve, reject, name)
+            // reqPermission(name, ({ list }) => {
+            //   if (list[0].granted) {
+            //     resolve()
+            //   } else {
+            //     reject(new Error(false))
+            //   }
+            // })
           })
           .catch(() => {
             reject(new Error(false))
           })
       } else {
-        reqPermission(name, ({ list }) => {
-          if (list[0].granted) {
-            resolve()
-          } else {
-            reject(new Error(false))
-          }
-        })
+        setPer(resolve, reject, name)
+        // reqPermission(name, ({ list }) => {
+        //   if (list[0].granted) {
+        //     resolve()
+        //   } else {
+        //     reject(new Error(false))
+        //   }
+        // })
       }
     } else {
       resolve()
+    }
+  })
+}
+
+/**
+ * 获取权限后调函数
+ * @param {string} name 权限名称
+ * @returns
+ */
+function setPer (resolve, reject, name) {
+  reqPermission(name, ({ list }) => {
+    if (list[0].granted) {
+      // 开启定位，则获取用户的定位信息保存在后端
+      if (name === 'location') {
+        bMapGetLocationInfo()
+          .then(data => {
+            const { lon, lat, address } = data
+            setUserPostion({
+              longitude: lon,
+              latitude: lat,
+              address
+            }).finally(() => {
+              resolve()
+            })
+          })
+          .catch(() => {
+            alert('error')
+            reject(new Error(false))
+          })
+      } else {
+        resolve()
+      }
+    } else {
+      reject(new Error(false))
     }
   })
 }
