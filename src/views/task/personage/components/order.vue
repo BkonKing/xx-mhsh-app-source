@@ -181,4 +181,9 @@ export default {
   line-height: 26px;
   font-size: 26px;
 }
+
+.order-view-1 {
+  margin-left: 30px;
+  margin-right: 30px;
+}
 </style>

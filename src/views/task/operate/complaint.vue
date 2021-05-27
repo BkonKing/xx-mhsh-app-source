@@ -58,7 +58,6 @@
           </div>
           <van-field
             v-model="content"
-            autosize
             rows="4"
             type="textarea"
             :maxlength="200"
@@ -359,6 +358,18 @@ export default {
   }
   .type-item + .type-item {
     border-top: 1px solid #eeeeee;
+  }
+}
+
+/deep/ .van-uploader__preview-delete {
+  width: 36px;
+  height: 36px;
+  background: #000000cc;
+  top: 0;
+  right: 0;
+  border-radius: 0px 0px 0px 14px;
+  .van-icon-cross {
+    font-size: 32px;
   }
 }
 </style>

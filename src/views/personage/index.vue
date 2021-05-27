@@ -696,7 +696,7 @@ export default {
   flex: 1;
   padding: 30px 20px;
 }
-.tf-icon-pinglun {
+.tf-icon-pinglun1 {
   @relative();
 }
 .tf-icon-xiaoxi {

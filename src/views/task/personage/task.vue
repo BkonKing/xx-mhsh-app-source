@@ -15,7 +15,9 @@
     <div class="tf-main-container">
       <div class="task-wrapper" @click="goDetails">
         <div class="task-header">
-          <span class="task-caption">{{ info.task_title }}</span>
+          <div class="task-caption">
+            <span class="task-caption-text">{{ info.task_title }}</span>
+          </div>
           <span class="task-title">{{ info.task_status_name }}</span>
         </div>
         <div class="task-body">
@@ -182,6 +184,7 @@ export default {
 }
 
 .task-title {
+  margin-left: 30px;
   text-align: left;
   line-height: 26px;
   color: #ff6555;
@@ -200,9 +203,14 @@ export default {
 .task-caption {
   display: flex;
   align-items: center;
-  line-height: 1;
-  color: #000;
-  font-size: 32px;
+  flex: 1;
+  width: 0;
+  > .task-caption-text {
+    line-height: 1;
+    color: #000;
+    font-size: 32px;
+    @text-ellipsis();
+  }
 }
 
 .task-title-1 {

@@ -103,7 +103,7 @@ export default {
           description: this.item.task_desc,
           pyqTitle: this.item.task_title,
           thumb: 'widget://res/task_share.jpg',
-          contentUrl: `http://live.tosolomo.com/wap/#/taskDetail?taskId=${this.taskId}`
+          contentUrl: `http://live.tosolomo.com/wap/#/taskDetail?taskId=${this.item.task_id}`
         }
       } else {
         this.downloadSharePic(this.item)

@@ -19,6 +19,7 @@ import { mapGetters } from 'vuex'
 import eventBus from '@/api/eventbus'
 import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
 import { pagesArr } from './const/pages.js'
+import { swiperightWhiteList } from './const/whiteList'
 // import api from './api/index'
 export default {
   name: 'App',
@@ -45,18 +46,6 @@ export default {
     api.setStatusBarStyle({
       style: 'dark'
     })
-    const whiteList = [
-      'goodsDetail',
-      'orderList',
-      'flashPurchase',
-      'life',
-      'interactionIndex',
-      'waterElectricityMeter',
-      'movieCinemaDetails',
-      'movieSeat',
-      'movieIndex',
-      'livePayCostDetail'
-    ]
     api.addEventListener(
       {
         name: 'swiperight'
@@ -64,7 +53,7 @@ export default {
       (ret, err) => {
         if (
           this.$route.matched.length === 1 &&
-          whiteList.indexOf(this.$route.name) === -1
+          swiperightWhiteList.indexOf(this.$route.name) === -1
         ) {
           this.$router.go(-1)
         } else {

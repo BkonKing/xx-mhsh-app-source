@@ -36,7 +36,7 @@
       class="mask-box"
       @click.stop="showIsAll = false"
     ></div>
-    <div v-show="showIsAll" class="isAll-select">
+    <div v-show="showIsAll" class="isAll-select" :style="safeTop">
       <div
         class="isAll-select__item"
         :class="{ active: isAll === 1 }"
@@ -200,7 +200,8 @@ export default {
       province: '', // 省
       city: '', // 市
       area: '', // 县
-      isLocation: false
+      isLocation: false,
+      safeTop: {}
     }
   },
   computed: {
@@ -225,6 +226,7 @@ export default {
     })
     this.getPostBarCategoryList()
     this.getTaskSwitch()
+    this.safeTop = { marginTop: `${api.safeArea.top}px` || 0 }
   },
   activated () {
     if (this.scrollTop && this.current !== 1) {
@@ -472,7 +474,8 @@ export default {
 // 筛选弹窗
 .isAll-select {
   position: absolute;
-  top: 153px;
+  top: 114px;
+  // top: 153px;
   left: 192px;
   z-index: 1000;
   padding: 0 20px;

@@ -23,7 +23,7 @@
               cell.thumbsups | numberText
             }}</span>
             <span
-              class="tf-icon tf-icon-zan"
+              class="tf-icon like-thumbsup"
               :class="{ 'like-active': cell.is_thumbsup }"
               @click.stop="thumbsUp(cell)"
             ></span>
@@ -305,11 +305,15 @@ export default {
 <style lang="less" scoped>
 .reply-container {
   padding-bottom: 100px;
+  /deep/ .user-info__right-box {
+    display: flex;
+    align-items: center;
+  }
   .thumbsups-number {
     font-size: 24px;
     color: @gray-7;
   }
-  .tf-icon-zan {
+  .like-thumbsup {
     font-size: 36px;
     margin-left: 10px;
     color: #8f8f94;
@@ -384,8 +388,9 @@ export default {
   padding: 15px 30px;
   background: #fff;
   border-top: 2px solid @gray-2;
-  .tf-icon-zan {
-    font-size: 44px;
+  .like-thumbsup {
+    width: 44px;
+    height: 44px;
     margin-right: 30px;
   }
   /deep/ .van-field {

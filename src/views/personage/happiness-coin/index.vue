@@ -14,7 +14,7 @@
       <div class="sign-box tf-row-space-between">
         <div class="coin-box">
           <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
-          <div class="">
+          <div class="tf-column">
             <span class="coin-number">{{ credits }}</span>
             <div class="coin-freeze">
               <span>可用{{ky_credits}}</span>
@@ -452,10 +452,14 @@ export default {
   flex: 1;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  > .tf-row-space-between {
+    padding-top: 60px;
+  }
 }
 .coin-box {
   display: flex;
   flex: 1;
+  align-items: flex-start;
   padding-top: 12px;
   margin-left: 59px;
 }
@@ -478,6 +482,7 @@ export default {
   }
 }
 .coin-icon {
+  margin-top: 4px;
   margin-right: 20px;
   font-size: 64px;
   line-height: 1;

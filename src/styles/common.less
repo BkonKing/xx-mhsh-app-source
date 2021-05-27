@@ -1171,3 +1171,23 @@
     border-color: #0089C9 transparent transparent transparent;
   }
 }
+
+// 点赞和未点赞
+.like-thumbsup::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 36px;
+  background-image: url(~@/assets/neighbours/weidianzan.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.like-active::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 36px;
+  background-image: url(~@/assets/neighbours/dianzan.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+}

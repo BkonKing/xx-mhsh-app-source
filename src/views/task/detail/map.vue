@@ -1,6 +1,7 @@
 <template>
   <div>
     <tf-map
+      v-if="show"
       btnText="任务完成地点"
       :destinationInfo="mapInfo"
       @init="getMapInfo"
@@ -16,11 +17,14 @@ export default {
   },
   data () {
     return {
+      show: false,
       mapInfo: {}
     }
   },
   mounted () {
-
+    setTimeout(() => {
+      this.show = true
+    }, 500)
   },
   methods: {
     getMapInfo () {

@@ -25,7 +25,7 @@
               replyInfo.thumbsups | numberText
             }}</span>
             <span
-              class="tf-icon tf-icon-zan"
+              class="like-thumbsup"
               :class="{ 'like-active': replyInfo.is_thumbsup }"
               @click.stop="thumbsUp(replyInfo)"
             ></span>
@@ -61,9 +61,11 @@
             size="m"
           >
             <template v-slot:right>
-              <span class="thumbsups-number">{{ item.thumbsups }}</span>
+              <span class="thumbsups-number">{{
+                item.thumbsups | numberText
+              }}</span>
               <span
-                class="tf-icon tf-icon-zan"
+                class="tf-icon like-thumbsup"
                 :class="{ 'like-active': item.is_thumbsup }"
                 @click.stop="thumbsUp(item)"
               ></span>
@@ -172,7 +174,7 @@ export default {
       thumbsUp({
         id: item.id,
         t_type: 2
-      }).then((res) => {
+      }).then(res => {
         // 点赞图标点亮
         item.thumbsups++
         item.is_thumbsup = 1
@@ -185,7 +187,7 @@ export default {
     getCommentInfo () {
       getCommentInfo({
         id: this.id
-      }).then((res) => {
+      }).then(res => {
         this.replyInfo = res.data
         this.replyNum = parseInt(res.data.reply_num)
       })
@@ -202,7 +204,7 @@ export default {
     deleteComment () {
       deleteComment({
         id: this.currentId
-      }).then((res) => {
+      }).then(res => {
         this.replyList.splice(this.index, 1)
         Toast.success('删除成功')
         this.replyNum--
@@ -280,10 +282,11 @@ export default {
   filters: {
     numberText (value) {
       let text = ''
-      if (value < 10000 && value > 0) {
-        text = value
-      } else if (value >= 10000) {
-        text = `${Math.floor(value / 10000)}万+`
+      const num = +value
+      if (num < 10000 && num > 0) {
+        text = num
+      } else if (num >= 10000) {
+        text = `${Math.floor(num / 10000)}万+`
       }
       return text
     }
@@ -351,11 +354,15 @@ export default {
     border-bottom: none !important;
   }
 }
+/deep/ .user-info__right-box {
+  display: flex;
+  align-items: center;
+}
 .thumbsups-number {
   font-size: 24px;
   color: @gray-7;
 }
-.tf-icon-zan {
+.like-thumbsup {
   font-size: 36px;
   margin-left: 10px;
   color: #8f8f94;

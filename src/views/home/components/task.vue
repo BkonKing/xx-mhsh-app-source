@@ -52,7 +52,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // 任务专区
 .task-box {
   padding: 0 30px;

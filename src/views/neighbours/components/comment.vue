@@ -1,7 +1,7 @@
 <template>
   <div class="comment-container">
     <div class="comment-box">
-      <span v-if="thumbsupshow" class="tf-icon tf-icon-zan" :class="{'like-active': thumbsupStatus}" @click="thumbsup"></span>
+      <span v-if="thumbsupshow" class="like-thumbsup" :class="{'like-active': thumbsupStatus}" @click="thumbsup"></span>
       <van-field placeholder="写评论" @click="showPopup" />
     </div>
     <van-popup v-model="show" position="bottom">
@@ -136,15 +136,19 @@ export default {
   left: 0;
   bottom: 0;
   @flex();
+  align-items: center;
   width: 100%;
   padding: 15px 30px;
   margin-bottom: env(safe-area-inset-bottom);
   margin-bottom: constant(safe-area-inset-bottom);
   background: #fff;
   border-top: 2px solid @gray-2;
-  .tf-icon-zan {
-    font-size: 44px;
+  .like-thumbsup {
     margin-right: 30px;
+    &::before {
+      width: 44px;
+      height: 44px;
+    }
   }
   /deep/ .van-field {
     border-radius: 4px;
@@ -190,8 +194,5 @@ export default {
       font-size: 24px;
     }
   }
-}
-.like-active::before {
-  color: @orange-dark;
 }
 </style>
