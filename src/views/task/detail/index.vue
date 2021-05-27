@@ -212,10 +212,6 @@ export default {
   created () {
     this.taskId = this.$route.query.taskId
     this.getLocationInfo()
-    this.getData()
-  },
-  mounted () {
-
   },
   methods: {
     getData () {
@@ -275,9 +271,11 @@ export default {
       // adCode:行政区编码
       return bMapGetLocationInfo().then(data => {
         const { province, city, district } = data
-        this.province = province || '福建省'
-        this.city = city || '福州市'
-        this.area = district || '仓山区'
+        this.province = province
+        this.city = city
+        this.area = district
+        this.getData()
+      }).catch(() => {
         this.getData()
       })
     },

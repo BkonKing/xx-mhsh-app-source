@@ -21,7 +21,12 @@ export default {
       mapInfo: {}
     }
   },
-  mounted () {
+  created () {
+    this.$toast.loading({
+      message: '加载中...',
+      duration: 500,
+      forbidClick: true
+    })
     setTimeout(() => {
       this.show = true
     }, 500)
@@ -34,6 +39,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

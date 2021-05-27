@@ -92,6 +92,9 @@ const store = {
     },
     setKeepAliveList (state, name) {
       if (state.keepAliveList.indexOf(name) === -1) {
+        if (name === 'home' && state.keepAliveList.indexOf('mainIndex') === -1) {
+          state.keepAliveList.push('mainIndex')
+        }
         state.keepAliveList.push(name)
       }
     },

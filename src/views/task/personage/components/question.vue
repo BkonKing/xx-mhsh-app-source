@@ -7,17 +7,13 @@
         </div>
         <div class="complaint-body">
           <span class="complaint-summary">{{ item.content }}</span>
-          <div class="complaint-group-1" @click.stop="goDetails(item)">
-            <div class="complaint-view">
-              <img class="complaint-large-icon" :src="item.avatar" />
-            </div>
-            <div class="complaint-view-1">
-              <span class="complaint-nick-name">{{ item.nickname }}</span>
-              <span class="complaint-caption-1">{{ item.task_title }}</span>
+          <div v-if="item.hf_content" class="complaint-group-2">
+            <div class="complaint-group-div">
+              <span class="complaint-text">回复：</span>{{ item.hf_content }}
             </div>
           </div>
-          <div v-if="item.hf_content" class="complaint-group-2">
-            <div class="complaint-group-div"><span class="complaint-text">回复：</span>{{ item.hf_content }}</div>
+          <div class="complaint-group-1" @click.stop="goDetails(item)">
+            <span class="complaint-caption-1">任务：{{ item.task_title }}</span>
           </div>
         </div>
       </div>

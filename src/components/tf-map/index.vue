@@ -1,20 +1,23 @@
 <template>
   <div class="app-body">
-    <div class="bottom-fixed">
-      <div ref="fixed-footer" class="cinema-box">
+    <div ref="fixed-footer" class="bottom-fixed">
+      <div class="cinema-box">
         <div class="cinema-name">{{ destinationInfo.name }}</div>
         <div class="cinema-address">{{ destinationInfo.address }}</div>
+      </div>
+      <div class="open-app-btn">
         <van-button type="primary" size="large" @click="openAppPopup"
-          ><img
-            class="path-icon"
-            src="@/assets/imgs/movie_map_path.png"
-          />到这去</van-button
-        >
+        ><img
+          class="path-icon"
+          src="@/assets/imgs/movie_map_path.png"
+        />到这去</van-button
+      >
       </div>
     </div>
     <van-popup
       v-model="isAppVisiable"
       closeable
+      :overlay="false"
       position="bottom"
       get-container="body"
       class="app-popup"
@@ -330,6 +333,8 @@ export default {
 
 <style lang="less" scoped>
 .bottom-fixed {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 292px;
   position: fixed;
@@ -338,8 +343,10 @@ export default {
     border-radius: 44px !important;
   }
   .cinema-box {
-    height: 100%;
-    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 30px 30px 0;
     background: #fff;
     color: #222;
     box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.25);
@@ -348,14 +355,19 @@ export default {
   .cinema-name {
     font-size: 32px;
     font-weight: 600;
-    line-height: 48px;
+    line-height: 1;
     color: #000;
   }
   .cinema-address {
-    height: 98px;
-    padding-top: 16px;
+    padding-top: 25px;
     font-size: 24px;
+    line-height: 36px;
     color: #8f8f94;
+    .text-multiple-ellipsis();
+  }
+  .open-app-btn {
+    padding: 0 30px 30px;
+    background: #fff;
   }
   /deep/ .van-button__text {
     display: flex;
