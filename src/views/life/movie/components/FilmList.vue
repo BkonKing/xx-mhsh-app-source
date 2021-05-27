@@ -1,5 +1,11 @@
 <template>
-  <refreshList ref="list" :disabled="disabled" :list.sync="list" :load="load">
+  <refreshList
+    ref="list"
+    :disabled="disabled"
+    :pagination="pagination"
+    :list.sync="list"
+    :load="load"
+  >
     <template v-slot="{ item, index }">
       <div
         class="film-publish-date"
@@ -9,7 +15,12 @@
       </div>
       <div class="film-box" @click="goFilmDetails(item)">
         <img v-if="item.cover" class="film-cover" :src="item.cover" alt="" />
-        <img v-else class="film-cover" src="@/assets/imgs/movie_nocover.png" alt="" />
+        <img
+          v-else
+          class="film-cover"
+          src="@/assets/imgs/movie_nocover.png"
+          alt=""
+        />
         <div class="film-info">
           <div class="film-title">
             {{ item.film_name }}
@@ -113,6 +124,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    pagination: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
