@@ -42,6 +42,7 @@
             key="1"
             v-model="nowMovieList"
             :type="1"
+            :pagination="false"
             :load="params => getfilmlist(params, 1)"
           ></film-list>
         </van-tab>
@@ -129,7 +130,7 @@ export default {
         type,
         city_id: this.cityId,
         page_index: pages,
-        page_size: 10
+        page_size: type === 1 ? '' : 10
       })
     },
     // 影片列表刷新
