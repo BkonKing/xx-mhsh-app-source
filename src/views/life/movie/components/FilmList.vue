@@ -1,5 +1,11 @@
 <template>
-  <refreshList ref="list" :disabled="disabled" :list.sync="list" :load="load">
+  <refreshList
+    ref="list"
+    :disabled="disabled"
+    :pagination="pagination"
+    :list.sync="list"
+    :load="load"
+  >
     <template v-slot="{ item, index }">
       <div
         class="film-publish-date"
@@ -112,6 +118,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    pagination: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
