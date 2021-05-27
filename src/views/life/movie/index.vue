@@ -32,11 +32,7 @@
         :key="i"
         @click="$router.push(item.url)"
       >
-        <van-image
-          :src="item.img"
-          v-imageCach="item.img"
-          class="swipe-item__image"
-        />
+        <van-image :src="item.img" class="swipe-item__image" />
       </van-swipe-item>
     </van-swipe>
     <!-- 功能列表 -->

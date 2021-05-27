@@ -8,12 +8,10 @@
         >
           <div @click="goDetails('2', item)">
             <div class="activity-image-box">
-              <img
-                class="activity-image"
-                :src="item.thumbnail"
-                v-imageCach="item.thumbnail"
-              />
-              <div v-if="item.joins != '0'" class="activity-join">{{ item.joins || 0 }}人已报名</div>
+              <img class="activity-image" :src="item.thumbnail" />
+              <div v-if="item.joins != '0'" class="activity-join">
+                {{ item.joins || 0 }}人已报名
+              </div>
             </div>
             <div class="tf-status-tag">活动</div>
             <div class="activity-title">{{ item.title }}</div>
@@ -56,7 +54,6 @@
                 width="33%"
                 :src="item.images[0]"
                 v-if="item.images.length === 1"
-                v-imageCach="item.images[0]"
                 @click.stop="preview(item.images[0])"
               />
               <tf-image-list
@@ -83,11 +80,7 @@
           v-else-if="item.article_type == 1 || article_type == 1"
         >
           <div @click="goDetails('1', item)">
-            <img
-              class="activity-image tf-mb-sm"
-              :src="item.thumbnail"
-              v-imageCach="item.thumbnail"
-            />
+            <img class="activity-image tf-mb-sm" :src="item.thumbnail" />
             <div class="tf-status-tag">资讯</div>
             <div class="activity-title">{{ item.title }}</div>
           </div>
@@ -113,7 +106,7 @@
       :complainType="1"
       :share="true"
       :shareObj="shareObj"
-      :class="{'ios-share': systemType === 'ios' && article_type != 3}"
+      :class="{ 'ios-share': systemType === 'ios' && article_type != 3 }"
       @delete="deleteArticle"
     ></more-popup>
   </div>
@@ -169,7 +162,7 @@ export default {
       const { article_type, id, share_img } = item
       const urlName = 'detail_' + article_type + '_' + id
       downloadPic(share_img, urlName)
-        .then((data) => {
+        .then(data => {
           this.sendShareParam(item, data)
         })
         .catch(() => {
@@ -177,13 +170,20 @@ export default {
         })
     },
     sendShareParam (data, img) {
-      const content = data.article_type == 3 || this.article_type == 3 ? data.content : data.title
+      const content =
+        data.article_type == 3 || this.article_type == 3
+          ? data.content
+          : data.title
       this.shareObj = {
         title: content,
         description: content,
         pyqTitle: content,
         thumb: img ? 'fs://' + img + '.png' : '',
-        contentUrl: 'http://live.tosolomo.com/wap/#/neighbours?articleType=' + data.article_type + '&id=' + data.id
+        contentUrl:
+          'http://live.tosolomo.com/wap/#/neighbours?articleType=' +
+          data.article_type +
+          '&id=' +
+          data.id
       }
     },
     /* 帖子操作 */

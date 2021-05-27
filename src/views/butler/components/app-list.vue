@@ -1,11 +1,7 @@
 <template>
   <van-grid class="app-box" :border="false" :column-num="column" square>
     <van-grid-item v-for="(item, index) in list" :key="index" :to="item.url">
-      <van-image
-        class="app-box__image"
-        :src="item.icon_image"
-        v-imageCach="item.icon_image"
-      />
+      <van-image class="app-box__image" :src="item.icon_image" />
       <span class="app-box__text">{{ item.application }}</span>
     </van-grid-item>
   </van-grid>

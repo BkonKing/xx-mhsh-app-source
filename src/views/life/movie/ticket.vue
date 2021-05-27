@@ -130,8 +130,9 @@
         <!-- 有票 -->
         <template v-if="info.ticket_code !== '0'">
           <img class="ticket-code-img" :src="info.printno_url" />
-          <div class="tf-text-lg">
-            取票码：<span class="ticket-code-text">{{ info.ticket_code }}</span>
+          <!-- 遍历取票码等 -->
+          <div v-for="(item, index) in info.ticket_info" :key="index" class="tf-text-lg">
+            {{item.name}}：<span class="ticket-code-text">{{ item.value }}</span>
           </div>
         </template>
         <!-- 待出票 -->
@@ -369,6 +370,9 @@ export default {
   .tf-text-lg {
     margin-top: 36px;
     color: #222;
+  }
+  .tf-text-lg + .tf-text-lg {
+    margin-top: 10px;
   }
 }
 .order-status-complete {
