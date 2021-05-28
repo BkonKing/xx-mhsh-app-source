@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-bg tf-body">
+  <div class="tf-bg">
     <van-nav-bar
       title="任务投诉"
       :fixed="true"
@@ -74,15 +74,17 @@
         </div>
       </div>
     </div>
-    <van-button
-      class="confirm-btn"
-      v-preventReClick
-      size="large"
-      type="danger"
-      :disabled="!(complaintType && content)"
-      @click="complaintTask"
-      >确认</van-button
-    >
+    <div class="confirm-btn">
+      <van-button
+        v-preventReClick
+        size="large"
+        type="danger"
+        :disabled="!(complaintType && content)"
+        @click="complaintTask"
+        >确认</van-button
+      >
+    </div>
+
     <van-popup
       v-model="typeVisible"
       safe-area-inset-bottom
@@ -339,10 +341,16 @@ export default {
 }
 
 .confirm-btn {
-  width: 710px;
-  margin: 30px 20px 30px;
-  font-size: 28px;
-  border-radius: 44px !important;
+  height: 108px;
+  /deep/ .van-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 5;
+    width: 710px;
+    font-size: 28px;
+    border-radius: 44px !important;
+  }
 }
 
 .type-dialog {
