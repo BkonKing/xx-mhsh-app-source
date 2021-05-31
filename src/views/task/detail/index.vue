@@ -33,7 +33,8 @@
         <div class="task-session">
           <div class="session-tit">任务来源</div>
           <div class="release-user tf-row">
-            <img :src="infoData.rwf_avatar" />
+            <img v-if="infoData.rwf_avatar" :src="infoData.rwf_avatar" />
+            <img v-else src="@/assets/imgs/touxiang.png" />
             <div class="tf-row-space-between">
               <div class="release-name van-ellipsis">{{ infoData.rwf_nickname }}</div>
               <div class="release-time">{{ infoData.task_ctime }}</div>
@@ -47,7 +48,8 @@
         <div v-if="!isUp && receiverInfo && receiverInfo.is_already == 1" class="task-session">
           <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
           <div class="release-user tf-row">
-            <img :src="receiverInfo.jdf_avatar" />
+            <img v-if="receiverInfo.jdf_avatar" :src="receiverInfo.jdf_avatar" />
+            <img v-else src="@/assets/imgs/touxiang.png" />
             <div class="tf-row-space-between">
               <div class="release-name van-ellipsis">{{ receiverInfo.jdf_nickname }}</div>
               <div class="release-time" :class="{'color-FF5240' : receiverInfo.progress_status != 2}">{{ receiverInfo.progress_status_name }}</div>
@@ -79,7 +81,9 @@
         <div class="task-session">
           <div class="session-tit tf-row-space-between">任务说明<span class="tit-right" v-if="infoData.renew_day > 0">更新：{{ infoData.renew_day }}天前</span></div>
           <div class="detai-cont">
-            <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.task_desc }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
+            <div class="text-block">
+              <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont"><div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div>{{ infoData.task_desc }}</div>
+            </div>
             <div v-if="infoData.task_image && infoData.task_image.length" class="cont-pic tf-row-wrap">
               <img @click="previewPic(index)" v-for="(item, index) in infoData.task_image" :key="index" :src="item" />
             </div>
@@ -274,6 +278,8 @@ export default {
         this.province = province
         this.city = city
         this.area = district
+        this.getData()
+      }).catch(() => {
         this.getData()
       }).catch(() => {
         this.getData()
@@ -616,6 +622,9 @@ export default {
   }
 }
 .detai-cont {
+  .text-block {
+    display: flex;
+  }
   .cont-text {
     color: #8F8F94;
     line-height: 48px;
@@ -625,6 +634,12 @@ export default {
     &.text-hidden {
       height: 288px;
       overflow: hidden;
+      // .text-multiple-ellipsis(6);
+    }
+    &::before {
+      content: "";
+      float: right;
+      height: calc(100% - 45px); /*先随便设置一个高度*/
     }
   }
   .cont-pic {

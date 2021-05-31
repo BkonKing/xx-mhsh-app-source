@@ -30,14 +30,16 @@
       </div>
       <div v-if="userList.length > 1" class="user-list">
         <div v-for="(item, index) in userList" :key="index" class="user-item tf-column" :class="{ 'active': userIndex == index }" @click="userSelect(index)">
-          <img :src="item.avatar" />
+          <img v-if="item.avatar" :src="item.avatar" />
+          <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="van-ellipsis user-name">{{ item.nickname }}</div>
           <div class="user-status" :class="{ 'color-FF5240': item.is_stop == 1, 'opacity-gray': item.progress_status > 1 }">{{ item.progress_status_name }}</div>
         </div>
       </div>
       <div v-if="userList.length == 1" class="release-header">
         <div class="release-user tf-row">
-          <img :src="infoData.avatar" />
+          <img v-if="infoData.avatar" :src="infoData.avatar" />
+          <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="tf-row-space-between">
             <div class="release-name van-ellipsis">{{ userList[0].nickname }}</div>
             <div class="release-time color-ccc" :class="{ 'color-FF5240': userList[0].is_stop == 1, 'color-ccc': userList[0].progress_status > 1 }">{{ userList[0].progress_status_name }}</div>

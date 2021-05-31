@@ -23,7 +23,8 @@
             <!-- <img class="img-100" src="@/assets/neighbours/more.png" /> -->
           </div>
           <div class="item-header">
-            <img :src="item.avatar" />
+            <img v-if="item.avatar" :src="item.avatar" />
+            <img v-else src="@/assets/imgs/touxiang.png" />
             <div class="name-time tf-column">
               <div class="user-name van-ellipsis">{{ item.nickname }}</div>
               <div class="itme-time">{{ item.ctime }}</div>
@@ -31,10 +32,10 @@
           </div>
           <div class="item-cont">{{ item.content }}</div>
           <div v-if="item.is_reply == 1 && item.reply_text" class="reply-cont">
-            <div :class="{'test-hidden': item.isOver&&!item.isDown}" :ref="`text_${index}`">
+            <div class="cont-text" :class="{'text-hidden': item.isOver&&!item.isDown}" :ref="`text_${index}`">
+              <div @click="showToggle(index)" v-show="item.isOver" class="more-down" :class="{'down-up' : item.isDown}">{{ item.isDown ? '收起' : '展开' }}</div>
               <span>任务方：</span>{{ item.reply_text }}
             </div>
-            <div @click="showToggle(index)" v-show="item.isOver" class="more-down" :class="{'down-up' : item.isDown}">{{ item.isDown ? '收起' : '展开' }}</div>
           </div>
           <div v-if="item.is_reply == 0 && isUp == 1" @click="replyQuiz(index)" class="reply-btn tf-row-center">回复TA</div>
         </div>
@@ -199,42 +200,6 @@ export default {
     text-align: center;
     line-height: 36px;
     color: #8F8F94;
-    // .operate-btn {
-    //   position: absolute;
-    //   top: 50%;
-    //   left: -255px;
-    //   margin-top: -36px;
-    //   width: 225px;
-    //   height: 72px;
-    //   line-height: 72px;
-    //   background-color: #333333;
-    //   border-radius: 10px;
-    //   @flex();
-    //   align-items: center;
-    //   color: #FFFFFF;
-    //   &::after {
-    //     content: '';
-    //     position: absolute;
-    //     top: 50%;
-    //     right: -10px;
-    //     margin-top: -5px;
-    //     width: 0;
-    //     height: 0;
-    //     border-style: solid;
-    //     border-width: 5px 0 5px 10px;
-    //     border-color: transparent transparent transparent #333333;
-    //   }
-    //   & > div {
-    //     flex-grow: 1;
-    //     text-align: center;
-    //   }
-    //   .line {
-    //     width: 2pX;
-    //     flex-grow: 0;
-    //     height: 30px;
-    //     background: #8F8F94;
-    //   }
-    // }
   }
   .item-cont {
     font-size: 28px;
@@ -258,24 +223,28 @@ export default {
     background: #F7F7F7;
     border-radius: 10px;
     color: #8F8F94;
-
+    display: flex;
     position: relative;
-    & > div {
+    .cont-text {
       line-height: 44px;
       overflow: hidden;
-    }
-    & > div.test-hidden {
-      height: 132px;
+      &.text-hidden {
+        height: 132px;
+      }
+      &::before {
+        content: "";
+        float: right;
+        height: calc(100% - 42px);
+      }
     }
     span {
       color: #E98400;
     }
     .more-down {
-      right: 30px;
-      bottom: 20px;
       font-size: 24px;
       line-height: 44px;
       background-color: #F7F7F7;
+      margin-right: 0;
     }
   }
 }

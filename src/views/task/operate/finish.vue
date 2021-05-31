@@ -14,7 +14,11 @@
         <div class="card-cont" slot="content">
           <div class="session-tit">接单方 已确认完成任务</div>
           <div class="divider-line"></div>
-          <div class="receiver-cont" :class="{'text-hidden': isOver&&!isDown}" ref="textCont">{{ infoData.content }}<div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div></div>
+          <div class="receiver-cont" ref="textCont">
+            <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}">
+              <div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div>{{ infoData.content }}
+            </div>
+          </div>
           <div class="receiver-pic tf-row-wrap">
             <img @click="previewPic(index)" v-for="(item, index) in infoData.image_url_data" :key="index" :src="item" />
           </div>
@@ -40,7 +44,7 @@
           </div>
         </div>
       </graphic>
-      <div class="task-btn-block">
+      <div v-if="btnShow" class="task-btn-block">
         <div v-preventReClick @click="submit" :class="[ formData.content ? '' : 'unable-btn', 'task-btn']">确认</div>
       </div>
       <confirm-model v-model="confirmShow" modelTit="确定已经完成任务？" modelSubTit="确定将结算幸福币给接单方" @sure="sure"></confirm-model>
@@ -88,7 +92,8 @@ export default {
       statusList: ['已完成', '未完成'],
       statusIndex: null, // 0已完成 1未完成
       picIndex: 0, // 图片预览起始位置索引
-      picShow: false // 查看大图
+      picShow: false, // 查看大图
+      btnShow: true
     }
   },
   created () {
@@ -96,7 +101,15 @@ export default {
     this.getData()
   },
   mounted () {
-
+    const winHight = document.documentElement.clientHeight
+    window.onresize = () => {
+      const resizeHight = document.documentElement.clientHeight
+      if (resizeHight < winHight - 100) {
+        this.btnShow = false
+      } else {
+        this.btnShow = true
+      }
+    }
   },
   methods: {
     getData () {
@@ -148,7 +161,7 @@ export default {
             this.confirmShow = true
           }
         }
-      })
+      }).catch(res => {})
     },
     sure () {
       this.formData.user_task_id = this.userTaskId
@@ -216,18 +229,31 @@ export default {
 .receiver-cont {
   color: #000000;
   font-size: 30px;
-  line-height: 48px;
   padding: 0 30px;
   position: relative;
   margin: 16px 0 20px;
-  &.text-hidden {
-    height: 240px;
+  display: flex;
+  .cont-text {
+    line-height: 48px;
     overflow: hidden;
+    &.text-hidden {
+      height: 240px;
+      overflow: hidden;
+    }
+    &::before {
+      content: "";
+      float: right;
+      height: calc(100% - 45px);
+    }
+    .more-down {
+      margin-right: 0;
+      background-color: #fff;
+      &::before {
+        color: #000000;
+      }
+    }
   }
-  .more-down {
-    right: 30px;
-    background-color: #fff;
-  }
+
 }
 .receiver-pic {
   padding: 0 0 14px 30px;

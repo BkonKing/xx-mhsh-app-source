@@ -15,7 +15,8 @@
     <div v-if="infoData" class="tf-body-container">
       <div class="release-header">
         <div class="release-user tf-row">
-          <img :src="infoData.avatar" />
+          <img v-if="infoData.avatar" :src="infoData.avatar" />
+          <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="tf-row-space-between">
             <div class="release-name van-ellipsis">{{ infoData.nickname }}</div>
             <div class="release-time color-ccc" :class="{ 'color-FF5240': infoData.is_stop == 1, 'color-ccc': infoData.progress_status > 1 }">{{ infoData.progress_status_name }}</div>

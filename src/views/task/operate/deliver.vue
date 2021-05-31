@@ -21,7 +21,7 @@
           <div class="divider-line"></div>
         </div>
       </graphic>
-      <div class="task-btn-block">
+      <div v-if="btnShow" class="task-btn-block">
         <div v-preventReClick @click="submit" :class="[ formData.content.length > 200 ? 'unable-btn' : '', 'task-btn']">确定</div>
       </div>
       <confirm-model v-model="confirmShow"></confirm-model>
@@ -51,6 +51,7 @@ export default {
         content: '',
         image_url: []
       },
+      btnShow: true,
       phTxt: '和对方说点什么',
       maxNum: 200,
       confirmShow: false
@@ -61,7 +62,15 @@ export default {
     this.taskId = this.$route.query.taskId
   },
   mounted () {
-
+    const winHight = document.documentElement.clientHeight
+    window.onresize = () => {
+      const resizeHight = document.documentElement.clientHeight
+      if (resizeHight < winHight - 100) {
+        this.btnShow = false
+      } else {
+        this.btnShow = true
+      }
+    }
   },
   methods: {
     // 图文信息
