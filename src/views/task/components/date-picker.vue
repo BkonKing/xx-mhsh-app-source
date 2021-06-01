@@ -75,7 +75,8 @@ export default {
       currentTime: '00:00',
       nowTime: '',
       nowYear: 0,
-      nowMonth: 0
+      nowMonth: 0,
+      isBol: false // 是否是点击遮罩层关闭
       // startDay: 0,
       // endDay: 0
     }
@@ -184,6 +185,7 @@ export default {
       this.dateShow = false
     },
     dateSure () {
+      this.isBol = true
       if (this.startTime && !this.endTime) {
         Toast('请选择结束时间')
         return
@@ -209,6 +211,11 @@ export default {
       this.dateShow = val
     },
     dateShow (val) {
+      // console.log('dateShow', val)
+      if (this.isBol === false) {
+        this.startTime = ''
+        this.endTime = ''
+      }
       this.$emit('input', val)
     }
   }
