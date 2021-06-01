@@ -353,7 +353,7 @@ export default {
       guideTop: 0,
       isOpeningTask: true, // 是否显示任务专区
       taskList: [], // 任务列表
-      isfirst: true // 保存用户信息只执行一次状态
+      isLocationFirst: true // 保存用户定位信息只执行一次状态
     }
   },
   computed: {
@@ -564,13 +564,13 @@ export default {
           // 开启则获取任务列表
           this.isOpeningTask && this.getTaskList(data)
           // 保存当前定位信息，只执行一次
-          if (this.isfirst) {
+          if (this.isLocationFirst) {
             setUserPostion({
               longitude: lon,
               latitude: lat,
               address
             }).then(() => {
-              this.isfirst = false
+              this.isLocationFirst = false
             })
           }
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
@@ -578,11 +578,6 @@ export default {
         .catch(() => {
           // 开启则获取任务列表
           this.isOpeningTask && this.getTaskList({})
-          // setUserPostion({
-          //   longitude: 119.3408126,
-          //   latitude: 26.053068,
-          //   address: '福建省福州市仓山区工农路481号'
-          // })
           this.getfilmlist()
         })
     },
@@ -684,6 +679,16 @@ export default {
       ]
       return numText[value]
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    // 重新登录后，重新发送地址
+    const name = ['login', 'settingAccount']
+    if (name.includes(from.name)) {
+      next((vm) => {
+        vm.isLocationFirst = true
+      })
+    }
+    next()
   },
   beforeRouteLeave (to, from, next) {
     bulterPermission(to, from, next, this.userType, this.userInfo, () => {
