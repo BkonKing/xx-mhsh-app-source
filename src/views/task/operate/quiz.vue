@@ -248,4 +248,7 @@ export default {
     }
   }
 }
+.quiz-list {
+  padding-bottom: 74px;
+}
 </style>

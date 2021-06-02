@@ -3,7 +3,10 @@
     <refreshList ref="list" :list.sync="list" :load="load">
       <template v-slot="{ item, index }">
         <!-- 任务 -->
-        <div v-if="article_type == 6 || item.article_type == 5" class="task-item article-cell">
+        <div
+          v-if="article_type == 6 || item.article_type == 5"
+          class="task-item article-cell"
+        >
           <div class="task-header" @click="goTask(item)">
             <div class="task-header-left">{{ item.task_title }}</div>
             <div class="task-header-right">
@@ -12,31 +15,33 @@
             </div>
           </div>
           <div class="task-content" @click="goTask(item)">
-            <userInfo
-              class="task-userinfo"
-              :ellipsis="true"
-              :avatar="item.avatar"
-              :name="item.nickname"
-            >
-              <template v-slot:right>
-                <span v-if="item.surplus_num" class="userinfo-text"
-                  >剩余{{ item.surplus_num }}人</span
-                >
-              </template>
-            </userInfo>
-            <ul v-if="item.task_tag_text" class="task-tags">
-              <li
-                v-for="(tag, index) in item.task_tag_text.split('|')"
-                class="task-tag"
-                :key="index"
+            <div class="task-container">
+              <userInfo
+                class="task-userinfo"
+                :ellipsis="true"
+                :avatar="item.avatar"
+                :name="item.nickname"
               >
-                {{tag}}
-              </li>
-            </ul>
-            <div class="task-time">{{ item.task_time }}</div>
-            <div v-if="item.address_text" class="task-address">
-              <img class="task-ditu-img" src="@/assets/neighbours/ditu.png" />
-              <div class="task-address-text">{{item.address_text}}</div>
+                <template v-slot:right>
+                  <span v-if="item.surplus_num" class="userinfo-text"
+                    >剩余{{ item.surplus_num }}人</span
+                  >
+                </template>
+              </userInfo>
+              <ul v-if="item.task_tag_text" class="task-tags">
+                <li
+                  v-for="(tag, index) in item.task_tag_text.split('|')"
+                  class="task-tag"
+                  :key="index"
+                >
+                  {{ tag }}
+                </li>
+              </ul>
+              <div class="task-time">{{ item.task_time }}</div>
+              <div v-if="item.address_text" class="task-address">
+                <img class="task-ditu-img" src="@/assets/neighbours/ditu.png" />
+                <div class="task-address-text">{{ item.address_text }}</div>
+              </div>
             </div>
           </div>
           <operation
@@ -313,13 +318,14 @@ export default {
     align-items: center;
     min-height: 143px;
     padding: 30px;
-    background: url(~@/assets/neighbours/activity-bg.png);
-    background-size: cover;
+    // background: url(~@/assets/neighbours/activity-bg.png);
+    // background-size: cover;
+    background: linear-gradient(0deg, #ffffff 0%, #fff8e2 100%);
     border-radius: 10px 10px 0px 0px;
     .task-header-left {
       max-width: 380px;
       font-size: 32px;
-      font-weight: 500;
+      font-weight: bold;
       color: #000000;
     }
     .task-header-right {
@@ -329,21 +335,27 @@ export default {
     .task-header-img {
       font-size: 32px;
       line-height: 1;
-      color: #fff;
+      color: #febf00;
     }
     .task-header-text {
       margin-top: 4px;
       margin-left: 20px;
       font-size: 32px;
-      font-weight: 500;
-      color: #ffffff;
+      font-weight: bold;
+      color: #febf00;
       line-height: 1;
     }
   }
   .task-content {
     display: flex;
     flex-direction: column;
-    padding: 30px 30px 0;
+    padding: 0 30px;
+    .task-container {
+      display: flex;
+      flex-direction: column;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+    }
   }
   .task-userinfo {
     /deep/ .user-info__left-box {
@@ -429,6 +441,6 @@ export default {
   margin-top: 50px;
   font-size: 26px;
   line-height: 1;
-  color: #8F8F94;
+  color: #8f8f94;
 }
 </style>

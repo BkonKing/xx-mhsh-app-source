@@ -104,7 +104,7 @@
               @click="goCoinCommodity(item)"
             >
               <div class="coin-tag">
-                <span class="tf-icon tf-icon-xingfubi"></span>
+                <span class="tf-icon tf-icon-xingfubi1"></span>
                 <span>{{ item.credits }}</span>
               </div>
             </van-image>
@@ -1123,21 +1123,23 @@ export default {
   width: 100%;
 }
 /deep/ .coin-tag {
+  display: flex;
+  align-items: center;
   position: absolute;
   left: 20px;
   right: 20px;
   bottom: 10px;
-  padding: 0 23px;
+  padding: 0 12px;
   height: 36px;
-  line-height: 36px;
+  line-height: 1;
   font-size: 24px;
-  text-align: center;
   color: #fff;
   background: @orange-dark;
   opacity: 0.8;
   border-radius: 18px;
   .tf-icon {
-    margin-right: 6px;
+    margin-right: 14px;
+    line-height: 1;
   }
 }
 .coin-message {

@@ -14,6 +14,7 @@
         :phTxt="phTxt"
         :maxNum="maxNum"
         @getForm="getForm"
+        @getUpload="getUpload"
       >
         <div slot="header" class="deliver-header">
           <div class="deliver-tit">请确保已经完成任务</div>
@@ -22,7 +23,16 @@
         </div>
       </graphic>
       <div v-if="btnShow" class="task-btn-block">
-        <div v-preventReClick @click="submit" :class="[ formData.content.length > 200 ? 'unable-btn' : '', 'task-btn']">确定</div>
+        <van-button
+          v-preventReClick
+          @click="submit"
+          :class="[
+            formData.content.length > 200 ? 'unable-btn' : '',
+            'task-btn'
+          ]"
+          :loading="loadingBtn"
+          >确定</van-button
+        >
       </div>
       <confirm-model v-model="confirmShow"></confirm-model>
     </div>
@@ -30,9 +40,7 @@
 </template>
 
 <script>
-import {
-  NavBar, Toast
-} from 'vant'
+import { NavBar, Toast } from 'vant'
 import graphic from '../components/graphic'
 import confirmModel from '../components/confirm-model'
 import { deliverTask } from '@/api/task'
@@ -54,7 +62,9 @@ export default {
       btnShow: true,
       phTxt: '和对方说点什么',
       maxNum: 200,
-      confirmShow: false
+      confirmShow: false,
+      uploadStatus: false,
+      loadingBtn: false
     }
   },
   created () {
@@ -73,6 +83,9 @@ export default {
     }
   },
   methods: {
+    getUpload (value) {
+      this.uploadStatus = value
+    },
     // 图文信息
     getForm (val) {
       this.formData = val
@@ -83,18 +96,27 @@ export default {
     submit () {
       if (this.textNum > 200) {
         Toast('交付说明 最多输入200字')
+      } else if (this.uploadStatus) {
+        Toast('请等待图片上传成功后重试')
       } else {
-        const params = Object.assign({}, this.formData, { user_task_id: this.userTaskId })
-        deliverTask(params).then((res) => {
-          Toast({
-            message: '提交成功',
-            onClose: () => {
-              this.$router.go(-1)
-            }
-          })
-        }).catch(() => {
-          Toast('提交失败 请重试')
+        this.loadingBtn = true
+        const params = Object.assign({}, this.formData, {
+          user_task_id: this.userTaskId
         })
+        deliverTask(params)
+          .then(res => {
+            Toast({
+              message: '提交成功',
+              onClose: () => {
+                this.$router.go(-1)
+                this.loadingBtn = false
+              }
+            })
+          })
+          .catch(() => {
+            Toast('提交失败 请重试')
+            this.loadingBtn = false
+          })
       }
     }
   }
@@ -104,17 +126,17 @@ export default {
 <style lang="less" scoped>
 /deep/ .van-nav-bar {
   // background-color: #F7F7F7;
-  .van-nav-bar__left  {
+  .van-nav-bar__left {
     padding-left: 20px;
-    .tf-icon{
+    .tf-icon {
       color: #000;
       font-size: 30px;
     }
   }
 }
-.tf-body-container{
+.tf-body-container {
   padding: 30px 20px 0;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
   .deliver-header {
     padding-top: 30px;
   }
@@ -127,20 +149,20 @@ export default {
     padding-left: 30px;
     margin-bottom: 20px;
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 50%;
       margin-top: -16px;
       width: 8px;
       height: 32px;
-      background: #FEBF00;
+      background: #febf00;
       border-radius: 4px;
     }
   }
   .deliver-subtit {
     font-size: 24px;
-    color: #8F8F94;
+    color: #8f8f94;
     padding-left: 30px;
     line-height: 44px;
     margin-bottom: 30px;
@@ -151,6 +173,9 @@ export default {
   /deep/ .van-field textarea {
     min-height: 300px;
   }
+}
+.task-btn {
+  border: none;
 }
 .task-btn-block {
   height: 166px;

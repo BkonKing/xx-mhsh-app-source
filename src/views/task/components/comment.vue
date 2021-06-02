@@ -3,7 +3,7 @@
     <div v-if="replyType == 'quiz'" class="comment-box">
       <van-field placeholder="我要提问" @click="showPopup" />
     </div>
-    <van-popup v-model="show" position="bottom">
+    <van-popup v-model="show" position="bottom" :duration="show ? 0.3 : 0">
       <div class="comment-popup">
         <div class="comment-popup-left">
           <van-field

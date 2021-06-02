@@ -197,7 +197,7 @@ export default {
   flex-direction: column;
   width: 100%;
   padding-bottom: 40px;
-  border-bottom: 1px solid #eeeeee;
+  // border-bottom: 1px solid #eeeeee;
 }
 
 .task-caption {
@@ -255,9 +255,7 @@ export default {
     }
   }
 }
-
-.schedule {
+/deep/ .schedule-list {
   margin-top: 30px;
-  border-radius: 10px;
 }
 </style>

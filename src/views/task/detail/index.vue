@@ -40,7 +40,7 @@
               <div class="release-time">{{ infoData.task_ctime }}</div>
             </div>
           </div>
-          <div v-if="!isUp" class="complain-tip tf-row-space-between">
+          <div v-if="!isUp && +receiverInfo.is_already" class="complain-tip tf-row-space-between">
             <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
             <div @click="complaint">投诉</div>
           </div>
@@ -57,7 +57,7 @@
             <div @click="deliverTask" v-if="receiverInfo.is_deliver == 1" class="finish-btn">交付任务</div>
           </div>
           <div @click="goSchedule" v-if="receiverInfo.taskflow_list.length" class="progress-step">
-            <div v-for="(item, index) in receiverInfo.taskflow_list" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
+            <div v-for="(item, index) in receiverInfo.taskflow_list.slice(0,2)" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
             <!-- <div>03-21 12:00 接单成功，任务进行中</div> -->
           </div>
         </div>
@@ -278,8 +278,6 @@ export default {
         this.province = province
         this.city = city
         this.area = district
-        this.getData()
-      }).catch(() => {
         this.getData()
       }).catch(() => {
         this.getData()
@@ -684,9 +682,11 @@ export default {
   color: #8F8F94;
   margin-bottom: 40px;
   div {
+    width: 100%;
     line-height: 48px;
     position: relative;
     padding-left: 60px;
+    @text-ellipsis();
     &::before {
       content: '';
       position: absolute;

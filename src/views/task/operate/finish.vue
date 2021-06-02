@@ -15,12 +15,28 @@
           <div class="session-tit">接单方 已确认完成任务</div>
           <div class="divider-line"></div>
           <div class="receiver-cont" ref="textCont">
-            <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}">
-              <div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div>{{ infoData.content }}
+            <div
+              class="cont-text"
+              :class="{ 'text-hidden': isOver && !isDown }"
+            >
+              <div
+                @click="showToggle"
+                v-show="isOver"
+                class="more-down"
+                :class="{ 'down-up': isDown }"
+              >
+                {{ isDown ? "收起" : "展开" }}
+              </div>
+              {{ infoData.content }}
             </div>
           </div>
           <div class="receiver-pic tf-row-wrap">
-            <img @click="previewPic(index)" v-for="(item, index) in infoData.image_url_data" :key="index" :src="item" />
+            <img
+              @click="previewPic(index)"
+              v-for="(item, index) in infoData.image_url_data"
+              :key="index"
+              :src="item"
+            />
           </div>
         </div>
       </task-card>
@@ -28,6 +44,7 @@
         :phTxt="phTxt"
         :maxNum="maxNum"
         @getForm="getForm"
+        @getUpload="getUpload"
       >
         <div slot="header">
           <div class="session-tit red">任务方 请确认</div>
@@ -35,33 +52,55 @@
           <div class="initiator-session">
             <div class="form-label">接单方是否完成任务<span>*</span></div>
             <div class="radio-block tf-row">
-              <div v-for="(item, index) in statusList" :key="index" @click="statusIndex=index" class="popup-radio tf-row-vertical-center" :class="{'active': index == statusIndex}">
+              <div
+                v-for="(item, index) in statusList"
+                :key="index"
+                @click="statusIndex = index"
+                class="popup-radio tf-row-vertical-center"
+                :class="{ active: index == statusIndex }"
+              >
                 <div></div>
                 <div>{{ item }}</div>
               </div>
             </div>
-            <div class="initiator-tip">任务若确定已经完成，将结算幸福币给接单方</div>
+            <div class="initiator-tip">
+              任务若确定已经完成，将结算幸福币给接单方
+            </div>
           </div>
         </div>
       </graphic>
       <div v-if="btnShow" class="task-btn-block">
-        <div v-preventReClick @click="submit" :class="[ statusIndex!=null && statusIndex > -1? '' : 'unable-btn', 'task-btn']">确认</div>
+        <div
+          v-preventReClick
+          @click="submit"
+          :class="[
+            statusIndex != null && statusIndex > -1 ? '' : 'unable-btn',
+            'task-btn'
+          ]"
+        >
+          确认
+        </div>
       </div>
-      <confirm-model v-model="confirmShow" modelTit="确定已经完成任务？" modelSubTit="确定将结算幸福币给接单方" @sure="sure"></confirm-model>
+      <confirm-model
+        v-model="confirmShow"
+        modelTit="确定已经完成任务？"
+        modelSubTit="确定将结算幸福币给接单方"
+        @sure="sure"
+      ></confirm-model>
     </div>
     <template v-if="infoData.image_url_data && infoData.image_url_data.length">
-      <van-image-preview v-model="picShow" :images="infoData.image_url_data" :startPosition="picIndex">
+      <van-image-preview
+        v-model="picShow"
+        :images="infoData.image_url_data"
+        :startPosition="picIndex"
+      >
       </van-image-preview>
     </template>
   </div>
 </template>
 
 <script>
-import {
-  NavBar,
-  Toast,
-  ImagePreview
-} from 'vant'
+import { NavBar, Toast, ImagePreview } from 'vant'
 import graphic from '../components/graphic'
 import confirmModel from '../components/confirm-model'
 import taskCard from '../components/task-card'
@@ -93,7 +132,8 @@ export default {
       statusIndex: null, // 0已完成 1未完成
       picIndex: 0, // 图片预览起始位置索引
       picShow: false, // 查看大图
-      btnShow: true
+      btnShow: true,
+      uploadStatus: false
     }
   },
   created () {
@@ -113,7 +153,7 @@ export default {
   },
   methods: {
     getData () {
-      getCompleteInfo({ user_task_id: this.userTaskId }).then((res) => {
+      getCompleteInfo({ user_task_id: this.userTaskId }).then(res => {
         console.log(res)
         this.infoData = res.data
         this.$nextTick(() => {
@@ -123,7 +163,8 @@ export default {
     },
     getTextOver () {
       const textCont = this.$refs.textCont
-      const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
+      const textHeight =
+        (textCont.clientHeight * 750) / document.documentElement.clientWidth
       if (textHeight > 48 * 5) {
         this.isOver = true
       }
@@ -144,35 +185,55 @@ export default {
     // 提交
     submit () {
       this.formData.type = this.statusIndex
-      console.log(this.formData)
       const validator = [
         {
           value: this.formData.type,
           message: '请选择任务是否完成'
+        },
+        {
+          value: this.uploadStatus ? '' : '1',
+          message: '请等待图片上传成功后重试'
         }
       ]
-      validForm(validator).then((res) => {
-        if (this.formData.content.length > 500) {
-          Toast('内容最多输入500字')
-        } else {
-          if (this.statusIndex == 1) {
-            this.sure()
+      validForm(validator)
+        .then(res => {
+          if (this.formData.content.length > 500) {
+            Toast('内容最多输入500字')
           } else {
-            this.confirmShow = true
+            if (this.statusIndex == 1) {
+              this.sure()
+            } else {
+              this.confirmShow = true
+            }
           }
-        }
-      }).catch(res => {})
+        })
+        .catch(res => {})
     },
     sure () {
       this.formData.user_task_id = this.userTaskId
-      submitCompleteInfo(this.formData).then((res) => {
-        Toast({
-          message: `已奖励${this.infoData.reward_happiness}幸福币给接单方`,
-          onClose: () => {
-            this.$router.go(-1)
+      submitCompleteInfo(this.formData).then(res => {
+        if (res.success) {
+          // 已完成
+          if (this.formData.type == 0) {
+            Toast({
+              message: `已奖励${this.infoData.reward_happiness}幸福币给接单方`,
+              onClose: () => {
+                this.$router.go(-1)
+              }
+            })
+          } else {
+            Toast({
+              message: '提交成功',
+              onClose: () => {
+                this.$router.go(-1)
+              }
+            })
           }
-        })
+        }
       })
+    },
+    getUpload (value) {
+      this.uploadStatus = value
     }
   }
 }
@@ -181,17 +242,17 @@ export default {
 <style lang="less" scoped>
 /deep/ .van-nav-bar {
   // background-color: #F7F7F7;
-  .van-nav-bar__left  {
+  .van-nav-bar__left {
     padding-left: 20px;
-    .tf-icon{
+    .tf-icon {
       color: #000;
       font-size: 30px;
     }
   }
 }
-.tf-body-container{
+.tf-body-container {
   padding: 30px 20px 0;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
   /deep/textarea {
     min-height: 280px;
   }
@@ -205,21 +266,21 @@ export default {
   font-weight: 500;
   color: #000000;
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     top: 50%;
     margin-top: -16px;
     width: 8px;
     height: 32px;
-    background: #FEBF00;
+    background: #febf00;
     border-radius: 4px;
   }
   &.red {
     height: 90px;
     line-height: 90px;
     &::before {
-      background-color: #FF6555;
+      background-color: #ff6555;
     }
   }
 }
@@ -253,7 +314,6 @@ export default {
       }
     }
   }
-
 }
 .receiver-pic {
   padding: 0 0 14px 30px;
@@ -271,7 +331,7 @@ export default {
   line-height: 82px;
   font-size: 24px;
   span {
-    color: #FF6555;
+    color: #ff6555;
   }
 }
 .popup-radio {
@@ -281,7 +341,7 @@ export default {
   div:first-child {
     width: 30px;
     height: 30px;
-    border: 1PX solid #000000;
+    border: 1px solid #000000;
     border-radius: 15px;
     margin-right: 10px;
     position: relative;
@@ -296,16 +356,16 @@ export default {
     width: 194px;
   }
   &.active div:first-child {
-    border-color: #FF5240;
+    border-color: #ff5240;
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
+      transform: translate(-50%, -50%);
       width: 12px;
       height: 12px;
-      background: #FF6555;
+      background: #ff6555;
       border-radius: 50%;
     }
   }
@@ -314,10 +374,10 @@ export default {
   height: 64px;
   line-height: 64px;
   text-align: center;
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 10px;
   font-size: 24px;
-  color: #8F8F94;
+  color: #8f8f94;
   margin-bottom: 30px;
 }
 </style>

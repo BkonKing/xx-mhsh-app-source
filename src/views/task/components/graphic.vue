@@ -17,7 +17,7 @@
       </div>
       <div class="divider-line"></div>
       <div class="pic-block">
-        <tf-uploader ref="uploader" v-model="formData.images" max-count="9"></tf-uploader>
+        <tf-uploader ref="uploader" v-model="formData.images" max-count="9" @getUpload="(value) => $emit('getUpload', value)"></tf-uploader>
       </div>
     </div>
   </task-card>

@@ -90,7 +90,7 @@ export default {
       this.$emit('input', value)
     },
     uploadStatus (value) {
-      console.log(value)
+      // console.log(value)
       this.$emit('getUpload', value)
     }
   }
