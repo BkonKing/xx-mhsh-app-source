@@ -9,7 +9,7 @@
           </div>
           <span
             class="order-title"
-            :class="{ 'order-title-grey': +item.progress_status > 2 }"
+            :class="{ 'order-title-grey': +item.progress_status > 1 }"
             >{{ item.progress_status_name }}</span
           >
         </div>

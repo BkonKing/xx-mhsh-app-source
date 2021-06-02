@@ -65,7 +65,13 @@
           :maxNum="200"
           @getForm="getForm"
         ></graphic>
-        <div @click="submit" :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']">确定</div>
+        <van-button
+          v-preventReClick
+          @click="submit"
+          :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']"
+          :disabled="!formData.reason || formData.content.length > 200"
+          >确定</van-button
+        >
       </div>
     </task-popup>
     <list-select
@@ -102,7 +108,7 @@
 
 <script>
 import {
-  NavBar
+  NavBar, Toast
 } from 'vant'
 import taskPopup from '../components/task-popup'
 import listSelect from '../components/list-select'
@@ -184,6 +190,10 @@ export default {
     },
     // 提交
     submit () {
+      if (!this.formData.reason) {
+        Toast('请选择放弃任务')
+        return
+      }
       this.formData.user_task_id = this.infoData.id
       submitGiveUp(this.formData).then((res) => {
         this.endShow = false
@@ -344,7 +354,7 @@ export default {
       }
     }
     .van-cell {
-      height: 210px;
+      // height: 210px;
       padding: 16px 20px 0 30px;
     }
     .text-num {
@@ -365,5 +375,9 @@ export default {
       }
     }
   }
+}
+
+.op-right {
+  width: 200px !important;
 }
 </style>

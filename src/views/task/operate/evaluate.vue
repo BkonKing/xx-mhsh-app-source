@@ -33,9 +33,9 @@
               :key="i"
               :class="{
                 'radio-btn--active':
-                evaluateIdList.findIndex((obj) => {
-                  return obj && obj.id === item.id && obj.type === 'bad'
-                }) !== -1
+                  evaluateIdList.findIndex(obj => {
+                    return obj && obj.id === item.id && obj.type === 'bad';
+                  }) !== -1
               }"
               @click="handleSelectType(item.bad_tag_name, item.id, 'bad')"
             >
@@ -46,9 +46,9 @@
               :key="`good${i}`"
               :class="{
                 'radio-btn--active':
-                evaluateIdList.findIndex((obj) => {
-                  return obj && obj.id === item.id && obj.type === 'good'
-                }) !== -1
+                  evaluateIdList.findIndex(obj => {
+                    return obj && obj.id === item.id && obj.type === 'good';
+                  }) !== -1
               }"
               @click="handleSelectType(item.good_tag_name, item.id, 'good')"
             >
@@ -67,11 +67,12 @@
           class="evaluate-form-textarea"
         />
       </div>
+    </div>
+    <div class="task-btn-block">
       <van-button
-        class="confirm-btn"
+        class="task-btn"
         v-preventReClick
         type="primary"
-        size="large"
         :disabled="!evaluate_stars"
         @click="submit"
         >提交</van-button
@@ -122,7 +123,7 @@ export default {
     // 评价
     handleSelectType (value, id, type) {
       // 加入type是为了排除同组标签内容一模一样
-      const index = this.evaluateIdList.findIndex((obj) => {
+      const index = this.evaluateIdList.findIndex(obj => {
         return obj && obj.id === id
       })
       // 当前组合没有任何选择，则插入所有
@@ -133,7 +134,10 @@ export default {
         })
         this.evaluate_reason.push(value)
       } else {
-        if (this.evaluate_reason[index] === value && this.evaluateIdList[index].type === type) {
+        if (
+          this.evaluate_reason[index] === value &&
+          this.evaluateIdList[index].type === type
+        ) {
           // 取消选中的选项
           this.evaluateIdList.splice(index, 1)
           this.evaluate_reason.splice(index, 1)
@@ -172,6 +176,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-bg {
+  padding-bottom: 30px;
+}
 /deep/ .van-nav-bar {
   background: #febf00;
 }
@@ -203,6 +210,7 @@ export default {
   padding-left: 20px;
   padding-right: 20px;
   margin-top: -80px;
+  margin-bottom: 30px;
 }
 // 评分
 .rate-box {

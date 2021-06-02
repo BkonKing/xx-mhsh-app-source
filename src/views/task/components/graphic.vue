@@ -9,6 +9,7 @@
           rows="3"
           :border="false"
           type="textarea"
+          :maxlength="maxNum"
           :placeholder="phTxt"
         />
         <div class="text-num tf-row">

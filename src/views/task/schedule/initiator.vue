@@ -9,18 +9,32 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <a :href="'tel: ' + maskTel" class="tel-btn"><img src="@/assets/img/task_10.png" /></a>
+        <a :href="'tel: ' + maskTel" class="tel-btn"
+          ><img src="@/assets/img/task_10.png"
+        /></a>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="status-block tf-row-space-between">
         <div class="status-list tf-row-vertical-center">
-          <div v-for="(item, index) in statusNumList" :key="index" class="status-item">{{ item.text }}({{ item.value }})</div>
+          <div
+            v-for="(item, index) in statusNumList"
+            :key="index"
+            class="status-item"
+          >
+            {{ item.text }}({{ item.value }})
+          </div>
         </div>
         <van-dropdown-menu active-color="#8F8F94">
           <van-dropdown-item :title="statusName" ref="item">
             <div class="status-option">
-              <div @click="statusChange(index)" v-for="(item, index) in statusList" :key="index" class="option-item" :class="{ 'active': statusIndex==index }">
+              <div
+                @click="statusChange(index)"
+                v-for="(item, index) in statusList"
+                :key="index"
+                class="option-item"
+                :class="{ active: statusIndex == index }"
+              >
                 <div>{{ item.value }}</div>
                 <div>{{ item.text }}</div>
               </div>
@@ -29,11 +43,25 @@
         </van-dropdown-menu>
       </div>
       <div v-if="userList.length > 1" class="user-list">
-        <div v-for="(item, index) in userList" :key="index" class="user-item tf-column" :class="{ 'active': userIndex == index }" @click="userSelect(index)">
+        <div
+          v-for="(item, index) in userList"
+          :key="index"
+          class="user-item tf-column"
+          :class="{ active: userIndex == index }"
+          @click="userSelect(index)"
+        >
           <img v-if="item.avatar" :src="item.avatar" />
           <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="van-ellipsis user-name">{{ item.nickname }}</div>
-          <div class="user-status" :class="{ 'color-FF5240': item.is_stop == 1, 'opacity-gray': item.progress_status > 1 }">{{ item.progress_status_name }}</div>
+          <div
+            class="user-status"
+            :class="{
+              'color-FF5240': item.is_stop == 1,
+              'opacity-gray': item.progress_status > 1
+            }"
+          >
+            {{ item.progress_status_name }}
+          </div>
         </div>
       </div>
       <div v-if="userList.length == 1" class="release-header">
@@ -41,8 +69,18 @@
           <img v-if="infoData.avatar" :src="infoData.avatar" />
           <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="tf-row-space-between">
-            <div class="release-name van-ellipsis">{{ userList[0].nickname }}</div>
-            <div class="release-time color-ccc" :class="{ 'color-FF5240': userList[0].is_stop == 1, 'color-ccc': userList[0].progress_status > 1 }">{{ userList[0].progress_status_name }}</div>
+            <div class="release-name van-ellipsis">
+              {{ userList[0].nickname }}
+            </div>
+            <div
+              class="release-time color-ccc"
+              :class="{
+                'color-FF5240': userList[0].is_stop == 1,
+                'color-ccc': userList[0].progress_status > 1
+              }"
+            >
+              {{ userList[0].progress_status_name }}
+            </div>
           </div>
         </div>
       </div>
@@ -58,7 +96,9 @@
         <div class="bottom-fiex tf-row">
           <div class="op-left tf-row">
             <div @click="quiz" class="tf-column">
-              <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
+              <span v-if="infoData.question_num > 0" class="num tf-flex-center"
+                ><i>{{ infoData.question_num }}</i></span
+              >
               <img src="@/assets/img/task_05.png" />
               <div>提问</div>
             </div>
@@ -66,21 +106,48 @@
               <img src="@/assets/img/task_06.png" />
               <div>联系</div>
             </a>
-            <div v-if="infoData.is_show_complain == 1" @click="infoData.is_can_complain == 1 && complaint()" class="tf-column" :class="{'opacity-gray': infoData.is_can_complain == 0}">
+            <div
+              v-if="infoData.is_show_complain == 1"
+              @click="infoData.is_can_complain == 1 && complaint()"
+              class="tf-column"
+              :class="{ 'opacity-gray': infoData.is_can_complain == 0 }"
+            >
               <img src="@/assets/img/task_18.png" />
               <div>投诉</div>
             </div>
-            <div v-if="infoData.is_show_eliminate == 1" @click="infoData.is_can_eliminate == 1 && endTask()" class="tf-column" :class="{'opacity-gray': infoData.is_can_eliminate == 0}">
+            <div
+              v-if="infoData.is_show_eliminate == 1"
+              @click="infoData.is_can_eliminate == 1 && endTask()"
+              class="tf-column"
+              :class="{ 'opacity-gray': infoData.is_can_eliminate == 0 }"
+            >
               <img src="@/assets/img/task_19.png" />
               <div>淘汰</div>
             </div>
-            <div v-if="infoData.is_can_evaluate == 1" @click="evaluate" class="tf-column" :class="{'opacity-gray': infoData.is_can_abandon == 0}">
+            <div
+              v-if="infoData.is_can_evaluate == 1"
+              @click="evaluate"
+              class="tf-column"
+              :class="{ 'opacity-gray': infoData.is_can_abandon == 0 }"
+            >
               <img src="@/assets/img/task_20.png" />
               <div>评价</div>
             </div>
           </div>
-          <div v-if="infoData.is_can_confirm == 1" class="op-right" @click="completeTask()">确认完成</div>
-          <div v-if="infoData.is_can_delay == 1" class="op-right" @click="overtimeTask">是否延期</div>
+          <div
+            v-if="infoData.is_can_confirm == 1"
+            class="op-right"
+            @click="completeTask()"
+          >
+            确认完成
+          </div>
+          <div
+            v-if="infoData.is_can_delay == 1"
+            class="op-right"
+            @click="overtimeTask"
+          >
+            是否延期
+          </div>
         </div>
       </div>
     </div>
@@ -88,7 +155,13 @@
       <div slot="content" class="popup-cont">
         <div class="form-label">是否延长期限<span>*</span></div>
         <div class="radio-block tf-row">
-          <div v-for="(item, index) in overList" :key="index" @click="overIndex=index" class="popup-radio tf-row-vertical-center" :class="{'active': index == overIndex}">
+          <div
+            v-for="(item, index) in overList"
+            :key="index"
+            @click="overIndex = index"
+            class="popup-radio tf-row-vertical-center"
+            :class="{ active: index == overIndex }"
+          >
             <div></div>
             <div>{{ item }}</div>
           </div>
@@ -96,40 +169,67 @@
         <div v-show="overIndex == 1">
           <div class="form-label">是否奖励幸福币<span>*</span></div>
           <div class="radio-block tf-row">
-            <div v-for="(item, index) in coinList" :key="index" @click="coinIndex=item.value" class="popup-radio tf-row-vertical-center" :class="{'active': item.value == coinIndex}">
+            <div
+              v-for="(item, index) in coinList"
+              :key="index"
+              @click="coinIndex = item.value"
+              class="popup-radio tf-row-vertical-center"
+              :class="{ active: item.value == coinIndex }"
+            >
               <div></div>
               <div>{{ item.label }}</div>
             </div>
           </div>
           <div class="coin-tip">
-            <div v-show="coinIndex == 0" class="all-tip">奖励每人{{ overtimeInfo.reward_happiness }}幸福币</div>
-            <van-field v-show="coinIndex == 1" v-model="formData2.new_reward_happiness" type="digit" :placeholder="`奖励每人数量，需小于${overtimeInfo.reward_happiness}幸福币`">
+            <div v-show="coinIndex == 0" class="all-tip">
+              奖励每人{{ overtimeInfo.reward_happiness }}幸福币
+            </div>
+            <van-field
+              v-show="coinIndex == 1"
+              v-model="formData2.new_reward_happiness"
+              type="digit"
+              :placeholder="
+                `奖励每人数量，需小于${overtimeInfo.reward_happiness}幸福币`
+              "
+            >
               <div slot="extra" class="coin-unit">币</div>
             </van-field>
           </div>
         </div>
         <div v-show="overIndex == 0" class="select-block tf-row">
           <div @click="timeSelect(1)" class="popup-select tf-row-space-between">
-            {{ formData2.day_num ? this.formData2.day_num+'天' : '请选择' }}
+            {{ formData2.day_num ? this.formData2.day_num + "天" : "请选择" }}
             <img src="@/assets/img/task_14.png" />
           </div>
           <div class="select-lable">天</div>
           <div @click="timeSelect(2)" class="popup-select tf-row-space-between">
-            {{ formData2.hour_num ? this.formData2.hour_num+'小时' : '请选择' }}
+            {{
+              formData2.hour_num ? this.formData2.hour_num + "小时" : "请选择"
+            }}
             <img src="@/assets/img/task_14.png" />
           </div>
           <div class="select-lable">小时</div>
         </div>
-        <div class="task-btn" @click="ableClick||delayTask()" :class="{'unable-btn': ableClick}">确定</div>
+        <div
+          class="task-btn"
+          @click="ableClick || delayTask()"
+          :class="{ 'unable-btn': ableClick }"
+        >
+          确定
+        </div>
       </div>
     </task-popup>
-    <task-picker v-model="pcikerShow" :list="pickerList" @pickerCall="pickerCall"></task-picker>
+    <task-picker
+      v-model="pcikerShow"
+      :list="pickerList"
+      @pickerCall="pickerCall"
+    ></task-picker>
     <task-popup v-model="endShow" :titName="endTit" :subTitName="endSubTit">
       <div slot="content" class="popup-cont end-cont">
         <div class="form-label">淘汰原因<span>*</span></div>
         <div @click="reasonShow = true" class="select-block tf-row">
           <div class="popup-select tf-row-space-between">
-            {{ formData.reason || '请选择' }}
+            {{ formData.reason || "请选择" }}
             <img src="@/assets/img/task_09.png" />
           </div>
         </div>
@@ -140,7 +240,16 @@
           @getForm="getForm"
           ref="graphic"
         ></graphic>
-        <div @click="submitEliminate" :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']">确定</div>
+        <van-button
+          v-preventReClick
+          @click="submitEliminate"
+          :class="[
+            { 'unable-btn': !formData.reason || formData.content.length > 200 },
+            'task-btn'
+          ]"
+          :disabled="!formData.reason || formData.content.length > 200"
+          >确定</van-button
+        >
       </div>
     </task-popup>
     <list-select
@@ -152,19 +261,19 @@
 </template>
 
 <script>
-import {
-  NavBar,
-  DropdownMenu,
-  DropdownItem,
-  Picker,
-  Toast
-} from 'vant'
+import { NavBar, DropdownMenu, DropdownItem, Picker, Toast } from 'vant'
 import taskPopup from '../components/task-popup'
 import taskPicker from '../components/task-picker'
 import graphic from '../components/graphic'
 import scheduleList from './schedule-list'
 import listSelect from '../components/list-select'
-import { getTaskSchedule, getReasonList, submitEliminate, getOvertimeTask, submitDelayTash } from '@/api/task'
+import {
+  getTaskSchedule,
+  getReasonList,
+  submitEliminate,
+  getOvertimeTask,
+  submitDelayTash
+} from '@/api/task'
 export default {
   name: 'scheduleInitiator',
   components: {
@@ -222,7 +331,14 @@ export default {
   },
   computed: {
     ableClick () {
-      if ((this.overIndex == 0 && (!this.formData2.day_num && !this.formData2.hour_num)) || (this.overIndex == 1 && this.coinIndex == 1 && !this.formData2.new_reward_happiness)) {
+      if (
+        (this.overIndex == 0 &&
+          !this.formData2.day_num &&
+          !this.formData2.hour_num) ||
+        (this.overIndex == 1 &&
+          this.coinIndex == 1 &&
+          !this.formData2.new_reward_happiness)
+      ) {
         return true
       } else {
         return false
@@ -265,9 +381,11 @@ export default {
         linli_task_id: this.taskId
       }
       if (this.statusIndex > -1) {
-        Object.assign(params, { select_type: this.statusList[this.statusIndex].text })
+        Object.assign(params, {
+          select_type: this.statusList[this.statusIndex].text
+        })
       }
-      getTaskSchedule(params).then((res) => {
+      getTaskSchedule(params).then(res => {
         this.isLoading = false
         if (this.first) {
           this.first = false
@@ -307,7 +425,9 @@ export default {
     },
     statusChange (index) {
       this.statusIndex = index
-      this.statusName = `${this.statusList[this.statusIndex].text} (${this.statusList[this.statusIndex].value})`
+      this.statusName = `${this.statusList[this.statusIndex].text} (${
+        this.statusList[this.statusIndex].value
+      })`
       this.$refs.item.toggle()
       this.getData()
     },
@@ -331,7 +451,7 @@ export default {
       this.formData.content = ''
       this.formData.image_url = []
       if (!this.reasonList.length) {
-        getReasonList({ type: 1 }).then((res) => {
+        getReasonList({ type: 1 }).then(res => {
           this.reasonList = res.data.map(item => {
             return {
               value: item.id,
@@ -349,14 +469,14 @@ export default {
     submitEliminate () {
       if (!this.formData.reason) return
       this.formData.user_task_id = this.infoData.id
-      submitEliminate(this.formData).then((res) => {
+      submitEliminate(this.formData).then(res => {
         this.endShow = false
         this.getData()
       })
     },
     // 延期
     overtimeTask () {
-      getOvertimeTask({ task_id: this.taskId }).then((res) => {
+      getOvertimeTask({ task_id: this.taskId }).then(res => {
         this.overtimeInfo = res.data
         this.overSubTit = res.data.tab_text
         this.popupShow = true
@@ -387,12 +507,18 @@ export default {
     },
     // 延期
     delayTask () {
-      if (this.overIndex == 1 && this.coinIndex == 1 && this.formData2.new_reward_happiness - this.overtimeInfo.reward_happiness >= 0) {
+      if (
+        this.overIndex == 1 &&
+        this.coinIndex == 1 &&
+        this.formData2.new_reward_happiness -
+          this.overtimeInfo.reward_happiness >=
+          0
+      ) {
         Toast(`奖励必须小于${this.overtimeInfo.reward_happiness}幸福币`)
       } else {
         this.formData2.type = this.overIndex + 1
         this.formData2.reward_type = this.coinIndex + 1
-        submitDelayTash(this.formData2).then((res) => {
+        submitDelayTash(this.formData2).then(res => {
           this.popupShow = false
           this.getData()
         })
@@ -451,7 +577,12 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['operateEvaluate', 'operateComplaint', 'operateQuiz', 'operateFinish']
+    const names = [
+      'operateEvaluate',
+      'operateComplaint',
+      'operateQuiz',
+      'operateFinish'
+    ]
     if (!names.includes(to.name)) {
       console.log(123)
       this.$destroy()
@@ -463,10 +594,10 @@ export default {
 </script>
 <style lang="less" scoped>
 @import url(../../../styles/task.less);
-.tf-body-container{
+.tf-body-container {
   font-size: 28px;
   color: #333;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 /deep/ .van-nav-bar__right {
   padding: 0;
@@ -495,20 +626,20 @@ export default {
   .status-select {
     width: 200px;
     height: 64px;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 32px;
     position: relative;
     padding-right: 64px;
     text-align: right;
     line-height: 64px;
-    color: #8F8F94;
+    color: #8f8f94;
     font-size: 24px;
   }
   /deep/.van-dropdown-menu {
     .van-dropdown-menu__bar {
       width: 200px;
       height: 64px;
-      background: #F7F7F7;
+      background: #f7f7f7;
       border-radius: 32px;
     }
     .van-dropdown-menu__title {
@@ -518,14 +649,14 @@ export default {
       font-size: 24px;
       &.van-dropdown-menu__title--active::after {
         border-width: 0 7px 12px 7px;
-        border-color: transparent transparent #8F8F94 transparent;
+        border-color: transparent transparent #8f8f94 transparent;
       }
       &::after {
         width: 0;
         height: 0;
         border-style: solid;
         border-width: 12px 7px 0 7px;
-        border-color: #8F8F94 transparent transparent transparent;
+        border-color: #8f8f94 transparent transparent transparent;
         margin-top: 0;
         transform: translate(0, -50%);
         right: 20px;
@@ -540,8 +671,8 @@ export default {
       .option-item {
         width: 155px;
         height: 120px;
-        background: #F7F7F7;
-        border: 1PX solid #F7F7F7;
+        background: #f7f7f7;
+        border: 1px solid #f7f7f7;
         border-radius: 10px;
         margin-bottom: 30px;
         display: flex;
@@ -549,7 +680,7 @@ export default {
         justify-content: center;
         align-items: center;
         &.active {
-          border: 1PX solid #000000;
+          border: 1px solid #000000;
         }
         div {
           line-height: 44px;
@@ -562,7 +693,7 @@ export default {
         div:nth-child(2) {
           font-size: 24px;
           font-weight: 500;
-          color: #8F8F94;
+          color: #8f8f94;
         }
       }
     }
@@ -576,13 +707,13 @@ export default {
   .user-item {
     width: 200px;
     height: 240px;
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 10px;
     margin-right: 20px;
     align-items: center;
     flex-shrink: 0;
     &.active {
-      background: linear-gradient(45deg, #FFD34D 0%, #FEBF00 100%);
+      background: linear-gradient(45deg, #ffd34d 0%, #febf00 100%);
       box-shadow: 0px 10px 20px 0px rgba(232, 174, 0, 0.3);
     }
     img {
@@ -592,7 +723,8 @@ export default {
       object-fit: fill;
       margin: 30px 0 10px;
     }
-    .user-name,.user-status {
+    .user-name,
+    .user-status {
       color: #000000;
       line-height: 44px;
       font-size: 24px;
@@ -601,7 +733,7 @@ export default {
     }
     .user-status {
       &.color-FF5240 {
-        color: #FF5240;
+        color: #ff5240;
       }
       &.opacity-gray {
         opacity: 0.6;
@@ -621,7 +753,7 @@ export default {
   div:first-child {
     width: 30px;
     height: 30px;
-    border: 1PX solid #000000;
+    border: 1px solid #000000;
     border-radius: 15px;
     margin-right: 10px;
     position: relative;
@@ -636,16 +768,16 @@ export default {
     width: 194px;
   }
   &.active div:first-child {
-    border-color: #FF5240;
+    border-color: #ff5240;
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%,-50%);
+      transform: translate(-50%, -50%);
       width: 12px;
       height: 12px;
-      background: #FF6555;
+      background: #ff6555;
       border-radius: 50%;
     }
   }
@@ -655,9 +787,9 @@ export default {
   .popup-select {
     width: 180px;
     height: 80px;
-    border: 1PX solid #CCCCCC;
+    border: 1px solid #cccccc;
     border-radius: 10px;
-    color: #8F8F94;
+    color: #8f8f94;
     padding-left: 20px;
     line-height: 76px;
     align-items: center;
@@ -676,15 +808,15 @@ export default {
 .coin-tip {
   margin: 20px 0 60px;
   .all-tip {
-    color: #8F8F94;
+    color: #8f8f94;
     padding-left: 39px;
     line-height: 24px;
   }
   /deep/.van-cell {
     padding: 0 0 0 20px;
     height: 80px;
-    background: #FFFFFF;
-    border: 1PX solid #CCCCCC;
+    background: #ffffff;
+    border: 1px solid #cccccc;
     border-radius: 10px;
     .van-field__body {
       height: 100%;
@@ -720,7 +852,7 @@ export default {
     .text-block {
       width: 500px;
       min-height: 260px;
-      border: 1PX solid #CCCCCC;
+      border: 1px solid #cccccc;
       border-radius: 10px;
       margin-bottom: 30px;
       overflow: hidden;
@@ -755,7 +887,7 @@ export default {
 .release-header {
   height: 160px;
   width: 710px;
-  background: linear-gradient(90deg, #FFD34D 0%, #FEBF00 100%);
+  background: linear-gradient(90deg, #ffd34d 0%, #febf00 100%);
   border-radius: 10px 10px 0 0;
   padding: 30px;
   margin: 0 auto;
@@ -787,7 +919,7 @@ export default {
     font-size: 24px;
     line-height: 30px;
     &.color-FF5240 {
-      color: #FF5240;
+      color: #ff5240;
     }
     &.color-ccc {
       opacity: 0.6;

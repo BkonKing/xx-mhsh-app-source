@@ -70,13 +70,13 @@
         </div>
       </graphic>
       <div v-if="btnShow" class="task-btn-block">
-        <div
+        <van-button
           v-preventReClick
           @click="submit"
           :class="[{ 'unable-btn': statusIndex === null }, 'task-btn']"
+          :disabled="statusIndex === null"
+          >确认</van-button
         >
-          确认
-        </div>
       </div>
       <confirm-model
         v-model="confirmShow"
