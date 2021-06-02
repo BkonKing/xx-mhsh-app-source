@@ -151,13 +151,27 @@ export function getQuizList (params) {
 }
 
 // 任务-提交提问
-export function submitQuiz (params) {
-  return request.post('/linli/question/put_questions_to', params)
+export function submitQuiz (data) {
+  return request({
+    url: '/linli/question/put_questions_to',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 
 // 任务-回复提问
-export function replyQuiz (params) {
-  return request.post('/linli/question/reply_question', params)
+export function replyQuiz (data) {
+  return request({
+    url: '/linli/question/reply_question',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 
 // 放弃、淘汰原因

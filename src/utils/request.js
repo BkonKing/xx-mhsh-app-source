@@ -90,8 +90,6 @@ service.interceptors.response.use(
         router.push('/login')
       })
       return Promise.reject(code)
-    } else if (+code === 444) {
-      return Promise.reject(data || 'Error')
     } else if (code != 200) {
       if (!config.headers.noToast) {
         Toast(message || codeMessage[code])

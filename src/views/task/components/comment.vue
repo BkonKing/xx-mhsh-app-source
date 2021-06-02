@@ -35,7 +35,7 @@
           {{ errorInfo }}
         </div>
         <div class="btn">
-          <van-button  color="#ff6555" @click="close">我知道了</van-button>
+          <van-button color="#ff6555" @click="close">我知道了</van-button>
         </div>
       </div>
     </van-popup>
@@ -105,27 +105,43 @@ export default {
         return
       }
       this.isLoading = true
+      let reqAPI
       if (this.replyType === 'quiz') {
-        submitQuiz({ content: this.content, linli_task_id: this.parentId })
-          .then(res => {
-            this.initData()
-            this.isLoading = false
-            this.$emit('quizCall', res.data)
-          })
-          .catch(error => {
-            console.log(error)
-            this.errorInfo = error.message
-            this.isShow = true
-          })
+        reqAPI = submitQuiz({
+          content: this.content,
+          linli_task_id: this.parentId
+        })
       } else if (this.replyType === 'reply') {
-        replyQuiz({ content: this.content, question_id: this.parentId }).then(
-          res => {
-            this.initData()
-            this.isLoading = false
-            this.$emit('quizCall', res.data)
-          }
-        )
+        reqAPI = replyQuiz({
+          content: this.content,
+          question_id: this.parentId
+        })
       }
+      reqAPI
+        .then(res => {
+          // 提问是否开启审核0未开启1开启
+          if (+res.ask_check) {
+            Toast('提交成功，审核通过后自动发布')
+          } else {
+            Toast('发送成功')
+          }
+          this.initData()
+          this.isLoading = false
+          this.$emit('quizCall', res.data)
+        })
+        .catch(res => {
+          if (res.code === '444') {
+            this.errorInfo = res.message
+            this.isShow = true
+          } else {
+            if (+res.ask_check) {
+              Toast('提交失败，请重试')
+            } else {
+              Toast('发送失败 请重试')
+            }
+          }
+          this.isLoading = false
+        })
     },
     initData () {
       this.show = false
@@ -226,22 +242,22 @@ export default {
 // .like-active::before {
 //   color: @orange-dark;
 // }
-.errorPopup{
+.errorPopup {
   border-radius: 20px;
 }
 .errorinfo {
-   width: 560px;
+  width: 560px;
   height: 300px;
-   text-align: center;
-  .txt{
-  padding:50px 30px;
-  font-size: 30px;
-  font-family: PingFang SC;
-  font-weight: 500;
-  color: #333333;
-  line-height: 48px;
+  text-align: center;
+  .txt {
+    padding: 50px 30px;
+    font-size: 30px;
+    font-family: PingFang SC;
+    font-weight: 500;
+    color: #333333;
+    line-height: 48px;
   }
-  .btn{
+  .btn {
     margin-top: -20px;
   }
 }

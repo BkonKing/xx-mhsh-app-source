@@ -6,7 +6,12 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container" id="body-container">
-      <type-select cardTit="任务类型" ref="typeRadio" :radioList="typeList" @selectCall="typeCall"></type-select>
+      <type-select
+        cardTit="任务类型"
+        ref="typeRadio"
+        :radioList="typeList"
+        @selectCall="typeCall"
+      ></type-select>
       <div id="task_title"></div>
       <task-card cardTit="任务标题" :required="true">
         <div class="card-cont" slot="content">
@@ -19,29 +24,65 @@
               type="textarea"
             />
             <div class="text-num tf-row">
-              <div><span :class="{'red': formData.task_title.length > 20}">{{ formData.task_title.length }}</span>/20</div>
+              <div>
+                <span :class="{ red: formData.task_title.length > 20 }">{{
+                  formData.task_title.length
+                }}</span
+                >/20
+              </div>
             </div>
           </div>
           <div id="reward_happiness" class="reward-block bottom-line">
-            <div class="card-tit">奖励幸福币(每人)<span class="tit-icon">*</span></div>
+            <div class="card-tit">
+              奖励幸福币(每人)<span class="tit-icon">*</span>
+            </div>
             <van-field v-model="formData.reward_happiness" type="number" />
           </div>
-          <div v-if="typeIndex > -1" class="card-tip">同类型任务参考价<span>{{ typeList[typeIndex].start_price }}~{{ typeList[typeIndex].close_price }}</span>幸福币，请参考此价格设置奖励</div>
+          <div v-if="typeIndex > -1" class="card-tip">
+            同类型任务参考价<span
+              >{{ typeList[typeIndex].start_price }}~{{
+                typeList[typeIndex].close_price
+              }}</span
+            >幸福币，请参考此价格设置奖励
+          </div>
         </div>
       </task-card>
       <task-card cardTit="任务标签">
         <div class="card-cont" slot="content">
-          <div v-if="formData.task_tag.length < 5" class="label-block tf-row-space-between">
-            <div class="area-block label-input bottom-line tf-row-space-between">
+          <div
+            v-if="formData.task_tag.length < 5"
+            class="label-block tf-row-space-between"
+          >
+            <div
+              class="area-block label-input bottom-line tf-row-space-between"
+            >
               <van-field v-model="labelVal" type="text" />
               <div class="text-num tf-row">
-                <div><span :class="{'red': labelVal.length > 10}">{{ labelVal.length }}</span>/10</div>
+                <div>
+                  <span :class="{ red: labelVal.length > 10 }">{{
+                    labelVal.length
+                  }}</span
+                  >/10
+                </div>
               </div>
             </div>
-            <div @click="labelAdd" class="task-btn label-add" :class="{'label-unable': !addStatus}">添加</div>
+            <div
+              @click="labelAdd"
+              class="task-btn label-add"
+              :class="{ 'label-unable': !addStatus }"
+            >
+              添加
+            </div>
           </div>
           <div v-if="formData.task_tag.length" class="label-list tf-row">
-            <div class="label-item tf-row" v-for="(item, index) in formData.task_tag" :key="index">{{ item }}<img @click="labelDel(index)" src="@/assets/img/close_04.png" /></div>
+            <div
+              class="label-item tf-row"
+              v-for="(item, index) in formData.task_tag"
+              :key="index"
+            >
+              {{ item
+              }}<img @click="labelDel(index)" src="@/assets/img/close_04.png" />
+            </div>
           </div>
           <div class="card-tip">最多可添加5个标签</div>
         </div>
@@ -54,38 +95,70 @@
               <van-stepper v-model="formData.need_people" max="100" />
             </div>
           </div>
-          <div id="task_etime" @click="dateShow=true" class="cell-item tf-row">
+          <div
+            id="task_etime"
+            @click="dateShow = true"
+            class="cell-item tf-row"
+          >
             <div class="item-left">完成时间<span class="tit-icon">*</span></div>
             <div class="item-cont">{{ completeTime }}</div>
-            <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
+            <div class="item-arrow">
+              <i class="van-icon van-icon-arrow"></i>
+            </div>
           </div>
-          <div @click="!formData.udpate_address && goMap()" class="cell-item tf-row">
+          <div
+            @click="!formData.udpate_address && goMap()"
+            class="cell-item tf-row"
+          >
             <div class="item-left">完成地点</div>
             <div class="item-cont p-30">
-              <template v-if="!formData.udpate_address">不限{{formData.udpate_address}}</template>
+              <template v-if="!formData.udpate_address"
+                >不限{{ formData.udpate_address }}</template
+              >
               <template v-else>
-                <div class="address-name"><van-field v-model="formData.udpate_address" type="text" /></div>
-                <div>{{ formData.address_province + ' ' + formData.address_city + ' ' + formData.address_area + ' '}}</div>
+                <div class="address-name">
+                  <van-field v-model="formData.udpate_address" type="text" />
+                </div>
+                <div>
+                  {{
+                    formData.address_province +
+                      " " +
+                      formData.address_city +
+                      " " +
+                      formData.address_area +
+                      " "
+                  }}
+                </div>
               </template>
             </div>
-            <div @click="formData.udpate_address && goMap()" class="item-arrow"><i class="van-icon van-icon-location"></i></div>
+            <div @click="formData.udpate_address && goMap()" class="item-arrow">
+              <i class="van-icon van-icon-location"></i>
+            </div>
           </div>
           <div class="cell-item">
-            <div @click="selectShow=true" class="tf-row cell-limit">
+            <div @click="selectShow = true" class="tf-row cell-limit">
               <div class="item-left">可见范围</div>
               <div class="item-cont">{{ ableLookVal }}</div>
-              <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
+              <div class="item-arrow">
+                <i class="van-icon van-icon-arrow"></i>
+              </div>
             </div>
-            <div class="limit-tip card-tip">可针对指定地区或用户进行可见，其他用户将无法看到和接单</div>
+            <div class="limit-tip card-tip">
+              可针对指定地区或用户进行可见，其他用户将无法看到和接单
+            </div>
           </div>
         </div>
       </task-card>
       <task-card :required="true">
         <div class="card-cont" slot="content">
-          <div @click="telShow=true" class="cell-item cell-tel tf-row">
-            <div id="mobile" class="item-left">联系电话<span class="tit-icon">*</span></div>
+          <div @click="telShow = true" class="cell-item cell-tel tf-row">
+            <div id="mobile" class="item-left">
+              联系电话<span class="tit-icon">*</span>
+            </div>
             <div class="item-cont">{{ telLimt }}</div>
-            <div class="item-arrow"><i class="van-icon van-icon-arrow"></i></div>
+            <div class="item-arrow">
+              <i class="van-icon van-icon-arrow"></i>
+            </div>
           </div>
           <div class="area-block bottom-line tf-row-space-between">
             <van-field maxlength="11" v-model="formData.mobile" type="tel" />
@@ -103,21 +176,49 @@
       ></graphic>
       <div id="isAgree" class="agree-rule tf-flex-center">
         <div class="tf-flex-center agree-check" @click="agreeToggle">
-          <div :class="{'active': isAgree}"><span class="tf-icon tf-icon-gou"></span></div>我已阅读并同意
+          <div :class="{ active: isAgree }">
+            <span class="tf-icon tf-icon-gou"></span>
+          </div>
+          我已阅读并同意
         </div>
         <div @click="releaseRule" class="color-0E80E1">《交易规则》</div>
       </div>
       <div class="task-btn-block">
-        <div v-preventReClick @click="submit" :class="[ ableSubmit ? '' : 'unable-btn', 'task-btn']">发布</div>
+        <van-button
+          v-preventReClick
+          @click="submit"
+          :class="[ableSubmit ? '' : 'unable-btn', 'task-btn']"
+          :loading="isLoading"
+          >发布</van-button
+        >
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
     <date-picker v-model="dateShow" @dateSure="dateSure"></date-picker>
-    <area-picker v-model="areaShow" :province="province" @areaSure="areaSure"></area-picker>
-    <list-select v-model="selectShow" @selectCall="selectCall" :selectList="selectList"></list-select>
-    <list-select v-model="telShow" @selectCall="telCall" :selectList="telList"></list-select>
+    <area-picker
+      v-model="areaShow"
+      :province="province"
+      @areaSure="areaSure"
+    ></area-picker>
+    <list-select
+      v-model="selectShow"
+      @selectCall="selectCall"
+      :selectList="selectList"
+    ></list-select>
+    <list-select
+      v-model="telShow"
+      @selectCall="telCall"
+      :selectList="telList"
+    ></list-select>
     <project v-model="projectShow" @projectSure="projectCall"></project>
-    <confirm-model v-model="confirmShow" modelTit="确定放弃编辑内容？" cancelTxt="放弃" yesTxt="保存草稿" @cancel="cancel" @sure="sure"></confirm-model>
+    <confirm-model
+      v-model="confirmShow"
+      modelTit="确定放弃编辑内容？"
+      cancelTxt="放弃"
+      yesTxt="保存草稿"
+      @cancel="cancel"
+      @sure="sure"
+    ></confirm-model>
   </div>
 </template>
 
@@ -130,14 +231,16 @@ import areaPicker from '../components/area-picker'
 import listSelect from '../components/list-select'
 import project from '../components/project'
 import confirmModel from '../components/confirm-model'
-import { getTaskTypeList, getGroupList, submitTask, saveTask, editTaskInfo } from '@/api/task'
+import {
+  getTaskTypeList,
+  getGroupList,
+  submitTask,
+  saveTask,
+  editTaskInfo
+} from '@/api/task'
 import { mapGetters } from 'vuex'
 import { taskValidForm, ValidNumForm, bMapGetLocationInfo } from '@/utils/util'
-import {
-  NavBar,
-  Stepper,
-  Toast
-} from 'vant'
+import { NavBar, Stepper, Toast } from 'vant'
 
 export default {
   name: 'releaseEdit',
@@ -232,10 +335,21 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
     addStatus () {
-      return (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5)
+      return (
+        this.labelVal.length > 0 &&
+        this.labelVal.length < 11 &&
+        this.formData.task_tag.length < 5
+      )
     },
     ableSubmit () {
-      if (!this.formData.task_title || !this.formData.reward_happiness || !this.formData.task_etime || !this.formData.mobile || !this.formData.task_desc || !this.isAgree) {
+      if (
+        !this.formData.task_title ||
+        !this.formData.reward_happiness ||
+        !this.formData.task_etime ||
+        !this.formData.mobile ||
+        !this.formData.task_desc ||
+        !this.isAgree
+      ) {
         return false
       } else {
         return true
@@ -243,7 +357,8 @@ export default {
     }
   },
   activated () {
-    this.scrollTop && (document.getElementById('body-container').scrollTop = this.scrollTop)
+    this.scrollTop &&
+      (document.getElementById('body-container').scrollTop = this.scrollTop)
     const groupInfo = this.$store.state.groupInfo
     this.groupInfo = groupInfo
     if (this.ableIndex == 3 && groupInfo) {
@@ -290,7 +405,7 @@ export default {
     },
     // 获取任务详情
     getData () {
-      editTaskInfo({ linli_task_id: this.taskId }).then((res) => {
+      editTaskInfo({ linli_task_id: this.taskId }).then(res => {
         this.typeId = res.data.task_type
         const info = res.data
         this.ableIndex = info.range_type
@@ -319,7 +434,10 @@ export default {
         info.task_stime = info.task_stime == '0' ? '' : info.task_stime
         this.dateSure({ startTime: info.task_stime, endTime: info.task_etime })
         console.log(info.task_image)
-        this.$refs.graphic.setVal({ content: info.task_desc, images: info.task_image })
+        this.$refs.graphic.setVal({
+          content: info.task_desc,
+          images: info.task_image
+        })
         this.formData = Object.assign({}, this.formData, info)
         // this.formData = Object.assign({}, this.formData, info, this.addressObj)
         this.getTaskType()
@@ -366,9 +484,16 @@ export default {
     },
     // 添加标签
     labelAdd () {
-      if (this.labelVal.length > 0 && this.labelVal.length < 11 && this.formData.task_tag.length < 5) {
+      if (
+        this.labelVal.length > 0 &&
+        this.labelVal.length < 11 &&
+        this.formData.task_tag.length < 5
+      ) {
         console.log(document.getElementsByClassName('label-input')[0])
-        document.getElementsByClassName('label-input')[0].getElementsByTagName('input')[0].focus()
+        document
+          .getElementsByClassName('label-input')[0]
+          .getElementsByTagName('input')[0]
+          .focus()
         this.formData.task_tag.push(this.labelVal)
         this.labelVal = ''
       }
@@ -397,24 +522,27 @@ export default {
       const addressData = this.$store.state.map_info || ''
       if (addressData) {
         const bMap = api.require('bMap')
-        bMap.getNameFromCoords({
-          lon: addressData.lon,
-          lat: addressData.lat
-        }, function (ret, err) {
-          if (ret.status) {
-            const obj = {
-              location_limit: 1,
-              longitude: addressData.lon,
-              latitude: addressData.lat,
-              address: addressData.name,
-              udpate_address: addressData.name,
-              address_province: ret.province,
-              address_city: ret.city,
-              address_area: ret.district
+        bMap.getNameFromCoords(
+          {
+            lon: addressData.lon,
+            lat: addressData.lat
+          },
+          function (ret, err) {
+            if (ret.status) {
+              const obj = {
+                location_limit: 1,
+                longitude: addressData.lon,
+                latitude: addressData.lat,
+                address: addressData.name,
+                udpate_address: addressData.name,
+                address_province: ret.province,
+                address_city: ret.city,
+                address_area: ret.district
+              }
+              that.formData = Object.assign({}, that.formData, obj)
             }
-            that.formData = Object.assign({}, that.formData, obj)
           }
-        })
+        )
       }
       // const addressData = {
       //   name: '三盛滨江',
@@ -440,16 +568,20 @@ export default {
     selectCall (callData) {
       console.log(callData.value)
       this.ableIndex = callData.value
-      if (callData.value == 0) { // 不限
+      if (callData.value == 0) {
+        // 不限
         this.formData.range_type = 0
         this.ableLookVal = '不限'
         this.ableIndex = 0
         this.sureAbleIndex = 0
-      } else if (callData.value == 1) { // 指定地区
+      } else if (callData.value == 1) {
+        // 指定地区
         this.areaShow = true
-      } else if (callData.value == 2) { // 指定小区
+      } else if (callData.value == 2) {
+        // 指定小区
         this.projectShow = true
-      } else if (callData.value == 3) { // 指定人群
+      } else if (callData.value == 3) {
+        // 指定人群
         this.selectShow = false
         this.$nextTick(() => {
           this.$router.push({
@@ -476,10 +608,10 @@ export default {
         value = callData[0].name
         this.formData.province = callData[0].name
         if (callData[1] && callData[1].name) {
-          value += ('-' + callData[1].name)
+          value += '-' + callData[1].name
           this.formData.city = callData[1].name
           if (callData[2] && callData[2].name) {
-            value += ('-' + callData[2].name)
+            value += '-' + callData[2].name
             this.formData.area = callData[2].name
           }
         }
@@ -536,66 +668,72 @@ export default {
           message: '请同意《交易规则》'
         }
       ]
-      taskValidForm(validator).then((res) => {
-        const validatorNum = [
-          {
-            min: 0,
-            max: 20,
-            value: this.formData.task_title.length,
-            id: 'task_title',
-            message: '任务标题 最多输入20字'
-          },
-          {
-            min: parseInt(this.typeList[this.typeIndex].start_price),
-            max: parseInt(this.typeList[this.typeIndex].close_price),
-            value: parseInt(this.formData.reward_happiness),
-            id: 'reward_happiness',
-            message: '奖励幸福币数量需在参考价内'
-          },
-          {
-            min: 0,
-            max: 1000,
-            value: this.formData.task_desc.length,
-            id: 'task_desc',
-            message: '任务说明 最多输入1000字'
-          }
-        ]
-        ValidNumForm(validatorNum).then((res) => {
-          this.formData.linli_task_id = this.taskId
-          // this.formData.location_limit = this.formData.address ? 0 : 1
-          if (this.editType === 'edit' || this.editType === 'publish') {
-            this.formData.is_modify = this.editType === 'edit' ? 1 : 0
-            const now = new Date().getTime()
-            const end = new Date(this.formData.task_etime).getTime()
-            if (end < now) {
-              Toast('结束时间不能小于当前时间')
-              return
+      taskValidForm(validator)
+        .then(res => {
+          const validatorNum = [
+            {
+              min: 0,
+              max: 20,
+              value: this.formData.task_title.length,
+              id: 'task_title',
+              message: '任务标题 最多输入20字'
+            },
+            {
+              min: parseInt(this.typeList[this.typeIndex].start_price),
+              max: parseInt(this.typeList[this.typeIndex].close_price),
+              value: parseInt(this.formData.reward_happiness),
+              id: 'reward_happiness',
+              message: '奖励幸福币数量需在参考价内'
+            },
+            {
+              min: 0,
+              max: 1000,
+              value: this.formData.task_desc.length,
+              id: 'task_desc',
+              message: '任务说明 最多输入1000字'
             }
-          } else if (this.editType === 'anew') {
-            this.formData.id = 0
-            this.formData.linli_task_id = 0
-          }
-          if (this.isLoading) return
-          this.isLoading = true
-          submitTask(this.formData).then((res) => {
-            this.isLoading = false
-            Toast({
-              message: '提交成功',
-              onClose: () => {
-                this.taskOrder(res.task_id)
+          ]
+          ValidNumForm(validatorNum)
+            .then(res => {
+              this.formData.linli_task_id = this.taskId
+              // this.formData.location_limit = this.formData.address ? 0 : 1
+              if (this.editType === 'edit' || this.editType === 'publish') {
+                this.formData.is_modify = this.editType === 'edit' ? 1 : 0
+                const now = new Date().getTime()
+                const end = new Date(this.formData.task_etime).getTime()
+                if (end < now) {
+                  Toast('结束时间不能小于当前时间')
+                  return
+                }
+              } else if (this.editType === 'anew') {
+                this.formData.id = 0
+                this.formData.linli_task_id = 0
               }
+              if (this.isLoading) return
+              this.isLoading = true
+              submitTask(this.formData)
+                .then(res => {
+                  this.isLoading = false
+                  Toast({
+                    message: '提交成功',
+                    onClose: () => {
+                      this.taskOrder(res.task_id)
+                    }
+                  })
+                })
+                .catch(res => {
+                  this.isLoading = false
+                  const message = res.message || '提交失败 请重试'
+                  Toast(message)
+                })
             })
-          }).catch((res) => {
-            this.isLoading = false
-            const message = res.message || '提交失败 请重试'
-            Toast(message)
-          })
-        }).catch((res) => {
+            .catch(res => {
+              this.goScroll(res)
+            })
+        })
+        .catch(res => {
           this.goScroll(res)
         })
-      }).catch((res) => {
-        this.goScroll(res)
-      })
     },
     // 放弃
     cancel () {
@@ -613,12 +751,14 @@ export default {
         this.formData.id = 0
         this.formData.linli_task_id = 0
       }
-      saveTask(this.formData).then((res) => {
-        this.myTask()
-        // Toast('提交成功')
-      }).catch((res) => {
-        Toast('提交失败 请重试')
-      })
+      saveTask(this.formData)
+        .then(res => {
+          this.myTask()
+          // Toast('提交成功')
+        })
+        .catch(res => {
+          Toast('提交失败 请重试')
+        })
     },
     // 锚点滚动
     goScroll (selector) {
@@ -666,14 +806,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-body-container{
+.tf-body-container {
   padding: 20px 20px 30px;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 /deep/ .van-nav-bar {
-  .van-nav-bar__left  {
+  .van-nav-bar__left {
     padding-left: 20px;
-    .tf-icon{
+    .tf-icon {
       color: #000;
       font-size: 30px;
     }
@@ -690,7 +830,7 @@ export default {
     flex-shrink: 0;
     font-size: 24px;
     line-height: 36px;
-    color: #7A7A7E;
+    color: #7a7a7e;
     position: absolute;
     bottom: 14px;
     right: 0;
@@ -698,7 +838,7 @@ export default {
   }
 }
 .bottom-line {
-  border-bottom: 1PX solid #EEEEEE;
+  border-bottom: 1px solid #eeeeee;
 }
 .reward-block {
   height: 146px;
@@ -706,7 +846,8 @@ export default {
     padding-top: 26px;
   }
 }
-.area-block,.reward-block {
+.area-block,
+.reward-block {
   .van-cell {
     padding: 0;
     width: 560px;
@@ -720,12 +861,12 @@ export default {
 }
 .card-tip {
   font-size: 24px;
-  color: #BBBBBB;
+  color: #bbbbbb;
   height: 82px;
   line-height: 64px;
   white-space: nowrap;
   span {
-    color: #FEBF00;
+    color: #febf00;
     padding: 6px;
   }
 }
@@ -751,7 +892,7 @@ export default {
 .label-item {
   height: 48px;
   line-height: 48px;
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 10px;
   padding: 0 10px 0 16px;
   font-size: 24px;
@@ -766,11 +907,11 @@ export default {
 }
 .cell-item {
   min-height: 106px;
-  border-bottom: 1PX solid #EEEEEE;
+  border-bottom: 1px solid #eeeeee;
   font-size: 28px;
   .item-left {
     flex-shrink: 0;
-    color: #7A7A7E;
+    color: #7a7a7e;
     line-height: 106px;
   }
   .item-cont {
@@ -801,7 +942,7 @@ export default {
     & > div:nth-child(2) {
       line-height: 24px;
       font-size: 24px;
-      color: #8F8F94;
+      color: #8f8f94;
       padding-bottom: 10px;
     }
   }
@@ -810,7 +951,7 @@ export default {
     margin-bottom: -20px;
   }
   .item-arrow {
-    color: #AAAAAA;
+    color: #aaaaaa;
     align-items: center;
     display: flex;
     padding-left: 18px;
@@ -831,7 +972,7 @@ export default {
   button {
     width: 56px;
     height: 56px;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 4px;
   }
   input {
@@ -842,37 +983,38 @@ export default {
   }
   button.van-stepper__minus--disabled,
   button.van-stepper__plus--disabled {
-    &::before,&::after {
+    &::before,
+    &::after {
       background-color: #ccc;
     }
   }
   .van-stepper__minus::before,
   .van-stepper__plus::before {
     width: 20px;
-    height: 1PX;
+    height: 1px;
     background-color: #000;
   }
   .van-stepper__plus::after {
-    width: 1PX;
+    width: 1px;
     height: 20px;
     background-color: #000;
   }
 }
 span.red {
-  color: #FF6555;
+  color: #ff6555;
 }
 .agree-rule {
   height: 100px;
   margin-bottom: 30px;
   font-size: 26px;
   .color-0E80E1 {
-    color: #0E80E1;
+    color: #0e80e1;
   }
   .agree-check div {
     width: 40px;
     height: 40px;
-    background: #EEEEEE;
-    border: 1px solid #CCCCCC;
+    background: #eeeeee;
+    border: 1px solid #cccccc;
     border-radius: 20px;
     margin-right: 20px;
     span {
@@ -881,7 +1023,7 @@ span.red {
     &.active {
       border: 0;
       line-height: 40px;
-      background: #FF5240;
+      background: #ff5240;
       color: #fff;
       text-align: center;
       span {
@@ -889,5 +1031,8 @@ span.red {
       }
     }
   }
+}
+.task-btn {
+  border: none;
 }
 </style>

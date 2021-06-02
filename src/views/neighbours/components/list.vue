@@ -260,7 +260,7 @@ export default {
     margin-top: 24px;
     padding: 0 30px;
     font-size: 32px;
-    font-weight: 600;
+    font-weight: bold;
     color: #000;
     @text-ellipsis();
   }

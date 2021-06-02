@@ -24,6 +24,9 @@
       :complainInfo="item"
       :complainType="+type < 4 ? 1 : type"
       :complainKey="complainKey"
+      :types="types"
+      labelKey="complaint_type"
+      valueKey="id"
     ></complain-popup>
     <!-- 屏蔽 -->
     <shield-popup
@@ -54,6 +57,10 @@ export default {
     },
     type: {
       default: ''
+    },
+    types: {
+      type: Array,
+      default: () => []
     },
     contentKey: {
       type: String,

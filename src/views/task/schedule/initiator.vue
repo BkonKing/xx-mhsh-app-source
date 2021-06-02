@@ -96,9 +96,9 @@
         <div v-show="overIndex == 1">
           <div class="form-label">是否奖励幸福币<span>*</span></div>
           <div class="radio-block tf-row">
-            <div v-for="(item, index) in coinList" :key="index" @click="coinIndex=index" class="popup-radio tf-row-vertical-center" :class="{'active': index == coinIndex}">
+            <div v-for="(item, index) in coinList" :key="index" @click="coinIndex=item.value" class="popup-radio tf-row-vertical-center" :class="{'active': item.value == coinIndex}">
               <div></div>
-              <div>{{ item }}</div>
+              <div>{{ item.label }}</div>
             </div>
           </div>
           <div class="coin-tip">
@@ -166,6 +166,7 @@ import scheduleList from './schedule-list'
 import listSelect from '../components/list-select'
 import { getTaskSchedule, getReasonList, submitEliminate, getOvertimeTask, submitDelayTash } from '@/api/task'
 export default {
+  name: 'scheduleInitiator',
   components: {
     [NavBar.name]: NavBar,
     [DropdownMenu.name]: DropdownMenu,
@@ -201,8 +202,7 @@ export default {
       overtimeInfo: '',
       timeType: 1, // 1 天 2 小时
       pickerList: [],
-      coinList: ['奖励全部', '奖励部分', '不奖励'],
-      coinIndex: 1, // 0奖励全部 1奖励部分 2不奖励
+      coinIndex: 0, // 0奖励全部 1奖励部分 2不奖励
       maskTel: '', // 联系电话
       reasonList: [], // 淘汰原因
       reasonShow: false,
@@ -216,7 +216,8 @@ export default {
       formData: {
         reason: '',
         content: ''
-      }
+      },
+      first: true
     }
   },
   computed: {
@@ -226,6 +227,28 @@ export default {
       } else {
         return false
       }
+    },
+    // 如果任务奖励是1或0幸福币的话，不显示“奖励部分”这个选项
+    coinList () {
+      const coinList = [
+        {
+          label: '奖励全部',
+          value: 0
+        },
+        {
+          label: '奖励部分',
+          value: 1
+        },
+        {
+          label: '不奖励',
+          value: 2
+        }
+      ]
+      if (this.overtimeInfo.reward_happiness == '1') {
+        coinList.splice(1, 1)
+        return coinList
+      }
+      return coinList
     }
   },
   created () {
@@ -233,8 +256,8 @@ export default {
     this.formData2.task_id = this.taskId
     this.getData()
   },
-  mounted () {
-
+  activated () {
+    this.getData()
   },
   methods: {
     getData () {
@@ -246,7 +269,10 @@ export default {
       }
       getTaskSchedule(params).then((res) => {
         this.isLoading = false
-        this.userIndex = 0
+        if (this.first) {
+          this.first = false
+          this.userIndex = 0
+        }
         this.statusNumList = []
         this.statusList = []
         if (res.is_cen_yq == 1 && this.statusIndex < 0) {
@@ -271,9 +297,9 @@ export default {
         this.userList = res.data
         if (res.data.length) {
           if (!this.maskTel) {
-            this.maskTel = this.userList[0].customer_service
+            this.maskTel = this.userList[this.userIndex].customer_service
           }
-          this.infoData = this.userList[0]
+          this.infoData = this.userList[this.userIndex]
         } else {
           this.infoData = []
         }
@@ -423,6 +449,15 @@ export default {
         })
       }
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['operateEvaluate', 'operateComplaint', 'operateQuiz', 'operateFinish']
+    if (!names.includes(to.name)) {
+      console.log(123)
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

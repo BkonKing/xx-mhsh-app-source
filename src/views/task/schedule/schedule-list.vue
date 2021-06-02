@@ -20,12 +20,13 @@
           class="mask tf-row"
         >
           <img class="img-100" src="@/assets/img/task_12.png" />
-          <span>{{item.image_url.length}}</span>
+          <span>{{ item.image_url.length }}</span>
         </div>
         {{ item.ctime }}
       </div>
       <div class="cont tf-column">
         <div>{{ item.progress_title }}</div>
+        <div v-if="item.content">{{item.content}}</div>
       </div>
     </div>
     <van-image-preview
@@ -42,7 +43,6 @@
           <div class="evaluate-user van-ellipsis">
             对接单方<span>{{ evaluateInfo.nickname }}</span>
           </div>
-          <div class="evaluate-score">{{ evaluateInfo.stars_detail }}</div>
         </div>
         <div class="score-star tf-row-space-between">
           <div
@@ -52,6 +52,7 @@
             :class="{ active: evaluateInfo.evaluate_stars > index }"
           ></div>
         </div>
+        <div class="evaluate-score">{{ evaluateInfo.stars_detail }}</div>
         <div class="evaluate-label tf-row-space-between">
           <div
             v-for="(item, index) in evaluateInfo.evaluate_tags_data"
@@ -240,11 +241,13 @@ export default {
         padding-left: 20px;
       }
     }
-    .evaluate-score {
-      z-index: 4;
-      font-size: 24px;
-      line-height: 44px;
-    }
+  }
+  .evaluate-score {
+    display: flex;
+    justify-content: center;
+    z-index: 4;
+    font-size: 24px;
+    line-height: 44px;
   }
   .score-star {
     width: 430px;

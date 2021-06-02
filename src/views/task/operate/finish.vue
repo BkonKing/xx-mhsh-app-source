@@ -73,10 +73,7 @@
         <div
           v-preventReClick
           @click="submit"
-          :class="[
-            statusIndex != null && statusIndex > -1 ? '' : 'unable-btn',
-            'task-btn'
-          ]"
+          :class="[{ 'unable-btn': statusIndex === null }, 'task-btn']"
         >
           确认
         </div>

@@ -80,7 +80,10 @@ const taskRouter = [
       import(
         /* webpackChunkName: "scheduleInitiator" */
         '@/views/task/schedule/initiator'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 任务进度-接单方
   {
