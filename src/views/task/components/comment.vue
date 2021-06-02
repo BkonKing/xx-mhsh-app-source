@@ -13,12 +13,29 @@
             maxlength="100"
             show-word-limit
             v-model="content"
-            autosize="true"
+            :autosize="true"
             :placeholder="placeholder"
           />
         </div>
         <div class="comment-popup-right">
-          <van-button :loading="isLoading" v-preventReClick class="send-btn" :class="{'able-send': content}" @click="submit">发送</van-button>
+          <van-button
+            :loading="isLoading"
+            v-preventReClick
+            class="send-btn"
+            :class="{ 'able-send': content }"
+            @click="submit"
+            >发送</van-button
+          >
+        </div>
+      </div>
+    </van-popup>
+    <van-popup class="errorPopup" v-model="isShow">
+      <div class="errorinfo">
+        <div class="txt">
+          {{ errorInfo }}
+        </div>
+        <div class="btn">
+          <van-button  color="#ff6555" @click="close">我知道了</van-button>
         </div>
       </div>
     </van-popup>
@@ -54,19 +71,28 @@ export default {
       show: this.value,
       images: '',
       isLoading: false,
-      placeholder: ''
+      placeholder: '',
+      isShow: false,
+      errorInfo: ''
     }
   },
   methods: {
+    // 关闭违规信息弹窗
+    close () {
+      this.content = ''
+      this.show = false
+      this.isLoading = false
+      this.isShow = false
+    },
     /* 图片上传 */
     afterRead (file) {
       const formData = new FormData()
       formData.append('imgFile', file.file)
       uImages(formData)
-        .then((res) => {
+        .then(res => {
           this.images = res.data
         })
-        .catch((message) => {
+        .catch(message => {
           Toast.fail(message)
         })
     },
@@ -80,17 +106,25 @@ export default {
       }
       this.isLoading = true
       if (this.replyType === 'quiz') {
-        submitQuiz({ content: this.content, linli_task_id: this.parentId }).then(res => {
-          this.initData()
-          this.isLoading = false
-          this.$emit('quizCall', res.data)
-        })
+        submitQuiz({ content: this.content, linli_task_id: this.parentId })
+          .then(res => {
+            this.initData()
+            this.isLoading = false
+            this.$emit('quizCall', res.data)
+          })
+          .catch(error => {
+            console.log(error)
+            this.errorInfo = error.message
+            this.isShow = true
+          })
       } else if (this.replyType === 'reply') {
-        replyQuiz({ content: this.content, question_id: this.parentId }).then(res => {
-          this.initData()
-          this.isLoading = false
-          this.$emit('quizCall', res.data)
-        })
+        replyQuiz({ content: this.content, question_id: this.parentId }).then(
+          res => {
+            this.initData()
+            this.isLoading = false
+            this.$emit('quizCall', res.data)
+          }
+        )
       }
     },
     initData () {
@@ -129,16 +163,16 @@ export default {
   right: 0;
   bottom: 0;
   padding: 14px 20px;
-  border: 1PX solid #EEEEEE;
+  border: 1px solid #eeeeee;
   margin-bottom: env(safe-area-inset-bottom);
   margin-bottom: constant(safe-area-inset-bottom);
   background: #fff;
   /deep/ .van-field {
     height: 72px;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 36px;
     padding: 20px 30px;
-    background: #F7F7F7;
+    background: #f7f7f7;
     .van-field__body {
       height: 32px;
     }
@@ -158,11 +192,11 @@ export default {
   // }
   &-left {
     width: 620px;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 10px;
     padding: 20px 30px;
     /deep/ .van-cell {
-      background: #F7F7F7;
+      background: #f7f7f7;
       padding: 0;
     }
   }
@@ -179,12 +213,12 @@ export default {
       line-height: 56px;
       font-size: 24px;
       border-radius: 10px;
-      background: #CCCCCC;
+      background: #cccccc;
       width: 72px;
       padding: 0;
       border: 0;
       &.able-send {
-        background-color: #FF6555;
+        background-color: #ff6555;
       }
     }
   }
@@ -192,4 +226,23 @@ export default {
 // .like-active::before {
 //   color: @orange-dark;
 // }
+.errorPopup{
+  border-radius: 20px;
+}
+.errorinfo {
+   width: 560px;
+  height: 300px;
+   text-align: center;
+  .txt{
+  padding:50px 30px;
+  font-size: 30px;
+  font-family: PingFang SC;
+  font-weight: 500;
+  color: #333333;
+  line-height: 48px;
+  }
+  .btn{
+    margin-top: -20px;
+  }
+}
 </style>
