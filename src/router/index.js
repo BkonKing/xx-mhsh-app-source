@@ -127,6 +127,24 @@ const routes = [{
       '@/views/index/openingPage.vue'
     )
 },
+{
+  path: '/specialTopic',
+  name: 'specialTopic', // 专题页
+  component: () =>
+    import(
+      /* webpackChunkName: "specialTopic" */
+      '@/views/index/special.vue'
+    )
+},
+{
+  path: '/specialMap',
+  name: 'specialMap', // 专题地址
+  component: () =>
+    import(
+      /* webpackChunkName: "specialMap" */
+      '@/views/index/specialMap.vue'
+    )
+},
 ...butlerRouter,
 ...lifeRouter,
 ...neighboursRouter,
