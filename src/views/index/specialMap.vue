@@ -1,9 +1,16 @@
 <template>
-  <tf-map :btnText="btnText" :destinationInfo="mapInfo" @init="getMapInfo">
-    <div class="phone-number" @click="callPhoneNumber">
-      咨询电话：{{ phoneNumber }}<i class="tf-icon tf-icon-dianhua1"></i>
-    </div>
-  </tf-map>
+  <div>
+    <tf-map
+      v-if="show"
+      :btnText="btnText"
+      :destinationInfo="mapInfo"
+      @init="getMapInfo"
+    >
+      <div class="phone-number" @click="callPhoneNumber">
+        咨询电话：{{ phoneNumber }}<i class="tf-icon tf-icon-dianhua1"></i>
+      </div>
+    </tf-map>
+  </div>
 </template>
 
 <script>
@@ -14,6 +21,7 @@ export default {
   },
   data () {
     return {
+      show: false,
       mapInfo: {},
       btnText: '',
       phoneNumber: ''
@@ -22,12 +30,22 @@ export default {
   created () {
     this.mapInfo.name = this.$route.query.name
     this.mapInfo.address = this.$route.query.address
+    this.btnText = this.$route.query.btnText
+    this.$toast.loading({
+      message: '加载中...',
+      duration: 500,
+      forbidClick: true
+    })
+    setTimeout(() => {
+      this.show = true
+    }, 500)
   },
   methods: {
     getMapInfo () {
       this.mapInfo = this.$route.query
       this.btnText = this.$route.query.btnText
       this.phoneNumber = this.$route.query.phoneNumber
+      this.$toast.clear()
     },
     callPhoneNumber () {
       api.call({
@@ -35,6 +53,9 @@ export default {
         number: this.phoneNumber
       })
     }
+  },
+  beforeDestroy () {
+    this.$toast.clear()
   }
 }
 </script>
