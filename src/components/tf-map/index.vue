@@ -389,6 +389,8 @@ export default {
   }
 }
 .app-popup {
+  display: flex;
+  flex-direction: column;
   // height: 292px;
   border-radius: 20px 20px 0px 0px;
   /deep/ .van-popup__close-icon {
@@ -408,6 +410,9 @@ export default {
 }
 .map-list {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
   .map-item {
     display: flex;
     flex-direction: column;
