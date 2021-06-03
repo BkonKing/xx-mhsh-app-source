@@ -370,7 +370,7 @@ export default {
   created () {
     this.taskId = this.$route.query.taskId
     this.formData2.task_id = this.taskId
-    this.getData()
+    // this.getData()
   },
   activated () {
     this.getData()
@@ -390,6 +390,10 @@ export default {
         if (this.first) {
           this.first = false
           this.userIndex = 0
+        } else {
+          this.userIndex = res.data.findIndex((obj) => {
+            return obj.id === this.infoData.id
+          })
         }
         this.statusNumList = []
         this.statusList = []
