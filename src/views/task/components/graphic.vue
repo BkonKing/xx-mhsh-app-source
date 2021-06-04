@@ -13,12 +13,22 @@
           :placeholder="phTxt"
         />
         <div class="text-num tf-row">
-          <div><span :class="{'red': formData.content.length>maxNum}">{{ formData.content.length }}</span>/{{ maxNum }}</div>
+          <div>
+            <span :class="{ red: formData.content.length > maxNum }">{{
+              formData.content.length
+            }}</span
+            >/{{ maxNum }}
+          </div>
         </div>
       </div>
       <div class="divider-line"></div>
       <div class="pic-block">
-        <tf-uploader ref="uploader" v-model="formData.images" max-count="9" @getUpload="(value) => $emit('getUpload', value)"></tf-uploader>
+        <tf-uploader
+          ref="uploader"
+          v-model="formData.images"
+          max-count="9"
+          @getUpload="value => $emit('getUpload', value)"
+        ></tf-uploader>
       </div>
     </div>
   </task-card>
@@ -54,8 +64,7 @@ export default {
       }
     }
   },
-  created () {
-  },
+  created () {},
   methods: {
     // 设置初始值
     setVal (obj) {
@@ -79,9 +88,12 @@ export default {
   padding: 6px 47px 36px 30px;
   textarea {
     min-height: 414px;
-    font-size: 30px;
+    font-size: 24px;
+    font-family: PingFang SC;
+    font-weight: 400;
+    line-height: 44px;
     color: #333333;
-    line-height: 48px;
+
     word-break: break-all;
   }
 }
@@ -90,13 +102,13 @@ export default {
   justify-content: flex-end;
   padding-right: 30px;
   font-size: 26px;
-  color: #8F8F94;
+  color: #8f8f94;
   margin-bottom: 14px;
   div {
     line-height: 36px;
   }
   span.red {
-    color: #FF6555;
+    color: #ff6555;
   }
 }
 .divider-line {
@@ -124,9 +136,9 @@ export default {
 }
 /deep/ .van-uploader__upload {
   background-color: #fff;
-  border: 2px dashed #8F8F94;
+  border: 2px dashed #8f8f94;
   .van-uploader__upload-icon {
-    color: #8F8F94;
+    color: #8f8f94;
     font-size: 40px;
   }
 }

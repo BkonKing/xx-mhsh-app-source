@@ -98,6 +98,22 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.van-uploader {
+    margin-bottom: 10px;
+}
+/deep/ .van-uploader__preview{
+      width: 105px !important;
+      height: 105px !important;
+      margin-left: 4px !important;
+      img{
+        width: 100%;
+        height: 100%;
+      }
+}
+/deep/ .van-uploader{
+  margin-bottom: 10px;
+}
+
 /deep/ .van-uploader__preview-delete {
   position: absolute;
   top: -17px;

@@ -88,6 +88,7 @@ export default {
     this.nowYear = nowTime.getFullYear()
     this.nowMonth = nowTime.getMonth() + 1
     this.getMonthDay()
+
     // this.nowMonth = getDate()
   },
   methods: {
@@ -126,6 +127,7 @@ export default {
     onConfirm (date) {
       if (this.timeIndex == 0) {
         this.startYmd = this.formatDate(date)
+        // console.log('选择了日历', this.startYmd)
       } else {
         this.endYmd = this.formatDate(date)
       }
@@ -174,6 +176,7 @@ export default {
       // 修改
       if (this.timeIndex === 0) {
         this.startTime = this.startYmd + ' ' + this.startHi
+        console.log('this.startTime', this.startTime)
       } else {
         this.endTime = this.endYmd + ' ' + this.endHi
       }
@@ -215,6 +218,9 @@ export default {
       if (this.isBol === false) {
         this.startTime = ''
         this.endTime = ''
+      }
+      if (val) {
+        this.onConfirm(new Date())
       }
       this.$emit('input', val)
     }
