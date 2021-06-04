@@ -118,7 +118,12 @@ export default {
     }
   },
   methods: {
-    getData () {
+    getData (loading) {
+      loading && this.$toast.loading({
+        message: '加载中...',
+        duration: 0,
+        forbidClick: true
+      })
       getOpStatus({ linli_task_id: this.taskId }).then((res) => {
         const statusInfo = res.data
         const list = []
@@ -162,6 +167,9 @@ export default {
           }
         })
         this.selectList = list
+        this.$toast.clear()
+      }).catch(() => {
+        this.$toast.clear()
       })
     },
     // 操作选择
@@ -305,7 +313,7 @@ export default {
       this.$emit('input', val)
     },
     taskId () {
-      this.getData()
+      this.getData(true)
     }
   }
 }
