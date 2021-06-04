@@ -83,6 +83,16 @@ export default {
       }
     }
   },
+  beforeRouteEnter (to, from, next) {
+    const current = +to.query.publish || 0
+    next(vm => {
+      if (current && current !== vm.current) {
+        vm.scrollTop = 0
+        vm.current = parseInt(current)
+        vm.$router.replace({ name: 'PersonageTaskIndex' })
+      }
+    })
+  },
   beforeRouteLeave (to, from, next) {
     const el = document
       .getElementById(`taskList${this.current}`)

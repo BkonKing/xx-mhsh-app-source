@@ -79,7 +79,7 @@
         v-preventReClick
         size="large"
         type="danger"
-        :disabled="!(complaintType && content)"
+        :disabled="!(complaintType && content && content.length > 9)"
         @click="complaintTask"
         >确认</van-button
       >

@@ -151,6 +151,7 @@
         </div>
       </div>
     </div>
+    <!-- 延期弹窗 -->
     <task-popup v-model="popupShow" :titName="overTit" :subTitName="overSubTit">
       <div slot="content" class="popup-cont">
         <div class="form-label">是否延长期限<span>*</span></div>
@@ -210,13 +211,13 @@
           </div>
           <div class="select-lable">小时</div>
         </div>
-        <div
-          class="task-btn"
+        <van-button
+          v-preventReClick
           @click="ableClick || delayTask()"
-          :class="{ 'unable-btn': ableClick }"
+          :class="[{ 'unable-btn': ableClick }, 'task-btn']"
+          :disabled="ableClick"
+          >确定</van-button
         >
-          确定
-        </div>
       </div>
     </task-popup>
     <task-picker
@@ -391,7 +392,7 @@ export default {
           this.first = false
           this.userIndex = 0
         } else {
-          this.userIndex = res.data.findIndex((obj) => {
+          this.userIndex = res.data.findIndex(obj => {
             return obj.id === this.infoData.id
           })
         }
@@ -481,10 +482,23 @@ export default {
     // 延期
     overtimeTask () {
       getOvertimeTask({ task_id: this.taskId }).then(res => {
+        this.resetOverTimeForm()
         this.overtimeInfo = res.data
         this.overSubTit = res.data.tab_text
         this.popupShow = true
       })
+    },
+    // 延期弹窗重置表单
+    resetOverTimeForm () {
+      this.overIndex = 0
+      this.coinIndex = 0
+      this.formData2 = {
+        type: 1,
+        day_num: '',
+        hour_num: '',
+        reward_type: 2,
+        new_reward_happiness: null
+      }
     },
     // 延期时间
     timeSelect (type) {
@@ -588,7 +602,6 @@ export default {
       'operateFinish'
     ]
     if (!names.includes(to.name)) {
-      console.log(123)
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

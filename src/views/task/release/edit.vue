@@ -767,7 +767,10 @@ export default {
     // 我的任务
     myTask () {
       this.$router.replace({
-        name: 'PersonageTaskIndex'
+        name: 'PersonageTaskIndex',
+        query: {
+          publish: 1
+        }
       })
     },
     // 任务订单
