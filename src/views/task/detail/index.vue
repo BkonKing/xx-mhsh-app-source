@@ -11,13 +11,22 @@
       <template #right>
         <span
           class="van-icon van-icon-ellipsis"
-          @click="isUp ? selectShow = true : opShow = true"
+          @click="isUp ? (selectShow = true) : (opShow = true)"
         ></span>
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="header-block">
-        <div class="task-status bg-FEBF00" :class="{'bg-FE8900': infoData.task_status < 3, 'bg-FF6555' : infoData.task_status == 4, 'bg-ccc' : infoData.task_status > 4}">{{ infoData.task_status_name }}</div>
+        <div
+          class="task-status bg-FEBF00"
+          :class="{
+            'bg-FE8900': infoData.task_status < 3,
+            'bg-FF6555': infoData.task_status == 4,
+            'bg-ccc': infoData.task_status > 4
+          }"
+        >
+          {{ infoData.task_status_name }}
+        </div>
         <img class="header-bg" src="@/assets/img/task_01.png" />
         <div class="task-tit">{{ infoData.task_title }}</div>
         <div class="task-coin tf-row-vertical-center">
@@ -26,7 +35,13 @@
           <div class="coin-unit">幸福币/人</div>
         </div>
         <div class="task-label tf-row">
-          <div v-for="(item, index) in infoData.task_tag" :key="index" class="lable-item">{{ item }}</div>
+          <div
+            v-for="(item, index) in infoData.task_tag"
+            :key="index"
+            class="lable-item"
+          >
+            {{ item }}
+          </div>
         </div>
       </div>
       <div class="body-cont">
@@ -36,56 +51,137 @@
             <img v-if="infoData.rwf_avatar" :src="infoData.rwf_avatar" />
             <img v-else src="@/assets/imgs/touxiang.png" />
             <div class="tf-row-space-between">
-              <div class="release-name van-ellipsis">{{ infoData.rwf_nickname }}</div>
+              <div class="release-name van-ellipsis">
+                {{ infoData.rwf_nickname }}
+              </div>
               <div class="release-time">{{ infoData.task_ctime }}</div>
             </div>
           </div>
-          <div v-if="!isUp && +receiverInfo.is_already" class="complain-tip tf-row-space-between">
-            <div>凡涉及到内容有违法信息传播。收费不合理， 请您警惕并手机关联证据向我们举报。</div>
+          <div
+            v-if="!isUp && +receiverInfo.is_already"
+            class="complain-tip tf-row-space-between"
+          >
+            <div>
+              凡涉及到内容有违法信息传播。收费不合理，
+              请您警惕并手机关联证据向我们举报。
+            </div>
             <div @click="complaint">投诉</div>
           </div>
         </div>
-        <div v-if="!isUp && receiverInfo && receiverInfo.is_already == 1" class="task-session">
-          <div class="session-tit tf-row-space-between">接单用户<div class="tit-right tf-row-vertical-center" @click="goSchedule">查看<img src="@/assets/img/task_09.png" /></div></div>
+        <div
+          v-if="!isUp && receiverInfo && receiverInfo.is_already == 1"
+          class="task-session"
+        >
+          <div class="session-tit tf-row-space-between">
+            接单用户
+            <div class="tit-right tf-row-vertical-center" @click="goSchedule">
+              查看<img src="@/assets/img/task_09.png" />
+            </div>
+          </div>
           <div class="release-user tf-row">
-            <img v-if="receiverInfo.jdf_avatar" :src="receiverInfo.jdf_avatar" />
+            <img
+              v-if="receiverInfo.jdf_avatar"
+              :src="receiverInfo.jdf_avatar"
+            />
             <img v-else src="@/assets/imgs/touxiang.png" />
             <div class="tf-row-space-between">
-              <div class="release-name van-ellipsis">{{ receiverInfo.jdf_nickname }}</div>
-              <div class="release-time" :class="{'color-FF5240' : receiverInfo.progress_status != 2}">{{ receiverInfo.progress_status_name }}</div>
+              <div class="release-name van-ellipsis">
+                {{ receiverInfo.jdf_nickname }}
+              </div>
+              <div
+                class="release-time"
+                :class="{ 'color-FF5240': receiverInfo.progress_status != 2 }"
+              >
+                {{ receiverInfo.progress_status_name }}
+              </div>
             </div>
-            <div @click="deliverTask" v-if="receiverInfo.is_deliver == 1" class="finish-btn">交付任务</div>
+            <div
+              @click="deliverTask"
+              v-if="receiverInfo.is_deliver == 1"
+              class="finish-btn"
+            >
+              交付任务
+            </div>
           </div>
-          <div @click="goSchedule" v-if="receiverInfo.taskflow_list.length" class="progress-step">
-            <div v-for="(item, index) in receiverInfo.taskflow_list.slice(0,2)" :key="index">{{ item.ctime + ' ' + item.progress_title }}</div>
+          <div
+            @click="goSchedule"
+            v-if="receiverInfo.taskflow_list.length"
+            class="progress-step"
+          >
+            <div
+              v-for="(item, index) in receiverInfo.taskflow_list.slice(0, 2)"
+              :key="index"
+            >
+              {{ item.ctime + " " + item.progress_title }}
+            </div>
             <!-- <div>03-21 12:00 接单成功，任务进行中</div> -->
           </div>
         </div>
         <div class="task-session">
           <div class="session-tit">任务要求</div>
           <div class="ask-list">
-            <div class="ask-item">需要人数：{{ infoData.need_people_text }}</div>
+            <div class="ask-item">
+              需要人数：{{ infoData.need_people_text }}
+            </div>
             <div class="ask-item">完成时间：{{ infoData.task_time }}</div>
-            <div v-if="isUp" class="ask-item">可见范围：{{ infoData.range_type_name }}</div>
+            <div v-if="isUp" class="ask-item">
+              可见范围：{{ infoData.range_type_name }}
+            </div>
           </div>
         </div>
         <div v-if="infoData.address" class="task-session">
           <div class="session-tit">完成地点</div>
           <div @click="openMap" class="task-address tf-vertical-center">
-            <div class="van-ellipsis">{{ infoData.udpate_address || infoData.address }}</div>
-            <div class="van-ellipsis">{{ infoData.address_province + ' ' + infoData.address_city + ' ' + infoData.address_area }}</div>
+            <div class="van-ellipsis">
+              {{ infoData.udpate_address || infoData.address }}
+            </div>
+            <div class="van-ellipsis">
+              {{
+                infoData.address_province +
+                  " " +
+                  infoData.address_city +
+                  " " +
+                  infoData.address_area
+              }}
+            </div>
             <img class="address-arrow" src="@/assets/img/task_04.png" />
             <img class="address-bg" src="@/assets/img/task_03.png" />
           </div>
         </div>
         <div class="task-session">
-          <div class="session-tit tf-row-space-between">任务说明<span class="tit-right" v-if="infoData.renew_day > 0">更新：{{ infoData.renew_day }}天前</span></div>
+          <div class="session-tit tf-row-space-between">
+            任务说明<span class="tit-right" v-if="infoData.renew_day"
+              >更新：{{ infoData.renew_day }}</span
+            >
+          </div>
           <div class="detai-cont">
             <div class="text-block">
-              <div class="cont-text" :class="{'text-hidden': isOver&&!isDown}" ref="textCont"><div @click="showToggle" v-show="isOver" class="more-down" :class="{'down-up' : isDown}">{{ isDown ? '收起' : '展开' }}</div>{{ infoData.task_desc }}</div>
+              <div
+                class="cont-text"
+                :class="{ 'text-hidden': isOver && !isDown }"
+                ref="textCont"
+              >
+                <div
+                  @click="showToggle"
+                  v-show="isOver"
+                  class="more-down"
+                  :class="{ 'down-up': isDown }"
+                >
+                  {{ isDown ? "收起" : "展开" }}
+                </div>
+                <div class="task-desc-box" v-html="infoData.task_desc.replace(/\r\n|\n/g, '<br/>')"></div>
+              </div>
             </div>
-            <div v-if="infoData.task_image && infoData.task_image.length" class="cont-pic tf-row-wrap">
-              <img @click="previewPic(index)" v-for="(item, index) in infoData.task_image" :key="index" :src="item" />
+            <div
+              v-if="infoData.task_image && infoData.task_image.length"
+              class="cont-pic tf-row-wrap"
+            >
+              <img
+                @click="previewPic(index)"
+                v-for="(item, index) in infoData.task_image"
+                :key="index"
+                :src="item"
+              />
             </div>
           </div>
         </div>
@@ -97,29 +193,64 @@
               <img src="@/assets/img/task_05.png" />
               <div>提问</div>
             </div>
-            <a v-if="infoData.mobile_open == 1 || receiverInfo.is_already == 1" :href="'tel: ' + infoData.mobile" class="tf-column">
+            <a
+              v-if="infoData.mobile_open == 1 || receiverInfo.is_already == 1"
+              :href="'tel: ' + infoData.mobile"
+              class="tf-column"
+            >
               <img src="@/assets/img/task_06.png" />
               <div>联系</div>
             </a>
-            <div @click="share" v-if="receiverInfo.is_can_share == 1" class="tf-column">
+            <div
+              @click="share"
+              v-if="receiverInfo.is_can_share == 1"
+              class="tf-column"
+            >
               <img src="@/assets/img/task_07.png" />
               <div>分享</div>
             </div>
-            <div v-if="receiverInfo.is_already == 1" @click="goSchedule" class="tf-column">
+            <div
+              v-if="infoData.is_schedule == 1"
+              @click="goSchedule"
+              class="tf-column"
+            >
               <img src="@/assets/img/task_08.png" />
               <div>进度</div>
             </div>
           </div>
-          <div v-preventReClick v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">立即接单</div>
+          <div
+            v-preventReClick
+            v-if="receiverInfo.is_can == 1"
+            class="op-right"
+            @click="opCall()"
+          >
+            立即接单
+          </div>
         </div>
       </div>
       <template v-else>
-        <div v-if="infoData.task_status!=0 && infoData.task_status!=4 && infoData.task_status!=6" class="op-block">
+        <div
+          v-if="
+            infoData.task_status != 0 &&
+              infoData.task_status != 4 &&
+              infoData.task_status != 6
+          "
+          class="op-block"
+        >
           <div class="bottom-fiex tf-row">
             <div class="op-left tf-row">
-              <template v-if="(infoData.task_status > 0 && infoData.task_status < 4) || infoData.task_status == 5">
+              <template
+                v-if="
+                  (infoData.task_status > 0 && infoData.task_status < 4) ||
+                    infoData.task_status == 5
+                "
+              >
                 <div @click="quiz" class="tf-column">
-                  <span v-if="infoData.question_num > 0" class="num tf-flex-center"><i>{{ infoData.question_num }}</i></span>
+                  <span
+                    v-if="infoData.question_num > 0"
+                    class="num tf-flex-center"
+                    ><i>{{ infoData.question_num }}</i></span
+                  >
                   <img src="@/assets/img/task_05.png" />
                   <div>提问</div>
                 </div>
@@ -128,21 +259,39 @@
                   <div>联系</div>
                 </a>
               </template>
-              <div @click="share" v-if="infoData.task_status == 1 || infoData.task_status == 2" class="tf-column">
+              <div
+                @click="share"
+                v-if="infoData.task_status == 1"
+                class="tf-column"
+              >
                 <img src="@/assets/img/task_07.png" />
                 <div>分享</div>
               </div>
-              <div v-if="infoData.task_status == 1 && infoData.task_status == 5" @click="goSchedule" class="tf-column">
+              <div
+                v-if="infoData.is_schedule == 1"
+                @click="goSchedule"
+                class="tf-column"
+              >
                 <img src="@/assets/img/task_08.png" />
                 <div>进度</div>
               </div>
             </div>
-            <div v-if="receiverInfo.is_can == 1" class="op-right" @click="opCall()">编辑</div>
+            <div
+              v-if="receiverInfo.is_can == 1"
+              class="op-right"
+              @click="opCall()"
+            >
+              编辑
+            </div>
           </div>
         </div>
       </template>
       <template v-if="infoData.task_image && infoData.task_image.length">
-        <van-image-preview v-model="picShow" :images="infoData.task_image" :startPosition="picIndex">
+        <van-image-preview
+          v-model="picShow"
+          :images="infoData.task_image"
+          :startPosition="picIndex"
+        >
         </van-image-preview>
       </template>
       <task-op
@@ -152,7 +301,15 @@
         :shareObj="shareObj"
         @updateTask="updateTask"
       ></task-op>
-      <confirm-model v-model="confirmShow" :modelTit="confirm.modelTit" :modelSubTit="confirm.modelSubTit" :cancelTxt="confirm.cancelTxt" :yesTxt="confirm.yesTxt" :cancel="confirm.cancel" @sure="receiveOrder"></confirm-model>
+      <confirm-model
+        v-model="confirmShow"
+        :modelTit="confirm.modelTit"
+        :modelSubTit="confirm.modelSubTit"
+        :cancelTxt="confirm.cancelTxt"
+        :yesTxt="confirm.yesTxt"
+        :cancel="confirm.cancel"
+        @sure="receiveOrder"
+      ></confirm-model>
       <receiver-op
         v-model="opShow"
         :canShare="canShare"
@@ -165,11 +322,7 @@
 </template>
 
 <script>
-import {
-  NavBar,
-  ImagePreview,
-  Toast
-} from 'vant'
+import { NavBar, ImagePreview, Toast } from 'vant'
 import receiverOp from './receiver-op'
 import { getTaskInfo, receivingMask } from '@/api/task'
 import taskOp from '../components/task-op'
@@ -224,7 +377,12 @@ export default {
         duration: 0,
         forbidClick: true
       })
-      getTaskInfo({ linli_task_id: this.taskId, province: this.province, city: this.city, area: this.area }).then(res => {
+      getTaskInfo({
+        linli_task_id: this.taskId,
+        province: this.province,
+        city: this.city,
+        area: this.area
+      }).then(res => {
         this.shieldInfo = {
           uid: res.data.uid,
           nickname: res.data.rwf_nickname,
@@ -254,7 +412,8 @@ export default {
     },
     getTextOver () {
       const textCont = this.$refs.textCont
-      const textHeight = textCont.clientHeight * 750 / document.documentElement.clientWidth
+      const textHeight =
+        (textCont.clientHeight * 750) / document.documentElement.clientWidth
       console.log(textHeight)
       if (textHeight > 48 * 6) {
         this.isOver = true
@@ -273,15 +432,17 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      return bMapGetLocationInfo().then(data => {
-        const { province, city, district } = data
-        this.province = province
-        this.city = city
-        this.area = district
-        this.getData()
-      }).catch(() => {
-        this.getData()
-      })
+      return bMapGetLocationInfo()
+        .then(data => {
+          const { province, city, district } = data
+          this.province = province
+          this.city = city
+          this.area = district
+          this.getData()
+        })
+        .catch(() => {
+          this.getData()
+        })
     },
     // 操作选择回调
     updateTask (opType) {
@@ -307,16 +468,18 @@ export default {
     // 立即接单
     receiveOrder () {
       if (this.isBack) return
-      bMapGetLocationInfo(1).then((res) => {
-        const obj = {
-          province: res.province,
-          city: res.city,
-          area: res.district
-        }
-        this.receivingMask(obj)
-      }).catch((res) => {
-        this.receivingMask({})
-      })
+      bMapGetLocationInfo(1)
+        .then(res => {
+          const obj = {
+            province: res.province,
+            city: res.city,
+            area: res.district
+          }
+          this.receivingMask(obj)
+        })
+        .catch(res => {
+          this.receivingMask({})
+        })
       // api.getLocation(function (ret, err) {
       //   if (ret && ret.status) {
       //     // alert(JSON.stringify(ret))
@@ -328,7 +491,7 @@ export default {
     },
     receivingMask (obj) {
       const params = Object.assign(obj, { linli_task_id: this.taskId })
-      receivingMask(params).then((res) => {
+      receivingMask(params).then(res => {
         this.getData()
       })
     },
@@ -381,7 +544,11 @@ export default {
         name: 'taskMap',
         query: {
           name: this.infoData.address,
-          address: this.infoData.address_province + this.infoData.address_city + this.infoData.address_area + this.infoData.address,
+          address:
+            this.infoData.address_province +
+            this.infoData.address_city +
+            this.infoData.address_area +
+            this.infoData.address,
           lon: this.infoData.longitude,
           lat: this.infoData.latitude
         }
@@ -413,27 +580,27 @@ export default {
 
 <style lang="less" scoped>
 @import url(../../../styles/task.less);
-.tf-body-container{
+.tf-body-container {
   font-size: 28px;
   color: #333;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 /deep/.van-nav-bar {
-  background-color: #FFD34D;
+  background-color: #ffd34d;
   .van-nav-bar__right .van-icon {
     font-size: 44px;
   }
 }
 .header-block {
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
   padding: 38px 0 20px 50px;
-  background: linear-gradient(0deg, #FEBF00 0%, #FFD34D 100%);
+  background: linear-gradient(0deg, #febf00 0%, #ffd34d 100%);
   position: relative;
   margin-bottom: 30px;
   .task-tit {
     font-size: 44px;
     font-weight: bold;
-    color: #2A334A;
+    color: #2a334a;
     line-height: 60px;
     width: 486px;
     margin-bottom: 10px;
@@ -441,7 +608,7 @@ export default {
   .task-coin {
     height: 56px;
     line-height: 56px;
-    color: #2A334A;
+    color: #2a334a;
     margin-bottom: 30px;
     img {
       width: 36px;
@@ -462,13 +629,13 @@ export default {
     z-index: 5;
     flex-wrap: wrap;
     .lable-item {
-      background-color: #FCD86E;
+      background-color: #fcd86e;
       height: 48px;
       line-height: 48px;
       border-radius: 10px;
       padding: 0 18px;
       font-size: 24px;
-      color: #A46400;
+      color: #a46400;
       margin: 0 10px 20px 0;
     }
   }
@@ -490,19 +657,19 @@ export default {
     border-radius: 32px 0px 0px 32px;
     font-size: 26px;
     font-weight: bold;
-    color: #FFFFFF;
+    color: #ffffff;
     z-index: 3;
     &.bg-ccc {
-      background: #CCCCCC;
+      background: #cccccc;
     }
     &.bg-FF6555 {
-      background: #FF6555;
+      background: #ff6555;
     }
     &.bg-FEBF00 {
-      background: #FEBF00;
+      background: #febf00;
     }
     &.bg-FE8900 {
-      background: #FE8900;
+      background: #fe8900;
     }
   }
 }
@@ -522,7 +689,7 @@ export default {
     line-height: 90px;
     .tit-right {
       font-size: 24px;
-      color: #8F8F94;
+      color: #8f8f94;
       line-height: 90px;
       img {
         width: 36px;
@@ -554,10 +721,10 @@ export default {
   }
   .release-time {
     font-size: 24px;
-    color: #8F8F94;
+    color: #8f8f94;
     line-height: 30px;
     &.color-FF5240 {
-      color: #FF5240;
+      color: #ff5240;
     }
   }
   .finish-btn {
@@ -565,10 +732,10 @@ export default {
     text-align: center;
     height: 64px;
     line-height: 64px;
-    background: #FF6555;
+    background: #ff6555;
     border-radius: 10px;
     font-size: 24px;
-    color: #FFFFFF;
+    color: #ffffff;
     justify-content: flex-start;
     flex-shrink: 0;
   }
@@ -583,7 +750,7 @@ export default {
 }
 .task-address {
   height: 128px;
-  background: linear-gradient(90deg, #F7F7F7 0%, #FFFFFF 100%);
+  background: linear-gradient(90deg, #f7f7f7 0%, #ffffff 100%);
   border-radius: 10px;
   margin-bottom: 40px;
   position: relative;
@@ -600,7 +767,7 @@ export default {
   }
   div:nth-child(2) {
     font-size: 24px;
-    color: #8F8F94;
+    color: #8f8f94;
   }
   img {
     position: absolute;
@@ -624,7 +791,7 @@ export default {
     display: flex;
   }
   .cont-text {
-    color: #8F8F94;
+    color: #8f8f94;
     line-height: 48px;
     font-size: 30px;
     position: relative;
@@ -656,30 +823,30 @@ export default {
 .complain-tip {
   height: 112px;
   align-items: center;
-  background: #F7F7F7;
+  background: #f7f7f7;
   margin: -10px 0 40px;
   padding: 0 16px 0 28px;
   font-size: 24px;
   div:nth-child(1) {
     width: 480px;
-    color: #8F8F94;
+    color: #8f8f94;
   }
   div:nth-child(2) {
     width: 100px;
     height: 48px;
     text-align: center;
     line-height: 44px;
-    border: 1PX solid #FF6555;
+    border: 1px solid #ff6555;
     border-radius: 10px;
-    color: #FF6555;
+    color: #ff6555;
   }
 }
 .progress-step {
-  background: #FFF6F5;
+  background: #fff6f5;
   border-radius: 10px;
   padding: 28px 20px 28px 0;
   font-size: 24px;
-  color: #8F8F94;
+  color: #8f8f94;
   margin-bottom: 40px;
   div {
     width: 100%;
@@ -688,13 +855,13 @@ export default {
     padding-left: 60px;
     @text-ellipsis();
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: 30px;
       top: 19px;
       width: 10px;
       height: 10px;
-      background: #8F8F94;
+      background: #8f8f94;
       border-radius: 50%;
     }
     &:first-child {
@@ -704,5 +871,8 @@ export default {
       }
     }
   }
+}
+.task-desc-box {
+  width: 650px;
 }
 </style>

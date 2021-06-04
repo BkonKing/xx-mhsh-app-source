@@ -221,11 +221,11 @@ export default {
         value: 1
       })
     }
-    this.getLocationInfo().finally(() => {
-      this.isLocation = true
-    })
-    this.getPostBarCategoryList()
-    this.getTaskSwitch()
+    // this.getLocationInfo().finally(() => {
+    //   this.isLocation = true
+    // })
+    // this.getPostBarCategoryList()
+    // this.getTaskSwitch()
     this.safeTop = { marginTop: `${api.safeArea.top}px` || 0 }
   },
   activated () {
@@ -236,6 +236,9 @@ export default {
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
     }
+    this.getLocationInfo().finally(() => {
+      this.isLocation = true
+    })
     this.getPostBarCategoryList()
     this.getTaskSwitch()
     this.$refs.groupDropdown && this.$refs.groupDropdown.scrollCenter()

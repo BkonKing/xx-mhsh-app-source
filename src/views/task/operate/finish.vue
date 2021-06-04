@@ -27,7 +27,7 @@
               >
                 {{ isDown ? "收起" : "展开" }}
               </div>
-              {{ infoData.content }}
+              <div class="task-desc-box" v-html="infoData.content.replace(/\r\n|\n/g, '<br/>')"></div>
             </div>
           </div>
           <div class="receiver-pic tf-row-wrap">
@@ -376,5 +376,8 @@ export default {
   font-size: 24px;
   color: #8f8f94;
   margin-bottom: 30px;
+}
+.task-desc-box {
+  width: 650px;
 }
 </style>

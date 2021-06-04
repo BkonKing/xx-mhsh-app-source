@@ -18,7 +18,7 @@
           <div class="area-block bottom-line tf-row-space-between">
             <van-field
               v-model.trim="formData.task_title"
-              autosize
+              :autosize="false"
               rows="1"
               :border="false"
               type="textarea"
@@ -386,6 +386,16 @@ export default {
     }
     this.getLocationInfo()
     this.getGroupList()
+    window.addEventListener(
+      'touchmove',
+      function (e) {
+        const target = e.target
+        if (target && target.tagName === 'TEXTAREA') {
+          e.stopPropagation()
+        }
+      },
+      true
+    )
   },
   methods: {
     // 获取当前地址信息

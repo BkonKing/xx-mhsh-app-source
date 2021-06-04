@@ -398,6 +398,7 @@ export default {
         }
         this.statusNumList = []
         this.statusList = []
+        // 任务超时则打开延期弹窗
         if (res.is_cen_yq == 1 && this.statusIndex < 0) {
           this.overtimeTask()
         }
@@ -479,8 +480,9 @@ export default {
         this.getData()
       })
     },
-    // 延期
+    // 打开延期窗口
     overtimeTask () {
+      // 获取任务超时信息
       getOvertimeTask({ task_id: this.taskId }).then(res => {
         this.resetOverTimeForm()
         this.overtimeInfo = res.data
@@ -497,7 +499,8 @@ export default {
         day_num: '',
         hour_num: '',
         reward_type: 2,
-        new_reward_happiness: null
+        new_reward_happiness: null,
+        task_id: this.taskId
       }
     },
     // 延期时间
