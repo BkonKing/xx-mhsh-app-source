@@ -176,7 +176,7 @@ export default {
       // 修改
       if (this.timeIndex === 0) {
         this.startTime = this.startYmd + ' ' + this.startHi
-        console.log('this.startTime', this.startTime)
+        // console.log('this.startTime', this.startTime)
       } else {
         this.endTime = this.endYmd + ' ' + this.endHi
       }

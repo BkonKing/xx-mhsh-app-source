@@ -44,7 +44,7 @@ export default {
   methods: {
     // 设置选中项
     setType (val) {
-      console.log(33333333333)
+      // console.log(33333333333)
       this.radioIndex = val
     },
     // 选择小组类型

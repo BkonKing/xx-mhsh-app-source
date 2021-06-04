@@ -84,6 +84,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .van-uploader__upload{
+  width: 105px !important;
+  height: 105px !important;
+}
 /deep/ .van-field {
   padding: 6px 47px 36px 30px;
   textarea {
@@ -97,6 +101,7 @@ export default {
     word-break: break-all;
   }
 }
+
 .text-num {
   align-items: center;
   justify-content: flex-end;
