@@ -174,6 +174,10 @@ export default {
     color: #fff;
   }
 }
+/deep/ .van-uploader__upload {
+  width: 105px !important;
+  height: 105px !important;
+}
 .tabbar {
   display: flex;
   flex-direction: column;
