@@ -168,10 +168,12 @@
       </task-card>
       <div id="task_desc"></div>
       <graphic
+        class="edit-graphic"
         ref="graphic"
         :cardTit="cardTit"
         :phTxt="phTxt"
         :maxNum="maxNum"
+        :autosize="{ maxHeight: 220, minHeight: 220 }"
         @getForm="getForm"
       ></graphic>
       <div id="isAgree" class="agree-rule tf-flex-center">
@@ -1047,5 +1049,10 @@ span.red {
 }
 .task-btn {
   border: none;
+}
+.edit-graphic {
+  /deep/ .card-tit {
+    padding-bottom: 10px;
+  }
 }
 </style>

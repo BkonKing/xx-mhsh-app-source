@@ -167,7 +167,10 @@ export default {
           }
         })
         this.selectList = list
-        this.$toast.clear()
+        this.$nextTick(() => {
+          this.$toast.clear()
+          loading && (this.opShow = true)
+        })
       }).catch(() => {
         this.$toast.clear()
       })

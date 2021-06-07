@@ -11,7 +11,7 @@
         <div class="type-tit">小组</div>
         <radio-list v-model="teamIndex" :radioList="postTypeList" @selectCall="postCall"></radio-list>
       </div>
-      <div class="type-block" :class="{ 'cur' : taskIndex > -1 }">
+      <div v-if="isOpeningTask" class="type-block" :class="{ 'cur' : taskIndex > -1 }">
         <div class="type-tit">任务</div>
         <radio-list v-model="taskIndex" :radioList="taskTypeList" @selectCall="taskCall"></radio-list>
       </div>
@@ -39,12 +39,14 @@ export default {
       selectType: 0, // 选中的类型 1小组 2任务
       selectId: 0, // 选择的id
       teamIndex: -1, // 小组选中项
-      taskIndex: -1 // 任务选中项
+      taskIndex: -1, // 任务选中项
+      isOpeningTask: 0 // 是否开启任务
     }
   },
   created () {
+    this.isOpeningTask = this.$route.query.task
     this.getPostType()
-    this.getTaskType()
+    this.isOpeningTask && this.getTaskType()
   },
   mounted () {
   },
