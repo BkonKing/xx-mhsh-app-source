@@ -85,8 +85,8 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .van-uploader__upload {
-  width: 105px !important;
-  height: 105px !important;
+  width: 150px !important;
+  height: 150px !important;
 }
 /deep/ .van-field__control {
   font-size: 30px !important;

@@ -175,8 +175,8 @@ export default {
   }
 }
 /deep/ .van-uploader__upload {
-  width: 105px !important;
-  height: 105px !important;
+  width: 150px !important;
+  height: 150px !important;
 }
 .tabbar {
   display: flex;
@@ -336,6 +336,7 @@ export default {
     /deep/ .van-uploader__preview {
       width: 150px;
       height: 150px;
+      margin-left: 0 !important;
     }
     /deep/ .van-uploader__upload {
       border: 2px dashed #8f8f94;

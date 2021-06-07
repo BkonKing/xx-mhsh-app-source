@@ -102,8 +102,8 @@ export default {
     margin-bottom: 10px;
 }
 /deep/ .van-uploader__preview{
-      width: 105px !important;
-      height: 105px !important;
+      width: 150px !important;
+      height: 150px !important;
       margin-left: 4px !important;
       img{
         width: 100%;
