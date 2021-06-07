@@ -189,7 +189,7 @@
           @click="submit"
           :class="[ableSubmit ? '' : 'unable-btn', 'task-btn']"
           :loading="isLoading"
-          >发布</van-button
+          >提交</van-button
         >
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
