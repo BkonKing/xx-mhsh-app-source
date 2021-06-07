@@ -138,6 +138,12 @@ export default {
   font-size: 28px;
 }
 
+/deep/ .van-nav-bar .van-icon-ellipsis {
+  font-size: 38px;
+  color: #000;
+  font-weight: bold;
+}
+
 .task-wrapper {
   display: flex;
   flex-direction: column;

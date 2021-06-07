@@ -91,6 +91,10 @@ export default {
         vm.current = parseInt(current)
         vm.$router.replace({ name: 'PersonageTaskIndex' })
       }
+      // 重新发布
+      if (from.query.type === 'anew' && +vm.current === 1) {
+        vm.$refs[`taskList${vm.current}`].reloadList()
+      }
     })
   },
   beforeRouteLeave (to, from, next) {

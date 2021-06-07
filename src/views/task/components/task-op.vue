@@ -268,12 +268,15 @@ export default {
     },
     // 重新发布
     anewPublish () {
-      this.$router.push({
-        name: 'releaseEdit',
-        query: {
-          taskId: this.taskId,
-          type: 'anew'
-        }
+      this.confirmShow = false
+      this.$nextTick(() => {
+        this.$router.push({
+          name: 'releaseEdit',
+          query: {
+            taskId: this.taskId,
+            type: 'anew'
+          }
+        })
       })
     },
     // 删除

@@ -162,6 +162,9 @@ export default {
       } else {
         this.reSingleTask()
       }
+    },
+    reloadList () {
+      this.$refs.list.reload()
     }
   }
 }

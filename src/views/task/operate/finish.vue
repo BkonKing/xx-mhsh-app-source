@@ -13,8 +13,8 @@
       <task-card>
         <div class="card-cont" slot="content">
           <div class="session-tit">接单方 已确认完成任务</div>
-          <div class="divider-line"></div>
-          <div class="receiver-cont" ref="textCont">
+          <div v-if="infoData.content" class="divider-line"></div>
+          <div v-if="infoData.content" class="receiver-cont" ref="textCont">
             <div
               class="cont-text"
               :class="{ 'text-hidden': isOver && !isDown }"
@@ -30,7 +30,7 @@
               <div class="task-desc-box" v-html="infoData.content.replace(/\r\n|\n/g, '<br/>')"></div>
             </div>
           </div>
-          <div class="receiver-pic tf-row-wrap">
+          <div v-if="infoData.image_url_data && infoData.image_url_data.length" class="receiver-pic tf-row-wrap">
             <img
               @click="previewPic(index)"
               v-for="(item, index) in infoData.image_url_data"
