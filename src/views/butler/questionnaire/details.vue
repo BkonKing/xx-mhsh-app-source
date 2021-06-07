@@ -7,7 +7,11 @@
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
-    />
+    >
+      <template #right>
+        <span class="tf-icon tf-icon-zhuanfa" @click="shareShow = true"></span>
+      </template>
+    </van-nav-bar>
     <div class="tf-main-container">
       <!-- 头部问卷投票信息 -->
       <div class="qustion-header">
@@ -36,7 +40,10 @@
             {{ wjtp_info.remarks }}
           </div>
         </div>
-        <div class="tf-row-space-between" :class="{'tf-row-center': !(parseInt(wjtp_info.virtual_coin) > 0)}">
+        <div
+          class="tf-row-space-between"
+          :class="{ 'tf-row-center': !(parseInt(wjtp_info.virtual_coin) > 0) }"
+        >
           <!-- 参与能获得的幸福币，有才显示 -->
           <div
             class="tf-gradient-tag--warning"
@@ -146,7 +153,9 @@
                 <div class="vote-title">
                   <!-- 投票结果打钩图标 -->
                   <span
-                    v-if="voteList.answer && voteList.answer.indexOf(item.id) > -1"
+                    v-if="
+                      voteList.answer && voteList.answer.indexOf(item.id) > -1
+                    "
                     class="tf-icon tf-icon-gou tf-text-sm"
                   ></span>
                   {{ item.content }}
@@ -217,15 +226,24 @@
         </template>
       </div>
     </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare"
+    >
+    </tf-share>
   </div>
 </template>
 
 <script>
+import tfShare from '@/components/tf-share'
 import userInfo from '@/components/user-info/index.vue'
+import { mapGetters } from 'vuex'
 import { addWjtp, getWjtpInfo } from '@/api/butler.js'
 export default {
   components: {
-    userInfo
+    userInfo,
+    tfShare
   },
   data () {
     return {
@@ -235,14 +253,16 @@ export default {
       voteList: {}, // 转化过的问题对象
       radioAnswer: '', // 投票单选值
       voteAnswer: [], // 投票选中值
-      submitLoading: false // 提交loading
+      submitLoading: false, // 提交loading
+      shareShow: false,
+      shareObj: {}
     }
   },
   created () {
-    this.wjtpId = this.$route.query.id
-    this.getWjtpInfo()
+    this.init()
   },
   computed: {
+    ...mapGetters(['currentProject']),
     // 是否完成或结束
     finishStatus () {
       // 已经做过调查或者结束状态
@@ -275,30 +295,66 @@ export default {
     }
   },
   methods: {
+    init () {
+      // 看是否认证过，没有则提示返回
+      if (this.currentProject) {
+        this.wjtpId = this.$route.query.id
+        this.getWjtpInfo()
+      } else {
+        this.$dialog
+          .alert({
+            className: 'questionnaire-alert',
+            message: '您还未认证房间\n无法查看',
+            confirmButtonText: '我知道了'
+          })
+          .then(() => {
+            this.$router.go(-1)
+          })
+      }
+    },
     // 获取投票详情
     getWjtpInfo () {
       getWjtpInfo({
         wjtpId: this.wjtpId
-      }).then(res => {
-        const { wjtp_info, item } = res.data
-        this.wjtp_info = wjtp_info
-        this.title = this.wjtp_info.wjtp_type == '1' ? '问卷' : '投票'
-        // 遍历将可能答案为''的转为[]
-        this.voteList = item.map(obj => {
-          // 多选，空则返回空数组
-          if (obj.item_type === '2') {
-            obj.answer = obj.answer ? obj.answer : []
-          } else if (Array.isArray(obj.answer)) {
-            // 单选和文本答案是数组，则只取第一个值
-            obj.answer = obj.answer[0]
-          }
-          return obj
-        })
-        // 如果是投票只需取第一个问题
-        if (this.wjtp_info.wjtp_type === '2') {
-          this.voteList = this.voteList[0]
-        }
       })
+        .then(res => {
+          const { wjtp_info, item } = res.data
+          this.wjtp_info = wjtp_info
+          this.title = this.wjtp_info.wjtp_type == '1' ? '问卷' : '投票'
+          // 遍历将可能答案为''的转为[]
+          this.voteList = item.map(obj => {
+            // 多选，空则返回空数组
+            if (obj.item_type === '2') {
+              obj.answer = obj.answer ? obj.answer : []
+            } else if (Array.isArray(obj.answer)) {
+              // 单选和文本答案是数组，则只取第一个值
+              obj.answer = obj.answer[0]
+            }
+            return obj
+          })
+          // 如果是投票只需取第一个问题
+          if (this.wjtp_info.wjtp_type === '2') {
+            this.voteList = this.voteList[0]
+          }
+          // 设置分享参数
+          this.shareObj = {
+            title: this.wjtp_info.title,
+            description: this.wjtp_info.remarks,
+            thumb: 'widget://res/wenjuan.png',
+            contentUrl: `http://live.tosolomo.com/wap/#/questionnaire?id=${this.wjtpId}&projectId=${this.currentProject.project_id}`,
+            pyqHide: false
+          }
+        })
+        .catch(() => {
+          this.$dialog
+            .alert({
+              title: '您没有权限查看',
+              confirmButtonText: '我知道了'
+            })
+            .then(() => {
+              this.$router.go(-1)
+            })
+        })
     },
     // 投票提交
     confirm () {
@@ -366,7 +422,8 @@ export default {
           this.submitLoading = false
           if (res.success) {
             this.$toast.success({
-              message: this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
+              message:
+                this.wjtp_info.wjtp_type == 1 ? '问卷提交成功' : '投票成功'
             })
             this.getWjtpInfo()
             this.mtjEvent({
@@ -381,6 +438,14 @@ export default {
         .catch(() => {
           this.submitLoading = false
         })
+    },
+    closeShare (data) {
+      this.shareShow = data == 1
+    }
+  },
+  watch: {
+    $route (to, from) {
+      this.init()
     }
   }
 }
@@ -596,5 +661,13 @@ export default {
   /deep/ .van-button--disabled {
     background: #aaaaaa;
   }
+}
+</style>
+
+<style>
+.questionnaire-alert .van-dialog__message {
+  font-size: 30px;
+  font-weight: 500;
+  color: #000;
 }
 </style>

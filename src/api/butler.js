@@ -354,8 +354,13 @@ export function addWjtp (data) {
 }
 // 问卷调查详情接口
 export function getWjtpInfo (params) {
-  return request.get('/butler/wjtp/getWjtpInfo', {
-    params
+  return request({
+    url: '/butler/wjtp/getWjtpInfo',
+    method: 'get',
+    params,
+    headers: {
+      noToast: true
+    }
   })
 }
 
