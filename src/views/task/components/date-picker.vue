@@ -145,6 +145,10 @@ export default {
     },
     // 点击时间输入框
     timeBlur (index) {
+      if (index === 1) {
+        console.log('第二个')
+        document.getElementsByClassName('van-calendar__selected-day')[0].style.background = 'white'
+      }
       this.timeIndex = index
       let timeVal = ''
       if (index == 0) {
@@ -219,9 +223,9 @@ export default {
         this.startTime = ''
         this.endTime = ''
       }
-      if (val) {
-        this.onConfirm(new Date())
-      }
+      // if (val) {
+      //   this.onConfirm(new Date())
+      // }
       this.$emit('input', val)
     }
   }
@@ -277,6 +281,9 @@ export default {
         background: #FEBF00;
         border-radius: 10px;
         color: #000000;
+      }
+      .nowday{
+        background: #cccccc !important;
       }
     }
     .van-picker__columns {
