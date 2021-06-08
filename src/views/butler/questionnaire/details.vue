@@ -340,7 +340,7 @@ export default {
           this.shareObj = {
             title: this.wjtp_info.title,
             description: this.wjtp_info.remarks,
-            thumb: 'widget://res/wenjuan.png',
+            thumb: `widget://res/${this.wjtp_info.wjtp_type == '1' ? 'wenjuan' : 'toupiao'}.png`,
             contentUrl: `http://live.tosolomo.com/wap/#/questionnaire?id=${this.wjtpId}&projectId=${this.currentProject.project_id}`,
             pyqHide: false
           }
