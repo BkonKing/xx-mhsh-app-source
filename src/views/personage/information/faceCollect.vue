@@ -57,7 +57,6 @@ export default {
         this.$router.push({
           name: 'faceCollectCamera'
         })
-        // this.openCamera()
       })
     }
   }
