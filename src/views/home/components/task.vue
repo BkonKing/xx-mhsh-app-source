@@ -8,34 +8,67 @@
       </div>
     </div>
     <template>
-      <van-swipe
-        v-if="data.length > 1"
-        class="task-swipe"
-        vertical
-        :autoplay="6000"
-        :show-indicators="false"
-      >
-        <van-swipe-item v-for="(item, i) in data" :key="i">
-          <task-ul class="task-ul" :data="item"></task-ul>
-        </van-swipe-item>
-      </van-swipe>
-      <task-ul v-else class="task-swipe" :data="data[0]" style="height: auto;"></task-ul>
+      <div v-if="data.length > 5" class="task-swipe">
+        <swiper class="task-ul" ref="mySwiper" :options="swiperOptions">
+          <swiper-slide v-for="(task, i) in data" :key="i">
+            <div class="task-item" @click="goTaskDetail(task)">
+              <span class="tf-icon tf-icon-xingfubi1"></span>
+              <span class="task-num">+{{ task.reward_happiness }}</span>
+              <span class="task-text task-username">{{ task.nickname }}</span>
+              <span class="task-text">发布了</span>
+              <span class="task-title">{{ task.task_title }}</span>
+            </div>
+          </swiper-slide>
+        </swiper>
+      </div>
+      <ul v-else class="task-swipe task-ul" style="height: auto;">
+        <li
+          class="task-item"
+          v-for="task in data"
+          :key="task.task_id"
+          @click="goTaskDetail(task)"
+        >
+          <span class="tf-icon tf-icon-xingfubi1"></span>
+          <span class="task-num">+{{ task.reward_happiness }}</span>
+          <span class="task-text task-username">{{ task.nickname }}</span>
+          <span class="task-text">发布了</span>
+          <span class="task-title">{{ task.task_title }}</span>
+        </li>
+      </ul>
     </template>
   </div>
 </template>
 
 <script>
-import taskUl from './task-ul'
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
+
+// import style (<= Swiper 5.x)
+import 'swiper/css/swiper.css'
 
 export default {
   name: 'homeTask',
   components: {
-    taskUl
+    Swiper,
+    SwiperSlide
   },
   props: {
     data: {
       type: Array,
       default: () => []
+    }
+  },
+  data () {
+    return {
+      swipeTime: 6000,
+      swiperOptions: {
+        direction: 'vertical',
+        slidesPerView: 5,
+        loop: true,
+        autoplay: {
+          delay: 2500,
+          disableOnInteraction: false
+        }
+      }
     }
   },
   methods: {
@@ -45,6 +78,15 @@ export default {
         path: '/neighbours',
         query: {
           active: 4
+        }
+      })
+    },
+    // 跳转任务详情
+    goTaskDetail ({ task_id }) {
+      this.$router.push({
+        name: 'taskDetail',
+        query: {
+          taskId: task_id
         }
       })
     }
@@ -90,5 +132,40 @@ export default {
       height: 290px;
     }
   }
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  padding-bottom: 30px;
+}
+.tf-icon-xingfubi1 {
+  font-size: 28px;
+  line-height: 1;
+  color: #febf00;
+}
+.task-num {
+  min-width: 91px;
+  margin-left: 10px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  color: #febf00;
+}
+.task-text {
+  font-size: 24px;
+  line-height: 1;
+  color: #8f8f94;
+}
+.task-username {
+  max-width: 126px;
+  @text-ellipsis();
+}
+.task-title {
+  flex: 1;
+  margin-left: 10px;
+  font-size: 24px;
+  line-height: 1;
+  color: #333;
+  @text-ellipsis();
 }
 </style>
