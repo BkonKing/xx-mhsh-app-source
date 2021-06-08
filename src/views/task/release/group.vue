@@ -34,7 +34,7 @@
                 :key="index2"
                 class="user-pic tf-row"
               >
-                <van-image :src="item2.avatar">
+                <van-image class="avatar-img" round :src="item2.avatar">
                   <template v-slot:error>
                     <img
                       class="avatar-img"

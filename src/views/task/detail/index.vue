@@ -396,7 +396,7 @@ export default {
           this.receiverInfo = res.data.user_task_data
           this.canShare = this.receiverInfo.is_can_share == 1
         }
-        if (!this.isUp && res.popup_data.is_popup == 1) {
+        if (res.popup_data.is_popup == 1) {
           this.isBack = true
           this.confirmShow = true
           this.confirm.modelTit = res.popup_data.popup_text
