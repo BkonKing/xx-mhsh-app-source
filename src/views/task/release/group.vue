@@ -9,20 +9,40 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <div @click="sure" class="sure-btn able">确定</div>
+        <van-button
+          @click="sure"
+          class="sure-btn"
+          :class="{'able': groupIndex !== -1}"
+          :disabled="groupIndex === -1"
+          >确定</van-button
+        >
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
       <div class="group-list">
         <div v-for="(item, index) in listData" :key="index" class="group-item">
           <div @click="selectGroup(index)" class="check-block tf-row-center">
-            <div :class="{'cur': groupIndex == index}"><span class="tf-icon tf-icon-gou"></span></div>
+            <div :class="{ cur: groupIndex == index }">
+              <span class="tf-icon tf-icon-gou"></span>
+            </div>
           </div>
           <div class="group-cont">
             <div class="group-name van-ellipsis">{{ item.group_name }}</div>
             <div class="group-user tf-row-vertical-center">
-              <div v-for="(item2, index2) in item.user_list" :key="index2" class="user-pic tf-row">
-                <div><img :src="item2.avatar" /></div>
+              <div
+                v-for="(item2, index2) in item.user_list"
+                :key="index2"
+                class="user-pic tf-row"
+              >
+                <van-image :src="item2.avatar">
+                  <template v-slot:error>
+                    <img
+                      class="avatar-img"
+                      src="@/assets/imgs/touxiang.png"
+                      alt=""
+                    />
+                  </template>
+                </van-image>
               </div>
               <div class="group-num">({{ item.member_num }}人)</div>
             </div>
@@ -46,15 +66,15 @@
           </div>
         </div> -->
       </div>
-      <div class="test" :class="{'test-over': isOver}" ref="test">{{text}}</div>
+      <div class="test" :class="{ 'test-over': isOver }" ref="test">
+        {{ text }}
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  NavBar
-} from 'vant'
+import { NavBar } from 'vant'
 import { getGroupList } from '@/api/task.js'
 export default {
   components: {
@@ -71,9 +91,7 @@ export default {
   created () {
     this.getData()
   },
-  mounted () {
-
-  },
+  mounted () {},
   methods: {
     getData () {
       getGroupList().then(res => {
@@ -118,24 +136,26 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.tf-body-container{
+.tf-body-container {
   padding: 0 20px 20px;
   font-size: 28px;
   color: #333;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 .sure-btn {
   width: 100px;
   height: 56px;
   line-height: 56px;
   text-align: center;
-  background: #CCCCCC;
+  background: #cccccc;
   border-radius: 10px;
+  border: none;
   font-size: 24px;
   font-weight: 500;
-  color: #FFFFFF;
+  color: #ffffff;
+  opacity: 1;
   &.able {
-    background: #FF6555;
+    background: #ff6555;
   }
 }
 .group-list {
@@ -145,7 +165,7 @@ export default {
     margin: 0 auto 30px;
     padding: 40px 0;
     height: 189px;
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 10px;
     @flex();
     .check-block {
@@ -155,13 +175,13 @@ export default {
       div {
         width: 36px;
         height: 36px;
-        border: 1PX solid #8F8F94;
+        border: 1px solid #8f8f94;
         border-radius: 50%;
         span {
           display: none;
         }
         &.cur {
-          background-color: #FF6555;
+          background-color: #ff6555;
           border: 0;
           color: #fff;
           text-align: center;
@@ -188,8 +208,13 @@ export default {
       height: 48px;
     }
     .user-pic {
-      margin-right: 30px;
-      img,& > div {
+      // margin-right: 30px;
+      /deep/ .van-image__error {
+        position: initial;
+        background: initial;
+      }
+      .avatar-img,
+      & > div {
         height: 48px;
         width: 48px;
         border-radius: 50%;
@@ -199,16 +224,24 @@ export default {
         margin-left: -10px;
       }
       div:nth-child(5)::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         right: 0;
         bottom: 0;
         left: 0;
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, #FFFFFF 100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          #ffffff 100%
+        );
       }
     }
+    .user-pic + .user-pic {
+      margin-left: -10px;
+    }
     .group-num {
+      margin-left: 30px;
       font-size: 24px;
       color: @gray-7;
     }

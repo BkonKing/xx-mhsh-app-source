@@ -586,6 +586,7 @@ export default {
         this.ableLookVal = '不限'
         this.ableIndex = 0
         this.sureAbleIndex = 0
+        this.ableLookSure()
       } else if (callData.value == 1) {
         // 指定地区
         this.areaShow = true
