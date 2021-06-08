@@ -18,7 +18,7 @@
             <span class="coin-number">{{ credits }}</span>
             <div class="coin-freeze">
               <span>可用{{ky_credits}}</span>
-              <span>不可用{{sd_credits}}</span>
+              <span v-if="+sd_credits">不可用{{sd_credits}}</span>
             </div>
           </div>
         </div>

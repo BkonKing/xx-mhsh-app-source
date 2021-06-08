@@ -334,8 +334,8 @@ export default {
     margin-top: 30px;
     /deep/ .van-uploader__upload,
     /deep/ .van-uploader__preview {
-      width: 150px;
-      height: 150px;
+      width: 150px !important;
+      height: 150px !important;
       margin-left: 0 !important;
     }
     /deep/ .van-uploader__upload {

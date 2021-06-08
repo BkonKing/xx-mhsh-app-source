@@ -99,18 +99,18 @@ export default {
 
 <style lang="less" scoped>
 .van-uploader {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
-/deep/ .van-uploader__preview{
-      width: 150px ;
-      height: 150px ;
-      margin-left: 4px !important;
-      img{
-        width: 100%;
-        height: 100%;
-      }
+/deep/ .van-uploader__preview {
+  width: 105px !important;
+  height: 105px !important;
+  margin-left: 4px !important;
+img {
+    width: 100%;
+    height: 100%;
+  }
 }
-/deep/ .van-uploader{
+/deep/ .van-uploader {
   margin-bottom: 10px;
 }
 

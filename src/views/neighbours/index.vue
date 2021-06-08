@@ -252,7 +252,7 @@ export default {
     },
     // 发布
     goEdit () {
-      this.$router.push({ name: 'releaseType' })
+      this.$router.push({ name: 'releaseType', query: { task: this.isOpeningTask } })
     },
     // 跳转消息
     goMessage () {
@@ -370,7 +370,9 @@ export default {
         this.province = province
         this.city = city
         this.area = district
-        this.$refs.list && this.$refs.list.reload()
+        if (this.area !== district && this.$refs.list) {
+          this.$refs.list.reload()
+        }
       })
     }
   },

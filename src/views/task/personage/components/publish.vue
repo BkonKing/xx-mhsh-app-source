@@ -125,6 +125,9 @@ export default {
     },
     // 打开更多
     openMoreDialog ({ task_id, task_title, task_desc }, index) {
+      if (this.taskId === task_id) {
+        this.selectShow = true
+      }
       this.taskId = task_id
       this.activeIndex = index
       this.shareObj = {
@@ -132,7 +135,6 @@ export default {
         description: task_desc,
         pyqTitle: task_title
       }
-      this.selectShow = true
     },
     // 任务进度
     goSchedule ({ task_id }, index) {

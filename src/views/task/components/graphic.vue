@@ -5,7 +5,7 @@
       <div class="text-block">
         <van-field
           v-model.trim="formData.content"
-          :autosize="{ maxHeight: 100, minHeight: 50 }"
+          :autosize="autosize"
           rows="3"
           :border="false"
           type="textarea"
@@ -54,6 +54,10 @@ export default {
     maxNum: {
       type: Number,
       default: 500
+    },
+    autosize: {
+      type: [Boolean, Object],
+      default: true
     }
   },
   data () {
@@ -84,15 +88,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .van-uploader__upload {
-  width: 150px !important;
-  height: 150px !important;
-}
 /deep/ .van-field__control {
   font-size: 30px !important;
-  font-family: PingFangSC;
   font-weight: 400;
-
   line-height: 36px;
 }
 /deep/ .van-field {
@@ -131,8 +129,8 @@ export default {
 }
 /deep/ .van-uploader__upload,
 /deep/ .van-uploader__preview {
-  width: 150px;
-  height: 150px;
+  width: 150px !important;
+  height: 150px !important;
   margin: 0 16px 20px 0;
   .van-uploader__preview-delete {
     right: 0;

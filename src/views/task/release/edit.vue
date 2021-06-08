@@ -168,10 +168,12 @@
       </task-card>
       <div id="task_desc"></div>
       <graphic
+        class="edit-graphic"
         ref="graphic"
         :cardTit="cardTit"
         :phTxt="phTxt"
         :maxNum="maxNum"
+        :autosize="{ maxHeight: 220, minHeight: 220 }"
         @getForm="getForm"
       ></graphic>
       <div id="isAgree" class="agree-rule tf-flex-center">
@@ -584,6 +586,7 @@ export default {
         this.ableLookVal = '不限'
         this.ableIndex = 0
         this.sureAbleIndex = 0
+        this.ableLookSure()
       } else if (callData.value == 1) {
         // 指定地区
         this.areaShow = true
@@ -1047,5 +1050,10 @@ span.red {
 }
 .task-btn {
   border: none;
+}
+.edit-graphic {
+  /deep/ .card-tit {
+    padding-bottom: 10px;
+  }
 }
 </style>
