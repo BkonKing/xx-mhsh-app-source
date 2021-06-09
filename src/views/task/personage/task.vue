@@ -264,4 +264,7 @@ export default {
 /deep/ .schedule-list {
   margin-top: 30px;
 }
+.schedule {
+  margin-top: 30px;
+}
 </style>

@@ -66,7 +66,7 @@
     </refreshList>
     <task-op
       v-model="selectShow"
-      :taskId="taskId"
+      :taskId="moreTaskId"
       :shareObj="shareObj"
       @updateTask="reload"
     ></task-op>
@@ -89,6 +89,7 @@ export default {
       list: [],
       selectShow: false,
       taskId: '',
+      moreTaskId: '', // 更多的任务id
       shareObj: {},
       activeIndex: '',
       modelSubTit: '下架后其他用户将看不见'
@@ -125,10 +126,11 @@ export default {
     },
     // 打开更多
     openMoreDialog ({ task_id, task_title, task_desc }, index) {
-      if (this.taskId === task_id) {
+      if (this.moreTaskId === task_id) {
         this.selectShow = true
       }
       this.taskId = task_id
+      this.moreTaskId = task_id
       this.activeIndex = index
       this.shareObj = {
         title: task_title,

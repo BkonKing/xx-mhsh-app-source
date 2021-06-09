@@ -508,7 +508,7 @@ export default {
           this.$nextTick(() => {
             const key = 'area' + index
             if (this.$refs[key]) {
-              console.log(this.$refs[key][0])
+              // console.log(this.$refs[key][0])
               this.$refs[key][0].listInit()
             }
           })
