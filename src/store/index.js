@@ -305,7 +305,6 @@ const store = {
         getMyAccount().then(({
           data
         }) => {
-          console.log(data.user_info)
           commit('setUser_info', data && data.user_info)
           let userList = api.getPrefs({
             key: 'user_list',

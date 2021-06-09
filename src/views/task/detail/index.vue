@@ -342,7 +342,9 @@ export default {
       taskId: '',
       isOver: false, // 内容是否超出行数
       isDown: false,
-      infoData: '',
+      infoData: {
+        task_desc: ''
+      },
       receiverInfo: '',
       isUp: false, // 是否是发布者
       selectShow: false, // 操作选择弹窗
@@ -414,7 +416,6 @@ export default {
       const textCont = this.$refs.textCont
       const textHeight =
         (textCont.clientHeight * 750) / document.documentElement.clientWidth
-      console.log(textHeight)
       if (textHeight > 48 * 6) {
         this.isOver = true
       }
@@ -480,14 +481,6 @@ export default {
         .catch(res => {
           this.receivingMask({})
         })
-      // api.getLocation(function (ret, err) {
-      //   if (ret && ret.status) {
-      //     // alert(JSON.stringify(ret))
-      //   // 获取位置信息成功
-      //   } else {
-      //     // alert(JSON.stringify(err))
-      //   }
-      // })
     },
     receivingMask (obj) {
       const params = Object.assign(obj, { linli_task_id: this.taskId })
@@ -567,7 +560,6 @@ export default {
   },
   watch: {
     confirmShow (val) {
-      console.log(111, val, this.isBack)
       if (!val) {
         if (this.isBack) {
           this.$router.go(-1)
