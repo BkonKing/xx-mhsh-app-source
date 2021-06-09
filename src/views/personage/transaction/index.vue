@@ -132,6 +132,9 @@
                   :options="statusList"
                 />
               </van-dropdown-menu>
+              <div class="tf-flex-item house-string">
+                <van-field v-model="buildingString" placeholder="楼栋" />
+              </div>
             </div>
             <!-- 升序 -->
             <img
@@ -153,6 +156,7 @@
             ref="buildList"
             :data.sync="monthRecordList"
             :load="getMeterBuilding"
+            :filter="buildingString"
           ></building-list>
           <div v-show="!monthList || !monthList.length" class="empty-month">
             <img src="@/assets/img/empty_order.png" />
@@ -203,7 +207,8 @@ export default {
       monthRecordList: [], // 水电抄表楼栋数据
       // 水电抄表参数列表是否赋值过，因为参数列表和楼栋数据是一起返回的
       // 月份参数默认取第一个值，如果每次赋值会覆盖掉原来的值，所以只需要进入页面赋值一次就行
-      monthStatus: true
+      monthStatus: true,
+      buildingString: '' // 楼栋搜索字段
     }
   },
   computed: {
@@ -434,13 +439,17 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 30px;
+  > .tf-flex {
+    flex: 1;
+  }
   .tf-flex {
     align-items: center;
   }
   .date-time-box {
-    margin-right: 30px;
+    width: 184px;
+    margin-right: 20px;
     .tf-icon-caret-down {
-      margin-left: 20px;
+      margin-left: 10px;
     }
   }
   .selected-date {
@@ -456,14 +465,24 @@ export default {
     height: 66px;
     border-radius: 33px;
   }
-  /deep/ .van-dropdown-menu__bar {
-    width: 220px;
+  /deep/ .van-dropdown-menu__bar,
+  /deep/ .van-field {
     background: none;
     border: 2px solid #aaaaaa;
     border-radius: 33px;
   }
   /deep/ .van-dropdown-menu__bar {
+    width: 220px;
     border-color: @primary;
+      width: 220px;
+  margin-right: 20px;
+  }
+  /deep/ .van-field {
+    height: 66px;
+    .van-field__body,
+    .van-field__control {
+      height: 100%;
+    }
   }
   /deep/ .van-dropdown-menu__item {
     justify-content: flex-start;
@@ -533,5 +552,9 @@ export default {
     line-height: 92px;
     color: #222;
   }
+}
+.tf-flex-item {
+  margin-right: 20px;
+  width: 0;
 }
 </style>
