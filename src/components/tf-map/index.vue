@@ -1,5 +1,5 @@
 <template>
-  <div class="app-body">
+  <div class="map-body">
     <div ref="fixed-footer" class="bottom-fixed">
       <div class="cinema-box">
         <div class="cinema-name">{{ destinationInfo.name }}</div>
@@ -8,11 +8,11 @@
       </div>
       <div class="open-app-btn">
         <van-button type="primary" size="large" @click="openAppPopup"
-        ><img
-          class="path-icon"
-          src="@/assets/imgs/movie_map_path.png"
-        />到这去</van-button
-      >
+          ><img
+            class="path-icon"
+            src="@/assets/imgs/movie_map_path.png"
+          />到这去</van-button
+        >
       </div>
     </div>
     <van-popup
@@ -22,7 +22,7 @@
       position="bottom"
       get-container="body"
       class="app-popup"
-      :style="{height: `${footerHeight}px`}"
+      :style="{ height: `${footerHeight}px` }"
     >
       <div class="popup-title">打开应用</div>
       <div class="map-list">
@@ -341,6 +341,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.map-body {
+  height: 100%;
+}
 .bottom-fixed {
   display: flex;
   flex-direction: column;

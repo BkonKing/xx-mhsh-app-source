@@ -152,6 +152,13 @@ router.beforeEach(async (to, from, next) => {
             frameUrl: params.frameUrl
           }
         })
+      } else if (params.page_type == 7) {
+        router.push({
+          name: 'questionnaireDetails',
+          query: {
+            id: params.id
+          }
+        })
       }
     })
   }
