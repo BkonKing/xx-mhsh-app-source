@@ -24,7 +24,7 @@
             </div>
           </template>
           <template #right-icon>
-            <i class="font_family icon-shuoming right"
+            <i class="tf-icon tf-icon-shuoming right"
                @click="isShow = true"></i>
           </template>
         </van-field>
@@ -39,10 +39,10 @@
             <div class="label">卡号</div>
           </template>
           <template #right-icon>
-            <i class="font_family icon-close-circle-fill clear"
+            <i class="tf-icon tf-icon-close-circle-fill clear"
                v-if="bankCardNum != ''"
                @click="clearBankInfo"></i>
-            <i class="font_family icon-xiangji right"
+            <i class="tf-icon tf-icon-xiangji right"
                @click="openCamera"></i>
           </template>
         </van-field>
@@ -125,7 +125,7 @@
     <div class="close"
          v-if="isShow"
          @click="isShow = false">
-      <i class="font_family icon-guanbi1 guanbi"></i>
+      <i class="tf-icon tf-icon-guanbi1 guanbi"></i>
     </div>
 
     <div class="txt-support">

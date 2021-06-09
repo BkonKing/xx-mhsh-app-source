@@ -45,7 +45,8 @@ const store = {
     temporaryType: undefined,
     mobile_info: '',
     map_info: '',
-    share_params: ''
+    share_params: '',
+    groupInfo: ''
   },
   mutations: {
     setUser_info (state, value) {
@@ -91,6 +92,9 @@ const store = {
     },
     setKeepAliveList (state, name) {
       if (state.keepAliveList.indexOf(name) === -1) {
+        if (name === 'home' && state.keepAliveList.indexOf('mainIndex') === -1) {
+          state.keepAliveList.push('mainIndex')
+        }
         state.keepAliveList.push(name)
       }
     },
@@ -99,6 +103,9 @@ const store = {
       if (index !== -1) {
         state.keepAliveList.splice(index, 1)
       }
+    },
+    clearKeepAlive (state) {
+      state.keepAliveList = []
     },
     setPaddingTop (state, value) {
       state.paddingTop = value
@@ -120,6 +127,9 @@ const store = {
     },
     setShare_params (state, value) {
       state.share_params = value
+    },
+    setGroupInfo (state, value) {
+      state.groupInfo = value
     }
   },
   getters: {
@@ -231,6 +241,7 @@ const store = {
           loadingToast.clear()
           if (res.success) {
             clearUserInfo()
+            commit('clearKeepAlive')
             resolve()
           } else {
             reject(res)

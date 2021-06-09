@@ -17,11 +17,11 @@
         />
         <i
           v-else-if="type == 'iconfont' && userInfo.gender == 1"
-          class="font_family icon-xingbie1 nan"
+          class="tf-icon tf-icon-xingbie1 nan"
         ></i>
         <i
           v-else-if="type == 'iconfont' && userInfo.gender == 2"
-          class="font_family icon-xingbie nv"
+          class="tf-icon tf-icon-xingbie nv"
         ></i>
         <div v-else class="value">
           {{ value }}

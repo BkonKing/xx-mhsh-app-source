@@ -12,9 +12,15 @@
         @click-right="goCoinRecord"
       ></van-nav-bar>
       <div class="sign-box tf-row-space-between">
-        <div class="tf-row-center tf-flex-item">
-          <div class="tf-icon tf-icon-xingfubi coin-icon"></div>
-          <div class="coin-number">{{ credits }}</div>
+        <div class="coin-box">
+          <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
+          <div class="tf-column">
+            <span class="coin-number">{{ credits }}</span>
+            <div class="coin-freeze">
+              <span>可用{{ky_credits}}</span>
+              <span v-if="+sd_credits">不可用{{sd_credits}}</span>
+            </div>
+          </div>
         </div>
         <van-button
           v-preventReClick
@@ -210,7 +216,9 @@ export default {
       signLoading: false, // 签到按钮loading
       mj_status: true, // 是否有门禁
       yxlpNum: 0, // 推荐购房楼盘列表
-      signRuledialog: false
+      signRuledialog: false,
+      sd_credits: '', // 锁定幸福币
+      ky_credits: '' // 可用幸福币
     }
   },
   computed: {
@@ -228,6 +236,8 @@ export default {
         this.taskList = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
+        this.ky_credits = data.ky_credits
+        this.sd_credits = data.sd_credits
         this.getYxlpList()
         // console.log('任务列表', data.task_list)
       })
@@ -392,9 +402,10 @@ export default {
 }
 .page-bg {
   width: 750px;
-  height: 378px;
+  height: 428px;
   background: url("../../../assets/imgs/credits_header.png") no-repeat;
   background-size: cover;
+  background-repeat: no-repeat;
 }
 .nav-bar {
   flex-direction: row;
@@ -434,26 +445,48 @@ export default {
   background-color: @gray-2;
 }
 .sign-box {
-  height: 290px;
-  align-items: center;
+  height: 300px;
+  padding-top: 94px;
 }
 .coin-main-box {
   flex: 1;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+  > .tf-row-space-between {
+    padding-top: 60px;
+  }
+}
+.coin-box {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  padding-top: 12px;
+  margin-left: 59px;
 }
 .coin-number {
   font-size: 72px;
-  line-height: 72px;
+  line-height: 1;
   font-weight: 500;
-  color: @gold-color;
+  color: #fff;
+}
+.coin-freeze {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+  color: #ffffff;
+  span + span {
+    margin-left: 26px;
+  }
 }
 .coin-icon {
-  @flex-column();
-  font-size: 36px;
-  color: @gold-color;
-  justify-content: flex-end;
+  margin-top: 4px;
   margin-right: 20px;
+  font-size: 64px;
+  line-height: 1;
+  color: #fff;
 }
 .function-box {
   padding: 0 46px;
@@ -586,7 +619,7 @@ export default {
   .van-icon,
   .van-nav-bar__title,
   .van-nav-bar__text {
-    color: @gold-color;
+    color: #fff;
   }
 }
 </style>

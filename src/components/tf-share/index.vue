@@ -47,7 +47,7 @@ export default {
           eventId = 33
         }
       }
-      setStatisticsData(3, { event_id: eventId })
+      if (eventId) setStatisticsData(3, { event_id: eventId })
       const that = this
       this.$emit('closeSwal', 0)
       let sceneVal = ''

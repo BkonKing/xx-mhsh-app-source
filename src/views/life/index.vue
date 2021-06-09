@@ -508,7 +508,7 @@ export default {
           this.$nextTick(() => {
             const key = 'area' + index
             if (this.$refs[key]) {
-              console.log(this.$refs[key][0])
+              // console.log(this.$refs[key][0])
               this.$refs[key][0].listInit()
             }
           })
@@ -570,7 +570,9 @@ export default {
     linkFunc (type, obj = {}) {
       switch (type) {
         case 1:
-        // this.$router.push('/address/list');
+          // this.$router.push({
+          //   name: 'releaseType'
+          // })
           this.$router.push('/store/goods-classify')
           break
         case 2:

@@ -230,6 +230,7 @@ export default {
     record (val) {
       this.editStatus = !val
       this.meterNum = val
+      this.images = this.pic || []
     },
     pic (val) {
       this.images = val || []

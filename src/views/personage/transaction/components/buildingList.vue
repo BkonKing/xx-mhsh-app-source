@@ -8,16 +8,27 @@
     :immediate-check="false"
   >
     <template v-slot="{ item }">
-      <div class="build-item" @click="jump(item)">
+      <div v-show="item.building_name.indexOf(filter) > -1" class="build-item" @click="jump(item)">
         <div class="build-left">
           <div class="build-name">{{ item.building_name }}</div>
           <div class="build-number">{{ item.count }}户</div>
         </div>
-        <div class="build-right" :class="{'build-center': !item.w_icon || !item.e_icon}">
-          <div v-if="item.w_icon" class="build-water" :class="{ active: item.w_icon == 1 }">
+        <div
+          class="build-right"
+          :class="{ 'build-center': !item.w_icon || !item.e_icon }"
+        >
+          <div
+            v-if="item.w_icon"
+            class="build-water"
+            :class="{ active: item.w_icon == 1 }"
+          >
             <span class="tf-icon tf-icon-shuibiao"></span>
           </div>
-          <div v-if="item.e_icon" class="build-electricity" :class="{ active: item.e_icon == 1 }">
+          <div
+            v-if="item.e_icon"
+            class="build-electricity"
+            :class="{ active: item.e_icon == 1 }"
+          >
             <span class="tf-icon tf-icon-dianbiao"></span>
           </div>
         </div>
@@ -37,7 +48,11 @@ export default {
       type: Array,
       default: () => []
     },
-    load: Function
+    load: Function,
+    filter: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
@@ -72,12 +87,9 @@ export default {
 
 <style lang="less" scoped>
 .building-list {
-  /deep/ .van-cell {
-    width: 50%;
-    margin-bottom: 20px;
-    padding: 0 10px;
-  }
   .build-item {
+    width: 330px;
+    margin: 0 10px;
     display: flex;
     height: 142px;
     padding: 30px;
@@ -142,5 +154,6 @@ export default {
 }
 /deep/ .tf-van-cell {
   float: left;
+  width: auto;
 }
 </style>

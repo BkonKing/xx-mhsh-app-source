@@ -59,6 +59,15 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
+      <van-tab v-if="isShowTask" false="message-list-6" title="任务" :badge="badgeList[7]">
+        <message-list
+          ref="task"
+          type="task"
+          :load="({ pages }) => getMessageList(pages, 7)"
+          @click="handleTaskClick"
+          @mark="messageRead"
+        ></message-list>
+      </van-tab>
       <van-tab id="message-list-5" title="系统" :badge="badgeList[6]">
         <message-list
           ref="system"
@@ -95,6 +104,7 @@ export default {
   data () {
     return {
       badgeList: [],
+      isShowTask: false,
       current: 0
     }
   },
@@ -104,6 +114,9 @@ export default {
   created () {
     this.mtjEvent({
       eventId: 7
+    })
+    this.getMessageList(1, 7).then(({ data }) => {
+      this.isShowTask = data && data.length
     })
   },
   activated () {
@@ -347,6 +360,26 @@ export default {
         path: '/pages/personage/transaction/details',
         query: {
           id: item.source_id
+        }
+      })
+    },
+    // 任务操作
+    handleTaskClick (item) {
+      if (item.is_read == 0) {
+        this.messageRead(item)
+      }
+      const routeName = {
+        // 接单方 - 任务进度
+        23: 'scheduleReceiver',
+        // 任务方 - 我的任务详情
+        24: 'PersonageTaskDetails',
+        // 任务提问
+        25: 'operateQuiz'
+      }
+      this.$router.push({
+        name: routeName[item.sub_type],
+        query: {
+          taskId: item.source_id
         }
       })
     }

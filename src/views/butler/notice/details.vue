@@ -9,8 +9,8 @@
       @click-left="goBack"
     />
     <div class="page-container">
-      <div class="tf-article-title">{{title}}</div>
-      <div class="tf-article-info">{{ctime}}</div>
+      <div class="tf-article-title">{{ title }}</div>
+      <div class="tf-article-info">{{ ctime }}</div>
       <div class="tf-article-content" v-html="content"></div>
     </div>
   </div>
@@ -38,7 +38,7 @@ export default {
     getNoticInfo (noticeId) {
       getNoticInfo({
         noticeId
-      }).then((res) => {
+      }).then(res => {
         if (res.success) {
           const { title, content, ctime } = res.data
           this.title = title

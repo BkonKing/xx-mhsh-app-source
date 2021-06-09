@@ -2,7 +2,7 @@
  * 性别
  * @param {String} value
  */
-export function sexText(value) {
+export function sexText (value) {
   const sex = {
     1: '男',
     2: '女'
@@ -14,7 +14,7 @@ export function sexText(value) {
  * 用户角色
  * @param {String} value
  */
-export function houseRoleText(value) {
+export function houseRoleText (value) {
   const houseRole = {
     0: '访客',
     1: '业主',
@@ -29,7 +29,7 @@ export function houseRoleText(value) {
  * 用户角色
  * @param {String} value
  */
-export function houseRoleColor(value) {
+export function houseRoleColor (value) {
   const houseRole = {
     0: '#EB5841',
     1: '#EB5841',
@@ -45,8 +45,8 @@ export function houseRoleColor(value) {
  * 真实姓名首字转为'*'
  * @param {String} value
  */
-export function privacyName(value) {
-  return value ?
-    `${'*' + value.substring(1)}` :
-    '-'
+export function privacyName (value) {
+  return value
+    ? `${'*' + value.substring(1)}`
+    : '-'
 }

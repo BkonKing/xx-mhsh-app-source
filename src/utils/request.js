@@ -52,7 +52,7 @@ service.interceptors.request.use(
     if (!config.headers.Authorization && token) {
       config.headers.Authorization = token
     }
-    if (!config.headers.ProjectId) {
+    if (typeof config.headers.ProjectId === 'undefined') {
       // 获取当前项目
       const project = store.getters.currentProject
       if (project) {

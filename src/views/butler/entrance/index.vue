@@ -128,6 +128,7 @@ export default {
     }
   },
   created () {
+    this.getQrCode()
     // 首次进入页面需弹窗一次使用说明
     const firstStatus = api.getPrefs({
       sync: true,

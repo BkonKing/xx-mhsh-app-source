@@ -269,7 +269,7 @@
             </template>
           </template>
           <template v-else>
-            <div class="add-btn credits-info"><img src="@/assets/img/icon_24.png" />{{ableCredits}}</div>
+            <div class="add-btn credits-info"><img src="@/assets/img/icon_37.png" />{{ableCredits}}</div>
             <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy" v-txAnalysis="{eventId: 12}">立即兑换</div>
           </template>
         </template>
@@ -1068,14 +1068,15 @@ export default {
   display: flex;
   align-items: center;
   height: 60px;
-  /* color: #ffa110; */
   font-size: 24px;
   padding: 0 28px;
-  /* background-color: #fff5e7; */
-  background: rgba(235, 88, 65, 0.1);
-  color: #EB5841;
+  /* background: rgba(235, 88, 65, 0.1);
+  color: #EB5841; */
+  background-color: rgba(254, 191, 0, 0.1);
+  color: #FEBF00;
   margin: 0 auto;
-  border-radius: 30px;
+  border-radius: 10px;
+  font-weight: bold;
 }
 /* .dh-happy-coin.happy-coin {
   color: #ffa110;
@@ -1086,9 +1087,8 @@ export default {
   margin-right: 8px;
 }
 .info-price .happy-coin {
-  background: linear-gradient(90deg, #EB5841, #F9866B);
+  /* background: linear-gradient(90deg, #EB5841, #F9866B); */
   font-size: 26px;
-  color: #FFFFFF;
   margin: 0;
 }
 
@@ -1283,16 +1283,18 @@ div.btn-disabled {
 .credits-info {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 42px;
+  justify-content: flex-end;
+  font-size: 36px;
   font-weight: bold;
-  color: #eb5841;
+  color: #FEBF00;
   background-color: #fff;
+  line-height: 98px;
+  padding-right: 30px;
 }
 .credits-info img {
   width: 36px;
   height: 36px;
-  margin-right: 8px;
+  margin-right: 20px;
 }
 
 /*规格*/

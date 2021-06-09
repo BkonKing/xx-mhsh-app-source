@@ -47,7 +47,7 @@
         v-if="swipeImages && swipeImages.length"
         class="home-swipe"
         :autoplay="6000"
-        :lazy-render="false"
+        :lazy-render="true"
         indicator-color="#fff"
         @change="swipeChange"
       >
@@ -104,13 +104,19 @@
               @click="goCoinCommodity(item)"
             >
               <div class="coin-tag">
-                <span class="tf-icon tf-icon-xingfubi"></span>
+                <span class="tf-icon tf-icon-xingfubi1"></span>
                 <span>{{ item.credits }}</span>
               </div>
             </van-image>
           </div>
         </div>
       </div>
+      <!-- 任务专区 -->
+      <home-task
+        v-if="isOpeningTask && taskList.length"
+        :data="taskList"
+      ></home-task>
+      <!-- 生活专区 -->
       <div class="goods-container" v-if="bargainVisible || ollageGoodsVisible">
         <!-- 9.9特卖 -->
         <div
@@ -290,10 +296,11 @@
 </template>
 
 <script>
-import { Toast } from 'vant'
 import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 import FilmBox from '@/views/life/movie/components/FilmBox'
+import homeTask from './components/task'
+import { setUserPostion } from '@/api/user'
 import {
   getMyApp,
   getBannerIndex,
@@ -306,6 +313,7 @@ import { getNoticeLbList } from '@/api/butler.js'
 import { getActivityList } from '@/api/neighbours'
 import { signin } from '@/api/personage'
 import { getfilmlist } from '@/api/movie'
+import { getTaskSwitch, getHomeTaskList } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
@@ -315,7 +323,8 @@ export default {
   components: {
     pageNavBar,
     tfImageList,
-    FilmBox
+    FilmBox,
+    homeTask
   },
   data () {
     return {
@@ -341,7 +350,10 @@ export default {
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_04.png',
         process.env.VUE_APP_DOMAIN_NAME + '/library/img/app_img/guide_05.png'
       ],
-      guideTop: 0
+      guideTop: 0,
+      isOpeningTask: true, // 是否显示任务专区
+      taskList: [], // 任务列表
+      isLocationFirst: true // 保存用户定位信息只执行一次状态
     }
   },
   computed: {
@@ -404,6 +416,7 @@ export default {
     this.getBannerIndex()
     this.getNoticeLbList()
     this.getCreditsGoodsList()
+    this.getTaskSwitch()
     this.getBargainGoods()
     this.getLocationInfo()
     this.getActivityList()
@@ -412,7 +425,7 @@ export default {
     this.swipeChange(0)
   },
   methods: {
-    /* 新手引导步骤 */
+    // 新手引导步骤
     guideStep () {
       this.guideIndex = this.guideIndex + 1
       this.guideTop = this.guideIndex == 1 ? this.$refs.sign.offsetTop : 0
@@ -421,26 +434,26 @@ export default {
         api.setPrefs({ key: 'guidetype', value: 1 })
       }
     },
-    /* 获取通知轮播列表 */
+    // 获取通知轮播列表
     getNoticeLbList () {
       getNoticeLbList().then(({ data }) => {
         this.noticeList = data
       })
     },
-    /* 获取轮播图 */
+    // 获取轮播图
     getBannerIndex () {
       getBannerIndex().then(res => {
         this.swipeImages = res.data
         this.swipeChange(0)
       })
     },
-    /* 获取我的app列表，并手动打入一个全部 */
+    // 获取我的app列表，并手动打入一个全部
     getMyApp () {
       getMyApp().then(res => {
         this.myAppList = res.data
       })
     },
-    /* 轮播图change事件 */
+    // 轮播图change事件
     swipeChange (index) {
       this.activeIndex = index
       if (!this.scrollStatus) {
@@ -449,7 +462,7 @@ export default {
           '#eb5841'
       }
     },
-    /* 签到 */
+    // 签到
     sign () {
       handlePermission({
         name: 'location',
@@ -460,7 +473,7 @@ export default {
         signin()
           .then(res => {
             this.signLoading = false
-            Toast({
+            this.$toast({
               message: res.message
             })
             this.$store.dispatch('getMyAccount')
@@ -473,45 +486,61 @@ export default {
           })
       })
     },
-    /* 获取幸福币专区 */
+    // 获取幸福币专区
     getCreditsGoodsList () {
       getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
-    /* 跳转幸福币 */
+    // 跳转幸福币
     goHappiness () {
       this.$router.push('/pages/personage/happiness-coin/index')
     },
-    /* 幸福币专区商品详情 */
+    // 幸福币专区商品详情
     goCoinCommodity (item) {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
-    /* 获取9.9特卖区 */
+    // 获取任务开关
+    getTaskSwitch () {
+      getTaskSwitch().then(({ alluser_open }) => {
+        this.isOpeningTask = +alluser_open
+      })
+    },
+    // 获取任务列表
+    getTaskList ({ province, city, district }) {
+      getHomeTaskList({
+        province,
+        city,
+        area: district
+      }).then(({ data }) => {
+        this.taskList = data
+      })
+    },
+    // 获取9.9特卖区
     getBargainGoods () {
       getBargainGoods().then(res => {
         this.bargainList = res.data
       })
     },
-    /* 跳转9.9特卖专区 */
+    // 跳转9.9特卖专区
     goSpecialSale () {
       this.$router.push('/store/special-sale')
     },
-    /* 9.9特卖专区图片点击 */
+    // 9.9特卖专区图片点击
     clickSpecialSale ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
-    /* 获取闪购专区 */
+    // 获取闪购专区
     getOllageGoods () {
       getOllageGoods().then(res => {
         this.ollageGoods = res.data
       })
     },
-    /* 跳转限时闪购列表 */
+    // 跳转限时闪购列表
     goTimeLimit () {
       this.$router.push('/store/flash-purchase')
     },
-    /* 跳转限时闪购详情 */
+    // 跳转限时闪购详情
     clickTimeLimit ({ goods_id }) {
       this.$router.push(`/store/goods-detail?id=${goods_id}`)
     },
@@ -531,10 +560,24 @@ export default {
       // adCode:行政区编码
       bMapGetLocationInfo()
         .then(data => {
-          const { adCode } = data
+          const { adCode, address, lon, lat } = data
+          // 开启则获取任务列表
+          this.isOpeningTask && this.getTaskList(data)
+          // 保存当前定位信息，只执行一次
+          if (this.isLocationFirst) {
+            setUserPostion({
+              longitude: lon,
+              latitude: lat,
+              address
+            }).then(() => {
+              this.isLocationFirst = false
+            })
+          }
           this.getfilmlist(String(adCode).substring(0, 4) + '00')
         })
         .catch(() => {
+          // 开启则获取任务列表
+          this.isOpeningTask && this.getTaskList({})
           this.getfilmlist()
         })
     },
@@ -544,17 +587,17 @@ export default {
         name: 'movieIndex'
       })
     },
-    /* 获取活动列表 */
+    // 获取活动列表
     getActivityList () {
       getActivityList().then(res => {
         this.activityList = res.data
       })
     },
-    /* 跳转活动详情 */
+    // 跳转活动详情
     goActivity ({ id }) {
       this.$router.push(`/pages/neighbours/details?articleType=2&id=${id}`)
     },
-    /* 跳转社区活动 */
+    // 跳转社区活动
     goCommunity () {
       this.$router.push({
         path: '/neighbours',
@@ -563,7 +606,7 @@ export default {
         }
       })
     },
-    /* 跳转公告详情页 */
+    // 跳转公告详情页
     goNotice ({ id }) {
       this.$router.push({
         name: 'noticeDetails',
@@ -572,17 +615,17 @@ export default {
         }
       })
     },
-    /* 点击头条跳转相应内容 */
+    // 点击头条跳转相应内容
     clickFront ({ id }) {
       this.$router.push(`/pages/neighbours/details?articleType=1&id=${id}`)
     },
-    /* 获取美好头条 */
+    // 获取美好头条
     getMhttList () {
       getMhttList().then(res => {
         this.frontList = res.data || []
       })
     },
-    /* 滚动行为 */
+    // 滚动行为
     onScroll ({ target }) {
       const el = document.getElementById('home-notice-box')
       const height = (el && el.clientHeight) || 0
@@ -597,7 +640,7 @@ export default {
     // 跳转到应用
     goApp ({ url, mj_status }) {
       if (url === '/pages/butler/entrance/index' && mj_status == '0') {
-        Toast('小区暂未开放此功能')
+        this.$toast('小区暂未开放此功能')
       } else {
         this.$router.push(url)
       }
@@ -636,6 +679,16 @@ export default {
       ]
       return numText[value]
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    // 重新登录后，重新发送地址
+    const name = ['login', 'settingAccount']
+    if (name.includes(from.name)) {
+      next((vm) => {
+        vm.isLocationFirst = true
+      })
+    }
+    next()
   },
   beforeRouteLeave (to, from, next) {
     bulterPermission(to, from, next, this.userType, this.userInfo, () => {
@@ -725,12 +778,11 @@ export default {
   padding-top: 88px;
 }
 .home-swipe {
-  width: 100%;
-  height: 345.4px;
+  height: 344.4px;
 }
 .swipe-item__image {
   width: 100%;
-  height: 345.4px;
+  height: 344.4px;
 }
 /* app列表 */
 .app-box {
@@ -823,6 +875,7 @@ export default {
     width: 100%;
   }
 }
+
 /* 专区容器 */
 .goods-container {
   display: flex;
@@ -1070,21 +1123,23 @@ export default {
   width: 100%;
 }
 /deep/ .coin-tag {
+  display: flex;
+  align-items: center;
   position: absolute;
   left: 20px;
   right: 20px;
   bottom: 10px;
-  padding: 0 23px;
+  padding: 0 12px;
   height: 36px;
-  line-height: 36px;
+  line-height: 1;
   font-size: 24px;
-  text-align: center;
   color: #fff;
   background: @orange-dark;
   opacity: 0.8;
   border-radius: 18px;
   .tf-icon {
-    margin-right: 6px;
+    margin-right: 14px;
+    line-height: 1;
   }
 }
 .coin-message {

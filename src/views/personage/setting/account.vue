@@ -66,6 +66,7 @@ export default {
         key: 'access_token',
         value: tokenList[item.id]
       })
+      this.$store.commit('clearKeepAlive')
       this.$store.dispatch('getMyAccount').then(async () => {
         Toast.clear()
         if (process.env.VUE_APP_IS_APP === '1') {
@@ -73,6 +74,12 @@ export default {
         }
         await this.$store.dispatch('getHouse')
         this.$router.replace('/')
+        // 清除路由记录
+        // const routeHistory = history.length - 1
+        // this.$router.go(-routeHistory)
+        // setTimeout(() => {
+        //   this.$router.replace('/')
+        // }, 0)
         this.mtjEvent({
           eventId: 79
         })

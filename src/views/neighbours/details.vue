@@ -125,14 +125,18 @@
         </template>
         <div class="activity-footer">
           <div
-            class="tf-icon tf-icon-zan"
+            class="tf-icon like-thumbsup"
             :class="{ 'like-active': info.is_thumbsup }"
             @click="thumbsUp(info)"
           >
-            <span class="tf-text-sm">{{ info.thumbsups | numberText }}</span>
+            <span class="tf-text-sm">{{
+              info.thumbsups | numberText("点赞")
+            }}</span>
           </div>
-          <div class="tf-icon tf-icon-pinglun" @click="$refs.reply.comment()">
-            <span class="tf-text-sm">{{ info.comments | numberText }}</span>
+          <div class="tf-icon tf-icon-pinglun1" @click="$refs.reply.comment()">
+            <span class="tf-text-sm">{{
+              info.comments | numberText("评论")
+            }}</span>
           </div>
         </div>
       </div>
@@ -362,8 +366,8 @@ export default {
     }
   },
   filters: {
-    numberText (value) {
-      let text = ''
+    numberText (value, txt) {
+      let text = txt
       if (value < 10000 && value > 0) {
         text = value
       } else if (value >= 10000) {
@@ -537,9 +541,6 @@ export default {
   width: 100%;
   height: 365px;
   margin-bottom: 20px;
-}
-.like-active::before {
-  color: @orange-dark;
 }
 .activity-reply {
   flex: 1;

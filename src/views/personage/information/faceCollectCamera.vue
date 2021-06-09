@@ -9,7 +9,7 @@
       </div>
       <div class="footer">
         <div class="text">拍摄您本人人脸，请保证正对手机，光线充足</div>
-        <div class="camera-footer__btn" @click="cameraOperate('takePhoto')">拍照</div>
+        <van-button class="camera-footer__btn" :loading="loading" @click="cameraOperate('takePhoto')">拍照</van-button>
       </div>
     </div>
   </div>
@@ -23,14 +23,13 @@ export default {
   data () {
     return {
       FNPhotograph: null,
-      complete: 0
+      loading: false
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   created () {
-    this.complete = this.userInfo.have_faceimg == 1 ? 2 : 0
     this.FNPhotograph = api.require('FNPhotograph')
     eventBus.$on('resume', () => {
       this.openCamera()
@@ -100,6 +99,9 @@ export default {
           break
         // 拍照
         case 'takePhoto':
+          if (this.loading) {
+            return
+          }
           this.FNPhotograph.takePhoto(
             {
               quality: 'medium',
@@ -117,6 +119,7 @@ export default {
     },
     /* 上传图片到服务器 */
     uploadImage (file) {
+      this.loading = true
       api.ajax(
         {
           url: process.env.VUE_APP_BASE_API + '/upload/uploads/uImages',
@@ -137,6 +140,7 @@ export default {
           if (ret) {
             this.cjFace(ret.data)
           } else {
+            this.loading = false
             api.alert({
               msg: err
             })
@@ -151,13 +155,17 @@ export default {
         face_url: url
       })
         .then(res => {
-          this.complete = 1
           this.cameraOperate({ detail: { type: 'close' } })
+          this.$store.dispatch('getMyAccount').then(() => {
+            this.closeCameraView()
+          })
           this.mtjEvent({
             eventId: 74
           })
+          this.loading = false
         })
         .catch(err => {
+          this.loading = false
           api.alert({
             msg: err.message
           })
@@ -218,6 +226,7 @@ export default {
   background: #fff;
   color: #222;
   font-size: 30px;
+  border: none;
 }
 
 .container {

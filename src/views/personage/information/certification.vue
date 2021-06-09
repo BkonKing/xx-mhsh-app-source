@@ -43,13 +43,13 @@
           </template>
           <template #button>
             <i v-if="bankCardNum.length > 0"
-               class="font_family icon-close-circle-fill close"
+               class="tf-icon tf-icon-close-circle-fill close"
                @click="clearBankInfo"></i>
-            <i class="font_family icon-xiangji xiangji"
+            <i class="tf-icon tf-icon-xiangji xiangji"
                @click="openCamera"></i>
           </template>
           <!-- <template #right-icon>
-            <i class="font_family icon-xiangji xiangji"
+            <i class="tf-icon tf-icon-xiangji xiangji"
                @click="openCamera"></i>
           </template> -->
         </van-field>
@@ -89,7 +89,7 @@
                round
                class="popup">
       <!-- <div v-if="showTc">
-        <i class="font_family icon-gouxuan gouxuan"></i>
+        <i class="tf-icon tf-icon-gouxuan gouxuan"></i>
         <div class="txt">认证成功</div>
       </div> -->
       <!-- <div v-else> -->
@@ -100,7 +100,7 @@
     </van-popup>
     <i v-if="isShow"
        @click="isShow = false"
-       class="font_family icon-guanbi1 guanbi"></i>
+       class="tf-icon tf-icon-guanbi1 guanbi"></i>
   </div>
 </template>
 
