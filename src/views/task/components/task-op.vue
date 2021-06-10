@@ -168,11 +168,11 @@ export default {
         })
         this.selectList = list
         this.$nextTick(() => {
-          this.$toast.clear()
+          loading && this.$toast.clear()
           loading && (this.opShow = true)
         })
       }).catch(() => {
-        this.$toast.clear()
+        loading && this.$toast.clear()
       })
     },
     // 操作选择
