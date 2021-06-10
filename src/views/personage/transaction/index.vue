@@ -446,7 +446,7 @@ export default {
     align-items: center;
   }
   .date-time-box {
-    width: 184px;
+    width: 190px;
     margin-right: 20px;
     .tf-icon-caret-down {
       margin-left: 10px;

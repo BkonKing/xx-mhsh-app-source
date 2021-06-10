@@ -193,14 +193,16 @@ export default {
   padding-bottom: 0;
 }
 .group-tag {
-  height: 34px;
-  line-height: 34px;
-  padding: 0 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px;
   text-align: center;
-  border: 2px solid @orange-dark;
-  border-radius: 10px 0px 10px 10px;
-  color: @orange-dark;
-  font-size: 22px;
+  font-size: 24px;
+  color: #ff6555;
+  background: #ffedeb;
+  border-radius: 4px;
 }
 .reply-cell-content {
   padding: 30px;

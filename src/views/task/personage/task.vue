@@ -30,8 +30,8 @@
           </div>
           <span class="task-title-1">需要人数：{{ info.need_people }}</span>
           <span class="task-title-1">完成时间：{{ info.task_time }}</span>
-          <span v-if="info.address_text" class="task-title-1"
-            >完成地点：{{ info.address_text }}</span
+          <span v-if="info.address_text" class="task-title-1 task-address"
+            >完成地点：<span class="tf-flex-item">{{ info.address_text }}</span></span
           >
         </div>
       </div>
@@ -220,15 +220,19 @@ export default {
 }
 
 .task-title-1 {
-  margin-top: 29px;
+  margin-top: 24px;
   max-width: 649px;
-  height: 25px;
+  min-height: 26px;
   text-align: left;
   text-overflow: ellipsis;
-  line-height: 26px;
-  white-space: pre;
+  line-height: 36px;
+  // white-space: pre;
   color: #8f8f94;
   font-size: 26px;
+}
+
+.task-address {
+  display: flex;
 }
 
 .task-schedule {

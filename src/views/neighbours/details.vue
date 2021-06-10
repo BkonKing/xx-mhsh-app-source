@@ -61,7 +61,7 @@
             :showIcon="false"
             size="sm"
           ></tf-alert>
-          <div class="tf-card-content">{{ info.content }}</div>
+          <div class="tf-card-content" v-html="info.content.replace(/\r\n|\n/g, '<br/>')"></div>
           <template v-if="info.images && info.images.length">
             <img
               width="33%"
@@ -196,7 +196,9 @@ export default {
       articleType: 0, // 文章类型：1资讯，2活动，3话题
       id: '',
       moreShow: false, // 更多操作弹窗
-      info: {},
+      info: {
+        content: ''
+      },
       isLoading: false,
       shareObj: {}
     }
@@ -528,14 +530,16 @@ export default {
   }
 }
 .group-tag {
-  height: 34px;
-  line-height: 34px;
-  padding: 0 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px;
   text-align: center;
-  border: 2px solid @orange-dark;
-  border-radius: 10px 0px 10px 10px;
-  color: @orange-dark;
-  font-size: 22px;
+  font-size: 24px;
+  color: #ff6555;
+  background: #ffedeb;
+  border-radius: 4px;
 }
 .activity-image {
   width: 100%;

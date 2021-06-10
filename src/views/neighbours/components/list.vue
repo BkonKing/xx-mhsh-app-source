@@ -40,7 +40,9 @@
               <div class="task-time">{{ item.task_time }}</div>
               <div v-if="item.address_text" class="task-address">
                 <img class="task-ditu-img" src="@/assets/neighbours/ditu.png" />
-                <div class="task-address-text">{{ item.address_text }}</div>
+                <div class="task-address-box">
+                  <div class="task-address-text">{{ item.address_text }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -89,9 +91,8 @@
                 <div
                   v-if="item.content"
                   class="tf-card-content text-multiple-ellipsis-3"
-                >
-                  {{ item.content }}
-                </div>
+                  v-html="item.content.replace(/\r\n|\n/g, '<br/>')"
+                ></div>
                 <template v-if="item.images">
                   <img
                     class="tf-mt-base"
@@ -125,6 +126,7 @@
             :item="item"
             :key="item.id"
             :articleType="item.article_type"
+            :contentKey="item.article_type == '3' ? 'content' : 'title'"
             @delete="list.splice(index, 1)"
           >
           </operation>
@@ -410,17 +412,21 @@ export default {
       width: 44px;
       height: 44px;
     }
-    .task-address-text {
+    .task-address-box {
       display: flex;
       justify-content: center;
       align-items: center;
+      min-width: 0;
       height: 44px;
       padding: 0 18px;
       background: #f7f7f7;
       border-radius: 4px;
+    }
+    .task-address-text {
       font-size: 24px;
       color: #8f8f94;
       line-height: 1;
+      @text-ellipsis();
     }
   }
   .taks-footer {

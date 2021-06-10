@@ -46,8 +46,8 @@
         v-if="!(articleType == 6 && item.is_mine)"
         :item="item"
         :type="articleType"
-        :complainKey="articleType == 6 ? 'task_title' : ''"
-        :contentKey="articleType == 6 ? 'task_title' : ''"
+        :complainKey="articleType == 6 ? 'task_title' : contentKey"
+        :contentKey="articleType == 6 ? 'task_title' : contentKey"
         @delete="deleteArticle"
       ></more-btn>
     </div>
@@ -76,6 +76,10 @@ export default {
       default: () => {}
     },
     articleType: {
+      default: ''
+    },
+    contentKey: {
+      type: String,
       default: ''
     }
   },

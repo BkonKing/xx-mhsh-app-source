@@ -19,20 +19,28 @@
       </template>
     </div>
     <!-- 投诉 -->
+    <!-- 提问投诉 -->
     <complain-popup
+      v-if="+type === 7"
       v-model="complainShow"
       :complainInfo="item"
-      :complainType="+type < 4 ? 1 : type"
-      :complainKey="complainKey"
+      :complainType="type"
       :types="types"
       labelKey="complaint_type"
       valueKey="id"
+    ></complain-popup>
+    <!-- 列表投诉 -->
+    <complain-popup
+      v-else
+      v-model="complainShow"
+      :complainInfo="item"
+      :complainType="1"
     ></complain-popup>
     <!-- 屏蔽 -->
     <shield-popup
       v-model="shieldShow"
       :shieldInfo="item"
-      :shieldType="type"
+      :shieldType="+type < 4 ? 1 : type"
       :contentKey="contentKey"
     ></shield-popup>
   </div>
@@ -63,10 +71,6 @@ export default {
       default: () => []
     },
     contentKey: {
-      type: String,
-      default: ''
-    },
-    complainKey: {
       type: String,
       default: ''
     }

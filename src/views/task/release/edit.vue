@@ -941,9 +941,10 @@ export default {
     justify-content: center;
     width: 480px;
     &.p-30 {
-      padding: 30px 0;
+      padding: 30px 0 30px 20px;
     }
     .address-name {
+      padding-top: 4px !important;
       /deep/.van-cell {
         padding: 0;
         input {

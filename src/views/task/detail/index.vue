@@ -132,7 +132,7 @@
         <div v-if="infoData.address" class="task-session">
           <div class="session-tit">完成地点</div>
           <div @click="openMap" class="task-address tf-vertical-center">
-            <div class="van-ellipsis">
+            <div>
               {{ infoData.udpate_address || infoData.address }}
             </div>
             <div class="van-ellipsis">
@@ -741,12 +741,14 @@ export default {
   }
 }
 .task-address {
-  height: 128px;
+  min-height: 128px;
   background: linear-gradient(90deg, #f7f7f7 0%, #ffffff 100%);
   border-radius: 10px;
   margin-bottom: 40px;
   position: relative;
   padding-left: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   div {
     position: relative;
     z-index: 5;
