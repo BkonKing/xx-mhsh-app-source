@@ -399,6 +399,7 @@ export default {
       true
     )
   },
+
   methods: {
     // 获取当前地址信息
     getLocationInfo () {

@@ -1,19 +1,38 @@
 <template>
   <div class="date-cont">
-    <van-calendar ref="calendar" :show-subtitle="false" v-model="dateShow" :min-date="minDate" :max-date="maxDate" :show-confirm="false" :show-mark="false" :default-date="defaultDate" @confirm="onConfirm">
+    <van-calendar
+      ref="calendar"
+      :show-subtitle="false"
+      v-model="dateShow"
+      :min-date="minDate"
+      :max-date="maxDate"
+      :show-confirm="false"
+      :show-mark="false"
+      :default-date="defaultDate"
+      @confirm="onConfirm"
+    >
       <div class="date-header-block" slot="title">
         <div class="date-header tf-row-vertical-center">
           <div class="date-tit">完成时间</div>
-          <div @click="close" class="date-close tf-row-vertical-center van-icon van-icon-cross">
-          </div>
+          <div
+            @click="close"
+            class="date-close tf-row-vertical-center van-icon van-icon-cross"
+          ></div>
         </div>
         <div class="time-field tf-row-center">
-          <div @click="timeBlur(0)" :class="{'active': timeIndex == 0}"><van-field v-model="startTime" placeholder="开始时间" disabled  /></div>
+          <div @click="timeBlur(0)" :class="{ active: timeIndex == 0 }">
+            <van-field v-model="startTime" placeholder="开始时间" disabled />
+          </div>
           <div class="time-hr tf-row-vertical-center"></div>
-          <div @click="timeBlur(1)" :class="{'active': timeIndex == 1}"><van-field v-model="endTime" placeholder="结束时间" disabled  /></div>
+          <div @click="timeBlur(1)" :class="{ active: timeIndex == 1 }">
+            <van-field v-model="endTime" placeholder="结束时间" disabled />
+          </div>
         </div>
         <div class="tf-row-center opera-block">
-          <div @click="prev" class="opera-btn van-icon van-icon-arrow-left"></div>
+          <div
+            @click="prev"
+            class="opera-btn van-icon van-icon-arrow-left"
+          ></div>
           <div class="year-month">{{ yearmonth }}</div>
           <div @click="next" class="opera-btn van-icon van-icon-arrow"></div>
         </div>
@@ -39,12 +58,7 @@
 </template>
 
 <script>
-import {
-  Calendar,
-  DatetimePicker,
-  Field,
-  Toast
-} from 'vant'
+import { Calendar, DatetimePicker, Field, Toast } from 'vant'
 
 export default {
   components: {
@@ -82,7 +96,7 @@ export default {
     }
   },
   created () {
-    // console.log(new Date(2021, 0, 1))
+    // console.log('当前时间', new Date().getDate())
     const nowTime = new Date()
     this.nowTime = nowTime
     this.nowYear = nowTime.getFullYear()
@@ -91,12 +105,13 @@ export default {
 
     // this.nowMonth = getDate()
   },
+
   methods: {
     prev () {
       // this.minDate = new Date(2021, 2, 1)
       // this.maxDate = new Date(2021, 2, 31)
-      this.nowYear = (this.nowMonth - 1 === 0) ? (this.nowYear - 1) : this.nowYear
-      this.nowMonth = (this.nowMonth - 1 === 0) ? 12 : (this.nowMonth - 1)
+      this.nowYear = this.nowMonth - 1 === 0 ? this.nowYear - 1 : this.nowYear
+      this.nowMonth = this.nowMonth - 1 === 0 ? 12 : this.nowMonth - 1
       console.log(this.nowYear, this.nowMonth, this.nowMonth - 1)
       this.getMonthDay()
       // this.$refs.calendar.reset()
@@ -104,8 +119,8 @@ export default {
     next () {
       // this.minDate = new Date(2021, 2, 1)
       // this.maxDate = new Date(2021, 2, 31)
-      this.nowYear = (this.nowMonth + 1 === 13) ? (this.nowYear + 1) : this.nowYear
-      this.nowMonth = (this.nowMonth + 1 === 13) ? 1 : (this.nowMonth + 1)
+      this.nowYear = this.nowMonth + 1 === 13 ? this.nowYear + 1 : this.nowYear
+      this.nowMonth = this.nowMonth + 1 === 13 ? 1 : this.nowMonth + 1
       console.log(this.nowYear, this.nowMonth, this.nowMonth - 1)
       this.getMonthDay()
       // this.$refs.calendar.reset()
@@ -113,9 +128,21 @@ export default {
     // 获取选中月份的最小最大日期
     getMonthDay () {
       const firstDay = new Date(this.nowYear, this.nowMonth - 1)
-      const lastDay = new Date(new Date(this.nowYear, this.nowMonth).valueOf() - 60 * 60 * 1000 * 24)
-      const startDate = firstDay.getFullYear() + '/' + (firstDay.getMonth() + 1) + '/' + firstDay.getDate()
-      const endDate = lastDay.getFullYear() + '/' + (lastDay.getMonth() + 1) + '/' + lastDay.getDate()
+      const lastDay = new Date(
+        new Date(this.nowYear, this.nowMonth).valueOf() - 60 * 60 * 1000 * 24
+      )
+      const startDate =
+        firstDay.getFullYear() +
+        '/' +
+        (firstDay.getMonth() + 1) +
+        '/' +
+        firstDay.getDate()
+      const endDate =
+        lastDay.getFullYear() +
+        '/' +
+        (lastDay.getMonth() + 1) +
+        '/' +
+        lastDay.getDate()
       this.minDate = new Date(startDate)
       this.maxDate = new Date(endDate)
       this.yearmonth = this.nowYear + '年' + this.nowMonth + '月'
@@ -125,6 +152,32 @@ export default {
     },
     // 选择了日历
     onConfirm (date) {
+      if (date.getDate() !== new Date().getDate()) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            const arr = document.getElementsByClassName('van-calendar__day')
+            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+            const arr2 = Array.prototype.slice.call(arr)
+            const dom = arr2.find(item => {
+              return +item.innerText === new Date().getDate()
+            })
+            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+          })
+        })
+      } else {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            const arr = document.getElementsByClassName('van-calendar__day')
+            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+            const arr2 = Array.prototype.slice.call(arr)
+            const dom = arr2.find(item => {
+              return +item.innerText === new Date().getDate()
+            })
+            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+          })
+        })
+      }
+
       if (this.timeIndex == 0) {
         this.startYmd = this.formatDate(date)
         // console.log('选择了日历', this.startYmd)
@@ -146,8 +199,29 @@ export default {
     // 点击时间输入框
     timeBlur (index) {
       if (index === 1) {
-        console.log('第二个')
-        document.getElementsByClassName('van-calendar__selected-day')[0].style.background = 'white'
+        this.$nextTick(() => {
+          setTimeout(() => {
+            const arr = document.getElementsByClassName('van-calendar__day')
+            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+            const arr2 = Array.prototype.slice.call(arr)
+            const dom = arr2.find(item => {
+              return +item.innerText === new Date().getDate()
+            })
+            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+          })
+        })
+      } else {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            const arr = document.getElementsByClassName('van-calendar__day')
+            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+            const arr2 = Array.prototype.slice.call(arr)
+            const dom = arr2.find(item => {
+              return +item.innerText === new Date().getDate()
+            })
+            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+          })
+        })
       }
       this.timeIndex = index
       let timeVal = ''
@@ -209,10 +283,14 @@ export default {
           return
         }
       }
-      this.$emit('dateSure', { startTime: this.startTime, endTime: this.endTime })
+      this.$emit('dateSure', {
+        startTime: this.startTime,
+        endTime: this.endTime
+      })
       this.close()
     }
   },
+
   watch: {
     value (val) {
       this.dateShow = val
@@ -223,9 +301,20 @@ export default {
         this.startTime = ''
         this.endTime = ''
       }
-      // if (val) {
-      //   this.onConfirm(new Date())
-      // }
+      if (val) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            if (+document.getElementsByClassName('van-calendar__selected-day')[0].innerText === new Date().getDate()) {
+              document.getElementsByClassName(
+                'van-calendar__selected-day'
+              )[0].style.background = '#eeeeee'
+            }
+          })
+        })
+      } else {
+
+      }
+
       this.$emit('input', val)
     }
   }
@@ -233,9 +322,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.nowDateClass {
+  width: 0.74667rem;
+  height: 0.74667rem;
+  line-height: 2.4;
+  background: #eeeeee;
+  border-radius: 0.13333rem;
+  color: #000000;
+}
 .date-cont {
   .van-popup--bottom.van-popup--round {
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 20px 20px 0px 0px;
     height: auto;
   }
@@ -244,7 +341,7 @@ export default {
       display: none;
     }
     .van-calendar {
-      background: #F7F7F7;
+      background: #f7f7f7;
     }
     .van-calendar__header {
       box-shadow: none;
@@ -252,7 +349,8 @@ export default {
     .van-calendar__month-title {
       display: none;
     }
-    .van-calendar__weekdays,.van-calendar__body {
+    .van-calendar__weekdays,
+    .van-calendar__body {
       width: 710px;
       margin: 0 auto;
       background-color: #fff;
@@ -264,7 +362,7 @@ export default {
         line-height: 40px;
         font-size: 24px;
         font-weight: 400;
-        color: #AAAAAA;
+        color: #aaaaaa;
       }
     }
     .van-calendar__body {
@@ -278,21 +376,21 @@ export default {
       .van-calendar__selected-day {
         width: 56px;
         height: 56px;
-        background: #FEBF00;
+        background: #febf00;
         border-radius: 10px;
         color: #000000;
       }
-      .nowday{
+      .nowday {
         background: #cccccc !important;
       }
     }
     .van-picker__columns {
       &::after {
-        content: ':';
+        content: ":";
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         font-size: 36px;
         font-weight: 500;
         color: #000000;
@@ -330,12 +428,12 @@ export default {
     margin-right: 26px;
     font-size: 40px;
     justify-content: center;
-    color: #AAAAAA;
+    color: #aaaaaa;
   }
 }
 .active {
   /deep/.van-field {
-    border: 1PX solid #FF6555;
+    border: 1px solid #ff6555;
     // box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
   }
 }
@@ -345,17 +443,17 @@ export default {
   .van-field {
     width: 324px;
     height: 88px;
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 10px;
   }
   .time-hr {
     width: 62px;
     justify-content: center;
     &::after {
-      content: '';
+      content: "";
       width: 24px;
       height: 2px;
-      background: #AAAAAA;
+      background: #aaaaaa;
       border-radius: 1px;
     }
   }
@@ -372,7 +470,7 @@ export default {
   height: 106px;
   align-items: center;
   width: 710px;
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 10px 10px 0 0;
   margin: 0 auto;
   .opera-btn {
@@ -380,7 +478,7 @@ export default {
     height: 40px;
     line-height: 40px;
     text-align: center;
-    background: #EEEEEE;
+    background: #eeeeee;
     border-radius: 50%;
     color: #333333;
     font-size: 24px;
