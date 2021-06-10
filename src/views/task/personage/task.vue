@@ -18,7 +18,11 @@
           <div class="task-caption">
             <span class="task-caption-text">{{ info.task_title }}</span>
           </div>
-          <span class="task-title">{{ info.task_status_name }}</span>
+          <span
+            class="task-title"
+            :class="{ 'task-title-grey': +info.task_status > 2 }"
+            >{{ info.task_status_name }}</span
+          >
         </div>
         <div class="task-body">
           <div class="task-view">
@@ -31,7 +35,9 @@
           <span class="task-title-1">需要人数：{{ info.need_people }}</span>
           <span class="task-title-1">完成时间：{{ info.task_time }}</span>
           <span v-if="info.address_text" class="task-title-1 task-address"
-            >完成地点：<span class="tf-flex-item">{{ info.address_text }}</span></span
+            >完成地点：<span class="tf-flex-item">{{
+              info.address_text
+            }}</span></span
           >
         </div>
       </div>
@@ -52,6 +58,7 @@
       :taskId="taskId"
       :shareObj="shareObj"
       @updateTask="updateTask"
+      key="myTaskDetail"
     ></task-op>
   </div>
 </template>
@@ -195,6 +202,10 @@ export default {
   line-height: 26px;
   color: #ff6555;
   font-size: 26px;
+}
+
+.task-title-grey {
+  color: #8f8f94;
 }
 
 .task-body {
