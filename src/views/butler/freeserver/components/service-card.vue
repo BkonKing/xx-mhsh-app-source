@@ -3,42 +3,68 @@
     <div
       v-for="(item, i) in data"
       :key="i"
-      v-show="(!active || active == item.category_type) && (item.category.indexOf(search) !== -1)"
+      v-show="
+        (!active || active == item.category_type) &&
+          item.category.indexOf(search) !== -1
+      "
       class="service-card"
-      :class="{'service-card--disabled': item.is_stop == 1 || (item.sy_num == 0 && item.category_type == 2 && item.server_status == 0)}"
+      :class="{
+        'service-card--disabled':
+          item.is_stop == 1 ||
+          (item.sy_num == 0 &&
+            item.category_type == 2 &&
+            item.server_status == 0)
+      }"
       @click="showService(item)"
     >
       <div
         class="service-card-tag"
-        :class="{'service-card-tag--blue':item.category_type==1, 'service-card-tag--green':item.category_type==2}"
+        :class="{
+          'service-card-tag--blue': item.category_type == 1,
+          'service-card-tag--green': item.category_type == 2
+        }"
       ></div>
       <div class="service-card-content">
-        <div class="service-card-name">{{item.category}}</div>
-        <div v-if="item.is_stop == 1" class="service-card-info service-card-info--gray">暂停服务</div>
+        <div class="service-card-name">{{ item.category }}</div>
+        <div
+          v-if="item.is_stop == 1"
+          class="service-card-info service-card-info--gray"
+        >
+          暂停服务
+        </div>
         <div
           v-else
           class="service-card-info"
-          :class="{'tf-text-primary': item.server_status == 1}"
-        >{{item | pdText}}</div>
+          :class="{ 'tf-text-primary': item.server_status == 1 }"
+        >
+          {{ item | pdText }}
+        </div>
       </div>
     </div>
-    <tfDialog v-model="show" :title="activeServe.category">
+    <tfDialog
+      v-model="show"
+      :title="activeServe.category"
+      popup-class="free-server-dialog"
+    >
       <div class="qr-box" v-if="!success">
-        <img class="qr-img" :src="qrImg" />
         <div class="qr-status-box">
+          <div class="qr-status">{{ statusText }}</div>
           <div class="qr-triangle"></div>
-          <div class="qr-status">{{statusText}}</div>
         </div>
+        <img class="qr-img" :src="qrImg" />
       </div>
       <div
         class="qr-status-box"
-        v-else-if="activeServe.server_status == 1 || (activeServe.category_type == 1 && activeServe.is_lineup == 0)"
+        v-else-if="
+          activeServe.server_status == 1 ||
+            (activeServe.category_type == 1 && activeServe.is_lineup == 0)
+        "
       >
-        <template v-if="activeServe.category_type==1">
+        <template v-if="activeServe.category_type == 1">
           <div class="box-tag">开始享受服务</div>
           <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
         </template>
-        <template v-if="activeServe.category_type==2">
+        <template v-if="activeServe.category_type == 2">
           <div class="box-tag">归还成功</div>
           <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
         </template>
@@ -49,10 +75,15 @@
         </div>
         <template v-if="activeServe.category_type == 1">
           <div class="tf-text-lg">排队成功</div>
-          <div class="tf-text-lg tf-text-primary">排队中：第{{activeServe.pd_num + 1}}位</div>
+          <div class="tf-text-lg tf-text-primary">
+            排队中：第{{ activeServe.pd_num + 1 }}位
+          </div>
         </template>
-        <div class="tf-text-lg" v-if="activeServe.category_type==2">借用成功</div>
+        <div class="tf-text-lg" v-if="activeServe.category_type == 2">
+          借用成功
+        </div>
       </div>
+      <div v-if="!success" class="qr-alert">（请前往物业，出示给工作人员）</div>
     </tfDialog>
   </div>
 </template>
@@ -147,7 +178,7 @@ export default {
         id,
         server_id,
         code_type
-      }).then((res) => {
+      }).then(res => {
         this.qrImg = res.data.url
         this.codeId = res.data.code_id
         this.serverCodeStatus()
@@ -166,7 +197,7 @@ export default {
     serverCodeStatus () {
       serverCodeStatus({
         code_id: this.codeId
-      }).then((res) => {
+      }).then(res => {
         if (res.status == '1') {
           this.success = true
           this.timer = null
@@ -281,7 +312,7 @@ export default {
 }
 
 .qr-box {
-  padding: 40px 70px;
+  padding: 0 70px;
 }
 
 .qr-img {
@@ -292,7 +323,7 @@ export default {
 .qr-status-box {
   @flex-column();
   align-items: center;
-  margin-top: 26px;
+  margin-bottom: 6px;
 }
 
 .qr-status {
@@ -300,14 +331,24 @@ export default {
   height: 66px;
   line-height: 66px;
   font-size: 30px;
+  font-weight: 500;
   border-radius: 33px;
-  color: #fff;
-  background-color: @red-dark;
+  color: #ff6555;
+  background-color: #ff65551a;
   text-align: center;
 }
 
 .qr-triangle {
-  .triangle();
+  .triangle-bottom(12px, 15px, #ff65551a);
+}
+
+.qr-alert {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  font-size: 26px;
+  font-weight: 500;
+  color: #8f8f94;
 }
 
 .success-tag {
@@ -338,6 +379,20 @@ export default {
   text-align: center;
   & + .tf-text-grey {
     margin-bottom: 68px;
+  }
+}
+</style>
+
+<style lang="less">
+.free-server-dialog {
+  .tf-dialog-header {
+    height: 148px;
+    .tf-dialog-header__title {
+      line-height: 148px;
+    }
+  }
+  .tf-dialog-content {
+    padding-top: 30px;
   }
 }
 </style>

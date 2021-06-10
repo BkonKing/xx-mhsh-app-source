@@ -3,7 +3,7 @@
     <van-popup
       safe-area-inset-bottom
       :get-container="getContainer"
-      class="tf-van-popup"
+      :class="['tf-van-popup', popupClass]"
       v-model="valueChild"
       @click-overlay="close"
       :close-on-click-overlay="false"
@@ -79,6 +79,10 @@ export default {
     getContainer: {
       type: String,
       default: 'body'
+    },
+    popupClass: {
+      type: String,
+      default: ''
     }
   },
   data () {

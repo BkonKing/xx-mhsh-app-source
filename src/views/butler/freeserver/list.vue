@@ -1,43 +1,66 @@
 <template>
   <div class="tf-bg tf-body">
-    <van-nav-bar title="我的免费服务" :fixed="true" placeholder left-arrow @click-left="$router.go(-1)" />
+    <van-nav-bar
+      title="我的免费服务"
+      :fixed="true"
+      placeholder
+      left-arrow
+      @click-left="$router.go(-1)"
+    />
     <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getMyFreeServerList">
-        <template v-slot="{item}">
+        <template v-slot="{ item }">
           <div class="tf-card">
             <div class="tf-card-header">
               <div class="tf-card-header__title">{{ item.category }}</div>
-              <div v-if="item.status == 1" class="tf-icon tf-icon-erweima" @click="showService(item)"></div>
+              <div
+                v-if="item.status == 1"
+                class="tf-icon tf-icon-erweima"
+                @click="showService(item)"
+              ></div>
             </div>
             <div class="tf-card-content">
               <template v-if="item.category_type == 1">
-                <div>排队时间：{{item.stime}}</div>
+                <div>排队时间：{{ item.stime }}</div>
                 <div class="mt10" v-if="item.status == 1">
-                  排队中：<span class="tf-text-primary">第 {{parseInt(item.pd_num || 0) + 1}} 位</span>
+                  排队中：<span class="tf-text-primary"
+                    >第 {{ parseInt(item.pd_num || 0) + 1 }} 位</span
+                  >
                 </div>
-                <div v-else-if="item.status == 2">服务时间：{{item.etime}}</div>
+                <div v-else-if="item.status == 2">
+                  服务时间：{{ item.etime }}
+                </div>
               </template>
               <template v-else>
-                <div>借用时间：{{item.stime}}</div>
+                <div>借用时间：{{ item.stime }}</div>
                 <div class="mt10" v-if="item.status == 1">
-                  归还时间：<span class="tf-text-primary">请于 {{item.gh_time}} 前归还</span>
+                  归还时间：<span class="tf-text-primary"
+                    >请于 {{ item.gh_time }} 前归还</span
+                  >
                 </div>
-                <div v-if="item.status == 2">归还时间：{{item.etime}}</div>
+                <div v-if="item.status == 2">归还时间：{{ item.etime }}</div>
               </template>
-              <div v-if="item.status == 3">取消时间：{{item.etime}}</div>
+              <div v-if="item.status == 3">取消时间：{{ item.etime }}</div>
             </div>
           </div>
         </template>
       </refreshList>
     </div>
-    <tfDialog v-model="dialog" :title="active.category">
+    <tfDialog
+      v-model="dialog"
+      :title="active.category"
+      popup-class="free-server-dialog"
+    >
       <div class="qr-box">
-        <img class="qr-img" :src="qrImg" />
         <div class="qr-status-box">
+          <div class="qr-status">
+            {{ active.category_type == 1 ? "开始享受服务" : "归还" }}
+          </div>
           <div class="qr-triangle"></div>
-          <div class="qr-status">{{active.category_type == 1 ? '开始享受服务' : '归还'}}</div>
         </div>
+        <img class="qr-img" :src="qrImg" />
       </div>
+      <div class="qr-alert">（请前往物业，出示给工作人员）</div>
     </tfDialog>
   </div>
 </template>
@@ -46,7 +69,11 @@
 import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
 import tfDialog from '@/components/tf-dialog/index.vue'
-import { getMyFreeServerList, getServerCode, serverCodeStatus } from '@/api/butler.js'
+import {
+  getMyFreeServerList,
+  getServerCode,
+  serverCodeStatus
+} from '@/api/butler.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -73,11 +100,7 @@ export default {
     },
     /* 点击服务显示二维码 */
     showService (item) {
-      const {
-        category_type: categoryType,
-        id,
-        category_id
-      } = item
+      const { category_type: categoryType, id, category_id } = item
       this.active = item
       const codeType = categoryType == '1' ? 4 : 2
       this.dialog = true
@@ -89,7 +112,7 @@ export default {
         id,
         server_id,
         code_type
-      }).then((res) => {
+      }).then(res => {
         this.qrImg = res.data.url
         this.codeId = res.data.code_id
         this.serverCodeStatus()
@@ -108,7 +131,7 @@ export default {
     serverCodeStatus () {
       serverCodeStatus({
         code_id: this.codeId
-      }).then((res) => {
+      }).then(res => {
         if (res.status == '1') {
           this.success = true
           this.timer = null
@@ -136,8 +159,9 @@ export default {
   font-size: 42px;
   line-height: 1;
 }
+
 .qr-box {
-  padding: 40px 70px;
+  padding: 0 70px;
 }
 
 .qr-img {
@@ -148,7 +172,7 @@ export default {
 .qr-status-box {
   @flex-column();
   align-items: center;
-  margin-top: 26px;
+  margin-bottom: 6px;
 }
 
 .qr-status {
@@ -156,13 +180,37 @@ export default {
   height: 66px;
   line-height: 66px;
   font-size: 30px;
+  font-weight: 500;
   border-radius: 33px;
-  color: #fff;
-  background-color: @red-dark;
+  color: #ff6555;
+  background-color: #ff65551a;
   text-align: center;
 }
 
 .qr-triangle {
-  .triangle();
+  .triangle-bottom(12px, 15px, #ff65551a);
+}
+
+.qr-alert {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  font-size: 26px;
+  font-weight: 500;
+  color: #8f8f94;
+}
+</style>
+
+<style lang="less">
+.free-server-dialog {
+  .tf-dialog-header {
+    height: 148px;
+    .tf-dialog-header__title {
+      line-height: 148px;
+    }
+  }
+  .tf-dialog-content {
+    padding-top: 30px;
+  }
 }
 </style>
