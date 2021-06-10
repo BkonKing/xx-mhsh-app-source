@@ -194,7 +194,7 @@ export default {
   .evaluate-info-name {
     margin-top: 64px;
     font-size: 32px;
-    font-weight: 600;
+    font-weight: bold;
     color: #000000;
     line-height: 1;
   }

@@ -161,7 +161,10 @@ export default {
             const dom = arr2.find(item => {
               return +item.innerText === new Date().getDate()
             })
-            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+            dom.innerHTML =
+              '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' +
+              new Date().getDate() +
+              '</div>'
           })
         })
       } else {
@@ -173,7 +176,10 @@ export default {
             const dom = arr2.find(item => {
               return +item.innerText === new Date().getDate()
             })
-            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+            dom.innerHTML =
+              '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' +
+              new Date().getDate() +
+              '</div>'
           })
         })
       }
@@ -209,7 +215,10 @@ export default {
               const dom = arr2.find(item => {
                 return +item.innerText === new Date().getDate()
               })
-              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+              dom.innerHTML =
+                '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' +
+                new Date().getDate() +
+                '</div>'
             })
           })
         } else {
@@ -221,7 +230,10 @@ export default {
               const dom = arr2.find(item => {
                 return +item.innerText === new Date().getDate()
               })
-              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+              dom.innerHTML =
+                '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' +
+                new Date().getDate() +
+                '</div>'
             })
           })
         }
@@ -236,7 +248,10 @@ export default {
               const dom = arr2.find(item => {
                 return +item.innerText === new Date().getDate()
               })
-              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+              dom.innerHTML =
+                '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' +
+                new Date().getDate() +
+                '</div>'
             })
           })
         } else {
@@ -248,7 +263,10 @@ export default {
               const dom = arr2.find(item => {
                 return +item.innerText === new Date().getDate()
               })
-              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+              dom.innerHTML =
+                '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' +
+                new Date().getDate() +
+                '</div>'
             })
           })
         }
@@ -288,6 +306,21 @@ export default {
         // console.log('this.startTime', this.startTime)
       } else {
         this.endTime = this.endYmd + ' ' + this.endHi
+      }
+    },
+    setDetailTime (obj) {
+      const { startTime, endTime } = obj
+      if (endTime) {
+        this.isBol = true
+        this.endTime = endTime
+        this.endYmd = endTime.split(' ')[0]
+        this.endHi = endTime.split(' ')[1]
+      }
+      if (startTime) {
+        this.isBol = true
+        this.startTime = startTime
+        this.startYmd = startTime.split(' ')[0]
+        this.startHi = startTime.split(' ')[1]
       }
     },
     formatDate (date) {
@@ -333,14 +366,19 @@ export default {
         this.endTime = ''
         this.$nextTick(() => {
           setTimeout(() => {
-            document.getElementsByClassName('van-calendar__selected-day')[0].style.background = 'white'
+            document.getElementsByClassName(
+              'van-calendar__selected-day'
+            )[0].style.background = 'white'
           })
         })
       }
       if (val) {
         this.$nextTick(() => {
           setTimeout(() => {
-            if (+document.getElementsByClassName('van-calendar__selected-day')[0].innerText === new Date().getDate()) {
+            if (
+              +document.getElementsByClassName('van-calendar__selected-day')[0]
+                .innerText === new Date().getDate()
+            ) {
               document.getElementsByClassName(
                 'van-calendar__selected-day'
               )[0].style.background = '#eeeeee'

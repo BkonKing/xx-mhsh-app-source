@@ -245,9 +245,10 @@ export default {
   .evaluate-score {
     display: flex;
     justify-content: center;
+    margin-bottom: 30px;
     z-index: 4;
     font-size: 24px;
-    line-height: 44px;
+    line-height: 1;
   }
   .score-star {
     width: 430px;
@@ -255,7 +256,7 @@ export default {
     background: #ffffff;
     box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.05);
     border-radius: 50px;
-    margin: -50px auto 50px;
+    margin: -50px auto 40px;
     position: relative;
     z-index: 15;
     align-items: center;

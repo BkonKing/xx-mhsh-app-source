@@ -131,20 +131,24 @@
         </div>
         <div v-if="infoData.address" class="task-session">
           <div class="session-tit">完成地点</div>
-          <div @click="openMap" class="task-address tf-vertical-center">
-            <div>
-              {{ infoData.udpate_address || infoData.address }}
+          <div @click="openMap" class="task-address">
+            <div class="task-address-left">
+              <div>
+                {{ infoData.udpate_address || infoData.address }}
+              </div>
+              <div class="van-ellipsis">
+                {{
+                  infoData.address_province +
+                    " " +
+                    infoData.address_city +
+                    " " +
+                    infoData.address_area
+                }}
+              </div>
             </div>
-            <div class="van-ellipsis">
-              {{
-                infoData.address_province +
-                  " " +
-                  infoData.address_city +
-                  " " +
-                  infoData.address_area
-              }}
+            <div class="task-address-right">
+              <img class="address-arrow" src="@/assets/img/task_04.png" />
             </div>
-            <img class="address-arrow" src="@/assets/img/task_04.png" />
             <img class="address-bg" src="@/assets/img/task_03.png" />
           </div>
         </div>
@@ -169,7 +173,10 @@
                 >
                   {{ isDown ? "收起" : "展开" }}
                 </div>
-                <div class="task-desc-box" v-html="infoData.task_desc.replace(/\r\n|\n/g, '<br/>')"></div>
+                <div
+                  class="task-desc-box"
+                  v-html="infoData.task_desc.replace(/\r\n|\n/g, '<br/>')"
+                ></div>
               </div>
             </div>
             <div
@@ -741,39 +748,42 @@ export default {
   }
 }
 .task-address {
+  display: flex;
+  justify-content: space-between;
   min-height: 128px;
   background: linear-gradient(90deg, #f7f7f7 0%, #ffffff 100%);
   border-radius: 10px;
   margin-bottom: 40px;
   position: relative;
-  padding-left: 30px;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  div {
+  padding: 20px 30px;
+  .task-address-left {
+    div {
+      position: relative;
+      z-index: 5;
+      line-height: 44px;
+      max-width: 530px;
+    }
+    div:nth-child(1) {
+      font-size: 26px;
+      color: #000000;
+    }
+    div:nth-child(2) {
+      font-size: 24px;
+      color: #8f8f94;
+    }
+  }
+  .task-address-right {
+    display: flex;
+    align-items: center;
     position: relative;
-    z-index: 5;
-    line-height: 44px;
-    max-width: 530px;
-  }
-  div:nth-child(1) {
-    font-size: 26px;
-    color: #000000;
-  }
-  div:nth-child(2) {
-    font-size: 24px;
-    color: #8f8f94;
-  }
-  img {
-    position: absolute;
-  }
-  .address-arrow {
-    right: 30px;
-    top: 40px;
-    width: 48px;
-    height: 48px;
-    z-index: 3;
+    .address-arrow {
+      width: 48px;
+      height: 48px;
+      z-index: 1;
+    }
   }
   .address-bg {
+    position: absolute;
     right: 0;
     top: 0;
     width: 314px;
@@ -815,11 +825,11 @@ export default {
   }
 }
 .complain-tip {
-  height: 112px;
+  min-height: 112px;
   align-items: center;
   background: #f7f7f7;
   margin: -10px 0 40px;
-  padding: 0 16px 0 28px;
+  padding: 20px 16px 20px 28px;
   font-size: 24px;
   div:nth-child(1) {
     width: 480px;
