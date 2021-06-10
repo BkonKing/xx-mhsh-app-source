@@ -199,30 +199,61 @@ export default {
     // 点击时间输入框
     timeBlur (index) {
       if (index === 1) {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            const arr = document.getElementsByClassName('van-calendar__day')
-            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
-            const arr2 = Array.prototype.slice.call(arr)
-            const dom = arr2.find(item => {
-              return +item.innerText === new Date().getDate()
+        const arr = this.endYmd.split('-')
+        if (+arr[2] === new Date().getDate()) {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              const arr = document.getElementsByClassName('van-calendar__day')
+              // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+              const arr2 = Array.prototype.slice.call(arr)
+              const dom = arr2.find(item => {
+                return +item.innerText === new Date().getDate()
+              })
+              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
             })
-            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
           })
-        })
+        } else {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              const arr = document.getElementsByClassName('van-calendar__day')
+              // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+              const arr2 = Array.prototype.slice.call(arr)
+              const dom = arr2.find(item => {
+                return +item.innerText === new Date().getDate()
+              })
+              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+            })
+          })
+        }
       } else {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            const arr = document.getElementsByClassName('van-calendar__day')
-            // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
-            const arr2 = Array.prototype.slice.call(arr)
-            const dom = arr2.find(item => {
-              return +item.innerText === new Date().getDate()
+        const arr = this.startYmd.split('-')
+        if (+arr[2] === new Date().getDate()) {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              const arr = document.getElementsByClassName('van-calendar__day')
+              // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+              const arr2 = Array.prototype.slice.call(arr)
+              const dom = arr2.find(item => {
+                return +item.innerText === new Date().getDate()
+              })
+              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #febf00 ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
             })
-            dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
           })
-        })
+        } else {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              const arr = document.getElementsByClassName('van-calendar__day')
+              // console.log(Object.prototype.toString.call(arr)) [object HTMLCollection]
+              const arr2 = Array.prototype.slice.call(arr)
+              const dom = arr2.find(item => {
+                return +item.innerText === new Date().getDate()
+              })
+              dom.innerHTML = '<div style="width: 0.74667rem ;height: 0.74667rem ;line-height: 2.4;background: #eeeeee ;border-radius: 0.13333rem ;color: #000000 ;">' + new Date().getDate() + '</div>'
+            })
+          })
+        }
       }
+
       this.timeIndex = index
       let timeVal = ''
       if (index == 0) {
@@ -300,6 +331,11 @@ export default {
       if (this.isBol === false) {
         this.startTime = ''
         this.endTime = ''
+        this.$nextTick(() => {
+          setTimeout(() => {
+            document.getElementsByClassName('van-calendar__selected-day')[0].style.background = 'white'
+          })
+        })
       }
       if (val) {
         this.$nextTick(() => {
@@ -311,8 +347,6 @@ export default {
             }
           })
         })
-      } else {
-
       }
 
       this.$emit('input', val)
