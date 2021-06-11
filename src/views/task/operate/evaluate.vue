@@ -71,6 +71,7 @@
     <div class="task-btn-block">
       <van-button
         class="task-btn"
+        :class="{'no-fixed-btn': winResize}"
         v-preventReClick
         type="primary"
         :disabled="!evaluate_stars"
@@ -85,6 +86,7 @@
 // /pages/task/operate/evaluate
 import { getEvaluateData, evaluateTask } from '@/api/task'
 import { validForm } from '@/utils/util'
+import { mapState } from 'vuex'
 export default {
   data () {
     return {
@@ -104,6 +106,9 @@ export default {
         5: '非常满意'
       }
     }
+  },
+  computed: {
+    ...mapState(['winResize'])
   },
   created () {
     this.userTaskId = this.$route.query.userTaskId
@@ -299,5 +304,9 @@ export default {
   background-color: #f9cbc6;
   border-color: #f9cbc6;
   opacity: 1;
+}
+.no-fixed-btn {
+  position: initial !important;
+  margin-left: 20px;
 }
 </style>

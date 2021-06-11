@@ -372,7 +372,8 @@ export default {
       picShow: false, // 查看大图
       province: '', // 省
       city: '', // 市
-      area: '' // 县
+      area: '', // 县
+      toast: null
     }
   },
   created () {
@@ -381,7 +382,7 @@ export default {
   },
   methods: {
     getData () {
-      Toast.loading({
+      this.toast = Toast.loading({
         message: '加载中...',
         duration: 0,
         forbidClick: true
@@ -416,7 +417,7 @@ export default {
         this.$nextTick(() => {
           this.getTextOver()
         })
-        Toast.clear()
+        this.toast.clear()
       })
     },
     getTextOver () {
@@ -573,6 +574,10 @@ export default {
         }
       }
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    this.toast && this.toast.clear()
+    next()
   }
 }
 </script>
@@ -808,7 +813,7 @@ export default {
     &::before {
       content: "";
       float: right;
-      height: calc(100% - 45px); /*先随便设置一个高度*/
+      height: calc(100% - 48px); /*先随便设置一个高度*/
     }
   }
   .cont-pic {
@@ -878,5 +883,6 @@ export default {
 }
 .task-desc-box {
   width: 650px;
+  line-height: 48px;
 }
 </style>

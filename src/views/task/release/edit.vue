@@ -592,14 +592,14 @@ export default {
     // 选完地址后的完成地点更改
     updateAddressInput (val) {
       if (!val) {
-        this.location_limit = 0
-        this.longitude = ''
-        this.latitude = ''
-        this.address = ''
-        this.udpate_address = ''
-        this.address_province = ''
-        this.address_city = ''
-        this.address_area = ''
+        this.formData.location_limit = 0
+        this.formData.longitude = ''
+        this.formData.latitude = ''
+        this.formData.address = ''
+        this.formData.udpate_address = ''
+        this.formData.address_province = ''
+        this.formData.address_city = ''
+        this.formData.address_area = ''
       }
     },
     // 弹窗选择-可见范围

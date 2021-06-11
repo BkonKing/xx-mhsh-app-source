@@ -9,7 +9,9 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <a :href="'tel: ' + maskTel" class="tel-btn"><img src="@/assets/img/task_10.png" /></a>
+        <a :href="'tel: ' + maskTel" class="tel-btn"
+          ><img src="@/assets/img/task_10.png"
+        /></a>
       </template>
     </van-nav-bar>
     <div v-if="infoData" class="tf-body-container">
@@ -19,9 +21,19 @@
           <img v-else src="@/assets/imgs/touxiang.png" />
           <div class="tf-row-space-between">
             <div class="release-name van-ellipsis">{{ infoData.nickname }}</div>
-            <div class="release-time color-ccc" :class="{ 'color-FF5240': infoData.is_stop == 1, 'color-ccc': infoData.progress_status > 1 }">{{ infoData.progress_status_name }}</div>
+            <div
+              class="release-time color-ccc"
+              :class="{
+                'color-FF5240': infoData.is_stop == 1,
+                'color-ccc': infoData.progress_status > 1
+              }"
+            >
+              {{ infoData.progress_status_name }}
+            </div>
           </div>
-          <div @click="taskDetail" class="finish-btn tf-flex-center">查看任务<img src="@/assets/img/task_17.png" /></div>
+          <div @click="taskDetail" class="finish-btn tf-flex-center">
+            查看任务<img src="@/assets/img/task_17.png" />
+          </div>
         </div>
       </div>
       <schedule-list :listData="infoData.taskflow_list"></schedule-list>
@@ -37,16 +49,31 @@
               <img src="@/assets/img/task_06.png" />
               <div>联系</div>
             </a>
-            <div @click="infoData.is_can_complain == 1 && complaint()" class="tf-column" :class="{'opacity-gray': infoData.is_can_complain == 0}">
+            <div
+              @click="infoData.is_can_complain == 1 && complaint()"
+              class="tf-column"
+              :class="{ 'opacity-gray': infoData.is_can_complain == 0 }"
+            >
               <img src="@/assets/img/task_18.png" />
               <div>投诉</div>
             </div>
-            <div v-if="infoData.is_show_abandon == 1" @click="infoData.is_can_abandon == 1 && endTask()" class="tf-column" :class="{'opacity-gray': infoData.is_can_abandon == 0}">
+            <div
+              v-if="infoData.is_show_abandon == 1"
+              @click="infoData.is_can_abandon == 1 && endTask()"
+              class="tf-column"
+              :class="{ 'opacity-gray': infoData.is_can_abandon == 0 }"
+            >
               <img src="@/assets/img/task_19.png" />
               <div>放弃</div>
             </div>
           </div>
-          <div v-if="infoData.is_can_submit == 1" class="op-right" @click="deliverTask()">交付任务</div>
+          <div
+            v-if="infoData.is_can_submit == 1"
+            class="op-right"
+            @click="deliverTask()"
+          >
+            交付任务
+          </div>
         </div>
       </div>
     </div>
@@ -55,7 +82,7 @@
         <div class="form-label">取消原因<span>*</span></div>
         <div @click="reasonShow = true" class="select-block tf-row">
           <div class="popup-select tf-row-space-between">
-            {{ formData.reason || '请选择' }}
+            {{ formData.reason || "请选择" }}
             <img src="@/assets/img/task_09.png" />
           </div>
         </div>
@@ -69,7 +96,12 @@
         <van-button
           v-preventReClick
           @click="submit"
-          :class="[ formData.reason && formData.content.length < 201 ? '' : 'unable-btn', 'task-btn']"
+          :class="[
+            formData.reason && formData.content.length < 201
+              ? ''
+              : 'unable-btn',
+            'task-btn'
+          ]"
           :disabled="!formData.reason || formData.content.length > 200"
           >确定</van-button
         >
@@ -103,14 +135,11 @@
         <div class="evaluate-cont">其他补充：噢噢噢噢噢噢噢噢哦哦哦哦哦哦哦哦哦</div>
       </div>
     </task-popup> -->
-
   </div>
 </template>
 
 <script>
-import {
-  NavBar, Toast
-} from 'vant'
+import { NavBar, Toast } from 'vant'
 import taskPopup from '../components/task-popup'
 import listSelect from '../components/list-select'
 import graphic from '../components/graphic'
@@ -146,17 +175,15 @@ export default {
     this.taskId = this.$route.query.taskId
     this.getData()
   },
-  mounted () {
-
-  },
+  mounted () {},
   beforeRouteEnter (to, from, next) {
-    next((vm) => {
+    next(vm => {
       vm.prevName = from.name
     })
   },
   methods: {
     getData () {
-      getTaskSchedule({ linli_task_id: this.taskId }).then((res) => {
+      getTaskSchedule({ linli_task_id: this.taskId }).then(res => {
         this.complaintUid = res.uid
         this.infoData = res.data[0]
         if (!this.maskTel) {
@@ -167,7 +194,7 @@ export default {
     // 放弃
     endTask () {
       if (!this.reasonList.length) {
-        getReasonList({ type: 2 }).then((res) => {
+        getReasonList({ type: 2 }).then(res => {
           this.reasonList = res.data.map(item => {
             return {
               value: item.id,
@@ -196,7 +223,7 @@ export default {
         return
       }
       this.formData.user_task_id = this.infoData.id
-      submitGiveUp(this.formData).then((res) => {
+      submitGiveUp(this.formData).then(res => {
         this.endShow = false
         this.getData()
       })
@@ -249,11 +276,11 @@ export default {
 </script>
 <style lang="less" scoped>
 @import url(../../../styles/task.less);
-.tf-body-container{
+.tf-body-container {
   padding: 30px 20px;
   font-size: 28px;
   color: #333;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
 }
 /deep/ .van-nav-bar__right {
   padding: 0;
@@ -268,7 +295,7 @@ export default {
 }
 .release-header {
   height: 160px;
-  background: linear-gradient(90deg, #FFD34D 0%, #FEBF00 100%);
+  background: linear-gradient(90deg, #ffd34d 0%, #febf00 100%);
   border-radius: 10px 10px 0 0;
   padding: 30px;
 }
@@ -296,7 +323,7 @@ export default {
     font-size: 24px;
     line-height: 30px;
     &.color-FF5240 {
-      color: #FF5240;
+      color: #ff5240;
     }
     &.color-ccc {
       opacity: 0.6;
@@ -305,7 +332,7 @@ export default {
   .finish-btn {
     width: 168px;
     height: 56px;
-    background: #FFF6BA;
+    background: #fff6ba;
     border-radius: 28px;
     text-align: center;
     line-height: 56px;
@@ -326,9 +353,9 @@ export default {
     .popup-select {
       width: 180px;
       height: 80px;
-      border: 1PX solid #CCCCCC;
+      border: 1px solid #cccccc;
       border-radius: 10px;
-      color: #8F8F94;
+      color: #8f8f94;
       padding-left: 20px;
       line-height: 76px;
       align-items: center;
@@ -346,7 +373,7 @@ export default {
     .text-block {
       width: 500px;
       min-height: 260px;
-      border: 1PX solid #CCCCCC;
+      border: 1px solid #cccccc;
       border-radius: 10px;
       margin-bottom: 30px;
       overflow: hidden;
@@ -369,9 +396,11 @@ export default {
       padding-left: 0;
       padding-bottom: 0;
       .van-uploader__upload,
-      .van-uploader__preview {
-        width: 112px;
-        height: 112px;
+      .van-uploader__preview,
+      /deep/ .van-uploader__upload,
+      /deep/ .van-uploader__preview {
+        width: 104px !important;
+        height: 104px !important;
         margin: 0 16px 20px 0;
       }
     }
@@ -380,5 +409,10 @@ export default {
 
 .op-right {
   width: 200px !important;
+}
+/deep/ .van-uploader__upload,
+/deep/ .van-uploader__preview {
+  width: 104px !important;
+  height: 104px !important;
 }
 </style>

@@ -22,13 +22,14 @@
           <div class="divider-line"></div>
         </div>
       </graphic>
-      <div v-if="btnShow" class="task-btn-block">
+      <div class="task-btn-block">
         <van-button
           v-preventReClick
           @click="submit"
           :class="[
             formData.content.length > 200 ? 'unable-btn' : '',
-            'task-btn'
+            'task-btn',
+            { 'no-fixed-btn': winResize }
           ]"
           :loading="loadingBtn"
           >确定</van-button
@@ -44,6 +45,7 @@ import { NavBar, Toast } from 'vant'
 import graphic from '../components/graphic'
 import confirmModel from '../components/confirm-model'
 import { deliverTask } from '@/api/task'
+import { mapState } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -59,7 +61,6 @@ export default {
         content: '',
         image_url: []
       },
-      btnShow: true,
       phTxt: '和对方说点什么',
       maxNum: 200,
       confirmShow: false,
@@ -67,20 +68,12 @@ export default {
       loadingBtn: false
     }
   },
+  computed: {
+    ...mapState(['winResize'])
+  },
   created () {
     this.userTaskId = this.$route.query.userTaskId
     this.taskId = this.$route.query.taskId
-  },
-  mounted () {
-    const winHight = document.documentElement.clientHeight
-    window.onresize = () => {
-      const resizeHight = document.documentElement.clientHeight
-      if (resizeHight < winHight - 100) {
-        this.btnShow = false
-      } else {
-        this.btnShow = true
-      }
-    }
   },
   methods: {
     getUpload (value) {

@@ -30,6 +30,7 @@ export default {
       historyList: [],
       paddingTop: 0,
       paddingBottom: 0,
+      winHeight: 0,
       mobile_info: {}
     }
   },
@@ -67,7 +68,7 @@ export default {
             'van-image-preview'
           )
           let imgPreviewStatus = false
-          imgPreviewEle.forEach((el) => {
+          imgPreviewEle.forEach(el => {
             if (el.style.display !== 'none') {
               imgPreviewStatus = true
             }
@@ -94,6 +95,14 @@ export default {
       updateStatisticsData(1)
       setStatisticsData(6, { type: 2, page_id: pagesArr[this.$route.name] })
     })
+    this.winHeight = api.winHeight
+    window.onresize = () => {
+      if (api.winHeight === this.winHeight) {
+        this.$store.commit('setWinResize', false)
+      } else {
+        this.$store.commit('setWinResize', true)
+      }
+    }
   },
   methods: {
     setRouteKeepAlive (routes) {

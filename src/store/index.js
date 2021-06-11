@@ -46,7 +46,8 @@ const store = {
     mobile_info: '',
     map_info: '',
     share_params: '',
-    groupInfo: ''
+    groupInfo: '',
+    winResize: false
   },
   mutations: {
     setUser_info (state, value) {
@@ -130,6 +131,9 @@ const store = {
     },
     setGroupInfo (state, value) {
       state.groupInfo = value
+    },
+    setWinResize (state, value) {
+      state.winResize = value
     }
   },
   getters: {

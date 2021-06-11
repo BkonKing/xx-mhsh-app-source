@@ -67,9 +67,6 @@ export default {
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
     }
-    if (+this.current < 2 && this.$refs[`taskList${this.current}`]) {
-      this.$refs[`taskList${this.current}`].reSingleTask()
-    }
   },
   methods: {
     // 发布
@@ -94,6 +91,8 @@ export default {
       // 重新发布
       if (from.query.type === 'anew' && +vm.current === 1) {
         vm.$refs[`taskList${vm.current}`].reloadList()
+      } else if (+vm.current < 2 && vm.$refs[`taskList${vm.current}`]) {
+        vm.$refs[`taskList${vm.current}`].reSingleTask()
       }
     })
   },

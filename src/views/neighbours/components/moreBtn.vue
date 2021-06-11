@@ -42,6 +42,7 @@
       :shieldInfo="item"
       :shieldType="+type < 4 ? 1 : type"
       :contentKey="contentKey"
+      @shielding="$emit('shielding')"
     ></shield-popup>
   </div>
 </template>

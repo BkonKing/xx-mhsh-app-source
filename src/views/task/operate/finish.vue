@@ -69,11 +69,11 @@
           </div>
         </div>
       </graphic>
-      <div v-if="btnShow" class="task-btn-block">
+      <div class="task-btn-block">
         <van-button
           v-preventReClick
           @click="submit"
-          :class="[{ 'unable-btn': statusIndex === null }, 'task-btn']"
+          :class="[{ 'unable-btn': statusIndex === null }, 'task-btn', {'no-fixed-btn': winResize}]"
           :disabled="statusIndex === null"
           >确认</van-button
         >
@@ -103,6 +103,7 @@ import confirmModel from '../components/confirm-model'
 import taskCard from '../components/task-card'
 import { getCompleteInfo, submitCompleteInfo } from '@/api/task'
 import { validForm } from '@/utils/util'
+import { mapState } from 'vuex'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -133,20 +134,12 @@ export default {
       uploadStatus: false
     }
   },
+  computed: {
+    ...mapState(['winResize'])
+  },
   created () {
     this.userTaskId = this.$route.query.userTaskId
     this.getData()
-  },
-  mounted () {
-    const winHight = document.documentElement.clientHeight
-    window.onresize = () => {
-      const resizeHight = document.documentElement.clientHeight
-      if (resizeHight < winHight - 100) {
-        this.btnShow = false
-      } else {
-        this.btnShow = true
-      }
-    }
   },
   methods: {
     getData () {
@@ -289,7 +282,7 @@ export default {
   font-size: 30px;
   padding: 0 30px;
   position: relative;
-  margin: 16px 0 20px;
+  margin: 25px 0 30px;
   display: flex;
   .cont-text {
     line-height: 48px;
@@ -301,7 +294,7 @@ export default {
     &::before {
       content: "";
       float: right;
-      height: calc(100% - 45px);
+      height: calc(100% - 48px);
     }
     .more-down {
       margin-right: 0;
@@ -379,5 +372,6 @@ export default {
 }
 .task-desc-box {
   width: 650px;
+  line-height: 48px;
 }
 </style>

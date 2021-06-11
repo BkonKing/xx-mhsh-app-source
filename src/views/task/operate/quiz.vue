@@ -29,6 +29,7 @@
               type="7"
               contentKey="content"
               :types="typeList"
+              @shielding="getData"
             ></more-btn>
             <!-- <img class="img-100" src="@/assets/neighbours/more.png" /> -->
           </div>
@@ -106,6 +107,7 @@
       v-model="shieldShow"
       :shieldInfo="activeReply"
       :shieldType="7"
+      @shielding="getData"
     ></shield-popup>
   </div>
 </template>

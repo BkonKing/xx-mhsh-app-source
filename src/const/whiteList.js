@@ -12,6 +12,9 @@ export const swiperightWhiteList = [
   'livePayCostDetail',
   'releaseEdit',
   'postPubuish',
+  'operateFinish',
+  'operateDeliver',
+  'operateEvaluate',
   'operateComplaint',
   'taskDetail'
 ]

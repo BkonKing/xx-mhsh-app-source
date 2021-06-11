@@ -77,6 +77,7 @@
     <div class="confirm-btn">
       <van-button
         v-preventReClick
+        :class="{ 'no-fixed-btn': winResize }"
         size="large"
         type="danger"
         :disabled="!(complaintType && content && content.length > 9)"
@@ -107,6 +108,7 @@
 // pages/task/operate/complaint
 import tfUploader from '@/components/tf-uploader/index'
 import { getTaskComplaint, complaintTask } from '@/api/task'
+import { mapState } from 'vuex'
 export default {
   components: {
     tfUploader
@@ -124,6 +126,9 @@ export default {
       typeList: [],
       typeVisible: false
     }
+  },
+  computed: {
+    ...mapState(['winResize'])
   },
   created () {
     this.taskId = this.$route.query.taskId
@@ -386,5 +391,13 @@ export default {
   .van-icon-cross {
     font-size: 32px;
   }
+}
+/deep/ .van-field__word-limit {
+  margin-bottom: 10px;
+}
+
+.no-fixed-btn {
+  position: initial !important;
+  margin-left: 20px;
 }
 </style>

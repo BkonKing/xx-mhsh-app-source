@@ -44,7 +44,7 @@ export default {
     }
   },
   created () {
-    this.isOpeningTask = this.$route.query.task
+    this.isOpeningTask = +this.$route.query.task
     this.getPostType()
     this.isOpeningTask && this.getTaskType()
   },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-popup v-model="isShow">
+    <van-popup v-model="isShow" @click-overlay="$emit('click-overlay')">
       <div class="model-block">
         <div class="model-body">
           <div v-if="modelName" class="model-name">{{ modelName }}</div>

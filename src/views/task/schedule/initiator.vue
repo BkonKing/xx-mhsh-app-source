@@ -362,7 +362,7 @@ export default {
           value: 2
         }
       ]
-      if (this.overtimeInfo.reward_happiness == '1') {
+      if (this.overtimeInfo.reward_happiness == '1' || this.overtimeInfo.reward_happiness == '0') {
         coinList.splice(1, 1)
         return coinList
       }
@@ -898,9 +898,11 @@ export default {
       padding-left: 0;
       padding-bottom: 0;
       .van-uploader__upload,
-      .van-uploader__preview {
-        width: 112px;
-        height: 112px;
+      .van-uploader__preview,
+      /deep/ .van-uploader__upload,
+      /deep/ .van-uploader__preview {
+        width: 104px !important;
+        height: 104px !important;
         margin: 0 16px 20px 0;
       }
     }
