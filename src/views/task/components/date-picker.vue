@@ -82,8 +82,8 @@ export default {
       endYmd: '', // 结束时间（年月日）
       startHi: '00:00', // 开始时间（时分）
       endHi: '00:00', // 结束时间（时分）
-      minDate: new Date(2021, 0, 1),
-      maxDate: new Date(2021, 0, 31),
+      minDate: new Date('2021/0/1'),
+      maxDate: new Date('2021/0/31'),
       defaultDate: new Date(),
       yearmonth: '', // 年月
       currentTime: '00:00',
@@ -287,7 +287,7 @@ export default {
         }
       }
       if (timeVal) {
-        const nowTime = new Date(timeVal)
+        const nowTime = new Date(this.iosFormatDate(timeVal))
         this.nowTime = nowTime
         this.nowYear = nowTime.getFullYear()
         this.nowMonth = nowTime.getMonth() + 1
@@ -296,7 +296,7 @@ export default {
         dateArr[1] = dateArr[1] - 1
         // const dateStr = dateArr.join(',')
         console.log(timeVal, dateArr)
-        this.defaultDate = new Date(dateArr[0], dateArr[1], dateArr[2])
+        this.defaultDate = new Date(`${dateArr[0]}/${dateArr[1]}/${dateArr[2]}`)
       }
     },
     // 时间赋值
@@ -327,6 +327,9 @@ export default {
     formatDate (date) {
       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
     },
+    iosFormatDate (date) {
+      return date.replaceAll('-', '/')
+    },
     close () {
       this.dateShow = false
     },
@@ -337,8 +340,8 @@ export default {
         return
       } else {
         const now = new Date().getTime()
-        const start = this.startTime ? new Date(this.startTime).getTime() : ''
-        const end = new Date(this.endTime).getTime()
+        const start = this.startTime ? new Date(this.iosFormatDate(this.startTime)).getTime() : ''
+        const end = new Date(this.iosFormatDate(this.endTime)).getTime()
         if (end < now) {
           Toast('结束时间不能小于当前时间')
           return
