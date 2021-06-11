@@ -161,7 +161,7 @@
             </div>
           </div>
           <div class="area-block bottom-line tf-row-space-between">
-            <van-field maxlength="11" v-model="formData.mobile" type="tel" />
+            <van-field maxlength="11" v-model="formData.mobile" type="tel" onkeyup="value=value.replace(/^(0+)|[^\d]+/g,'')"/>
           </div>
           <div class="card-tip">请填写有效的手机号码，以便联系</div>
         </div>

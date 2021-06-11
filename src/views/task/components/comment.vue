@@ -244,6 +244,7 @@ export default {
 // }
 .errorPopup {
   border-radius: 20px;
+
 }
 .errorinfo {
   width: 560px;
@@ -259,6 +260,10 @@ export default {
   }
   .btn {
     margin-top: -20px;
+    button{
+      width: 200px;
+      height: 80px;
+    }
   }
 }
 </style>

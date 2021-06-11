@@ -102,7 +102,8 @@ export default {
     this.nowYear = nowTime.getFullYear()
     this.nowMonth = nowTime.getMonth() + 1
     this.getMonthDay()
-
+    this.startTime = window.localStorage.getItem('startTime') || ''
+    this.endTime = window.localStorage.getItem('endTime') || ''
     // this.nowMonth = getDate()
   },
 
@@ -314,6 +315,10 @@ export default {
           return
         }
       }
+      // console.log('起始时间', this.startTime)
+      // console.log('结束时间', this.endTime)
+      window.localStorage.setItem('startTime', this.startTime)
+      window.localStorage.setItem('endTime', this.endTime)
       this.$emit('dateSure', {
         startTime: this.startTime,
         endTime: this.endTime
@@ -328,7 +333,8 @@ export default {
     },
     dateShow (val) {
       // console.log('dateShow', val)
-      if (this.isBol === false) {
+      if (this.isBol === false && val === false) {
+        console.log('执行了')
         this.startTime = ''
         this.endTime = ''
         this.$nextTick(() => {

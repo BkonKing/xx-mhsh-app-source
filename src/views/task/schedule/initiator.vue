@@ -229,7 +229,7 @@
       <div slot="content" class="popup-cont end-cont">
         <div class="form-label">淘汰原因<span>*</span></div>
         <div @click="reasonShow = true" class="select-block tf-row">
-          <div class="popup-select tf-row-space-between">
+          <div class="popup-select tf-row-space-between" >
             {{ formData.reason || "请选择" }}
             <img src="@/assets/img/task_09.png" />
           </div>
@@ -812,6 +812,7 @@ export default {
     color: #8f8f94;
     padding-left: 20px;
     line-height: 76px;
+
     align-items: center;
     img {
       width: 21px;
@@ -858,6 +859,7 @@ export default {
   .select-block {
     margin: 0;
     .popup-select {
+
       flex: 1;
       img {
         width: 36px;

@@ -89,7 +89,7 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .van-field__control {
-  font-size: 30px !important;
+  font-size: 0.32rem;
   font-weight: 400;
   line-height: 36px;
 }
