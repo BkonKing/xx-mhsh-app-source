@@ -348,6 +348,7 @@ export default {
           return
         }
       }
+
       // console.log('起始时间', this.startTime)
       // console.log('结束时间', this.endTime)
       window.localStorage.setItem('startTime', this.startTime)
@@ -367,7 +368,7 @@ export default {
     dateShow (val) {
       console.log('dateShow', val)
       if (this.isBol === false && val === false) {
-        console.log('执行了')
+        // console.log('执行了')
         this.startTime = ''
         this.endTime = ''
         window.localStorage.removeItem('startTime')
@@ -379,6 +380,14 @@ export default {
             )[0].style.background = 'white'
           })
         })
+      }
+      if (this.isBol && val === false) {
+        if (!window.localStorage.getItem('startTime')) {
+          this.startTime = ''
+        }
+        if (!window.localStorage.getItem('endTime')) {
+          this.endTime = ''
+        }
       }
       if (val) {
         this.$nextTick(() => {
