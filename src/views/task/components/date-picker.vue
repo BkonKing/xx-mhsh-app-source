@@ -312,13 +312,13 @@ export default {
     setDetailTime (obj) {
       const { startTime, endTime } = obj
       if (endTime) {
-        this.isBol = true
+        // this.isBol = true
         this.endTime = endTime
         this.endYmd = endTime.split(' ')[0]
         this.endHi = endTime.split(' ')[1]
       }
       if (startTime) {
-        this.isBol = true
+        // this.isBol = true
         this.startTime = startTime
         this.startYmd = startTime.split(' ')[0]
         this.startHi = startTime.split(' ')[1]
@@ -365,11 +365,13 @@ export default {
       this.dateShow = val
     },
     dateShow (val) {
-      // console.log('dateShow', val)
+      console.log('dateShow', val)
       if (this.isBol === false && val === false) {
         console.log('执行了')
         this.startTime = ''
         this.endTime = ''
+        window.localStorage.removeItem('startTime')
+        window.localStorage.removeItem('endTime')
         this.$nextTick(() => {
           setTimeout(() => {
             document.getElementsByClassName(
