@@ -47,7 +47,8 @@ const store = {
     map_info: '',
     share_params: '',
     groupInfo: '',
-    winResize: false
+    winResize: false,
+    taskFinishStatus: false
   },
   mutations: {
     setUser_info (state, value) {
@@ -134,6 +135,9 @@ const store = {
     },
     setWinResize (state, value) {
       state.winResize = value
+    },
+    setTaskFinishStatus (state, value) {
+      state.taskFinishStatus = value
     }
   },
   getters: {
