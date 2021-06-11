@@ -238,6 +238,7 @@
         <graphic
           phTxt="请输入"
           :maxNum="200"
+          :autosize="{ maxHeight: 96 }"
           @getForm="getForm"
           ref="graphic"
         ></graphic>
@@ -879,7 +880,7 @@ export default {
       margin-bottom: 30px;
       overflow: hidden;
       textarea {
-        min-height: 200px;
+        min-height: 192px;
       }
     }
     .van-cell {

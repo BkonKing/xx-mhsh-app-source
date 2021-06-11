@@ -112,12 +112,14 @@
           >
             <div class="item-left">完成地点</div>
             <div class="item-cont p-30">
-              <template v-if="!formData.udpate_address"
-                >不限{{ formData.udpate_address }}</template
-              >
+              <template v-if="!formData.udpate_address">不限</template>
               <template v-else>
                 <div class="address-name">
-                  <van-field v-model="formData.udpate_address" type="text" />
+                  <van-field
+                    v-model="formData.udpate_address"
+                    type="text"
+                    @input="updateAddressInput"
+                  />
                 </div>
                 <div>
                   {{
@@ -196,7 +198,11 @@
       </div>
       <!-- <div @click="selectShow=true">xuanz</div> -->
     </div>
-    <date-picker v-model="dateShow" @dateSure="dateSure"></date-picker>
+    <date-picker
+      ref="date-picker"
+      v-model="dateShow"
+      @dateSure="dateSure"
+    ></date-picker>
     <area-picker
       v-model="areaShow"
       :province="province"
@@ -446,6 +452,12 @@ export default {
         }
         info.task_stime = info.task_stime == '0' ? '' : info.task_stime
         this.dateSure({ startTime: info.task_stime, endTime: info.task_etime })
+        this.$nextTick(() => {
+          this.$refs['date-picker'].setDetailTime({
+            startTime: this.formData.task_stime,
+            endTime: this.formData.task_etime
+          })
+        })
         console.log(info.task_image)
         this.$refs.graphic.setVal({
           content: info.task_desc,
@@ -577,6 +589,19 @@ export default {
       // this.addressObj = obj
       // console.log(111, this.formData)
     },
+    // 选完地址后的完成地点更改
+    updateAddressInput (val) {
+      if (!val) {
+        this.location_limit = 0
+        this.longitude = ''
+        this.latitude = ''
+        this.address = ''
+        this.udpate_address = ''
+        this.address_province = ''
+        this.address_city = ''
+        this.address_area = ''
+      }
+    },
     // 弹窗选择-可见范围
     selectCall (callData) {
       console.log(callData.value)
@@ -656,11 +681,11 @@ export default {
           id: 'task_title',
           message: '请填写任务标题'
         },
-        {
-          value: this.formData.reward_happiness,
-          id: 'reward_happiness',
-          message: '请填写奖励幸福币数量'
-        },
+        // {
+        //   value: this.formData.reward_happiness,
+        //   id: 'reward_happiness',
+        //   message: '请填写奖励幸福币数量'
+        // },
         {
           value: this.formData.task_etime,
           id: 'task_etime',

@@ -3,6 +3,7 @@
     <van-nav-bar
       title="正文"
       :fixed="true"
+      :border="false"
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
@@ -64,6 +65,7 @@
           <div class="tf-card-content" v-html="info.content.replace(/\r\n|\n/g, '<br/>')"></div>
           <template v-if="info.images && info.images.length">
             <img
+              class="oneself-img"
               width="33%"
               :src="info.images[0]"
               v-if="info.images.length === 1"
@@ -427,7 +429,7 @@ export default {
   }
 }
 .activity-footer {
-  margin-top: 35px;
+  // margin-top: 35px;
   @flex();
   padding: 20px 0;
   border-top: 1px solid @divider-color;
@@ -456,6 +458,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding-top: 40px;
+  padding-bottom: 40px;
   border-top: 2px solid @divider-color;
 }
 .article-content {
@@ -471,6 +474,7 @@ export default {
   align-items: center;
   border-top: 1px solid @divider-color;
   padding-top: 30px;
+  padding-bottom: 30px;
   word-break: break-all;
   .activity-content-box {
     @flex-column();
@@ -551,5 +555,21 @@ export default {
 }
 /deep/ .van-nav-bar__right .van-icon {
   font-size: 44px;
+}
+/deep/ .alert-box {
+  margin-bottom: 30px;
+}
+.tf-card {
+  line-height: 1;
+}
+.tf-card-content {
+  padding-top: 0;
+  padding-bottom: 18px;
+}
+/deep/ .van-grid-item {
+  margin-bottom: 10px;
+}
+.oneself-img {
+  margin-bottom: 30px;
 }
 </style>
