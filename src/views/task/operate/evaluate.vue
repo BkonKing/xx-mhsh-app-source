@@ -306,7 +306,6 @@ export default {
   opacity: 1;
 }
 .no-fixed-btn {
-  position: initial !important;
   margin-left: 20px;
 }
 </style>
