@@ -90,20 +90,25 @@ export default {
       nowTime: '',
       nowYear: 0,
       nowMonth: 0,
-      isBol: false // 是否是点击遮罩层关闭
+      isBol: false, // 是否是点击遮罩层关闭
       // startDay: 0,
       // endDay: 0
+      hasStartTime: false,
+      hasEndTime: false,
+      noStartTime: false,
+      noEndTime: false
     }
   },
   created () {
     // console.log('当前时间', new Date().getDate())
+    console.log('type', this.$route.query.type)
+    console.log('isBol', this.isBol)
     const nowTime = new Date()
     this.nowTime = nowTime
     this.nowYear = nowTime.getFullYear()
     this.nowMonth = nowTime.getMonth() + 1
     this.getMonthDay()
-    this.startTime = window.localStorage.getItem('startTime') || ''
-    this.endTime = window.localStorage.getItem('endTime') || ''
+
     // this.nowMonth = getDate()
   },
 
@@ -312,14 +317,14 @@ export default {
     setDetailTime (obj) {
       const { startTime, endTime } = obj
       if (endTime) {
-        // this.isBol = true
         this.endTime = endTime
+        this.hasEndTime = true
         this.endYmd = endTime.split(' ')[0]
         this.endHi = endTime.split(' ')[1]
       }
       if (startTime) {
-        // this.isBol = true
         this.startTime = startTime
+        this.hasStartTime = true
         this.startYmd = startTime.split(' ')[0]
         this.startHi = startTime.split(' ')[1]
       }
@@ -348,15 +353,17 @@ export default {
           return
         }
       }
-
-      // console.log('起始时间', this.startTime)
-      // console.log('结束时间', this.endTime)
-      window.localStorage.setItem('startTime', this.startTime)
-      window.localStorage.setItem('endTime', this.endTime)
+      if (this.startTime === '') {
+        this.noStartTime = true
+      }
+      if (this.endTime === '') {
+        this.noEndTime = true
+      }
       this.$emit('dateSure', {
         startTime: this.startTime,
         endTime: this.endTime
       })
+
       this.close()
     }
   },
@@ -366,13 +373,11 @@ export default {
       this.dateShow = val
     },
     dateShow (val) {
-      console.log('dateShow', val)
-      if (this.isBol === false && val === false) {
+      // console.log('dateShow', val)
+      if (this.isBol === false && val === false && this.$route.query.type !== 'edit') {
         // console.log('执行了')
         this.startTime = ''
         this.endTime = ''
-        window.localStorage.removeItem('startTime')
-        window.localStorage.removeItem('endTime')
         this.$nextTick(() => {
           setTimeout(() => {
             document.getElementsByClassName(
@@ -380,16 +385,34 @@ export default {
             )[0].style.background = 'white'
           })
         })
-      }
-      if (this.isBol && val === false) {
-        if (!window.localStorage.getItem('startTime')) {
+      } else if (this.isBol === false && val === false && this.$route.query.type === 'edit') {
+        if (!this.hasStartTime) {
           this.startTime = ''
         }
-        if (!window.localStorage.getItem('endTime')) {
+        if (!this.hasEndTime) {
           this.endTime = ''
         }
+        this.$nextTick(() => {
+          setTimeout(() => {
+            document.getElementsByClassName(
+              'van-calendar__selected-day'
+            )[0].style.background = 'white'
+          })
+        })
+      } else if (this.isBol && val === false && this.$route.query.type !== 'edit') {
+        if (this.noStartTime) {
+          this.startTime = ''
+          console.log('执行1')
+        }
+        if (this.noEndTime) {
+          this.endTime = ''
+          console.log('执行2')
+        }
       }
+
       if (val) {
+        // console.log('开始时间', this.startTime)
+        // console.log('结束时间', this.endTime)
         this.$nextTick(() => {
           setTimeout(() => {
             if (
