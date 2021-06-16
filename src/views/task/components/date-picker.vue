@@ -333,7 +333,7 @@ export default {
       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
     },
     iosFormatDate (date) {
-      return date.replaceAll('-', '/')
+      return date.replace(/-/g, '/')
     },
     close () {
       this.dateShow = false
