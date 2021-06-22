@@ -377,7 +377,7 @@ export default {
           // user_coupon_id: 2
         }).then(res => {
           if (res.success) {
-            api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) })
+            // api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) })
             this.settlementInfo = res.data
             if (!this.isSelectCoupon) {
               this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo
