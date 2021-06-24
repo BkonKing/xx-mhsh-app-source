@@ -37,7 +37,7 @@
                     return obj && obj.id === item.id && obj.type === 'bad';
                   }) !== -1
               }"
-              @click="handleSelectType(item.bad_tag_name, item.id, 'bad')"
+              @click="handleSelectType(item.id, 'bad')"
             >
               <div class="radio-btn__text">{{ item.bad_tag_name }}</div>
             </div>
@@ -50,7 +50,7 @@
                     return obj && obj.id === item.id && obj.type === 'good';
                   }) !== -1
               }"
-              @click="handleSelectType(item.good_tag_name, item.id, 'good')"
+              @click="handleSelectType(item.id, 'good')"
             >
               <div class="radio-btn__text">{{ item.good_tag_name }}</div>
             </div>
@@ -71,7 +71,7 @@
     <div class="task-btn-block">
       <van-button
         class="task-btn"
-        :class="{'no-fixed-btn': winResize}"
+        :class="{ 'no-fixed-btn': winResize }"
         v-preventReClick
         type="primary"
         :disabled="!evaluate_stars"
@@ -126,21 +126,23 @@ export default {
       })
     },
     // 评价
-    handleSelectType (value, id, type) {
+    handleSelectType (id, type) {
       // 加入type是为了排除同组标签内容一模一样
       const index = this.evaluateIdList.findIndex(obj => {
         return obj && obj.id === id
       })
+      // 好：1，坏：2
+      const newValue = `${id}-${type === 'good' ? '1' : '2'}`
       // 当前组合没有任何选择，则插入所有
       if (index === -1) {
         this.evaluateIdList.push({
           id,
           type
         })
-        this.evaluate_reason.push(value)
+        this.evaluate_reason.push(newValue)
       } else {
         if (
-          this.evaluate_reason[index] === value &&
+          this.evaluate_reason[index] === newValue &&
           this.evaluateIdList[index].type === type
         ) {
           // 取消选中的选项
@@ -149,7 +151,7 @@ export default {
         } else {
           // 切换选项
           this.$set(this.evaluateIdList[index], 'type', type)
-          this.$set(this.evaluate_reason, index, value)
+          this.$set(this.evaluate_reason, index, newValue)
         }
       }
     },
