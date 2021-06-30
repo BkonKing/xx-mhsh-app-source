@@ -17,7 +17,7 @@
         :immediate-check="false"
       >
       <div class="special-list">
-        <div v-for="(item,index) in listData" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
+        <div v-for="(item,index) in listData" :key="index" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
           <div class="special-goods-pic">
             <img class="img-100" :src="item.thumb" />
           </div>
@@ -71,7 +71,7 @@ export default {
   },
   created () {
     this.finished = false
-    this.onLoad()
+    // this.onLoad()
   },
   methods: {
     onLoad () {

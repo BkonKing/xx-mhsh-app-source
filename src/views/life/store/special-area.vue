@@ -1,6 +1,7 @@
 <template>
   <div class="app-body scroll-body" id="special-body">
     <area-page
+      ref="area"
       :special_id="special_id"
       :navBarShow="navBarShow"
     ></area-page>
@@ -22,6 +23,9 @@ export default {
   },
   created () {
     this.special_id = this.$route.query.id
+  },
+  mounted () {
+    this.$refs.area.listInit()
   },
   activated () {
     if (this.scrollTop) {
