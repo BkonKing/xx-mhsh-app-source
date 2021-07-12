@@ -407,7 +407,7 @@ export default {
           if (res.success) {
             this.settlementInfo = res.data.pay
             this.infoData = res.data.info_data
-            this.priceTotal = parseInt(this.settlementInfo.new_pay_money) - parseInt(this.settlementInfo.freight)
+            this.priceTotal = parseInt(this.settlementInfo.new_pay_money)
             this.carts[0].s_price = parseInt(this.infoData.pay_price)
             this.carts[0].y_price = parseInt(this.infoData.sale_price)
             if (this.isSelectAddress) {

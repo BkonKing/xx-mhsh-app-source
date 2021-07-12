@@ -1,35 +1,68 @@
 <template>
   <div>
-    <div class="area-header" :style="{backgroundImage: 'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'}">
+    <div
+      class="area-header"
+      :style="{
+        backgroundImage:
+          'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'
+      }"
+    >
       <div v-if="navBarShow" class="order-bar bar-nobg">
-        <van-nav-bar title="" :border="false" fixed @click-left="$router.go(-1)" left-arrow></van-nav-bar>
+        <van-nav-bar
+          title=""
+          :border="false"
+          fixed
+          @click-left="$router.go(-1)"
+          left-arrow
+        ></van-nav-bar>
       </div>
       <div class="header-session">
-        <div class="area-tit">{{infoData.special_name}}</div>
-        <div class="area-subtit">{{infoData.special_text}}</div>
+        <div class="area-tit">{{ infoData.special_name }}</div>
+        <div class="area-subtit">{{ infoData.special_text }}</div>
       </div>
     </div>
     <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text=""
-        @load="onLoad"
-        :immediate-check="false"
-      >
+      v-model="loading"
+      :finished="finished"
+      finished-text=""
+      @load="onLoad"
+      :immediate-check="false"
+    >
       <div class="special-list">
-        <div v-for="(item,index) in listData" :key="index" @click="linkFunc(5,{id:item.goods_id})" class="special-item flex-between">
+        <div
+          v-for="(item, index) in listData"
+          :key="index"
+          @click="linkFunc(5, { id: item.goods_id })"
+          class="special-item flex-between"
+        >
           <div class="special-goods-pic">
             <img class="img-100" :src="item.thumb" />
           </div>
           <div class="special-goods-info">
-            <div class="special-goods-name p-nowrap">{{item.goods_name}}</div>
+            <div class="special-goods-name p-nowrap">{{ item.goods_name }}</div>
             <div class="flex-align-center">
-              <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
+              <div
+                v-for="(val, j) in item.tag"
+                :key="j"
+                class="label-item-block label-item-tip"
+                :style="{ 'border-color': val.tag_color, color: val.tag_color }"
+              >
+                {{ val.tag_name }}
+              </div>
               <!-- <div class="label-item-block flex-center label-item-tip">顺丰</div> -->
             </div>
             <div class="special-goods-price">
-              <span class="special-price-span1">￥</span>{{item.s_price/100}}
-              <span v-if="item.y_price && item.y_price!='0'" class="special-price-span2">￥{{item.y_price/100}}</span>
+              <price-show
+                class="price-tag-1"
+                :money="item.rmb_price"
+                :credit="item.xfb_num"
+              ></price-show>
+              <div
+                v-if="item.y_price && item.y_price != '0'"
+                class="special-price-span2"
+              >
+                ￥{{ item.y_price / 100 }}
+              </div>
             </div>
           </div>
         </div>
@@ -40,15 +73,18 @@
 
 <script>
 import { NavBar, List } from 'vant'
+import PriceShow from '../../home/components/price-show'
 import { getAreaGoods } from '@/api/life.js'
 export default {
   name: 'area-page',
   components: {
     [NavBar.name]: NavBar,
-    [List.name]: List
+    [List.name]: List,
+    PriceShow
   },
   props: {
-    special_id: { // 专区id
+    special_id: {
+      // 专区id
       type: String,
       default: ''
     },
@@ -84,8 +120,13 @@ export default {
         special_id: this.special_id
       }).then(res => {
         if (res.success) {
-          this.listData = this.page == 1 ? res.data.special_goods_list : this.listData.concat(res.data.special_goods_list)
-          this.isEmpty = !!(this.page == 1 && res.data.special_goods_list.length == 0)
+          this.listData =
+            this.page == 1
+              ? res.data.special_goods_list
+              : this.listData.concat(res.data.special_goods_list)
+          this.isEmpty = !!(
+            this.page == 1 && res.data.special_goods_list.length == 0
+          )
           if (res.data.special_goods_list.length < res.pageSize) {
             this.finished = true
           } else {
@@ -125,8 +166,8 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped>
+<style scoped src="../../../styles/life.css"></style>
+<style lang="less" scoped>
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -211,10 +252,19 @@ export default {
   font-size: 24px;
 }
 .special-price-span2 {
+  margin-top: 8px;
+  font-size: 24px;
   color: #999999;
   text-decoration: line-through;
 }
 .label-item-block {
   margin-right: 10px;
+}
+.price-tag-1 {
+  justify-content: flex-start;
+  font-size: 32px;
+  /deep/ .price-icon {
+    font-size: 24px;
+  }
 }
 </style>

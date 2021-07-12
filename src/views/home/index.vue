@@ -146,7 +146,11 @@
                 @click="clickSpecialSale"
               >
                 <template v-slot:tag="{ img }">
-                  <div class="price-tag">￥{{ img.te_price / 100 }}</div>
+                  <price-show
+                    class="price-tag"
+                    :money="img.rmb_price"
+                    :credit="img.xfb_num"
+                  ></price-show>
                 </template>
               </tf-image-list>
             </van-swipe-item>
@@ -177,7 +181,11 @@
                 @click="clickTimeLimit"
               >
                 <template v-slot:tag="{ img }">
-                  <div class="price-tag">￥{{ img.s_price }}</div>
+                  <price-show
+                    class="price-tag"
+                    :money="img.rmb_price"
+                    :credit="img.xfb_num"
+                  ></price-show>
                 </template>
               </tf-image-list>
             </van-swipe-item>
@@ -300,6 +308,7 @@ import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 import FilmBox from '@/views/life/movie/components/FilmBox'
 import homeTask from './components/task'
+import PriceShow from './components/price-show'
 import { setUserPostion } from '@/api/user'
 import {
   getMyApp,
@@ -324,7 +333,8 @@ export default {
     pageNavBar,
     tfImageList,
     FilmBox,
-    homeTask
+    homeTask,
+    PriceShow
   },
   data () {
     return {
@@ -684,7 +694,7 @@ export default {
     // 重新登录后，重新发送地址
     const name = ['login', 'settingAccount']
     if (name.includes(from.name)) {
-      next((vm) => {
+      next(vm => {
         vm.isLocationFirst = true
       })
     }
@@ -909,7 +919,7 @@ export default {
   width: 0;
   padding: 30px 0 0;
   /deep/ .tf-image-grid {
-    height: 260px;
+    height: 276px;
   }
   &__title {
     font-size: 34px;
@@ -935,9 +945,11 @@ export default {
     padding: 0 10px;
   }
   /deep/ .tf-image-item {
+    // width: 212px;
+    // height: 212px;
     background: #ffffff;
     border: 4px solid #ffffff;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
   }
   /deep/ .van-image__error {
     border-radius: 10px;
@@ -946,18 +958,19 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 130px;
-    height: 44px;
+    width: 100%;
+    height: 60px;
     position: absolute;
-    bottom: -19px;
-    left: 50%;
-    margin-left: -65px;
-    background: #eb5841;
-    box-shadow: 0px 4px 10px 0px rgba(209, 58, 33, 0.45);
-    border-radius: 22px;
-    font-size: 26px;
+    bottom: -58px;
+    left: 0;
+    // margin-left: -100px;
+    // background: #eb5841;
+    // box-shadow: 0px 4px 10px 0px rgba(209, 58, 33, 0.45);
+    border-radius: 0 0 10px 10px;
+    font-size: 24px;
     line-height: 1;
-    color: #fff;
+    color: #ff6555;
+    background: #fff;
   }
 }
 // 电影专区
