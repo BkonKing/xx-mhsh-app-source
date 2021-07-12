@@ -1,11 +1,11 @@
 <template>
   <div class="price-show-tag">
-      <span v-if="+money"><span class="price-icon">￥</span>{{ money }}</span>
-      <span class="plus-span" v-if="+money && +credit">+</span>
-      <template v-if="+credit">
-        <span class="price-icon tf-icon tf-icon-xingfubi1"></span>
-        <span>{{ credit }}</span>
-      </template>
+    <span v-if="+money || (+money === 0 && +credit === 0)"><span class="price-icon">￥</span>{{ money }}</span>
+    <span class="plus-span" v-if="+money && +credit">+</span>
+    <template v-if="+credit">
+      <span class="price-icon tf-icon tf-icon-xingfubi1"></span>
+      <span>{{ credit }}</span>
+    </template>
   </div>
 </template>
 
