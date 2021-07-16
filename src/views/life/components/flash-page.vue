@@ -815,7 +815,7 @@ export default {
 }
 
 .price-tag-1 {
-  display: inline-flex;
+  display: inline-flex !important;
   font-size: 32px;
   /deep/ .price-icon {
     font-size: 24px;
@@ -827,7 +827,7 @@ export default {
 }
 
 .price-tag-2 {
-  justify-content: flex-start;
+  justify-content: flex-start !important;
   font-size: 32px;
   /deep/ .price-icon {
     font-size: 24px;

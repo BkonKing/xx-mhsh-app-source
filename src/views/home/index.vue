@@ -131,7 +131,6 @@
           </div>
           <van-swipe
             ref="bargainSwipe"
-            :autoplay="3000"
             :show-indicators="false"
           >
             <van-swipe-item
@@ -142,6 +141,7 @@
               <tf-image-list
                 :data="item"
                 :column="ollageGoodsVisible ? 1 : 3"
+                :gutter="2"
                 srcKey="thumb"
                 @click="clickSpecialSale"
               >
@@ -170,13 +170,13 @@
           </div>
           <van-swipe
             ref="ollageGoods"
-            :autoplay="3000"
             :show-indicators="false"
           >
             <van-swipe-item v-for="(item, i) in ollageSwipeList" :key="i">
               <tf-image-list
                 :data="item"
                 :column="bargainVisible ? 2 : 3"
+                :gutter="5"
                 srcKey="thumb"
                 @click="clickTimeLimit"
               >
@@ -534,7 +534,12 @@ export default {
     },
     // 跳转9.9特卖专区
     goSpecialSale () {
-      this.$router.push('/store/special-sale')
+      this.$router.push({
+        path: '/life',
+        query: {
+          type: 2
+        }
+      })
     },
     // 9.9特卖专区图片点击
     clickSpecialSale ({ goods_id }) {
@@ -548,7 +553,12 @@ export default {
     },
     // 跳转限时闪购列表
     goTimeLimit () {
-      this.$router.push('/store/flash-purchase')
+      this.$router.push({
+        path: '/life',
+        query: {
+          type: 1
+        }
+      })
     },
     // 跳转限时闪购详情
     clickTimeLimit ({ goods_id }) {
@@ -741,6 +751,8 @@ export default {
 .tf-bg-white {
   height: 100%;
   /deep/ .tf-image-grid .van-grid-item__content--square {
+    width: 212px;
+    height: 212px !important;
     background: #f4f4f4;
     border-radius: 10px;
   }
@@ -918,6 +930,7 @@ export default {
   flex: 1;
   width: 0;
   padding: 30px 0 0;
+  min-height: 400px;
   /deep/ .tf-image-grid {
     height: 276px;
   }

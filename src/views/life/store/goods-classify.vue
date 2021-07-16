@@ -91,6 +91,7 @@
               <div
                 v-for="(item, index) in listData"
                 class="classify-item flex-between"
+                :key="index"
                 :data-id="2"
                 @click="linkFunc(5, { id: item.id })"
               >
@@ -126,13 +127,15 @@
                   </div>
                   <div class="res-goods-price">
                     <price-show
-                      class="price-tag-2"
                       :money="item.rmb_price"
                       :credit="item.xfb_num"
                     ></price-show>
-                    <span v-if="item.y_price && item.y_price != '0'"
-                      >￥{{ item.y_price / 100 }}</span
-                    >
+                  </div>
+                  <div
+                    class="res-goods-price-original"
+                    v-if="item.y_price && item.y_price != '0'"
+                  >
+                    ￥{{ item.y_price / 100 }}
                   </div>
                 </div>
               </div>
@@ -486,14 +489,14 @@ export default {
   border-color: #eb5841 transparent transparent transparent;
 }
 .classify-item {
-  height: 160px;
   width: 530px;
+  min-height: 160px;
   overflow: hidden;
   margin-bottom: 30px;
 }
 .res-goods-pic {
   width: 160px;
-  height: 100%;
+  height: 160px;
   object-fit: cover;
   border-radius: 4px;
   background-color: #f4f4f4;
@@ -511,23 +514,20 @@ export default {
 }
 .res-goods-price {
   display: flex;
-  justify-content: space-between;
   margin-top: 10px;
   padding-top: 10px;
-  line-height: 44px;
+  line-height: 1;
   font-size: 32px;
   color: #eb5841;
   /deep/ .price-icon {
     font-size: 24px;
   }
 }
-.res-goods-price span {
+.res-goods-price-original {
+  margin-top: 18px;
   font-size: 24px;
+  line-height: 1;
   color: #8f8f94;
   text-decoration: line-through;
-}
-
-.res-goods-tags {
-  height: 60px;
 }
 </style>

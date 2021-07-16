@@ -161,7 +161,7 @@ export default {
   padding-left: 20px;
 }
 .price-tag-2 {
-  justify-content: flex-start;
+  justify-content: flex-start !important;
   height: 66px;
   font-size: 32px;
   /deep/ .price-icon {

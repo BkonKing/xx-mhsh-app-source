@@ -48,7 +48,7 @@
             <div class="life-home">
               <div v-if="bannerList.length > 0" class="life-swipe">
                 <van-swipe :autoplay="3000" indicator-color="white">
-                  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
+                  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)" :key="index">
                     <img class="img-100" :src="item.img" />
                   </van-swipe-item>
                 </van-swipe>
@@ -318,7 +318,8 @@ export default {
       listData: [], // 分类商品
       loading: false,
       finished: true,
-      swipeable: true
+      swipeable: true,
+      skipType: 0 // 跳转type，特卖1，闪购 2
     }
   },
   created () {
@@ -336,6 +337,13 @@ export default {
     this.cart_num = cart_num
     this.page = 1
     this.isRefresh = true
+    const type = this.$route.query.type
+    if (type) {
+      this.skipType = type
+      if (this.navList && this.navList.length) {
+        this.setTabIndex()
+      }
+    }
     // this.navList = [];
     // this.activeIndex = 0;
     // this.activeIndex2 = 0;
@@ -413,6 +421,7 @@ export default {
           var navArr = this.navList.concat()
           if (navArr.length && res.data.length) {
             if (JSON.stringify(navArr) != JSON.stringify(res.data)) {
+              console.log(123123)
               this.isChange = true
               this.navList = []
               this.navList2 = []
@@ -436,19 +445,19 @@ export default {
             })
             this.flashIcon = isFlash && true
           } else {
-            // this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
-            // this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
-            // if (res.data.goods_list.length < res.pageSize) {
-            //   this.finished = true
-            //   this.flag = true
-            // } else {
-            //   this.flag = false
-            //   this.page = this.page + 1
-            // }
-            // this.loading = false
+            this.setTabIndex()
           }
         }
       })
+    },
+    // 获取9.9特卖(type = 2)闪购（type = 1）所在的index并设置tab值
+    setTabIndex () {
+      if (this.skipType) {
+        const index = this.navList.findIndex((obj) => obj.type == this.skipType)
+        this.activeIndex = index > -1 ? index : 0
+        this.active = index > -1 ? index : 0
+      }
+      this.skipType = 0
     },
     compare (origin, target) {
       if (typeof target !== 'object') {
@@ -637,6 +646,14 @@ export default {
       const val = parseInt(value)
       return val > 9999 ? `${Math.ceil(val / 10000)}万` : val
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    const { type } = to.query
+    next(vm => {
+      if (type) {
+        vm.$router.push('/life')
+      }
+    })
   },
   beforeRouteLeave (to, from, next) {
     const el = document
@@ -1006,6 +1023,7 @@ export default {
 .flash-goods-list {
   justify-content: space-around;
   .life-goods-name {
+    text-align: center;
     line-height: 1;
     margin-top: 20px;
     padding: 0 10px;

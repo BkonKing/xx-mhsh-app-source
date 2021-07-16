@@ -261,7 +261,7 @@ export default {
   margin-right: 10px;
 }
 .price-tag-1 {
-  justify-content: flex-start;
+  justify-content: flex-start !important;
   font-size: 32px;
   /deep/ .price-icon {
     font-size: 24px;
