@@ -17,8 +17,8 @@
           <div class="tf-column">
             <span class="coin-number">{{ credits }}</span>
             <div class="coin-freeze">
-              <span>可用{{ky_credits}}</span>
-              <span v-if="+sd_credits">不可用{{sd_credits}}</span>
+              <span>可用{{ ky_credits }}</span>
+              <span v-if="+sd_credits">不可用{{ sd_credits }}</span>
             </div>
           </div>
         </div>
@@ -191,6 +191,11 @@
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
     <sign-rule-dialog v-model="signRuledialog"></sign-rule-dialog>
+    <sign-alert
+      v-model="signAlertVisible"
+      :message="signMessage"
+      :credits="signOwnerCredits"
+    ></sign-alert>
   </div>
 </template>
 
@@ -201,10 +206,12 @@ import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
 import { getCreditsGoodsList } from '@/api/home'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
+import SignAlert from '@/views/home/components/SignAlert'
 export default {
   components: {
     tfCalendar,
-    [SignRule.name]: SignRule
+    [SignRule.name]: SignRule,
+    SignAlert
   },
   data () {
     return {
@@ -218,7 +225,10 @@ export default {
       yxlpNum: 0, // 推荐购房楼盘列表
       signRuledialog: false,
       sd_credits: '', // 锁定幸福币
-      ky_credits: '' // 可用幸福币
+      ky_credits: '', // 可用幸福币
+      signAlertVisible: false, // 游客认证提醒弹窗
+      signMessage: '', // 签到成功提醒
+      signOwnerCredits: '' // 业主签到幸福币
     }
   },
   computed: {
@@ -256,21 +266,6 @@ export default {
     },
     /* 签到请求 */
     signin () {
-      this.signLoading = true
-      signin()
-        .then(res => {
-          this.signLoading = false
-          this.$toast({
-            message: res.message
-          })
-          this.getCreditsAccount()
-          this.mtjEvent({
-            eventId: 4
-          })
-        })
-        .catch(() => {
-          this.signLoading = false
-        })
       handlePermission({
         name: 'location',
         title: '定位服务未开启',
@@ -280,9 +275,15 @@ export default {
         signin()
           .then(res => {
             this.signLoading = false
-            this.$toast({
-              message: res.message
-            })
+            if (+res.open_box) {
+              this.signMessage = res.message
+              this.signOwnerCredits = res.owner_credits
+              this.signAlertVisible = true
+            } else {
+              this.$toast({
+                message: res.message
+              })
+            }
             this.getCreditsAccount()
             this.mtjEvent({
               eventId: 4

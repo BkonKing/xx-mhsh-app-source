@@ -300,6 +300,11 @@
         :key="index"
       />
     </div>
+    <sign-alert
+      v-model="signAlertVisible"
+      :message="signMessage"
+      :credits="signOwnerCredits"
+    ></sign-alert>
   </div>
 </template>
 
@@ -324,6 +329,7 @@ import { signin } from '@/api/personage'
 import { getfilmlist } from '@/api/movie'
 import { getTaskSwitch, getHomeTaskList } from '@/api/task'
 import { mapGetters } from 'vuex'
+import SignAlert from './components/SignAlert'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
 import { bMapGetLocationInfo } from '@/utils/util'
@@ -334,7 +340,8 @@ export default {
     tfImageList,
     FilmBox,
     homeTask,
-    PriceShow
+    PriceShow,
+    SignAlert
   },
   data () {
     return {
@@ -363,7 +370,10 @@ export default {
       guideTop: 0,
       isOpeningTask: true, // 是否显示任务专区
       taskList: [], // 任务列表
-      isLocationFirst: true // 保存用户定位信息只执行一次状态
+      isLocationFirst: true, // 保存用户定位信息只执行一次状态
+      signAlertVisible: false, // 游客认证提醒弹窗
+      signMessage: '', // 签到成功提醒
+      signOwnerCredits: '' // 业主签到幸福币
     }
   },
   computed: {
@@ -483,9 +493,15 @@ export default {
         signin()
           .then(res => {
             this.signLoading = false
-            this.$toast({
-              message: res.message
-            })
+            if (+res.open_box) {
+              this.signMessage = res.message
+              this.signOwnerCredits = res.owner_credits
+              this.signAlertVisible = true
+            } else {
+              this.$toast({
+                message: res.message
+              })
+            }
             this.$store.dispatch('getMyAccount')
             this.mtjEvent({
               eventId: 4

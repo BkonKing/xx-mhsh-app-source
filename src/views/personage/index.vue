@@ -301,6 +301,11 @@
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
     <sign-rule-dialog v-model="signRuledialog"></sign-rule-dialog>
+    <sign-alert
+      v-model="signAlertVisible"
+      :message="signMessage"
+      :credits="signOwnerCredits"
+    ></sign-alert>
   </div>
 </template>
 
@@ -314,13 +319,15 @@ import { getUserActivity } from '@/api/activity'
 import { getMyTaskNum } from '@/api/task'
 import { mapGetters } from 'vuex'
 import { handlePermission } from '@/utils/permission'
+import SignAlert from '@/views/home/components/SignAlert'
 export default {
   name: 'personage',
   components: {
     [SignRule.name]: SignRule,
     tfList,
     tfListItem,
-    tfCalendar
+    tfCalendar,
+    SignAlert
   },
   data () {
     return {
@@ -332,7 +339,10 @@ export default {
       isOpenActivity: false, // 是否开启积分活动
       isShowTask: false, // 是否显示任务
       taskNum: '', // 任务数量
-      activityTitle: '参与活动领积分'
+      activityTitle: '参与活动领积分',
+      signAlertVisible: false, // 游客认证提醒弹窗
+      signMessage: '', // 签到成功提醒
+      signOwnerCredits: '' // 业主签到幸福币
     }
   },
   computed: {
@@ -388,9 +398,15 @@ export default {
           signin()
             .then(res => {
               this.signLoading = false
-              this.$toast({
-                message: res.message
-              })
+              if (+res.open_box) {
+                this.signMessage = res.message
+                this.signOwnerCredits = res.owner_credits
+                this.signAlertVisible = true
+              } else {
+                this.$toast({
+                  message: res.message
+                })
+              }
               this.$store.dispatch('getMyAccount')
               this.mtjEvent({
                 eventId: 4
