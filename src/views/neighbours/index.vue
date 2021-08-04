@@ -145,7 +145,7 @@
         </div>
         <div class="tf-text-sm" style="text-indent: 24px;line-height: 1.8;">
           使用邻里请阅读
-          <router-link class="tf-text-blue" to="/agreement?type=2"
+          <router-link class="tf-text-blue" to="/agreement?articleType=3"
             >《{{ agreementTitle }}》</router-link
           >。
         </div>

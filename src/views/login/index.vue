@@ -86,8 +86,11 @@
         </div>
         <span class="agreement-text">
           登录即表示您同意
-          <router-link class="agreement-link" to="/agreement"
-            >《美好生活家园用户协议》</router-link
+          <router-link class="agreement-link" to="/agreement?articleType=1"
+            >《{{userAgreementTitle}}》</router-link
+          >
+          <router-link class="agreement-link" to="/agreement?articleType=6"
+            >《{{privacyAgreementTitle}}》</router-link
           >
         </span>
       </div>
@@ -98,6 +101,7 @@
 <script>
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
+import { getAllAgreement } from '@/api/home'
 import { handlePermission } from '@/utils/permission'
 import { setStatisticsData } from '@/utils/analysis.js'
 export default {
@@ -113,11 +117,14 @@ export default {
       codeStatus: false, // 验证码发送状态
       countDownTime: 60000,
       status: 0, // 1：换个账号登录 0：登录
-      loginLoading: false // 登录loading状态
+      loginLoading: false, // 登录loading状态
+      userAgreementTitle: '用户协议', // 用户协议标题
+      privacyAgreementTitle: '隐私协议' // 隐私协议标题
     }
   },
   created () {
     this.status = this.$route.query.status
+    this.getAllAgreement()
   },
   mounted () {
     handlePermission({
@@ -126,10 +133,19 @@ export default {
     })
   },
   methods: {
+    // 获取协议名称
+    getAllAgreement () {
+      getAllAgreement().then(({ data }) => {
+        data.forEach((obj) => {
+          obj.article_type === '1' && (this.userAgreementTitle = obj.title)
+          obj.article_type === '6' && (this.privacyAgreementTitle = obj.title)
+        })
+      })
+    },
     // 提交登录验证
     submitLogin () {
       if (!this.agree) {
-        this.$toast('请阅读并同意用户协议')
+        this.$toast('请阅读并同意用户协议和隐私政策')
         return
       }
       let params
@@ -374,18 +390,19 @@ export default {
   }
 }
 .agreement {
-  margin-top: 160px;
   display: flex;
-  padding: 20px 0;
-  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 20px 0;
+  margin-top: 160px;
   .agreement-checkbox-input {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    flex-shrink: 0;
+    width: 30px;
     height: 28px;
+    margin-top: 2px;
     margin-right: 10px;
     border: 2px solid #aaa;
     .tf-icon-gou {
@@ -396,6 +413,7 @@ export default {
   .agreement-text {
     font-size: 24px;
     color: #8f8f94;
+    text-align: center;
     .agreement-link {
       color: #8f8f94;
     }

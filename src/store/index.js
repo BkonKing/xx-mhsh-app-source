@@ -11,9 +11,6 @@ import {
   bindingHouse
 } from '@/api/personage.js'
 import {
-  getOtherAgreement
-} from '@/api/home'
-import {
   Toast,
   Dialog
 } from 'vant'
@@ -41,7 +38,6 @@ const store = {
     keepAliveList: ['mainIndex'],
     paddingTop: 0,
     paddingBottom: 0,
-    otherAgreement: null,
     temporaryType: undefined,
     mobile_info: '',
     map_info: '',
@@ -115,9 +111,6 @@ const store = {
     setPaddingBottom (state, value) {
       state.paddingBottom = value
     },
-    setOtherAgreement (state, value) {
-      state.otherAgreement = value
-    },
     setTemporaryType (state, value) {
       state.temporaryType = value
     },
@@ -155,9 +148,6 @@ const store = {
     },
     keepAlives (state) {
       return state.keepAliveList
-    },
-    otherAgreement (state) {
-      return state.otherAgreement
     }
   },
   actions: {
@@ -328,15 +318,6 @@ const store = {
         }).catch(err => {
           reject(err)
         })
-      })
-    },
-    getOtherAgreement ({
-      commit
-    }) {
-      getOtherAgreement().then(({
-        data
-      }) => {
-        commit('setOtherAgreement', data || {})
       })
     }
   }

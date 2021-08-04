@@ -106,7 +106,7 @@
               阅读并同意
               <span
                 class="tf-text-blue"
-                @click.stop="$router.push('/agreement?type=1')"
+                @click.stop="$router.push('/agreement?articleType=2')"
                 >《{{ otherAgreement.title }}》</span
               >
             </van-checkbox>
@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { NavBar, Switch, Button, Checkbox, Toast, Dialog } from 'vant'
+import { Toast, Dialog } from 'vant'
 import tfRadioBtn from '@/components/tf-radio-btn/index'
 import tfList from '@/components/tf-list/index'
 import tfListItem from '@/components/tf-list/item'
@@ -150,17 +150,15 @@ import {
 import { validForm } from '@/utils/util'
 import { userText } from '@/const/user'
 import { mapGetters } from 'vuex'
+import otherAgreementMixin from '@/mixins/otherAgreementMixin'
 
 export default {
   name: 'houseAttestation',
+  mixins: [otherAgreementMixin],
   components: {
     tfRadioBtn,
     tfList,
-    tfListItem,
-    [NavBar.name]: NavBar,
-    [Checkbox.name]: Checkbox,
-    [Switch.name]: Switch,
-    [Button.name]: Button
+    tfListItem
   },
   data () {
     return {
@@ -206,7 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'otherAgreement', 'currentProject'])
+    ...mapGetters(['userInfo', 'currentProject'])
   },
   created () {
     this.type = parseInt(this.$route.query.type)

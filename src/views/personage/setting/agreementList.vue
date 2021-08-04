@@ -56,12 +56,12 @@ export default {
       })
     },
     goAgreement (articleType) {
-      const type = {
-        1: '',
-        2: '1',
-        3: '2'
-      }
-      this.$router.push(`/agreement?type=${type[articleType]}`)
+      this.$router.push({
+        path: '/agreement',
+        query: {
+          articleType
+        }
+      })
     }
   }
 }

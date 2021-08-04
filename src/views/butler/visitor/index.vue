@@ -9,7 +9,10 @@
       @click-left="goback"
     >
       <template #right>
-        <span class="tf-icon tf-icon-tongxunlu" @click="goVisitorList(1)"></span>
+        <span
+          class="tf-icon tf-icon-tongxunlu"
+          @click="goVisitorList(1)"
+        ></span>
         <span class="tf-icon tf-icon-shijian" @click="goInviteList"></span>
       </template>
     </van-nav-bar>
@@ -27,16 +30,24 @@
                 :max-date="endDate"
               >
                 <template>
-                  <div class="tf-text text-right">{{form.lfday || '选择日期'}}</div>
+                  <div class="tf-text text-right">
+                    {{ form.lfday || "选择日期" }}
+                  </div>
                 </template>
               </tf-date-time-picker>
             </template>
           </tf-list-item>
           <tf-list-item border title="来访时间">
             <template v-slot:right>
-              <tf-picker v-model="form.time" title="选择时间" :columns="timeArray">
-                <template v-slot="{valueText}">
-                  <div class="tf-text text-right">{{valueText || '选择时间'}}</div>
+              <tf-picker
+                v-model="form.time"
+                title="选择时间"
+                :columns="timeArray"
+              >
+                <template v-slot="{ valueText }">
+                  <div class="tf-text text-right">
+                    {{ valueText || "选择时间" }}
+                  </div>
                 </template>
               </tf-picker>
             </template>
@@ -50,18 +61,27 @@
                 selected-key="value"
                 :columns="array"
               >
-                <template v-slot="{valueText}">
-                  <div class="tf-text text-right">{{valueText}}</div>
+                <template v-slot="{ valueText }">
+                  <div class="tf-text text-right">{{ valueText }}</div>
                 </template>
               </tf-picker>
             </template>
           </tf-list-item>
-          <tf-list-item border title="同行人数" :showArrow="false" :IFocusStatus="true">
+          <tf-list-item
+            border
+            title="同行人数"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
               <input v-model="form.num" type="number" class="tf-input" />
             </template>
           </tf-list-item>
-          <tf-list-item title="来访目的" :showArrow="false" :IFocusStatus="true">
+          <tf-list-item
+            title="来访目的"
+            :showArrow="false"
+            :IFocusStatus="true"
+          >
             <template v-slot:right>
               <input v-model="form.remark" class="tf-input" />
             </template>
@@ -76,56 +96,59 @@
           <template v-if="visitorList.length > 0">
             <div v-for="(item, i) in visitorList" :key="i" class="visitor-info">
               <div class="tf-row">
-                <div
-                  class="visitor-info__text tf-mr-base"
-                >{{item.realname}} {{item.gender == '1' ? '男' : '女'}}</div>
-                <div class="visitor-info__text tf-text-grey">{{item.mobile}} {{item.car_number}}</div>
+                <div class="visitor-info__text tf-mr-base">
+                  {{ item.realname }} {{ item.gender == "1" ? "男" : "女" }}
+                </div>
+                <div class="visitor-info__text tf-text-grey">
+                  {{ item.mobile }} {{ item.car_number }}
+                </div>
               </div>
-              <div class="tf-icon tf-icon-delete" @click="deleteVisitor(i)"></div>
+              <div
+                class="tf-icon tf-icon-delete"
+                @click="deleteVisitor(i)"
+              ></div>
             </div>
           </template>
           <visitor-form v-else ref="form"></visitor-form>
         </tf-list>
       </div>
-      <van-checkbox class="agreement-checkbox" v-model="agreeValue" shape="square">
+      <van-checkbox
+        class="agreement-checkbox"
+        v-model="agreeValue"
+        shape="square"
+      >
         阅读并同意
         <span
           class="tf-text-blue"
-          @click.stop="$router.push('/agreement?type=1')"
-        >《{{otherAgreement.title}}》</span>
+          @click.stop="$router.push('/agreement?articleType=2')"
+          >《{{ otherAgreement.title }}》</span
+        >
       </van-checkbox>
-      <van-button v-preventReClick class="tf-mt-lg" size="large" type="danger" @click="addVisitorLog">发起邀约</van-button>
+      <van-button
+        v-preventReClick
+        class="tf-mt-lg"
+        size="large"
+        type="danger"
+        @click="addVisitorLog"
+        >发起邀约</van-button
+      >
     </div>
   </div>
 </template>
 
 <script>
-import {
-  NavBar,
-  Toast,
-  Picker,
-  DatetimePicker,
-  Popup,
-  Button,
-  Checkbox
-} from 'vant'
+import { Toast } from 'vant'
 import visitorForm from './components/form.vue'
 import tfList from '@/components/tf-list/index.vue'
 import tfListItem from '@/components/tf-list/item.vue'
 import tfPicker from '@/components/tf-picker/index'
 import tfDateTimePicker from '@/components/tf-date-time-picker/index'
-import { mapGetters } from 'vuex'
 import { addVisitorLog } from '@/api/butler.js'
-import { getTime } from '@/utils/util.js'
+import otherAgreementMixin from '@/mixins/otherAgreementMixin'
 export default {
   name: 'visitorIndex',
+  mixins: [otherAgreementMixin],
   components: {
-    [NavBar.name]: NavBar,
-    [Picker.name]: Picker,
-    [DatetimePicker.name]: DatetimePicker,
-    [Popup.name]: Popup,
-    [Button.name]: Button,
-    [Checkbox.name]: Checkbox,
     tfList,
     tfListItem,
     tfPicker,
@@ -166,7 +189,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['otherAgreement']),
     array () {
       const status = !this.form.time
       return [
@@ -245,7 +267,7 @@ export default {
         params.stime = time[0]
         params.etime = time[1]
       }
-      addVisitorLog(params).then((res) => {
+      addVisitorLog(params).then(res => {
         if (res.success) {
           this.sendInvite(res.data.id)
         }

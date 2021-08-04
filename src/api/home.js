@@ -50,7 +50,7 @@ export function getUserAgreement (params) {
 export function getOtherAgreement () {
   return request.get('/ulogin/agreement/other_agreement')
 }
-// 邻里使用协议
+// 获取邻里使用协议（已改为带参可以请求所有协议）
 export function getNeighboursAgreement (data) {
   return request.post('/ulogin/agreement/neighbours_agreement', data)
 }
