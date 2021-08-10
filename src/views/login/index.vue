@@ -77,24 +77,29 @@
         @click="loginType = loginType === 1 ? 2 : 1"
         >{{ loginType === 1 ? "密码登录" : "验证码登录" }}</span
       >
-      <div class="agreement" @click="agree = !agree">
-        <div class="agreement-checkbox-input">
+      <div class="agreement">
+        <div class="agreement-checkbox-input" @click="agree = !agree">
           <span
             class="tf-icon checkbox-icon"
             :class="{ 'tf-icon-gou': agree }"
           ></span>
         </div>
         <span class="agreement-text">
-          登录即表示您同意
-          <router-link class="agreement-link" to="/agreement?articleType=1"
-            >《{{userAgreementTitle}}》</router-link
+          <span @click="agree = !agree">已阅读并同意</span>
+          <router-link
+            class="agreement-link"
+            to="/agreement?articleType=1"
+            >《{{ userAgreementTitle }}》</router-link
           >
-          <router-link class="agreement-link" to="/agreement?articleType=6"
-            >《{{privacyAgreementTitle}}》</router-link
+          <router-link
+            class="agreement-link"
+            to="/agreement?articleType=6"
+            >《{{ privacyAgreementTitle }}》</router-link
           >
         </span>
       </div>
     </div>
+    <agree-popup v-model="agreePopup" @handleAgree="handleAgree"></agree-popup>
   </div>
 </template>
 
@@ -102,16 +107,21 @@
 import { verifCode } from '@/api/user'
 import { validEmpty } from '@/utils/util'
 import { getAllAgreement } from '@/api/home'
-import { handlePermission } from '@/utils/permission'
-import { setStatisticsData } from '@/utils/analysis.js'
+import { setStatisticsData } from '@/utils/analysis'
+import AgreePopup from '@/components/Business/agree-popup'
 export default {
+  name: 'login',
+  components: {
+    AgreePopup
+  },
   data () {
     return {
+      firstStatus: false, // 是否第一次登录
       mobile: undefined,
       yzm: undefined, // 验证码
       pwd: undefined, // 密码
       loginType: 1, // 1:验证码登录 2：密码登陆
-      agree: true, // 同意协议
+      agree: false, // 同意协议
       showPassword: false,
       codeLoading: false, // 获取验证loading状态
       codeStatus: false, // 验证码发送状态
@@ -119,33 +129,43 @@ export default {
       status: 0, // 1：换个账号登录 0：登录
       loginLoading: false, // 登录loading状态
       userAgreementTitle: '用户协议', // 用户协议标题
-      privacyAgreementTitle: '隐私协议' // 隐私协议标题
+      privacyAgreementTitle: '隐私协议', // 隐私协议标题
+      agreePopup: false // 登录协议弹窗
     }
   },
   created () {
-    this.status = this.$route.query.status
-    this.getAllAgreement()
-  },
-  mounted () {
-    handlePermission({
-      name: 'location',
-      message: '没有开启定位，可能会影响部分功能哦！'
+    this.firstStatus = api.getPrefs({
+      sync: true,
+      key: 'first-login'
     })
+    if (!this.firstStatus) {
+      this.agreePopup = true
+    }
+    this.status = this.$route.query.status
+    // 换个账号登录则默认同意协议
+    if (this.status) {
+      this.agree = true
+    }
+    this.getAllAgreement()
   },
   methods: {
     // 获取协议名称
     getAllAgreement () {
       getAllAgreement().then(({ data }) => {
-        data.forEach((obj) => {
+        data.forEach(obj => {
           obj.article_type === '1' && (this.userAgreementTitle = obj.title)
           obj.article_type === '6' && (this.privacyAgreementTitle = obj.title)
         })
       })
     },
+    // 同意协议
+    handleAgree () {
+      this.agree = true
+    },
     // 提交登录验证
     submitLogin () {
       if (!this.agree) {
-        this.$toast('请阅读并同意用户协议和隐私政策')
+        this.agreePopup = true
         return
       }
       let params
@@ -186,6 +206,12 @@ export default {
         })
         .then(data => {
           this.loginLoading = false
+          if (!this.firstStatus) {
+            api.setPrefs({
+              key: 'first-login',
+              value: 1
+            })
+          }
           this.loginJump()
           // 行为数据分析收集
           if (data.first_register == 1) {
@@ -279,6 +305,10 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.$store.commit('setShare_params', '')
+    if (to.name !== 'agreement') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
     next()
   }
 }

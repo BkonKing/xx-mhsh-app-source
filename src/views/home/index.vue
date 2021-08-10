@@ -373,7 +373,8 @@ export default {
       isLocationFirst: true, // 保存用户定位信息只执行一次状态
       signAlertVisible: false, // 游客认证提醒弹窗
       signMessage: '', // 签到成功提醒
-      signOwnerCredits: '' // 业主签到幸福币
+      signOwnerCredits: '', // 业主签到幸福币
+      isNotice: false // 是否为公告跳转
     }
   },
   computed: {
@@ -644,6 +645,7 @@ export default {
     },
     // 跳转公告详情页
     goNotice ({ id }) {
+      this.isNotice = true
       this.$router.push({
         name: 'noticeDetails',
         query: {
@@ -727,6 +729,15 @@ export default {
     next()
   },
   beforeRouteLeave (to, from, next) {
+    /**
+     * 2021-8-15
+     * 总后台发布的公告，首页的公告轮播区，所有用户可点击查看通知详情，不需要验证是否认证
+     */
+    if (this.isNotice && to.name === 'noticeDetails') {
+      this.isNotice = false
+      next()
+      return
+    }
     bulterPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
