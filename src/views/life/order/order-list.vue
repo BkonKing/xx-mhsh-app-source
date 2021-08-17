@@ -99,6 +99,7 @@
     @sureSwal="sureSwal()">
     </remind-swal>
     <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
+    <goods-share v-model="sharePopup" :infoData="shareList"></goods-share>
   </div>
 </template>
 
@@ -108,7 +109,8 @@ import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
 import ztOrder from './../components/zt-order'
-import { getOrderList, getOrderOne, cancelNoPayOrder, cancelPayOrder, payOrderUp } from '@/api/life.js'
+import { getOrderList, getOrderOne, cancelNoPayOrder, cancelPayOrder, payOrderUp, getIsShare } from '@/api/life.js'
+import GoodsShare from '../components/goods-share.vue'
 export default {
   name: 'orderList',
   components: {
@@ -120,7 +122,8 @@ export default {
     explainSwal,
     remindSwal,
     ztOrder,
-    paySwal
+    paySwal,
+    GoodsShare
   },
   data () {
     return {
@@ -148,7 +151,9 @@ export default {
       showPaySwal: false, // 支付方式弹窗
       payMoney: 0, // 支付金额
       downTime: 0, // 支付结束时间
-      idcard: '' // 身份证
+      idcard: '', // 身份证
+      sharePopup: false, // 分享弹窗
+      shareList: {} // 分享的商品列表
     }
   },
   created () {
@@ -168,6 +173,7 @@ export default {
     } */
 
     // console.log(this.$store.state.paddingTop)
+    this.getIsShare()
   },
   activated () {
     if (this.scrollTop) {
@@ -184,6 +190,17 @@ export default {
       this.timeArr[id] = (time.hours * 3600 + time.minutes * 60 + time.seconds) * 1000
       // console.log(time, index, id)
       // this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
+    },
+    // 获取是否弹出分享
+    getIsShare () {
+      getIsShare({
+        type: 1 // 订单列表
+      }).then(({ is_popup: isPopup, credits, list }) => {
+        if (+isPopup) {
+          this.sharePopup = true
+          this.shareList = { credits, list }
+        }
+      })
     },
     navFun (index) {
       this.flag = false

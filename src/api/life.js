@@ -234,3 +234,13 @@ export function fuPay (params) {
 export function getCodeAgain (params) {
   return request.post('/my/fupay/fupay_code', params)
 }
+
+// 下完订单是否弹出分享
+export function getIsShare (params) {
+  return request.post('/my/reward/isShare', params)
+}
+
+// 分享成功触发发放幸福币
+export function giveCredits (params) {
+  return request.post('/my/reward/share', params)
+}
