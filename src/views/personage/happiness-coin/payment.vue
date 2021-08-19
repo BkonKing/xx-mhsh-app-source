@@ -109,6 +109,7 @@ import {
   skCredits
 } from '@/api/personage'
 export default {
+  name: 'happinessCoinPayment',
   components: {
     [NavBar.name]: NavBar,
     [NumberKeyboard.name]: NumberKeyboard,
@@ -152,6 +153,9 @@ export default {
       this.remarks = remarks
     }
   },
+  activated () {
+    this.paypassword = ''
+  },
   methods: {
     // 完成
     pay () {
@@ -193,7 +197,7 @@ export default {
             this.$router.go(-1)
           })
         })
-        .catch((message) => {
+        .catch(({ message }) => {
           this.setPaymentPassword(message)
         })
     },
@@ -213,7 +217,7 @@ export default {
             this.$router.go(-1)
           })
         })
-        .catch((message) => {
+        .catch(({ message }) => {
           this.setPaymentPassword(message)
         })
     },
@@ -233,7 +237,6 @@ export default {
     },
     // 设置支付密码
     setPaymentPassword (message) {
-      Toast.clear()
       if (message === '您还未设置支付密码！') {
         Dialog.confirm({
           title: '您还未设置支付密码，是否前往设置'
@@ -247,6 +250,8 @@ export default {
         }).catch(() => {
           this.showPasswordboard = true
         })
+      } else {
+        Toast(message)
       }
     },
     touchstart () {
@@ -270,6 +275,13 @@ export default {
       }
       return textList[value]
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'informationPaymentCode') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>

@@ -153,7 +153,8 @@ export default {
       downTime: 0, // 支付结束时间
       idcard: '', // 身份证
       sharePopup: false, // 分享弹窗
-      shareList: {} // 分享的商品列表
+      shareList: {}, // 分享的商品列表
+      isSplitOrder: false // 是否拆单
     }
   },
   created () {
@@ -173,7 +174,7 @@ export default {
     } */
 
     // console.log(this.$store.state.paddingTop)
-    this.getIsShare()
+    this.getIsShare(true)
   },
   activated () {
     if (this.scrollTop) {
@@ -192,9 +193,11 @@ export default {
       // this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
     },
     // 获取是否弹出分享
-    getIsShare () {
+    getIsShare (isSplitOrder) {
+      const currentSplitOrder = isSplitOrder || this.isSplitOrder
       getIsShare({
-        type: 1 // 订单列表
+        type: currentSplitOrder ? 1 : 2, // 订单列表
+        order_id: this.tapId
       }).then(({ is_popup: isPopup, credits, list }) => {
         if (+isPopup) {
           this.sharePopup = true
@@ -211,7 +214,7 @@ export default {
       // 异步更新数据
       this.getData()
     },
-    updateOne () {
+    updateOne (isShare = false) {
       getOrderOne({
         page_type: this.typeVal,
         order_project_id: this.tapId
@@ -235,6 +238,7 @@ export default {
           }
         }
       })
+      isShare && this.getIsShare()
     },
     getData () {
       getOrderList({
@@ -275,10 +279,11 @@ export default {
       console.log(this.timeArr)
       // this.downTime = this.listData[index].is_again_pay_time * 1000 - this.newTime
       this.downTime = this.timeArr[id]
-      this.payMoney = this.listData[index].pay_price / 100
+      this.payMoney = this.listData[index].z_pay_price / 100
       this.showPaySwal = true
       this.payOderdId = id
       this.tapId = this.listData[index].id
+      this.isSplitOrder = +this.listData[index].pt_order_num > 1
     },
     surePaySwal (callData) {
       payOrderUp({
@@ -330,7 +335,7 @@ export default {
       var aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
         function (ret, err) {
-          that.updateOne()
+          that.updateOne(true)
           // that.listInit(1);
           if (ret.code == '9000') { // 支付成功
 
@@ -351,12 +356,12 @@ export default {
         package: that.payOrderInfo.package,
         sign: that.payOrderInfo.paySign
       }, function (ret, err) {
-        that.updateOne()
+        that.updateOne(true)
       })
     },
     fyResult () {
       this.showPaySwal = false
-      this.updateOne()
+      this.updateOne(true)
     },
     // 取消订单
     cancelOrder (index, id) {

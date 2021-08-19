@@ -242,7 +242,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "happinessCoinPayment" */
         '@/views/personage/happiness-coin/payment.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 我的互动 */
   {

@@ -582,8 +582,7 @@ export default {
   created () {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
-    this.getData()
-    this.getIsShare()
+    this.getData(true)
   },
   methods: {
     // 到时间时间变化
@@ -592,7 +591,7 @@ export default {
         (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) *
         1000
     },
-    getData () {
+    getData (isShare = false) {
       getOrderDetail({
         order_project_id: this.order_id
       }).then(res => {
@@ -601,13 +600,14 @@ export default {
           this.orderInfo = res.order_project_info
           this.logisticsInfo = res.logistice_info
           this.newTime = parseInt(new Date().getTime())
+          isShare && this.getIsShare()
         }
       })
     },
     // 获取是否弹出分享
     getIsShare () {
       getIsShare({
-        type: 2, // 订单详情页
+        type: +this.orderInfo.pt_order_num > 1 ? 1 : 2, // 订单详情页
         order_id: this.order_id
       }).then(({ is_popup: isPopup, credits, list }) => {
         if (+isPopup) {
@@ -655,7 +655,7 @@ export default {
     // 再次付款
     payFunc () {
       // this.downTime = this.orderInfo.is_again_pay_time * 1000 - this.newTime
-      this.payMoney = this.orderInfo.pay_price / 100
+      this.payMoney = this.orderInfo.z_pay_price / 100
       this.showPaySwal = true
     },
     surePaySwal (callData) {
@@ -709,7 +709,7 @@ export default {
       const that = this
       var aliPayPlus = api.require('aliPayPlus')
       aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, function (ret, err) {
-        that.getData()
+        that.getData(true)
       })
     },
     // 微信支付
@@ -727,13 +727,13 @@ export default {
           sign: that.payOrderInfo.paySign
         },
         function (ret, err) {
-          that.getData()
+          that.getData(true)
         }
       )
     },
     fyResult () {
       this.showPaySwal = false
-      this.getData()
+      this.getData(true)
     },
     // 取消订单
     cancelOrder () {

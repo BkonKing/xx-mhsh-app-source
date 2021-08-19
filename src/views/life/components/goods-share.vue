@@ -128,7 +128,6 @@ export default {
       })
     },
     closeShare (data) {
-      console.log(data)
       this.shareShow = data === 1
     }
   }
