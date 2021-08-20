@@ -419,9 +419,7 @@ export default {
         })
       }
     },
-    /**
-     * 计算商品数量/价格
-     */
+    // 计算商品数量/价格
     total: function (e) {
       const that = this
       let carts_arr = []
@@ -473,9 +471,7 @@ export default {
       }
       that.getData()
     },
-    /**
-     * 结算
-    */
+    // 结算/兑换
     payFunc: function (e) {
       const that = this
       if (!this.addressInfo || !this.addressInfo.id) {
@@ -498,7 +494,7 @@ export default {
             // that.cartInit()
             this.cartClear = true
             if (res.no_pay == 1) {
-              this.goDetail()
+              this.goDetail(true)
             } else {
               this.openPaySwal()
             }
@@ -534,14 +530,14 @@ export default {
         })
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
-        this.flashParam.old_pay_credits = this.settlementInfo.pay_credits
+        this.flashParam.old_pay_credits = this.settlementInfo.pay_credits + parseFloat(this.settlementInfo.freight)
         this.flashParam.is_change = this.psType == this.selectType ? 0 : 1
         exchangeCreate(Object.assign({ user_explain: this.remarks }, this.flashParam)).then(res => { // 幸福币兑换
           if (res.success) {
             this.order_id = res.order_id
             // that.cartInit()
             this.cartClear = true
-            this.linkFunc(12, { id: this.order_id })
+            this.linkFunc(12, { id: this.order_id }, true)
           } else {
             if (res.code_val == 1) {
               this.$router.go(-1)
@@ -575,9 +571,7 @@ export default {
         })
       }
     },
-    /**
-     * 积分选择
-     */
+    // 积分选择
     selectFunc: function (e) {
       this.is_credits = !this.is_credits
       this.flashParam.is_credits = this.is_credits ? 1 : 0
@@ -610,6 +604,7 @@ export default {
         this.goDetail()
       }
     },
+    // 去支付
     surePaySwal (callData) {
       payOrderUp({
         order_id: this.order_id,
