@@ -582,7 +582,7 @@ export default {
   created () {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
-    this.getData(true)
+    this.getData(this.$route.query.isPay)
   },
   methods: {
     // 到时间时间变化

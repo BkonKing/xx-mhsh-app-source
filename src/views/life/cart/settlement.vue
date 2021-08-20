@@ -663,7 +663,7 @@ export default {
         function (ret, err) {
           if (that.order_type == 1 || that.order_type == 2) { // 闪购、拼单
             if (ret.code == 9000) { // 支付成功
-              that.goDetail()
+              that.goDetail(true)
             } else {
               that.$router.go(-1)
             }
@@ -687,7 +687,7 @@ export default {
         package: that.payOrderInfo.package,
         sign: that.payOrderInfo.paySign
       }, function (ret, err) {
-        that.goDetail()
+        that.goDetail(true)
         // if (ret.status) {
         //   that.goDetail()
         // } else {
@@ -698,16 +698,16 @@ export default {
     // 富友支付成功
     fyResult () {
       this.closePaySwal(0)
-      this.goDetail()
+      this.goDetail(true)
     },
-    goDetail () {
+    goDetail (isPay = false) {
       if (this.order_type == 1 || this.order_type == 2) { // 闪购、拼单
         this.linkFunc(13, { id: this.order_list[0].id })
       } else {
         if (this.order_list.length > 1) {
           this.linkFunc(11)
         } else {
-          this.linkFunc(12, { id: this.order_list[0].id })
+          this.linkFunc(12, { id: this.order_list[0].id }, isPay)
         }
       }
     },
@@ -722,7 +722,7 @@ export default {
         api.removePrefs({ key: 'cart2' })
       }
     },
-    linkFunc (type, obj = {}) {
+    linkFunc (type, obj = {}, isPay = false) {
       switch (type) {
         case 5:
           this.$router.push({
@@ -742,13 +742,19 @@ export default {
           })
           break
         case 11:
-          this.$router.push('/order/list')
+          this.$router.push({
+            path: '/order/list',
+            query: {
+              isPay: 1
+            }
+          })
           break
         case 12:
           this.$router.replace({
             path: '/order/detail',
             query: {
-              id: obj.id
+              id: obj.id,
+              isPay
             }
           })
           break

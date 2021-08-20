@@ -117,7 +117,7 @@ export default {
         thumb: data ? 'fs://' + data + '.png' : '',
         contentUrl:
           'http://live.tosolomo.com/wap/#/goodsDetail?id=' +
-          this.infoData.goods_id
+          this.activeGoods.goods_id
       }
     },
     success () {

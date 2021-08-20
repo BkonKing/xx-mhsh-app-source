@@ -14,9 +14,13 @@
     </van-nav-bar>
     <div class="tf-main-container">
       <!-- <userInfo :avatar="info.avatar" :name="`${nickname}(${info.realname})`" :time="info.mobile"></userInfo> -->
-      <userInfo :avatar="info.avatar" :name="info.realname  " :time="info.mobile"></userInfo>
+      <userInfo
+        :avatar="info.avatar"
+        :name="info.realname"
+        :time="info.mobile"
+      ></userInfo>
       <div class="payment-box">
-        <div class="payment-box__text">{{type | payText}}</div>
+        <div class="payment-box__text">{{ type | payText }}</div>
         <div class="payment-box__money">
           <span>￥</span>
           <van-field
@@ -39,12 +43,9 @@
           placeholder="添加备注(10字以内)"
         />
       </div>
-      <van-button
-        class="tf-mt-lg"
-        type="primary"
-        size="large"
-        @click="pay"
-      >{{type !== '2' ? '确认支付' : '确认'}}</van-button>
+      <van-button class="tf-mt-lg" type="primary" size="large" @click="pay">{{
+        type !== "2" ? "确认支付" : "确认"
+      }}</van-button>
     </div>
     <tf-dialog
       v-model="payCodeShow"
@@ -101,13 +102,8 @@ import {
 } from 'vant'
 import userInfo from '@/components/user-info/index.vue'
 import tfDialog from '@/components/tf-dialog/index'
-import {
-  paymentScan,
-  collectScan,
-  paymentCredits,
-  collectCredits,
-  skCredits
-} from '@/api/personage'
+import { paymentCredits, collectCredits, skCredits } from '@/api/personage'
+import { mapGetters } from 'vuex'
 export default {
   name: 'happinessCoinPayment',
   components: {
@@ -119,6 +115,9 @@ export default {
     [PasswordInput.name]: PasswordInput,
     userInfo,
     tfDialog
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   data () {
     return {
@@ -163,6 +162,10 @@ export default {
         Toast('请输入金额')
         return
       }
+      if (!this.userInfo.is_setpaypassword) {
+        this.setPaymentPassword('您还未设置支付密码！')
+        return
+      }
       if (this.type !== '2') {
         this.payCodeShow = true
         this.showPasswordboard = true
@@ -190,7 +193,7 @@ export default {
         paypassword: this.paypassword
       }
       paymentCredits(params)
-        .then((res) => {
+        .then(res => {
           Dialog.alert({
             title: '付款成功'
           }).then(() => {
@@ -210,7 +213,7 @@ export default {
         paypassword: this.paypassword
       }
       collectCredits(params)
-        .then((res) => {
+        .then(res => {
           Dialog.alert({
             title: '付款成功'
           }).then(() => {
@@ -227,7 +230,7 @@ export default {
         credits: this.value,
         remarks: this.remarks,
         code_id: this.codeId
-      }).then((res) => {
+      }).then(res => {
         Dialog.alert({
           title: '请等待对方确认付款'
         }).then(() => {
@@ -240,16 +243,18 @@ export default {
       if (message === '您还未设置支付密码！') {
         Dialog.confirm({
           title: '您还未设置支付密码，是否前往设置'
-        }).then(() => {
-          this.payCodeShow = false
-          this.$nextTick(() => {
-            this.$router.push(
-              '/pages/personage/information/payment-code?status=0'
-            )
-          })
-        }).catch(() => {
-          this.showPasswordboard = true
         })
+          .then(() => {
+            this.payCodeShow = false
+            this.$nextTick(() => {
+              this.$router.push(
+                '/pages/personage/information/payment-code?status=0'
+              )
+            })
+          })
+          .catch(() => {
+            this.showPasswordboard = true
+          })
       } else {
         Toast(message)
       }
@@ -286,7 +291,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .tf-main-container {
   padding: 30px 20px 0;
 }

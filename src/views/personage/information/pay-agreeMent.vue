@@ -18,29 +18,29 @@
 </template>
 
 <script>
-import { NavBar } from "vant";
-import { payAgreement } from "@/api/personage.js";
+import { NavBar } from 'vant'
+import { payAgreement } from '@/api/personage.js'
 export default {
   components: {
     [NavBar.name]: NavBar
   },
-  data() {
+  data () {
     return {
-      info: ""
-    };
+      info: ''
+    }
   },
   methods: {
     // 回退
-    goback() {
-      this.$router.go(-1);
+    goback () {
+      this.$router.go(-1)
     }
   },
-  async created() {
-    const res = await payAgreement();
-    this.info = res.data;
-    console.log(res);
+  async created () {
+    const res = await payAgreement()
+    this.info = res.data
+    console.log(res)
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
