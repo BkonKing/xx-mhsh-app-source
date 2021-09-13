@@ -100,7 +100,7 @@ export default {
     // 保存分享图片
     downloadSharePic () {
       const urlName = 'goods_' + this.activeGoods.goods_id
-      downloadPic(this.activeGoods.share_img, urlName)
+      downloadPic(this.activeGoods.pic, urlName)
         .then(data => {
           this.setShareObj(data)
         })
