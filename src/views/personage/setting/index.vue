@@ -23,6 +23,7 @@
         </tf-list-item>
       </tf-list>
       <tf-list class="tf-mt-lg">
+        <tf-list-item title="隐私政策" @click="goPrivacyPolicy" :border="true"></tf-list-item>
         <tf-list-item title="关于我们" @click="goAbout"></tf-list-item>
       </tf-list>
       <button class="btn" @click="goAccount">切换账号</button>
@@ -89,6 +90,10 @@ export default {
     /* 跳转我的资料 */
     goInformation () {
       this.$router.push('/pages/personage/information/index')
+    },
+    // 隐私政策
+    goPrivacyPolicy () {
+      this.$router.push('/agreement?articleType=6')
     },
     /* 跳转关于 */
     goAbout () {

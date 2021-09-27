@@ -85,6 +85,9 @@ export default {
   align-items: center;
   padding: 20px 0;
   // width: 710px;
+  div {
+    line-height: 1;
+  }
 }
 
 .tf-clist-cell-left {
