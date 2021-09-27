@@ -186,7 +186,7 @@
         <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
         <template v-else>
           <div v-if="settlementInfo.is_ok" class="all-price all-price-credits"><span>合计：</span><img src="@/assets/img/icon_37.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
-          <div v-else-if="settlementInfo.differ_credits" class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
+          <div v-else class="all-price"><template v-if="settlementInfo.differ_credits">还差{{settlementInfo.differ_credits}}幸福币</template></div>
         </template>
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc" v-preventReClick v-txAnalysis="{eventId: 16}">付款</div>
         <template v-else>
