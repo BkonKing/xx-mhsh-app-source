@@ -91,6 +91,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+span {
+  line-height: 1;
+}
 .agree-popup {
   display: flex;
   flex-direction: column;

@@ -5,8 +5,8 @@
       :fixed="true"
       placeholder
       :border="false"
-      left-arrow
-      @click-left="$router.go(-1)"
+      :left-arrow="type !== 4"
+      @click-left="handleClickLeft"
     >
     </van-nav-bar>
     <div class="tf-body-container">
@@ -34,7 +34,9 @@
         >
         <div class="agreement">
           <van-checkbox v-model="agreement" class="agreement-checkbox"
-            >阅读并同意<a>《注销重要提示》</a></van-checkbox
+            >阅读并同意<router-link to="/agreement?articleType=7" @click.stop=""
+              >《{{logoutAgreementTitle}}》</router-link
+            ></van-checkbox
           >
         </div>
       </template>
@@ -130,6 +132,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { clearUserInfo } from '@/utils/util'
+import { getAllAgreement } from '@/api/home'
 import { verifCode, setLogout } from '@/api/user'
 
 export default {
@@ -143,6 +147,7 @@ export default {
         '交易记录将被清空；',
         '其他APP、网站的授权登录或绑定关系将被解绑。'
       ],
+      logoutAgreementTitle: '',
       agreement: false,
       type: 1, // 1：申请注销 2：密码 3：手机验证码 4：成功
       mobile: '',
@@ -156,10 +161,23 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  // created () {
-  //   console.log(this.userInfo.is_setpassword)
-  // },
+  created () {
+    this.getAllAgreement()
+  },
   methods: {
+    // 获取协议名称
+    getAllAgreement () {
+      getAllAgreement().then(({ data }) => {
+        data.forEach(obj => {
+          obj.article_type === '7' && (this.logoutAgreementTitle = obj.title)
+        })
+      })
+    },
+    handleClickLeft () {
+      if (this.type !== 4) {
+        this.$router.go(-1)
+      }
+    },
     // 打开申请注销
     openApply () {
       if (this.agreement) {
@@ -203,13 +221,14 @@ export default {
       }).then(({ success }) => {
         if (success) {
           this.type = 4
+          clearUserInfo()
+          this.$store.commit('clearKeepAlive')
         }
       })
     },
+    // 关闭APP
     confirm () {
-      this.$store.dispatch('outLogin').then(() => {
-        this.$router.push('/login')
-      })
+      api.closeWidget({ silent: true })
     }
   }
 }
@@ -270,6 +289,7 @@ span {
   margin-top: 9px;
   color: #222222;
   font-size: 28px;
+  font-weight: bold;
   line-height: 28px;
 }
 
@@ -330,7 +350,7 @@ span {
     line-height: 1;
     a {
       line-height: 1;
-      color: #0E80E1;
+      color: #0e80e1;
     }
   }
 }
@@ -377,30 +397,39 @@ span {
   }
   .form-input {
     flex: 1;
-    height: 44px;
+    height: 36px;
     margin-bottom: 30px;
     padding: 0 20px 0 0;
     border: none;
     font-size: 32px;
-    /deep/ .van-field__control::placeholder {
+    /deep/ .van-field__control {
       font-size: 32px;
-      letter-spacing: 0;
-      color: #8f8f94 !important;
+      font-weight: bold;
+      line-height: 1;
+      &::placeholder {
+        font-size: 32px;
+        font-weight: 400;
+        letter-spacing: 0;
+        color: #8f8f94 !important;
+      }
     }
   }
   .query-code-btn {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
-    width: 152px;
-    height: 40px;
-    padding-left: 30px;
+    width: 168px;
+    height: 36px;
+    // padding-left: 30px;
     padding-right: 0;
     border: none;
     border-radius: 0;
     border-left: 1px solid #8f8f94;
-    font-size: 24px;
-    color: #222222;
+    /deep/ .van-button__text > span {
+      font-size: 28px;
+      font-weight: bold;
+      color: #222222;
+    }
     &:active::before {
       opacity: 0;
     }
@@ -437,13 +466,14 @@ span {
   }
   .success-alert {
     width: 510px;
-    margin-top: 60px;
+    margin-top: 50px;
     font-size: 24px;
     color: #8f8f94;
+    text-align: center;
     line-height: 44px;
   }
   .btn {
-    margin-top: 180px;
+    margin-top: 170px;
     margin-left: 0;
   }
 }

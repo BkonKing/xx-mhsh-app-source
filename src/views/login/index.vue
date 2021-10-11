@@ -108,7 +108,7 @@
         您的账号注销申请已提交，在30天内请不要登录美好生活家园APP，以确保注销顺利完成。可再次查看<router-link
           class="agreement-link"
           to="/agreement?articleType=7"
-          >《注销重要提醒》</router-link
+          >《{{logoutAgreementTitle}}》</router-link
         >
       </template>
     </tf-dialog-v2>
@@ -155,6 +155,7 @@ export default {
       loginLoading: false, // 登录loading状态
       userAgreementTitle: '用户协议', // 用户协议标题
       privacyAgreementTitle: '隐私协议', // 隐私协议标题
+      logoutAgreementTitle: '注销重要提示', // 注销协议标题
       agreePopup: false, // 登录协议弹窗
       logoutDialog: false,
       cancelLogoutDialog: false
@@ -182,6 +183,7 @@ export default {
         data.forEach(obj => {
           obj.article_type === '1' && (this.userAgreementTitle = obj.title)
           obj.article_type === '6' && (this.privacyAgreementTitle = obj.title)
+          obj.article_type === '7' && (this.logoutAgreementTitle = obj.title)
         })
       })
     },
