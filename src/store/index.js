@@ -218,12 +218,12 @@ const store = {
               await dispatch('getHouse')
               resolve(data)
             } else {
-              reject(res.message)
+              reject(res.message, res)
             }
             loadingToast.clear()
           }).catch((error) => {
             loadingToast.clear()
-            reject(error.message)
+            reject(error)
           })
         }
       })

@@ -86,33 +86,58 @@
         </div>
         <span class="agreement-text">
           <span @click="agree = !agree">已阅读并同意</span>
-          <router-link
-            class="agreement-link"
-            to="/agreement?articleType=1"
+          <router-link class="agreement-link" to="/agreement?articleType=1"
             >《{{ userAgreementTitle }}》</router-link
           >
-          <router-link
-            class="agreement-link"
-            to="/agreement?articleType=6"
+          <router-link class="agreement-link" to="/agreement?articleType=6"
             >《{{ privacyAgreementTitle }}》</router-link
           >
         </span>
       </div>
     </div>
     <agree-popup v-model="agreePopup" @handleAgree="handleAgree"></agree-popup>
+    <tf-dialog-v2
+      v-model="logoutDialog"
+      title="账号注销已提交"
+      confirmButtonText="我知道了"
+      cancelButtonText="取消注销申请"
+      @confirm="() => logoutDialog = false"
+      @cancel="logoutDialog = false;cancelLogoutDialog = true"
+    >
+      <template slot="content">
+        您的账号注销申请已提交，在30天内请不要登录美好生活家园APP，以确保注销顺利完成。可再次查看<router-link
+          class="agreement-link"
+          to="/agreement?articleType=7"
+          >《注销重要提醒》</router-link
+        >
+      </template>
+    </tf-dialog-v2>
+    <tf-dialog-v2
+      v-model="cancelLogoutDialog"
+      title="确定取消账号注销申请？"
+      content="取消账号注销申请后，不再删除账号的数据，您的账号可正常进行登录。"
+      confirmButtonText="确定取消"
+      :showCancelButton="false"
+      :closeOnClickOverlay="true"
+      @confirm="cancelLogout"
+    >
+    </tf-dialog-v2>
   </div>
 </template>
 
 <script>
-import { verifCode } from '@/api/user'
+import { verifCode, cancelLogout } from '@/api/user'
 import { validEmpty } from '@/utils/util'
 import { getAllAgreement } from '@/api/home'
 import { setStatisticsData } from '@/utils/analysis'
 import AgreePopup from '@/components/Business/agree-popup'
+import TfDialogV2 from '@/components/tf-dialog-v2'
+
 export default {
   name: 'login',
   components: {
-    AgreePopup
+    AgreePopup,
+    TfDialogV2
   },
   data () {
     return {
@@ -130,7 +155,9 @@ export default {
       loginLoading: false, // 登录loading状态
       userAgreementTitle: '用户协议', // 用户协议标题
       privacyAgreementTitle: '隐私协议', // 隐私协议标题
-      agreePopup: false // 登录协议弹窗
+      agreePopup: false, // 登录协议弹窗
+      logoutDialog: false,
+      cancelLogoutDialog: false
     }
   },
   created () {
@@ -225,9 +252,25 @@ export default {
           // 登入新增
           setStatisticsData(4, { mobile: this.mobile })
         })
-        .catch(() => {
+        .catch((res) => {
           this.loginLoading = false
+          // 弹出注销提交
+          if (+res.is_popup) {
+            this.logoutDialog = true
+          } else {
+            this.$toast(res.message)
+          }
         })
+    },
+    // 确定取消注销申请
+    cancelLogout () {
+      cancelLogout({
+        mobile: this.mobile
+      }).then(({ success }) => {
+        if (success) {
+          this.submitLogin()
+        }
+      })
     },
     // 登录跳转，判断是否通过分享进入未登录情况下吗，登录成功后跳转到分享页面，否则跳转到首页
     loginJump () {
