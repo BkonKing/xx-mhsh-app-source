@@ -142,5 +142,6 @@ export const pagesArr = {
   PersonageTaskDetails: 141, // 邻里任务我的任务详情
   TaskComplaintDetails: 142, // 邻里任务任务投诉详情
   specialTopic: 143, // 专题页
-  specialMap: 144 // 专题地址
+  specialMap: 144, // 专题地址
+  logout: 145 // 注销账号
 }
