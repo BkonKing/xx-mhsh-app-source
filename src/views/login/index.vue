@@ -101,14 +101,17 @@
       title="账号注销已提交"
       confirmButtonText="我知道了"
       cancelButtonText="取消注销申请"
-      @confirm="() => logoutDialog = false"
-      @cancel="logoutDialog = false;cancelLogoutDialog = true"
+      @confirm="() => (logoutDialog = false)"
+      @cancel="
+        logoutDialog = false;
+        cancelLogoutDialog = true;
+      "
     >
       <template slot="content">
         您的账号注销申请已提交，在30天内请不要登录美好生活家园APP，以确保注销顺利完成。可再次查看<router-link
           class="agreement-link"
           to="/agreement?articleType=7"
-          >《{{logoutAgreementTitle}}》</router-link
+          >《{{ logoutAgreementTitle }}》</router-link
         >
       </template>
     </tf-dialog-v2>
@@ -158,7 +161,8 @@ export default {
       logoutAgreementTitle: '注销重要提示', // 注销协议标题
       agreePopup: false, // 登录协议弹窗
       logoutDialog: false,
-      cancelLogoutDialog: false
+      cancelLogoutDialog: false,
+      loginData: {} // 注销用户保护期登录保存登录成功数据,确认取消申请后登录使用
     }
   },
   created () {
@@ -235,34 +239,39 @@ export default {
         })
         .then(data => {
           this.loginLoading = false
-          if (!this.firstStatus) {
-            api.setPrefs({
-              key: 'first-login',
-              value: 1
-            })
-          }
-          this.loginJump()
-          // 行为数据分析收集
-          if (data.first_register == 1) {
-            this.mtjEvent({
-              eventId: 2
-            })
-          }
-          this.mtjEvent({
-            eventId: 1
-          })
-          // 登入新增
-          setStatisticsData(4, { mobile: this.mobile })
-        })
-        .catch((res) => {
-          this.loginLoading = false
           // 弹出注销提交
-          if (+res.is_popup) {
+          if (+data.is_popup) {
             this.logoutDialog = true
+            this.loginData = data
           } else {
-            this.$toast(res.message)
+            this.loginSuccess(data)
           }
         })
+        .catch(res => {
+          this.loginLoading = false
+          this.$toast(res.message)
+        })
+    },
+    // 成功登录
+    loginSuccess (data) {
+      if (!this.firstStatus) {
+        api.setPrefs({
+          key: 'first-login',
+          value: 1
+        })
+      }
+      this.loginJump()
+      // 行为数据分析收集
+      if (data.first_register == 1) {
+        this.mtjEvent({
+          eventId: 2
+        })
+      }
+      this.mtjEvent({
+        eventId: 1
+      })
+      // 登入新增
+      setStatisticsData(4, { mobile: this.mobile })
     },
     // 确定取消注销申请
     cancelLogout () {
@@ -270,7 +279,7 @@ export default {
         mobile: this.mobile
       }).then(({ success }) => {
         if (success) {
-          this.submitLogin()
+          this.loginSuccess(this.loginData)
         }
       })
     },
