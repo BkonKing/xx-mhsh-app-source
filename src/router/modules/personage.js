@@ -454,7 +454,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "logout" */
         '@/views/personage/information/logout'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   }
 ]
 

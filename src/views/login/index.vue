@@ -129,12 +129,13 @@
 </template>
 
 <script>
-import { verifCode, cancelLogout } from '@/api/user'
-import { validEmpty } from '@/utils/util'
+import { yzmLogin, pwdLogin, verifCode, cancelLogout } from '@/api/user'
+import { validEmpty, bMapGetLocationInfo } from '@/utils/util'
 import { getAllAgreement } from '@/api/home'
 import { setStatisticsData } from '@/utils/analysis'
 import AgreePopup from '@/components/Business/agree-popup'
 import TfDialogV2 from '@/components/tf-dialog-v2'
+import { bindAliasAndTags } from '@/utils/ajpush'
 
 export default {
   name: 'login',
@@ -202,8 +203,8 @@ export default {
         return
       }
       let params
-      /* 验证码登录 */
       if (this.loginType === 1) {
+        // 验证码登录
         if (
           validEmpty(this.mobile, '请输入手机号码') ||
           validEmpty(this.yzm, '请输入验证码')
@@ -215,7 +216,7 @@ export default {
           yzm: this.yzm
         }
       } else if (this.loginType === 2) {
-        /* 密码登录 */
+        // 密码登录
         if (
           validEmpty(this.mobile, '请输入手机号码') ||
           validEmpty(this.pwd, '请输入密码')
@@ -229,31 +230,80 @@ export default {
       }
       this.login(params)
     },
-    // 登录请求
-    login (params) {
+    // 获取地址登录
+    async login (params) {
       this.loginLoading = true
-      this.$store
-        .dispatch('login', {
-          type: this.loginType,
-          params
+
+      this.$toast.allowMultiple()
+      const loadingToast = this.$toast.loading({
+        duration: 0,
+        message: '正在登录中'
+      })
+
+      // 获取当前地址
+      let newParams = params
+      try {
+        const ret = await bMapGetLocationInfo()
+        const locationInfo = {
+          lon: ret.lon, // 数字类型；经度
+          lat: ret.lat, // 数字类型；纬度
+          province: ret.province, // 字符串类型；省份
+          cityCode: ret.cityCode, // 字符串类型；城市编码
+          city: ret.city, // 字符串类型；城市
+          district: ret.district, // 字符串类型；县区
+          streetName: ret.streetName // 字符串类型；街道名
+        }
+        newParams = {
+          ...locationInfo,
+          ...params
+        }
+        api.setPrefs({
+          key: 'location_info',
+          value: locationInfo
         })
-        .then(data => {
-          this.loginLoading = false
-          // 弹出注销提交
-          if (+data.is_popup) {
-            this.logoutDialog = true
-            this.loginData = data
+      } catch (error) {
+      }
+      this.requestLogin(newParams, loadingToast)
+    },
+    // 登录请求
+    requestLogin (newParams, loadingToast) {
+      const loginUrl = this.loginType === 1 ? yzmLogin : pwdLogin
+      loginUrl(newParams)
+        .then(res => {
+          const { data, success } = res
+          if (success) {
+            if (+data.is_popup) {
+              // 弹出注销提交
+              this.logoutDialog = true
+              this.loginData = data
+            } else {
+              // 登录成功
+              this.loginSuccess(data)
+            }
           } else {
-            this.loginSuccess(data)
+            this.$toast(res.message)
           }
         })
-        .catch(res => {
-          this.loginLoading = false
+        .catch((res) => {
           this.$toast(res.message)
+        })
+        .finally(() => {
+          this.loginLoading = false
+          loadingToast.clear()
         })
     },
     // 成功登录
-    loginSuccess (data) {
+    async loginSuccess (data) {
+      // 极光推送别名
+      if (process.env.VUE_APP_IS_APP === '1') {
+        bindAliasAndTags(data.id)
+      }
+      // 保存token和tokenList(多账号切换)
+      this.setToken(data)
+
+      this.$store.commit('setUser_info', data)
+      await this.$store.dispatch('getHouse')
+      // 第一次登录成功后，下次不进入自动勾选协议
       if (!this.firstStatus) {
         api.setPrefs({
           key: 'first-login',
@@ -261,26 +311,29 @@ export default {
         })
       }
       this.loginJump()
-      // 行为数据分析收集
-      if (data.first_register == 1) {
-        this.mtjEvent({
-          eventId: 2
-        })
-      }
-      this.mtjEvent({
-        eventId: 1
-      })
-      // 登入新增
-      setStatisticsData(4, { mobile: this.mobile })
+      this.setDataAnalysis(data.first_register)
     },
-    // 确定取消注销申请
-    cancelLogout () {
-      cancelLogout({
-        mobile: this.mobile
-      }).then(({ success }) => {
-        if (success) {
-          this.loginSuccess(this.loginData)
-        }
+    // 保存token和tokenList(多账号切换)
+    setToken (data) {
+      api.setPrefs({
+        key: 'access_token',
+        value: data.access_token
+      })
+      api.setPrefs({
+        key: 'refresh_token',
+        value: data.refresh_token
+      })
+      let tokenList =
+        api.getPrefs({
+          key: 'token_list',
+          sync: true
+        }) || {}
+      tokenList =
+        typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
+      tokenList[data.id] = data.access_token
+      api.setPrefs({
+        key: 'token_list',
+        value: tokenList
       })
     },
     // 登录跳转，判断是否通过分享进入未登录情况下吗，登录成功后跳转到分享页面，否则跳转到首页
@@ -332,6 +385,31 @@ export default {
           name: 'home'
         })
       }
+    },
+    // 登录行为数据分析收集
+    setDataAnalysis (firstRegister) {
+      // 行为数据分析收集
+      // eslint-disable-next-line eqeqeq
+      if (firstRegister == 1) {
+        this.mtjEvent({
+          eventId: 2
+        })
+      }
+      this.mtjEvent({
+        eventId: 1
+      })
+      // 登入新增
+      setStatisticsData(4, { mobile: this.mobile })
+    },
+    // 确定取消注销申请
+    cancelLogout () {
+      cancelLogout({
+        mobile: this.mobile
+      }).then(({ success }) => {
+        if (success) {
+          this.loginSuccess(this.loginData)
+        }
+      })
     },
     // 发送验证码
     verifCode () {

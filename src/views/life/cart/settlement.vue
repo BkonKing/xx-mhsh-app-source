@@ -380,7 +380,7 @@ export default {
             // api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) })
             this.settlementInfo = res.data
             if (!this.isSelectCoupon) {
-              this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo
+              this.couponInfo = res.data.coupon_arr && res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo
             }
             if (!this.isSelectAddress) {
               this.addressInfo = res.address_info

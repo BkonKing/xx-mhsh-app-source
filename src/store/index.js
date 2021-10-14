@@ -16,10 +16,8 @@ import {
 } from 'vant'
 import router from '@/router'
 import {
-  clearUserInfo,
-  bMapGetLocationInfo
+  clearUserInfo
 } from '@/utils/util'
-import { bindAliasAndTags } from '@/utils/ajpush'
 
 Vue.use(Vuex)
 
@@ -151,83 +149,6 @@ const store = {
     }
   },
   actions: {
-    login ({
-      commit,
-      state,
-      dispatch
-    }, {
-      type,
-      params
-    }) {
-      return new Promise((resolve, reject) => {
-        Toast.allowMultiple()
-        const loadingToast = Toast.loading({
-          duration: 0,
-          message: '正在登录中'
-        })
-        const loginUrl = type === 1 ? yzmLogin : pwdLogin
-        bMapGetLocationInfo().then((ret) => {
-          const locationInfo = {
-            lon: ret.lon, // 数字类型；经度
-            lat: ret.lat, // 数字类型；纬度
-            province: ret.province, // 字符串类型；省份
-            cityCode: ret.cityCode, // 字符串类型；城市编码
-            city: ret.city, // 字符串类型；城市
-            district: ret.district, // 字符串类型；县区
-            streetName: ret.streetName// 字符串类型；街道名
-          }
-          const newParams = { ...locationInfo, ...params }
-          api.setPrefs({
-            key: 'location_info',
-            value: locationInfo
-          })
-          toLogin(newParams)
-        }).catch(() => {
-          toLogin(params)
-        })
-        function toLogin (newParams) {
-          loginUrl(newParams).then(async (res) => {
-            if (res.success) {
-              const {
-                data
-              } = res
-              if (process.env.VUE_APP_IS_APP === '1') {
-                bindAliasAndTags(data.id)
-              }
-              api.setPrefs({
-                key: 'access_token',
-                value: data.access_token
-              })
-              api.setPrefs({
-                key: 'refresh_token',
-                value: data.refresh_token
-              })
-              let tokenList = api.getPrefs({
-                key: 'token_list',
-                sync: true
-              }) || {}
-              tokenList = typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
-              tokenList[data.id] = data.access_token
-              api.setPrefs({
-                key: 'token_list',
-                value: tokenList
-              })
-              commit('setUser_info', data)
-              // dispatch('getHouse')
-              // dispatch('getMyAccount')
-              await dispatch('getHouse')
-              resolve(data)
-            } else {
-              reject(res.message, res)
-            }
-            loadingToast.clear()
-          }).catch((error) => {
-            loadingToast.clear()
-            reject(error)
-          })
-        }
-      })
-    },
     async outLogin ({
       commit
     }) {

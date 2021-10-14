@@ -34,8 +34,8 @@
         >
         <div class="agreement">
           <van-checkbox v-model="agreement" class="agreement-checkbox"
-            >阅读并同意<router-link to="/agreement?articleType=7" @click.stop=""
-              >《{{logoutAgreementTitle}}》</router-link
+            >阅读并同意<a @click.stop="$router.push('/agreement?articleType=7')"
+              >《{{ logoutAgreementTitle }}》</a
             ></van-checkbox
           >
         </div>
@@ -230,6 +230,13 @@ export default {
     confirm () {
       api.closeWidget({ silent: true })
     }
+  },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'agreement') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
   }
 }
 </script>
