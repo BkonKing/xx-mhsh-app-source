@@ -2,7 +2,14 @@ import request from '../utils/request.js'
 
 /* 手机验证码登录 */
 export function yzmLogin (data) {
-  return request.post('/ulogin/login/yzmLogin', data)
+  return request({
+    url: '/ulogin/login/yzmLogin',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 
 /* 发送手机验证码 */
@@ -16,7 +23,14 @@ export function verifCode (data) {
 
 /* 手机密码登录 */
 export function pwdLogin (data) {
-  return request.post('/ulogin/login/pwdLogin', data)
+  return request({
+    url: '/ulogin/login/pwdLogin',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 
 /* 退出登录 */
@@ -60,4 +74,14 @@ export function sendSaveDownload (data) {
 /* 设置游客定位信息 */
 export function setUserPostion (data) {
   return request.post('/user/user/setUserPostion', data)
+}
+
+/* 注销账号接口 */
+export function setLogout (data) {
+  return request.post('/user/cancel/set_cancel', data)
+}
+
+/* 取消注销账号接口 */
+export function cancelLogout (data) {
+  return request.post('/user/cancel/cancel_apply', data)
 }

@@ -47,16 +47,15 @@ router.beforeEach(async (to, from, next) => {
     sync: true,
     key: 'access_token'
   })
-
+  // 动态添加keepalive到列表，离开时再手动从列表中删除keepalive
+  if (to.meta && to.meta.keepAlive) {
+    store.commit('setKeepAliveList', to.name)
+  }
   // 有token
   if (hasToken && hasToken != 'undefined') {
     if (store.state.user_info.user_type != 0 && !store.state.current_project) {
       // 获取当前项目
       await store.dispatch('getHouse')
-    }
-    // 动态添加keepalive到列表，离开时再手动从列表中删除keepalive
-    if (to.meta && to.meta.keepAlive) {
-      store.commit('setKeepAliveList', to.name)
     }
     next()
   } else {

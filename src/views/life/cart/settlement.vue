@@ -186,7 +186,7 @@
         <div v-else-if="order_type==1 || order_type==2" class="all-price"><span>合计：</span>￥{{is_credits ? (parseInt(settlementInfo.credits_pay_money) + parseInt(settlementInfo.freight))/100 : (parseInt(settlementInfo.new_pay_money) + parseInt(settlementInfo.freight))/100}}</div>
         <template v-else>
           <div v-if="settlementInfo.is_ok" class="all-price all-price-credits"><span>合计：</span><img src="@/assets/img/icon_37.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
-          <div v-else class="all-price">还差{{settlementInfo.differ_credits}}幸福币</div>
+          <div v-else class="all-price"><template v-if="settlementInfo.differ_credits">还差{{settlementInfo.differ_credits}}幸福币</template></div>
         </template>
         <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc" v-preventReClick v-txAnalysis="{eventId: 16}">付款</div>
         <template v-else>
@@ -377,10 +377,10 @@ export default {
           // user_coupon_id: 2
         }).then(res => {
           if (res.success) {
-            api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) })
+            // api.setPrefs({ key: 'cart', value: JSON.stringify(res.goods_arr) })
             this.settlementInfo = res.data
             if (!this.isSelectCoupon) {
-              this.couponInfo = res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo
+              this.couponInfo = res.data.coupon_arr && res.data.coupon_arr.length > 0 && !this.couponInfo ? res.data.coupon_arr[0] : this.couponInfo
             }
             if (!this.isSelectAddress) {
               this.addressInfo = res.address_info
@@ -407,7 +407,7 @@ export default {
           if (res.success) {
             this.settlementInfo = res.data.pay
             this.infoData = res.data.info_data
-            this.priceTotal = parseInt(this.settlementInfo.new_pay_money) - parseInt(this.settlementInfo.freight)
+            this.priceTotal = parseInt(this.settlementInfo.new_pay_money)
             this.carts[0].s_price = parseInt(this.infoData.pay_price)
             this.carts[0].y_price = parseInt(this.infoData.sale_price)
             if (this.isSelectAddress) {
@@ -419,9 +419,7 @@ export default {
         })
       }
     },
-    /**
-     * 计算商品数量/价格
-     */
+    // 计算商品数量/价格
     total: function (e) {
       const that = this
       let carts_arr = []
@@ -473,9 +471,7 @@ export default {
       }
       that.getData()
     },
-    /**
-     * 结算
-    */
+    // 结算/兑换
     payFunc: function (e) {
       const that = this
       if (!this.addressInfo || !this.addressInfo.id) {
@@ -498,7 +494,7 @@ export default {
             // that.cartInit()
             this.cartClear = true
             if (res.no_pay == 1) {
-              this.goDetail()
+              this.goDetail(true)
             } else {
               this.openPaySwal()
             }
@@ -534,14 +530,14 @@ export default {
         })
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
-        this.flashParam.old_pay_credits = this.settlementInfo.pay_credits
+        this.flashParam.old_pay_credits = this.settlementInfo.pay_credits + parseFloat(this.settlementInfo.freight)
         this.flashParam.is_change = this.psType == this.selectType ? 0 : 1
         exchangeCreate(Object.assign({ user_explain: this.remarks }, this.flashParam)).then(res => { // 幸福币兑换
           if (res.success) {
             this.order_id = res.order_id
             // that.cartInit()
             this.cartClear = true
-            this.linkFunc(12, { id: this.order_id })
+            this.linkFunc(12, { id: this.order_id }, true)
           } else {
             if (res.code_val == 1) {
               this.$router.go(-1)
@@ -575,9 +571,7 @@ export default {
         })
       }
     },
-    /**
-     * 积分选择
-     */
+    // 积分选择
     selectFunc: function (e) {
       this.is_credits = !this.is_credits
       this.flashParam.is_credits = this.is_credits ? 1 : 0
@@ -610,6 +604,7 @@ export default {
         this.goDetail()
       }
     },
+    // 去支付
     surePaySwal (callData) {
       payOrderUp({
         order_id: this.order_id,
@@ -663,7 +658,7 @@ export default {
         function (ret, err) {
           if (that.order_type == 1 || that.order_type == 2) { // 闪购、拼单
             if (ret.code == 9000) { // 支付成功
-              that.goDetail()
+              that.goDetail(true)
             } else {
               that.$router.go(-1)
             }
@@ -687,7 +682,7 @@ export default {
         package: that.payOrderInfo.package,
         sign: that.payOrderInfo.paySign
       }, function (ret, err) {
-        that.goDetail()
+        that.goDetail(true)
         // if (ret.status) {
         //   that.goDetail()
         // } else {
@@ -698,16 +693,16 @@ export default {
     // 富友支付成功
     fyResult () {
       this.closePaySwal(0)
-      this.goDetail()
+      this.goDetail(true)
     },
-    goDetail () {
+    goDetail (isPay = false) {
       if (this.order_type == 1 || this.order_type == 2) { // 闪购、拼单
         this.linkFunc(13, { id: this.order_list[0].id })
       } else {
         if (this.order_list.length > 1) {
           this.linkFunc(11)
         } else {
-          this.linkFunc(12, { id: this.order_list[0].id })
+          this.linkFunc(12, { id: this.order_list[0].id }, isPay)
         }
       }
     },
@@ -722,7 +717,7 @@ export default {
         api.removePrefs({ key: 'cart2' })
       }
     },
-    linkFunc (type, obj = {}) {
+    linkFunc (type, obj = {}, isPay = false) {
       switch (type) {
         case 5:
           this.$router.push({
@@ -742,13 +737,19 @@ export default {
           })
           break
         case 11:
-          this.$router.push('/order/list')
+          this.$router.push({
+            path: '/order/list',
+            query: {
+              isPay: 1
+            }
+          })
           break
         case 12:
           this.$router.replace({
             path: '/order/detail',
             query: {
-              id: obj.id
+              id: obj.id,
+              isPay
             }
           })
           break

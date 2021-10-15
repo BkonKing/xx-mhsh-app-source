@@ -97,7 +97,11 @@ function setPer (resolve, reject, name) {
   reqPermission(name, ({ list }) => {
     if (list[0].granted) {
       // 开启定位，则获取用户的定位信息保存在后端
-      if (name === 'location') {
+      const hasToken = api.getPrefs({
+        sync: true,
+        key: 'access_token'
+      })
+      if (name === 'location' && hasToken) {
         bMapGetLocationInfo()
           .then(data => {
             const { lon, lat, address } = data

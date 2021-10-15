@@ -397,7 +397,6 @@ export default {
 }
 
 .no-fixed-btn {
-  position: initial !important;
   margin-left: 20px;
 }
 </style>

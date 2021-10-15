@@ -229,7 +229,7 @@
       <div slot="content" class="popup-cont end-cont">
         <div class="form-label">淘汰原因<span>*</span></div>
         <div @click="reasonShow = true" class="select-block tf-row">
-          <div class="popup-select tf-row-space-between" >
+          <div class="popup-select tf-row-space-between">
             {{ formData.reason || "请选择" }}
             <img src="@/assets/img/task_09.png" />
           </div>
@@ -362,7 +362,10 @@ export default {
           value: 2
         }
       ]
-      if (this.overtimeInfo.reward_happiness == '1' || this.overtimeInfo.reward_happiness == '0') {
+      if (
+        this.overtimeInfo.reward_happiness == '1' ||
+        this.overtimeInfo.reward_happiness == '0'
+      ) {
         coinList.splice(1, 1)
         return coinList
       }
@@ -391,11 +394,15 @@ export default {
         this.isLoading = false
         if (this.first) {
           this.first = false
-          this.userIndex = 0
         } else {
-          this.userIndex = res.data.findIndex(obj => {
-            return obj.id === this.infoData.id
-          })
+          if (this.$store.state.taskFinishStatus) {
+            this.userIndex = 0
+            this.$store.commit('setTaskFinishStatus', false)
+          } else {
+            this.userIndex = res.data.findIndex(obj => {
+              return obj.id === this.infoData.id
+            })
+          }
         }
         this.statusNumList = []
         this.statusList = []
@@ -860,7 +867,6 @@ export default {
   .select-block {
     margin: 0;
     .popup-select {
-
       flex: 1;
       img {
         width: 36px;

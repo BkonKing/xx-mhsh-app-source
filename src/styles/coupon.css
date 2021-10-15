@@ -51,6 +51,10 @@
 }
 .coupon-price-num {
   line-height: 190px;
+  font-weight: bold;
+}
+.coupon-price-num span {
+  font-weight: normal;
 }
 .coupon-price span {
   font-size: 30px;

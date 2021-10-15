@@ -1,59 +1,38 @@
 <template>
-<div class='tf-bg-white'>
-  <van-nav-bar
-    :title="title"
-    :fixed="true"
-    :border="false"
-    placeholder
-    left-arrow
-    @click-left="goback"
-  ></van-nav-bar>
-  <div class='tf-padding'>
-    <div class="tf-text" v-html="content"></div>
+  <div class="tf-bg-white">
+    <van-nav-bar
+      :title="title"
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    ></van-nav-bar>
+    <div class="tf-padding">
+      <div class="tf-text" v-html="content"></div>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
-import { getUserAgreement, getNeighboursAgreement } from '@/api/home'
-import { mapGetters } from 'vuex'
+import { getNeighboursAgreement } from '@/api/home'
 
 export default {
-  components: {
-    [NavBar.name]: NavBar
-  },
   data () {
     return {
       title: '',
       content: ''
     }
   },
-  computed: {
-    ...mapGetters(['otherAgreement'])
-  },
   created () {
-    const type = this.$route.query.type
-    if (type == 1) { // 使用协议
-      this.title = this.otherAgreement.title
-      this.content = this.otherAgreement.content
-    } else if (type == 2) { // 邻里协议
-      this.getNeighboursAgreement()
-    } else {
-      this.getUserAgreement()
-    }
+    // articleType：1、用户协议 2、其他协议 3、内容协议 4、支付协议 5、交易规则 6、隐私政策
+    const { articleType } = this.$route.query
+    this.getAgreement({ article_type: articleType })
   },
   methods: {
-    getUserAgreement () {
-      getUserAgreement().then(res => {
-        const { title, content } = res.data
-        this.title = title
-        this.content = content
-      })
-    },
-    /* 邻里使用协议 */
-    getNeighboursAgreement () {
-      getNeighboursAgreement().then(({ data }) => {
+    // 获取协议内容
+    getAgreement (data) {
+      getNeighboursAgreement(data).then(({ data }) => {
         const { title, content } = data
         this.title = title
         this.content = content
@@ -72,6 +51,4 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
-
-</style>
+<style lang="less" scoped></style>

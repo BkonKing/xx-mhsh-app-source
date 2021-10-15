@@ -11,215 +11,501 @@
           @click-left="$router.go(-1)"
         >
           <template #right>
-            <a :href="'tel: '+orderInfo.customerServiceHotline" class="nav-serve" v-txAnalysis="{eventId: 53}"><img src="@/assets/img/icon_23.png" /></a>
+            <a
+              :href="'tel: ' + orderInfo.customerServiceHotline"
+              class="nav-serve"
+              v-txAnalysis="{ eventId: 53 }"
+              ><img src="@/assets/img/icon_23.png"
+            /></a>
           </template>
         </van-nav-bar>
       </div>
-      <div v-if="orderInfo" :class="[(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2) ? 'scroll-body-btn' : '', 'order-session scroll-body']">
+      <div
+        v-if="orderInfo"
+        :class="[
+          (orderInfo.is_cancel_btn ||
+            orderInfo.is_again_pay_btn ||
+            orderInfo.is_logistice_btn) &&
+          !(goodsList[0].buy_type == 1 && orderInfo.order_status > 2)
+            ? 'scroll-body-btn'
+            : '',
+          'order-session scroll-body'
+        ]"
+      >
         <div class="order-header-bg"></div>
         <div class="order-status-session">
-          <div class="order-status-name">{{orderInfo.order_status_name}}</div>
-          <div v-if="orderInfo.is_again_pay_btn" class="order-status-tip">剩余<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish">
-                <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-                </template>
-              </van-count-down> 自动取消订单</div>
-          <div v-else class="order-status-tip">{{orderInfo.order_status_text_name}}</div>
+          <div class="order-status-name">{{ orderInfo.order_status_name }}</div>
+          <div v-if="orderInfo.is_again_pay_btn" class="order-status-tip">
+            剩余<van-count-down
+              ref="countDown"
+              :auto-start="true"
+              :time="orderInfo.is_again_pay_time * 1000 - newTime"
+              @finish="finish"
+            >
+              <template v-slot="timeData"
+                >{{
+                  timeData.hours < 10 ? "0" + timeData.hours : timeData.hours
+                }}:{{
+                  timeData.minutes < 10
+                    ? "0" + timeData.minutes
+                    : timeData.minutes
+                }}:{{
+                  timeData.seconds < 10
+                    ? "0" + timeData.seconds
+                    : timeData.seconds
+                }}
+              </template>
+            </van-count-down>
+            自动取消订单
+          </div>
+          <div v-else class="order-status-tip">
+            {{ orderInfo.order_status_text_name }}
+          </div>
         </div>
         <div class="cont-session goods-session">
-          <div v-for="(item, index) in goodsList" @click.stop="linkFunc(5,{id: item.goods_id})" :class="[index > 4 ? 'toggle-up' : '', is_toggle ? 'toggle-down' : '', 'order-goods-info']">
+          <div
+            v-for="(item, index) in goodsList"
+            @click.stop="linkFunc(5, { id: item.goods_id })"
+            :class="[
+              index > 4 ? 'toggle-up' : '',
+              is_toggle ? 'toggle-down' : '',
+              'order-goods-info'
+            ]"
+          >
             <div class="order-pic-block">
               <img class="img-100" mode="aspectFill" :src="item.specs_img" />
             </div>
             <div class="order-info">
               <div class="order-name-price">
-                <div class="order-name p-nowrap">{{item.goods_name}}</div>
-                <div class="order-price">￥{{item.pay_type == 1 ? item.happiness_price/100 : item.pay_price/100}}</div>
+                <div class="order-name p-nowrap">{{ item.goods_name }}</div>
+                <div class="order-price">
+                  ￥{{
+                    item.pay_type == 1
+                      ? item.happiness_price / 100
+                      : item.pay_price / 100
+                  }}
+                </div>
               </div>
               <div class="order-sku-num">
-                <div class="order-sku p-nowrap">{{item.specs_name}}</div>
-                <div v-if="item.y_pay_price && item.y_pay_price!='0'" class="order-num">￥{{item.y_pay_price/100}}</div>
+                <div class="order-sku p-nowrap">{{ item.specs_name }}</div>
+                <div
+                  v-if="item.y_pay_price && item.y_pay_price != '0'"
+                  class="order-num"
+                >
+                  ￥{{ item.y_pay_price / 100 }}
+                </div>
               </div>
               <div class="order-action-session">
-                <div v-if="item.is_returnfund==0 || item.is_return==0" @click.stop="openExplainSwal" class="order-action-text color-8f8f94">
-                  {{item.is_returnfund==0 ? '不支持退换' : '不支持退货'}}
+                <div
+                  v-if="item.is_returnfund == 0 || item.is_return == 0"
+                  @click.stop="openExplainSwal"
+                  class="order-action-text color-8f8f94"
+                >
+                  {{ item.is_returnfund == 0 ? "不支持退换" : "不支持退货" }}
                   <div class="order-action-btn">
-                    <img class="img-100" src="@/assets/img/question_01.png" mode="" />
+                    <img
+                      class="img-100"
+                      src="@/assets/img/question_01.png"
+                      mode=""
+                    />
                   </div>
                 </div>
                 <div v-else class="order-action-text">
-                  {{item.order_status_name}}
+                  {{ item.order_status_name }}
                 </div>
                 <div class="order-buy-num">x1</div>
               </div>
             </div>
             <div v-if="item.is_shouhou_btn == 1" class="order-goods-btn">
-              <div @click.stop="linkFunc(14,{logistice_id: item.logistice_id})" class="order-border-btn" hover-class="none">申请退换</div>
+              <div
+                @click.stop="linkFunc(14, { logistice_id: item.logistice_id })"
+                class="order-border-btn"
+                hover-class="none"
+              >
+                申请退换
+              </div>
             </div>
-            <div v-if="item.is_barter_btn == 1 || item.is_refund_btn == 1 || item.is_returnfund_btn == 1" class="order-goods-btn">
-              <div v-if="item.is_barter_btn == 1" @click.stop="linkFunc(16,{id: item.sale_order_id})" class="order-border-btn" hover-class="none">换货详情</div>
-              <div v-if="item.is_refund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 1})" class="order-border-btn" hover-class="none">退款详情</div>
-              <div v-if="item.is_returnfund_btn == 1" @click.stop="linkFunc(18,{id: item.sale_order_id,type: 2})" class="order-border-btn" hover-class="none">退款详情</div>
+            <div
+              v-if="
+                item.is_barter_btn == 1 ||
+                  item.is_refund_btn == 1 ||
+                  item.is_returnfund_btn == 1
+              "
+              class="order-goods-btn"
+            >
+              <div
+                v-if="item.is_barter_btn == 1"
+                @click.stop="linkFunc(16, { id: item.sale_order_id })"
+                class="order-border-btn"
+                hover-class="none"
+              >
+                换货详情
+              </div>
+              <div
+                v-if="item.is_refund_btn == 1"
+                @click.stop="linkFunc(18, { id: item.sale_order_id, type: 1 })"
+                class="order-border-btn"
+                hover-class="none"
+              >
+                退款详情
+              </div>
+              <div
+                v-if="item.is_returnfund_btn == 1"
+                @click.stop="linkFunc(18, { id: item.sale_order_id, type: 2 })"
+                class="order-border-btn"
+                hover-class="none"
+              >
+                退款详情
+              </div>
             </div>
           </div>
-          <div @click.stop="toggle()" v-show="goodsList.length > 5" :class="[is_toggle ? 'btn-up' : '', 'toggle-btn']">
+          <div
+            @click.stop="toggle()"
+            v-show="goodsList.length > 5"
+            :class="[is_toggle ? 'btn-up' : '', 'toggle-btn']"
+          >
             <img src="@/assets/img/icon_25.png" />
           </div>
           <div class="detail-price-list">
             <div class="detail-price-item">
               <div>商品总价</div>
-              <div>￥{{orderInfo.goods_price_total/100}}</div>
+              <div>￥{{ orderInfo.goods_price_total / 100 }}</div>
             </div>
-            <div v-if="orderInfo.freight && orderInfo.freight!=0" class="detail-price-item">
+            <div
+              v-if="orderInfo.freight && orderInfo.freight != 0"
+              class="detail-price-item"
+            >
               <div>运费</div>
-              <div>￥{{orderInfo.freight/100}}</div>
+              <div>￥{{ orderInfo.freight / 100 }}</div>
             </div>
-            <div v-if="orderInfo.coupon_money && orderInfo.coupon_money!=0" class="detail-price-item">
+            <div
+              v-if="orderInfo.coupon_money && orderInfo.coupon_money != 0"
+              class="detail-price-item"
+            >
               <div>优惠券</div>
-              <div>-￥{{orderInfo.coupon_money/100}}</div>
+              <div>-￥{{ orderInfo.coupon_money / 100 }}</div>
             </div>
-            <div v-if="orderInfo.happiness_price && orderInfo.happiness_price!=0" class="detail-price-item">
+            <div
+              v-if="orderInfo.happiness_price && orderInfo.happiness_price != 0"
+              class="detail-price-item"
+            >
               <div>幸福币抵扣</div>
-              <div>-￥{{orderInfo.happiness_price/100}}</div>
+              <div>-￥{{ orderInfo.happiness_price / 100 }}</div>
             </div>
           </div>
           <div class="order-total order-total-detail">
-            <div class="color-8f8f94 font-24">共 {{orderInfo.goods_num}} 件</div>
+            <div class="color-8f8f94 font-24">
+              共 {{ orderInfo.goods_num }} 件
+            </div>
             <div class="order-price-total">
-              合计:<span>￥{{orderInfo.pay_type==1 ? orderInfo.happiness_price/100 : orderInfo.pay_price/100}}</span>
+              合计:<span
+                >￥{{
+                  orderInfo.pay_type == 1
+                    ? orderInfo.happiness_price / 100
+                    : orderInfo.pay_price / 100
+                }}</span
+              >
             </div>
           </div>
         </div>
-        <div v-if="goodsList[0].buy_type == 1" @click="(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3) && getLogistics()" class="cont-session order-message smzt-session">
+        <div
+          v-if="goodsList[0].buy_type == 1"
+          @click="
+            orderInfo.project_logistice_buy_type &&
+              orderInfo.project_logistice_buy_type == 1 &&
+              orderInfo.order_status == 3 &&
+              getLogistics()
+          "
+          class="cont-session order-message smzt-session"
+        >
           <div class="order-message-item th-type">
-            <div class="order-message-item-left color-222 font-28">配送方式</div>
-            <div class="color-222 font-28 order-message-item-right">上门自提</div>
-          </div>
-          <div :class="[!(orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3) ? 'th-item-log' : '', 'order-message-item th-item']">
-            <div class="order-message-item-left color-222 font-28">提货地点</div>
-            <div class="shipping-address-item-right">
-              <div class="color-222 font-28">{{goodsList[0].take_address}}</div>
+            <div class="order-message-item-left color-222 font-28">
+              配送方式
+            </div>
+            <div class="color-222 font-28 order-message-item-right">
+              上门自提
             </div>
           </div>
-          <template v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status!=3">
+          <div
+            :class="[
+              !(
+                orderInfo.project_logistice_buy_type &&
+                orderInfo.project_logistice_buy_type == 1 &&
+                orderInfo.order_status != 3
+              )
+                ? 'th-item-log'
+                : '',
+              'order-message-item th-item'
+            ]"
+          >
+            <div class="order-message-item-left color-222 font-28">
+              提货地点
+            </div>
+            <div class="shipping-address-item-right">
+              <div class="color-222 font-28">
+                {{ goodsList[0].take_address }}
+              </div>
+            </div>
+          </div>
+          <template
+            v-if="
+              orderInfo.project_logistice_buy_type &&
+                orderInfo.project_logistice_buy_type == 1 &&
+                orderInfo.order_status != 3
+            "
+          >
             <div class="th-line"></div>
-            <div class="th-code" @click.stop="getLogistics"><img class="img-100" src="@/assets/img/code.png" /></div>
+            <div class="th-code" @click.stop="getLogistics">
+              <img class="img-100" src="@/assets/img/code.png" />
+            </div>
           </template>
-          <img v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1 && orderInfo.order_status==3" class="shipping-address-icon" src="@/assets/img/right.png" />
+          <img
+            v-if="
+              orderInfo.project_logistice_buy_type &&
+                orderInfo.project_logistice_buy_type == 1 &&
+                orderInfo.order_status == 3
+            "
+            class="shipping-address-icon"
+            src="@/assets/img/right.png"
+          />
         </div>
         <div v-else class="cont-session address-logistics">
           <div @click="linkFunc(23)" class="shipping-address">
             <div class="shipping-address-item">
-              <div class="shipping-address-item-left color-222 font-28">收货地址:</div>
+              <div class="shipping-address-item-left color-222 font-28">
+                收货地址:
+              </div>
               <div class="shipping-address-item-right">
-                <div class="shipping-address-username p-nowrap">{{orderInfo.rece_realname}}</div>
-                <div class="color-222 font-28">{{orderInfo.rece_mobile}}</div>
-                <img v-if="orderInfo.is_again_pay_btn" class="shipping-address-icon" src="@/assets/img/right.png" />
+                <div class="shipping-address-username p-nowrap">
+                  {{ orderInfo.rece_realname }}
+                </div>
+                <div class="color-222 font-28">{{ orderInfo.rece_mobile }}</div>
+                <img
+                  v-if="orderInfo.is_again_pay_btn"
+                  class="shipping-address-icon"
+                  src="@/assets/img/right.png"
+                />
               </div>
             </div>
             <div class="shipping-address-item">
               <div class="shipping-address-item-left"></div>
               <div class="shipping-address-item-right">
-                <div class="shipping-address-text">{{orderInfo.rece_address}}</div>
+                <div class="shipping-address-text">
+                  {{ orderInfo.rece_address }}
+                </div>
               </div>
             </div>
           </div>
-          <div @click="logisticsLink" v-if="logisticsInfo" class="shipping-logistics">
-            <div v-if="logisticsInfo.l_status == 0" class="shipping-address-item">
-              <div class="shipping-address-item-left color-222 font-28">物流配送:</div>
+          <div
+            @click="logisticsLink"
+            v-if="logisticsInfo"
+            class="shipping-logistics"
+          >
+            <div
+              v-if="logisticsInfo.l_status == 0"
+              class="shipping-address-item"
+            >
+              <div class="shipping-address-item-left color-222 font-28">
+                物流配送:
+              </div>
               <div class="shipping-address-item-right">
-                <div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
-                <div class="color-8f8f94 font-28">({{logisticsInfo.kuaidi_numb}})</div>
-                <img class="shipping-address-icon" src="@/assets/img/right.png" />
+                <div class="color-222 font-28">
+                  {{ logisticsInfo.kuaidi_name }}
+                </div>
+                <div class="color-8f8f94 font-28">
+                  ({{ logisticsInfo.kuaidi_numb }})
+                </div>
+                <img
+                  class="shipping-address-icon"
+                  src="@/assets/img/right.png"
+                />
               </div>
             </div>
             <div v-else class="shipping-address-item">
-              <div class="shipping-address-item-left color-222 font-28">物流配送:</div>
+              <div class="shipping-address-item-left color-222 font-28">
+                物流配送:
+              </div>
               <div class="shipping-address-item-right">
-                <div class="color-222 font-28">{{logisticsInfo.kuaidi_name}}</div>
+                <div class="color-222 font-28">
+                  {{ logisticsInfo.kuaidi_name }}
+                </div>
                 <div class="color-8f8f94 font-28">(已签收)</div>
-                <img class="shipping-address-icon" src="@/assets/img/right.png" />
+                <img
+                  class="shipping-address-icon"
+                  src="@/assets/img/right.png"
+                />
               </div>
             </div>
-            <div v-if="logisticsInfo.l_status == 0" class="shipping-logistics-item">
+            <div
+              v-if="logisticsInfo.l_status == 0"
+              class="shipping-logistics-item"
+            >
               <div class="shipping-address-item-left"></div>
-              <div class="shipping-address-item-right shipping-logistics-item-right">
+              <div
+                class="shipping-address-item-right shipping-logistics-item-right"
+              >
                 <div class="shipping-logistics-point"></div>
                 <div class="shipping-logistics-line"></div>
-                <div class="shipping-logistics-text">{{logisticsInfo.kd_data.data[0].context}}<br />{{logisticsInfo.kd_data.data[0].time}}</div>
+                <div class="shipping-logistics-text">
+                  {{ logisticsInfo.kd_data.data[0].context }}<br />{{
+                    logisticsInfo.kd_data.data[0].time
+                  }}
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div v-if="orderInfo.user_explain" class="cont-session order-remarks">
           <div class="order-remarks-item">
-            <div class="order-remarks-item-left color-222 font-28">订单备注:</div>
+            <div class="order-remarks-item-left color-222 font-28">
+              订单备注:
+            </div>
             <div class="shipping-address-item-right">
-              <div class="color-222 font-28 order-remarks-text">{{orderInfo.user_explain}}</div>
+              <div class="color-222 font-28 order-remarks-text">
+                {{ orderInfo.user_explain }}
+              </div>
             </div>
           </div>
         </div>
         <div class="cont-session order-message">
           <div class="order-message-item">
-            <div class="order-message-item-left color-8f8f94 font-28">订单编号:</div>
-            <div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.order_numb}}</div>
+            <div class="order-message-item-left color-8f8f94 font-28">
+              订单编号:
+            </div>
+            <div class="color-8f8f94 font-28 order-message-item-right">
+              {{ orderInfo.order_numb }}
+            </div>
             <div class="copy-btn" @click="copy_cont(orderInfo.order_numb)">
               <div class="copy-text">复制</div>
             </div>
           </div>
           <div class="order-message-item">
-            <div class="order-message-item-left color-8f8f94 font-28">下单时间:</div>
-            <div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.ctime}}</div>
+            <div class="order-message-item-left color-8f8f94 font-28">
+              下单时间:
+            </div>
+            <div class="color-8f8f94 font-28 order-message-item-right">
+              {{ orderInfo.ctime }}
+            </div>
           </div>
           <div v-if="orderInfo.payment_type_name" class="order-message-item">
-            <div class="order-message-item-left color-8f8f94 font-28">支付方式:</div>
-            <div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.payment_type_name}}</div>
+            <div class="order-message-item-left color-8f8f94 font-28">
+              支付方式:
+            </div>
+            <div class="color-8f8f94 font-28 order-message-item-right">
+              {{ orderInfo.payment_type_name }}
+            </div>
           </div>
           <div v-if="orderInfo.pay_time" class="order-message-item">
-            <div class="order-message-item-left color-8f8f94 font-28">支付时间:</div>
-            <div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.pay_time}}</div>
+            <div class="order-message-item-left color-8f8f94 font-28">
+              支付时间:
+            </div>
+            <div class="color-8f8f94 font-28 order-message-item-right">
+              {{ orderInfo.pay_time }}
+            </div>
           </div>
           <div v-if="orderInfo.cancel_time" class="order-message-item">
-            <div class="order-message-item-left color-8f8f94 font-28">取消时间:</div>
-            <div class="color-8f8f94 font-28 order-message-item-right">{{orderInfo.cancel_time}}</div>
+            <div class="order-message-item-left color-8f8f94 font-28">
+              取消时间:
+            </div>
+            <div class="color-8f8f94 font-28 order-message-item-right">
+              {{ orderInfo.cancel_time }}
+            </div>
           </div>
         </div>
       </div>
 
-      <template v-if="(orderInfo.is_cancel_btn || orderInfo.is_again_pay_btn || orderInfo.is_logistice_btn) && !(goodsList[0].buy_type == 1 && orderInfo.order_status>2)">
+      <template
+        v-if="
+          (orderInfo.is_cancel_btn ||
+            orderInfo.is_again_pay_btn ||
+            orderInfo.is_logistice_btn) &&
+            !(goodsList[0].buy_type == 1 && orderInfo.order_status > 2)
+        "
+      >
         <div class="fixed-empty"></div>
         <div class="btn-fixed-buttom">
-          <div v-if="orderInfo.is_cancel_btn" @click="openSwal" class="order-border-btn" hover-class="none" v-txAnalysis="{eventId: 51}">取消订单</div>
+          <div
+            v-if="orderInfo.is_cancel_btn"
+            @click="openSwal"
+            class="order-border-btn"
+            hover-class="none"
+            v-txAnalysis="{ eventId: 51 }"
+          >
+            取消订单
+          </div>
           <template v-if="orderInfo.is_logistice_btn">
-            <div v-if="orderInfo.project_logistice_buy_type && orderInfo.project_logistice_buy_type == 1" @click="getLogistics" class="order-border-btn paid-btn" hover-class="none">提货二维码</div>
-            <div v-else @click="logisticsLink" class="order-border-btn" hover-class="none">物流详情</div>
+            <div
+              v-if="
+                orderInfo.project_logistice_buy_type &&
+                  orderInfo.project_logistice_buy_type == 1
+              "
+              @click="getLogistics"
+              class="order-border-btn paid-btn"
+              hover-class="none"
+            >
+              提货二维码
+            </div>
+            <div
+              v-else
+              @click="logisticsLink"
+              class="order-border-btn"
+              hover-class="none"
+            >
+              物流详情
+            </div>
           </template>
-          <div @click.stop="payFunc()" v-if="orderInfo.is_again_pay_btn" class="order-border-btn paid-btn">付款(<van-count-down ref="countDown" :auto-start="true" :time="orderInfo.is_again_pay_time*1000-newTime" @finish="finish" @change="getChangeTime">
-                <template v-slot="timeData">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}:{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}:{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}
-                </template>
-              </van-count-down>)</div>
+          <div
+            @click.stop="payFunc()"
+            v-if="orderInfo.is_again_pay_btn"
+            class="order-border-btn paid-btn"
+          >
+            付款(<van-count-down
+              ref="countDown"
+              :auto-start="true"
+              :time="orderInfo.is_again_pay_time * 1000 - newTime"
+              @finish="finish"
+              @change="getChangeTime"
+            >
+              <template v-slot="timeData"
+                >{{
+                  timeData.hours < 10 ? "0" + timeData.hours : timeData.hours
+                }}:{{
+                  timeData.minutes < 10
+                    ? "0" + timeData.minutes
+                    : timeData.minutes
+                }}:{{
+                  timeData.seconds < 10
+                    ? "0" + timeData.seconds
+                    : timeData.seconds
+                }}
+              </template> </van-count-down
+            >)
+          </div>
         </div>
       </template>
       <explain-swal
-      :show-swal="showExplainSwal"
-      :swal-cont="swalCont"
-      @closeSwal="closeExplainSwal"
+        :show-swal="showExplainSwal"
+        :swal-cont="swalCont"
+        @closeSwal="closeExplainSwal"
       ></explain-swal>
       <pay-swal
-      ref="payblock"
-      :showSwal.sync="showPaySwal"
-      :pay-money="payMoney"
-      :down-time="downTime"
-      @sureSwal="surePaySwal"
-      @fyResult="fyResult"
+        ref="payblock"
+        :showSwal.sync="showPaySwal"
+        :pay-money="payMoney"
+        :down-time="downTime"
+        @sureSwal="surePaySwal"
+        @fyResult="fyResult"
       ></pay-swal>
       <remind-swal
-      :show-swal="showSwal"
-      :remind-tit="remindTit"
-      @closeSwal="closeSwal"
-      @sureSwal="sureSwal()">
+        :show-swal="showSwal"
+        :remind-tit="remindTit"
+        @closeSwal="closeSwal"
+        @sureSwal="sureSwal()"
+      >
       </remind-swal>
       <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
     </div>
+    <goods-share v-model="sharePopup" :infoData="shareList"></goods-share>
   </div>
 </template>
 
@@ -230,7 +516,15 @@ import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
 import ztOrder from './../components/zt-order'
 import eventBus from '@/api/eventbus.js'
-import { getOrderDetail, cancelNoPayOrder, cancelPayOrder, payOrderUp, editOrderAddress } from '@/api/life.js'
+import {
+  getOrderDetail,
+  cancelNoPayOrder,
+  cancelPayOrder,
+  payOrderUp,
+  editOrderAddress,
+  getIsShare
+} from '@/api/life.js'
+import GoodsShare from '../components/goods-share.vue'
 export default {
   name: 'orderDetail',
   components: {
@@ -240,13 +534,15 @@ export default {
     paySwal,
     explainSwal,
     remindSwal,
-    ztOrder
+    ztOrder,
+    GoodsShare
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
       showExplainSwal: false, // 弹窗
-      swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
+      swalCont:
+        '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
       newTime: '', // 当前时间
       time: 11 * 60 * 60 * 1000,
       goodsList: [],
@@ -262,7 +558,9 @@ export default {
       idcard: '', // 身份证
       thSwal: false, // 自提弹窗
       timer: '', // 定时器
-      infoData: '' // 自提物流信息
+      infoData: '', // 自提物流信息
+      sharePopup: false, // 分享弹窗
+      shareList: {} // 分享的商品列表
     }
   },
   mounted () {
@@ -273,7 +571,10 @@ export default {
         that.addressInfo = JSON.parse(data)
         that.orderInfo.rece_realname = that.addressInfo.realname
         that.orderInfo.rece_mobile = that.addressInfo.mobile
-        that.orderInfo.rece_address = that.addressInfo.address_detail + that.addressInfo.address_name + that.addressInfo.address_house
+        that.orderInfo.rece_address =
+          that.addressInfo.address_detail +
+          that.addressInfo.address_name +
+          that.addressInfo.address_house
         that.orderAddress(that.addressInfo.id)
       }
     })
@@ -281,14 +582,16 @@ export default {
   created () {
     eventBus.$off('chooseAddress')
     this.order_id = this.$route.query.id
-    this.getData()
+    this.getData(this.$route.query.isPay)
   },
   methods: {
     // 到时间时间变化
     getChangeTime (timeData) {
-      this.downTime = (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) * 1000
+      this.downTime =
+        (timeData.hours * 3600 + timeData.minutes * 60 + timeData.seconds) *
+        1000
     },
-    getData () {
+    getData (isShare = false) {
       getOrderDetail({
         order_project_id: this.order_id
       }).then(res => {
@@ -297,6 +600,19 @@ export default {
           this.orderInfo = res.order_project_info
           this.logisticsInfo = res.logistice_info
           this.newTime = parseInt(new Date().getTime())
+          isShare && this.getIsShare()
+        }
+      })
+    },
+    // 获取是否弹出分享
+    getIsShare () {
+      getIsShare({
+        type: +this.orderInfo.pt_order_num > 1 ? 1 : 2, // 订单详情页
+        order_id: this.order_id
+      }).then(({ is_popup: isPopup, credits, list }) => {
+        if (+isPopup) {
+          this.sharePopup = true
+          this.shareList = { credits, list }
         }
       })
     },
@@ -306,7 +622,6 @@ export default {
         address_id: address_id
       }).then(res => {
         if (res.success) {
-
         }
       })
     },
@@ -340,7 +655,7 @@ export default {
     // 再次付款
     payFunc () {
       // this.downTime = this.orderInfo.is_again_pay_time * 1000 - this.newTime
-      this.payMoney = this.orderInfo.pay_price / 100
+      this.payMoney = this.orderInfo.z_pay_price / 100
       this.showPaySwal = true
     },
     surePaySwal (callData) {
@@ -352,74 +667,78 @@ export default {
         realname: callData.realname,
         idcard: callData.idcard,
         mobile: callData.mobile
-      }).then(res => {
-        if (res.success) {
-          if (res.data) {
-            this.payOrderInfo = res.data
-            if (callData.pay_type == 1) {
-              this.showPaySwal = false
-              this.wxPayUp()
-            } else if (callData.pay_type == 2) {
-              this.showPaySwal = false
-              this.aliPayUp()
-            } else if (callData.pay_type == 4) {
-              this.$refs.payblock.sendCode(res)
+      })
+        .then(res => {
+          if (res.success) {
+            if (res.data) {
+              this.payOrderInfo = res.data
+              if (callData.pay_type == 1) {
+                this.showPaySwal = false
+                this.wxPayUp()
+              } else if (callData.pay_type == 2) {
+                this.showPaySwal = false
+                this.aliPayUp()
+              } else if (callData.pay_type == 4) {
+                this.$refs.payblock.sendCode(res)
+              }
             }
           }
-        }
-      }).catch((res) => {
-        if (callData.pay_type == 4) {
-          if (callData.idcard) {
-            this.$router.push({
-              path: '/pages/personage/information/addBankCard',
-              query: {
-                message: res.message
-              }
-            })
-          } else {
-            this.$router.push({
-              path: '/pages/personage/information/certification',
-              query: {
-                message: res.message
-              }
-            })
+        })
+        .catch(res => {
+          if (callData.pay_type == 4) {
+            if (callData.idcard) {
+              this.$router.push({
+                path: '/pages/personage/information/addBankCard',
+                query: {
+                  message: res.message
+                }
+              })
+            } else {
+              this.$router.push({
+                path: '/pages/personage/information/certification',
+                query: {
+                  message: res.message
+                }
+              })
+            }
           }
-        }
-      })
+        })
     },
     // 支付宝支付
     aliPayUp () {
       const that = this
       var aliPayPlus = api.require('aliPayPlus')
-      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo },
-        function (ret, err) {
-          that.getData()
-        }
-      )
+      aliPayPlus.payOrder({ orderInfo: this.payOrderInfo }, function (ret, err) {
+        that.getData(true)
+      })
     },
     // 微信支付
     wxPayUp () {
       const that = this
       const wxPayPlus = api.require('wxPayPlus')
-      wxPayPlus.payOrder({
-        apiKey: that.payOrderInfo.appid,
-        mchId: that.payOrderInfo.partnerid,
-        orderId: that.payOrderInfo.prepayid,
-        nonceStr: that.payOrderInfo.noncestr,
-        timeStamp: that.payOrderInfo.timestamp,
-        package: that.payOrderInfo.package,
-        sign: that.payOrderInfo.paySign
-      }, function (ret, err) {
-        that.getData()
-      })
+      wxPayPlus.payOrder(
+        {
+          apiKey: that.payOrderInfo.appid,
+          mchId: that.payOrderInfo.partnerid,
+          orderId: that.payOrderInfo.prepayid,
+          nonceStr: that.payOrderInfo.noncestr,
+          timeStamp: that.payOrderInfo.timestamp,
+          package: that.payOrderInfo.package,
+          sign: that.payOrderInfo.paySign
+        },
+        function (ret, err) {
+          that.getData(true)
+        }
+      )
     },
     fyResult () {
       this.showPaySwal = false
-      this.getData()
+      this.getData(true)
     },
     // 取消订单
     cancelOrder () {
-      if (this.orderInfo.is_pay == 0) { // 未付款
+      if (this.orderInfo.is_pay == 0) {
+        // 未付款
         cancelNoPayOrder({
           order_project_id: this.orderInfo.id
         }).then(res => {
@@ -456,15 +775,18 @@ export default {
     },
     copy_cont (text_c) {
       var clipBoard = api.require('clipBoard')
-      clipBoard.set({
-        value: text_c
-      }, function (ret, err) {
-        if (ret) {
-          Toast('复制成功')
-        } else {
-          alert(JSON.stringify(err))
+      clipBoard.set(
+        {
+          value: text_c
+        },
+        function (ret, err) {
+          if (ret) {
+            Toast('复制成功')
+          } else {
+            alert(JSON.stringify(err))
+          }
         }
-      })
+      )
     },
     linkFunc (type, obj = {}) {
       switch (type) {
@@ -516,7 +838,11 @@ export default {
       }
     },
     logisticsLink () {
-      if (this.orderInfo.project_logistice_count > 1 || (this.orderInfo.project_logistice_count = 1 && this.orderInfo.order_status == 1)) {
+      if (
+        this.orderInfo.project_logistice_count > 1 ||
+        (this.orderInfo.project_logistice_count =
+          1 && this.orderInfo.order_status == 1)
+      ) {
         this.$router.push({
           path: '/logistics/list',
           query: {
@@ -524,7 +850,8 @@ export default {
           }
         })
       } else {
-        if (this.orderInfo.project_logistice_buy_type == 0) { // 0快递 1自提 2商家配送
+        if (this.orderInfo.project_logistice_buy_type == 0) {
+          // 0快递 1自提 2商家配送
           this.$router.push({
             path: '/logistics/logistics-express',
             query: {
@@ -567,7 +894,11 @@ export default {
     if (!this.clickGoods && (to.name == 'goodsDetail' || to.name == 'cart')) {
       this.$router.push('/order/list')
     }
-    if (to.name != 'addressList' && to.name != 'addBankCard' && to.name != 'certification') {
+    if (
+      to.name != 'addressList' &&
+      to.name != 'addBankCard' &&
+      to.name != 'certification'
+    ) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
@@ -576,8 +907,8 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped  src="../../../styles/order.css"></style>
+<style scoped src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/order.css"></style>
 <style lang="less" scoped>
 .app-body {
   background-color: #f2f2f4;
@@ -600,13 +931,13 @@ export default {
   display: flex;
 }
 .th-line {
-  width: 1PX;
+  width: 1px;
   height: 60px;
   position: absolute;
   right: 112px;
   top: 50%;
   margin-top: -30px;
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
 }
 .th-type {
   height: 56px;
@@ -635,7 +966,7 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   .th-bg {
-    background: linear-gradient(90deg, #F9866B, #EB5841);
+    background: linear-gradient(90deg, #f9866b, #eb5841);
   }
   .th-tit {
     height: 88px;
@@ -643,12 +974,12 @@ export default {
     text-align: center;
     font-size: 30px;
     font-weight: 500;
-    color: #FFFFFF;
+    color: #ffffff;
   }
   .th-info {
     font-size: 24px;
     font-weight: 400;
-    color: #FFFFFF;
+    color: #ffffff;
     padding: 20px 30px;
     background: rgba(255, 255, 255, 0.1);
     & > div {
@@ -669,7 +1000,7 @@ export default {
   }
   .th-cont {
     font-size: 24px;
-    color: #8F8F94;
+    color: #8f8f94;
     flex-direction: column;
     height: 543px;
     .th-tip {

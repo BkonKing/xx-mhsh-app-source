@@ -1,19 +1,33 @@
 <template>
-  <div v-show="shareShow" class="mask-bg" @click="calcel(0)">
+  <div v-show="shareShow" class="mask-bg" @click="handleClickOverlay">
     <div class="mask-block" @click.stop="calcel(1)">
-      <div class="mask-close">
-        <img class="img-100" src="@/assets/img/close.png" @click.stop="calcel(0)" />
+      <div v-if="closeIcon" class="mask-close">
+        <img
+          class="img-100"
+          src="@/assets/img/close.png"
+          @click.stop="calcel(0)"
+        />
+      </div>
+      <div v-if="title" class="share-title">
+        {{ title }}
       </div>
       <div class="share-cont flex-center">
         <div @click.stop="shareFunc(1)" class="share-btn">
           <img src="@/assets/img/share_1.png" />
           <div>微信</div>
         </div>
-        <div v-if="!shareObj.pyqHide" @click.stop="shareFunc(2)" class="share-btn">
+        <div
+          v-if="!shareObj.pyqHide"
+          @click.stop="shareFunc(2)"
+          class="share-btn"
+        >
           <img src="@/assets/img/share_2.png" />
           <div>朋友圈</div>
         </div>
       </div>
+      <van-button v-if="!closeIcon" class="close-btn" @click.stop="calcel(0)"
+        >取消</van-button
+      >
     </div>
   </div>
 </template>
@@ -30,9 +44,26 @@ export default {
     shareObj: {
       type: Object,
       default: () => {}
+    },
+    closeOnClickOverlay: {
+      type: Boolean,
+      default: true
+    },
+    // 是否显示关闭图标
+    closeIcon: {
+      type: Boolean,
+      default: true
+    },
+    title: {
+      type: String,
+      default: ''
     }
   },
   methods: {
+    // 点击遮罩层
+    handleClickOverlay () {
+      this.closeOnClickOverlay && this.calcel(0)
+    },
     calcel (val) {
       this.$emit('closeSwal', val)
     },
@@ -59,69 +90,86 @@ export default {
       const wxPlus = api.require('wxPlus')
       wxPlus.isInstalled(function (ret, err) {
         if (ret.installed) {
-          wxPlus.shareWebpage({
-            apiKey: 'wx7245d2cb43a093db',
-            scene: sceneVal,
-            title: that.shareObj.title,
-            description: that.shareObj.description,
-            thumb: that.shareObj.thumb,
-            contentUrl: that.shareObj.contentUrl
-          }, function (ret, err) {
-            if (ret.status) {
-              // alert('分享成功')
-            } else {
-              // alert(err.code)
+          wxPlus.shareWebpage(
+            {
+              apiKey: 'wx7245d2cb43a093db',
+              scene: sceneVal,
+              title: that.shareObj.title,
+              description: that.shareObj.description,
+              thumb: that.shareObj.thumb,
+              contentUrl: that.shareObj.contentUrl
+            },
+            function (ret, err) {
+              if (ret.status) {
+                that.$emit('success')
+                // alert('分享成功')
+              } else {
+                // alert(err.code)
+              }
             }
-          })
-        } else {}
+          )
+        } else {
+        }
       })
     }
   }
 }
 </script>
-<style scoped  src="../../styles/life.css"></style>
+<style scoped src="../../styles/life.css"></style>
 <style lang="less" scoped>
 /*弹窗*/
 .mask-bg {
   z-index: 2030;
 }
 .mask-block {
-  height: 327px;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   width: 100%;
-  border-radius: 0;
+  display: flex;
+  height: auto;
+  min-height: 328px;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  border-radius: 20px 20px 0px 0px;
+}
+.share-title {
+  font-size: 32px;
+  line-height: 1;
+  color: #000000;
 }
 .share-cont {
-  height: 100%;
-  width: 100%;
-  padding-top: 20px;
+  padding: 65px 0;
 }
 .share-btn {
-  height: 188px;
   width: 250px;
   padding: 0 65px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
 }
 .share-btn div {
-  font-size: 28px;
-  color: #666666;
-  text-align: center;
-  height: 68px;
-  line-height: 68px;
-  width: 100%;
+  margin-top: 24px;
+  font-size: 24px;
+  color: #222222;
+  line-height: 1;
 }
 .share-btn img {
-  width: 120px;
-  height: 120px;
+  width: 98px;
+  height: 98px;
+}
+.close-btn {
+  width: 690px;
+  height: 80px;
+  background: #f7f7f7;
+  border: none;
+  border-radius: 40px;
+  font-size: 28px;
+  color: #8f8f94;
 }
 .mask-close {
   display: flex;
 }
-// .mask-btn div.mask-sure-btn {
-//   width: 215px;
-// }
 </style>

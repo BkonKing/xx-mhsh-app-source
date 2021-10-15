@@ -220,11 +220,25 @@ export function collectStatus (data) {
 }
 // 付款码支付
 export function paymentCredits (data) {
-  return request.post('/credits/qrcode/paymentCredits', data)
+  return request({
+    url: '/credits/qrcode/paymentCredits',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 // 收款码支付
 export function collectCredits (data) {
-  return request.post('/credits/qrcode/collectCredits', data)
+  return request({
+    url: '/credits/qrcode/collectCredits',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 // 收款方提交收款金额
 export function skCredits (data) {

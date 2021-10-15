@@ -48,7 +48,7 @@
             <div class="life-home">
               <div v-if="bannerList.length > 0" class="life-swipe">
                 <van-swipe :autoplay="3000" indicator-color="white">
-                  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)">
+                  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)" :key="index">
                     <img class="img-100" :src="item.img" />
                   </van-swipe-item>
                 </van-swipe>
@@ -72,6 +72,7 @@
                   <div>全部分类</div>
                 </div>
               </div>
+              <!-- 热映电影 -->
               <div v-if="nowMovieList.length" class="life-session life-movie">
                 <div class="movie-cont">
                   <div class="life-tit flex-between" @click="linkFunc(8)">
@@ -95,9 +96,10 @@
                   </div>
                 </div>
               </div>
-              <template v-for="(item) in lifeData">
+              <template v-for="(item, index) in lifeData">
+                <!-- 9.9特卖 -->
                 <template v-if="item.type == 2">
-                  <div v-if="item.child && item.child.length > 0" class="life-session life-sale">
+                  <div v-if="item.child && item.child.length > 0" :key="index" class="life-session life-sale">
                     <div class="sale-cont">
                       <div class="life-tit flex-between" @click="selectNav(2)">
                         <div class="flex-align-center">
@@ -110,15 +112,15 @@
                           <div class="life-goods-pic">
                             <img class="img-100" :src="val.thumb" />
                           </div>
-                          <!-- <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div> -->
-                          <div class="life-goods-price"><span>￥</span>{{val.te_price/100}} <span>￥{{val.s_price/100}}</span></div>
+                          <price-show class="price-tag-1" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
                         </div>
                       </div>
                     </div>
                   </div>
                 </template>
+                <!-- 限时闪购 -->
                 <template v-else-if="item.type == 1">
-                  <div v-if="item.child && item.child.length > 0" class="life-session life-flash">
+                  <div v-if="item.child && item.child.length > 0" :key="index" class="life-session life-flash">
                     <div class="flash-cont">
                       <div class="life-tit flex-between" @click="selectNav(1)">
                         <div class="flex-align-center">
@@ -141,20 +143,21 @@
                           <div class="life-goods-pic">
                             <img class="img-100" :src="val.thumb" />
                           </div>
-                          <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-                          <div class="life-goods-price"><span>￥</span>{{val.o_price/100}} <span>￥{{val.s_price/100}}</span></div>
+                          <div class="life-goods-name color-222 p-nowrap">{{val.goods_name}}</div>
+                          <price-show class="price-tag-2" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
                         </div>
                       </div>
                     </div>
                   </div>
                 </template>
+                <!-- 其他专区 -->
                 <template v-else>
-                  <div class="bg-guodu"></div>
+                  <div class="bg-guodu" :key="`${index}bg`"></div>
                   <template  v-if="item.special_type == 2">
-                    <div v-if="item.child && item.child.length > 0" class="special-session flex-between">
+                    <div v-if="item.child && item.child.length > 0" class="special-session flex-between" :key="index">
                       <div class="special-list">
                         <template v-if="item.child.length < 4" v-for="(val, key) in item.child">
-                          <div @click="selectNav(3, val.special_id)" class="height-345">
+                          <div @click="selectNav(3, val.special_id)" :key="key" class="height-345">
                             <img class="img-100" :src="val.special_thumb" />
                             <div class="special-tip">
                               <div class="p-nowrap">{{val.special_name}}</div>
@@ -201,7 +204,7 @@
                     </div>
                   </template>
                   <template v-else-if="item.special_type == 1">
-                    <div v-if="item.child && item.child.length > 0" class="life-session">
+                    <div v-if="item.child && item.child.length > 0" class="life-session" :key="index">
                       <div :class="[item.special_text ? '' : 'life-area-tit-small', 'life-tit life-area-tit flex-between']" @click="selectNav(3, item.special_id)">
                         <div class="font-34 font-weight flex-column-center">
                           <div class="area-text-tit">{{item.special_name}}</div>
@@ -210,18 +213,18 @@
                         <div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
                       </div>
                       <div class="life-goods-list flex-align-center" ref="scrollEl" @scroll="scrollEvent" @touchend="touchEnd">
-                        <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+                        <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item" :key="key">
                           <div class="life-goods-pic">
                             <img class="img-100" :src="val.thumb" />
                           </div>
                           <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-                          <div class="life-goods-price">￥{{val.s_price/100}} <span v-if="val.original_price && val.original_price!='0'">￥{{val.original_price/100}}</span></div>
+                          <price-show class="price-tag-3" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
                         </div>
                       </div>
                     </div>
                   </template>
                   <template v-else>
-                    <div v-if="item.special_thumb" @click="selectNav(3, item.special_id)" class="banner-session">
+                    <div v-if="item.special_thumb" @click="selectNav(3, item.special_id)" :key="index" class="banner-session">
                       <img class="img-100" :src="item.special_thumb" />
                     </div>
                   </template>
@@ -273,6 +276,7 @@ import { getfilmlist } from '@/api/movie'
 import flashPage from './components/flash-page'
 import specialPage from './components/special-page'
 import areaPage from './components/area-page'
+import PriceShow from '../home/components/price-show'
 import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   components: {
@@ -287,7 +291,8 @@ export default {
     scrollBar,
     flashPage,
     specialPage,
-    areaPage
+    areaPage,
+    PriceShow
   },
   data () {
     return {
@@ -313,7 +318,8 @@ export default {
       listData: [], // 分类商品
       loading: false,
       finished: true,
-      swipeable: true
+      swipeable: true,
+      skipType: 0 // 跳转type，特卖1，闪购 2
     }
   },
   created () {
@@ -331,6 +337,13 @@ export default {
     this.cart_num = cart_num
     this.page = 1
     this.isRefresh = true
+    const type = this.$route.query.type
+    if (type) {
+      this.skipType = type
+      if (this.navList && this.navList.length) {
+        this.setTabIndex()
+      }
+    }
     // this.navList = [];
     // this.activeIndex = 0;
     // this.activeIndex2 = 0;
@@ -408,6 +421,7 @@ export default {
           var navArr = this.navList.concat()
           if (navArr.length && res.data.length) {
             if (JSON.stringify(navArr) != JSON.stringify(res.data)) {
+              console.log(123123)
               this.isChange = true
               this.navList = []
               this.navList2 = []
@@ -431,19 +445,19 @@ export default {
             })
             this.flashIcon = isFlash && true
           } else {
-            // this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
-            // this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
-            // if (res.data.goods_list.length < res.pageSize) {
-            //   this.finished = true
-            //   this.flag = true
-            // } else {
-            //   this.flag = false
-            //   this.page = this.page + 1
-            // }
-            // this.loading = false
+            this.setTabIndex()
           }
         }
       })
+    },
+    // 获取9.9特卖(type = 2)闪购（type = 1）所在的index并设置tab值
+    setTabIndex () {
+      if (this.skipType) {
+        const index = this.navList.findIndex((obj) => obj.type == this.skipType)
+        this.activeIndex = index > -1 ? index : 0
+        this.active = index > -1 ? index : 0
+      }
+      this.skipType = 0
     },
     compare (origin, target) {
       if (typeof target !== 'object') {
@@ -632,6 +646,14 @@ export default {
       const val = parseInt(value)
       return val > 9999 ? `${Math.ceil(val / 10000)}万` : val
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    const { type } = to.query
+    next(vm => {
+      if (type) {
+        vm.$router.push('/life')
+      }
+    })
   },
   beforeRouteLeave (to, from, next) {
     const el = document
@@ -952,6 +974,13 @@ export default {
   height: 367px;
   overflow-x: auto;
   white-space: nowrap;
+  .life-goods-name {
+    line-height: 1;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    font-size: 24px;
+  }
 }
 .special-goods-list,.flash-goods-list {
   padding: 0 20px;
@@ -994,9 +1023,11 @@ export default {
 .flash-goods-list {
   justify-content: space-around;
   .life-goods-name {
-    line-height: 40px;
-    margin-top: 13px;
+    text-align: center;
+    line-height: 1;
+    margin-top: 20px;
     padding: 0 10px;
+    font-size: 28px;
   }
   .life-goods-price {
     text-align: left;
@@ -1041,11 +1072,11 @@ export default {
   margin-top: 10px;
   font-size: 24px;
 }
-.flash-goods-info .life-goods-name {
-  font-size: 28px;
-  line-height: 46px;
-  margin-top: 8px;
-}
+// .flash-goods-info .life-goods-name {
+//   font-size: 28px;
+//   line-height: 46px;
+//   margin-top: 8px;
+// }
 .life-goods-price {
   font-size: 30px;
   color: #eb5841;
@@ -1317,5 +1348,17 @@ div.empty-session {
   /deep/ .life-home {
     background: linear-gradient(to bottom, #fff,#f2f2f4, #fff);
   }
+}
+.price-tag-1 {
+  height: 70px;
+  font-size: 28px;
+}
+.price-tag-2 {
+  height: 68px;
+  font-size: 28px;
+}
+.price-tag-3 {
+  height: 56px;
+  font-size: 28px;
 }
 </style>

@@ -99,7 +99,10 @@ const routes = [{
     import(
       /* webpackChunkName: "login" */
       '@/views/login/index.vue'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 {
   path: '/applist',
@@ -126,7 +129,10 @@ const routes = [{
     import(
       /* webpackChunkName: "openingPage" */
       '@/views/index/openingPage.vue'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 {
   path: '/specialTopic',

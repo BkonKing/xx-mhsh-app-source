@@ -269,7 +269,7 @@
             </template>
           </template>
           <template v-else>
-            <div class="add-btn credits-info"><img src="@/assets/img/icon_37.png" />{{ableCredits}}</div>
+            <div class="add-btn credits-info"><img src="@/assets/img/icon_37.png" />{{ableCredits}}<span class="credits-text">可用</span></div>
             <div class="buy-btn btn-linear" @click="showFunc('buy')" data-type="buy" v-txAnalysis="{eventId: 12}">立即兑换</div>
           </template>
         </template>
@@ -1288,7 +1288,7 @@ div.btn-disabled {
   font-weight: bold;
   color: #FEBF00;
   background-color: #fff;
-  line-height: 98px;
+  line-height: 1;
   padding-right: 30px;
 }
 .credits-info img {
@@ -1690,5 +1690,11 @@ div.btn-disabled {
   display: inline;
   color: #eb5841;
   font-size: 24px;
+}
+.credits-text {
+  margin-left: 4px;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
 }
 </style>

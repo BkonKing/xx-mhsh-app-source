@@ -131,7 +131,6 @@
           </div>
           <van-swipe
             ref="bargainSwipe"
-            :autoplay="3000"
             :show-indicators="false"
           >
             <van-swipe-item
@@ -142,11 +141,16 @@
               <tf-image-list
                 :data="item"
                 :column="ollageGoodsVisible ? 1 : 3"
+                :gutter="2"
                 srcKey="thumb"
                 @click="clickSpecialSale"
               >
                 <template v-slot:tag="{ img }">
-                  <div class="price-tag">￥{{ img.te_price / 100 }}</div>
+                  <price-show
+                    class="price-tag"
+                    :money="img.rmb_price"
+                    :credit="img.xfb_num"
+                  ></price-show>
                 </template>
               </tf-image-list>
             </van-swipe-item>
@@ -166,18 +170,22 @@
           </div>
           <van-swipe
             ref="ollageGoods"
-            :autoplay="3000"
             :show-indicators="false"
           >
             <van-swipe-item v-for="(item, i) in ollageSwipeList" :key="i">
               <tf-image-list
                 :data="item"
                 :column="bargainVisible ? 2 : 3"
+                :gutter="5"
                 srcKey="thumb"
                 @click="clickTimeLimit"
               >
                 <template v-slot:tag="{ img }">
-                  <div class="price-tag">￥{{ img.s_price }}</div>
+                  <price-show
+                    class="price-tag"
+                    :money="img.rmb_price"
+                    :credit="img.xfb_num"
+                  ></price-show>
                 </template>
               </tf-image-list>
             </van-swipe-item>
@@ -292,6 +300,11 @@
         :key="index"
       />
     </div>
+    <sign-alert
+      v-model="signAlertVisible"
+      :message="signMessage"
+      :credits="signOwnerCredits"
+    ></sign-alert>
   </div>
 </template>
 
@@ -300,6 +313,7 @@ import pageNavBar from '@/components/page-nav-bar/index'
 import tfImageList from '@/components/tf-image-list'
 import FilmBox from '@/views/life/movie/components/FilmBox'
 import homeTask from './components/task'
+import PriceShow from './components/price-show'
 import { setUserPostion } from '@/api/user'
 import {
   getMyApp,
@@ -315,6 +329,7 @@ import { signin } from '@/api/personage'
 import { getfilmlist } from '@/api/movie'
 import { getTaskSwitch, getHomeTaskList } from '@/api/task'
 import { mapGetters } from 'vuex'
+import SignAlert from './components/SignAlert'
 import { bulterPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
 import { bMapGetLocationInfo } from '@/utils/util'
@@ -324,7 +339,9 @@ export default {
     pageNavBar,
     tfImageList,
     FilmBox,
-    homeTask
+    homeTask,
+    PriceShow,
+    SignAlert
   },
   data () {
     return {
@@ -353,7 +370,11 @@ export default {
       guideTop: 0,
       isOpeningTask: true, // 是否显示任务专区
       taskList: [], // 任务列表
-      isLocationFirst: true // 保存用户定位信息只执行一次状态
+      isLocationFirst: true, // 保存用户定位信息只执行一次状态
+      signAlertVisible: false, // 游客认证提醒弹窗
+      signMessage: '', // 签到成功提醒
+      signOwnerCredits: '', // 业主签到幸福币
+      isNotice: false // 是否为公告跳转
     }
   },
   computed: {
@@ -473,9 +494,15 @@ export default {
         signin()
           .then(res => {
             this.signLoading = false
-            this.$toast({
-              message: res.message
-            })
+            if (+res.open_box) {
+              this.signMessage = res.message
+              this.signOwnerCredits = res.owner_credits
+              this.signAlertVisible = true
+            } else {
+              this.$toast({
+                message: res.message
+              })
+            }
             this.$store.dispatch('getMyAccount')
             this.mtjEvent({
               eventId: 4
@@ -524,7 +551,12 @@ export default {
     },
     // 跳转9.9特卖专区
     goSpecialSale () {
-      this.$router.push('/store/special-sale')
+      this.$router.push({
+        path: '/life',
+        query: {
+          type: 2
+        }
+      })
     },
     // 9.9特卖专区图片点击
     clickSpecialSale ({ goods_id }) {
@@ -538,7 +570,12 @@ export default {
     },
     // 跳转限时闪购列表
     goTimeLimit () {
-      this.$router.push('/store/flash-purchase')
+      this.$router.push({
+        path: '/life',
+        query: {
+          type: 1
+        }
+      })
     },
     // 跳转限时闪购详情
     clickTimeLimit ({ goods_id }) {
@@ -608,6 +645,7 @@ export default {
     },
     // 跳转公告详情页
     goNotice ({ id }) {
+      this.isNotice = true
       this.$router.push({
         name: 'noticeDetails',
         query: {
@@ -684,13 +722,22 @@ export default {
     // 重新登录后，重新发送地址
     const name = ['login', 'settingAccount']
     if (name.includes(from.name)) {
-      next((vm) => {
+      next(vm => {
         vm.isLocationFirst = true
       })
     }
     next()
   },
   beforeRouteLeave (to, from, next) {
+    /**
+     * 2021-8-15
+     * 总后台发布的公告，首页的公告轮播区，所有用户可点击查看通知详情，不需要验证是否认证
+     */
+    if (this.isNotice && to.name === 'noticeDetails') {
+      this.isNotice = false
+      next()
+      return
+    }
     bulterPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
@@ -731,6 +778,8 @@ export default {
 .tf-bg-white {
   height: 100%;
   /deep/ .tf-image-grid .van-grid-item__content--square {
+    width: 212px;
+    height: 212px !important;
     background: #f4f4f4;
     border-radius: 10px;
   }
@@ -908,8 +957,9 @@ export default {
   flex: 1;
   width: 0;
   padding: 30px 0 0;
+  min-height: 400px;
   /deep/ .tf-image-grid {
-    height: 260px;
+    height: 276px;
   }
   &__title {
     font-size: 34px;
@@ -935,9 +985,11 @@ export default {
     padding: 0 10px;
   }
   /deep/ .tf-image-item {
+    // width: 212px;
+    // height: 212px;
     background: #ffffff;
     border: 4px solid #ffffff;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
   }
   /deep/ .van-image__error {
     border-radius: 10px;
@@ -946,18 +998,19 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 130px;
-    height: 44px;
+    width: 100%;
+    height: 60px;
     position: absolute;
-    bottom: -19px;
-    left: 50%;
-    margin-left: -65px;
-    background: #eb5841;
-    box-shadow: 0px 4px 10px 0px rgba(209, 58, 33, 0.45);
-    border-radius: 22px;
-    font-size: 26px;
+    bottom: -58px;
+    left: 0;
+    // margin-left: -100px;
+    // background: #eb5841;
+    // box-shadow: 0px 4px 10px 0px rgba(209, 58, 33, 0.45);
+    border-radius: 0 0 10px 10px;
+    font-size: 24px;
     line-height: 1;
-    color: #fff;
+    color: #ff6555;
+    background: #fff;
   }
 }
 // 电影专区

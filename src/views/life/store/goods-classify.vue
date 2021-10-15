@@ -1,15 +1,27 @@
 <template>
   <div class="app-body white-bg">
     <div class="body-block">
-      <div :class="[navList.length == 0 ? 'empty-188' : 'empty-276','search-absolute']">
+      <div
+        :class="[
+          navList.length == 0 ? 'empty-188' : 'empty-276',
+          'search-absolute'
+        ]"
+      >
         <div class="absolute-top">
           <div class="search-input-block flex-between">
             <div class="search-back flex-center" @click="$router.go(-1)">
               <img class="img-100" src="@/assets/img/icon_19.png" />
             </div>
-            <div class="search-input-session flex-align-center" @click="linkFunc(6)">
+            <div
+              class="search-input-session flex-align-center"
+              @click="linkFunc(6)"
+            >
               <img class="search-icon" src="@/assets/img/icon_11.png" />
-              <input class="search-input" type="text" placeholder="输入关键词搜索" />
+              <input
+                class="search-input"
+                type="text"
+                placeholder="输入关键词搜索"
+              />
             </div>
           </div>
 
@@ -23,13 +35,27 @@
                   @click="changeNav(index, item.id)"
                   :class="index === activeIndex ? 'active' : null"
                 >
-                  <div>{{item.category_name}}</div>
+                  <div>{{ item.category_name }}</div>
                 </div>
               </scrollBar>
             </div>
             <div class="sort-session flex-align-center">
-              <div :class="['price-sort', sort_val == 2 ? 'cur asc' : '',sort_val == 3 ? 'cur desc' : '']" @click="sortFunc(23)">价格</div>
-              <div :class="['sales-sort', sort_val == 1 ? 'cur' : '']" @click="sortFunc(1)">销量</div>
+              <div
+                :class="[
+                  'price-sort',
+                  sort_val == 2 ? 'cur asc' : '',
+                  sort_val == 3 ? 'cur desc' : ''
+                ]"
+                @click="sortFunc(23)"
+              >
+                价格
+              </div>
+              <div
+                :class="['sales-sort', sort_val == 1 ? 'cur' : '']"
+                @click="sortFunc(1)"
+              >
+                销量
+              </div>
             </div>
           </div>
         </div>
@@ -38,11 +64,23 @@
       <div class="classify-cont">
         <div class="classify-nav-block">
           <div class="classify-nav">
-            <div v-for="(item,index) in leftNav" :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']" @click="categoryNav(index,item.id)">{{item.category_name}}</div>
+            <div
+              v-for="(item, index) in leftNav"
+              :class="[leftActiveIndex == index ? 'cur' : '', 'nav-item']"
+              @click="categoryNav(index, item.id)"
+            >
+              {{ item.category_name }}
+            </div>
           </div>
         </div>
 
-        <div :class="[navList.length == 0 ? '' : 'classify-right-276', 'classify-right']" id="classify-body">
+        <div
+          :class="[
+            navList.length == 0 ? '' : 'classify-right-276',
+            'classify-right'
+          ]"
+          id="classify-body"
+        >
           <van-list
             v-model="loading"
             :finished="finished"
@@ -50,17 +88,55 @@
             @load="onLoad"
           >
             <div v-if="listData.length > 0" class="classify-list">
-              <div v-for="(item,index) in listData" class="classify-item flex-between" :data-id="2" @click="linkFunc(5,{id:item.id})">
+              <div
+                v-for="(item, index) in listData"
+                class="classify-item flex-between"
+                :key="index"
+                :data-id="2"
+                @click="linkFunc(5, { id: item.id })"
+              >
                 <img class="res-goods-pic" :src="item.thumb" />
                 <div class="res-goods-info">
-                  <div class="res-goods-name res-name p-nowrap">{{item.goods_name}}</div>
-                  <div class="flex-align-center">
-                    <template v-if="item.goods_type>1">
-                      <div :class="[item.goods_type == 2 ? 'label-item-tm' : 'label-item-sg','label-item-block']">{{item.goods_type == 2 ? '特卖' : '闪购'}}</div>
-                    </template>
-                    <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
+                  <div class="res-goods-name res-name p-nowrap">
+                    {{ item.goods_name }}
                   </div>
-                  <div class="res-goods-price">￥{{item.s_price/100}} <span v-if="item.y_price && item.y_price!='0'">￥{{item.y_price/100}}</span></div>
+                  <div class="res-goods-tags flex-align-center">
+                    <template v-if="item.goods_type > 1">
+                      <div
+                        :class="[
+                          item.goods_type == 2
+                            ? 'label-item-tm'
+                            : 'label-item-sg',
+                          'label-item-block'
+                        ]"
+                      >
+                        {{ item.goods_type == 2 ? "特卖" : "闪购" }}
+                      </div>
+                    </template>
+                    <div
+                      v-for="(val, j) in item.tag"
+                      :key="j"
+                      class="label-item-block label-item-tip"
+                      :style="{
+                        'border-color': val.tag_color,
+                        color: val.tag_color
+                      }"
+                    >
+                      {{ val.tag_name }}
+                    </div>
+                  </div>
+                  <div class="res-goods-price">
+                    <price-show
+                      :money="item.rmb_price"
+                      :credit="item.xfb_num"
+                    ></price-show>
+                  </div>
+                  <div
+                    class="res-goods-price-original"
+                    v-if="item.y_price && item.y_price != '0'"
+                  >
+                    ￥{{ item.y_price / 100 }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,13 +154,15 @@
 <script>
 import { TreeSelect, List } from 'vant'
 import scrollBar from '@/components/scroll-bar'
+import PriceShow from '../../home/components/price-show'
 import { getClassifyGoods } from '@/api/life.js'
 export default {
   name: 'goodsClassify',
   components: {
     [TreeSelect.name]: TreeSelect,
     [List.name]: List,
-    scrollBar
+    scrollBar,
+    PriceShow
   },
   data () {
     return {
@@ -129,11 +207,15 @@ export default {
           if (this.leftNav.length == 0) {
             this.leftNav = res.data.category_list
             if (res.data.category_list[this.leftActiveIndex].children) {
-              this.navList = res.data.category_list[this.leftActiveIndex].children
+              this.navList =
+                res.data.category_list[this.leftActiveIndex].children
             }
           }
 
-          this.listData = this.page == 1 ? res.data.goods_list : this.listData.concat(res.data.goods_list)
+          this.listData =
+            this.page == 1
+              ? res.data.goods_list
+              : this.listData.concat(res.data.goods_list)
           this.isEmpty = !!(this.page == 1 && res.data.goods_list.length == 0)
           if (res.data.goods_list.length < res.pageSize) {
             this.finished = true
@@ -218,8 +300,8 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped>
+<style scoped src="../../../styles/life.css"></style>
+<style lang="less" scoped>
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -306,7 +388,7 @@ export default {
   font-size: 24px;
   color: #666;
 }
-.nav-item.cur{
+.nav-item.cur {
   background-color: #fff;
   color: #eb5841;
   font-size: 26px;
@@ -354,7 +436,7 @@ export default {
   color: #222222;
 }
 .scroll-barItem.active div:after {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -381,8 +463,9 @@ export default {
 .sort-session .cur {
   color: #eb5841;
 }
-.price-sort::before,.price-sort::after {
-  content: '';
+.price-sort::before,
+.price-sort::after {
+  content: "";
   position: absolute;
   right: 25px;
   width: 0;
@@ -406,14 +489,14 @@ export default {
   border-color: #eb5841 transparent transparent transparent;
 }
 .classify-item {
-  height: 160px;
   width: 530px;
+  min-height: 160px;
   overflow: hidden;
   margin-bottom: 30px;
 }
 .res-goods-pic {
   width: 160px;
-  height: 100%;
+  height: 160px;
   object-fit: cover;
   border-radius: 4px;
   background-color: #f4f4f4;
@@ -430,13 +513,20 @@ export default {
   margin: 10px 10px 14px 0;
 }
 .res-goods-price {
+  display: flex;
+  margin-top: 10px;
   padding-top: 10px;
-  line-height: 44px;
+  line-height: 1;
   font-size: 32px;
   color: #eb5841;
+  /deep/ .price-icon {
+    font-size: 24px;
+  }
 }
-.res-goods-price span {
+.res-goods-price-original {
+  margin-top: 18px;
   font-size: 24px;
+  line-height: 1;
   color: #8f8f94;
   text-decoration: line-through;
 }

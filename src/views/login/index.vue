@@ -77,64 +77,134 @@
         @click="loginType = loginType === 1 ? 2 : 1"
         >{{ loginType === 1 ? "密码登录" : "验证码登录" }}</span
       >
-      <div class="agreement" @click="agree = !agree">
-        <div class="agreement-checkbox-input">
+      <div class="agreement">
+        <div class="agreement-checkbox-input" @click="agree = !agree">
           <span
             class="tf-icon checkbox-icon"
             :class="{ 'tf-icon-gou': agree }"
           ></span>
         </div>
         <span class="agreement-text">
-          登录即表示您同意
-          <router-link class="agreement-link" to="/agreement"
-            >《美好生活家园用户协议》</router-link
+          <span @click="agree = !agree">已阅读并同意</span>
+          <router-link class="agreement-link" to="/agreement?articleType=1"
+            >《{{ userAgreementTitle }}》</router-link
+          >
+          <router-link class="agreement-link" to="/agreement?articleType=6"
+            >《{{ privacyAgreementTitle }}》</router-link
           >
         </span>
       </div>
     </div>
+    <agree-popup v-model="agreePopup" @handleAgree="handleAgree"></agree-popup>
+    <tf-dialog-v2
+      v-model="logoutDialog"
+      title="账号注销已提交"
+      confirmButtonText="我知道了"
+      cancelButtonText="取消注销申请"
+      @confirm="() => (logoutDialog = false)"
+      @cancel="
+        logoutDialog = false;
+        cancelLogoutDialog = true;
+      "
+    >
+      <template slot="content">
+        您的账号注销申请已提交，在30天内请不要登录美好生活家园APP，以确保注销顺利完成。可再次查看<router-link
+          class="agreement-link"
+          to="/agreement?articleType=7"
+          >《{{ logoutAgreementTitle }}》</router-link
+        >
+      </template>
+    </tf-dialog-v2>
+    <tf-dialog-v2
+      v-model="cancelLogoutDialog"
+      title="确定取消账号注销申请？"
+      content="取消账号注销申请后，不再删除账号的数据，您的账号可正常进行登录。"
+      confirmButtonText="确定取消"
+      :showCancelButton="false"
+      :closeOnClickOverlay="true"
+      @confirm="cancelLogout"
+    >
+    </tf-dialog-v2>
   </div>
 </template>
 
 <script>
-import { verifCode } from '@/api/user'
-import { validEmpty } from '@/utils/util'
-import { handlePermission } from '@/utils/permission'
-import { setStatisticsData } from '@/utils/analysis.js'
+import { yzmLogin, pwdLogin, verifCode, cancelLogout } from '@/api/user'
+import { validEmpty, bMapGetLocationInfo } from '@/utils/util'
+import { getAllAgreement } from '@/api/home'
+import { setStatisticsData } from '@/utils/analysis'
+import AgreePopup from '@/components/Business/agree-popup'
+import TfDialogV2 from '@/components/tf-dialog-v2'
+import { bindAliasAndTags } from '@/utils/ajpush'
+
 export default {
+  name: 'login',
+  components: {
+    AgreePopup,
+    TfDialogV2
+  },
   data () {
     return {
+      firstStatus: false, // 是否第一次登录
       mobile: undefined,
       yzm: undefined, // 验证码
       pwd: undefined, // 密码
       loginType: 1, // 1:验证码登录 2：密码登陆
-      agree: true, // 同意协议
+      agree: false, // 同意协议
       showPassword: false,
       codeLoading: false, // 获取验证loading状态
       codeStatus: false, // 验证码发送状态
       countDownTime: 60000,
       status: 0, // 1：换个账号登录 0：登录
-      loginLoading: false // 登录loading状态
+      loginLoading: false, // 登录loading状态
+      userAgreementTitle: '用户协议', // 用户协议标题
+      privacyAgreementTitle: '隐私协议', // 隐私协议标题
+      logoutAgreementTitle: '注销重要提示', // 注销协议标题
+      agreePopup: false, // 登录协议弹窗
+      logoutDialog: false,
+      cancelLogoutDialog: false,
+      loginData: {} // 注销用户保护期登录保存登录成功数据,确认取消申请后登录使用
     }
   },
   created () {
-    this.status = this.$route.query.status
-  },
-  mounted () {
-    handlePermission({
-      name: 'location',
-      message: '没有开启定位，可能会影响部分功能哦！'
+    this.firstStatus = api.getPrefs({
+      sync: true,
+      key: 'first-login'
     })
+    if (!this.firstStatus) {
+      this.agreePopup = true
+    }
+    this.status = this.$route.query.status
+    // 换个账号登录则默认同意协议
+    if (this.status) {
+      this.agree = true
+    }
+    this.getAllAgreement()
   },
   methods: {
+    // 获取协议名称
+    getAllAgreement () {
+      getAllAgreement().then(({ data }) => {
+        data.forEach(obj => {
+          obj.article_type === '1' && (this.userAgreementTitle = obj.title)
+          obj.article_type === '6' && (this.privacyAgreementTitle = obj.title)
+          obj.article_type === '7' && (this.logoutAgreementTitle = obj.title)
+        })
+      })
+    },
+    // 同意协议
+    handleAgree () {
+      this.agree = true
+    },
     // 提交登录验证
     submitLogin () {
       if (!this.agree) {
-        this.$toast('请阅读并同意用户协议')
+        this.agreePopup = true
         return
       }
       let params
-      /* 验证码登录 */
       if (this.loginType === 1) {
+        // 验证码登录
         if (
           validEmpty(this.mobile, '请输入手机号码') ||
           validEmpty(this.yzm, '请输入验证码')
@@ -146,7 +216,7 @@ export default {
           yzm: this.yzm
         }
       } else if (this.loginType === 2) {
-        /* 密码登录 */
+        // 密码登录
         if (
           validEmpty(this.mobile, '请输入手机号码') ||
           validEmpty(this.pwd, '请输入密码')
@@ -160,32 +230,111 @@ export default {
       }
       this.login(params)
     },
-    // 登录请求
-    login (params) {
+    // 获取地址登录
+    async login (params) {
       this.loginLoading = true
-      this.$store
-        .dispatch('login', {
-          type: this.loginType,
-          params
+
+      this.$toast.allowMultiple()
+      const loadingToast = this.$toast.loading({
+        duration: 0,
+        message: '正在登录中'
+      })
+
+      // 获取当前地址
+      let newParams = params
+      try {
+        const ret = await bMapGetLocationInfo()
+        const locationInfo = {
+          lon: ret.lon, // 数字类型；经度
+          lat: ret.lat, // 数字类型；纬度
+          province: ret.province, // 字符串类型；省份
+          cityCode: ret.cityCode, // 字符串类型；城市编码
+          city: ret.city, // 字符串类型；城市
+          district: ret.district, // 字符串类型；县区
+          streetName: ret.streetName // 字符串类型；街道名
+        }
+        newParams = {
+          ...locationInfo,
+          ...params
+        }
+        api.setPrefs({
+          key: 'location_info',
+          value: locationInfo
         })
-        .then(data => {
-          this.loginLoading = false
-          this.loginJump()
-          // 行为数据分析收集
-          if (data.first_register == 1) {
-            this.mtjEvent({
-              eventId: 2
-            })
+      } catch (error) {
+      }
+      this.requestLogin(newParams, loadingToast)
+    },
+    // 登录请求
+    requestLogin (newParams, loadingToast) {
+      const loginUrl = this.loginType === 1 ? yzmLogin : pwdLogin
+      loginUrl(newParams)
+        .then(res => {
+          const { data, success } = res
+          if (success) {
+            if (+data.is_popup) {
+              // 弹出注销提交
+              this.logoutDialog = true
+              this.loginData = data
+            } else {
+              // 登录成功
+              this.loginSuccess(data)
+            }
+          } else {
+            this.$toast(res.message)
           }
-          this.mtjEvent({
-            eventId: 1
-          })
-          // 登入新增
-          setStatisticsData(4, { mobile: this.mobile })
         })
-        .catch(() => {
+        .catch((res) => {
+          this.$toast(res.message)
+        })
+        .finally(() => {
           this.loginLoading = false
+          loadingToast.clear()
         })
+    },
+    // 成功登录
+    async loginSuccess (data) {
+      // 极光推送别名
+      if (process.env.VUE_APP_IS_APP === '1') {
+        bindAliasAndTags(data.id)
+      }
+      // 保存token和tokenList(多账号切换)
+      this.setToken(data)
+
+      this.$store.commit('setUser_info', data)
+      await this.$store.dispatch('getHouse')
+      // 第一次登录成功后，下次不进入自动勾选协议
+      if (!this.firstStatus) {
+        api.setPrefs({
+          key: 'first-login',
+          value: 1
+        })
+      }
+      this.loginJump()
+      this.setDataAnalysis(data.first_register)
+    },
+    // 保存token和tokenList(多账号切换)
+    setToken (data) {
+      api.setPrefs({
+        key: 'access_token',
+        value: data.access_token
+      })
+      api.setPrefs({
+        key: 'refresh_token',
+        value: data.refresh_token
+      })
+      let tokenList =
+        api.getPrefs({
+          key: 'token_list',
+          sync: true
+        }) || {}
+      tokenList =
+        typeof tokenList === 'string' ? JSON.parse(tokenList) : tokenList
+      tokenList[data.id] = data.access_token
+      api.setPrefs({
+        key: 'token_list',
+        value: tokenList
+      })
     },
     // 登录跳转，判断是否通过分享进入未登录情况下吗，登录成功后跳转到分享页面，否则跳转到首页
     loginJump () {
@@ -237,6 +386,31 @@ export default {
         })
       }
     },
+    // 登录行为数据分析收集
+    setDataAnalysis (firstRegister) {
+      // 行为数据分析收集
+      // eslint-disable-next-line eqeqeq
+      if (firstRegister == 1) {
+        this.mtjEvent({
+          eventId: 2
+        })
+      }
+      this.mtjEvent({
+        eventId: 1
+      })
+      // 登入新增
+      setStatisticsData(4, { mobile: this.mobile })
+    },
+    // 确定取消注销申请
+    cancelLogout () {
+      cancelLogout({
+        mobile: this.mobile
+      }).then(({ success }) => {
+        if (success) {
+          this.loginSuccess(this.loginData)
+        }
+      })
+    },
     // 发送验证码
     verifCode () {
       this.codeLoading = true
@@ -263,6 +437,10 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.$store.commit('setShare_params', '')
+    if (to.name !== 'agreement') {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
     next()
   }
 }
@@ -374,18 +552,19 @@ export default {
   }
 }
 .agreement {
-  margin-top: 160px;
   display: flex;
-  padding: 20px 0;
-  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  padding: 20px 0;
+  margin-top: 160px;
   .agreement-checkbox-input {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    flex-shrink: 0;
+    width: 30px;
     height: 28px;
+    margin-top: 2px;
     margin-right: 10px;
     border: 2px solid #aaa;
     .tf-icon-gou {
@@ -396,6 +575,7 @@ export default {
   .agreement-text {
     font-size: 24px;
     color: #8f8f94;
+    text-align: center;
     .agreement-link {
       color: #8f8f94;
     }

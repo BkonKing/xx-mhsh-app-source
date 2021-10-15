@@ -5,7 +5,12 @@
       :class="[navList.length < 5 ? 'flex-center' : '', 'flash-header']"
     >
       <div class="flash-scroll">
-        <scrollBar direction="x" :activeIndex="tapIndex" @scrollEvent="scrollEvent" @touchEnd="touchEnd">
+        <scrollBar
+          direction="x"
+          :activeIndex="tapIndex"
+          @scrollEvent="scrollEvent"
+          @touchEnd="touchEnd"
+        >
           <div
             class=""
             v-for="(item, index) in navList"
@@ -50,15 +55,15 @@
         >
           <template v-slot="timeData">
             <span class="count-num">{{
-              timeData.hours < 10 ? "0" + timeData.hours : timeData.hours
+              10 > timeData.hours ? "0" + timeData.hours : timeData.hours
             }}</span>
             <div class="count-colon"></div>
             <span class="count-num">{{
-              timeData.minutes < 10 ? "0" + timeData.minutes : timeData.minutes
+              10 > timeData.minutes ? "0" + timeData.minutes : timeData.minutes
             }}</span>
             <div class="count-colon"></div>
             <span class="count-num">{{
-              timeData.seconds < 10 ? "0" + timeData.seconds : timeData.seconds
+              10 > timeData.seconds ? "0" + timeData.seconds : timeData.seconds
             }}</span>
           </template>
         </van-count-down>
@@ -74,7 +79,11 @@
         @change="changeNav"
         :swipeable="swipeable"
       >
-        <van-tab v-for="(item, index) in navList" :key="index" :title="item.status_txt">
+        <van-tab
+          v-for="(item, index) in navList"
+          :key="index"
+          :title="item.status_txt"
+        >
           <van-list
             v-model="loading"
             :finished="finished"
@@ -90,6 +99,7 @@
                     index == 0 ? 'item-big' : 'item-small',
                     'flash-item'
                   ]"
+                  :key="index"
                 >
                   <div class="flash-goods-pic">
                     <img class="img-100" :src="item.thumb" />
@@ -106,12 +116,28 @@
                         >
                           拼单优惠
                         </div>
-                        <div v-for="(val, j) in item.tag" :key="j" class="label-item-block label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
+                        <div
+                          v-for="(val, j) in item.tag"
+                          :key="j"
+                          class="label-item-block label-item-tip"
+                          :style="{
+                            'border-color': val.tag_color,
+                            color: val.tag_color
+                          }"
+                        >
+                          {{ val.tag_name }}
+                        </div>
                       </div>
                       <div class="flash-price-tip flex-center">
                         <div class="flash-goods-price">
-                          <span class="goods-price-span1">￥</span>{{ item.now_price / 100 }}
-                          <span class="goods-price-span2">￥{{ item.y_price / 100 }}</span>
+                          <price-show
+                            class="price-tag-1"
+                            :money="item.rmb_price"
+                            :credit="item.xfb_num"
+                          ></price-show>
+                          <span class="goods-price-span2"
+                            >￥{{ item.y_price / 100 }}</span
+                          >
                         </div>
                       </div>
                     </template>
@@ -130,8 +156,11 @@
                         </div> -->
                       </div>
                       <div class="flash-goods-price">
-                        <span class="goods-price-span1">￥</span
-                        >{{ item.now_price / 100 }}
+                        <price-show
+                          class="price-tag-2"
+                          :money="item.rmb_price"
+                          :credit="item.xfb_num"
+                        ></price-show>
                         <span class="goods-price-span2"
                           >￥{{ item.y_price / 100 }}</span
                         >
@@ -191,6 +220,7 @@
 import { NavBar, CountDown, List, Toast, Tab, Tabs } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import remindSwal from './../components/remind-swal'
+import PriceShow from '../../home/components/price-show'
 import { mapGetters } from 'vuex'
 import {
   getFlashNav,
@@ -208,10 +238,12 @@ export default {
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     scrollBar,
-    remindSwal
+    remindSwal,
+    PriceShow
   },
   props: {
-    bargain_id: { // 特价id
+    bargain_id: {
+      // 特价id
       type: String,
       default: ''
     },
@@ -310,8 +342,7 @@ export default {
             this.page == 1
               ? res.data.list_data
               : this.listData.concat(res.data.list_data)
-          this.isEmpty =
-            !!(this.page == 1 && res.data.list_data.length == 0)
+          this.isEmpty = !!(this.page == 1 && res.data.list_data.length == 0)
           if (res.data.list_data.length < res.pageSize) {
             this.finished = true
             this.flag = true
@@ -451,7 +482,7 @@ export default {
 </script>
 
 <style scoped src="../../../styles/life.css"></style>
-<style scoped>
+<style lang="less" scoped>
 .flash-cont {
   height: calc(100% - 88px);
   background-color: #fff;
@@ -651,7 +682,7 @@ export default {
 .goods-tip-block {
   display: flex;
   height: 36px;
-  margin-bottom: 18px;
+  margin-bottom: 28px;
 }
 /* .goods-tip {
   font-size: 22px;
@@ -662,15 +693,15 @@ export default {
   overflow: hidden;
 } */
 .label-item-block.tip-pd {
-  border: 1PX solid #FFA110;
-  color: #FFA110;
+  border: 1px solid #ffa110;
+  color: #ffa110;
 }
 .label-item-block + .label-item-block {
   margin-left: 10px;
 }
 .flash-goods-price {
-  height: 86px;
-  line-height: 86px;
+  /* height: 54px; */
+  line-height: 1;
   font-size: 42px;
   color: #eb5841;
   font-weight: bold;
@@ -781,5 +812,25 @@ export default {
   height: 147px;
   font-size: 30px;
   color: #000;
+}
+
+.price-tag-1 {
+  display: inline-flex !important;
+  font-size: 32px;
+  /deep/ .price-icon {
+    font-size: 24px;
+  }
+}
+
+.price-tag-1 + .goods-price-span2 {
+  margin-left: 10px;
+}
+
+.price-tag-2 {
+  justify-content: flex-start !important;
+  font-size: 32px;
+  /deep/ .price-icon {
+    font-size: 24px;
+  }
 }
 </style>

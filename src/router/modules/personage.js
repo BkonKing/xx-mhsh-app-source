@@ -242,7 +242,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "happinessCoinPayment" */
         '@/views/personage/happiness-coin/payment.vue'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   /* 我的互动 */
   {
@@ -442,6 +445,19 @@ const personageRouter = [
         /* webpackChunkName: "recomRecord" */
         '@/views/personage/happiness-coin/recom-record.vue'
       )
+  },
+  /** 我的资料-注销账号 */
+  {
+    path: '/personage/logout',
+    name: 'logout',
+    component: () =>
+      import(
+        /* webpackChunkName: "logout" */
+        '@/views/personage/information/logout'
+      ),
+    meta: {
+      keepAlive: true
+    }
   }
 ]
 

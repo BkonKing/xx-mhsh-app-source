@@ -121,6 +121,7 @@ export default {
         paypassword: this.paypassword
       }).then((res) => {
         this.successCallback('支付密码设置成功')
+        this.$store.dispatch('getMyAccount')
       })
     },
     // 操作成功后回调

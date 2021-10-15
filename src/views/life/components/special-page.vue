@@ -1,5 +1,6 @@
 <template>
   <van-list
+    class="van-special-list"
     v-model="loading"
     :finished="finished"
     finished-text=""
@@ -7,15 +8,25 @@
     :immediate-check="false"
   >
     <div v-if="listData.length" class="special-list flex-between">
-      <div v-for="(item,index) in listData" :key="index" class="special-item" @click="linkFunc(5,{id:item.goods_id})">
+      <div
+        v-for="(item, index) in listData"
+        :key="index"
+        class="special-item"
+        @click="linkFunc(5, { id: item.goods_id })"
+      >
         <div class="special-goods-pic">
           <img class="img-100" :src="item.thumb" />
         </div>
-        <div class="special-goods-name p-nowrap">{{item.goods_name}}</div>
-        <div class="special-goods-price flex-align-center">
-          <div class="goods-price-bg flex-between">特卖<div><span>￥</span>{{item.te_price/100}}</div></div>
-          <div class="goods-old-price">￥{{item.s_price/100}}</div>
+        <div class="special-goods-name p-nowrap">{{ item.goods_name }}</div>
+        <div class="special-goods-price">
+          <price-show
+            class="price-tag-2"
+            :money="item.rmb_price"
+            :credit="item.xfb_num"
+          ></price-show>
+          <div class="goods-old-price">￥{{ item.s_price / 100 }}</div>
         </div>
+        <span class="special-tag">特价</span>
       </div>
     </div>
     <div v-else style="height: 1px"></div>
@@ -24,15 +35,18 @@
 
 <script>
 import { NavBar, List } from 'vant'
+import PriceShow from '../../home/components/price-show'
 import { getSaleGoods } from '@/api/life.js'
 export default {
   name: 'special-page',
   components: {
     [NavBar.name]: NavBar,
-    [List.name]: List
+    [List.name]: List,
+    PriceShow
   },
   props: {
-    bargain_id: { // 特价id
+    bargain_id: {
+      // 特价id
       type: String,
       default: ''
     }
@@ -63,7 +77,8 @@ export default {
       }).then(res => {
         if (res.success) {
           this.flag = true
-          this.listData = this.page == 1 ? res.data : this.listData.concat(res.data)
+          this.listData =
+            this.page == 1 ? res.data : this.listData.concat(res.data)
           this.isEmpty = !!(this.page == 1 && res.data.length == 0)
           if (res.data.length < res.pageSize) {
             this.finished = true
@@ -102,12 +117,16 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped>
+<style scoped src="../../../styles/life.css"></style>
+<style lang="less" scoped>
 .scroll-body {
   height: calc(100% - 186px);
   overflow-y: auto;
   position: relative;
+}
+
+.van-special-list {
+  background-color: #f7f7f7;
 }
 
 .special-list {
@@ -116,8 +135,9 @@ export default {
   flex-wrap: wrap;
 }
 .special-item {
+  position: relative;
   width: 345px;
-  min-height: 505px;
+  min-height: 514px;
   background-color: #fff;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -130,30 +150,23 @@ export default {
   /*background-color: #f4f4f4;*/
 }
 .special-goods-name {
-  font-size: 26px;
+  font-size: 28px;
   color: #222;
-  line-height: 50px;
-  height: 50px;
+  line-height: 1;
   padding: 0 20px;
-  margin-top: 10px;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
 .special-goods-price {
-  height: 48px;
   padding-left: 20px;
 }
-.goods-price-bg {
-  height: 100%;
-  width: 210px;
-  padding-left: 10px;
-  color: #fff;
-  font-size: 24px;
-  background: url('../../../assets/img/icon_35.png') no-repeat center center /100% 100%;
-}
-.goods-price-bg div {
-  width: 117px;
-  font-weight: bold;
-  color: #EC4141;
-  font-size: 34px;
+.price-tag-2 {
+  justify-content: flex-start !important;
+  height: 66px;
+  font-size: 32px;
+  /deep/ .price-icon {
+    font-size: 24px;
+  }
 }
 .goods-price-bg div span {
   font-weight: normal;
@@ -162,7 +175,22 @@ export default {
 .goods-old-price {
   color: #8f8f94;
   font-size: 24px;
+  line-height: 1;
   text-decoration: line-through;
   margin-left: 8px;
+}
+.special-tag {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 60px;
+  height: 50px;
+  padding-top: 5px;
+  background-image: url("~@/assets/img/special-tag.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
 }
 </style>

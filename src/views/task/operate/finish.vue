@@ -203,6 +203,7 @@ export default {
       this.formData.user_task_id = this.userTaskId
       submitCompleteInfo(this.formData).then(res => {
         if (res.success) {
+          this.$store.commit('setTaskFinishStatus', true)
           // 已完成
           if (this.formData.type == 0) {
             Toast({
