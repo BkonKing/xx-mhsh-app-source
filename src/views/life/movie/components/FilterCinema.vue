@@ -113,9 +113,9 @@ export default {
     this.reload()
   },
   methods: {
-    reload () {
+    reload (params) {
       // this.gethall()
-      this.getcinematotalbycity()
+      this.getcinematotalbycity(params)
     },
     // 获取所有的影厅
     gethall () {
@@ -133,11 +133,12 @@ export default {
       })
     },
     // 获取所有及各区域县影院数量
-    getcinematotalbycity () {
+    getcinematotalbycity (params = {}) {
       getcinematotalbycity({
         city_id: this.cityId,
         film_no: this.filmNo, // 选择影院使用
-        search: this.search // 搜索页使用
+        search: this.search, // 搜索页使用
+        ...params
       }).then(({ data, total }) => {
         this.countyOptions = data
         this.countyOptions.unshift({

@@ -30,6 +30,7 @@
         <!-- 影院筛选 -->
         <filter-cinema
           v-if="filmInfo.film_id"
+          ref="filter-cinema"
           :cityId="cityId"
           :filmNo="filmInfo.film_code"
           :offset-top="`${offsetTop + 1.30667}rem`"
@@ -119,6 +120,14 @@ export default {
     FilterCinema,
     CinemaBox,
     tfShare
+  },
+  watch: {
+    activeDate (val) {
+      const FilterCinema = this.$refs['filter-cinema']
+      FilterCinema && FilterCinema.reload({
+        input_date: val
+      })
+    }
   },
   created () {
     this.filmId = this.$route.query.id
