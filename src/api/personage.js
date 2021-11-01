@@ -420,3 +420,38 @@ export function unbindBankCard (data) {
 }
 
 /* 基础信息 end */
+
+/* 美好红包 start */
+// 用户邀请有礼页面
+export function getUserInviteInfo (data) {
+  return request({
+    url: '/invite/invite/getUserInvite',
+    method: 'post',
+    data
+  })
+}
+// 用户邀请有礼 列表 记录页面
+export function getUserInviteRecord (data) {
+  return request({
+    url: '/invite/invite/getUserInviteList',
+    method: 'post',
+    data
+  })
+}
+// 邀请通知轮播
+export function getInviteNotice (data) {
+  return request({
+    url: '/invite/invite/inviteReward',
+    method: 'post',
+    data
+  })
+}
+// 生成 红包分享 海报
+export function getPoster (data) {
+  return request({
+    url: '/invite/invite/genrePic',
+    method: 'post',
+    data
+  })
+}
+/* 美好红包 end */
