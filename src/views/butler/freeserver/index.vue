@@ -15,9 +15,33 @@
         ></span>
       </template>
     </van-nav-bar>
-    <van-search v-model="search" placeholder="请输入关键字搜索" />
+    <div class="filter-box">
+      <van-dropdown-menu
+        v-show="!searchFocused"
+        class="filter-menu"
+        @change="getFreeServerList"
+      >
+        <van-dropdown-item
+          v-model="checkedStatus"
+          :options="bookingStatus"
+          :title="checkedStatus ? '' : '预约状态'"
+        />
+        <van-dropdown-item
+          v-model="checkedStatus"
+          :options="bookingStatus"
+          :title="checkedStatus ? '' : '服务类型'"
+        />
+      </van-dropdown-menu>
+      <van-search
+        class="search-box"
+        v-model="search"
+        @focus="searchFocused = true"
+        @blur="searchFocused = false"
+        placeholder="搜一搜"
+      />
+    </div>
     <div class="tf-padding tf-body-container">
-      <div class="tab-btn-box">
+      <!-- <div class="tab-btn-box">
         <div
           class="tab-btn"
           :class="{'tab-btn--blue': category_type === 1}"
@@ -42,42 +66,51 @@
             <div class="tf-text-grey">({{jy_num}})</div>
           </div>
         </div>
-      </div>
-      <service-card :active="category_type" :search="search" :data="serviceList" @reload="getFreeServerList"></service-card>
+      </div> -->
+      <service-card
+        :active="category_type"
+        :search="search"
+        :data="serviceList"
+        @reload="getFreeServerList"
+      ></service-card>
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Search } from 'vant'
 import serviceCard from './components/service-card.vue'
 import { getFreeServerList } from '@/api/butler.js'
 export default {
   components: {
-    serviceCard,
-    [NavBar.name]: NavBar,
-    [Search.name]: Search
+    serviceCard
   },
   data () {
     return {
       search: '',
+      searchFocused: false, // 搜索框聚焦中
       category_type: 0, // 当前类型
       rg_num: 0, // 人工服务数量
       jy_num: 0, // 借用服务数量
-      serviceList: []
+      serviceList: [],
+      checkedStatus: '',
+      bookingStatus: [
+        {
+          text: '已预约',
+          value: 1
+        }
+      ]
     }
   },
   created () {
     this.getFreeServerList()
   },
   methods: {
-    /* 获取全部免费服务类型 */
     getFreeServerList (searchName) {
       getFreeServerList(/* {
         category_type: this.category_type,
         searchName
       } */).then(
-        (res) => {
+        res => {
           const { rg_num, jy_num, records } = res.data
           this.rg_num = rg_num
           this.jy_num = jy_num
@@ -102,9 +135,47 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.tf-body-container {
+  background: #f7f7f7;
+}
 .placeholder {
   font-family: iconfont !important;
   color: @gray-7;
+}
+.filter-box {
+  display: flex;
+  height: 88px;
+  background: #fff;
+  .filter-menu {
+    width: 390px;
+    margin-right: 108px;
+    /deep/ .van-dropdown-menu__bar {
+      height: 100%;
+      box-shadow: none;
+    }
+  }
+  .search-box {
+    flex: 1;
+    padding: 12px 20px;
+    /deep/ .van-search__content {
+      height: 64px;
+      padding-left: 30px;
+      padding-right: 30px;
+      border-radius: 32px;
+      background: #f7f7f7;
+      .van-cell {
+        padding: 0;
+        line-height: 64px;
+        .van-icon-search {
+          color: #a6a6a6;
+        }
+        .van-field__left-icon,
+        .van-field__control {
+          line-height: 64px;
+        }
+      }
+    }
+  }
 }
 
 .check-type {

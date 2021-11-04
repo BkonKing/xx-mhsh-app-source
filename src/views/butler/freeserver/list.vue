@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-body">
     <van-nav-bar
-      title="我的免费服务"
+      title="免费服务"
       :fixed="true"
       placeholder
       left-arrow
@@ -12,7 +12,38 @@
         <template v-slot="{ item }">
           <div class="tf-card">
             <div class="tf-card-header">
-              <div class="tf-card-header__title">{{ item.category }}</div>
+              <div class="tf-card-header__title">
+                <div class="header-name">
+                  {{ item.category
+                  }}<span class="status-tag">{{ item.status }}</span>
+                </div>
+                <div class="header-time">
+                  预约服务：<span>2021-09-20 12:00</span>
+                </div>
+                <template v-if="item.category_type == 1">
+                  <div class="header-time">
+                    排队时间：<span v-if="item.status == 1" class="alert-text"
+                      >第 {{ parseInt(item.pd_num || 0) + 1 }} 位</span
+                    ><span v-if="item.status == 2">{{ item.stime }}</span>
+                  </div>
+                  <div v-if="item.status == 2" class="header-time">
+                    服务时间：<span>{{ item.etime }}</span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="header-time">
+                    借用时间：<span>{{ item.stime }}</span>
+                  </div>
+                  <div class="header-time">
+                    归还时间：<span v-if="item.status == 1" class="alert-text"
+                      >请于 {{ item.gh_time }} 前归还</span
+                    ><span v-if="item.status == 2">{{ item.stime }}</span>
+                  </div>
+                </template>
+                <div v-if="item.status == 3" class="header-time">
+                  取消时间：<span>{{ item.etime }}</span>
+                </div>
+              </div>
               <div
                 v-if="item.status == 1"
                 class="tf-icon tf-icon-erweima"
@@ -20,27 +51,13 @@
               ></div>
             </div>
             <div class="tf-card-content">
-              <template v-if="item.category_type == 1">
-                <div>排队时间：{{ item.stime }}</div>
-                <div class="mt10" v-if="item.status == 1">
-                  排队中：<span class="tf-text-primary"
-                    >第 {{ parseInt(item.pd_num || 0) + 1 }} 位</span
-                  >
-                </div>
-                <div v-else-if="item.status == 2">
-                  服务时间：{{ item.etime }}
-                </div>
-              </template>
-              <template v-else>
-                <div>借用时间：{{ item.stime }}</div>
-                <div class="mt10" v-if="item.status == 1">
-                  归还时间：<span class="tf-text-primary"
-                    >请于 {{ item.gh_time }} 前归还</span
-                  >
-                </div>
-                <div v-if="item.status == 2">归还时间：{{ item.etime }}</div>
-              </template>
-              <div v-if="item.status == 3">取消时间：{{ item.etime }}</div>
+              <span
+                class="tf-icon"
+                :class="[true ? 'tf-icon-shijian' : 'tf-icon-dingwei']"
+              ></span
+              ><span class="info-text"
+                >小区服务中心二楼（周一至周五 9:00-18:00）</span
+              >
             </div>
           </div>
         </template>
@@ -148,15 +165,57 @@ export default {
 .tf-body-container {
   padding-top: 10px;
 }
-.tf-card-content {
-  color: @gray-7;
-  margin-bottom: 10px;
+.tf-card-header__title {
+  width: 100%;
+  font-size: 32px;
+  font-weight: bold;
 }
-.mt10 {
-  margin-top: 10px;
+.header-name {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  line-height: 1;
+  .status-tag {
+    font-size: 24px;
+    color: #8f8f94;
+  }
+}
+.header-time {
+  margin-top: 19px;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1;
+  color: #8f8f94;
+  span {
+    color: #222222;
+  }
+}
+.alert-success-text {
+  color: #6bc572 !important;
+}
+.alert-info-text {
+  color: #00A0E9 !important;
+}
+.alert-text {
+  color: #ff6555 !important;
+}
+.tf-card-content {
+  .tf-icon {
+    margin-right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
+  }
+  .info-text {
+    font-size: 26px;
+    color: #8f8f94;
+  }
 }
 .tf-icon-erweima {
-  font-size: 42px;
+  position: absolute;
+  top: 84px;
+  right: 30px;
+  font-size: 40px;
   line-height: 1;
 }
 
