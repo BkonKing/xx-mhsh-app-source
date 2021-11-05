@@ -17,7 +17,7 @@
 
 <script>
 import { cjFace } from '@/api/personage'
-import eventBus from '@/api/eventbus'
+import eventBus from '@/utils/eventbus'
 import { mapGetters } from 'vuex'
 export default {
   data () {

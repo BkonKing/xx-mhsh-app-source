@@ -12,7 +12,7 @@
     </div>
     <!-- 预约 -->
     <!-- v-if="serverStatus === 0" -->
-    <div v-if="false" class="reservation">
+    <div v-if="true" class="reservation">
       <div v-if="!isManualServer" class="free-server-row">
         <span class="free-server-label">剩余可借：</span>
         <span class="free-server-value free-server-alert-red">5个</span>
@@ -29,19 +29,23 @@
         <span class="free-server-label">服务地点：</span>
         <span class="free-server-value">5人</span>
       </div>
-      <van-button class="free-server-btn free-server-btn-able"
+      <van-button
+        class="free-server-btn free-server-btn-able"
+        @click="generateReservation"
         >我要预约</van-button
       >
     </div>
     <!-- 排队 -->
     <!-- v-else-if="serverStatus === 2" -->
-    <div v-if="true" class="in-service">
+    <div v-if="false" class="in-service">
       <div v-if="!success" class="free-server-alert">
         (请前往服务地点，出示给工作人员）
         <!-- 排队中：第{{ data.pd_num + 1 }}位 -->
       </div>
       <div class="qr-box">
-        <div class="qr-status" :class="{'qr-status-return': true}">{{ statusText }}</div>
+        <div class="qr-status" :class="{ 'qr-status-return': true }">
+          {{ statusText }}
+        </div>
         <img class="qr-img" :src="qrImg" />
       </div>
       <div class="return-info">
@@ -56,13 +60,19 @@
     <div v-if="false" class="success-box">
       <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
       <div class="success-info">服务成功</div>
-    </div><cancel-server></cancel-server></van-popup
-  >
+    </div>
+    <cancel-server v-model="cancelVisible"></cancel-server
+  ></van-popup>
 </template>
 
 <script>
 import CancelServer from './CancelServer'
-import { getServerCode, serverCodeStatus } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
+import {
+  getServerCode,
+  serverCodeStatus,
+  generateReservation
+} from '@/api/butler.js'
 export default {
   name: 'ServicePop',
   components: {
@@ -84,10 +94,12 @@ export default {
       timer: null,
       qrImg: '',
       visible: this.value,
+      cancelVisible: false,
       codeId: ''
     }
   },
   computed: {
+    ...mapGetters(['userInfo', 'currentProject']),
     // 是否人工服务，否则为借用服务
     isManualServer () {
       return this.data.category_type === '1'
@@ -168,6 +180,13 @@ export default {
       this.codeId = res.data.code_id
       this.serverCodeStatus()
     },
+    // 预约
+    generateReservation () {
+      generateReservation({
+        enter_project_id: this.currentProject.project_id,
+        category_id: this.data.id
+      }).then(() => {})
+    },
     // 轮询当前状态
     pollingServer () {
       this.timer && clearTimeout(this.timer)
@@ -203,14 +222,14 @@ export default {
 }
 .free-server-dialog-green {
   .free-server-btn-able {
-    background: #6BC572;
+    background: #6bc572;
     color: #fff;
   }
   .qr-status {
-    background: #6BC572;
+    background: #6bc572;
   }
   .qr-status-return {
-    background: #FEBF00;
+    background: #febf00;
   }
 }
 

@@ -250,7 +250,7 @@
 import { NavBar, Toast } from 'vant'
 import explainSwal from './../components/explain-swal'
 import paySwal from './../components/pay-swal'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 import { getOrdinaryInfo, getFlashInfo, getExchangeInfo, ordinaryCreate, flashCreate, exchangeCreate, payOrderUp } from '@/api/life.js'
 import { mapGetters } from 'vuex'
 export default {

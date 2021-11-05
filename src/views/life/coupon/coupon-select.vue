@@ -90,7 +90,7 @@
                 <div class="color-ffa110 font-24">{{item.term_of_validity}}</div>
               </div>
             </div>
-		        
+
 		      </div>
 		      <div class="coupon-down">
             <div :class="['toggle-btn',item.is_down ? 'toggle-btn-down' : '']" @click="contToggle(index,0)" data-id="index"></div>
@@ -119,10 +119,10 @@
 <script>
 import { NavBar } from 'vant'
 import { getSelectCoupon } from '@/api/life.js'
-import eventBus from '@/api/eventbus.js';
+import eventBus from '@/utils/eventbus.js'
 export default {
   components: {
-    [NavBar.name]: NavBar,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
@@ -130,78 +130,77 @@ export default {
       ableList: [],
       ableNum: 0,
       unableList: [],
-      unableNum: 0,
+      unableNum: 0
     }
   },
-  created(){
-    this.prev_page = this.$route.query.prev_page;
-    this.user_coupon_id = this.$route.query.user_coupon_id;
-    this.total();
+  created () {
+    this.prev_page = this.$route.query.prev_page
+    this.user_coupon_id = this.$route.query.user_coupon_id
+    this.total()
   },
   methods: {
   	/**
      * 计算商品数量/价格
      */
     total: function (e) {
-      const that = this;
-      let carts_arr = [];
-      if (this.prev_page == 1){
+      const that = this
+      let carts_arr = []
+      if (this.prev_page == 1) {
         // carts_arr = JSON.parse(localStorage.getItem('cart2'))|| [];
-        carts_arr = api.getPrefs({ sync: true, key: 'cart2' }) || [];
-        if(carts_arr && carts_arr.length > 0){
-          carts_arr = JSON.parse(carts_arr);
+        carts_arr = api.getPrefs({ sync: true, key: 'cart2' }) || []
+        if (carts_arr && carts_arr.length > 0) {
+          carts_arr = JSON.parse(carts_arr)
         }
-      }else {
+      } else {
         // carts_arr = JSON.parse(localStorage.getItem('cart'))|| [];
-        carts_arr = api.getPrefs({ sync: true, key: 'cart' }) || [];
-        if(carts_arr && carts_arr.length > 0){
-          carts_arr = JSON.parse(carts_arr);
+        carts_arr = api.getPrefs({ sync: true, key: 'cart' }) || []
+        if (carts_arr && carts_arr.length > 0) {
+          carts_arr = JSON.parse(carts_arr)
         }
       }
-      let carts_list = [];
+      const carts_list = []
       if (carts_arr && carts_arr.length > 0) {
         for (var j in carts_arr) {
           if (carts_arr[j].is_checked) {
-            carts_list.push(carts_arr[j]);
+            carts_list.push(carts_arr[j])
           }
         }
-        this.carts = carts_list;
+        this.carts = carts_list
       } else {
-        return;
+        return
       }
-      that.getData();
-      return;
+      that.getData()
 	  },
     getData () {
       getSelectCoupon({
         user_coupon_id: this.user_coupon_id,
-        giftbag: JSON.stringify(this.carts),
+        giftbag: JSON.stringify(this.carts)
       }).then(res => {
         if (res.success) {
-          this.ableList = res.data.available;
-          this.ableNum = res.data.available_num;
-          this.unableList = res.data.disable;
-          this.unableNum = res.data.disable_num;
+          this.ableList = res.data.available
+          this.ableNum = res.data.available_num
+          this.unableList = res.data.disable
+          this.unableNum = res.data.disable_num
         }
       })
     },
-    contToggle(index,type){
-    	if(type == 1){
-    		this.ableList[index].is_down = !this.ableList[index].is_down;
-    	}else {
-        console.log(this.unableList[index]);
-    		this.unableList[index].is_down = !this.unableList[index].is_down;
+    contToggle (index, type) {
+    	if (type == 1) {
+    		this.ableList[index].is_down = !this.ableList[index].is_down
+    	} else {
+        console.log(this.unableList[index])
+    		this.unableList[index].is_down = !this.unableList[index].is_down
     	}
     },
-    clickItem(index){
-      //传递一个map，chooseCoupon是key，id是value
+    clickItem (index) {
+      // 传递一个map，chooseCoupon是key，id是value
       var obj = {
       	user_coupon_id: this.ableList[index].user_coupon_id,
-      	coupon_text: this.ableList[index].coupon_text,
+      	coupon_text: this.ableList[index].coupon_text
       }
-      eventBus.$emit('chooseCoupon',JSON.stringify(obj));
-      //调用router回退页面
-      this.$router.go(-1);
+      eventBus.$emit('chooseCoupon', JSON.stringify(obj))
+      // 调用router回退页面
+      this.$router.go(-1)
     }
   }
 }

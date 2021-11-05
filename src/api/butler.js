@@ -256,6 +256,14 @@ export function getFreeServerList (params) {
     params
   })
 }
+// 获取用户服务状态数
+export function getServerCount (data) {
+  return request.post('/butler/freeserver/getServerCount', data)
+}
+// 生成预约信息
+export function generateReservation (data) {
+  return request.post('/butler/freeserver/generateReservation', data)
+}
 // 我的免费预约列表接口
 export function getMyFreeServerList (params) {
   return request.get('/butler/freeserver/getMyFreeServerList', {

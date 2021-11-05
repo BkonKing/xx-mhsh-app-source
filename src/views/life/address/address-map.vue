@@ -33,7 +33,7 @@
 
 <script>
 import { NavBar, Search } from 'vant'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 export default {
   components: {
     [NavBar.name]: NavBar,

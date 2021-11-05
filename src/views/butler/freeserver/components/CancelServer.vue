@@ -1,5 +1,5 @@
 <template>
-  <van-popup v-model="revocationShow" class="cancel-server-dialog">
+  <van-popup v-model="visible" class="cancel-server-dialog">
     <div class="cancel-server-header">
       <div class="cancel-server-title">取消预约</div>
       <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
@@ -53,14 +53,28 @@
 import tfPicker from '@/components/tf-picker/index'
 export default {
   name: 'CancelServer',
+  props: {
+    value: {
+      type: Boolean,
+      default: false
+    }
+  },
   components: {
     tfPicker
   },
   data () {
     return {
-      revocationShow: true,
+      visible: this.value,
       refuse_reason: '',
       other_reason: ''
+    }
+  },
+  watch: {
+    value (newValue) {
+      this.visible = newValue
+    },
+    visible (newValue) {
+      this.emit('input', newValue)
     }
   }
 }

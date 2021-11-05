@@ -16,7 +16,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import eventBus from '@/api/eventbus'
+import eventBus from '@/utils/eventbus'
 import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
 import { pagesArr } from './const/pages.js'
 import { swiperightWhiteList } from './const/whiteList'

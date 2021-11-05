@@ -299,7 +299,7 @@ import house from '../house/components/house'
 import { uImages } from '@/api/user'
 import { mapGetters } from 'vuex'
 import { getDate, selectFileImage } from '@/utils/util'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 import {
   getMemberList,
   yzHouse,

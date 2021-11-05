@@ -29,7 +29,7 @@
 								</div>
 								<div class="order-sku-num">
 									<div class="order-sku order-sku-text p-nowrap">{{item.specs_name}}</div>
-									
+
 								</div>
 								<div class="order-action-session">
 									<div class="order-action-text"></div>
@@ -61,7 +61,7 @@
 							</div>
 							<div class="order-sku-num">
 								<div class="order-sku p-nowrap">{{item.specs_name}}</div>
-								
+
 							</div>
 							<div class="order-action-session">
 								<div class="order-action-text color-8f8f94">
@@ -143,7 +143,7 @@
 				<div class="color-fff font-30">提交</div>
 			</div>
 		</div>
-		
+
 		<div v-show="skuShow" class="public-mask  bottom-fixed">
       <div class="public-dclose" @click="showFunc()"><img class="img-100" src="@/assets/img/close.png" /></div>
       <div class="shops-params">
@@ -155,7 +155,7 @@
             <div class="goods-name p-nowrapm">{{ableList[tabIndex].goods_name}}</div>
           </div>
         </div>
-      
+
         <div class="shops-dlist">
           <div class="shops-ditem">
             <div class="shops-dtit">规格</div>
@@ -179,12 +179,12 @@
     </div>
     <div v-show="skuShow" class="mask-bg" catchtouchmove="true" @click="showFunc()"></div>
 
-		<explain-swal 
+		<explain-swal
     :show-swal="showExplainSwal"
     :swal-cont="swalCont"
     @closeSwal="closeExplainSwal"
     ></explain-swal>
-    <reason-swal 
+    <reason-swal
     :show-swal="showReasonSwal"
     :swal-list="swalList"
     :swal-info="swalInfo"
@@ -197,7 +197,7 @@
 <script>
 import { Icon, NavBar, ImagePreview, Toast } from 'vant'
 import { getApplyBarter, barterSubmit } from '@/api/life.js'
-import eventBus from '@/api/eventbus.js';
+import eventBus from '@/utils/eventbus.js';
 import tfUploader from '@/components/tf-uploader/index'
 import reasonSwal from './../components/reason-swal'
 import explainSwal from './../components/explain-swal'
@@ -377,7 +377,7 @@ export default {
 	      }).then(res => {
 	        if (res.success) {
 	        	// Toast(res.message);
-            this.mtjEvent({eventId: '55'}); 
+            this.mtjEvent({eventId: '55'});
 	        	//跳转换货详情
             this.$router.push({
               path: '/order/barter-detail',
