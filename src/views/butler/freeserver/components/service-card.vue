@@ -1,58 +1,70 @@
 <template>
   <div class="service-card-box">
     <div
-      v-for="(item, i) in data"
-      :key="i"
+      v-for="(item, index) in data"
+      :key="item.id"
       v-show="
-        (!active || active == item.category_type) &&
+        (!categoryType || categoryType == item.category_type) &&
+          (!checkedStatus || checkedStatus == item.server_status) &&
           item.category.indexOf(search) !== -1
       "
       class="service-card"
       :class="{
-        'service-card--disabled':
-          item.is_stop == 1 ||
-          (item.sy_num == 0 &&
-            item.category_type == 2 &&
-            item.server_status == 0)
+        'service-card--disabled': item.is_stop == 1 || !item.appointment
       }"
-      @click="showService(item)"
+      @click="showService(item, index)"
     >
       <div
         class="service-card-tag"
         :class="{
-          'service-card-tag--blue': item.category_type == 1,
-          'service-card-tag--green': item.category_type == 2
+          'service-card-tag--blue': item.category_type === 1,
+          'service-card-tag--green': item.category_type === 2
         }"
       ></div>
       <div class="service-card-content">
         <div class="service-card-name">{{ item.category }}</div>
-        <div v-if="item.is_stop == 1" class="service-card-info">
-          暂停服务
+        <div
+          v-if="item.is_stop == 1 || !item.appointment"
+          class="service-card-info"
+        >
+          {{item.is_stop == 1 ? '暂停服务' : '仅部分用户可享受服务'}}
         </div>
         <div
           v-else
           class="service-card-info"
           :class="{ 'tf-text-primary': item.server_status == 1 }"
         >
-          <span class="status-tag status-tag-end">排队中</span>
+          <span
+            v-if="[1, 2, 3].includes(item.server_status)"
+            class="status-tag status-tag-end"
+            >{{ item.server_status | statusName }}</span
+          >
           <span>{{ item | pdText }}</span>
         </div>
       </div>
     </div>
-    <service-pop v-model="popVisible" :data="activeServe"></service-pop>
+    <service-pop
+      v-model="popVisible"
+      :data="activeServe"
+      :id="activeServe.id"
+      @change="changeServer"
+    ></service-pop>
   </div>
 </template>
 
 <script>
 import ServicePop from './ServicePop'
 import { mapGetters } from 'vuex'
-import { getServerCode, serverCodeStatus } from '@/api/butler.js'
 export default {
   components: {
     ServicePop
   },
   props: {
-    active: {
+    categoryType: {
+      type: [String, Number],
+      default: ''
+    },
+    checkedStatus: {
       type: [String, Number],
       default: ''
     },
@@ -69,7 +81,8 @@ export default {
     return {
       popVisible: false,
       // FNScanner: null,
-      activeServe: {} // 当前选中服务
+      activeServe: {}, // 当前选中服务
+      activeIndex: 0
     }
   },
   computed: {
@@ -77,51 +90,62 @@ export default {
   },
   methods: {
     // 点击服务显示二维码
-    showService (item) {
+    showService (item, index) {
       const {
-        category_type: categoryType,
-        server_status: status,
         is_stop: isStop,
-        sy_num: syNum
+        appointment
       } = item
       // 暂停使用或者没有可借的借用服务直接返回
-      if (
-        +isStop === 1 ||
-        (syNum === 0 && +categoryType === 2 && status === 0)
-      ) {
+      if (+isStop === 1 || appointment === 0) {
         return
       }
       this.activeServe = item
+      this.activeIndex = index
       this.popVisible = true
+    },
+    changeServer (data) {
+      this.$emit('change', {
+        index: this.activeIndex,
+        data
+      })
     }
   },
   watch: {
     popVisible (value) {
-      this.$emit('reload')
+      // this.$emit('reload')
     }
   },
   filters: {
-    pdText (obj) {
-      if (obj.category_type == '1') {
-        if (obj.is_lineup == 0) {
-          return '无需排队'
+    statusName (status) {
+      const statusName = {
+        1: '已预约',
+        2: '排队中',
+        3: '待归还'
+      }
+      return statusName[status]
+    },
+    pdText ({
+      category_type: type,
+      server_status: status,
+      appointment_count: appointmentCount,
+      server_count: serverCount,
+      remaining_count: remainingCount,
+      service_queue: serverQueue,
+      return_time: returnTime
+    }) {
+      if ([2, 3].includes(status)) {
+        const inProgress = {
+          2: `第${serverQueue}位`, // 排队中
+          3: `请${returnTime.substring(5, 10)}前归还` // 待归还
         }
-        if (obj.pd_num == 0) {
-          return '当前无人排队'
-        }
-        if (obj.server_status == 0) {
-          return `正在排队${obj.pd_num}人`
-        } else {
-          return `排队中：第${obj.pd_num}位`
-        }
-      } else if (obj.category_type == '2') {
-        if (obj.server_status == 0) {
-          return `剩余${obj.sy_num}个可借`
-        } else {
-          return '借用中'
-        }
+        return inProgress[status] || ''
       } else {
-        return '累计服务58人'
+        // 借用需显示剩余数量
+        const borrowRemain = type === 2 ? `(剩余${remainingCount || 0}个)` : ''
+        // 有预约则显示预约
+        return appointmentCount
+          ? `${appointmentCount}人预约${borrowRemain}`
+          : `累计服务${serverCount}人${borrowRemain}`
       }
     }
   }
@@ -192,10 +216,10 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 80px;
+    min-width: 88px;
     height: 42px;
     padding: 0 8px;
-    margin-right: 17px;
+    margin-right: 10px;
     border-radius: 6px;
     font-size: 22px;
     font-weight: bold;
@@ -207,7 +231,7 @@ export default {
   }
   .status-tag-end {
     background: #febf001a;
-    color: #FEBF00;
+    color: #febf00;
   }
 }
 </style>

@@ -10,24 +10,34 @@
       <div class="free-server-title">{{ data.category }}</div>
       <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
     </div>
+    <div v-if="success" class="success-box">
+      <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
+      <div class="success-info">服务成功</div>
+    </div>
     <!-- 预约 -->
-    <!-- v-if="serverStatus === 0" -->
-    <div v-if="true" class="reservation">
-      <div v-if="!isManualServer" class="free-server-row">
-        <span class="free-server-label">剩余可借：</span>
-        <span class="free-server-value free-server-alert-red">5个</span>
-      </div>
-      <div class="free-server-row">
-        <span class="free-server-label">当前预约：</span>
-        <span class="free-server-value">5人</span>
-      </div>
-      <div class="free-server-row">
-        <span class="free-server-label">服务时间：</span>
-        <span class="free-server-value">周一至周五 9:00~18:00</span>
-      </div>
-      <div class="free-server-row">
-        <span class="free-server-label">服务地点：</span>
-        <span class="free-server-value">5人</span>
+    <div
+      v-else-if="serverStatus === 0 || serverStatus === 5"
+      class="reservation"
+    >
+      <div class="free-server-info">
+        <div v-if="!isManualServer" class="free-server-row">
+          <span class="free-server-label">剩余可借：</span>
+          <span class="free-server-value free-server-alert-red"
+            >{{ data.remaining_count }}个</span
+          >
+        </div>
+        <div class="free-server-row">
+          <span class="free-server-label">当前预约：</span>
+          <span class="free-server-value">{{ data.appointment_count }}人</span>
+        </div>
+        <div v-if="data.service_time" class="free-server-row">
+          <span class="free-server-label">服务时间：</span>
+          <span class="free-server-value">{{ data.service_time }}</span>
+        </div>
+        <div v-if="data.location" class="free-server-row">
+          <span class="free-server-label">服务地点：</span>
+          <span class="free-server-value">{{ data.location }}</span>
+        </div>
       </div>
       <van-button
         class="free-server-btn free-server-btn-able"
@@ -36,32 +46,50 @@
       >
     </div>
     <!-- 排队 -->
-    <!-- v-else-if="serverStatus === 2" -->
-    <div v-if="false" class="in-service">
+    <div v-else-if="[1, 2, 3].includes(serverStatus)" class="in-service">
       <div v-if="!success" class="free-server-alert">
-        (请前往服务地点，出示给工作人员）
-        <!-- 排队中：第{{ data.pd_num + 1 }}位 -->
+        <span class="free-server-alert-red" v-if="serverStatus === 2"
+          >排队中：第{{ data.service_queue }}位</span
+        >
+        <template v-else>(请前往服务地点，出示给工作人员）</template>
       </div>
       <div class="qr-box">
-        <div class="qr-status" :class="{ 'qr-status-return': true }">
+        <van-loading v-if="!qrImg" type="spinner" size="30px" color="#00A0E9" />
+        <div
+          v-show="qrImg"
+          class="qr-status"
+          :class="{ 'qr-status-return': true }"
+        >
           {{ statusText }}
         </div>
-        <img class="qr-img" :src="qrImg" />
+        <img v-show="qrImg" class="qr-img" :src="qrImg" />
       </div>
-      <div class="return-info">
-        请<span class="free-server-alert-red">2021-10-01 12:00</span>前归还
+      <div v-if="codeType === 2" class="return-info">
+        请<span class="free-server-alert-red">{{ data.return_time }}</span
+        >前归还
       </div>
-      <div class="server-info">
-        <img class="icon-img" src="" alt="" />周一至周五 9:00~18:00周一至周五
-        9:00~18:00
+      <div v-if="serverInfo" class="server-info">
+        <img
+          v-if="data.location"
+          class="icon-img"
+          src="@/assets/butler/freeserver-address.png"
+          alt=""
+        /><img
+          v-else
+          class="icon-img"
+          src="@/assets/butler/freeserver-time.png"
+          alt=""
+        />{{ serverInfo }}
       </div>
-      <van-button class="free-server-btn">取消预约</van-button>
+      <van-button class="free-server-btn" @click="cancelReservation"
+        >取消预约</van-button
+      >
     </div>
-    <div v-if="false" class="success-box">
-      <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
-      <div class="success-info">服务成功</div>
-    </div>
-    <cancel-server v-model="cancelVisible"></cancel-server
+    <cancel-server
+      v-model="cancelVisible"
+      :data="data"
+      @success="cancelSuccess"
+    ></cancel-server
   ></van-popup>
 </template>
 
@@ -69,6 +97,7 @@
 import CancelServer from './CancelServer'
 import { mapGetters } from 'vuex'
 import {
+  getServerInfo,
   getServerCode,
   serverCodeStatus,
   generateReservation
@@ -83,16 +112,22 @@ export default {
       type: Boolean,
       default: false
     },
-    data: {
-      type: Object,
-      default: () => ({})
+    // data: {
+    //   type: Object,
+    //   default: () => ({})
+    // },
+    id: {
+      type: [Number, String],
+      default: ''
     }
   },
   data () {
     return {
+      data: {},
       success: false,
       timer: null,
       qrImg: '',
+      qrCodeId: '',
       visible: this.value,
       cancelVisible: false,
       codeId: ''
@@ -102,7 +137,10 @@ export default {
     ...mapGetters(['userInfo', 'currentProject']),
     // 是否人工服务，否则为借用服务
     isManualServer () {
-      return this.data.category_type === '1'
+      return this.data.category_type === 1
+    },
+    projectId () {
+      return this.currentProject.project_id
     },
     serverStatus () {
       return +this.data.server_status
@@ -120,31 +158,41 @@ export default {
       let codeType = 0
       // categoryType: 1-人工 2-借用
       const categoryType = +this.data.category_type
-      const serverStatus = +this.data.server_status
       const isLineup = +this.data.is_lineup
       if (categoryType === 1) {
-        if ((serverStatus === 0 || !serverStatus) && isLineup === 1) {
+        if (this.serverStatus === 1 && isLineup === 1) {
           codeType = 3
         } else {
           codeType = 4
         }
       } else if (categoryType === 2) {
-        if (serverStatus === 0 || !serverStatus) {
+        if (this.serverStatus === 1) {
           codeType = 1
         } else {
           codeType = 2
         }
       }
       return codeType
+    },
+    serverInfo () {
+      const { location, service_time: serviceTime } = this.data
+      if (location && serviceTime) {
+        return `${location}（${serviceTime}）`
+      }
+      if (location || serviceTime) {
+        return location || serviceTime
+      }
+      return ''
     }
   },
   watch: {
-    value (newValue) {
+    async value (newValue) {
       if (newValue && !this.visible) {
-        this.$nextTick(() => {
-          this.getServerCode()
-        })
+        this.$toast.loading('加载中')
+        this.qrImg = ''
+        await this.getServerInfo()
       }
+      this.$toast.clear()
       this.visible = newValue
     },
     visible (newValue) {
@@ -152,12 +200,10 @@ export default {
       if (!newValue) {
         this.timer && clearTimeout(this.timer)
         if (this.success) {
-          this.$emit('reload')
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.success = false
-            }, 500)
-          })
+          this.getServerInfo(true)
+          setTimeout(() => {
+            this.success = false
+          }, 500)
         }
       }
     }
@@ -169,12 +215,22 @@ export default {
     this.timer && clearTimeout(this.timer)
   },
   methods: {
+    // 获取服务信息
+    async getServerInfo (isChange) {
+      const { data } = await getServerInfo({
+        id: this.id
+      })
+      this.data = data
+      isChange && this.$emit('change', data)
+      if ([1, 2, 3].includes(+this.data.server_status)) {
+        this.getServerCode()
+      }
+    },
     // 获取服务二维码
     async getServerCode () {
       const res = await getServerCode({
-        id: this.data.id,
-        server_id: this.data.server_id,
-        code_type: this.codeType
+        enter_project_id: this.projectId,
+        server_id: this.data.server_id
       })
       this.qrImg = res.data.url
       this.codeId = res.data.code_id
@@ -183,9 +239,13 @@ export default {
     // 预约
     generateReservation () {
       generateReservation({
-        enter_project_id: this.currentProject.project_id,
+        enter_project_id: this.projectId,
         category_id: this.data.id
-      }).then(() => {})
+      }).then(success => {
+        if (success) {
+          this.getServerInfo()
+        }
+      })
     },
     // 轮询当前状态
     pollingServer () {
@@ -197,14 +257,27 @@ export default {
     // 出示二维码用户监听状态
     async serverCodeStatus () {
       const res = await serverCodeStatus({
+        enter_project_id: this.projectId,
         code_id: this.codeId
       })
       if (res.status === '1') {
-        this.success = true
+        if ([1, 3].includes(this.codeType)) {
+          this.getServerInfo(true)
+        } else {
+          this.success = true
+        }
         this.timer = null
       } else {
         this.pollingServer()
       }
+    },
+    cancelReservation () {
+      this.cancelVisible = true
+    },
+    cancelSuccess () {
+      this.visible = false
+      this.getServerInfo(true)
+      this.timer && clearTimeout(this.timer)
     }
   }
 }
@@ -253,6 +326,9 @@ export default {
 .reservation {
   padding: 40px 30px 30px;
 }
+.free-server-info {
+  margin-bottom: 40px;
+}
 .free-server-row {
   display: flex;
   padding: 20px 0;
@@ -271,7 +347,6 @@ export default {
 }
 .free-server-btn {
   width: 100%;
-  margin-top: 30px;
   background: #f7f7f7;
   border-radius: 10px;
   border: none;
@@ -295,6 +370,8 @@ export default {
 .qr-box {
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 360px;
   margin: 40px;
   position: relative;
   .qr-img {
@@ -305,11 +382,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 88px;
-    height: 88px;
+    width: 76px;
+    height: 76px;
     position: absolute;
-    left: calc(50% - 44px);
-    top: calc(50% - 44px);
+    left: calc(50% - 38px);
+    top: calc(50% - 38px);
     border-radius: 50%;
     font-size: 28px;
     font-weight: bold;
@@ -326,8 +403,10 @@ export default {
 
 .server-info {
   display: flex;
+  justify-content: center;
   text-align: center;
   padding-top: 24px;
+  margin-bottom: 24px;
   font-size: 26px;
   color: #222222;
   line-height: 38px;

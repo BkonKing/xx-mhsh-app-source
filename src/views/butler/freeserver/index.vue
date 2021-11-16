@@ -21,11 +21,7 @@
       </template>
     </van-nav-bar>
     <div class="filter-box">
-      <van-dropdown-menu
-        v-show="!searchFocused"
-        class="filter-menu"
-        @change="getFreeServerList"
-      >
+      <van-dropdown-menu v-show="!searchFocused" class="filter-menu">
         <van-dropdown-item
           v-model="checkedStatus"
           :options="bookingStatus"
@@ -39,16 +35,17 @@
           </div></van-dropdown-item
         >
         <van-dropdown-item
-          v-model="checkedStatus"
-          :options="bookingStatus"
-          :title="checkedStatus ? '' : '服务类型'"
+          v-model="categoryType"
+          :options="serverTypes"
+          :title="categoryType ? '' : '服务类型'"
         />
       </van-dropdown-menu>
       <van-search
         class="search-box"
         v-model="search"
-        @focus="searchFocused = true"
-        @blur="searchFocused = false"
+        @focus="switchFocus(true)"
+        @blur="switchFocus(false)"
+        @cancel="cancelSearch"
         :clearable="false"
         :show-action="searchFocused"
         placeholder="搜一搜"
@@ -56,10 +53,12 @@
     </div>
     <div class="tf-padding tf-body-container">
       <service-card
-        :active="category_type"
+        :categoryType="categoryType"
+        :checkedStatus="checkedStatus"
         :search="search"
         :data="serviceList"
         @reload="getFreeServerList"
+        @change="changeServer"
       ></service-card>
     </div>
     <tf-share
@@ -85,18 +84,34 @@ export default {
     return {
       search: '',
       searchFocused: false, // 搜索框聚焦中
-      category_type: 0, // 当前类型
-      rg_num: 0, // 人工服务数量
-      jy_num: 0, // 借用服务数量
+      checkedStatus: 0, // 预约状态
+      categoryType: 0, // 服务类型
+      artificialCount: 0, // 人工服务数量
+      borrowingCount: 0, // 借用服务数量
       serviceList: [],
-      checkedStatus: '',
       bookingStatus: [],
       shareShow: false,
       shareObj: {}
     }
   },
   computed: {
-    ...mapGetters(['currentProject', 'userInfo'])
+    ...mapGetters(['currentProject', 'userInfo']),
+    serverTypes () {
+      return [
+        {
+          text: '全部',
+          value: ''
+        },
+        {
+          text: `人工服务(${this.artificialCount})`,
+          value: '1'
+        },
+        {
+          text: `借用服务(${this.borrowingCount})`,
+          value: '2'
+        }
+      ]
+    }
   },
   created () {
     this.getFreeServerList()
@@ -113,12 +128,10 @@ export default {
   methods: {
     getFreeServerList (searchName) {
       getFreeServerList({
-        category_type: this.category_type,
+        category_type: this.categoryType || '',
         searchName,
         enter_project_id: this.userInfo.enter_project_id
       }).then(({ list }) => {
-        // this.rg_num = rg_num
-        // this.jy_num = jy_num
         this.serviceList = list
       })
     },
@@ -127,40 +140,60 @@ export default {
         enter_project_id: this.userInfo.enter_project_id
       }).then(({ data }) => {
         const {
-          reserved_count: reservedCount,
-          inline_count: inlineCount,
-          bereturned_count: ereturnedCount
+          artificial_count: artificialCount,
+          borrowing_count: borrowingCount
         } = data
-        const bookingStatus = []
-        reservedCount && bookingStatus.push({
+        this.artificialCount = artificialCount
+        this.borrowingCount = borrowingCount
+        this.createBookingStatus(data)
+      })
+    },
+    // 根据是否有状态动态添加显示的筛选选项
+    createBookingStatus ({
+      reserved_count: reservedCount,
+      inline_count: inlineCount,
+      bereturned_count: ereturnedCount
+    }) {
+      const bookingStatus = []
+      reservedCount &&
+        bookingStatus.push({
           text: `已预约(${reservedCount})`,
           value: '1'
         })
-        inlineCount && bookingStatus.push({
+      inlineCount &&
+        bookingStatus.push({
           text: `排队中(${inlineCount})`,
           value: '2'
         })
-        ereturnedCount && bookingStatus.push({
+      ereturnedCount &&
+        bookingStatus.push({
           text: `待归还(${ereturnedCount})`,
           value: '3'
         })
-        this.bookingStatus = bookingStatus
-      })
-    },
-    /* 搜索服务（暂时弃用） */
-    searchList ({ value }) {
-      this.getFreeServerList(value)
-    },
-    // 选中类型
-    changeType (type) {
-      if (type !== this.category_type) {
-        this.category_type = type
-      } else {
-        this.category_type = 0
+      if (bookingStatus && bookingStatus.length) {
+        bookingStatus.unshift({
+          text: '全部',
+          value: ''
+        })
       }
+      this.bookingStatus = bookingStatus
+    },
+    switchFocus (bool) {
+      // 因为动态控制是否显示取消按钮，如果点击取消按妞就立即执行，
+      // 则取消监听就不会执行
+      setTimeout(() => {
+        this.searchFocused = bool
+      }, 0)
+    },
+    cancelSearch () {
+      this.search = ''
     },
     closeShare (data) {
       this.shareShow = data == 1
+    },
+    changeServer ({ index, data }) {
+      this.serviceList.splice(index, 1, data)
+      this.getServerCount()
     }
   }
 }

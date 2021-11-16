@@ -15,94 +15,96 @@
               <div class="tf-card-header__title">
                 <div class="header-name">
                   {{ item.category
-                  }}<span class="status-tag">{{ item.status }}</span>
+                  }}<span
+                    class="status-tag"
+                    :class="{
+                      'status-tag-info': item.server_status === 1,
+                      'status-tag-ing': [2, 3].includes(item.server_status)
+                    }"
+                    >{{ item.server_status_desc }}</span
+                  >
                 </div>
                 <div class="header-time">
-                  预约服务：<span>2021-09-20 12:00</span>
+                  预约服务：<span>{{ item.ctime }}</span>
                 </div>
                 <template v-if="item.category_type == 1">
-                  <div class="header-time">
-                    排队时间：<span v-if="item.status == 1" class="alert-text"
-                      >第 {{ parseInt(item.pd_num || 0) + 1 }} 位</span
-                    ><span v-if="item.status == 2">{{ item.stime }}</span>
+                  <div v-if="item.server_status == 2 || item.stime" class="header-time">
+                    排队时间：<span v-if="item.server_status == 2" class="alert-text"
+                      >第 {{ item.service_queue }} 位</span
+                    ><span v-if="item.stime">{{ item.stime }}</span>
                   </div>
-                  <div v-if="item.status == 2" class="header-time">
+                  <div
+                    v-if="item.server_status == 4 && item.etime"
+                    class="header-time"
+                  >
                     服务时间：<span>{{ item.etime }}</span>
                   </div>
                 </template>
                 <template v-else>
-                  <div class="header-time">
+                  <div v-if="item.server_status == 3 && item.stime" class="header-time">
                     借用时间：<span>{{ item.stime }}</span>
                   </div>
-                  <div class="header-time">
-                    归还时间：<span v-if="item.status == 1" class="alert-text"
-                      >请于 {{ item.gh_time }} 前归还</span
-                    ><span v-if="item.status == 2">{{ item.stime }}</span>
+                  <div v-if="item.status == 3 || item.status == 4" class="header-time">
+                    归还时间：<span v-if="item.status == 3" class="alert-text"
+                      >请于 {{ item.return_time }} 前归还</span
+                    ><span v-if="item.status == 4 && item.etime">{{ item.etime }}</span>
                   </div>
                 </template>
-                <div v-if="item.status == 3" class="header-time">
-                  取消时间：<span>{{ item.etime }}</span>
+                <div v-if="item.server_status == 5" class="header-time">
+                  取消时间：<span>{{ item.cancel_time }}</span>
                 </div>
               </div>
               <div
-                v-if="item.status == 1"
+                v-if="[1, 2, 3].includes(item.server_status)"
                 class="tf-icon tf-icon-erweima"
                 @click="showService(item)"
               ></div>
             </div>
-            <div class="tf-card-content">
+            <div
+              v-if="item.location || item.server_time"
+              class="tf-card-content"
+            >
               <span
                 class="tf-icon"
                 :class="[true ? 'tf-icon-shijian' : 'tf-icon-dingwei']"
               ></span
               ><span class="info-text"
-                >小区服务中心二楼（周一至周五 9:00-18:00）</span
+                >{{ item.location }}（{{ item.server_time }}）</span
               >
             </div>
           </div>
         </template>
       </refreshList>
     </div>
-    <tfDialog
-      v-model="dialog"
-      :title="active.category"
-      popup-class="free-server-dialog"
-    >
-      <div class="qr-box">
-        <div class="qr-status-box">
-          <div class="qr-status">
-            {{ active.category_type == 1 ? "开始享受服务" : "归还" }}
-          </div>
-          <div class="qr-triangle"></div>
-        </div>
-        <img class="qr-img" :src="qrImg" />
-      </div>
-      <div class="qr-alert">（请前往物业，出示给工作人员）</div>
-    </tfDialog>
+    <service-pop
+      v-model="popVisible"
+      :data="activeServer"
+      :id="activeServer.id"
+    ></service-pop>
   </div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
-import tfDialog from '@/components/tf-dialog/index.vue'
-import {
-  getMyFreeServerList,
-  getServerCode,
-  serverCodeStatus
-} from '@/api/butler.js'
+import ServicePop from './components/ServicePop'
+import { getMyFreeServerList } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
-    [NavBar.name]: NavBar,
     refreshList,
-    tfDialog
+    ServicePop
   },
   data () {
     return {
       data: [],
-      dialog: false,
-      active: {},
-      qrImg: ''
+      popVisible: false,
+      activeServer: {}
+    }
+  },
+  computed: {
+    ...mapGetters(['currentProject', 'userInfo']),
+    projectId () {
+      return this.currentProject.project_id
     }
   },
   created () {
@@ -112,50 +114,18 @@ export default {
     getMyFreeServerList ({ pages }) {
       const len = this.data.length
       return getMyFreeServerList({
-        serverId: (len && pages !== 1 && this.data[len - 1].id) || ''
-      })
-    },
-    /* 点击服务显示二维码 */
-    showService (item) {
-      const { category_type: categoryType, id, category_id } = item
-      this.active = item
-      const codeType = categoryType == '1' ? 4 : 2
-      this.dialog = true
-      this.getServerCode(category_id, codeType, id)
-    },
-    /* 获取服务二维码 */
-    getServerCode (id, code_type, server_id) {
-      getServerCode({
-        id,
-        server_id,
-        code_type
-      }).then(res => {
-        this.qrImg = res.data.url
-        this.codeId = res.data.code_id
-        this.serverCodeStatus()
-      })
-    },
-    /* 轮询收款码当前状态 */
-    pollingServer () {
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(() => {
-        this.serverCodeStatus()
-      }, 3000)
-    },
-    /* 出示二维码用户监听状态 */
-    serverCodeStatus () {
-      serverCodeStatus({
-        code_id: this.codeId
-      }).then(res => {
-        if (res.status == '1') {
-          this.success = true
-          this.timer = null
-        } else {
-          this.pollingServer()
+        enter_project_id: this.projectId,
+        server_id: (len && pages !== 1 && this.data[len - 1].server_id) || ''
+      }).then(({ data }) => {
+        return {
+          data: data.list
         }
       })
+    },
+    // 点击服务显示二维码
+    showService (item) {
+      this.activeServer = item
+      this.popVisible = true
     }
   }
 }
@@ -179,6 +149,12 @@ export default {
     font-size: 24px;
     color: #8f8f94;
   }
+  .status-tag-info {
+    color: #00a0e9;
+  }
+  .status-tag-ing {
+    color: #ff6555;
+  }
 }
 .header-time {
   margin-top: 19px;
@@ -194,7 +170,7 @@ export default {
   color: #6bc572 !important;
 }
 .alert-info-text {
-  color: #00A0E9 !important;
+  color: #00a0e9 !important;
 }
 .alert-text {
   color: #ff6555 !important;
@@ -257,19 +233,5 @@ export default {
   font-size: 26px;
   font-weight: 500;
   color: #8f8f94;
-}
-</style>
-
-<style lang="less">
-.free-server-dialog {
-  .tf-dialog-header {
-    height: 148px;
-    .tf-dialog-header__title {
-      line-height: 148px;
-    }
-  }
-  .tf-dialog-content {
-    padding-top: 30px;
-  }
 }
 </style>

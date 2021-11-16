@@ -1,5 +1,9 @@
 <template>
-  <van-popup v-model="visible" class="cancel-server-dialog">
+  <van-popup
+    v-model="visible"
+    class="cancel-server-dialog"
+    get-container="body"
+  >
     <div class="cancel-server-header">
       <div class="cancel-server-title">取消预约</div>
       <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
@@ -12,17 +16,14 @@
         <div class="cancel-form-item" style="position:relative;">
           <tf-picker
             class="cancel-form-input"
-            v-model="refuse_reason"
+            v-model="cancel_id"
             title="取消原因"
             value-key="content"
             selected-key="content"
             :columns="reasonList"
           >
             <template v-slot="{ valueText }">
-              <div
-                class="reason-text"
-                :class="{ 'picker-active': refuse_reason }"
-              >
+              <div class="reason-text" :class="{ 'picker-active': cancel_id }">
                 {{ valueText }}
               </div>
             </template>
@@ -33,16 +34,19 @@
       <div class="cancel-form-box">
         <div class="cancel-form-label">补充说明：</div>
         <van-field
-          v-model="other_reason"
+          v-model="note"
           class="cancel-form-textarea"
           rows="2"
           autosize
           type="textarea"
-          maxlength="300"
+          maxlength="200"
           placeholder="请输入"
         />
       </div>
-      <van-button class="cancel-server-btn cancel-server-btn-able"
+      <van-button
+        class="cancel-server-btn"
+        :class="{'cancel-server-btn-able': cancel_id}"
+        @click="cancelReservation"
         >确定</van-button
       >
     </div>
@@ -50,13 +54,19 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import tfPicker from '@/components/tf-picker/index'
+import { getCancelReason, cancelReservation } from '@/api/butler.js'
 export default {
   name: 'CancelServer',
   props: {
     value: {
       type: Boolean,
       default: false
+    },
+    data: {
+      type: Object,
+      default: () => ({})
     }
   },
   components: {
@@ -65,8 +75,15 @@ export default {
   data () {
     return {
       visible: this.value,
-      refuse_reason: '',
-      other_reason: ''
+      reasonList: [],
+      cancel_id: '',
+      note: ''
+    }
+  },
+  computed: {
+    ...mapGetters(['userInfo', 'currentProject']),
+    projectId () {
+      return this.currentProject.project_id
     }
   },
   watch: {
@@ -74,7 +91,32 @@ export default {
       this.visible = newValue
     },
     visible (newValue) {
-      this.emit('input', newValue)
+      this.$emit('input', newValue)
+    }
+  },
+  created () {
+    this.getCancelReason()
+  },
+  methods: {
+    async getCancelReason () {
+      const { data } = await getCancelReason({
+        enter_project_id: this.projectId
+      })
+      this.reasonList = data
+    },
+    // 取消预约
+    async cancelReservation () {
+      const { success } = await cancelReservation({
+        code_id: this.codeId,
+        server_id: this.data.server_id,
+        cancel_id: this.cancel_id,
+        note: this.note
+      })
+      if (success) {
+        this.visible = false
+        this.$toast('预约已取消')
+        this.$emit('success')
+      }
     }
   }
 }
@@ -117,11 +159,15 @@ export default {
     .cancel-form-textarea {
       width: 100%;
       height: 260px;
+      padding: 0 30px;
       font-size: 24px;
       color: #222;
       border: 1px solid #cccccc;
       border-radius: 10px;
-      line-height: 30px;
+      /deep/ textarea {
+        padding: 20px 0;
+        line-height: 30px;
+      }
     }
     .cancel-form-icon {
       position: absolute;
@@ -132,7 +178,7 @@ export default {
     .reason-text {
       display: flex;
       align-items: center;
-      height: 80px;
+      height: 76px;
       padding-left: 30px;
       font-size: 24px;
       color: #8f8f94;
@@ -156,6 +202,7 @@ export default {
 <style lang="less">
 .cancel-server-dialog {
   width: 560px;
+  height: 736px;
   border-radius: 10px;
   * {
     line-height: 1;

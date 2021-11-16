@@ -3,17 +3,24 @@
     <div class="server-confirm-box">
       <div class="free-server-header">
         <div class="free-server-title">请确认服务信息</div>
-        <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
+        <span class="tf-icon tf-icon-guanbi" @click="$router.go(-1)"></span>
       </div>
       <div class="server-container">
         <div class="server-box">
           <div class="free-server-row">
             <span class="free-server-label">服务项目：</span
-            ><span class="free-server-value free-server-alert-red">{{ info.server_category }}</span>
+            ><span class="free-server-value free-server-alert-red">{{
+              info.server_category
+            }}</span>
           </div>
           <div class="free-server-row">
             <span class="free-server-label">申请：</span
-            ><span class="free-server-value">{{ info.server_type }}<span class="free-server-alert-grey">{{ info | serverInfo }}</span></span>
+            ><span class="free-server-value"
+              >{{ info.server_type
+              }}<span class="free-server-alert-grey">{{
+                info | serverInfo
+              }}</span></span
+            >
           </div>
         </div>
         <div class="pd30">
@@ -33,20 +40,21 @@
           </div>
         </div>
       </div>
-      <van-button class="free-server-btn" :class="{'free-server-btn-blue': true}" @click="confirm">确认</van-button>
+      <van-button
+        class="free-server-btn"
+        :class="{ 'free-server-btn-blue': isManualServer }"
+        @click="confirm"
+        >确认</van-button
+      >
     </div>
   </div>
 </template>
 
 <script>
 // /pages/butler/freeserver/confirm
-import { NavBar, Toast, Dialog } from 'vant'
-import { serverYuyue, serverClose } from '@/api/butler'
+import { confirmServer, serverClose } from '@/api/butler'
 import { mapGetters } from 'vuex'
 export default {
-  components: {
-    [NavBar.name]: NavBar
-  },
   data () {
     return {
       info: {},
@@ -54,49 +62,75 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    isManualServer () {
+      return [3, 4].includes(+this.info.code_type)
+    }
   },
   created () {
-    const { info, code_id } = this.$route.query
-    this.info = JSON.parse(info)
-    this.codeId = code_id
+    // const { info, code_id: codeId } = this.$route.query
+    // this.info = JSON.parse(info)
+    // this.codeId = codeId
+    this.info = {
+      code_type: '1',
+      yj_time: '',
+      pd_time: '',
+      server_type: '借用',
+      duration: '18000',
+      pd_num: 0,
+      server_category: '免费借用工具箱',
+      check_status: 1,
+      avatar: 'https://develop.mhshjy.com/upload/images/202010/20/1603177217_539839.jpg',
+      realname: '张亚波',
+      mobile: '15093338107',
+      user_type: '1',
+      fc_info: '1号楼1单元测试',
+      code_id: '2046',
+      uid: '100022',
+      project_id: '1',
+      category_id: '11',
+      server_id: '54'
+    }
+    this.codeId = this.info.code_id
   },
   methods: {
     confirm () {
       if (this.info.code_type == 1 || this.info.code_type == 3) {
-        this.serverYuyue()
+        this.confirmServer()
       } else {
         this.serverClose()
       }
     },
-    /* 确认用户预约 */
-    serverYuyue () {
-      serverYuyue({
+    // 确认用户预约
+    confirmServer () {
+      confirmServer({
         code_id: this.info.code_id,
         uid: this.info.uid,
-        project_id: this.userInfo.xm_project_id,
+        enter_project_id: this.info.project_id,
         category_id: this.info.category_id
-      }).then(res => {
-        Dialog.alert({
-          title: res.message
-        }).then(() => {
-          this.$router.go(-1)
-        })
+      }).then(({ success }) => {
+        if (success) {
+          this.$toast('确认成功')
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 500)
+        }
       })
     },
-    /* 服务预约结束 */
+    // 服务预约结束
     serverClose () {
       serverClose({
         code_id: this.info.code_id,
         uid: this.info.uid,
-        project_id: this.info.project_id,
+        enter_project_id: this.info.project_id,
         server_id: this.info.server_id
-      }).then(res => {
-        Dialog.alert({
-          title: res.message || '服务结束'
-        }).then(() => {
-          this.$router.go(-1)
-        })
+      }).then(({ success }) => {
+        if (success) {
+          this.$toast('确认成功')
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 500)
+        }
       })
     }
   },
@@ -172,7 +206,7 @@ export default {
 .free-server-btn {
   width: 100%;
   margin-top: 30px;
-  background: #6BC572;
+  background: #6bc572;
   border-radius: 10px;
   border: none;
   font-size: 26px;
@@ -210,7 +244,7 @@ export default {
   color: #ff6555;
 }
 .free-server-alert-grey {
-  color: #8F8F94;
+  color: #8f8f94;
 }
 
 .pd30 {
