@@ -479,6 +479,7 @@ export default {
   .rules-content {
     padding: 0 30px 48px;
     font-size: 26px;
+    letter-spacing: 4px;
     color: #81531b;
     > div {
       line-height: 48px;
