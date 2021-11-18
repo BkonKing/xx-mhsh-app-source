@@ -200,7 +200,7 @@ export function getPaymentCode (params) {
 }
 // 获取收款码二维码
 export function getCollectCode (params) {
-  return request.get('/credits/qrcode/collectCode', { params })
+  return request.get('/credits/qrcode/new_collectCode', { params })
 }
 // 付款码扫码请求
 export function paymentScan (data) {
@@ -208,7 +208,7 @@ export function paymentScan (data) {
 }
 // 收款码扫码请求
 export function collectScan (data) {
-  return request.post('/credits/qrcode/collectScan', data)
+  return request.post('/credits/qrcode/new_collectScan', data)
 }
 // 付款方接收付款码状态
 export function paymentStatus (data) {
@@ -216,7 +216,7 @@ export function paymentStatus (data) {
 }
 // 收款方接收收款码状态
 export function collectStatus (data) {
-  return request.post('/credits/qrcode/collectStatus', data)
+  return request.post('/credits/qrcode/new_collectStatus', data)
 }
 // 付款码支付
 export function paymentCredits (data) {
