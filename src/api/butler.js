@@ -278,6 +278,10 @@ export function cancelReservation (data) {
 export function getMyFreeServerList (data) {
   return request.post('/butler/freeserver/getMyFreeServerList', data)
 }
+// 获取我的服务详情
+export function getMyServerInfo (data) {
+  return request.post('/butler/freeserver/getMyServerInfo', data)
+}
 // 确认服务
 export function confirmServer (data) {
   return request.post('/butler/freeserver/serverYueue', data)

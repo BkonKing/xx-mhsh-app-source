@@ -2,11 +2,21 @@ import router from './router'
 import store from './store'
 import Vue from 'vue'
 import {
-  Toast
+  Dialog
 } from 'vant'
-import { pagesArr } from './const/pages.js'
-import { setStatisticsData, updateStatisticsData } from '@/utils/analysis.js'
-import { getParams } from '@/utils/util.js'
+import {
+  pagesArr
+} from './const/pages.js'
+import {
+  setStatisticsData,
+  updateStatisticsData
+} from '@/utils/analysis.js'
+import {
+  getParams
+} from '@/utils/util.js'
+import {
+  bulterPermission
+} from '@/utils/business'
 
 const whiteList = ['/login', '/agreement', '/openingPage']
 var flag = 0
@@ -22,10 +32,15 @@ router.beforeEach(async (to, from, next) => {
         pageName: fromPageName
       })
       // 页面统计-离开更新
-      updateStatisticsData(2, { page_id: pagesArr[fromPageName] })
+      updateStatisticsData(2, {
+        page_id: pagesArr[fromPageName]
+      })
     } else {
       // 应用启动新增
-      setStatisticsData(6, { type: 1, page_id: pagesArr[toPageName] })
+      setStatisticsData(6, {
+        type: 1,
+        page_id: pagesArr[toPageName]
+      })
       // 启动数据录入
       setStatisticsData(1)
     }
@@ -33,7 +48,9 @@ router.beforeEach(async (to, from, next) => {
       pageName: toPageName
     })
     // 页面统计-进入新增
-    setStatisticsData(2, { page_id: pagesArr[toPageName] })
+    setStatisticsData(2, {
+      page_id: pagesArr[toPageName]
+    })
   }
 
   // Toast.loading({
@@ -158,6 +175,22 @@ router.beforeEach(async (to, from, next) => {
             id: params.id
           }
         })
+      } else if (params.page_type == 8) {
+        if (+store.getters.userType !== 0 || store.getters.userInfo.enter_project_id) {
+          router.push({
+            name: 'freeserverIndex'
+          })
+        } else {
+          Dialog.confirm({
+            title: '提示',
+            message: '您尚未认证房间，是否去认证？',
+            confirmButtonText: '去认证'
+          }).then((res) => {
+            router.push(
+              '/pages/personage/house/attestation?type=1&mode=0&select=1'
+            )
+          }).catch(() => {})
+        }
       }
     })
   }

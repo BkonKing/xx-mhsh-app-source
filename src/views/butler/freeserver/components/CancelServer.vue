@@ -45,7 +45,9 @@
       </div>
       <van-button
         class="cancel-server-btn"
-        :class="{'cancel-server-btn-able': cancel_id}"
+        :class="[
+          isManualServer ? 'free-server-btn-blue' : 'free-server-btn-green'
+        ]"
         @click="cancelReservation"
         >确定</van-button
       >
@@ -83,7 +85,14 @@ export default {
   computed: {
     ...mapGetters(['userInfo', 'currentProject']),
     projectId () {
-      return this.currentProject.project_id
+      return (
+        (this.currentProject && this.currentProject.project_id) ||
+        this.userInfo.enter_project_id
+      )
+    },
+    // 是否人工服务，否则为借用服务
+    isManualServer () {
+      return this.data.category_type === 1
     }
   },
   watch: {
@@ -92,6 +101,10 @@ export default {
     },
     visible (newValue) {
       this.$emit('input', newValue)
+      if (!newValue) {
+        this.cancel_id = ''
+        this.note = ''
+      }
     }
   },
   created () {
@@ -106,6 +119,10 @@ export default {
     },
     // 取消预约
     async cancelReservation () {
+      if (!this.cancel_id) {
+        this.$toast('请选择取消原因')
+        return
+      }
       const { success } = await cancelReservation({
         code_id: this.codeId,
         server_id: this.data.server_id,
@@ -196,6 +213,14 @@ export default {
   border: none;
   font-size: 26px;
   color: #8f8f94;
+}
+.free-server-btn-blue {
+  background: #00a0e9;
+  color: #fff;
+}
+.free-server-btn-green {
+  background: #6bc572;
+  color: #fff;
 }
 </style>
 

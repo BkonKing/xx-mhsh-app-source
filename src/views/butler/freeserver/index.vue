@@ -16,6 +16,7 @@
         />
         <span
           class="tf-icon tf-icon-shijian"
+          style="width: auto;line-height: 1;"
           @click="$router.push('/pages/butler/freeserver/list')"
         ></span>
       </template>
@@ -48,10 +49,10 @@
         @cancel="cancelSearch"
         :clearable="false"
         :show-action="searchFocused"
-        placeholder="搜一搜"
+        :placeholder="searchFocused ? '请输入关键字搜索' : '搜一搜'"
       />
     </div>
-    <div class="tf-padding tf-body-container">
+    <div class="tf-body-container">
       <service-card
         :categoryType="categoryType"
         :checkedStatus="checkedStatus"
@@ -103,41 +104,59 @@ export default {
           value: ''
         },
         {
-          text: `人工服务(${this.artificialCount})`,
+          text: `人工服务（${this.artificialCount}）`,
           value: '1'
         },
         {
-          text: `借用服务(${this.borrowingCount})`,
+          text: `借用服务（${this.borrowingCount}）`,
           value: '2'
         }
       ]
+    },
+    projectId () {
+      return (
+        (this.currentProject && this.currentProject.project_id) ||
+        this.userInfo.enter_project_id
+      )
     }
   },
   created () {
     this.getFreeServerList()
     this.getServerCount()
-    this.shareObj = {
-      title: `"${this.currentProject.project_name +
-        this.currentProject.fc_info}"免费服务，让生活更美好！`,
-      description: '',
-      thumb: 'widget://res/freeserver.png',
-      contentUrl: 'http://live.tosolomo.com/wap/#/questionnaire',
-      pyqHide: false
-    }
   },
   methods: {
     getFreeServerList (searchName) {
       getFreeServerList({
         category_type: this.categoryType || '',
         searchName,
-        enter_project_id: this.userInfo.enter_project_id
+        enter_project_id: this.projectId
       }).then(({ list }) => {
         this.serviceList = list
+        this.setShareObj()
       })
+    },
+    setShareObj () {
+      const projectName = this.currentProject
+        ? this.currentProject.project_name
+        : this.userInfo.enter_project_name
+      // const content = this.serviceList.reduce(
+      //   (previousObj, currentObj, index) => {
+      //     const interval = index < this.serviceList.length - 1 ? '、' : ''
+      //     return previousObj + currentObj.category + interval
+      //   },
+      //   ''
+      // )
+      this.shareObj = {
+        title: `"${projectName}"免费服务，让生活更美好！`,
+        description: '业主终身享受，案场游客可免费体验按摩、老人理发、洗车、义诊、小推车、工具箱借用等服务',
+        thumb: 'widget://res/freeserver.png',
+        contentUrl: `http://192.168.1.107:8110/#/butler/freeServer?projectId=${this.projectId}`,
+        pyqHide: false
+      }
     },
     getServerCount () {
       getServerCount({
-        enter_project_id: this.userInfo.enter_project_id
+        enter_project_id: this.projectId
       }).then(({ data }) => {
         const {
           artificial_count: artificialCount,
@@ -157,17 +176,17 @@ export default {
       const bookingStatus = []
       reservedCount &&
         bookingStatus.push({
-          text: `已预约(${reservedCount})`,
+          text: `已预约（${reservedCount}）`,
           value: '1'
         })
       inlineCount &&
         bookingStatus.push({
-          text: `排队中(${inlineCount})`,
+          text: `排队中（${inlineCount}）`,
           value: '2'
         })
       ereturnedCount &&
         bookingStatus.push({
-          text: `待归还(${ereturnedCount})`,
+          text: `待归还（${ereturnedCount}）`,
           value: '3'
         })
       if (bookingStatus && bookingStatus.length) {
@@ -201,6 +220,7 @@ export default {
 
 <style lang="less" scoped>
 .tf-body-container {
+  padding: 30px 20px 0;
   background: #f7f7f7;
 }
 .placeholder {
@@ -212,8 +232,8 @@ export default {
   height: 88px;
   background: #fff;
   .filter-menu {
-    width: 390px;
-    margin-right: 108px;
+    width: 400px;
+    margin-right: 110px;
     .no-data-text {
       padding: 24px 0;
       font-size: 24px;
@@ -238,8 +258,12 @@ export default {
         background: #f7f7f7;
         .van-cell__title {
           color: #222222;
+          span {
+            font-weight: bold;
+          }
         }
         .van-dropdown-item__icon {
+          font-weight: bold;
           color: #222222;
         }
       }
@@ -263,10 +287,12 @@ export default {
         opacity: 1;
       }
       .van-dropdown-menu__title--active {
-        font-weight: bold;
         color: #000000;
         &::after {
           margin-top: -3px;
+        }
+        .van-ellipsis {
+          font-weight: bold;
         }
       }
     }
@@ -284,11 +310,19 @@ export default {
         padding: 0;
         line-height: 64px;
         .van-icon-search {
+          font-weight: bold;
           color: #a6a6a6;
         }
-        .van-field__left-icon,
-        .van-field__control {
+        .van-field__left-icon {
+          margin-right: 10px;
           line-height: 64px;
+        }
+        .van-field__control {
+          line-height: 62px;
+        }
+        .van-field__control::placeholder {
+          font-size: 24px;
+          line-height: 1 !important;
         }
       }
     }
@@ -326,6 +360,7 @@ export default {
 .icon-image {
   width: 44px;
   height: 44px;
+  margin-right: 30px;
 }
 
 .check-type__box {

@@ -55,10 +55,11 @@ service.interceptors.request.use(
     if (typeof config.headers.ProjectId === 'undefined') {
       // 获取当前项目
       const project = store.getters.currentProject
+      const userInfo = store.getters.userInfo
       if (project) {
         config.headers.ProjectId = project.project_id
-      } else if (store.getters.userInfo.project_id) {
-        config.headers.ProjectId = store.getters.userInfo.project_id
+      } else if (userInfo.project_id) {
+        config.headers.ProjectId = userInfo.project_id
       }
     }
     return config

@@ -27,19 +27,18 @@
           v-if="item.is_stop == 1 || !item.appointment"
           class="service-card-info"
         >
-          {{item.is_stop == 1 ? '暂停服务' : '仅部分用户可享受服务'}}
+          {{ item.is_stop == 1 ? "暂停服务" : "仅部分用户可享受服务" }}
         </div>
-        <div
-          v-else
-          class="service-card-info"
-          :class="{ 'tf-text-primary': item.server_status == 1 }"
-        >
+        <div v-else class="service-card-info">
           <span
             v-if="[1, 2, 3].includes(item.server_status)"
             class="status-tag status-tag-end"
+            :class="{ 'status-tag-ing': [2, 3].includes(item.server_status) }"
             >{{ item.server_status | statusName }}</span
           >
-          <span>{{ item | pdText }}</span>
+          <span :class="{ 'tf-text-red': [2, 3].includes(item.server_status) }">{{
+            item | pdText
+          }}</span>
         </div>
       </div>
     </div>
@@ -91,10 +90,7 @@ export default {
   methods: {
     // 点击服务显示二维码
     showService (item, index) {
-      const {
-        is_stop: isStop,
-        appointment
-      } = item
+      const { is_stop: isStop, appointment } = item
       // 暂停使用或者没有可借的借用服务直接返回
       if (+isStop === 1 || appointment === 0) {
         return
@@ -108,11 +104,6 @@ export default {
         index: this.activeIndex,
         data
       })
-    }
-  },
-  watch: {
-    popVisible (value) {
-      // this.$emit('reload')
     }
   },
   filters: {
@@ -136,7 +127,7 @@ export default {
       if ([2, 3].includes(status)) {
         const inProgress = {
           2: `第${serverQueue}位`, // 排队中
-          3: `请${returnTime.substring(5, 10)}前归还` // 待归还
+          3: returnTime && `请${returnTime.substring(5, 10)}前归还` // 待归还
         }
         return inProgress[status] || ''
       } else {
@@ -170,7 +161,7 @@ export default {
   .service-card-tag {
     position: absolute;
     left: 0;
-    top: 25px;
+    top: 22px;
     width: 6px;
     height: 32px;
     background: #00a0e9;
@@ -189,10 +180,10 @@ export default {
     border-bottom: 2px dotted #cccccc;
   }
   .service-card-tag--blue {
-    background-color: @blue-dark;
+    background-color: #00a0e9;
   }
   .service-card-tag--green {
-    background-color: @green-dark;
+    background-color: #6bc572;
   }
 }
 
@@ -225,13 +216,16 @@ export default {
     font-weight: bold;
     line-height: 1;
   }
-  .status-tag-ing {
-    background: #ff65551a;
-    color: #ff6555;
-  }
   .status-tag-end {
     background: #febf001a;
     color: #febf00;
   }
+  .status-tag-ing {
+    background: #ff65551a;
+    color: #ff6555;
+  }
+}
+.tf-text-red {
+  color: #ff6555;
 }
 </style>

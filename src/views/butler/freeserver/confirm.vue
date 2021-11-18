@@ -34,7 +34,7 @@
             <span class="free-server-label">手机号：</span
             ><span class="free-server-value">{{ info.mobile }}</span>
           </div>
-          <div class="free-server-row">
+          <div v-if="info.fc_info" class="free-server-row">
             <span class="free-server-label">房屋：</span
             ><span class="free-server-value">{{ info.fc_info }}</span>
           </div>
@@ -68,29 +68,9 @@ export default {
     }
   },
   created () {
-    // const { info, code_id: codeId } = this.$route.query
-    // this.info = JSON.parse(info)
-    // this.codeId = codeId
-    this.info = {
-      code_type: '1',
-      yj_time: '',
-      pd_time: '',
-      server_type: '借用',
-      duration: '18000',
-      pd_num: 0,
-      server_category: '免费借用工具箱',
-      check_status: 1,
-      avatar: 'https://develop.mhshjy.com/upload/images/202010/20/1603177217_539839.jpg',
-      realname: '张亚波',
-      mobile: '15093338107',
-      user_type: '1',
-      fc_info: '1号楼1单元测试',
-      code_id: '2046',
-      uid: '100022',
-      project_id: '1',
-      category_id: '11',
-      server_id: '54'
-    }
+    const { info, code_id: codeId } = this.$route.query
+    this.info = JSON.parse(info)
+    this.codeId = codeId
     this.codeId = this.info.code_id
   },
   methods: {

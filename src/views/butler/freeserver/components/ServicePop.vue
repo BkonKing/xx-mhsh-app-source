@@ -12,7 +12,7 @@
     </div>
     <div v-if="success" class="success-box">
       <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
-      <div class="success-info">服务成功</div>
+      <div class="success-info">{{isManualServer ? '服务' : '归还'}}成功</div>
     </div>
     <!-- 预约 -->
     <div
@@ -58,7 +58,7 @@
         <div
           v-show="qrImg"
           class="qr-status"
-          :class="{ 'qr-status-return': true }"
+          :class="{ 'qr-status-return': serverStatus === 3 }"
         >
           {{ statusText }}
         </div>
@@ -79,9 +79,9 @@
           class="icon-img"
           src="@/assets/butler/freeserver-time.png"
           alt=""
-        />{{ serverInfo }}
+        /><div class="server-info-text">{{ serverInfo }}</div>
       </div>
-      <van-button class="free-server-btn" @click="cancelReservation"
+      <van-button v-if="serverStatus !== 3" class="free-server-btn" @click="cancelReservation"
         >取消预约</van-button
       >
     </div>
@@ -140,7 +140,7 @@ export default {
       return this.data.category_type === 1
     },
     projectId () {
-      return this.currentProject.project_id
+      return (this.currentProject && this.currentProject.project_id) || this.userInfo.enter_project_id
     },
     serverStatus () {
       return +this.data.server_status
@@ -188,11 +188,9 @@ export default {
   watch: {
     async value (newValue) {
       if (newValue && !this.visible) {
-        this.$toast.loading('加载中')
         this.qrImg = ''
         await this.getServerInfo()
       }
-      this.$toast.clear()
       this.visible = newValue
     },
     visible (newValue) {
@@ -217,6 +215,7 @@ export default {
   methods: {
     // 获取服务信息
     async getServerInfo (isChange) {
+      this.$toast.loading('加载中')
       const { data } = await getServerInfo({
         id: this.id
       })
@@ -225,6 +224,7 @@ export default {
       if ([1, 2, 3].includes(+this.data.server_status)) {
         this.getServerCode()
       }
+      this.$toast.clear()
     },
     // 获取服务二维码
     async getServerCode () {
@@ -243,7 +243,7 @@ export default {
         category_id: this.data.id
       }).then(success => {
         if (success) {
-          this.getServerInfo()
+          this.getServerInfo(true)
         }
       })
     },
@@ -252,7 +252,7 @@ export default {
       this.timer && clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.serverCodeStatus()
-      }, 3000)
+      }, 1300)
     },
     // 出示二维码用户监听状态
     async serverCodeStatus () {
@@ -261,6 +261,8 @@ export default {
         code_id: this.codeId
       })
       if (res.status === '1') {
+        const { server_id: serverId } = this.data
+        this.$emit('success', serverId)
         if ([1, 3].includes(this.codeType)) {
           this.getServerInfo(true)
         } else {
@@ -276,6 +278,7 @@ export default {
     },
     cancelSuccess () {
       this.visible = false
+      this.$emit('cancelSuccess', this.data.server_id)
       this.getServerInfo(true)
       this.timer && clearTimeout(this.timer)
     }
@@ -320,7 +323,7 @@ export default {
     top: 30px;
     right: 30px;
     font-size: 30px;
-    color: #000;
+    color: #aaa;
   }
 }
 .reservation {
@@ -337,13 +340,19 @@ export default {
   }
 }
 .free-server-label {
+  width: 130px;
   font-size: 26px;
+  line-height: 36px;
   color: #8f8f94;
 }
 .free-server-value {
-  margin-left: 40px;
+  flex:1;
+  width: 0;
+  margin-left: 20px;
   font-size: 26px;
+  line-height: 36px;
   color: #222222;
+  word-break: break-all;
 }
 .free-server-btn {
   width: 100%;
@@ -352,6 +361,9 @@ export default {
   border: none;
   font-size: 26px;
   color: #8f8f94;
+}
+.server-info + .free-server-btn {
+  margin-top: 24px;
 }
 .free-server-alert {
   margin-top: 30px;
@@ -406,15 +418,19 @@ export default {
   justify-content: center;
   text-align: center;
   padding-top: 24px;
-  margin-bottom: 24px;
   font-size: 26px;
   color: #222222;
-  line-height: 38px;
   border-top: 1px solid #eeeeee;
   .icon-img {
-    width: 28px;
+    // width: 22px;
     height: 28px;
+    flex-shrink: 0;
+    margin-top: 6px;
     margin-right: 20px;
+  }
+  .server-info-text {
+    line-height: 38px;
+    word-break: break-all;
   }
 }
 

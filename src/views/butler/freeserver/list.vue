@@ -9,16 +9,17 @@
     />
     <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getMyFreeServerList">
-        <template v-slot="{ item }">
-          <div class="tf-card">
+        <template v-slot="{ item, index }">
+          <div class="tf-card" @click="showService(item, index)">
             <div class="tf-card-header">
               <div class="tf-card-header__title">
                 <div class="header-name">
-                  {{ item.category
-                  }}<span
+                  <span class="text-bold">{{ item.category }}</span
+                  ><span
                     class="status-tag"
                     :class="{
                       'status-tag-info': item.server_status === 1,
+                      'status-tag-info-green': item.server_status === 1 && item.category_type == 2,
                       'status-tag-ing': [2, 3].includes(item.server_status)
                     }"
                     >{{ item.server_status_desc }}</span
@@ -28,10 +29,15 @@
                   预约服务：<span>{{ item.ctime }}</span>
                 </div>
                 <template v-if="item.category_type == 1">
-                  <div v-if="item.server_status == 2 || item.stime" class="header-time">
-                    排队时间：<span v-if="item.server_status == 2" class="alert-text"
+                  <div
+                    v-if="item.server_status == 2 || item.stime"
+                    class="header-time"
+                  >
+                    排队时间：<span
+                      v-if="item.server_status == 2"
+                      class="alert-text"
                       >第 {{ item.service_queue }} 位</span
-                    ><span v-if="item.stime">{{ item.stime }}</span>
+                    ><span v-else-if="item.stime">{{ item.stime }}</span>
                   </div>
                   <div
                     v-if="item.server_status == 4 && item.etime"
@@ -41,13 +47,23 @@
                   </div>
                 </template>
                 <template v-else>
-                  <div v-if="item.server_status == 3 && item.stime" class="header-time">
+                  <div
+                    v-if="item.server_status == 3 || item.stime"
+                    class="header-time"
+                  >
                     借用时间：<span>{{ item.stime }}</span>
                   </div>
-                  <div v-if="item.status == 3 || item.status == 4" class="header-time">
-                    归还时间：<span v-if="item.status == 3" class="alert-text"
+                  <div
+                    v-if="item.server_status == 3 || item.server_status == 4"
+                    class="header-time"
+                  >
+                    归还时间：<span
+                      v-if="item.server_status == 3"
+                      class="alert-text"
                       >请于 {{ item.return_time }} 前归还</span
-                    ><span v-if="item.status == 4 && item.etime">{{ item.etime }}</span>
+                    ><span v-else-if="item.server_status == 4 && item.etime">{{
+                      item.etime
+                    }}</span>
                   </div>
                 </template>
                 <div v-if="item.server_status == 5" class="header-time">
@@ -57,20 +73,17 @@
               <div
                 v-if="[1, 2, 3].includes(item.server_status)"
                 class="tf-icon tf-icon-erweima"
-                @click="showService(item)"
               ></div>
             </div>
             <div
-              v-if="item.location || item.server_time"
+              v-if="item.location || item.service_time"
               class="tf-card-content"
             >
               <span
                 class="tf-icon"
-                :class="[true ? 'tf-icon-shijian' : 'tf-icon-dingwei']"
+                :class="[item.location ? 'tf-icon-dingwei' : 'tf-icon-shijian']"
               ></span
-              ><span class="info-text"
-                >{{ item.location }}（{{ item.server_time }}）</span
-              >
+              ><span class="info-text">{{ item | serverInfo }}</span>
             </div>
           </div>
         </template>
@@ -80,6 +93,8 @@
       v-model="popVisible"
       :data="activeServer"
       :id="activeServer.id"
+      @success="changeServer"
+      @cancelSuccess="changeServer"
     ></service-pop>
   </div>
 </template>
@@ -87,7 +102,7 @@
 <script>
 import refreshList from '@/components/tf-refresh-list'
 import ServicePop from './components/ServicePop'
-import { getMyFreeServerList } from '@/api/butler.js'
+import { getMyFreeServerList, getMyServerInfo } from '@/api/butler.js'
 import { mapGetters } from 'vuex'
 export default {
   components: {
@@ -98,24 +113,39 @@ export default {
     return {
       data: [],
       popVisible: false,
-      activeServer: {}
+      activeServer: {},
+      activeIndex: 0
     }
   },
   computed: {
     ...mapGetters(['currentProject', 'userInfo']),
     projectId () {
-      return this.currentProject.project_id
+      return (
+        (this.currentProject && this.currentProject.project_id) ||
+        this.userInfo.enter_project_id
+      )
     }
   },
-  created () {
-    // this.getMyFreeServerList()
+  filters: {
+    serverInfo (data) {
+      const { location, service_time: serviceTime } = data
+      if (location && serviceTime) {
+        return `${location}（${serviceTime}）`
+      }
+      if (location || serviceTime) {
+        return location || serviceTime
+      }
+      return ''
+    }
   },
   methods: {
     getMyFreeServerList ({ pages }) {
       const len = this.data.length
+      const serverId =
+        (len && pages !== 1 && this.data[len - 1].server_id) || ''
       return getMyFreeServerList({
         enter_project_id: this.projectId,
-        server_id: (len && pages !== 1 && this.data[len - 1].server_id) || ''
+        server_id: serverId
       }).then(({ data }) => {
         return {
           data: data.list
@@ -123,9 +153,19 @@ export default {
       })
     },
     // 点击服务显示二维码
-    showService (item) {
-      this.activeServer = item
-      this.popVisible = true
+    showService (serverData, index) {
+      if ([1, 2, 3].includes(serverData.server_status)) {
+        this.activeServer = serverData
+        this.activeIndex = index
+        this.popVisible = true
+      }
+    },
+    changeServer (serverId) {
+      getMyServerInfo({
+        server_id: serverId
+      }).then(({ data }) => {
+        this.data.splice(this.activeIndex, 1, data)
+      })
     }
   }
 }
@@ -143,7 +183,6 @@ export default {
 .header-name {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 10px;
   line-height: 1;
   .status-tag {
     font-size: 24px;
@@ -151,6 +190,9 @@ export default {
   }
   .status-tag-info {
     color: #00a0e9;
+  }
+  .status-tag-info-green {
+    color: #6bc572;
   }
   .status-tag-ing {
     color: #ff6555;
@@ -176,6 +218,7 @@ export default {
   color: #ff6555 !important;
 }
 .tf-card-content {
+  padding: 24px 0;
   .tf-icon {
     margin-right: 10px;
     font-size: 28px;
@@ -194,44 +237,7 @@ export default {
   font-size: 40px;
   line-height: 1;
 }
-
-.qr-box {
-  padding: 0 70px;
-}
-
-.qr-img {
-  width: 320px;
-  height: 320px;
-}
-
-.qr-status-box {
-  @flex-column();
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.qr-status {
-  width: 320px;
-  height: 66px;
-  line-height: 66px;
-  font-size: 30px;
-  font-weight: 500;
-  border-radius: 33px;
-  color: #ff6555;
-  background-color: #ff65551a;
-  text-align: center;
-}
-
-.qr-triangle {
-  .triangle-bottom(12px, 15px, #ff65551a);
-}
-
-.qr-alert {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  font-size: 26px;
-  font-weight: 500;
-  color: #8f8f94;
+.text-bold {
+  font-weight: bold;
 }
 </style>
