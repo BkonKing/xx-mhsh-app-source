@@ -1,7 +1,7 @@
 <template>
   <div class="tf-bg tf-body">
     <van-nav-bar
-      title="我的免费服务"
+      title="免费服务"
       :fixed="true"
       placeholder
       left-arrow
@@ -9,135 +9,162 @@
     />
     <div class="tf-body-container">
       <refreshList :list.sync="data" :load="getMyFreeServerList">
-        <template v-slot="{ item }">
-          <div class="tf-card">
+        <template v-slot="{ item, index }">
+          <div class="tf-card" @click="showService(item, index)">
             <div class="tf-card-header">
-              <div class="tf-card-header__title">{{ item.category }}</div>
+              <div class="tf-card-header__title">
+                <div class="header-name">
+                  <span class="text-bold">{{ item.category }}</span
+                  ><span
+                    class="status-tag"
+                    :class="{
+                      'status-tag-info': item.server_status === 1,
+                      'status-tag-info-green': item.server_status === 1 && item.category_type == 2,
+                      'status-tag-ing': [2, 3].includes(item.server_status)
+                    }"
+                    >{{ item.server_status_desc }}</span
+                  >
+                </div>
+                <div class="header-time">
+                  预约服务：<span>{{ item.ctime }}</span>
+                </div>
+                <template v-if="item.category_type == 1">
+                  <div
+                    v-if="item.server_status == 2 || item.stime"
+                    class="header-time"
+                  >
+                    排队时间：<span
+                      v-if="item.server_status == 2"
+                      class="alert-text"
+                      >第 {{ item.service_queue }} 位</span
+                    ><span v-else-if="item.stime">{{ item.stime }}</span>
+                  </div>
+                  <div
+                    v-if="item.server_status == 4 && item.etime"
+                    class="header-time"
+                  >
+                    服务时间：<span>{{ item.etime }}</span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div
+                    v-if="item.server_status == 3 || item.stime"
+                    class="header-time"
+                  >
+                    借用时间：<span>{{ item.stime }}</span>
+                  </div>
+                  <div
+                    v-if="item.server_status == 3 || item.server_status == 4"
+                    class="header-time"
+                  >
+                    归还时间：<span
+                      v-if="item.server_status == 3"
+                      class="alert-text"
+                      >请于 {{ item.return_time }} 前归还</span
+                    ><span v-else-if="item.server_status == 4 && item.etime">{{
+                      item.etime
+                    }}</span>
+                  </div>
+                </template>
+                <div v-if="item.server_status == 5" class="header-time">
+                  取消时间：<span>{{ item.cancel_time }}</span>
+                </div>
+              </div>
               <div
-                v-if="item.status == 1"
+                v-if="[1, 2, 3].includes(item.server_status)"
                 class="tf-icon tf-icon-erweima"
-                @click="showService(item)"
               ></div>
             </div>
-            <div class="tf-card-content">
-              <template v-if="item.category_type == 1">
-                <div>排队时间：{{ item.stime }}</div>
-                <div class="mt10" v-if="item.status == 1">
-                  排队中：<span class="tf-text-primary"
-                    >第 {{ parseInt(item.pd_num || 0) + 1 }} 位</span
-                  >
-                </div>
-                <div v-else-if="item.status == 2">
-                  服务时间：{{ item.etime }}
-                </div>
-              </template>
-              <template v-else>
-                <div>借用时间：{{ item.stime }}</div>
-                <div class="mt10" v-if="item.status == 1">
-                  归还时间：<span class="tf-text-primary"
-                    >请于 {{ item.gh_time }} 前归还</span
-                  >
-                </div>
-                <div v-if="item.status == 2">归还时间：{{ item.etime }}</div>
-              </template>
-              <div v-if="item.status == 3">取消时间：{{ item.etime }}</div>
+            <div
+              v-if="item.location || item.service_time"
+              class="tf-card-content"
+            >
+              <span
+                class="tf-icon"
+                :class="[item.location ? 'tf-icon-dingwei' : 'tf-icon-shijian']"
+              ></span
+              ><span class="info-text">{{ item | serverInfo }}</span>
             </div>
           </div>
         </template>
       </refreshList>
     </div>
-    <tfDialog
-      v-model="dialog"
-      :title="active.category"
-      popup-class="free-server-dialog"
-    >
-      <div class="qr-box">
-        <div class="qr-status-box">
-          <div class="qr-status">
-            {{ active.category_type == 1 ? "开始享受服务" : "归还" }}
-          </div>
-          <div class="qr-triangle"></div>
-        </div>
-        <img class="qr-img" :src="qrImg" />
-      </div>
-      <div class="qr-alert">（请前往物业，出示给工作人员）</div>
-    </tfDialog>
+    <service-pop
+      v-model="popVisible"
+      :data="activeServer"
+      :id="activeServer.id"
+      @success="changeServer"
+      @cancelSuccess="changeServer"
+    ></service-pop>
   </div>
 </template>
 
 <script>
-import { NavBar } from 'vant'
 import refreshList from '@/components/tf-refresh-list'
-import tfDialog from '@/components/tf-dialog/index.vue'
-import {
-  getMyFreeServerList,
-  getServerCode,
-  serverCodeStatus
-} from '@/api/butler.js'
+import ServicePop from './components/ServicePop'
+import { getMyFreeServerList, getMyServerInfo } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
-    [NavBar.name]: NavBar,
     refreshList,
-    tfDialog
+    ServicePop
   },
   data () {
     return {
       data: [],
-      dialog: false,
-      active: {},
-      qrImg: ''
+      popVisible: false,
+      activeServer: {},
+      activeIndex: 0
     }
   },
-  created () {
-    // this.getMyFreeServerList()
+  computed: {
+    ...mapGetters(['currentProject', 'userInfo']),
+    projectId () {
+      return (
+        (this.currentProject && this.currentProject.project_id) ||
+        this.userInfo.enter_project_id
+      )
+    }
+  },
+  filters: {
+    serverInfo (data) {
+      const { location, service_time: serviceTime } = data
+      if (location && serviceTime) {
+        return `${location}（${serviceTime}）`
+      }
+      if (location || serviceTime) {
+        return location || serviceTime
+      }
+      return ''
+    }
   },
   methods: {
     getMyFreeServerList ({ pages }) {
       const len = this.data.length
+      const serverId =
+        (len && pages !== 1 && this.data[len - 1].server_id) || ''
       return getMyFreeServerList({
-        serverId: (len && pages !== 1 && this.data[len - 1].id) || ''
-      })
-    },
-    /* 点击服务显示二维码 */
-    showService (item) {
-      const { category_type: categoryType, id, category_id } = item
-      this.active = item
-      const codeType = categoryType == '1' ? 4 : 2
-      this.dialog = true
-      this.getServerCode(category_id, codeType, id)
-    },
-    /* 获取服务二维码 */
-    getServerCode (id, code_type, server_id) {
-      getServerCode({
-        id,
-        server_id,
-        code_type
-      }).then(res => {
-        this.qrImg = res.data.url
-        this.codeId = res.data.code_id
-        this.serverCodeStatus()
-      })
-    },
-    /* 轮询收款码当前状态 */
-    pollingServer () {
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(() => {
-        this.serverCodeStatus()
-      }, 3000)
-    },
-    /* 出示二维码用户监听状态 */
-    serverCodeStatus () {
-      serverCodeStatus({
-        code_id: this.codeId
-      }).then(res => {
-        if (res.status == '1') {
-          this.success = true
-          this.timer = null
-        } else {
-          this.pollingServer()
+        enter_project_id: this.projectId,
+        server_id: serverId
+      }).then(({ data }) => {
+        return {
+          data: data.list
         }
+      })
+    },
+    // 点击服务显示二维码
+    showService (serverData, index) {
+      if ([1, 2, 3].includes(serverData.server_status)) {
+        this.activeServer = serverData
+        this.activeIndex = index
+        this.popVisible = true
+      }
+    },
+    changeServer (serverId) {
+      getMyServerInfo({
+        server_id: serverId
+      }).then(({ data }) => {
+        this.data.splice(this.activeIndex, 1, data)
       })
     }
   }
@@ -148,69 +175,69 @@ export default {
 .tf-body-container {
   padding-top: 10px;
 }
-.tf-card-content {
-  color: @gray-7;
-  margin-bottom: 10px;
+.tf-card-header__title {
+  width: 100%;
+  font-size: 32px;
+  font-weight: bold;
 }
-.mt10 {
-  margin-top: 10px;
-}
-.tf-icon-erweima {
-  font-size: 42px;
-  line-height: 1;
-}
-
-.qr-box {
-  padding: 0 70px;
-}
-
-.qr-img {
-  width: 320px;
-  height: 320px;
-}
-
-.qr-status-box {
-  @flex-column();
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.qr-status {
-  width: 320px;
-  height: 66px;
-  line-height: 66px;
-  font-size: 30px;
-  font-weight: 500;
-  border-radius: 33px;
-  color: #ff6555;
-  background-color: #ff65551a;
-  text-align: center;
-}
-
-.qr-triangle {
-  .triangle-bottom(12px, 15px, #ff65551a);
-}
-
-.qr-alert {
+.header-name {
   display: flex;
-  justify-content: center;
-  margin-top: 30px;
+  justify-content: space-between;
+  line-height: 1;
+  .status-tag {
+    font-size: 24px;
+    color: #8f8f94;
+  }
+  .status-tag-info {
+    color: #00a0e9;
+  }
+  .status-tag-info-green {
+    color: #6bc572;
+  }
+  .status-tag-ing {
+    color: #ff6555;
+  }
+}
+.header-time {
+  margin-top: 19px;
   font-size: 26px;
   font-weight: 500;
+  line-height: 1;
   color: #8f8f94;
+  span {
+    color: #222222;
+  }
 }
-</style>
-
-<style lang="less">
-.free-server-dialog {
-  .tf-dialog-header {
-    height: 148px;
-    .tf-dialog-header__title {
-      line-height: 148px;
-    }
+.alert-success-text {
+  color: #6bc572 !important;
+}
+.alert-info-text {
+  color: #00a0e9 !important;
+}
+.alert-text {
+  color: #ff6555 !important;
+}
+.tf-card-content {
+  padding: 24px 0;
+  .tf-icon {
+    margin-right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000;
   }
-  .tf-dialog-content {
-    padding-top: 30px;
+  .info-text {
+    font-size: 26px;
+    color: #8f8f94;
   }
+}
+.tf-icon-erweima {
+  position: absolute;
+  top: 84px;
+  right: 30px;
+  font-size: 40px;
+  line-height: 1;
+}
+.text-bold {
+  font-weight: bold;
 }
 </style>

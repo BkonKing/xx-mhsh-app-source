@@ -3,14 +3,9 @@
     <template #left>
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-dingwei"></span>
-        <span v-if="currentProject" class="tf-text">{{
-          currentProject.project_name + currentProject.fc_info
+        <span class="tf-text" :class="{ underline: !attestationType }">{{
+          attestationType || "请认证房间"
         }}</span>
-        <span
-          v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
-          class="tf-text"
-          >{{ userInfo.project_name }}</span>
-        <span v-else class="tf-text underline">请认证房间</span>
       </div>
     </template>
     <template #right>
@@ -50,13 +45,30 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters(['currentProject', 'userInfo'])
+    ...mapGetters(['currentProject', 'userInfo']),
+    attestationType () {
+      const currentProject = this.currentProject
+      const {
+        enter_project_id: enterProjectId,
+        enter_project_name: enterProjectName,
+        bsbx_allots: bsbxAllots,
+        project_name: projectName
+      } = this.userInfo
+      if (currentProject) {
+        return `${currentProject.project_name}${currentProject.fc_info}` // 已认证
+      } else if (+enterProjectId) {
+        return `游客 - ${enterProjectName}` // 游客定位、游客未认证业主
+      } else if (bsbxAllots === '1' && projectName) {
+        return projectName // 有报事报修的服务人员
+      }
+      return ''
+    }
   },
   methods: {
     goMessage () {
       this.$router.push('/pages/personage/message/index')
     },
-    /* 跳转房屋认证 */
+    // 跳转房屋认证
     goAttestation () {
       const url = this.currentProject
         ? '/pages/personage/house/select-house'

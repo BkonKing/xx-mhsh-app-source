@@ -66,7 +66,7 @@
 <script>
 import { NavBar, List } from 'vant'
 import { getAddress } from '@/api/life.js'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 import { getArea } from '@/utils/util'
 export default {
   components: {

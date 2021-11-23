@@ -515,7 +515,7 @@ import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
 import ztOrder from './../components/zt-order'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 import {
   getOrderDetail,
   cancelNoPayOrder,

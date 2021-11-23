@@ -1,104 +1,69 @@
 <template>
   <div class="service-card-box">
     <div
-      v-for="(item, i) in data"
-      :key="i"
+      v-for="(item, index) in data"
+      :key="item.id"
       v-show="
-        (!active || active == item.category_type) &&
+        (!categoryType || categoryType == item.category_type) &&
+          (!checkedStatus || checkedStatus == item.server_status) &&
           item.category.indexOf(search) !== -1
       "
       class="service-card"
       :class="{
-        'service-card--disabled':
-          item.is_stop == 1 ||
-          (item.sy_num == 0 &&
-            item.category_type == 2 &&
-            item.server_status == 0)
+        'service-card--disabled': item.is_stop == 1 || !item.appointment
       }"
-      @click="showService(item)"
+      @click="showService(item, index)"
     >
       <div
         class="service-card-tag"
         :class="{
-          'service-card-tag--blue': item.category_type == 1,
-          'service-card-tag--green': item.category_type == 2
+          'service-card-tag--blue': item.category_type === 1,
+          'service-card-tag--green': item.category_type === 2
         }"
       ></div>
       <div class="service-card-content">
         <div class="service-card-name">{{ item.category }}</div>
         <div
-          v-if="item.is_stop == 1"
-          class="service-card-info service-card-info--gray"
-        >
-          暂停服务
-        </div>
-        <div
-          v-else
+          v-if="item.is_stop == 1 || !item.appointment"
           class="service-card-info"
-          :class="{ 'tf-text-primary': item.server_status == 1 }"
         >
-          {{ item | pdText }}
+          {{ item.is_stop == 1 ? "暂停服务" : "仅部分用户可享受服务" }}
+        </div>
+        <div v-else class="service-card-info">
+          <span
+            v-if="[1, 2, 3].includes(item.server_status)"
+            class="status-tag status-tag-end"
+            :class="{ 'status-tag-ing': [2, 3].includes(item.server_status) }"
+            >{{ item.server_status | statusName }}</span
+          >
+          <span :class="{ 'tf-text-red': [2, 3].includes(item.server_status) }">{{
+            item | pdText
+          }}</span>
         </div>
       </div>
     </div>
-    <tfDialog
-      v-model="show"
-      :title="activeServe.category"
-      popup-class="free-server-dialog"
-    >
-      <div class="qr-box" v-if="!success">
-        <div class="qr-status-box">
-          <div class="qr-status">{{ statusText }}</div>
-          <div class="qr-triangle"></div>
-        </div>
-        <img class="qr-img" :src="qrImg" />
-      </div>
-      <div
-        class="qr-status-box"
-        v-else-if="
-          activeServe.server_status == 1 ||
-            (activeServe.category_type == 1 && activeServe.is_lineup == 0)
-        "
-      >
-        <template v-if="activeServe.category_type == 1">
-          <div class="box-tag">开始享受服务</div>
-          <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
-        </template>
-        <template v-if="activeServe.category_type == 2">
-          <div class="box-tag">归还成功</div>
-          <div class="tf-text-sm tf-text-grey">感谢您的支持，祝您愉快</div>
-        </template>
-      </div>
-      <div class="qr-box qr-status-box" v-else>
-        <div class="success-tag">
-          <span class="tf-icon tf-icon-gou"></span>
-        </div>
-        <template v-if="activeServe.category_type == 1">
-          <div class="tf-text-lg">排队成功</div>
-          <div class="tf-text-lg tf-text-primary">
-            排队中：第{{ activeServe.pd_num + 1 }}位
-          </div>
-        </template>
-        <div class="tf-text-lg" v-if="activeServe.category_type == 2">
-          借用成功
-        </div>
-      </div>
-      <div v-if="!success" class="qr-alert">（请前往物业，出示给工作人员）</div>
-    </tfDialog>
+    <service-pop
+      v-model="popVisible"
+      :data="activeServe"
+      :id="activeServe.id"
+      @change="changeServer"
+    ></service-pop>
   </div>
 </template>
 
 <script>
-import tfDialog from '@/components/tf-dialog/index.vue'
+import ServicePop from './ServicePop'
 import { mapGetters } from 'vuex'
-import { getServerCode, serverCodeStatus } from '@/api/butler.js'
-// import { Toast } from 'vant'
 export default {
   components: {
-    tfDialog
+    ServicePop
   },
   props: {
-    active: {
+    categoryType: {
+      type: [String, Number],
+      default: ''
+    },
+    checkedStatus: {
       type: [String, Number],
       default: ''
     },
@@ -113,141 +78,66 @@ export default {
   },
   data () {
     return {
-      statusText: '',
-      show: false,
-      success: false,
+      popVisible: false,
       // FNScanner: null,
-      qrImg: '',
-      timer: null,
-      codeId: '',
-      codeType: '',
-      activeServe: {} // 当前选中服务
+      activeServe: {}, // 当前选中服务
+      activeIndex: 0
     }
   },
   computed: {
     ...mapGetters(['userInfo', 'currentProject'])
   },
-  created () {
-    // this.FNScanner = api.require('FNScanner')
-  },
   methods: {
-    /* 点击服务显示二维码 */
-    showService (item) {
-      const {
-        category_type: categoryType,
-        category,
-        server_status: status,
-        is_stop,
-        is_lineup,
-        id,
-        sy_num: syNum,
-        server_id
-      } = item
+    // 点击服务显示二维码
+    showService (item, index) {
+      const { is_stop: isStop, appointment } = item
       // 暂停使用或者没有可借的借用服务直接返回
-      if (is_stop == 1 || (syNum == 0 && categoryType == 2 && status == 0)) {
+      if (+isStop === 1 || appointment === 0) {
         return
       }
       this.activeServe = item
-      this.statusText = ''
-      // categoryType: 1-人工 2-借用
-      let codeType
-      if (categoryType == 1) {
-        if ((status == 0 || !status) && is_lineup == 1) {
-          this.statusText = '开始排队'
-          codeType = 3
-        } else {
-          this.statusText = '开始享受服务'
-          codeType = 4
-        }
-      } else if (categoryType == 2) {
-        if (status == 0 || !status) {
-          codeType = 1
-          this.statusText = '借用'
-        } else {
-          codeType = 2
-          this.statusText = '归还'
-        }
-      }
-      this.codeType = codeType
-      this.getServerCode(id, codeType, server_id)
-      this.show = true
+      this.activeIndex = index
+      this.popVisible = true
     },
-    /* 获取服务二维码 */
-    getServerCode (id, code_type, server_id) {
-      getServerCode({
-        id,
-        server_id,
-        code_type
-      }).then(res => {
-        this.qrImg = res.data.url
-        this.codeId = res.data.code_id
-        this.serverCodeStatus()
+    changeServer (data) {
+      this.$emit('change', {
+        index: this.activeIndex,
+        data
       })
-    },
-    /* 轮询收款码当前状态 */
-    pollingServer () {
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(() => {
-        this.serverCodeStatus()
-      }, 3000)
-    },
-    /* 出示二维码用户监听状态 */
-    serverCodeStatus () {
-      serverCodeStatus({
-        code_id: this.codeId
-      }).then(res => {
-        if (res.status == '1') {
-          this.success = true
-          this.timer = null
-        } else {
-          this.pollingServer()
-        }
-      })
-    }
-  },
-  watch: {
-    show (value) {
-      if (!value) {
-        this.timer && clearTimeout(this.timer)
-        if (this.success) {
-          this.$emit('reload')
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.success = false
-            }, 500)
-          })
-        }
-      }
     }
   },
   filters: {
-    pdText (obj) {
-      if (obj.category_type == '1') {
-        if (obj.is_lineup == 0) {
-          return '无需排队'
-        }
-        if (obj.pd_num == 0) {
-          return '当前无人排队'
-        }
-        if (obj.server_status == 0) {
-          return `正在排队${obj.pd_num}人`
-        } else {
-          return `排队中：第${obj.pd_num}位`
-        }
-      } else {
-        if (obj.server_status == 0) {
-          return `剩余${obj.sy_num}个可借`
-        } else {
-          return '借用中'
-        }
+    statusName (status) {
+      const statusName = {
+        1: '已预约',
+        2: '排队中',
+        3: '待归还'
       }
-    }
-  },
-  beforeDestroy () {
-    if (this.timer) {
-      clearTimeout(this.timer)
+      return statusName[status]
+    },
+    pdText ({
+      category_type: type,
+      server_status: status,
+      appointment_count: appointmentCount,
+      server_count: serverCount,
+      remaining_count: remainingCount,
+      service_queue: serverQueue,
+      return_time: returnTime
+    }) {
+      if ([2, 3].includes(status)) {
+        const inProgress = {
+          2: `第${serverQueue}位`, // 排队中
+          3: returnTime && `请${returnTime.substring(5, 10)}前归还` // 待归还
+        }
+        return inProgress[status] || ''
+      } else {
+        // 借用需显示剩余数量
+        const borrowRemain = type === 2 ? `(剩余${remainingCount || 0}个)` : ''
+        // 有预约则显示预约
+        return appointmentCount
+          ? `${appointmentCount}人预约${borrowRemain}`
+          : `累计服务${serverCount}人${borrowRemain}`
+      }
     }
   }
 }
@@ -261,138 +151,81 @@ export default {
 }
 
 .service-card {
-  @flex();
-  align-items: center;
+  position: relative;
   width: 345px;
-  height: 150px;
-  padding: 30px 20px;
+  min-height: 144px;
+  padding: 0 18px;
   margin-bottom: @padding-lg;
   background: #fff;
   border-radius: 10px;
   .service-card-tag {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: @padding-md;
-    background-color: #aaa;
+    position: absolute;
+    left: 0;
+    top: 22px;
+    width: 6px;
+    height: 32px;
+    background: #00a0e9;
+    border-radius: 3px;
   }
   .service-card-name {
-    width: 265px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 82px;
+    padding: 4px 0;
     font-size: 26px;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 2px dashed #aaa;
-    color: @text-color;
+    font-weight: bold;
+    line-height: 36px;
+    color: #222222;
+    border-bottom: 2px dotted #cccccc;
   }
   .service-card-tag--blue {
-    background-color: @blue-dark;
+    background-color: #00a0e9;
   }
   .service-card-tag--green {
-    background-color: @green-dark;
+    background-color: #6bc572;
   }
 }
 
 .service-card--disabled {
-  background: #f9f9fa;
+  background: #eeeeee;
   .service-card-tag {
-    background-color: #aaa;
+    background-color: #bbbbbb;
   }
   .service-card-name {
-    color: @gray-7;
+    color: #8f8f94;
   }
 }
 
 .service-card-info {
+  display: flex;
+  align-items: center;
+  height: 60px;
   font-size: 24px;
   color: @gray-7;
+  .status-tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 88px;
+    height: 42px;
+    padding: 0 8px;
+    margin-right: 10px;
+    border-radius: 6px;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+  }
+  .status-tag-end {
+    background: #febf001a;
+    color: #febf00;
+  }
+  .status-tag-ing {
+    background: #ff65551a;
+    color: #ff6555;
+  }
 }
-
-.service-card-info--gray {
-  color: @gray-7;
-}
-
-.qr-box {
-  padding: 0 70px;
-}
-
-.qr-img {
-  width: 320px;
-  height: 320px;
-}
-
-.qr-status-box {
-  @flex-column();
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.qr-status {
-  width: 320px;
-  height: 66px;
-  line-height: 66px;
-  font-size: 30px;
-  font-weight: 500;
-  border-radius: 33px;
+.tf-text-red {
   color: #ff6555;
-  background-color: #ff65551a;
-  text-align: center;
-}
-
-.qr-triangle {
-  .triangle-bottom(12px, 15px, #ff65551a);
-}
-
-.qr-alert {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
-  font-size: 26px;
-  font-weight: 500;
-  color: #8f8f94;
-}
-
-.success-tag {
-  width: 320px;
-  height: 320px;
-  text-align: center;
-  background: #ffa110;
-  color: #fff;
-  border-radius: 50%;
-  .tf-icon-gou {
-    font-size: 240px;
-    line-height: 320px;
-  }
-  & + .tf-text-lg {
-    margin-top: 80px;
-    margin-bottom: 20px;
-  }
-}
-
-.box-tag {
-  width: 100%;
-  height: 120px;
-  line-height: 120px;
-  margin: 75px 0 60px;
-  background: #f2f2f4;
-  border-radius: 10px;
-  font-size: 34px;
-  text-align: center;
-  & + .tf-text-grey {
-    margin-bottom: 68px;
-  }
-}
-</style>
-
-<style lang="less">
-.free-server-dialog {
-  .tf-dialog-header {
-    height: 148px;
-    .tf-dialog-header__title {
-      line-height: 148px;
-    }
-  }
-  .tf-dialog-content {
-    padding-top: 30px;
-  }
 }
 </style>
