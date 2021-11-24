@@ -19,7 +19,7 @@
             v-model="cancel_id"
             title="取消原因"
             value-key="content"
-            selected-key="content"
+            selected-key="id"
             :columns="reasonList"
           >
             <template v-slot="{ valueText }">

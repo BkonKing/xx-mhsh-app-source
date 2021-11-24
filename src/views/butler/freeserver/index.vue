@@ -53,14 +53,16 @@
       />
     </div>
     <div class="tf-body-container">
-      <service-card
-        :categoryType="categoryType"
-        :checkedStatus="checkedStatus"
-        :search="search"
-        :data="serviceList"
-        @reload="getFreeServerList"
-        @change="changeServer"
-      ></service-card>
+      <van-pull-refresh v-model="isLoading" @refresh="init">
+        <service-card
+          :categoryType="categoryType"
+          :checkedStatus="checkedStatus"
+          :search="search"
+          :data="serviceList"
+          @reload="getFreeServerList"
+          @change="changeServer"
+        ></service-card>
+      </van-pull-refresh>
     </div>
     <tf-share
       :share-show="shareShow"
@@ -83,6 +85,7 @@ export default {
   },
   data () {
     return {
+      isLoading: false,
       search: '',
       searchFocused: false, // 搜索框聚焦中
       checkedStatus: 0, // 预约状态
@@ -121,17 +124,19 @@ export default {
     }
   },
   created () {
-    this.getFreeServerList()
-    this.getServerCount()
+    this.init()
   },
   methods: {
-    getFreeServerList (searchName) {
+    init () {
+      this.getFreeServerList()
+      this.getServerCount()
+    },
+    getFreeServerList () {
       getFreeServerList({
-        category_type: this.categoryType || '',
-        searchName,
         enter_project_id: this.projectId
       }).then(({ list }) => {
         this.serviceList = list
+        this.isLoading = false
         this.setShareObj()
       })
     },
@@ -148,9 +153,10 @@ export default {
       // )
       this.shareObj = {
         title: `"${projectName}"免费服务，让生活更美好！`,
-        description: '业主终身享受，案场游客可免费体验按摩、老人理发、洗车、义诊、小推车、工具箱借用等服务',
+        description:
+          '业主终身享受，案场游客可免费体验按摩、老人理发、洗车、义诊、小推车、工具箱借用等服务',
         thumb: 'widget://res/freeserver.png',
-        contentUrl: `http://192.168.1.107:8110/#/butler/freeServer?projectId=${this.projectId}`,
+        contentUrl: `${process.env.VUE_APP_BASE_API}/wap/#/butler/freeServer?projectId=${this.projectId}`,
         pyqHide: false
       }
     },
@@ -227,6 +233,12 @@ export default {
   font-family: iconfont !important;
   color: @gray-7;
 }
+.no-data-text {
+  padding: 24px 0;
+  font-size: 24px;
+  color: #8f8f94;
+  text-align: center;
+}
 .filter-box {
   display: flex;
   height: 88px;
@@ -234,12 +246,6 @@ export default {
   .filter-menu {
     width: 400px;
     margin-right: 110px;
-    .no-data-text {
-      padding: 24px 0;
-      font-size: 24px;
-      color: #8f8f94;
-      text-align: center;
-    }
     /deep/ .van-popup {
       padding-top: 26px;
       padding-bottom: 26px;

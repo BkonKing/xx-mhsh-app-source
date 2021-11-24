@@ -22,7 +22,7 @@
       <div class="payment-box">
         <div class="payment-box__text">{{ type | payText }}</div>
         <div class="payment-box__money">
-          <span>￥</span>
+          <span class="tf-icon tf-icon-xingfubi1"></span>
           <van-field
             class="payment-box__money-number"
             readonly
@@ -68,7 +68,7 @@
       get-container="body"
       key="number"
       theme="custom"
-      :extra-key="['.']"
+      :extra-key="['']"
       :close-button-text="type !== '2' ? '支付' : '确定'"
       @close="pay"
       @blur="showKeyboard = false"
@@ -158,7 +158,7 @@ export default {
   methods: {
     // 完成
     pay () {
-      if (!this.value) {
+      if (parseInt(this.value) <= 0) {
         Toast('请输入金额')
         return
       }
@@ -311,6 +311,9 @@ export default {
     padding: 30px 0;
     span {
       font-size: 52px;
+    }
+    .tf-icon-xingfubi1 {
+      color: @red-dark;
     }
     &-number {
       font-size: 72px;

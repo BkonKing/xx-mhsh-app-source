@@ -127,7 +127,7 @@ export default {
       if ([2, 3].includes(status)) {
         const inProgress = {
           2: `第${serverQueue}位`, // 排队中
-          3: returnTime && `请${returnTime.substring(5, 10)}前归还` // 待归还
+          3: returnTime && `请${returnTime.substring(5, 10)}归还` // 待归还
         }
         return inProgress[status] || ''
       } else {
