@@ -67,6 +67,20 @@ export default {
       return [3, 4].includes(+this.info.code_type)
     }
   },
+  filters: {
+    houseRoleText (value) {
+      const houseRole = {
+        0: '访客',
+        1: '业主',
+        2: '业主成员',
+        3: '租户',
+        4: '租户成员',
+        6: '游客-未认证业主',
+        7: '游客-定位'
+      }
+      return houseRole[value] || '--'
+    }
+  },
   created () {
     const { info, code_id: codeId } = this.$route.query
     this.info = JSON.parse(info)

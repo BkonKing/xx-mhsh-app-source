@@ -15,8 +15,9 @@
         </div>
         <div class="cancel-form-item" style="position:relative;">
           <tf-picker
-            class="cancel-form-input"
+            v-if="visible"
             v-model="cancel_id"
+            class="cancel-form-input"
             title="取消原因"
             value-key="content"
             selected-key="id"
@@ -97,6 +98,9 @@ export default {
   },
   watch: {
     value (newValue) {
+      if (newValue) {
+        this.getCancelReason()
+      }
       this.visible = newValue
     },
     visible (newValue) {
@@ -128,6 +132,9 @@ export default {
         server_id: this.data.server_id,
         cancel_id: this.cancel_id,
         note: this.note
+      }).catch(() => {
+        this.visible = false
+        this.$emit('success')
       })
       if (success) {
         this.visible = false

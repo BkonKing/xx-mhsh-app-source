@@ -27,6 +27,7 @@
           v-model="checkedStatus"
           :options="bookingStatus"
           :title="checkedStatus ? '' : '预约状态'"
+          @change="changeCheckedStatus"
         >
           <div
             v-if="!(bookingStatus && bookingStatus.length)"
@@ -39,13 +40,17 @@
           v-model="categoryType"
           :options="serverTypes"
           :title="categoryType ? '' : '服务类型'"
+          @change="changeCategoryType"
         />
       </van-dropdown-menu>
       <van-search
         class="search-box"
         v-model="search"
         @focus="switchFocus(true)"
-        @blur="switchFocus(false)"
+        @blur="
+          switchFocus(false);
+          changeSearch();
+        "
         @cancel="cancelSearch"
         :clearable="false"
         :show-action="searchFocused"
@@ -53,7 +58,11 @@
       />
     </div>
     <div class="tf-body-container">
-      <van-pull-refresh v-model="isLoading" @refresh="init">
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="init"
+        class="list-refresh"
+      >
         <service-card
           :categoryType="categoryType"
           :checkedStatus="checkedStatus"
@@ -86,14 +95,17 @@ export default {
   data () {
     return {
       isLoading: false,
+      filterType: 0,
       search: '',
       searchFocused: false, // 搜索框聚焦中
-      checkedStatus: 0, // 预约状态
-      categoryType: 0, // 服务类型
+      checkedStatus: '', // 预约状态
+      categoryType: '', // 服务类型
       artificialCount: 0, // 人工服务数量
       borrowingCount: 0, // 借用服务数量
+      reservedCount: 0,
+      inlineCount: 0,
+      ereturnedCount: 0,
       serviceList: [],
-      bookingStatus: [],
       shareShow: false,
       shareObj: {}
     }
@@ -107,12 +119,40 @@ export default {
           value: ''
         },
         {
-          text: `人工服务（${this.artificialCount}）`,
+          text: `人工服务${
+            this.artificialCount ? `（${this.artificialCount}）` : ''
+          }`,
           value: '1'
         },
         {
-          text: `借用服务（${this.borrowingCount}）`,
+          text: `借用服务${
+            this.borrowingCount ? `（${this.borrowingCount}）` : ''
+          }`,
           value: '2'
+        }
+      ]
+    },
+    bookingStatus () {
+      return [
+        {
+          text: '全部',
+          value: ''
+        },
+        {
+          text: `已预约${
+            this.reservedCount ? `（${this.reservedCount}）` : ''
+          }`,
+          value: '1'
+        },
+        {
+          text: `排队中${this.inlineCount ? `（${this.inlineCount}）` : ''}`,
+          value: '2'
+        },
+        {
+          text: `待归还${
+            this.ereturnedCount ? `（${this.ereturnedCount}）` : ''
+          }`,
+          value: '3'
         }
       ]
     },
@@ -129,7 +169,7 @@ export default {
   methods: {
     init () {
       this.getFreeServerList()
-      this.getServerCount()
+      this.getServerCount(true)
     },
     getFreeServerList () {
       getFreeServerList({
@@ -160,17 +200,55 @@ export default {
         pyqHide: false
       }
     },
-    getServerCount () {
+    changeCheckedStatus () {
+      this.changeFilterType(1)
+    },
+    changeCategoryType () {
+      this.changeFilterType(2)
+    },
+    changeFilterType (type) {
+      const isAllChange = this.filterType === 0
+      if (!this.checkedStatus || !this.filterType) {
+        this.filterType = type
+      }
+      this.filterType === type && this.getServerCount(false, {
+        status: type === 1 ? this.checkedStatus : '',
+        type: type === 2 ? this.categoryType : '',
+        search: this.search
+      })
+    },
+    changeSearch () {
+      this.filterType = 0
+      this.getServerCount(true)
+    },
+    getServerCount (
+      isAllChange = false,
+      params = {
+        status: this.checkedStatus,
+        type: this.categoryType,
+        search: this.search
+      }
+    ) {
       getServerCount({
+        ...params,
         enter_project_id: this.projectId
       }).then(({ data }) => {
         const {
           artificial_count: artificialCount,
-          borrowing_count: borrowingCount
+          borrowing_count: borrowingCount,
+          reserved_count: reservedCount,
+          inline_count: inlineCount,
+          bereturned_count: ereturnedCount
         } = data
-        this.artificialCount = artificialCount
-        this.borrowingCount = borrowingCount
-        this.createBookingStatus(data)
+        if (this.filterType === 2 || isAllChange) {
+          this.reservedCount = reservedCount
+          this.inlineCount = inlineCount
+          this.ereturnedCount = ereturnedCount
+        }
+        if (this.filterType === 1 || isAllChange) {
+          this.artificialCount = artificialCount
+          this.borrowingCount = borrowingCount
+        }
       })
     },
     // 根据是否有状态动态添加显示的筛选选项
@@ -212,13 +290,16 @@ export default {
     },
     cancelSearch () {
       this.search = ''
+      this.$nextTick(() => {
+        this.changeSearch()
+      })
     },
     closeShare (data) {
       this.shareShow = data == 1
     },
     changeServer ({ index, data }) {
       this.serviceList.splice(index, 1, data)
-      this.getServerCount()
+      this.getServerCount(true)
     }
   }
 }
@@ -228,6 +309,9 @@ export default {
 .tf-body-container {
   padding: 30px 20px 0;
   background: #f7f7f7;
+}
+.list-refresh {
+  min-height: 100%;
 }
 .placeholder {
   font-family: iconfont !important;

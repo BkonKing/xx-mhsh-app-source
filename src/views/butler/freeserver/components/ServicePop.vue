@@ -1,96 +1,99 @@
 <template>
-  <van-popup
-    v-model="visible"
-    class="free-server-dialog"
-    :class="[
-      isManualServer ? 'free-server-dialog-blue' : 'free-server-dialog-green'
-    ]"
-  >
-    <div class="free-server-header">
-      <div class="free-server-title">{{ data.category }}</div>
-      <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
-    </div>
-    <div v-if="success" class="success-box">
-      <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
-      <div class="success-info">{{isManualServer ? '服务' : '归还'}}成功</div>
-    </div>
-    <!-- 预约 -->
-    <div
-      v-else-if="serverStatus === 0 || serverStatus === 5"
-      class="reservation"
+  <div>
+    <van-popup
+      v-model="visible"
+      get-container="body"
+      class="free-server-dialog"
+      :class="[
+        isManualServer ? 'free-server-dialog-blue' : 'free-server-dialog-green'
+      ]"
     >
-      <div class="free-server-info">
-        <div v-if="!isManualServer" class="free-server-row">
-          <span class="free-server-label">剩余可借：</span>
-          <span class="free-server-value free-server-alert-red"
-            >{{ data.remaining_count }}个</span
+      <div class="free-server-header">
+        <div class="free-server-title">{{ data.category }}</div>
+        <span class="tf-icon tf-icon-guanbi" @click="visible = false"></span>
+      </div>
+      <div v-if="success" class="success-box">
+        <img class="success-img" src="@/assets/imgs/server-success.png" alt="" />
+        <div class="success-info">{{isManualServer ? '服务' : '归还'}}成功</div>
+      </div>
+      <!-- 预约 -->
+      <div
+        v-else-if="serverStatus === 0 || serverStatus === 5"
+        class="reservation"
+      >
+        <div class="free-server-info">
+          <div v-if="!isManualServer" class="free-server-row">
+            <span class="free-server-label">剩余可借：</span>
+            <span class="free-server-value free-server-alert-red"
+              >{{ data.remaining_count }}个</span
+            >
+          </div>
+          <div class="free-server-row">
+            <span class="free-server-label">当前预约：</span>
+            <span class="free-server-value">{{ data.appointment_count }}人</span>
+          </div>
+          <div v-if="data.service_time" class="free-server-row">
+            <span class="free-server-label">服务时间：</span>
+            <span class="free-server-value">{{ data.service_time }}</span>
+          </div>
+          <div v-if="data.location" class="free-server-row">
+            <span class="free-server-label">服务地点：</span>
+            <span class="free-server-value">{{ data.location }}</span>
+          </div>
+        </div>
+        <van-button
+          class="free-server-btn free-server-btn-able"
+          @click="generateReservation"
+          >我要预约</van-button
+        >
+      </div>
+      <!-- 排队 -->
+      <div v-else-if="[1, 2, 3].includes(serverStatus)" class="in-service">
+        <div v-if="!success" class="free-server-alert">
+          <span class="free-server-alert-red" v-if="serverStatus === 2"
+            >排队中：第{{ data.service_queue }}位</span
           >
+          <template v-else>(请前往服务地点，出示给工作人员）</template>
         </div>
-        <div class="free-server-row">
-          <span class="free-server-label">当前预约：</span>
-          <span class="free-server-value">{{ data.appointment_count }}人</span>
+        <div class="qr-box">
+          <van-loading v-if="!qrImg" type="spinner" size="30px" color="#00A0E9" />
+          <div
+            v-show="qrImg"
+            class="qr-status"
+            :class="{ 'qr-status-return': serverStatus === 3 }"
+          >
+            {{ statusText }}
+          </div>
+          <img v-show="qrImg" class="qr-img" :src="qrImg" />
         </div>
-        <div v-if="data.service_time" class="free-server-row">
-          <span class="free-server-label">服务时间：</span>
-          <span class="free-server-value">{{ data.service_time }}</span>
+        <div v-if="codeType === 2" class="return-info">
+          请<span class="free-server-alert-red">{{ data.return_time }}</span
+          >前归还
         </div>
-        <div v-if="data.location" class="free-server-row">
-          <span class="free-server-label">服务地点：</span>
-          <span class="free-server-value">{{ data.location }}</span>
+        <div v-if="serverInfo" class="server-info">
+          <img
+            v-if="data.location"
+            class="icon-img"
+            src="@/assets/butler/freeserver-address.png"
+            alt=""
+          /><img
+            v-else
+            class="icon-img"
+            src="@/assets/butler/freeserver-time.png"
+            alt=""
+          /><div class="server-info-text">{{ serverInfo }}</div>
         </div>
-      </div>
-      <van-button
-        class="free-server-btn free-server-btn-able"
-        @click="generateReservation"
-        >我要预约</van-button
-      >
-    </div>
-    <!-- 排队 -->
-    <div v-else-if="[1, 2, 3].includes(serverStatus)" class="in-service">
-      <div v-if="!success" class="free-server-alert">
-        <span class="free-server-alert-red" v-if="serverStatus === 2"
-          >排队中：第{{ data.service_queue }}位</span
+        <van-button v-if="serverStatus !== 3" class="free-server-btn" @click="cancelReservation"
+          >取消预约</van-button
         >
-        <template v-else>(请前往服务地点，出示给工作人员）</template>
       </div>
-      <div class="qr-box">
-        <van-loading v-if="!qrImg" type="spinner" size="30px" color="#00A0E9" />
-        <div
-          v-show="qrImg"
-          class="qr-status"
-          :class="{ 'qr-status-return': serverStatus === 3 }"
-        >
-          {{ statusText }}
-        </div>
-        <img v-show="qrImg" class="qr-img" :src="qrImg" />
-      </div>
-      <div v-if="codeType === 2" class="return-info">
-        请<span class="free-server-alert-red">{{ data.return_time }}</span
-        >前归还
-      </div>
-      <div v-if="serverInfo" class="server-info">
-        <img
-          v-if="data.location"
-          class="icon-img"
-          src="@/assets/butler/freeserver-address.png"
-          alt=""
-        /><img
-          v-else
-          class="icon-img"
-          src="@/assets/butler/freeserver-time.png"
-          alt=""
-        /><div class="server-info-text">{{ serverInfo }}</div>
-      </div>
-      <van-button v-if="serverStatus !== 3" class="free-server-btn" @click="cancelReservation"
-        >取消预约</van-button
-      >
-    </div>
-    <cancel-server
-      v-model="cancelVisible"
-      :data="data"
-      @success="cancelSuccess"
-    ></cancel-server
-  ></van-popup>
+      <cancel-server
+        v-model="cancelVisible"
+        :data="data"
+        @success="cancelSuccess"
+      ></cancel-server
+    ></van-popup>
+  </div>
 </template>
 
 <script>
@@ -214,8 +217,8 @@ export default {
   },
   methods: {
     // 获取服务信息
-    async getServerInfo (isChange) {
-      this.$toast.loading('加载中')
+    async getServerInfo (isChange, isLoading = true) {
+      isLoading && this.$toast.loading('加载中')
       const { data } = await getServerInfo({
         id: this.id
       })
@@ -224,7 +227,7 @@ export default {
       if ([1, 2, 3].includes(+this.data.server_status)) {
         this.getServerCode()
       }
-      this.$toast.clear()
+      isLoading && this.$toast.clear()
     },
     // 获取服务二维码
     async getServerCode () {
@@ -279,7 +282,7 @@ export default {
     cancelSuccess () {
       this.visible = false
       this.$emit('cancelSuccess', this.data.server_id)
-      this.getServerInfo(true)
+      this.getServerInfo(true, false)
       this.timer && clearTimeout(this.timer)
     }
   }

@@ -42,6 +42,9 @@
         </div>
       </div>
     </div>
+    <div v-if="!haveShowData" style="width: 100%;text-align:center;">
+      <van-empty image="search" description="暂无数据" />
+    </div>
     <service-pop
       v-model="popVisible"
       :data="activeServe"
@@ -85,7 +88,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo', 'currentProject'])
+    ...mapGetters(['userInfo', 'currentProject']),
+    haveShowData () {
+      return this.data.some((item) => {
+        return (!this.categoryType || this.categoryType == item.category_type) &&
+          (!this.checkedStatus || this.checkedStatus == item.server_status) &&
+          item.category.indexOf(this.search) !== -1
+      })
+    }
   },
   methods: {
     // 点击服务显示二维码
