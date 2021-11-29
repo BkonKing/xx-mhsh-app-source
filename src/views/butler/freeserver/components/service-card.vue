@@ -47,7 +47,6 @@
     </div>
     <service-pop
       v-model="popVisible"
-      :data="activeServe"
       :id="activeServe.id"
       @change="changeServer"
     ></service-pop>

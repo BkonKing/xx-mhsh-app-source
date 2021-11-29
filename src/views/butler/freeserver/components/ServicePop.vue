@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="false">
     <van-popup
       v-model="visible"
       get-container="body"
@@ -220,6 +220,7 @@ export default {
     async getServerInfo (isChange, isLoading = true) {
       isLoading && this.$toast.loading('加载中')
       const { data } = await getServerInfo({
+        enter_project_id: this.projectId,
         id: this.id
       })
       this.data = data

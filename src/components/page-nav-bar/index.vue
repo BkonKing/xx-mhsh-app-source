@@ -4,7 +4,7 @@
       <div class="tf-row-vertical-center room_btn" @click="goAttestation">
         <span class="tf-icon tf-icon-dingwei"></span>
         <span class="tf-text" :class="{ underline: !attestationType }">{{
-          attestationType || "请认证房间"
+          attestationType || "游客 - 美好生活家园"
         }}</span>
       </div>
     </template>
@@ -52,12 +52,19 @@ export default {
         enter_project_id: enterProjectId,
         enter_project_name: enterProjectName,
         bsbx_allots: bsbxAllots,
-        project_name: projectName
+        project_name: projectName,
+        id_type: idType
       } = this.userInfo
       if (currentProject) {
         return `${currentProject.project_name}${currentProject.fc_info}` // 已认证
       } else if (+enterProjectId) {
-        return `游客 - ${enterProjectName}` // 游客定位、游客未认证业主
+        if (+idType === 1) {
+          return `未认证 - ${enterProjectName}` // 游客未认证业主
+        } else if (+idType === 2) {
+          return `游客 - ${enterProjectName}` // 游客定位
+        } else {
+          return ''
+        }
       } else if (bsbxAllots === '1' && projectName) {
         return projectName // 有报事报修的服务人员
       }

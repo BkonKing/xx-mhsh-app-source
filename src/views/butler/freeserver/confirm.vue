@@ -27,7 +27,7 @@
           <div class="free-server-row">
             <span class="free-server-label">申请人：</span
             ><span class="free-server-value"
-              >{{ info.realname }}（{{ info.user_type | houseRoleText }}）</span
+              >{{ info.realname }}（{{ info.user_type | houseRoleT }}）</span
             >
           </div>
           <div class="free-server-row">
@@ -65,20 +65,6 @@ export default {
     ...mapGetters(['userInfo']),
     isManualServer () {
       return [3, 4].includes(+this.info.code_type)
-    }
-  },
-  filters: {
-    houseRoleText (value) {
-      const houseRole = {
-        0: '访客',
-        1: '业主',
-        2: '业主成员',
-        3: '租户',
-        4: '租户成员',
-        6: '游客-未认证业主',
-        7: '游客-定位'
-      }
-      return houseRole[value] || '--'
     }
   },
   created () {
@@ -137,6 +123,18 @@ export default {
         4: '享受服务'
       }
       return text[value]
+    },
+    houseRoleT (value) {
+      const houseRole = {
+        0: '访客',
+        1: '业主',
+        2: '业主成员',
+        3: '租户',
+        4: '租户成员',
+        6: '游客-未认证业主',
+        7: '游客-定位'
+      }
+      return houseRole[value] || value
     },
     serverInfo (value) {
       switch (value.code_type) {
@@ -220,6 +218,7 @@ export default {
 }
 .free-server-label {
   width: 144px;
+  flex-shrink: 0;
   font-size: 26px;
   color: #8f8f94;
 }
