@@ -1,17 +1,17 @@
 <template>
-  <div class="tf-bg">
-    <van-nav-bar
-      title="幸福币"
-      :fixed="true"
-      :border="false"
-      placeholder
-      left-arrow
-      right-text="明细"
-      @click-left="$router.go(-1)"
-      @click-right="goCoinRecord"
-    ></van-nav-bar>
+  <div class="tf-bg-white">
     <div class="page-bg">
-      <div class="sign-box">
+      <van-nav-bar
+        title="幸福币"
+        :fixed="true"
+        :border="false"
+        placeholder
+        left-arrow
+        right-text="明细"
+        @click-left="$router.go(-1)"
+        @click-right="goCoinRecord"
+      ></van-nav-bar>
+      <div class="sign-box tf-row-space-between">
         <div class="coin-box">
           <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
           <div class="tf-column">
@@ -31,31 +31,31 @@
           >{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
         >
       </div>
-      <div class="scan-box">
+    </div>
+    <div class="coin-main-box">
+      <div class="tf-row-space-between tf-padding-lg">
         <div class="function-box" @click="goScanCode(1)">
           <img
             class="function-box__icon"
-            src="@/assets/personage/credits_saoyisao.png"
+            src="@/assets/imgs/credits_saoyisao.png"
           />
           <div class="function-box__text">扫一扫</div>
         </div>
         <div class="function-box" @click="goScanCode(2)">
           <img
             class="function-box__icon"
-            src="@/assets/personage/credits_shoukuan.png"
+            src="@/assets/imgs/credits_shoukuan.png"
           />
           <div class="function-box__text">付款码</div>
         </div>
         <div class="function-box" @click="goScanCode(3)">
           <img
             class="function-box__icon"
-            src="@/assets/personage/credits_fukuan.png"
+            src="@/assets/imgs/credits_fukuan.png"
           />
           <div class="function-box__text">收款码</div>
         </div>
       </div>
-    </div>
-    <div class="coin-main-box">
       <template v-if="taskList && taskList.length">
         <div class="happiness-coin-title">幸福币任务</div>
         <div class="task-box">
@@ -397,93 +397,57 @@ export default {
 
 <style lang="less" scoped>
 @gold-color: #ca864e;
-.tf-bg {
-  background: #f7f7f7;
-}
-/deep/ .van-nav-bar {
-  background: #f7f7f7;
-  .van-nav-bar__text {
-    font-size: 32px;
-  }
+.tf-bg-white {
+  @flex-column();
+  height: 100%;
 }
 .page-bg {
-  margin: 30px 20px 0;
-}
-.sign-box {
-  position: relative;
-  z-index: 2;
-  width: 710px;
-  height: 336px;
-  background: url("~@/assets/personage/credits_header.png") no-repeat;
+  width: 750px;
+  height: 428px;
+  background: url("../../../assets/imgs/credits_header.png") no-repeat;
   background-size: cover;
   background-repeat: no-repeat;
 }
-.coin-box {
-  display: flex;
-  justify-content: center;
-  padding-top: 70px;
-  .coin-number {
-    font-size: 72px;
-    line-height: 1;
-    font-weight: 500;
-    color: #fff;
-  }
-  .coin-freeze {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 1;
-    color: #ffffff;
-    span + span {
-      margin-left: 26px;
-    }
-  }
-  .coin-icon {
-    margin-right: 28px;
-    font-size: 42px;
-    line-height: 1;
-    color: #fff;
-  }
-  .sign-tag {
-    width: 240px;
-    height: 88px;
-    line-height: 88px;
-    text-align: center;
-    color: #fff;
-    font-size: 30px;
-    background-image: linear-gradient(to right, @red, @red-dark);
-    border-width: 0;
-    border-radius: 0;
-    border-top-left-radius: 44px;
-    border-bottom-left-radius: 44px;
-  }
-  .sign-tag--complete {
-    color: @gray-7;
-    background-image: none;
-    background-color: @gray-2;
-  }
-}
-.scan-box {
-  display: flex;
+.nav-bar {
+  flex-direction: row;
   justify-content: space-around;
-  padding: 100px 30px 60px;
-  margin-top: -40px;
-  background: #fff;
-  .function-box {
-    padding: 0 46px;
-  }
-  .function-box__text {
-    font-size: 26px;
-    color: #7a7a7e;
-    text-align: center;
-  }
-  .function-box__icon {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-  }
+  height: 44px;
+  padding: 0 15px;
+}
+.navbar-title {
+  flex: 1;
+  font-size: 17px;
+  line-height: 44px;
+  text-align: center;
+  font-weight: 500;
+  color: @gold-color;
+}
+.navbar-text {
+  color: @gold-color;
+  line-height: 44px;
+  font-size: 26px;
+}
+.sign-tag {
+  width: 240px;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  color: #fff;
+  font-size: 30px;
+  background-image: linear-gradient(to right, @red, @red-dark);
+  border-width: 0;
+  border-radius: 0;
+  border-top-left-radius: 44px;
+  border-bottom-left-radius: 44px;
+}
+.sign-tag--complete {
+  color: @gray-7;
+  background-image: none;
+  background-color: @gray-2;
+}
+.sign-box {
+  height: 300px;
+  padding-top: 94px;
 }
 .coin-main-box {
   flex: 1;
@@ -492,6 +456,50 @@ export default {
   > .tf-row-space-between {
     padding-top: 60px;
   }
+}
+.coin-box {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  padding-top: 12px;
+  margin-left: 59px;
+}
+.coin-number {
+  font-size: 72px;
+  line-height: 1;
+  font-weight: 500;
+  color: #fff;
+}
+.coin-freeze {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
+  color: #ffffff;
+  span + span {
+    margin-left: 26px;
+  }
+}
+.coin-icon {
+  margin-top: 4px;
+  margin-right: 20px;
+  font-size: 64px;
+  line-height: 1;
+  color: #fff;
+}
+.function-box {
+  padding: 0 46px;
+}
+.function-box__text {
+  font-size: 30px;
+  text-align: center;
+}
+.function-box__icon {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
 }
 .happiness-coin-title {
   font-size: 34px;
@@ -605,5 +613,14 @@ export default {
 .sale-box {
   margin-top: 80px;
   @relative();
+}
+/deep/ .van-nav-bar {
+  background: none;
+  z-index: 0;
+  .van-icon,
+  .van-nav-bar__title,
+  .van-nav-bar__text {
+    color: #fff;
+  }
 }
 </style>
