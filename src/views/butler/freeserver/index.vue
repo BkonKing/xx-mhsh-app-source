@@ -9,102 +9,435 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
+        <img
+          class="icon-image"
+          src="@/assets/butler/freeserver-forward.png"
+          @click="shareShow = true"
+        />
         <span
           class="tf-icon tf-icon-shijian"
+          style="width: auto;line-height: 1;"
           @click="$router.push('/pages/butler/freeserver/list')"
         ></span>
       </template>
     </van-nav-bar>
-    <van-search v-model="search" placeholder="请输入关键字搜索" />
-    <div class="tf-padding tf-body-container">
-      <div class="tab-btn-box">
-        <div
-          class="tab-btn"
-          :class="{'tab-btn--blue': category_type === 1}"
-          @click="changeType(1)"
-          style="border-color: #448fe4;"
+    <div class="filter-box">
+      <van-dropdown-menu v-show="!searchFocused" class="filter-menu">
+        <van-dropdown-item
+          v-model="checkedStatus"
+          :options="bookingStatus"
+          :title="checkedStatus ? '' : '预约状态'"
+          @change="changeCheckedStatus"
         >
-          <div v-if="category_type !== 1" class="tf-circle-tag--blue"></div>
-          <div class="tab-btn__text-box tf-row">
-            <div class="tab-btn__text">人工服务</div>
-            <div class="tf-text-grey">({{rg_num}})</div>
-          </div>
-        </div>
-        <div
-          class="tab-btn"
-          :class="{'tf-bg-success': category_type === 2}"
-          @click="changeType(2)"
-          style="border-color: #55b862;"
+          <div
+            v-if="!(bookingStatus && bookingStatus.length)"
+            class="no-data-text"
+          >
+            当前没有预约，快去预约吧
+          </div></van-dropdown-item
         >
-          <div v-if="category_type !== 2" class="tf-circle-tag--success"></div>
-          <div class="tab-btn__text-box tf-row">
-            <div class="tab-btn__text">借用服务</div>
-            <div class="tf-text-grey">({{jy_num}})</div>
-          </div>
-        </div>
-      </div>
-      <service-card :active="category_type" :search="search" :data="serviceList" @reload="getFreeServerList"></service-card>
+        <van-dropdown-item
+          v-model="categoryType"
+          :options="serverTypes"
+          :title="categoryType ? '' : '服务类型'"
+          @change="changeCategoryType"
+        />
+      </van-dropdown-menu>
+      <van-search
+        class="search-box"
+        v-model="search"
+        @focus="switchFocus(true)"
+        @blur="
+          switchFocus(false);
+          changeSearch();
+        "
+        @cancel="cancelSearch"
+        :clearable="false"
+        :show-action="searchFocused"
+        :placeholder="searchFocused ? '请输入关键字搜索' : '搜一搜'"
+      />
     </div>
+    <div class="tf-body-container">
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="init"
+        class="list-refresh"
+      >
+        <service-card
+          :categoryType="categoryType"
+          :checkedStatus="checkedStatus"
+          :search="search"
+          :data="serviceList"
+          @reload="getFreeServerList"
+          @change="changeServer"
+        ></service-card>
+      </van-pull-refresh>
+    </div>
+    <tf-share
+      :share-show="shareShow"
+      :share-obj="shareObj"
+      @closeSwal="closeShare"
+    >
+    </tf-share>
   </div>
 </template>
 
 <script>
-import { NavBar, Search } from 'vant'
+import tfShare from '@/components/tf-share'
 import serviceCard from './components/service-card.vue'
-import { getFreeServerList } from '@/api/butler.js'
+import { getFreeServerList, getServerCount } from '@/api/butler.js'
+import { mapGetters } from 'vuex'
 export default {
   components: {
-    serviceCard,
-    [NavBar.name]: NavBar,
-    [Search.name]: Search
+    tfShare,
+    serviceCard
   },
   data () {
     return {
+      isLoading: false,
+      filterType: 0,
       search: '',
-      category_type: 0, // 当前类型
-      rg_num: 0, // 人工服务数量
-      jy_num: 0, // 借用服务数量
-      serviceList: []
+      searchFocused: false, // 搜索框聚焦中
+      checkedStatus: '', // 预约状态
+      categoryType: '', // 服务类型
+      artificialCount: 0, // 人工服务数量
+      borrowingCount: 0, // 借用服务数量
+      reservedCount: 0,
+      inlineCount: 0,
+      ereturnedCount: 0,
+      serviceList: [],
+      shareShow: false,
+      shareObj: {}
+    }
+  },
+  computed: {
+    ...mapGetters(['currentProject', 'userInfo']),
+    serverTypes () {
+      return [
+        {
+          text: '全部',
+          value: ''
+        },
+        {
+          text: `人工服务${
+            this.artificialCount ? `（${this.artificialCount}）` : ''
+          }`,
+          value: '1'
+        },
+        {
+          text: `借用服务${
+            this.borrowingCount ? `（${this.borrowingCount}）` : ''
+          }`,
+          value: '2'
+        }
+      ]
+    },
+    bookingStatus () {
+      return [
+        {
+          text: '全部',
+          value: ''
+        },
+        {
+          text: `已预约${
+            this.reservedCount ? `（${this.reservedCount}）` : ''
+          }`,
+          value: '1'
+        },
+        {
+          text: `排队中${this.inlineCount ? `（${this.inlineCount}）` : ''}`,
+          value: '2'
+        },
+        {
+          text: `待归还${
+            this.ereturnedCount ? `（${this.ereturnedCount}）` : ''
+          }`,
+          value: '3'
+        }
+      ]
+    },
+    projectId () {
+      return (
+        (this.currentProject && this.currentProject.project_id) ||
+        this.userInfo.enter_project_id
+      )
     }
   },
   created () {
-    this.getFreeServerList()
+    this.init()
   },
   methods: {
-    /* 获取全部免费服务类型 */
-    getFreeServerList (searchName) {
-      getFreeServerList(/* {
-        category_type: this.category_type,
-        searchName
-      } */).then(
-        (res) => {
-          const { rg_num, jy_num, records } = res.data
-          this.rg_num = rg_num
-          this.jy_num = jy_num
-          this.serviceList = records
-        }
-      )
+    init () {
+      this.getFreeServerList()
+      this.getServerCount(true)
     },
-    /* 搜索服务（暂时弃用） */
-    searchList ({ value }) {
-      this.getFreeServerList(value)
+    getFreeServerList () {
+      getFreeServerList({
+        enter_project_id: this.projectId
+      }).then(({ list }) => {
+        this.serviceList = list
+        this.isLoading = false
+        this.setShareObj()
+      })
     },
-    /* 选中类型 */
-    changeType (type) {
-      if (type !== this.category_type) {
-        this.category_type = type
-      } else {
-        this.category_type = 0
+    setShareObj () {
+      const projectName = this.currentProject
+        ? this.currentProject.project_name
+        : this.userInfo.enter_project_name
+      // const content = this.serviceList.reduce(
+      //   (previousObj, currentObj, index) => {
+      //     const interval = index < this.serviceList.length - 1 ? '、' : ''
+      //     return previousObj + currentObj.category + interval
+      //   },
+      //   ''
+      // )
+      this.shareObj = {
+        title: `"${projectName}"免费服务，让生活更美好！`,
+        description:
+          '业主终身享受，案场游客可免费体验按摩、老人理发、洗车、义诊、小推车、工具箱借用等服务',
+        thumb: 'widget://res/freeserver.png',
+        contentUrl: `${process.env.VUE_APP_BASE_API}/wap/#/butler/freeServer?projectId=${this.projectId}`,
+        pyqHide: false
       }
+    },
+    changeCheckedStatus () {
+      this.changeFilterType(1)
+    },
+    changeCategoryType () {
+      this.changeFilterType(2)
+    },
+    changeFilterType (type) {
+      const isAllChange = this.filterType === 0
+      if (!this.checkedStatus || !this.filterType) {
+        this.filterType = type
+      }
+      this.filterType === type && this.getServerCount(false, {
+        status: type === 1 ? this.checkedStatus : '',
+        type: type === 2 ? this.categoryType : '',
+        search: this.search
+      })
+    },
+    changeSearch () {
+      this.filterType = 0
+      this.getServerCount(true)
+    },
+    getServerCount (
+      isAllChange = false,
+      params = {
+        status: this.checkedStatus,
+        type: this.categoryType,
+        search: this.search
+      }
+    ) {
+      getServerCount({
+        ...params,
+        enter_project_id: this.projectId
+      }).then(({ data }) => {
+        const {
+          artificial_count: artificialCount,
+          borrowing_count: borrowingCount,
+          reserved_count: reservedCount,
+          inline_count: inlineCount,
+          bereturned_count: ereturnedCount
+        } = data
+        if (this.filterType === 2 || isAllChange) {
+          this.reservedCount = reservedCount
+          this.inlineCount = inlineCount
+          this.ereturnedCount = ereturnedCount
+        }
+        if (this.filterType === 1 || isAllChange) {
+          this.artificialCount = artificialCount
+          this.borrowingCount = borrowingCount
+        }
+      })
+    },
+    // 根据是否有状态动态添加显示的筛选选项
+    createBookingStatus ({
+      reserved_count: reservedCount,
+      inline_count: inlineCount,
+      bereturned_count: ereturnedCount
+    }) {
+      const bookingStatus = []
+      reservedCount &&
+        bookingStatus.push({
+          text: `已预约（${reservedCount}）`,
+          value: '1'
+        })
+      inlineCount &&
+        bookingStatus.push({
+          text: `排队中（${inlineCount}）`,
+          value: '2'
+        })
+      ereturnedCount &&
+        bookingStatus.push({
+          text: `待归还（${ereturnedCount}）`,
+          value: '3'
+        })
+      if (bookingStatus && bookingStatus.length) {
+        bookingStatus.unshift({
+          text: '全部',
+          value: ''
+        })
+      }
+      this.bookingStatus = bookingStatus
+    },
+    switchFocus (bool) {
+      // 因为动态控制是否显示取消按钮，如果点击取消按妞就立即执行，
+      // 则取消监听就不会执行
+      setTimeout(() => {
+        this.searchFocused = bool
+      }, 0)
+    },
+    cancelSearch () {
+      this.search = ''
+      this.$nextTick(() => {
+        this.changeSearch()
+      })
+    },
+    closeShare (data) {
+      this.shareShow = data == 1
+    },
+    changeServer ({ index, data }) {
+      this.serviceList.splice(index, 1, data)
+      this.getServerCount(true)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+.tf-body-container {
+  padding: 30px 20px 0;
+  background: #f7f7f7;
+}
+.list-refresh {
+  min-height: 100%;
+}
 .placeholder {
   font-family: iconfont !important;
   color: @gray-7;
+}
+.no-data-text {
+  padding: 24px 0;
+  font-size: 24px;
+  color: #8f8f94;
+  text-align: center;
+}
+.filter-box {
+  display: flex;
+  height: 88px;
+  background: #fff;
+  .filter-menu {
+    width: 400px;
+    margin-right: 110px;
+    /deep/ .van-popup {
+      padding-top: 26px;
+      padding-bottom: 26px;
+      border-radius: 0px 0px 10px 10px;
+      .van-dropdown-item__option {
+        height: 72px;
+        padding-left: 40px;
+        line-height: 72px;
+        font-size: 26px;
+        color: #8f8f94;
+        span {
+          line-height: 1;
+        }
+      }
+      .van-dropdown-item__option--active {
+        background: #f7f7f7;
+        .van-cell__title {
+          color: #222222;
+          span {
+            font-weight: bold;
+          }
+        }
+        .van-dropdown-item__icon {
+          font-weight: bold;
+          color: #222222;
+        }
+      }
+    }
+    /deep/ .van-dropdown-item--down {
+      margin-top: -2px;
+    }
+    /deep/ .van-overlay {
+      top: 4px;
+    }
+    /deep/ .van-dropdown-menu__bar {
+      height: 100%;
+      box-shadow: none;
+      .van-dropdown-menu__title {
+        font-size: 28px;
+      }
+      .van-dropdown-menu__title::after {
+        margin-top: -8px;
+        border: 6px solid;
+        border-color: transparent transparent #8f8f94 #8f8f94;
+        opacity: 1;
+      }
+      .van-dropdown-menu__title--active {
+        color: #000000;
+        &::after {
+          margin-top: -3px;
+        }
+        .van-ellipsis {
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  .search-box {
+    flex: 1;
+    padding: 12px 20px;
+    /deep/ .van-search__content {
+      height: 64px;
+      padding-left: 30px;
+      padding-right: 30px;
+      border-radius: 32px;
+      background: #f7f7f7;
+      .van-cell {
+        padding: 0;
+        line-height: 64px;
+        .van-icon-search {
+          font-weight: bold;
+          color: #a6a6a6;
+        }
+        .van-field__left-icon {
+          margin-right: 10px;
+          line-height: 64px;
+        }
+        .van-field__control {
+          line-height: 62px;
+        }
+        .van-field__control::placeholder {
+          font-size: 24px;
+          line-height: 1 !important;
+        }
+      }
+    }
+  }
+}
+
+/deep/ .van-search__action {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  margin-left: -40px;
+  padding: 0 30px;
+  position: relative;
+  background: #f7f7f7;
+  font-size: 24px;
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
+  &::before {
+    content: "";
+    width: 1px;
+    height: 30px;
+    position: absolute;
+    left: 0;
+    background: #cccccc;
+  }
 }
 
 .check-type {
@@ -112,6 +445,12 @@ export default {
   justify-content: flex-start;
   margin-top: @padding-md;
   margin-bottom: @padding-md;
+}
+
+.icon-image {
+  width: 44px;
+  height: 44px;
+  margin-right: 30px;
 }
 
 .check-type__box {

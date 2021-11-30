@@ -62,7 +62,7 @@
 
 <script>
 import { getMonthRecord, editRecord } from '@/api/personage'
-import eventBus from '@/api/eventbus'
+import eventBus from '@/utils/eventbus'
 import meterForm from './form'
 export default {
   name: 'waterElectricityMeter',

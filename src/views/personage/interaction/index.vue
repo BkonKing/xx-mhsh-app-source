@@ -39,7 +39,7 @@ import {
   getMyJoinActivityList
 } from '@/api/personage.js'
 import { getMyWjtpList } from '@/api/butler.js'
-import eventBus from '@/api/eventbus'
+import eventBus from '@/utils/eventbus'
 export default {
   name: 'interactionIndex',
   components: {

@@ -7,7 +7,7 @@ import * as filters from './filters'
 import txAnalysis from './directive/txAnalysis'
 import imageCach from './directive/imageCach'
 import preventReClick from './directive/preventReClick'
-import eventBus from '@/api/eventbus'
+import eventBus from '@/utils/eventbus'
 import './styles/base.css'
 // vconsole 悬浮console
 // import VConsole from 'vconsole'

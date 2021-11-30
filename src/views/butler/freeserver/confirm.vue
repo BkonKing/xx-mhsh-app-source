@@ -1,40 +1,60 @@
 <template>
   <div class="shade">
-    <van-nav-bar
-      class="invite-nav-bar"
-      title="请确认服务信息"
-      placeholder
-      left-arrow
-      :border="false"
-      @click-left="$router.go(-1)"
-    />
-    <div class="invite-box">
-      <div class="share-box">
-        <div class="tf-bg">
-          <div class="tf-text-grey">服务项目：{{info.server_category}}</div>
-          <div class="tf-text-grey">申请：{{info.server_type}}{{info | serverInfo}}</div>
+    <div class="server-confirm-box">
+      <div class="free-server-header">
+        <div class="free-server-title">请确认服务信息</div>
+        <span class="tf-icon tf-icon-guanbi" @click="$router.go(-1)"></span>
+      </div>
+      <div class="server-container">
+        <div class="server-box">
+          <div class="free-server-row">
+            <span class="free-server-label">服务项目：</span
+            ><span class="free-server-value free-server-alert-red">{{
+              info.server_category
+            }}</span>
+          </div>
+          <div class="free-server-row">
+            <span class="free-server-label">申请：</span
+            ><span class="free-server-value"
+              >{{ info.server_type
+              }}<span class="free-server-alert-grey">{{
+                info | serverInfo
+              }}</span></span
+            >
+          </div>
         </div>
-        <div class="pd20">
-          <div class="tf-text-grey">申请人：{{info.realname}}（{{info.user_type | houseRoleText}}）</div>
-          <div class="tf-text-grey">手机号：{{info.mobile}}</div>
-          <div class="tf-text-grey">房屋：{{info.fc_info}}</div>
+        <div class="pd30">
+          <div class="free-server-row">
+            <span class="free-server-label">申请人：</span
+            ><span class="free-server-value"
+              >{{ info.realname }}（{{ info.user_type | houseRoleT }}）</span
+            >
+          </div>
+          <div class="free-server-row">
+            <span class="free-server-label">手机号：</span
+            ><span class="free-server-value">{{ info.mobile }}</span>
+          </div>
+          <div v-if="info.fc_info" class="free-server-row">
+            <span class="free-server-label">房屋：</span
+            ><span class="free-server-value">{{ info.fc_info }}</span>
+          </div>
         </div>
       </div>
-      <button class="share-btn" @click="confirm">确认</button>
+      <van-button
+        class="free-server-btn"
+        :class="{ 'free-server-btn-blue': isManualServer }"
+        @click="confirm"
+        >确认</van-button
+      >
     </div>
   </div>
 </template>
 
 <script>
-import { NavBar, Toast, Dialog } from 'vant'
-import tfDialog from '@/components/tf-dialog/index.vue'
-import { serverYuyue, serverClose } from '@/api/butler'
+// /pages/butler/freeserver/confirm
+import { confirmServer, serverClose } from '@/api/butler'
 import { mapGetters } from 'vuex'
 export default {
-  components: {
-    [NavBar.name]: NavBar,
-    tfDialog
-  },
   data () {
     return {
       info: {},
@@ -42,49 +62,55 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    isManualServer () {
+      return [3, 4].includes(+this.info.code_type)
+    }
   },
   created () {
-    const { info, code_id } = this.$route.query
+    const { info, code_id: codeId } = this.$route.query
     this.info = JSON.parse(info)
-    this.codeId = code_id
+    this.codeId = codeId
+    this.codeId = this.info.code_id
   },
   methods: {
     confirm () {
       if (this.info.code_type == 1 || this.info.code_type == 3) {
-        this.serverYuyue()
+        this.confirmServer()
       } else {
         this.serverClose()
       }
     },
-    /* 确认用户预约 */
-    serverYuyue () {
-      serverYuyue({
+    // 确认用户预约
+    confirmServer () {
+      confirmServer({
         code_id: this.info.code_id,
         uid: this.info.uid,
-        project_id: this.userInfo.xm_project_id,
+        enter_project_id: this.info.project_id,
         category_id: this.info.category_id
-      }).then((res) => {
-        Dialog.alert({
-          title: res.message
-        }).then(() => {
-          this.$router.go(-1)
-        })
+      }).then(({ success }) => {
+        if (success) {
+          this.$toast('确认成功')
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 500)
+        }
       })
     },
-    /* 服务预约结束 */
+    // 服务预约结束
     serverClose () {
       serverClose({
         code_id: this.info.code_id,
         uid: this.info.uid,
-        project_id: this.info.project_id,
+        enter_project_id: this.info.project_id,
         server_id: this.info.server_id
-      }).then((res) => {
-        Dialog.alert({
-          title: res.message || '服务结束'
-        }).then(() => {
-          this.$router.go(-1)
-        })
+      }).then(({ success }) => {
+        if (success) {
+          this.$toast('确认成功')
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 500)
+        }
       })
     }
   },
@@ -97,6 +123,18 @@ export default {
         4: '享受服务'
       }
       return text[value]
+    },
+    houseRoleT (value) {
+      const houseRole = {
+        0: '访客',
+        1: '业主',
+        2: '业主成员',
+        3: '租户',
+        4: '租户成员',
+        6: '游客-未认证业主',
+        7: '游客-定位'
+      }
+      return houseRole[value] || value
     },
     serverInfo (value) {
       switch (value.code_type) {
@@ -116,55 +154,93 @@ export default {
 
 <style lang="less" scoped>
 .shade {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
-  background-color: #1b1b1b;
+  background-color: #1b1b1b99;
 }
 
-.invite-box {
+.server-confirm-box {
   @flex-column();
   align-items: center;
-}
-
-.share-box {
-  position: relative;
-  width: 620px;
-  margin: 80px 65px;
+  width: 560px;
   padding: 30px;
-  background-color: #fff;
-  box-shadow: 0 0 6px #f1c7c5;
-  // border:6px solid rgba(235, 88, 65, 0.3);
+  border-radius: 10px;
+  background: #fff;
 }
 
-.share-btn {
+.free-server-header {
+  width: 100%;
+  position: relative;
+  .free-server-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+  }
+  .tf-icon-guanbi {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 30px;
+    color: #000;
+  }
+}
+
+.server-container {
+  position: relative;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.free-server-btn {
+  width: 100%;
+  margin-top: 30px;
+  background: #6bc572;
+  border-radius: 10px;
   border: none;
+  font-size: 26px;
   color: #fff;
-  width: 620px;
-  height: 88px;
-  font-size: 30px;
-  background-image: linear-gradient(to right, @red, @red-dark);
+}
+
+.free-server-btn-blue {
+  background: #00a0e9;
+}
+
+.free-server-row {
+  display: flex;
+  padding: 20px 0;
+  + .free-server-row {
+    border-top: 1px solid #eeeeee;
+  }
+}
+.free-server-label {
+  width: 144px;
+  flex-shrink: 0;
+  font-size: 26px;
+  color: #8f8f94;
+}
+.free-server-value {
+  font-size: 26px;
+  color: #222222;
+}
+
+.server-box {
+  padding: 0 30px;
+  background: #f7f7f7;
   border-radius: 10px;
 }
 
-.tf-bg {
-  padding: 20px;
+.free-server-alert-red {
+  color: #ff6555;
+}
+.free-server-alert-grey {
+  color: #8f8f94;
 }
 
-.tf-text-grey {
-  font-size: 30px;
-  margin-bottom: 10px;
-}
-
-.invite-nav-bar {
-  background-color: #1b1b1b;
-  /deep/ .van-icon {
-    color: #fff;
-  }
-  /deep/ .van-nav-bar__title {
-    color: #fff;
-  }
-}
-.pd20 {
-  padding: 20px;
+.pd30 {
+  padding: 0 30px;
 }
 </style>

@@ -20,6 +20,10 @@ export function bulterPermission (to, from, next, userType, userInfo, fn) {
       next()
       return
     }
+    if (userInfo.enter_project_id && to.name === 'freeserverIndex') {
+      next()
+      return
+    }
     Dialog.confirm({
       title: '提示',
       message: '您尚未认证房间，是否去认证？',

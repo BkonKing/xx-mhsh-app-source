@@ -458,6 +458,29 @@ const personageRouter = [
     meta: {
       keepAlive: true
     }
+  },
+  /** 邀请 */
+  {
+    path: '/personage/invite/index',
+    name: 'inviteIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "inviteIndex" */
+        '@/views/personage/invite/index'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  /** 邀请-面对面邀请 */
+  {
+    path: '/personage/invite/QRCode',
+    name: 'inviteQRCode',
+    component: () =>
+      import(
+        /* webpackChunkName: "inviteQRCode" */
+        '@/views/personage/invite/QRCode'
+      )
   }
 ]
 

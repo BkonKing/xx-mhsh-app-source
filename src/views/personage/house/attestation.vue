@@ -171,7 +171,7 @@ export default {
       agreeValue: false,
       id: '',
       bindingId: '', // 绑定id
-      house_id: '1',
+      house_id: '',
       project_id: '',
       building_id: '',
       unit_id: '',
@@ -216,7 +216,9 @@ export default {
         mobile,
         house_role,
         fc_info,
+        project_id,
         project_name,
+        house_id,
         id,
         is_binding
       } = JSON.parse(this.$route.query.info)
@@ -226,6 +228,8 @@ export default {
       this.house_role = house_role
       this.house_name = project_name + fc_info
       this.isBinding = is_binding
+      this.project_id = project_id || ''
+      this.house_id = house_id || ''
     } else if (this.type === 1) {
       if (this.mode === 1) {
         this.bindingId = this.$route.query.id
@@ -331,6 +335,7 @@ export default {
     updateMember () {
       updateMember({
         id: this.id,
+        project_id: this.project_id,
         house_id: this.house_id,
         realname: this.realname,
         mobile: this.mobile,
@@ -338,6 +343,7 @@ export default {
       }).then(res => {
         if (res.success) {
           Toast.success('修改成功')
+          this.$router.go(-1)
         } else {
           Toast.fail('保存失败')
         }

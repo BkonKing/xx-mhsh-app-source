@@ -251,16 +251,40 @@ export function timeaxis (data, ProjectId) {
 /* 免费服务 start */
 
 // 免费服务列表接口
-export function getFreeServerList (params) {
-  return request.get('/butler/freeserver/getFreeServerList', {
-    params
-  })
+export function getFreeServerList (data) {
+  return request.post('/butler/freeserver/getFreeServerList', data)
+}
+// 获取用户服务状态数
+export function getServerCount (data) {
+  return request.post('/butler/freeserver/getServerCount', data)
+}
+// 获取服务信息
+export function getServerInfo (data) {
+  return request.post('/butler/freeserver/getServerInfo', data)
+}
+// 生成预约信息
+export function generateReservation (data) {
+  return request.post('/butler/freeserver/generateReservation', data)
+}
+// 获取取消原因
+export function getCancelReason (data) {
+  return request.post('/butler/freeserver/getCancelReason', data)
+}
+// 取消预约
+export function cancelReservation (data) {
+  return request.post('/butler/freeserver/cancelReservation', data)
 }
 // 我的免费预约列表接口
-export function getMyFreeServerList (params) {
-  return request.get('/butler/freeserver/getMyFreeServerList', {
-    params
-  })
+export function getMyFreeServerList (data) {
+  return request.post('/butler/freeserver/getMyFreeServerList', data)
+}
+// 获取我的服务详情
+export function getMyServerInfo (data) {
+  return request.post('/butler/freeserver/getMyServerInfo', data)
+}
+// 确认服务
+export function confirmServer (data) {
+  return request.post('/butler/freeserver/serverYueue', data)
 }
 // 确认服务预约
 export function serverYuyue (data) {
@@ -268,7 +292,7 @@ export function serverYuyue (data) {
 }
 // 服务预约结束
 export function serverClose (data) {
-  return request.post('/butler/freeserver/server_close', data, {
+  return request.post('/butler/freeserver/serverClose', data, {
     headers: {
       ProjectId: store.getters.userInfo.xm_project_id
     }

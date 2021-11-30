@@ -124,7 +124,7 @@
 <script>
 import { NavBar, Toast, Dialog } from 'vant'
 import { getAddressInfo, addAddress, updateAddress, deleteAddress } from '@/api/life.js'
-import eventBus from '@/api/eventbus.js'
+import eventBus from '@/utils/eventbus.js'
 import { getArea } from '@/utils/util'
 export default {
   name: 'addressEdit',

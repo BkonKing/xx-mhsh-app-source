@@ -245,8 +245,17 @@
         <div v-if="isOpenActivity" class="activity-banner" @click="goActivity">
           {{ activityTitle }}
         </div>
+        <!-- 红包活动 -->
+        <div v-if="isInvite" class="invite-banner" @click="goInvite">
+          <img class="invite-banner-img" :src="inviteBanner" alt="">
+        </div>
         <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item v-if="isShowTask" border title="我的任务" @click="goMyTask">
+          <tf-list-item
+            v-if="isShowTask"
+            border
+            title="我的任务"
+            @click="goMyTask"
+          >
             <template v-slot:image>
               <img
                 class="tf-clist-cell__image"
@@ -254,7 +263,7 @@
               />
             </template>
             <template v-slot:right>
-              <span v-if="taskNum" class="num-tag">{{taskNum}}</span>
+              <span v-if="taskNum" class="num-tag">{{ taskNum }}</span>
             </template>
           </tf-list-item>
           <tf-list-item border title="我的互动" @click="goInteraction">
@@ -334,6 +343,7 @@ export default {
       signStatus: true, // 签到状态
       showCalendar: false, // 签到日历是否隐藏
       orderData: {}, // 订单数据
+      hbBannerData: {}, // 美好红包数据
       signLoading: false, // 签到loading
       signRuledialog: false, // 签到规则弹窗
       isOpenActivity: false, // 是否开启积分活动
@@ -358,12 +368,21 @@ export default {
     // 用户是否有水电抄表事务处理权限
     isSdcbRole () {
       return this.userInfo.sdcbrole
+    },
+    // 是否有邀请活动
+    isInvite () {
+      return this.hbBannerData && this.hbBannerData.is_open_hb_banner
+    },
+    // 美好红包banner图
+    inviteBanner () {
+      return this.hbBannerData.hb_banner_url || ''
     }
   },
   activated () {
     // 重新获取用户信息
-    this.$store.dispatch('getMyAccount').then(({ order_data }) => {
+    this.$store.dispatch('getMyAccount').then(({ order_data, hb_banner_data }) => {
       this.orderData = order_data
+      this.hbBannerData = hb_banner_data
     })
     this.getActivityInfo()
     this.getMyTaskNum()
@@ -485,6 +504,10 @@ export default {
     // 用户积分活动专区
     goActivity () {
       this.$router.push({ name: 'activity' })
+    },
+    // 美好红包专区
+    goInvite () {
+      this.$router.push({ name: 'inviteIndex' })
     },
     // 我的任务
     goMyTask () {
@@ -785,6 +808,18 @@ export default {
   color: #000000;
   background: url("~@/assets/imgs/personage_activity_banner.png");
   background-size: contain;
+}
+.invite-banner {
+  width: 100%;
+  height: 140px;
+  margin-bottom: 30px;
+  line-height: 1;
+}
+.invite-banner-img {
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  object-fit: cover;
 }
 .num-tag {
   @flex-center();

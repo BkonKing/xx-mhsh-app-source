@@ -109,9 +109,9 @@ export default {
     // 获取收款码二维码
     getCollectCode () {
       getCollectCode().then(res => {
-        const { url, code_id } = res.data
+        const { url, old_code_id } = res.data
         this.collectCodeImg = url
-        this.codeId = code_id
+        this.codeId = old_code_id
         this.pollingCollect()
       })
     },
@@ -126,9 +126,7 @@ export default {
     },
     // 轮询收款码当前状态
     pollingCollect () {
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
+      this.timer && clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.collectStatus()
       }, 3000)
@@ -169,9 +167,9 @@ export default {
     // 出示收款码请求获取码当前状态
     collectStatus () {
       collectStatus({
-        code_id: this.codeId
+        old_code_id: this.codeId
       }).then(({ data }) => {
-        if (data.is_pay != '1') {
+        if (!data || data.is_pay != '1') {
           this.pollingCollect()
         } else {
           this.$dialog
@@ -229,13 +227,13 @@ export default {
         code_info: value
       })
         .then(res => {
-          const { check_status, is_pay, avatar, realname, mobile } = res.data
+          const { check_status, is_pay, avatar, realname, mobile, code_id } = res.data
           if (check_status) {
             this.$router.push({
               name: 'happinessCoinPayment',
               query: {
                 type: '1',
-                value: values[1],
+                value: code_id,
                 avatar,
                 realname,
                 mobile
