@@ -344,7 +344,7 @@ export default {
   }
 }
 .free-server-label {
-  width: 130px;
+  width: 142px;
   font-size: 26px;
   line-height: 36px;
   color: #8f8f94;
