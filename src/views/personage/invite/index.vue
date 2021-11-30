@@ -487,8 +487,8 @@ export default {
   }
 }
 .footer-text {
-  margin-top: 60px;
-  margin-bottom: 174px;
+  padding-top: 60px;
+  padding-bottom: 174px;
   font-size: 24px;
   font-weight: bold;
   text-align: center;
