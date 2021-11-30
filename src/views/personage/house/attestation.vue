@@ -343,6 +343,7 @@ export default {
       }).then(res => {
         if (res.success) {
           Toast.success('修改成功')
+          this.$router.go(-1)
         } else {
           Toast.fail('保存失败')
         }

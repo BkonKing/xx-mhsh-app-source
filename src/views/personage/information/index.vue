@@ -495,11 +495,12 @@ export default {
         let data = res.data || []
         let num = 0
         data = data.map(obj => {
-          const { project_name, fc_info, members, house_id } = obj
+          const { project_name, fc_info, members, house_id, project_id } = obj
           num += parseInt(members)
           return {
             text: `${project_name}${fc_info}(${members})`,
-            value: house_id
+            value: house_id,
+            project_id
           }
         })
         data.unshift({
@@ -514,8 +515,10 @@ export default {
     },
     /* 获取成员列表 */
     getMemberList () {
+      const house = this.houselist && this.houselist.find(obj => obj.value === this.selectedHouseId)
       getMemberList({
-        house_id: this.selectedHouseId
+        house_id: this.selectedHouseId,
+        project_id: house && house.project_id
       }).then(res => {
         this.memberList = res.data
       })
