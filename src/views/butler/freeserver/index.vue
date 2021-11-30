@@ -196,7 +196,7 @@ export default {
         description:
           '业主终身享受，案场游客可免费体验按摩、老人理发、洗车、义诊、小推车、工具箱借用等服务',
         thumb: 'widget://res/freeserver.png',
-        contentUrl: `${process.env.VUE_APP_BASE_API}/wap/#/butler/freeServer?projectId=${this.projectId}`,
+        contentUrl: `${process.env.VUE_APP_DOMAIN_NAME}/wap/#/butler/freeServer?projectId=${this.projectId}`,
         pyqHide: false
       }
     },
