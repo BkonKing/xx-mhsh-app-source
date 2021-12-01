@@ -252,47 +252,47 @@ export function timeaxis (data, ProjectId) {
 
 // 免费服务列表接口
 export function getFreeServerList (data) {
-  return request.post('/butler/freeserver/getFreeServerList', data)
+  return request.post('/butler/freeserver_new/getFreeServerList', data)
 }
 // 获取用户服务状态数
 export function getServerCount (data) {
-  return request.post('/butler/freeserver/getServerCount', data)
+  return request.post('/butler/freeserver_new/getServerCount', data)
 }
 // 获取服务信息
 export function getServerInfo (data) {
-  return request.post('/butler/freeserver/getServerInfo', data)
+  return request.post('/butler/freeserver_new/getServerInfo', data)
 }
 // 生成预约信息
 export function generateReservation (data) {
-  return request.post('/butler/freeserver/generateReservation', data)
+  return request.post('/butler/freeserver_new/generateReservation', data)
 }
 // 获取取消原因
 export function getCancelReason (data) {
-  return request.post('/butler/freeserver/getCancelReason', data)
+  return request.post('/butler/freeserver_new/getCancelReason', data)
 }
 // 取消预约
 export function cancelReservation (data) {
-  return request.post('/butler/freeserver/cancelReservation', data)
+  return request.post('/butler/freeserver_new/cancelReservation', data)
 }
 // 我的免费预约列表接口
 export function getMyFreeServerList (data) {
-  return request.post('/butler/freeserver/getMyFreeServerList', data)
+  return request.post('/butler/freeserver_new/getMyFreeServerList', data)
 }
 // 获取我的服务详情
 export function getMyServerInfo (data) {
-  return request.post('/butler/freeserver/getMyServerInfo', data)
+  return request.post('/butler/freeserver_new/getMyServerInfo', data)
 }
 // 确认服务
 export function confirmServer (data) {
-  return request.post('/butler/freeserver/serverYueue', data)
+  return request.post('/butler/freeserver_new/serverYueue', data)
 }
 // 确认服务预约
 export function serverYuyue (data) {
-  return request.post('/butler/freeserver/server_yuyue', data)
+  return request.post('/butler/freeserver_new/server_yuyue', data)
 }
 // 服务预约结束
 export function serverClose (data) {
-  return request.post('/butler/freeserver/serverClose', data, {
+  return request.post('/butler/freeserver_new/serverClose', data, {
     headers: {
       ProjectId: store.getters.userInfo.xm_project_id
     }
@@ -300,15 +300,15 @@ export function serverClose (data) {
 }
 // 预约服务二维码链接
 export function getServerCode (data) {
-  return request.post('/butler/freeserver/serverCode', data)
+  return request.post('/butler/freeserver_new/serverCode', data)
 }
 // 出示二维码用户监听状态
 export function serverCodeStatus (data) {
-  return request.post('/butler/freeserver/serverCodeStatus', data)
+  return request.post('/butler/freeserver_new/serverCodeStatus', data)
 }
 // 预约服务扫码确认
 export function serverCodeScan (data) {
-  return request.post('/butler/freeserver/serverCodeScan', data, {
+  return request.post('/butler/freeserver_new/serverCodeScan', data, {
     headers: {
       ProjectId: store.getters.userInfo.xm_project_id
     }
