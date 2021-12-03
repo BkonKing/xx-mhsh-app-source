@@ -8,7 +8,11 @@
         placeholder
         left-arrow
         @click-left="$router.go(-1)"
-      ></van-nav-bar>
+      >
+        <template #right>
+          <span class="tf-icon tf-icon-shijian" @click="goCouponPurchaseRecords"></span>
+        </template>
+      </van-nav-bar>
     </div>
 
     <div class="nav-box-block">
@@ -186,6 +190,11 @@ export default {
           this.$router.push('/life')
           break
       }
+    },
+    goCouponPurchaseRecords () {
+      this.$router.push({
+        name: 'shopCouponPurchaseRecord'
+      })
     }
   }
 }

@@ -13,23 +13,22 @@
     <div class="page-bg">
       <div class="sign-box">
         <div class="coin-box">
-          <div class="tf-icon tf-icon-xingfubi1 coin-icon"></div>
-          <div class="tf-column">
+          <div class="tf-icon tf-icon-xingfubi1 coin-icon">
             <span class="coin-number">{{ credits }}</span>
-            <div class="coin-freeze">
-              <span>可用{{ ky_credits }}</span>
-              <span v-if="+sd_credits">不可用{{ sd_credits }}</span>
-            </div>
           </div>
+          <div class="coin-freeze">
+            <span>可用{{ ky_credits }}</span>
+            <span v-if="+sd_credits">不可用{{ sd_credits }}</span>
+          </div>
+          <van-button
+            v-preventReClick
+            :loading="signLoading"
+            class="sign-tag"
+            :class="{ 'sign-tag--complete': signinToday !== 0 }"
+            @click="signIn()"
+            >{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
+          >
         </div>
-        <van-button
-          v-preventReClick
-          :loading="signLoading"
-          class="sign-tag"
-          :class="{ 'sign-tag--complete': signinToday !== 0 }"
-          @click="signIn()"
-          >{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
-        >
       </div>
       <div class="scan-box">
         <div class="function-box" @click="goScanCode(1)">
@@ -55,140 +54,27 @@
         </div>
       </div>
     </div>
-    <div class="coin-main-box">
-      <template v-if="taskList && taskList.length">
-        <div class="happiness-coin-title">幸福币任务</div>
-        <div class="task-box">
-          <div class="task-item" v-for="(item, i) in taskList" :key="i">
-            <div class="tf-row tf-flex-item">
-              <img
-                class="task-item__icon"
-                v-if="item.task_type == 1"
-                src="@/assets/imgs/credits_sign.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 2"
-                src="@/assets/imgs/credits_renzheng.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 3"
-                src="@/assets/imgs/credits_yunmenjin.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 4"
-                src="@/assets/imgs/credits_wenjuan.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 5"
-                src="@/assets/imgs/credits_toupiao.png"
-              />
-              <img
-                class="task-item__icon"
-                v-else-if="item.task_type == 7"
-                src="@/assets/imgs/credits_goufang.png"
-              />
-              <div class="tf-space-between">
-                <div class="task-item__title">{{ item.task_name }}</div>
-                <!-- 朋友到访、购房奖励 -->
-                <div v-if="item.task_type == 7">
-                  <div class="task-item__remarks">
-                    {{ item.task_type | taskText }}
-                  </div>
-                  <div v-if="yxlpNum" class="tf-row task-item__remarks">
-                    获得
-                    <div class="task-item__remarks--gold">
-                      {{ item.credits }}幸福币起
-                    </div>
-                  </div>
-                </div>
-                <!-- 其他 -->
-                <div class="tf-row" v-else>
-                  <!-- 签到 -->
-                  <template v-if="item.task_type === '1'">
-                    <div class="task-item__remarks">
-                      <!-- 游客 -->
-                      <template v-if="userType == 0">
-                        每日签到获得
-                      </template>
-                      <!-- 有认证用户 -->
-                      <template v-else>
-                        <span
-                          class="tf-icon tf-icon-zhushishuoming"
-                          @click="signRuledialog = true"
-                        ></span>
-                        <!-- 签到幸福币已达上限，不可签到 -->
-                        <template v-if="signinToday === 2"
-                          >明天要早点来哦</template
-                        >
-                        <template v-else>签到可获得</template>
-                      </template>
-                    </div>
-                    <div
-                      v-if="signinToday !== 2"
-                      class="task-item__remarks--gold"
-                    >
-                      {{ item.credits }}幸福币
-                    </div>
-                  </template>
-                  <!-- 其他 -->
-                  <template v-else>
-                    <div class="task-item__remarks">
-                      {{ item.task_type | taskText }}获得
-                    </div>
-                    <div class="task-item__remarks--gold">
-                      {{ item.credits }}幸福币
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </div>
-            <div v-if="item.complete" class="task-item__number">
-              +{{ item.credits }}
-            </div>
-            <van-button
-              v-else
-              v-preventReClick
-              :loading="signLoading && item.task_type == 1"
-              class="task-item__btn"
-              v-txAnalysis="{ eventId: 48 }"
-              :disabled="signinToday === 2 && item.task_type == 1"
-              @click="complete(item)"
-              >{{
-                item.task_type == 7
-                  ? "去推荐"
-                  : signinToday === 2 && item.task_type == 1
-                  ? "签到"
-                  : "去完成"
-              }}</van-button
-            >
-          </div>
-        </div>
-      </template>
-      <div class="sale-box">
-        <div class="happiness-coin-title">幸福币特卖区</div>
-        <div class="purchase-history" @click="goBuyRecord">购买记录</div>
-      </div>
-      <div class="sale-area">
-        <div
-          class="commodity-box"
-          v-for="(item, i) in creditsGoods"
-          :key="i"
-          @click="goCoinCommodity(item)"
-        >
-          <img class="commodity-image" :src="item.thumb" />
-          <div class="commodity-name van-ellipsis">{{ item.goods_name }}</div>
-          <div class="tf-row" style="align-items: flex-end;">
-            <div class="commodity-current-price">￥{{ item.s_price }}</div>
-            <div class="commodity-original-price">￥{{ item.y_price }}</div>
-          </div>
-          <div class="commodity-coin">{{ item.credits }}幸福币</div>
-        </div>
-      </div>
+    <div class="credit-task-box">
+      <task-list
+        v-if="taskData && taskData.length"
+        :data="taskData"
+        :signinToday="signinToday"
+        :userType="userType"
+      ></task-list>
     </div>
+    <van-tabs v-model="tabActive" class="credit-tabs">
+      <van-tab title="兑换专区">
+        <credit-area :data="creditsGoods"></credit-area>
+      </van-tab>
+      <van-tab title="领券中心">内容 2</van-tab>
+      <van-tab title="任务中心" v-if="taskData && taskData.length">
+        <task-list
+          :data="taskData"
+          :signinToday="signinToday"
+          :userType="userType"
+        ></task-list>
+      </van-tab>
+    </van-tabs>
     <tf-calendar v-model="showCalendar"></tf-calendar>
     <sign-rule-dialog v-model="signRuledialog"></sign-rule-dialog>
     <sign-alert
@@ -200,25 +86,29 @@
 </template>
 
 <script>
-import tfCalendar from '@/components/tf-calendar'
-import SignRule from './components/SignRule'
-import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
-import { getCreditsGoodsList } from '@/api/home'
-import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
+import tfCalendar from '@/components/tf-calendar'
 import SignAlert from '@/views/home/components/SignAlert'
+import { handlePermission } from '@/utils/permission'
+import SignRule from './components/SignRule'
+import TaskList from './components/TaskList'
+import CreditArea from './components/CreditArea'
+import { getCreditsGoodsList } from '@/api/home'
+import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
 export default {
   components: {
     tfCalendar,
-    [SignRule.name]: SignRule,
-    SignAlert
+    SignAlert,
+    TaskList,
+    CreditArea,
+    [SignRule.name]: SignRule
   },
   data () {
     return {
       showCalendar: false, // 签到日历是否隐藏
       signinToday: 1, // 今日是否签到
       credits: 0, // 当前幸福币
-      taskList: [], // 任务列表  task_type： 1: 签到 2：认证成功 3：首次开门 7:朋友到访、购房奖励
+      taskData: [], // 任务列表  task_type： 1: 签到 2：认证成功 3：首次开门 7:朋友到访、购房奖励
       creditsGoods: [], // 幸福币商品列表
       signLoading: false, // 签到按钮loading
       mj_status: true, // 是否有门禁
@@ -228,7 +118,8 @@ export default {
       ky_credits: '', // 可用幸福币
       signAlertVisible: false, // 游客认证提醒弹窗
       signMessage: '', // 签到成功提醒
-      signOwnerCredits: '' // 业主签到幸福币
+      signOwnerCredits: '', // 业主签到幸福币
+      tabActive: 0
     }
   },
   computed: {
@@ -243,7 +134,7 @@ export default {
     getCreditsAccount () {
       getCreditsAccount().then(({ data }) => {
         this.signinToday = data.signin_status
-        this.taskList = data.task_list
+        this.taskData = data.task_list
         this.credits = data.credits
         this.mj_status = data.mj_status
         this.ky_credits = data.ky_credits
@@ -297,10 +188,6 @@ export default {
     /* 幸福币明细 */
     goCoinRecord () {
       this.$router.push({ name: 'happinessCoinRecord' })
-    },
-    /* 购买详情 */
-    goBuyRecord () {
-      this.$router.push({ name: 'happinessCoinBuyRecord' })
     },
     /* 扫一扫 */
     goScanCode (current) {
@@ -371,26 +258,6 @@ export default {
         this.yxlpNum = (data && data.length) || 0
       })
     }
-  },
-  filters: {
-    taskText (value) {
-      let text = '参与'
-      switch (parseInt(value)) {
-        case 1:
-          text = '每日签到'
-          break
-        case 2:
-          text = '认证成功'
-          break
-        case 3:
-          text = '首次开门'
-          break
-        case 7:
-          text = '朋友到访、购房奖励'
-          break
-      }
-      return text
-    }
   }
 }
 </script>
@@ -420,10 +287,17 @@ export default {
 }
 .coin-box {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding-top: 70px;
+  .coin-icon {
+    margin-right: 26px;
+    font-size: 44px;
+    line-height: 1;
+    color: #fff;
+  }
   .coin-number {
-    font-size: 72px;
+    font-size: 56px;
     line-height: 1;
     font-weight: 500;
     color: #fff;
@@ -431,7 +305,7 @@ export default {
   .coin-freeze {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 34px;
     font-size: 28px;
     font-weight: 500;
     line-height: 1;
@@ -439,12 +313,6 @@ export default {
     span + span {
       margin-left: 26px;
     }
-  }
-  .coin-icon {
-    margin-right: 28px;
-    font-size: 42px;
-    line-height: 1;
-    color: #fff;
   }
   .sign-tag {
     width: 240px;
@@ -485,125 +353,42 @@ export default {
     border-radius: 50%;
   }
 }
-.coin-main-box {
+.credit-task-box {
   flex: 1;
+  margin: 30px 20px 0;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  > .tf-row-space-between {
-    padding-top: 60px;
+}
+.credit-tabs {
+  margin: 30px 0 0;
+  /deep/ .van-tabs__wrap {
+    height: 110px;
+    .van-tabs__nav {
+      background: linear-gradient(0deg, #f7f7f7 0%, #ffffff 100%);
+      border-radius: 20px 20px 0px 0px;
+    }
+    .van-tab {
+      width: 180px;
+      flex: initial;
+      justify-content: flex-start;
+      padding: 50px 20px 30px;
+      span {
+        line-height: 1;
+      }
+    }
+    .van-tabs__line {
+      width: 55px !important;
+      height: 8px;
+      left: -40px;
+      background: #ff6555;
+      border-radius: 4px;
+    }
+    .van-tab--active .van-tab__text {
+      font-size: 32px;
+    }
   }
-}
-.happiness-coin-title {
-  font-size: 34px;
-  font-weight: 500;
-  color: @gold-color;
-  text-align: center;
-  margin-top: 60px;
-  margin-bottom: 38px;
-}
-.task-box {
-  padding: 30px;
-  margin: 0 30px;
-  background-color: #fef8f2;
-  border-radius: 10px;
-}
-.task-item {
-  @flex();
-  justify-content: space-between;
-  align-items: center;
-  min-height: 90px;
-}
-.task-item + .task-item {
-  margin-top: 60px;
-}
-.task-item__icon {
-  width: 90px;
-  height: 90px;
-  background-color: #ffdec8;
-  border-radius: 45px;
-  margin-right: 20px;
-}
-.task-item__title {
-  margin-bottom: 6px;
-  font-size: 30px;
-  font-weight: 500;
-}
-.task-item__remarks {
-  font-size: 24px;
-  color: @gray-7;
-  .tf-icon-zhushishuoming {
-    margin-right: 10px;
+  /deep/ .van-tabs__content {
+    margin-top: 50px;
   }
-}
-.task-item__remarks--gold {
-  margin-left: 6px;
-  font-size: 24px;
-  color: @gold-color;
-}
-.task-item__number {
-  width: 150px;
-  text-align: center;
-  font-size: 38px;
-  line-height: 90px;
-  font-weight: 500;
-  color: #eb5841;
-}
-.task-item__btn {
-  width: 150px;
-  height: 46px;
-  line-height: 46px;
-  text-align: center;
-  background-image: linear-gradient(to right, @red, @red-dark);
-  border-radius: 23px;
-  font-size: 24px;
-  color: #fff;
-  border: none;
-}
-.purchase-history {
-  position: absolute;
-  top: 0;
-  right: 30px;
-  font-size: 24px;
-  color: @gray-7;
-  line-height: 44px;
-}
-.sale-area {
-  @flex();
-  padding-left: 30px;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-.commodity-box {
-  margin-bottom: 30px;
-  flex: 1;
-}
-.commodity-image {
-  width: 330px;
-  height: 330px;
-  background: #f4f4f4;
-  border-radius: 10px;
-}
-.commodity-name {
-  width: 330px;
-  font-size: 28px;
-  margin: 20px 0;
-}
-.commodity-current-price {
-  font-size: 30px;
-  margin-right: 10px;
-}
-.commodity-original-price {
-  font-size: 24px;
-  color: @gray-7;
-  text-decoration: line-through;
-}
-.commodity-coin {
-  margin-top: 15px;
-  font-size: 30px;
-  color: @red-dark;
-}
-.sale-box {
-  margin-top: 80px;
-  @relative();
 }
 </style>

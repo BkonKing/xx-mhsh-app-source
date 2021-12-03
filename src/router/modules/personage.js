@@ -481,6 +481,76 @@ const personageRouter = [
         /* webpackChunkName: "inviteQRCode" */
         '@/views/personage/invite/QRCode'
       )
+  },
+  // 商户首页
+  {
+    path: '/personage/shop/index',
+    name: 'shopIndex',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopIndex" */
+        '@/views/personage/shop/index'
+      )
+  },
+  // 店铺资料
+  {
+    path: '/personage/shop/information',
+    name: 'shopInformation',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopInformation" */
+        '@/views/personage/shop/information'
+      )
+  },
+  // 创建优惠券
+  {
+    path: '/personage/shop/createCoupon',
+    name: 'shopCreateCoupon',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCreateCoupon" */
+        '@/views/personage/shop/createCoupon'
+      )
+  },
+  // 优惠券管理
+  {
+    path: '/personage/shop/couponManager',
+    name: 'shopCouponManager',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCouponManager" */
+        '@/views/personage/shop/couponManager'
+      )
+  },
+  // 优惠券使用记录
+  {
+    path: '/personage/shop/couponUseRecord',
+    name: 'shopCouponUseRecord',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCouponUseRecord" */
+        '@/views/personage/shop/couponUseRecord'
+      )
+  },
+  // 优惠券购买记录
+  {
+    path: '/personage/shop/couponPurchaseRecord',
+    name: 'shopCouponPurchaseRecord',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCouponPurchaseRecord" */
+        '@/views/personage/shop/couponPurchaseRecord'
+      )
+  },
+  // 优惠券订单详情
+  {
+    path: '/personage/shop/couponDetail',
+    name: 'shopCouponDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCouponDetail" */
+        '@/views/personage/shop/couponDetail'
+      )
   }
 ]
 

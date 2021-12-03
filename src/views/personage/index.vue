@@ -101,6 +101,23 @@
         </div>
       </div>
       <div class="functional-box">
+        <!-- 商户入口 -->
+        <div class="shop-box" @click="goShopCentre">
+          <div class="shop-header">
+            <img class="shop-icon" src="@/assets/personage/shop.png" alt="" />
+            <span class="shop-name">美好生活家园新乡店</span>
+          </div>
+          <div class="shop-content">
+            <div class="shop-item">
+              <div class="shop-num">50</div>
+              <div class="shop-text">今日核销优惠券</div>
+            </div>
+            <div class="shop-item">
+              <div class="shop-num">3</div>
+              <div class="shop-text">领取中优惠券</div>
+            </div>
+          </div>
+        </div>
         <!-- 事务处理 -->
         <div v-if="isSwRole || isSdcbRole" class="tansaction-box">
           <div class="tansaction-header" @click="handleTransaction">
@@ -247,7 +264,7 @@
         </div>
         <!-- 红包活动 -->
         <div v-if="isInvite" class="invite-banner" @click="goInvite">
-          <img class="invite-banner-img" :src="inviteBanner" alt="">
+          <img class="invite-banner-img" :src="inviteBanner" alt="" />
         </div>
         <tf-list class="personage-list tf-mb-lg">
           <tf-list-item
@@ -380,10 +397,12 @@ export default {
   },
   activated () {
     // 重新获取用户信息
-    this.$store.dispatch('getMyAccount').then(({ order_data, hb_banner_data }) => {
-      this.orderData = order_data
-      this.hbBannerData = hb_banner_data
-    })
+    this.$store
+      .dispatch('getMyAccount')
+      .then(({ order_data, hb_banner_data }) => {
+        this.orderData = order_data
+        this.hbBannerData = hb_banner_data
+      })
     this.getActivityInfo()
     this.getMyTaskNum()
   },
@@ -472,6 +491,12 @@ export default {
     goTransaction (type) {
       const url = `/pages/personage/transaction/index?type=${type}`
       this.$router.push(url)
+    },
+    // 商户中心
+    goShopCentre () {
+      this.$router.push({
+        name: 'shopIndex'
+      })
     },
     /**
      * 我的订单
@@ -747,6 +772,56 @@ export default {
 .van-info {
   top: 24px;
   right: 22px;
+}
+.shop-box {
+  width: 710px;
+  min-height: 250px;
+  padding: 34px 30px 48px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  z-index: 1;
+  .shop-header {
+    display: flex;
+    align-items: center;
+    .shop-icon {
+      width: 32px;
+      height: 30px;
+      margin-right: 20px;
+    }
+    .shop-name {
+      font-size: 28px;
+      font-family: PingFang SC;
+      font-weight: bold;
+      color: #222222;
+    }
+  }
+  .shop-content {
+    display: flex;
+    width: 100%;
+    margin-top: 40px;
+  }
+  .shop-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    .shop-num {
+      margin-bottom: 30px;
+      font-size: 48px;
+      font-weight: bold;
+      color: #222222;
+      line-height: 1;
+    }
+    .shop-text {
+      font-size: 24px;
+      color: #8f8f94;
+      line-height: 1;
+    }
+  }
+  .shop-item + .shop-item {
+    border-left: 1px solid #eee;
+  }
 }
 .tansaction-box {
   padding: 30px 30px 40px;
