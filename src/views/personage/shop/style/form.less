@@ -30,7 +30,7 @@
   }
   .van-cell {
     padding: 0;
-    width: 560px;
+    // width: 560px;
     .van-field__control {
       font-size: 30px;
       font-weight: 500;
@@ -38,8 +38,24 @@
       line-height: 36px;
     }
     /deep/ textarea.van-field__control {
-      padding-bottom: 14px;
-      line-height: 48px;
+      line-height: 36px;
+    }
+    /deep/ .van-field__word-limit {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+  }
+}
+.uniline-textarea {
+  /deep/ .van-cell__value {
+    display: flex;
+    .van-field__body {
+      flex: 1;
+    }
+    .van-field__word-limit {
+      width: 80px;
+      margin-top: 0;
+      margin-bottom: 0;
     }
   }
 }
@@ -51,13 +67,13 @@
 }
 .cell-item {
   display: flex;
-  min-height: 106px;
+  min-height: 108px;
   border-bottom: 1px solid #eeeeee;
   font-size: 28px;
   .item-left {
     flex-shrink: 0;
     color: #222;
-    line-height: 106px;
+    line-height: 108px;
   }
   .item-cont {
     display: flex;
@@ -72,6 +88,7 @@
       padding-right: 0;
       .van-field__control {
         text-align: right;
+        line-height: 1;
       }
     }
     &.p-30 {

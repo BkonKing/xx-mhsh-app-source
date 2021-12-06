@@ -42,13 +42,13 @@ export default {
     line-height: 1;
   }
   &-num {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     font-size: 36px;
     font-weight: bold;
     color: #222222;
   }
   &-title {
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     font-size: 24px;
     color: #222222;
   }

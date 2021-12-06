@@ -500,7 +500,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "shopInformation" */
         '@/views/personage/shop/information'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 创建优惠券
   {

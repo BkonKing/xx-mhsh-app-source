@@ -11,9 +11,9 @@
       <div class="search-block">
         <van-search
           v-model="searchVal"
-          @input="searchProjectList"
           :clearable="false"
           placeholder="搜一搜"
+          @input="search"
         >
           <div slot="left-icon" class="tf-icon tf-icon-sousuo1"></div>
         </van-search>
@@ -41,6 +41,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { searchProjectList } from '@/api/task'
+import { debounce } from '@/utils/util'
 export default {
   props: {
     title: {
@@ -68,6 +69,9 @@ export default {
     this.searchProjectList()
   },
   methods: {
+    search: debounce(function () {
+      this.searchProjectList()
+    }, 300),
     searchProjectList () {
       searchProjectList({
         projectName: this.searchVal
@@ -153,7 +157,15 @@ export default {
     padding-left: 0;
     overflow: hidden;
     .van-search__content {
+      height: 68px;
       background-color: #f5f5f5;
+      .van-field__body {
+        line-height: 68px;
+      }
+      .van-field__control {
+        line-height: 68px;
+        font-size: 28px;
+      }
     }
     .van-field__left-icon {
       display: flex;
@@ -161,9 +173,6 @@ export default {
       color: #aaaaaa;
       font-size: 32px;
       margin-right: 20px;
-    }
-    .van-field__control {
-      font-size: 28px;
     }
   }
 }

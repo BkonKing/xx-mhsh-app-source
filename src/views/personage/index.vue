@@ -13,65 +13,76 @@
     </van-nav-bar>
     <div class="tf-body-container tf-overflow-auto">
       <div class="theme-header">
-        <div class="tf-bg-white">
-          <div class="tf-row tf-padding-lg" @click="goInformation">
-            <img
-              v-if="userInfo.avatar"
-              class="personage-info__avatar"
-              :src="userInfo.avatar"
-            />
-            <img
-              v-else
-              class="personage-info__avatar"
-              src="@/assets/imgs/touxiang.png"
-            />
-            <div class="personage-info--base">
-              <div class="user-info-box">
-                <div class="user-name">{{ userInfo.nickname }}</div>
-              </div>
-              <div class="user-role-box">
-                <img v-if="isShop" class="user-img" src="@/assets/personage/shangjia.png" alt="">
-                <img v-if="false" class="user-img" src="@/assets/personage/zhiyuanzhe.png" alt="">
-                <img v-if="false" class="user-img" src="@/assets/personage/yuangong.png" alt="">
-                <van-tag
-                  v-if="userType != '0'"
-                  class="user-role"
-                  plain
-                  :color="userType | houseRoleColor"
-                  :text-color="userType | houseRoleColor"
-                  :inverted="true"
-                  size="small"
-                  >{{ userType | houseRoleText }}</van-tag
-                >
-                <van-tag
-                  v-if="userInfo.position"
-                  class="user-role"
-                  plain
-                  :color="5 | houseRoleColor"
-                  :text-color="5 | houseRoleColor"
-                  :inverted="true"
-                  size="small"
-                  >{{ userInfo.position }}</van-tag
-                >
-              </div>
-              <div
-                v-if="currentProject && currentProject.fc_info"
-                class="user-address"
+        <div class="tf-row tf-padding-lg" @click="goInformation">
+          <img
+            v-if="userInfo.avatar"
+            class="personage-info__avatar"
+            :src="userInfo.avatar"
+          />
+          <img
+            v-else
+            class="personage-info__avatar"
+            src="@/assets/imgs/touxiang.png"
+          />
+          <div class="personage-info--base">
+            <div class="user-info-box">
+              <div class="user-name">{{ userInfo.nickname }}</div>
+            </div>
+            <div class="user-role-box">
+              <img
+                v-if="isShop"
+                class="user-img"
+                src="@/assets/personage/shangjia.png"
+                alt=""
+              />
+              <img
+                v-if="false"
+                class="user-img"
+                src="@/assets/personage/zhiyuanzhe.png"
+                alt=""
+              />
+              <img
+                v-if="false"
+                class="user-img"
+                src="@/assets/personage/yuangong.png"
+                alt=""
+              />
+              <van-tag
+                v-if="userType != '0'"
+                class="user-role"
+                plain
+                :color="userType | houseRoleColor"
+                :text-color="userType | houseRoleColor"
+                :inverted="true"
+                size="small"
+                >{{ userType | houseRoleText }}</van-tag
               >
-                {{ currentProject.fc_info }}
-              </div>
-              <div
-                v-else-if="
-                  userInfo.bsbx_allots === '1' && userInfo.project_name
-                "
-                class="user-address"
+              <van-tag
+                v-if="userInfo.position"
+                class="user-role"
+                plain
+                :color="5 | houseRoleColor"
+                :text-color="5 | houseRoleColor"
+                :inverted="true"
+                size="small"
+                >{{ userInfo.position }}</van-tag
               >
-                {{ userInfo.project_name }}
-              </div>
+            </div>
+            <div
+              v-if="currentProject && currentProject.fc_info"
+              class="user-address"
+            >
+              {{ currentProject.fc_info }}
+            </div>
+            <div
+              v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
+              class="user-address"
+            >
+              {{ userInfo.project_name }}
             </div>
           </div>
         </div>
-        <div class="tf-row tf-bg-white coin-box">
+        <div class="tf-row coin-box">
           <div class="tf-flex-item tf-column" @click="goHappiness">
             <div class="user-text--lg">{{ userInfo.credits || 0 }}</div>
             <div class="user-text--grey">幸福币</div>
@@ -129,7 +140,9 @@
             <div class="tansaction-title">
               {{ isSwRole ? "报事报修" : "水电抄表" }}
             </div>
-            <div class="tansaction-btn">事务处理 <i class="van-icon van-icon-arrow"></i></div>
+            <div class="tansaction-btn">
+              事务处理 <i class="van-icon van-icon-arrow"></i>
+            </div>
           </div>
           <div
             class="tf-row"
@@ -335,11 +348,27 @@
             <div class="model-tow-title">我的服务</div>
             <div class="model-grid">
               <van-grid :border="false" :column-num="4">
-                <van-grid-item text="我的订单" @click="goOrderList(undefined)">
+                <van-grid-item
+                  text="我的订单"
+                  :badge="taskNum"
+                  @click="goOrderList(undefined)"
+                >
                   <template slot="icon"
                     ><img
                       class="grid-item-icon"
                       src="@/assets/personage/personage_order.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item
+                  v-if="isShowTask"
+                  text="我的任务"
+                  :badge="taskNum"
+                  @click="goMyTask"
+                >
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_wenti.png"
                   /></template>
                 </van-grid-item>
                 <van-grid-item text="我的互动" @click="goInteraction">
@@ -356,18 +385,6 @@
                       src="@/assets/personage/personage_ziliao.png"
                   /></template>
                 </van-grid-item>
-                <van-grid-item
-                  v-if="isShowTask"
-                  text="我的任务"
-                  @click="goMyTask"
-                >
-                  <template slot="icon"
-                    ><img
-                      class="grid-item-icon"
-                      src="@/assets/personage/personage_wenti.png"
-                  /></template>
-                </van-grid-item>
-
                 <van-grid-item text="常见问题" @click="goQuestion">
                   <template slot="icon"
                     ><img
@@ -652,6 +669,7 @@ export default {
   z-index: 9;
   margin: 0 20px;
   border-radius: 10px;
+  background: #fff;
   overflow: hidden;
 }
 
@@ -716,7 +734,7 @@ export default {
 .user-address {
   margin-top: 12px;
   font-size: 26px;
-  color: #8F8F94;
+  color: #8f8f94;
   line-height: 42px;
   letter-spacing: 2px;
 }
@@ -1009,6 +1027,9 @@ export default {
   }
   .model-grid {
     padding: 20px 0;
+    /deep/ .van-info {
+      top: 0;
+    }
   }
   .grid-item-icon {
     width: 56px;

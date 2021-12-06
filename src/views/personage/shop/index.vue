@@ -9,7 +9,11 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span class="tf-icon tf-icon-saoyisao" @click="goSetting"></span>
+        <img
+          src="@/assets/personage/shop/saoyisao.png"
+          class="saoyisao-img"
+          @click="jumpPage('scanCode')"
+        />
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
@@ -20,7 +24,9 @@
             8
           </div>
           <div class="shop-header-info">领取中优惠券</div>
-          <van-button class="shop-header-button" @click="goCreateCoupon">创建</van-button>
+          <van-button v-if="haveCreate" class="shop-header-button" @click="jumpPage('create')"
+            >创建</van-button
+          >
           <img
             class="shop-header-image"
             src="@/assets/personage/shop/point-bg.png"
@@ -32,7 +38,7 @@
             10100
           </div>
           <div class="shop-header-info">幸福币</div>
-          <van-button class="shop-header-button">提现</van-button>
+          <!-- <van-button class="shop-header-button">提现</van-button> -->
           <img
             class="shop-header-image"
             src="@/assets/personage/shop/point-bg.png"
@@ -42,7 +48,7 @@
       <div class="shop-tool">
         <div class="shop-tool-title">常用工具</div>
         <van-grid :border="false" :column-num="4">
-          <van-grid-item @click="goShopCouponManager">
+          <van-grid-item @click="jumpPage('couponManger')">
             <img
               class="shop-tool-icon"
               src="@/assets/personage/shop/tool-1.png"
@@ -50,13 +56,45 @@
             />
             <div class="shop-tool-text">优惠券</div>
           </van-grid-item>
-          <van-grid-item @click="goShopInfo">
+          <van-grid-item @click="jumpPage('couponUseRecord')">
+            <img
+              class="shop-tool-icon"
+              src="@/assets/personage/shop/tool-2.png"
+              alt=""
+            />
+            <div class="shop-tool-text">券使用</div>
+          </van-grid-item>
+          <van-grid-item @click="jumpPage('credits')">
+            <img
+              class="shop-tool-icon"
+              src="@/assets/personage/shop/tool-3.png"
+              alt=""
+            />
+            <div class="shop-tool-text">幸福币</div>
+          </van-grid-item>
+          <van-grid-item @click="jumpPage('creditsRecord')">
+            <img
+              class="shop-tool-icon"
+              src="@/assets/personage/shop/tool-4.png"
+              alt=""
+            />
+            <div class="shop-tool-text">币明细</div>
+          </van-grid-item>
+          <van-grid-item @click="jumpPage('shopInformation')">
             <img
               class="shop-tool-icon"
               src="@/assets/personage/shop/tool-5.png"
               alt=""
             />
             <div class="shop-tool-text">店铺资料</div>
+          </van-grid-item>
+          <van-grid-item @click="jumpPage('scanCode')">
+            <img
+              class="shop-tool-icon"
+              src="@/assets/personage/shop/tool-6.png"
+              alt=""
+            />
+            <div class="shop-tool-text">扫一扫</div>
           </van-grid-item>
         </van-grid>
       </div>
@@ -87,6 +125,9 @@ export default {
   computed: {
     title () {
       return '店铺店铺名称'
+    },
+    haveCreate () {
+      return false
     },
     info () {
       return [
@@ -130,42 +171,49 @@ export default {
     }
   },
   methods: {
-    goCreateCoupon () {
+    jumpPage (key) {
+      const routerName = {
+        create: 'shopCreateCoupon',
+        couponManger: 'shopCouponManager',
+        couponUseRecord: 'shopCouponUseRecord',
+        credits: 'happinessCoinIndex',
+        creditsRecord: 'happinessCoinRecord',
+        shopInformation: 'shopInformation',
+        scanCode: 'scanCodeIndex'
+      }
       this.$router.push({
-        name: 'shopCreateCoupon'
+        name: routerName[key]
       })
-    },
-    goShopCouponManager () {
-      this.$router.push({
-        name: 'shopCouponManager'
-      })
-    },
-    goShopInfo () {
-      this.$router.push({
-        name: 'shopInformation'
-      })
-    },
-    goSetting () {}
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
+* {
+  line-height: 1;
+}
+.saoyisao-img {
+  width: 44px;
+  height: 44px;
+}
 .shop-time {
   position: absolute;
   width: 100%;
-  height: 172px;
+  height: 174px;
+  padding-top: 10px;
   background: #fff;
   font-size: 24px;
   color: #8f8f94;
   text-align: center;
+  line-height: 1;
 }
 .shop-header {
   position: relative;
   display: flex;
-  align-items: center;
   width: 710px;
-  height: 265px;
+  padding-top: 62px;
+  padding-bottom: 62px;
   margin-top: 62px;
   margin-left: 20px;
   border-radius: 10px;
@@ -174,10 +222,8 @@ export default {
   .shop-header-item {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     width: 355px;
-    height: 265px;
     .shop-header-view {
       font-size: 56px;
       font-weight: bold;
@@ -225,6 +271,7 @@ export default {
   background: #ffffff;
   border-radius: 10px;
   &-title {
+    margin-bottom: 35px;
     font-size: 24px;
     color: #222222;
   }
@@ -233,6 +280,7 @@ export default {
     height: 56px;
   }
   &-text {
+    padding-bottom: 6px;
     margin-top: 20px;
     font-size: 24px;
     line-height: 1;

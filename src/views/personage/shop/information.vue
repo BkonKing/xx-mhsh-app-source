@@ -13,25 +13,24 @@
         <div class="form-card-label">
           店铺名称<span class="form-card-label-required">*</span>
         </div>
-        <div class="area-block bottom-line tf-row-space-between">
+        <div
+          class="area-block bottom-line tf-row-space-between uniline-textarea"
+        >
           <van-field
             v-model.trim="formData.aaa"
-            autosize
             rows="1"
+            maxlength="20"
+            show-word-limit
             type="textarea"
             :border="false"
           />
-          <div class="text-num">
-            <span :class="{ red: formData.aaa.length > 20 }">{{
-              formData.aaa.length
-            }}</span
-            ><span>/20</span>
-          </div>
         </div>
       </div>
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
         <div class="cell-item" @click="!formData.ccc && goMap()">
-          <div class="item-left align-top" style="align-items: flex-start;">店铺地址</div>
+          <div class="item-left align-top" style="align-items: flex-start;">
+            店铺地址
+          </div>
           <div class="item-cont address-box">
             <template v-if="!formData.ccc">不限</template>
             <template v-else>
@@ -61,18 +60,18 @@
         <div class="cell-item">
           <div class="item-left">营业时间</div>
           <div class="item-cont">
-            <van-field v-model="formData.ccc" type="text" />
+            <van-field v-model="formData.ddd" maxlength="20" type="text" />
           </div>
         </div>
         <div class="cell-item">
           <div class="item-left">联系方式</div>
           <div class="item-cont">
-            <van-field v-model="formData.ccc" type="text" />
+            <van-field v-model="formData.eee" maxlength="20" type="number" />
           </div>
         </div>
         <div class="cell-item" @click="projectShow = true">
           <div class="item-left">店铺归属</div>
-          <div class="item-cont p-30">{{ formData.ccc }}</div>
+          <div class="item-cont p-30">{{ projectName }}</div>
           <div class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
@@ -88,17 +87,14 @@
             type="textarea"
             autosize
             rows="1"
+            maxlength="50"
+            show-word-limit
             :border="false"
           />
-          <div class="text-num">
-            <span :class="{ red: formData.zzz.length > 50 }">{{
-              formData.zzz.length
-            }}</span
-            ><span>/50</span>
-          </div>
         </div>
       </div>
     </div>
+    <van-button class="submit-btn" :disabled="!formData.aaa">提交</van-button>
     <select-project
       v-model="projectShow"
       title="店铺隶属"
@@ -117,18 +113,44 @@ export default {
   data () {
     return {
       projectShow: false,
+      projectName: '',
       formData: {
         aaa: '',
         bbb: '',
         ccc: '',
+        ddd: '',
+        eee: '',
+        fff: '',
         zzz: ''
       }
     }
   },
+  created () {
+    this.getData()
+  },
   activated () {
     this.getMap()
   },
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'addressMap') {
+      this.$destroy()
+      this.$store.commit('setMap_info', '')
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
+  },
   methods: {
+    getData () {
+      this.formData = {
+        aaa: '',
+        bbb: '',
+        ccc: '',
+        ddd: '',
+        eee: '',
+        fff: '',
+        zzz: ''
+      }
+    },
     // 地址选择
     goMap () {
       this.$router.push({
@@ -197,10 +219,11 @@ export default {
       }
     },
     // 项目选择(小区)
-    projectCall (callData) {
-      this.projectInfo = callData
-      this.ableLookVal = callData.project_name
-      this.formData.project_id = callData.id
+    projectCall (projectData) {
+      console.log(projectData)
+      const { id, project_name: projectName } = projectData
+      this.projectName = projectName
+      this.formData.fff = id
     }
   }
 }
@@ -228,6 +251,15 @@ export default {
 }
 .address-area {
   padding-top: 14px;
-  padding-bottom: 34px !important;
+}
+.submit-btn {
+  width: 710px;
+  height: 80px;
+  margin: 30px 20px;
+  background: #ff5240;
+  border-radius: 40px;
+  border: none;
+  font-size: 28px;
+  color: #ffffff;
 }
 </style>
