@@ -10,7 +10,7 @@
       请阅读并同意以下协议
     </div>
     <div class="agree-popup-content">
-      为保障您的个人信息安全，使用登录功能需要您先仔细阅读并同意<router-link
+      为保障您的个人信息安全，使用登录功能需要您先仔细阅读并勾选下方<router-link
         class="agreement-link"
         to="/agreement?articleType=1"
         >《{{ userAgreementTitle }}》</router-link
