@@ -95,7 +95,7 @@
         </span>
       </div>
     </div>
-    <agree-popup v-model="agreePopup" @handleAgree="handleAgree"></agree-popup>
+    <agree-popup v-model="agreePopup"></agree-popup>
     <tf-dialog-v2
       v-model="logoutDialog"
       title="账号注销已提交"
@@ -176,9 +176,9 @@ export default {
     }
     this.status = this.$route.query.status
     // 换个账号登录则默认同意协议
-    if (this.status) {
-      this.agree = true
-    }
+    // if (this.status) {
+    //   this.agree = true
+    // }
     this.getAllAgreement()
   },
   methods: {
@@ -261,8 +261,7 @@ export default {
           key: 'location_info',
           value: locationInfo
         })
-      } catch (error) {
-      }
+      } catch (error) {}
       this.requestLogin(newParams, loadingToast)
     },
     // 登录请求
@@ -284,7 +283,7 @@ export default {
             this.$toast(res.message)
           }
         })
-        .catch((res) => {
+        .catch(res => {
           this.$toast(res.message)
         })
         .finally(() => {
