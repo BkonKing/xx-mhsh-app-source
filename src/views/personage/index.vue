@@ -28,6 +28,11 @@
             <div class="personage-info--base">
               <div class="user-info-box">
                 <div class="user-name">{{ userInfo.nickname }}</div>
+              </div>
+              <div class="user-role-box">
+                <img v-if="isShop" class="user-img" src="@/assets/personage/shangjia.png" alt="">
+                <img v-if="false" class="user-img" src="@/assets/personage/zhiyuanzhe.png" alt="">
+                <img v-if="false" class="user-img" src="@/assets/personage/yuangong.png" alt="">
                 <van-tag
                   v-if="userType != '0'"
                   class="user-role"
@@ -124,7 +129,7 @@
             <div class="tansaction-title">
               {{ isSwRole ? "报事报修" : "水电抄表" }}
             </div>
-            <div class="tansaction-btn">事务处理 ></div>
+            <div class="tansaction-btn">事务处理 <i class="van-icon van-icon-arrow"></i></div>
           </div>
           <div
             class="tf-row"
@@ -198,7 +203,7 @@
           </div>
         </div>
         <!-- 我的订单 -->
-        <div class="module-box">
+        <div v-if="!isShop" class="module-box">
           <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box" @click="goOrderList(1)">
@@ -266,63 +271,121 @@
         <div v-if="isInvite" class="invite-banner" @click="goInvite">
           <img class="invite-banner-img" :src="inviteBanner" alt="" />
         </div>
-        <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item
-            v-if="isShowTask"
-            border
-            title="我的任务"
-            @click="goMyTask"
-          >
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_task.png"
-              />
-            </template>
-            <template v-slot:right>
-              <span v-if="taskNum" class="num-tag">{{ taskNum }}</span>
-            </template>
-          </tf-list-item>
-          <tf-list-item border title="我的互动" @click="goInteraction">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_hudong.png"
-              />
-            </template>
-          </tf-list-item>
-          <tf-list-item border title="我的资料" @click="goInformation">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_ziliao.png"
-              />
-            </template>
-          </tf-list-item>
-          <!-- <tf-list-item title="幸福基金">
-            <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
-            </template>
-          </tf-list-item>-->
-        </tf-list>
-        <tf-list class="personage-list">
-          <tf-list-item border title="常见问题" @click="goQuestion">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_wenti.png"
-              />
-            </template>
-          </tf-list-item>
-          <tf-list-item title="意见反馈" @click="goFeedback">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_fankui.png"
-              />
-            </template>
-          </tf-list-item>
-        </tf-list>
+        <template v-if="!isShop">
+          <tf-list class="personage-list tf-mb-lg">
+            <tf-list-item
+              v-if="isShowTask"
+              border
+              title="我的任务"
+              @click="goMyTask"
+            >
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_task.png"
+                />
+              </template>
+              <template v-slot:right>
+                <span v-if="taskNum" class="num-tag">{{ taskNum }}</span>
+              </template>
+            </tf-list-item>
+            <tf-list-item border title="我的互动" @click="goInteraction">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_hudong.png"
+                />
+              </template>
+            </tf-list-item>
+            <tf-list-item border title="我的资料" @click="goInformation">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_ziliao.png"
+                />
+              </template>
+            </tf-list-item>
+            <!-- <tf-list-item title="幸福基金">
+              <template v-slot:image>
+                <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
+              </template>
+            </tf-list-item>-->
+          </tf-list>
+          <tf-list class="personage-list">
+            <tf-list-item border title="常见问题" @click="goQuestion">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_wenti.png"
+                />
+              </template>
+            </tf-list-item>
+            <tf-list-item title="意见反馈" @click="goFeedback">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_fankui.png"
+                />
+              </template>
+            </tf-list-item>
+          </tf-list>
+        </template>
+        <template v-else>
+          <div class="model-tow">
+            <div class="model-tow-title">我的服务</div>
+            <div class="model-grid">
+              <van-grid :border="false" :column-num="4">
+                <van-grid-item text="我的订单" @click="goOrderList(undefined)">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_order.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="我的互动" @click="goInteraction">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_hudong.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="我的资料" @click="goInformation">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_ziliao.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item
+                  v-if="isShowTask"
+                  text="我的任务"
+                  @click="goMyTask"
+                >
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_wenti.png"
+                  /></template>
+                </van-grid-item>
+
+                <van-grid-item text="常见问题" @click="goQuestion">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_hudong.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="意见反馈" @click="goFeedback">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_fankui.png"
+                  /></template>
+                </van-grid-item>
+              </van-grid>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
@@ -393,6 +456,10 @@ export default {
     // 美好红包banner图
     inviteBanner () {
       return this.hbBannerData.hb_banner_url || ''
+    },
+    // 是否为商户
+    isShop () {
+      return true
     }
   },
   activated () {
@@ -604,10 +671,10 @@ export default {
   top: 0;
 }
 
-.personage-info--base {
-  @flex-column();
-  justify-content: space-around;
-}
+// .personage-info--base {
+//   @flex-column();
+//   justify-content: space-around;
+// }
 
 .personage-info__avatar {
   width: 110px;
@@ -625,17 +692,33 @@ export default {
   font-size: 34px;
   font-weight: 500;
   color: @text-color;
+  line-height: 1;
 }
 
+.user-role-box {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  line-height: 1;
+  .user-img {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+  }
+}
 .user-role {
-  min-height: 46px;
-  margin-left: 10px;
-  padding: 7px 8px;
+  min-height: 36px;
+  padding: 0 8px;
+  margin-right: 10px;
+  line-height: 1;
 }
 
 .user-address {
+  margin-top: 12px;
   font-size: 26px;
-  color: @gray-7;
+  color: #8F8F94;
+  line-height: 42px;
+  letter-spacing: 2px;
 }
 
 .user-text--lg {
@@ -652,7 +735,7 @@ export default {
   color: @gray-7;
 }
 .coin-box {
-  padding: 40px 20px;
+  padding: 10px 20px 40px;
 }
 
 .module-box {
@@ -843,12 +926,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 140px;
     height: 40px;
-    padding: 0 20px;
+    padding: 0 14px 0 20px;
     border: 1px solid #ff5240;
     border-radius: 20px;
-    font-size: 24px;
+    font-size: 22px;
     color: #ff5240;
+    line-height: 1;
+    .van-icon-arrow {
+      margin-right: -6px;
+    }
   }
   .tf-row {
     margin-top: 30px;
@@ -906,5 +994,28 @@ export default {
   font-size: 26px;
   font-weight: 500;
   color: #ffffff;
+}
+.model-tow {
+  width: 710px;
+  height: 408px;
+  background: #ffffff;
+  border-radius: 10px;
+  .model-tow-title {
+    padding-top: 30px;
+    padding-left: 30px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #021214;
+  }
+  .model-grid {
+    padding: 20px 0;
+  }
+  .grid-item-icon {
+    width: 56px;
+    height: 56px;
+  }
+  /deep/ .van-grid-item__text {
+    color: #222222;
+  }
 }
 </style>

@@ -26,7 +26,11 @@
             class="sign-tag"
             :class="{ 'sign-tag--complete': signinToday !== 0 }"
             @click="signIn()"
-            >{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
+            ><img
+              class="sign-img"
+              src="@/assets/personage/qiandao.png"
+              alt=""
+            />{{ signinToday === 1 ? "已签到" : "签到" }}</van-button
           >
         </div>
       </div>
@@ -66,8 +70,12 @@
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
-      <van-tab title="领券中心">内容 2</van-tab>
-      <van-tab title="任务中心" v-if="taskData && taskData.length">
+      <van-tab title="领券中心"><get-coupon-list></get-coupon-list></van-tab>
+      <van-tab
+        v-if="taskData && taskData.length"
+        title="任务中心"
+        class="task-tab"
+      >
         <task-list
           :data="taskData"
           :signinToday="signinToday"
@@ -90,9 +98,10 @@ import { mapGetters } from 'vuex'
 import tfCalendar from '@/components/tf-calendar'
 import SignAlert from '@/views/home/components/SignAlert'
 import { handlePermission } from '@/utils/permission'
-import SignRule from './components/SignRule'
+import SignRule from './components/SignRuleV2'
 import TaskList from './components/TaskList'
 import CreditArea from './components/CreditArea'
+import GetCouponList from './components/GetCouponList'
 import { getCreditsGoodsList } from '@/api/home'
 import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
 export default {
@@ -101,6 +110,7 @@ export default {
     SignAlert,
     TaskList,
     CreditArea,
+    GetCouponList,
     [SignRule.name]: SignRule
   },
   data () {
@@ -291,12 +301,12 @@ export default {
   align-items: center;
   padding-top: 70px;
   .coin-icon {
-    margin-right: 26px;
-    font-size: 44px;
+    font-size: 56px;
     line-height: 1;
     color: #fff;
   }
   .coin-number {
+    margin-left: 26px;
     font-size: 56px;
     line-height: 1;
     font-weight: 500;
@@ -308,29 +318,37 @@ export default {
     margin-top: 34px;
     font-size: 28px;
     font-weight: 500;
-    line-height: 1;
     color: #ffffff;
+    span {
+      line-height: 1;
+    }
     span + span {
       margin-left: 26px;
     }
   }
   .sign-tag {
-    width: 240px;
-    height: 88px;
-    line-height: 88px;
-    text-align: center;
+    width: 200px;
+    height: 80px;
+    margin-top: 34px;
+    font-size: 28px;
     color: #fff;
-    font-size: 30px;
-    background-image: linear-gradient(to right, @red, @red-dark);
-    border-width: 0;
-    border-radius: 0;
-    border-top-left-radius: 44px;
-    border-bottom-left-radius: 44px;
+    text-align: center;
+    background: linear-gradient(90deg, #ef9237 0%, #ec5850 99%);
+    border: none;
+    border-radius: 40px;
+    /deep/ .van-button__text {
+      display: flex;
+      align-items: center;
+      line-height: 1;
+    }
+  }
+  .sign-img {
+    width: 28px;
+    height: 28px;
+    margin-right: 16px;
   }
   .sign-tag--complete {
-    color: @gray-7;
-    background-image: none;
-    background-color: @gray-2;
+    opacity: 0.2;
   }
 }
 .scan-box {
@@ -390,5 +408,8 @@ export default {
   /deep/ .van-tabs__content {
     margin-top: 50px;
   }
+}
+.task-tab {
+  padding: 0 20px 30px;
 }
 </style>

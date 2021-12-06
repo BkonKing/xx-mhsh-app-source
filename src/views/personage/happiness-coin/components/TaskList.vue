@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import SignRule from './SignRule'
+import SignRule from './SignRuleV2'
 export default {
   name: 'TaskList',
   components: {
