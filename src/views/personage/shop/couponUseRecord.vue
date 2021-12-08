@@ -16,6 +16,7 @@
     />
     <div class="tf-body-container" id="notice-list-container">
       <refreshList
+        ref="list"
         class="refresh-box"
         :list.sync="noticeList"
         :load="getNoticeList"
@@ -43,6 +44,7 @@
 
 <script>
 import refreshList from '@/components/tf-refresh-list'
+import { debounce } from '@/utils/util'
 import { getNoticeList } from '@/api/butler.js'
 export default {
   name: 'noticeIndex',
@@ -52,46 +54,29 @@ export default {
   data () {
     return {
       search: '',
-      noticeList: [],
-      scrollTop: 0
+      noticeList: []
     }
   },
   created () {},
-  activated () {
-    if (this.scrollTop) {
-      document
-        .getElementById('notice-list-container')
-        .getElementsByClassName(
-          'tf-list-refresh'
-        )[0].scrollTop = this.scrollTop
-    }
-  },
   methods: {
     // 获取公告通知列表
     getNoticeList (params) {
       return getNoticeList(params)
     },
-    searchChange () {},
+    searchChange: debounce(function () {
+      this.$refs.list.reload()
+    }, 500),
     goBack () {
       this.$router.go(-1)
     }
-  },
-  beforeRouteLeave (to, from, next) {
-    if (to.name === 'butler') {
-      this.$destroy()
-      this.$store.commit('deleteKeepAlive', from.name)
-    } else {
-      const el = document
-        .getElementById('notice-list-container')
-        .getElementsByClassName('tf-list-refresh')
-      this.scrollTop = (el[0] && el[0].scrollTop) || 0
-    }
-    next()
   }
 }
 </script>
 
 <style lang="less" scoped>
+* {
+  line-height: 1;
+}
 .coupon-search-box {
   padding: 30px 20px;
   /deep/ .van-search__content {
@@ -103,7 +88,8 @@ export default {
       color: #aaa;
     }
     .van-field__control {
-      line-height: 64px !important;
+      font-size: 24px;
+      line-height: 68px !important;
     }
   }
 }
@@ -112,19 +98,28 @@ export default {
 }
 .refresh-box {
   width: 710px;
-  padding: 0 30px;
-  background: #ffffff;
+  padding: 0;
   border-radius: 10px;
   /deep/ .tf-van-cell {
+    padding: 0 30px;
     margin-bottom: 0;
+    background: #ffffff;
   }
-  /deep/ .tf-van-cell + .tf-van-cell {
-    border-top: 1px solid #eeeeee;
+  /deep/ .tf-van-cell + .tf-van-cell{
+    position: relative;
+    &::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    height: 1px;
+    background: #eee;
+  }
   }
 }
 .info-box {
   display: flex;
-  padding: 40px 0 30px;
+  padding: 40px 0;
   .info-left {
     width: 100px;
     font-size: 36px;
@@ -175,6 +170,7 @@ export default {
       border-radius: 4px;
       font-size: 24px;
       color: #ff6555;
+      line-height: 1;
     }
   }
   .info-text {

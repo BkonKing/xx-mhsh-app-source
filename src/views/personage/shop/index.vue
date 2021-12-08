@@ -10,8 +10,8 @@
     >
       <template #right>
         <img
-          src="@/assets/personage/shop/saoyisao.png"
-          class="saoyisao-img"
+          src="@/assets/personage/shop/scan.png"
+          class="scan-img"
           @click="jumpPage('scanCode')"
         />
       </template>
@@ -193,7 +193,7 @@ export default {
 * {
   line-height: 1;
 }
-.saoyisao-img {
+.scan-img {
   width: 44px;
   height: 44px;
 }

@@ -9,8 +9,8 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <img class="nav-icon" src="@/assets/personage/shop/record.png" alt="" @click="goUseRecord">
-        <span class="tf-icon tf-icon-saoyisao"></span>
+        <img class="nav-icon" src="@/assets/personage/shop/record.png" alt="" @click="jumpPage('couponUseRecord')">
+        <img class="nav-icon" src="@/assets/personage/shop/scan.png" alt="" @click="jumpPage('scanCode')">
       </template>
     </van-nav-bar>
     <van-tabs
@@ -32,12 +32,12 @@
 </template>
 
 <script>
-// /pages/task/personage/index
+// /personage/shop/couponManager
 import { mapGetters } from 'vuex'
 import CouponList from './components/CouponList'
 
 export default {
-  name: 'PersonageTaskIndex',
+  name: 'shopCouponManager',
   components: {
     CouponList
   },
@@ -58,23 +58,6 @@ export default {
         .getElementsByClassName(
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
-    }
-  },
-  methods: {
-    // 发布
-    goEdit () {
-      this.$router.push('/pages/neighbours/publish')
-    },
-    goUseRecord () {
-      this.$router.push({
-        name: 'shopCouponUseRecord'
-      })
-    },
-    // tab页改变，为最新标签时刷新最新列表
-    tabsChange (name) {
-      if (name === 0) {
-        this.$refs.list && this.$refs.list.reload()
-      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -103,12 +86,33 @@ export default {
       this.$destroy()
     }
     next()
+  },
+  methods: {
+    jumpPage (key) {
+      const routerName = {
+        create: 'shopCreateCoupon',
+        couponManger: 'shopCouponManager',
+        couponUseRecord: 'shopCouponUseRecord',
+        credits: 'happinessCoinIndex',
+        creditsRecord: 'happinessCoinRecord',
+        shopInformation: 'shopInformation',
+        scanCode: 'scanCodeIndex'
+      }
+      this.$router.push({
+        name: routerName[key]
+      })
+    },
+    // tab页改变，为最新标签时刷新最新列表
+    tabsChange (name) {
+      if (name === 0) {
+        this.$refs.list && this.$refs.list.reload()
+      }
+    }
   }
 }
 </script>
 
 <style lang="less" scoped>
-// 页面
 .tf-bg {
   @flex-column();
   background: #f7f7f7;
@@ -116,6 +120,17 @@ export default {
 .nav-icon {
   width: 44px;
   height: 44px;
+}
+.nav-icon + .nav-icon {
+  margin-left: 40px;
+}
+.tf-body-container {
+  /deep/ .van-tabs__wrap {
+    height: 88px;
+    .van-tabs__line {
+      width: 56px !important;
+    }
+  }
 }
 /deep/ .tf-list-refresh {
   padding: 30px 20px;

@@ -1,8 +1,8 @@
 <template>
   <div class="date-cont">
     <van-calendar
-      ref="calendar"
       v-model="dateShow"
+      ref="calendar"
       :show-subtitle="false"
       :min-date="minDate"
       :max-date="maxDate"
@@ -13,12 +13,13 @@
     >
       <div class="date-header-block" slot="title">
         <div class="date-header tf-row-vertical-center">
-          <div class="date-tit">完成时间</div>
+          <div class="date-tit">{{title}}</div>
           <div
             @click="close"
             class="date-close tf-row-vertical-center van-icon van-icon-cross"
           ></div>
         </div>
+        <div class="date-header-slot"><slot></slot></div>
         <div class="time-field tf-row-center">
           <div @click="timeBlur(0)" :class="{ active: timeIndex == 0 }">
             <van-field v-model="startTime" placeholder="开始时间" disabled />
@@ -28,7 +29,7 @@
             <van-field v-model="endTime" placeholder="结束时间" disabled />
           </div>
         </div>
-        <div class="tf-row-center opera-block">
+        <div class="opera-block">
           <div
             @click="prev"
             class="opera-btn van-icon van-icon-arrow-left"
@@ -41,7 +42,7 @@
         <van-datetime-picker
           :show-toolbar="false"
           :visible-item-count="3"
-          :item-height="26"
+          :item-height="32"
           v-model="currentTime"
           @change="timeChange"
           type="time"
@@ -73,6 +74,14 @@ export default {
     edit: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    autoClose: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -117,8 +126,12 @@ export default {
   methods: {
     // 获取选中月份的最小最大日期
     getMonthDay () {
-      const minDate = dayjs(`${this.nowYear}${this.nowMonth}`).startOf('month').valueOf()
-      const maxDate = dayjs(`${this.nowYear}${this.nowMonth}`).endOf('month').valueOf()
+      const minDate = dayjs(`${this.nowYear}${this.nowMonth}`)
+        .startOf('month')
+        .valueOf()
+      const maxDate = dayjs(`${this.nowYear}${this.nowMonth}`)
+        .endOf('month')
+        .valueOf()
       this.minDate = new Date(minDate)
       this.maxDate = new Date(maxDate)
     },
@@ -174,7 +187,9 @@ export default {
         this.getMonthDay()
         const dateArr = timeVal.split(' ')[0].split('-')
         dateArr[1] = dateArr[1] - 1
-        this.defaultDate = new Date(`${dateArr[0]}/${dateArr[1]}/${dateArr[2]}`)
+        this.defaultDate = new Date(
+          `${dateArr[0]}/${dateArr[1]}/${dateArr[2]}`
+        )
       }
     },
     // 时间赋值
@@ -207,6 +222,28 @@ export default {
     iosFormatDate (date) {
       return date.replace(/-/g, '/')
     },
+    setToday () {
+      const date = new Date()
+      const el = this.$refs.calendar && this.$refs.calendar.$el
+      if (!this.dateShow) {
+        return
+      }
+      if (dayjs(`${this.nowYear}${this.nowMonth}`).isSame(date, 'month')) {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            let dayDom = el.getElementsByClassName('van-calendar__day')
+            dayDom = Array.from(dayDom)
+            const dom = dayDom.find(ele => {
+              return +ele.innerText === date.getDate()
+            })
+            dom.classList.add('nowDateClass')
+          }, 0)
+        })
+      } else {
+        const dom = el.getElementsByClassName('nowDateClass')
+        dom.length && dom[0].classList.remove('nowDateClass')
+      }
+    },
     close () {
       this.dateShow = false
     },
@@ -217,7 +254,9 @@ export default {
         return
       } else {
         const now = new Date().getTime()
-        const start = this.startTime ? new Date(this.iosFormatDate(this.startTime)).getTime() : ''
+        const start = this.startTime
+          ? new Date(this.iosFormatDate(this.startTime)).getTime()
+          : 0
         const end = new Date(this.iosFormatDate(this.endTime)).getTime()
         if (end < now) {
           this.$toast('结束时间不能小于当前时间')
@@ -238,12 +277,16 @@ export default {
         startTime: this.startTime,
         endTime: this.endTime
       })
-
-      this.close()
+      this.autoClose && this.close()
     }
   },
   watch: {
     value (val) {
+      if (this.dateShow !== val) {
+        setTimeout(() => {
+          this.setToday()
+        }, 0)
+      }
       this.dateShow = val
     },
     dateShow (val) {
@@ -268,22 +311,7 @@ export default {
       this.$emit('input', val)
     },
     yearMonth () {
-      const date = new Date()
-      if (dayjs(`${this.nowYear}${this.nowMonth}`).isSame(date, 'month')) {
-        this.$nextTick(() => {
-          setTimeout(() => {
-            let dayDom = this.$refs.calendar.$el.getElementsByClassName('van-calendar__day')
-            dayDom = Array.from(dayDom)
-            const dom = dayDom.find(ele => {
-              return +ele.innerText === date.getDate()
-            })
-            dom.classList.add('nowDateClass')
-          }, 0)
-        })
-      } else {
-        const dom = this.$refs.calendar.$el.getElementsByClassName('nowDateClass')
-        dom.length && dom[0].classList.remove('nowDateClass')
-      }
+      this.setToday()
     }
   }
 }
@@ -291,7 +319,17 @@ export default {
 
 <style lang="less" scoped>
 /deep/ .nowDateClass {
-  background: #eeeeee;
+  position: relative;
+  z-index: 0;
+  &::after {
+    content: "";
+    width: 56px;
+    height: 56px;
+    position: absolute;
+    z-index: -1;
+    background: #eeeeee;
+    border-radius: 10px;
+  }
 }
 .date-cont {
   .van-popup--bottom.van-popup--round {
@@ -313,14 +351,15 @@ export default {
       display: none;
     }
     .van-calendar__weekdays,
-    .van-calendar__body {
+    .van-calendar__body,
+    .date-header-slot {
       width: 710px;
       margin: 0 auto;
       background-color: #fff;
     }
     .van-calendar__weekdays {
-      height: 40px;
-      padding-bottom: 10px;
+      height: 44px;
+      padding: 0 10px 14px;
       span {
         line-height: 40px;
         font-size: 24px;
@@ -330,8 +369,11 @@ export default {
     }
     .van-calendar__body {
       margin-bottom: 30px;
+      .van-calendar__days {
+        padding: 0 10px 22px;
+      }
       .van-calendar__day {
-        height: 62px;
+        height: 64px;
         font-size: 24px;
         font-weight: 400;
         line-height: 1;
@@ -356,6 +398,9 @@ export default {
         font-size: 36px;
         font-weight: 500;
         color: #000000;
+      }
+      .van-picker-column__item {
+        font-size: 36px;
       }
       .van-picker-column:nth-child(1) {
         padding-left: 180px;
@@ -423,31 +468,40 @@ export default {
     height: 100%;
     .van-field__control {
       text-align: center;
-      font-weight: 500;
+      font-weight: bold;
       line-height: 1;
       color: #000000;
+      &::placeholder {
+        font-weight: 400;
+      }
     }
   }
 }
 .opera-block {
-  height: 106px;
+  display: flex;
+  justify-content: center;
   align-items: center;
   width: 710px;
+  height: 116px;
+  margin: 0 auto;
   background: #ffffff;
   border-radius: 10px 10px 0 0;
-  margin: 0 auto;
   .opera-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 40px;
     height: 40px;
-    line-height: 40px;
+    line-height: 1;
     text-align: center;
     background: #eeeeee;
     border-radius: 50%;
-    color: #333333;
     font-size: 24px;
+    color: #333333;
   }
   .year-month {
     width: 208px;
+    line-height: 1;
   }
 }
 .date-sure {

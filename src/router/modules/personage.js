@@ -523,7 +523,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "shopCouponManager" */
         '@/views/personage/shop/couponManager'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 优惠券使用记录
   {
@@ -553,6 +556,16 @@ const personageRouter = [
       import(
         /* webpackChunkName: "shopCouponDetail" */
         '@/views/personage/shop/couponDetail'
+      )
+  },
+  // 核销优惠券
+  {
+    path: '/personage/shop/verification',
+    name: 'shopCouponVerification',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopCouponVerification" */
+        '@/views/personage/shop/verification'
       )
   }
 ]

@@ -94,7 +94,9 @@
         </div>
       </div>
     </div>
-    <van-button class="submit-btn" :disabled="!formData.aaa">提交</van-button>
+    <van-button class="submit-btn" :disabled="!formData.aaa" @click="submit"
+      >提交</van-button
+    >
     <select-project
       v-model="projectShow"
       title="店铺隶属"
@@ -220,10 +222,16 @@ export default {
     },
     // 项目选择(小区)
     projectCall (projectData) {
-      console.log(projectData)
       const { id, project_name: projectName } = projectData
       this.projectName = projectName
       this.formData.fff = id
+    },
+    submit () {
+      if (!this.formData.aaa) {
+        this.$toast('请填写店铺名称')
+      }
+      // this.$toast('提交成功')
+      // this.$toast('提交失败   请重试')
     }
   }
 }
@@ -261,5 +269,11 @@ export default {
   border: none;
   font-size: 28px;
   color: #ffffff;
+  /deep/ .van-button__text {
+    line-height: 1;
+  }
+}
+/deep/ .van-button--disabled {
+  opacity: 0.3;
 }
 </style>

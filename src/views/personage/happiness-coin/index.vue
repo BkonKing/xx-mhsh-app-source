@@ -1,6 +1,7 @@
 <template>
-  <div class="tf-bg">
+  <div class="tf-bg" ref="container">
     <van-nav-bar
+      ref="navBar"
       title="幸福币"
       :fixed="true"
       :border="false"
@@ -58,6 +59,10 @@
         </div>
       </div>
     </div>
+    <div v-if="isShowBanner" class="banner-container" @click="openCouponCentre">
+      <img class="coupon-banner" src="" alt="" />
+      <span class="banner-text">领取100元优惠券</span>
+    </div>
     <div class="credit-task-box">
       <task-list
         v-if="taskData && taskData.length"
@@ -66,7 +71,7 @@
         :userType="userType"
       ></task-list>
     </div>
-    <van-tabs v-model="tabActive" class="credit-tabs">
+    <van-tabs v-model="tabActive" class="credit-tabs" sticky offset-top="1.173rem" id="tabs">
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
@@ -133,14 +138,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userType']) // 1业主、2业主成员、3租户、4租户成员
+    ...mapGetters(['userType']), // 1业主、2业主成员、3租户、4租户成员
+    isShowBanner () {
+      return true
+    }
   },
   created () {
     this.getCreditsAccount()
     this.getCreditsGoodsList()
   },
   methods: {
-    /* 获取幸福币信息 */
+    // 获取幸福币信息
     getCreditsAccount () {
       getCreditsAccount().then(({ data }) => {
         this.signinToday = data.signin_status
@@ -150,10 +158,9 @@ export default {
         this.ky_credits = data.ky_credits
         this.sd_credits = data.sd_credits
         this.getYxlpList()
-        // console.log('任务列表', data.task_list)
       })
     },
-    /* 签到事件 */
+    // 签到事件
     signIn () {
       if (this.signinToday === 1) {
         // 已签到，则打开签到日历
@@ -165,7 +172,7 @@ export default {
         this.signin()
       }
     },
-    /* 签到请求 */
+    // 签到请求
     signin () {
       handlePermission({
         name: 'location',
@@ -195,11 +202,11 @@ export default {
           })
       })
     },
-    /* 幸福币明细 */
+    // 幸福币明细
     goCoinRecord () {
       this.$router.push({ name: 'happinessCoinRecord' })
     },
-    /* 扫一扫 */
+    // 扫一扫
     goScanCode (current) {
       this.$router.push({
         name: 'scanCodeIndex',
@@ -208,17 +215,22 @@ export default {
         }
       })
     },
-    /* 获取幸福币专区 */
+    // 获取幸福币专区
     getCreditsGoodsList () {
       getCreditsGoodsList().then(res => {
         this.creditsGoods = res.data
       })
     },
-    /* 幸福币专区商品详情 */
+    // 幸福币专区商品详情
     goCoinCommodity (item) {
       this.$router.push(`/store/goods-detail?id=${item.id}`)
     },
-    /* 幸福币任务去完成跳转 */
+    // 菜单悬挂顶部，tab切换到“领券中心”
+    openCouponCentre () {
+      this.tabActive = 1
+      this.$refs.container.scrollTop = document.getElementById('tabs').offsetTop - this.$refs.navBar.height
+    },
+    // 幸福币任务去完成跳转
     complete ({ task_type: type, source_id: id }) {
       switch (type) {
         case '1':
@@ -244,7 +256,7 @@ export default {
           break
       }
     },
-    /* 认证提醒 */
+    // 认证提醒
     authentication (url) {
       if (this.userType == 0) {
         this.$dialog
@@ -371,6 +383,28 @@ export default {
     border-radius: 50%;
   }
 }
+.banner-container {
+  width: 710px;
+  height: 140px;
+  margin: 30px 20px 0;
+  position: relative;
+  .coupon-banner {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .banner-text {
+    position: absolute;
+    top: 48px;
+    left: 86px;
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    background: linear-gradient(0deg, #ffe28c 0.2685546875%, #ffffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
 .credit-task-box {
   flex: 1;
   margin: 30px 20px 0;
@@ -391,7 +425,7 @@ export default {
       justify-content: flex-start;
       padding: 50px 20px 30px;
       span {
-        line-height: 1;
+        line-height: 1.1;
       }
     }
     .van-tabs__line {

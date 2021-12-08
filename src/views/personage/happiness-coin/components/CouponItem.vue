@@ -3,18 +3,25 @@
     <div class="coupon-card" @click="expanded = !expanded">
       <div class="coupon-money">
         <template v-if="true">
-          <span class="coupon-money-icon">￥</span><span class="coupon-money-number">10</span>
+          <span class="coupon-money-icon">￥</span
+          ><span class="coupon-money-number">10</span>
         </template>
         <template v-else>
-          <span class="coupon-money-icon">5</span><span class="coupon-money-number">折</span>
+          <span class="coupon-money-icon">5</span
+          ><span class="coupon-money-number">折</span>
         </template>
       </div>
       <div class="coupon-info">
-        <div class="tf-row">
-          <div class="coupon-info-2">满100减10</div>
-        </div>
-        <div class="coupon-info-3">
-          3天有效
+        <div class="tf-row-space-between">
+          <div>
+            <div class="coupon-info-2">满100减10</div>
+            <div class="coupon-info-3">
+              3天有效
+            </div>
+          </div>
+          <div class="left-slot">
+            <slot></slot>
+          </div>
         </div>
         <div class="coupon-footer">
           <div class="coupon-footer-text">端午区可用</div>
@@ -117,6 +124,18 @@ export default {
   position: relative;
   background: #ffffff;
   border-radius: 10px 10px 0px 0px;
+  &::after {
+    content: '';
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    background: linear-gradient(225deg, #ff6555 0%, #ffffff 50%);
+    opacity: 0.1;
+    border-radius: 0px 10px 0px 0px;
+  }
   .coupon-money {
     display: flex;
     justify-content: center;
@@ -145,6 +164,10 @@ export default {
     flex-direction: column;
     flex: 1;
     padding: 50px 24px 0 40px;
+    .left-slot {
+      position: relative;
+      z-index: 1;
+    }
     &-2 {
       margin-bottom: 20px;
       font-size: 28px;

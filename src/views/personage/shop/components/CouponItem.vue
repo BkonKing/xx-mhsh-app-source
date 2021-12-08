@@ -1,6 +1,10 @@
 <template>
   <div class="coupon-item">
-    <div class="coupon-card" @click="expanded = !expanded">
+    <div
+      class="coupon-card"
+      :class="{ 'coupon-card-expanded': expanded }"
+      @click="expanded = !expanded"
+    >
       <div class="coupon-money"><span>￥</span>10</div>
       <div class="coupon-info">
         <div class="coupon-info-1">发行1000张，领取0张，使用0张</div>
@@ -41,7 +45,7 @@
         </div>
       </div>
       <div class="coupon-btn-box">
-        <div class="coupon-btn">
+        <div v-if="isUnpublished" class="coupon-btn" @click="emit('publish')">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/publish.png"
@@ -49,7 +53,19 @@
           />
           <span>发布</span>
         </div>
-        <div class="coupon-btn">
+        <div v-if="isReceive" class="coupon-btn" @click="emit('finish')">
+          <img
+            class="coupon-img"
+            src="@/assets/personage/shop/finish.png"
+            alt=""
+          />
+          <span>结束</span>
+        </div>
+        <div
+          v-if="isUnpublished || isReceive"
+          class="coupon-btn"
+          @click="emit('revise')"
+        >
           <img
             class="coupon-img"
             src="@/assets/personage/shop/edit.png"
@@ -57,7 +73,7 @@
           />
           <span>修改</span>
         </div>
-        <div class="coupon-btn">
+        <div v-if="isFinish" class="coupon-btn">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/copy.png"
@@ -65,7 +81,7 @@
           />
           <span>复制</span>
         </div>
-        <div class="coupon-btn">
+        <div v-if="isFinish" class="coupon-btn">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/look.png"
@@ -73,56 +89,53 @@
           />
           <span>查看</span>
         </div>
-        <div class="coupon-btn">
+        <div
+          v-if="isUnpublished || isFinish"
+          class="coupon-btn"
+          @click="emit('delete')"
+        >
           <img
             class="coupon-img"
-            src="@/assets/personage/shop/time.png"
-            alt=""
-          />
-          <span>结束</span>
-        </div>
-        <div class="coupon-btn">
-          <img
-            class="coupon-img"
-            src="@/assets/personage/shop/time.png"
+            src="@/assets/personage/shop/delete.png"
             alt=""
           />
           <span>删除</span>
         </div>
       </div>
     </div>
-    <date-picker
-      ref="date-picker"
-      v-model="dateShow"
-      @dateSure="dateSure"
-    ></date-picker>
   </div>
 </template>
 
 <script>
-import DatePicker from './DatePicker'
 export default {
   name: 'CouponItem',
-  components: {
-    DatePicker
-  },
   props: {
     data: {
       type: Object,
-      default: () => ({})
+      default: () => ({
+        status: 1
+      })
     }
   },
   data () {
     return {
-      dateShow: false,
       expanded: false
     }
   },
   computed: {
+    isUnpublished () {
+      return this.data.status === 1
+    },
+    isReceive () {
+      return this.data.status === 2
+    },
+    isFinish () {
+      return this.data.status === 3
+    },
     statusClass () {
       const className = {
-        1: 'coupon-tag-ing',
-        2: 'coupon-tag-un',
+        1: 'coupon-tag-un',
+        2: 'coupon-tag-ing',
         3: 'coupon-tag-end'
       }
       return className[this.data.status]
@@ -131,26 +144,16 @@ export default {
   filters: {
     statusText: function (value) {
       const text = {
-        1: '领取中',
-        2: '未发布',
+        1: '未发布',
+        2: '领取中',
         3: '已结束'
       }
       return text[value]
     }
   },
   methods: {
-    dateSure (obj) {
-      this.formData.task_stime = obj.startTime
-      this.formData.task_etime = obj.endTime
-      if (!obj.startTime && !obj.endTime) {
-        this.completeTime = ''
-      } else {
-        if (obj.startTime && obj.endTime) {
-          this.completeTime = obj.startTime + ' ~ ' + obj.endTime
-        } else {
-          this.completeTime = '截止 ' + obj.endTime
-        }
-      }
+    emit (key) {
+      this.$emit(key)
     }
   }
 }
@@ -160,8 +163,6 @@ export default {
 * {
   line-height: 1;
 }
-.coupon-item {
-}
 .coupon-card {
   display: flex;
   align-items: center;
@@ -169,7 +170,7 @@ export default {
   height: 202px;
   position: relative;
   background: #ffffff;
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 10px;
   .coupon-money {
     display: flex;
     justify-content: center;
@@ -249,6 +250,9 @@ export default {
     background: linear-gradient(90deg, #c5ccd0 0%, #e6eaed 100%);
   }
 }
+.coupon-card-expanded {
+  border-radius: 10px 10px 0px 0px;
+}
 .coupon-panel {
   width: 710px;
   height: 0;
@@ -292,6 +296,19 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+      + .coupon-btn::before {
+        content: "";
+        width: 1px;
+        height: 32px;
+        position: absolute;
+        left: 0;
+        top: 24px;
+        background: #dddddd;
+      }
+      span {
+        font-size: 24px;
+      }
     }
   }
   .coupon-img {
