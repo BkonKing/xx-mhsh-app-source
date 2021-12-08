@@ -40,13 +40,7 @@
           <van-radio name="3">领取当月</van-radio>
         </van-radio-group>
         <template v-if="formData.bbb === '1'">
-          <van-field
-            v-model="formData.fff"
-            right-icon="notes-o"
-            class="prefix-input tf-mb-lg"
-            :disabled="true"
-            @click="setFFFTime"
-          />
+          <form-date-picker v-model="formData.fff"></form-date-picker>
         </template>
         <template v-if="formData.bbb === '2'">
           <div class="suffix-input tf-mb-lg">
@@ -176,6 +170,22 @@
               :disabled="!!formData.jjj"
           /></van-col>
         </van-row>
+        <div
+          class="alert-container"
+          :class="{ 'tf-mt-lg': formData.iii === '2' }"
+          @click="expanded = !expanded"
+        >
+          <div class="alert-text">
+            <i class="tf-icon tf-icon-shuoming"></i>
+            <span
+              >特别提醒：用户在领取“付费领取”型优惠券时，所支付的幸福币平台直接回收，不归商户所有。</span
+            >
+          </div>
+          <i
+            class="van-icon van-icon-arrow"
+            :class="{ 'van-icon-arrow--expanded': expanded }"
+          ></i>
+        </div>
         <div class="form-card-label tf-mt-lg">
           可领取用户
         </div>
@@ -190,7 +200,12 @@
           <van-radio name="2">指定社区</van-radio>
           <van-radio name="3">指定类型</van-radio>
         </van-radio-group>
-        <template v-if="formData.lll === '2'"> </template>
+        <template v-if="formData.lll === '2'">
+          <div class="form-select" @click="projectShow = true">
+            <span class="form-text">{{ formData.vvv }}</span>
+            <span class="van-icon van-icon-arrow-down"></span>
+          </div>
+        </template>
         <div class="userType-checkbox" v-if="formData.lll === '3'">
           <van-checkbox-group
             v-model="formData.nnn"
@@ -241,45 +256,38 @@
           <van-radio name="2">定时发布</van-radio>
         </van-radio-group>
         <div v-if="formData.rrr === '2'" class="tf-pd-lg">
-          <van-field
-            v-model="formData.sss"
-            right-icon="notes-o"
-            class="prefix-input"
-            :disabled="true"
-            @click="setFFFTime"
-          />
+          <form-date-picker v-model="formData.sss"></form-date-picker>
         </div>
       </div>
       <van-button class="submit-btn" type="primary" size="large"
         >提交</van-button
       >
     </div>
-    <date-picker
-      v-model="dateVisible"
-      ref="date-picker"
-      title="选择时间"
-      @dateSure="dateSure"
-    >
-    </date-picker>
-    <select-project></select-project>
+    <select-project
+      v-model="projectShow"
+      title="指定社区"
+      @projectSure="projectCall"
+    ></select-project>
   </div>
 </template>
 
 <script>
-import DatePicker from './components/DatePicker'
+import FormDatePicker from './components/FormDatePicker'
 import SelectPopup from './components/SelectPopup'
 import SelectProject from './components/SelectProject'
 
 export default {
   name: 'shopCreateCoupon',
   components: {
-    DatePicker,
+    FormDatePicker,
     SelectPopup,
     SelectProject
   },
   data () {
     return {
       id: '',
+      expanded: false,
+      projectShow: false,
       getNumOptions: [
         {
           label: '1张',
@@ -306,7 +314,6 @@ export default {
           value: '0'
         }
       ],
-      dateVisible: false,
       checked: ['1'],
       userTypes: [
         {
@@ -340,10 +347,22 @@ export default {
         ggg: '',
         hhh: '',
         iii: '1',
-        zzz: '',
-        yyy: '',
+        jjj: '',
+        kkk: '',
+        lll: '1',
+        mmm: '',
+        nnn: [],
+        ooo: '',
+        ppp: '',
+        qqq: '',
+        rrr: '',
+        sss: '',
+        ttt: '',
+        uuu: '',
+        vvv: '',
         xxx: '',
-        uuu: ''
+        yyy: '',
+        zzz: ''
       }
     }
   },
@@ -384,17 +403,19 @@ export default {
         qqq: '',
         rrr: '',
         sss: '',
+        ttt: '',
         uuu: '',
+        vvv: '',
         xxx: '',
         yyy: '',
         zzz: ''
       }
     },
-    setFFFTime () {
-      this.dateVisible = true
-    },
-    dateSure (data) {
-      const { startTime, endTime } = data
+    // 项目选择(小区)
+    projectCall (projectData) {
+      const { id, project_name: projectName } = projectData
+      this.formData.vvv = projectName
+      this.formData.ttt = id
     }
   }
 }
@@ -534,6 +555,36 @@ export default {
     width: 33.3%;
     margin-right: 0;
     margin-bottom: 30px;
+  }
+}
+.alert-container {
+  width: 650px;
+  min-height: 106px;
+  padding: 20px 24px;
+  position: relative;
+  background: #ff68570d;
+  border-radius: 10px;
+  .tf-icon {
+    margin-right: 14px;
+    font-size: 28px;
+  }
+  .alert-text {
+    font-size: 24px;
+    color: #ff6555;
+  }
+  .van-icon-arrow {
+    position: absolute;
+    right: 24px;
+    bottom: 20px;
+    font-size: 24px;
+    color: #ff6555;
+    &::before {
+      transform: rotate(90deg) translateZ(0);
+      transition: transform 0.3s;
+    }
+    &--expanded::before {
+      transform: rotate(-90deg);
+    }
   }
 }
 .submit-btn {

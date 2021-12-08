@@ -15,8 +15,8 @@
         <div class="date-header tf-row-vertical-center">
           <div class="date-tit">{{title}}</div>
           <div
-            @click="close"
             class="date-close tf-row-vertical-center van-icon van-icon-cross"
+            @click="close"
           ></div>
         </div>
         <div class="date-header-slot"><slot></slot></div>
@@ -40,15 +40,15 @@
       </div>
       <div slot="footer">
         <van-datetime-picker
+          v-model="currentTime"
           :show-toolbar="false"
           :visible-item-count="3"
           :item-height="32"
-          v-model="currentTime"
-          @change="timeChange"
-          type="time"
-          title="选择时间"
           :min-hour="0"
           :max-hour="23"
+          type="time"
+          title="选择时间"
+          @change="timeChange"
         />
         <div class="date-sure">
           <div @click="dateSure" class="task-btn">确定</div>
@@ -71,9 +71,9 @@ export default {
       type: Boolean,
       default: false
     },
-    edit: {
-      type: Boolean,
-      default: false
+    data: {
+      type: String,
+      default: ''
     },
     title: {
       type: String,
@@ -186,10 +186,13 @@ export default {
         this.nowMonth = nowTime.getMonth() + 1
         this.getMonthDay()
         const dateArr = timeVal.split(' ')[0].split('-')
-        dateArr[1] = dateArr[1] - 1
-        this.defaultDate = new Date(
-          `${dateArr[0]}/${dateArr[1]}/${dateArr[2]}`
-        )
+        dateArr[1] = parseFloat(dateArr[1]) - 1
+        this.defaultDate = new Date(dateArr[0], dateArr[1], dateArr[2])
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.$refs.calendar.reset()
+          }, 0)
+        })
       }
     },
     // 时间赋值
@@ -201,20 +204,34 @@ export default {
         this.endTime = this.endYmd + ' ' + this.endHi
       }
     },
-    setDetailTime (obj) {
-      const { startTime, endTime } = obj
-      if (endTime) {
-        this.endTime = endTime
-        this.hasEndTime = true
-        this.endYmd = endTime.split(' ')[0]
-        this.endHi = endTime.split(' ')[1]
+    setDetailTime (date) {
+      if (!date) {
+        this.setEndTime('')
+        this.setStartTime('')
+        return
       }
-      if (startTime) {
-        this.startTime = startTime
-        this.hasStartTime = true
-        this.startYmd = startTime.split(' ')[0]
-        this.startHi = startTime.split(' ')[1]
+      const dates = date.split('~')
+      let startTime, endTime
+      if (dates.length === 2) {
+        startTime = dates[0]
+        endTime = dates[1]
+      } else {
+        endTime = dates[0]
       }
+      this.setEndTime(endTime)
+      this.setStartTime(startTime)
+    },
+    setEndTime (endTime) {
+      this.endTime = endTime
+      this.hasEndTime = true
+      this.endYmd = endTime.split(' ')[0] || ''
+      this.endHi = endTime.split(' ')[1] || '00:00'
+    },
+    setStartTime (startTime) {
+      this.startTime = startTime
+      this.hasStartTime = true
+      this.startYmd = startTime.split(' ')[0] || ''
+      this.startHi = startTime.split(' ')[1] || '00:00'
     },
     formatDate (date) {
       return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
@@ -285,29 +302,13 @@ export default {
       if (this.dateShow !== val) {
         setTimeout(() => {
           this.setToday()
+          this.setDetailTime(this.data)
+          this.timeBlur(0)
         }, 0)
       }
       this.dateShow = val
     },
     dateShow (val) {
-      if (this.isBol === false && val === false && !this.edit) {
-        this.startTime = ''
-        this.endTime = ''
-      } else if (this.isBol === false && val === false && this.edit) {
-        if (!this.hasStartTime) {
-          this.startTime = ''
-        }
-        if (!this.hasEndTime) {
-          this.endTime = ''
-        }
-      } else if (this.isBol && val === false && !!this.edit) {
-        if (this.noStartTime) {
-          this.startTime = ''
-        }
-        if (this.noEndTime) {
-          this.endTime = ''
-        }
-      }
       this.$emit('input', val)
     },
     yearMonth () {
