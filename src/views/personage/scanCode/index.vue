@@ -217,6 +217,9 @@ export default {
           // 'jfhd_uid|100001'
           this.goTask(values[1])
           break
+        case 'shangpuyhq':
+          this.goShopCouponVerification(value)
+          break
         default:
           break
       }
@@ -388,6 +391,15 @@ export default {
         api.alert({
           title: err.message
         })
+      })
+    },
+    // 商户核销
+    goShopCouponVerification (value) {
+      this.$router.push({
+        name: 'shopCouponVerification',
+        query: {
+          codeInfo: value
+        }
       })
     },
     // 扫了任务码

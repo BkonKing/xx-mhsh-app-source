@@ -4,10 +4,13 @@
       <template v-slot="{ item, index }">
         <!-- <coupon-item :data="item"></coupon-item> -->
         <coupon-item
+          :data="item"
           @publish="openPublish(item, index)"
-          @revise="openRevise(item, index)"
           @delete="openDelete(item, index)"
           @finish="openFinish(item, index)"
+          @revise="goCreateCoupon(item, index, '1')"
+          @look="goCreateCoupon(item, index, '2')"
+          @copy="goCreateCoupon(item, index, '3')"
         ></coupon-item>
       </template>
       <template v-slot:nodata>
@@ -27,7 +30,7 @@
       <van-field class="date-radio" name="radio" label="发布时间：">
         <template #input>
           <van-radio-group
-            v-model="zzz"
+            v-model="release_type"
             direction="horizontal"
             checked-color="#FF6555"
           >
@@ -48,7 +51,7 @@
       title="确定结束优惠券吗？"
       content="结束后将停止领取该券，但已被领取的优惠券可继续使用"
       confirmButtonText="结束"
-      @confirm="deleteCoupon"
+      @confirm="finishCoupon"
     ></tf-dialog-v3>
   </div>
 </template>
@@ -58,7 +61,13 @@ import refreshList from '@/components/tf-refresh-list'
 import TfDialogV3 from '@/components/tf-dialog-v3'
 import CouponItem from './CouponItem'
 import DatePicker from './DatePicker'
-import { getUserTaskList, reUserTask } from '@/api/task'
+import {
+  getShopCouponList,
+  publishCoupon,
+  finishCoupon,
+  deleteCoupon
+} from '@/api/personage/shop'
+
 export default {
   components: {
     refreshList,
@@ -66,26 +75,41 @@ export default {
     CouponItem,
     DatePicker
   },
+  props: {
+    id: [Number, String],
+    status: {
+      type: [Number, String],
+      default: ''
+    }
+  },
   data () {
     return {
-      // 0已接单、1进行中、2已完成、3已淘汰、4已放弃、5已终止
       list: [],
-      taskId: '',
+      shopId: '',
+      couponId: '',
       activeIndex: '',
       deleteVisible: false,
       finishVisible: false,
       dateVisible: false,
-      zzz: '1'
+      release_type: '1'
     }
   },
-  created () {},
+  created () {
+    this.shopId = this.$route.query.shopId
+  },
   activated () {
     this.updateSingleData()
   },
   methods: {
     // 获取我的报事报修
     getList (params) {
-      return getUserTaskList(params)
+      return getShopCouponList({
+        ...params,
+        ...{
+          coupon_status: this.status,
+          shops_id: this.id
+        }
+      })
     },
     // 刷新单条数据
     updateSingleData () {
@@ -100,32 +124,76 @@ export default {
     reload () {
       this.$refs.list.reload()
     },
-    openPublish (item, index) {
-      this.zzz = '1'
-      this.activeIndex = index
-      this.dateVisible = true
-    },
-    publish (data) {
-      const { startTime, endTime } = data
-      console.log(startTime, endTime)
-      this.dateVisible = false
-      this.updateSingleData()
-    },
-    openRevise ({ task_id: id }, index) {
+    goCreateCoupon ({ id }, index, type) {
       this.activeIndex = index
       this.$router.push({
         name: 'shopCreateCoupon',
         query: {
-          id
+          shopId: this.shopId,
+          couponId: id,
+          type // 1：修改，2：查看，3：复制
         }
       })
     },
-    openDelete () {
+    openPublish ({ id }, index) {
+      this.release_type = '1'
+      this.couponId = id
+      this.activeIndex = index
+      this.dateVisible = true
+    },
+    async publish (data) {
+      const { startTime, endTime } = data
+      if (this.release_type === '2') {
+        if (!startTime) {
+          this.$toast('请选择开始时间')
+          return
+        }
+        if (!endTime) {
+          this.$toast('请选择结束时间')
+          return
+        }
+      }
+      const { success } = await publishCoupon({
+        shops_coupon_id: this.couponId,
+        release_type: this.release_type,
+        plan_stime: startTime,
+        plan_etime: endTime
+      })
+      if (success) {
+        this.dateVisible = false
+        this.$toast('发布成功')
+        this.updateSingleData()
+      }
+    },
+    openDelete ({ id }, index) {
+      this.couponId = id
+      this.activeIndex = index
       this.deleteVisible = true
     },
-    deleteCoupon () {},
-    openFinish () {
+    async deleteCoupon () {
+      const { success } = await deleteCoupon({
+        shops_coupon_id: this.couponId
+      })
+      if (success) {
+        this.deleteVisible = false
+        this.$toast('优惠券已删除')
+        this.updateSingleData()
+      }
+    },
+    openFinish ({ id }, index) {
+      this.couponId = id
+      this.activeIndex = index
       this.finishVisible = true
+    },
+    async finishCoupon () {
+      const { success } = await finishCoupon({
+        shops_coupon_id: this.couponId
+      })
+      if (success) {
+        this.finishVisible = false
+        this.$toast('优惠券已结束')
+        this.updateSingleData()
+      }
     }
   }
 }

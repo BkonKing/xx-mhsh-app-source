@@ -1,9 +1,13 @@
 <template>
-  <div class="complaint-form-select" @click="visible = true">
+  <div
+    class="complaint-form-select"
+    :class="{ 'complaint-form-select--disabled': disabled }"
+    @click="handleOpen"
+  >
     <span class="complaint-form-text" :class="{ 'complain-type': valueText }">{{
       valueText || placeholder
     }}</span>
-    <span class="van-icon van-icon-arrow-down"></span>
+    <span v-if="!this.disabled" class="van-icon van-icon-arrow-down"></span>
     <van-popup
       v-model="visible"
       safe-area-inset-bottom
@@ -49,6 +53,10 @@ export default {
     autoClose: {
       type: Boolean,
       default: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -76,6 +84,9 @@ export default {
     }
   },
   methods: {
+    handleOpen () {
+      !this.disabled && (this.visible = true)
+    },
     select (item) {
       this.data = item[this.valueKey]
       this.valueText = item[this.labelKey]
@@ -110,6 +121,11 @@ export default {
   white-space: nowrap;
   color: #8f8f94;
   font-size: 28px;
+  &--disabled {
+    .complain-type {
+      color: #c8c7cc;
+    }
+  }
 }
 .complaint-form-text {
   margin-right: 1px;

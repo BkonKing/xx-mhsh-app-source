@@ -17,14 +17,21 @@
       </template>
     </van-nav-bar>
     <div class="tf-body-container">
-      <div class="shop-time">营业时间 9:00-21:00</div>
+      <div class="shop-time">
+        <template v-if="infoData.business_hours"
+          >营业时间 {{ infoData.business_hours }}</template
+        >
+      </div>
       <div class="shop-header">
         <div class="shop-header-item">
           <div class="shop-header-view">
-            8
+            {{ infoData.jt_lqz_num }}
           </div>
           <div class="shop-header-info">领取中优惠券</div>
-          <van-button v-if="haveCreate" class="shop-header-button" @click="jumpPage('create')"
+          <van-button
+            v-if="haveCreate"
+            class="shop-header-button"
+            @click="jumpPage('create')"
             >创建</van-button
           >
           <img
@@ -35,7 +42,7 @@
         <div class="shop-header-item">
           <div class="shop-header-VerticalLine" />
           <div class="shop-header-view">
-            10100
+            {{ infoData.credits }}
           </div>
           <div class="shop-header-info">幸福币</div>
           <!-- <van-button class="shop-header-button">提现</van-button> -->
@@ -115,62 +122,81 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import StatisticsInfo from './components/StatisticsInfo'
+import { getShopInfo } from '@/api/personage/shop'
+
 export default {
   name: 'shopIndex',
   components: { StatisticsInfo },
   data () {
-    return {}
+    return {
+      infoData: {}
+    }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     title () {
-      return '店铺店铺名称'
+      return this.infoData.shops_name
     },
     haveCreate () {
-      return false
+      return +this.infoData.is_coupon
+    },
+    haveCashOut () {
+      return +this.infoData.is_cashout
     },
     info () {
       return [
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.jt_hx_num,
+          yNum: this.infoData.zt_hx_num,
           title: '核销优惠券',
           border: true
         },
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.jt_lq_num,
+          yNum: this.infoData.zt_lq_num,
           title: '领取优惠券',
           border: true
         },
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.jt_lqz_num,
+          yNum: this.infoData.zt_lqz_num,
           title: '领取中优惠券',
           border: false
         },
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.jthd_credits,
+          yNum: this.infoData.zthd_credits,
           title: '获得幸福币',
           border: true
         },
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.jtsy_credits,
+          yNum: this.infoData.ztsy_credits,
           title: '使用幸福币',
           border: true
         },
         {
-          num: '1',
-          yNum: '1',
+          num: this.infoData.credits,
+          yNum: this.infoData.zt_credits,
           title: '幸福币',
           border: false
         }
       ]
     }
   },
+  created () {
+    this.getShopInfo()
+  },
   methods: {
+    getShopInfo () {
+      getShopInfo({
+        shops_id: this.userInfo.shops_id
+      }).then(({ data }) => {
+        this.infoData = data
+      })
+    },
     jumpPage (key) {
       const routerName = {
         create: 'shopCreateCoupon',
@@ -182,7 +208,10 @@ export default {
         scanCode: 'scanCodeIndex'
       }
       this.$router.push({
-        name: routerName[key]
+        name: routerName[key],
+        query: {
+          shopId: this.infoData.shops_id
+        }
       })
     }
   }

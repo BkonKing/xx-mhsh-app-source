@@ -2,21 +2,21 @@
   <div class="coupon-item">
     <div class="coupon-card" @click="expanded = !expanded">
       <div class="coupon-money">
-        <template v-if="true">
+        <template v-if="+data.coupon_type === 1">
           <span class="coupon-money-icon">￥</span
-          ><span class="coupon-money-number">10</span>
+          ><span class="coupon-money-number">{{data.miane}}</span>
         </template>
         <template v-else>
-          <span class="coupon-money-icon">5</span
+          <span class="coupon-money-icon">{{data.miane}}</span
           ><span class="coupon-money-number">折</span>
         </template>
       </div>
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
-            <div class="coupon-info-2">满100减10</div>
+            <div class="coupon-info-2">{{data.denomination}}</div>
             <div class="coupon-info-3">
-              3天有效
+              {{data.term_of_validity}}
             </div>
           </div>
           <div class="left-slot">
@@ -24,15 +24,12 @@
           </div>
         </div>
         <div class="coupon-footer">
-          <div class="coupon-footer-text">端午区可用</div>
+          <div class="coupon-footer-text">{{data.goods_type_name}}</div>
           <i
             class="van-icon van-icon-arrow"
             :class="{ 'van-icon-arrow--expanded': expanded }"
           ></i>
         </div>
-      </div>
-      <div class="coupon-tag" :class="[statusClass]">
-        新人专享
       </div>
     </div>
     <div class="coupon-panel" :class="{ 'coupon-panel--expanded': expanded }">
@@ -72,26 +69,6 @@ export default {
     return {
       dateShow: false,
       expanded: false
-    }
-  },
-  computed: {
-    statusClass () {
-      const className = {
-        1: 'coupon-tag-ing',
-        2: 'coupon-tag-un',
-        3: 'coupon-tag-end'
-      }
-      return className[this.data.status]
-    }
-  },
-  filters: {
-    statusText: function (value) {
-      const text = {
-        1: '领取中',
-        2: '未发布',
-        3: '已结束'
-      }
-      return text[value]
     }
   },
   methods: {

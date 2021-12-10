@@ -5,16 +5,21 @@
       :class="{ 'coupon-card-expanded': expanded }"
       @click="expanded = !expanded"
     >
-      <div class="coupon-money"><span>￥</span>10</div>
+      <div class="coupon-money">
+        <template v-if="data.coupon_type == 1"
+          ><span>￥</span>{{ data.miane }}</template
+        >
+        <template v-else>{{ data.miane }}<span>折</span></template>
+      </div>
       <div class="coupon-info">
-        <div class="coupon-info-1">发行1000张，领取0张，使用0张</div>
-        <div class="coupon-info-2">满100减10</div>
+        <div class="coupon-info-1">{{ data.text }}</div>
+        <div class="coupon-info-2">{{ data.denomination }}</div>
         <div class="coupon-info-3">
           <img
             class="coupon-img-sm"
             src="@/assets/personage/shop/time.png"
             alt=""
-          /><span>3天有效</span>
+          /><span>{{ data.denomination2 }}</span>
         </div>
       </div>
       <i
@@ -22,30 +27,34 @@
         :class="{ 'van-icon-arrow--expanded': expanded }"
       ></i>
       <div class="coupon-tag" :class="[statusClass]">
-        {{ data.status | statusText }}
+        {{ data.coupon_status_name }}
       </div>
     </div>
     <div class="coupon-panel" :class="{ 'coupon-panel-expanded': expanded }">
       <div class="group-box">
         <div class="group-item">
-          <div class="group-num">990</div>
+          <div class="group-num">{{ data.surplus }}</div>
           <div class="group-text">剩余张数</div>
         </div>
         <div class="group-item">
-          <div class="group-num">1</div>
+          <div class="group-num">{{ data.receive }}</div>
           <div class="group-text">累计领取张数</div>
         </div>
         <div class="group-item">
-          <div class="group-num">3</div>
+          <div class="group-num">{{ data.employ }}</div>
           <div class="group-text">累计使用张数</div>
         </div>
         <div class="group-item">
-          <div class="group-num">30%</div>
+          <div class="group-num">{{ data.employ_rate }}%</div>
           <div class="group-text">累计使用率</div>
         </div>
       </div>
       <div class="coupon-btn-box">
-        <div v-if="isUnpublished" class="coupon-btn" @click="emit('publish')">
+        <div
+          v-if="+data.is_btn_open"
+          class="coupon-btn"
+          @click="emit('publish')"
+        >
           <img
             class="coupon-img"
             src="@/assets/personage/shop/publish.png"
@@ -53,7 +62,7 @@
           />
           <span>发布</span>
         </div>
-        <div v-if="isReceive" class="coupon-btn" @click="emit('finish')">
+        <div v-if="+data.is_btn_end" class="coupon-btn" @click="emit('finish')">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/finish.png"
@@ -62,7 +71,7 @@
           <span>结束</span>
         </div>
         <div
-          v-if="isUnpublished || isReceive"
+          v-if="+data.is_btn_edit"
           class="coupon-btn"
           @click="emit('revise')"
         >
@@ -73,7 +82,7 @@
           />
           <span>修改</span>
         </div>
-        <div v-if="isFinish" class="coupon-btn">
+        <div v-if="+data.is_btn_copy" class="coupon-btn" @click="emit('copy')">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/copy.png"
@@ -81,7 +90,7 @@
           />
           <span>复制</span>
         </div>
-        <div v-if="isFinish" class="coupon-btn">
+        <div v-if="+data.is_btn_see" class="coupon-btn" @click="emit('look')">
           <img
             class="coupon-img"
             src="@/assets/personage/shop/look.png"
@@ -90,7 +99,7 @@
           <span>查看</span>
         </div>
         <div
-          v-if="isUnpublished || isFinish"
+          v-if="+data.is_btn_delete"
           class="coupon-btn"
           @click="emit('delete')"
         >
@@ -124,31 +133,21 @@ export default {
   },
   computed: {
     isUnpublished () {
-      return this.data.status === 1
+      return this.data.coupon_status === '2'
     },
     isReceive () {
-      return this.data.status === 2
+      return this.data.coupon_status === '1'
     },
     isFinish () {
-      return this.data.status === 3
+      return this.data.coupon_status === '3'
     },
     statusClass () {
       const className = {
-        1: 'coupon-tag-un',
-        2: 'coupon-tag-ing',
+        1: 'coupon-tag-ing',
+        2: 'coupon-tag-un',
         3: 'coupon-tag-end'
       }
-      return className[this.data.status]
-    }
-  },
-  filters: {
-    statusText: function (value) {
-      const text = {
-        1: '未发布',
-        2: '领取中',
-        3: '已结束'
-      }
-      return text[value]
+      return className[this.data.coupon_status]
     }
   },
   methods: {

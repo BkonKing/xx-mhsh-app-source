@@ -11,17 +11,17 @@
     <div class="tf-body-container" id="notice-list-container">
       <refreshList
         class="refresh-box"
-        :list.sync="noticeList"
-        :load="getNoticeList"
+        :list.sync="orderList"
+        :load="getOrderList"
       >
         <template v-slot="{ item }">
           <div class="card-box" @click="goCouponDetail">
             <div class="card-header">
               <div>
                 <span>订单编号：</span>
-                <span>234234234234</span>
+                <span>{{ item.order_numb }}</span>
               </div>
-              <div>已完成</div>
+              <div>{{ item.order_status_name }}</div>
             </div>
             <div class="card-content">
               <img
@@ -30,19 +30,31 @@
                 alt=""
               />
               <div class="coupon-info">
-                <div class="card-name">10元优惠券</div>
+                <div class="card-name">{{ item.goods_name }}</div>
                 <div class="card-text">1张</div>
                 <div class="card-text"><span>不支持退货</span><i></i></div>
               </div>
               <div class="card-content-right">
-                <div class="card-money">￥200.00</div>
+                <div class="card-money">
+                  ￥{{
+                    item.pay_type == 1
+                      ? item.happiness_price / 100
+                      : item.pay_price / 100
+                  }}
+                </div>
                 <div class="card-text">x1</div>
               </div>
             </div>
             <div class="card-footer">
-              <div class="card-text">共 1 件</div>
+              <div class="card-text">共 {{ item.goods_num }} 件</div>
               <div class="card-text">
-                合计：<span class="card-user-money">￥0</span>
+                合计：<span class="card-user-money"
+                  >￥{{
+                    item.pay_type == 1
+                      ? item.happiness_price / 100
+                      : item.pay_price / 100
+                  }}</span
+                >
               </div>
             </div>
           </div>
@@ -54,7 +66,8 @@
 
 <script>
 import refreshList from '@/components/tf-refresh-list'
-import { getNoticeList } from '@/api/butler.js'
+import { getOrderList } from '@/api/life'
+
 export default {
   name: 'noticeIndex',
   components: {
@@ -63,7 +76,7 @@ export default {
   data () {
     return {
       search: '',
-      noticeList: [],
+      orderList: [],
       scrollTop: 0
     }
   },
@@ -78,9 +91,13 @@ export default {
     }
   },
   methods: {
-    // 获取公告通知列表
-    getNoticeList (params) {
-      return getNoticeList(params)
+    getOrderList (params) {
+      return getOrderList({
+        ...params,
+        ...{
+          order_type: 3
+        }
+      })
     },
     searchChange () {},
     goCouponDetail () {

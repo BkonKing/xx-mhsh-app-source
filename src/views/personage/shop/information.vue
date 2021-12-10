@@ -17,7 +17,7 @@
           class="area-block bottom-line tf-row-space-between uniline-textarea"
         >
           <van-field
-            v-model.trim="formData.aaa"
+            v-model.trim="formData.shops_name"
             rows="1"
             maxlength="20"
             show-word-limit
@@ -27,16 +27,16 @@
         </div>
       </div>
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
-        <div class="cell-item" @click="!formData.ccc && goMap()">
+        <div class="cell-item" @click="!formData.address_name && goMap()">
           <div class="item-left align-top" style="align-items: flex-start;">
             店铺地址
           </div>
           <div class="item-cont address-box">
-            <template v-if="!formData.ccc">不限</template>
+            <template v-if="!formData.address_name">不限</template>
             <template v-else>
               <div class="address-name">
                 <van-field
-                  v-model="formData.ccc"
+                  v-model="formData.address_name"
                   type="text"
                   @input="updateAddressInput"
                 />
@@ -53,25 +53,29 @@
               </div>
             </template>
           </div>
-          <div @click="formData.ccc && goMap()" class="item-arrow">
+          <div @click="formData.address_name && goMap()" class="item-arrow">
             <i class="van-icon van-icon-location"></i>
           </div>
         </div>
         <div class="cell-item">
           <div class="item-left">营业时间</div>
           <div class="item-cont">
-            <van-field v-model="formData.ddd" maxlength="20" type="text" />
+            <van-field
+              v-model="formData.business_hours"
+              maxlength="20"
+              type="text"
+            />
           </div>
         </div>
         <div class="cell-item">
           <div class="item-left">联系方式</div>
           <div class="item-cont">
-            <van-field v-model="formData.eee" maxlength="20" type="number" />
+            <van-field v-model="formData.phone" maxlength="20" type="number" />
           </div>
         </div>
         <div class="cell-item" @click="projectShow = true">
           <div class="item-left">店铺归属</div>
-          <div class="item-cont p-30">{{ projectName }}</div>
+          <div class="item-cont p-30">{{ formData.projectName }}</div>
           <div class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
@@ -83,7 +87,7 @@
         </div>
         <div class="area-block bottom-line tf-row-space-between">
           <van-field
-            v-model.trim="formData.zzz"
+            v-model.trim="formData.shops_notice"
             type="textarea"
             autosize
             rows="1"
@@ -94,7 +98,10 @@
         </div>
       </div>
     </div>
-    <van-button class="submit-btn" :disabled="!formData.aaa" @click="submit"
+    <van-button
+      class="submit-btn"
+      :disabled="!formData.shops_name"
+      @click="submit"
       >提交</van-button
     >
     <select-project
@@ -107,6 +114,8 @@
 
 <script>
 import SelectProject from './components/SelectProject'
+import { getShopInformation, saveShopInformation } from '@/api/personage/shop'
+
 export default {
   name: 'shopInformation',
   components: {
@@ -114,20 +123,22 @@ export default {
   },
   data () {
     return {
+      id: '',
       projectShow: false,
-      projectName: '',
       formData: {
-        aaa: '',
+        shops_name: '',
         bbb: '',
-        ccc: '',
-        ddd: '',
-        eee: '',
-        fff: '',
-        zzz: ''
+        address_name: '',
+        business_hours: '',
+        phone: '',
+        project_id: '',
+        projectName: '',
+        shops_notice: ''
       }
     }
   },
   created () {
+    this.id = this.$route.query.id
     this.getData()
   },
   activated () {
@@ -142,16 +153,12 @@ export default {
     next()
   },
   methods: {
-    getData () {
-      this.formData = {
-        aaa: '',
-        bbb: '',
-        ccc: '',
-        ddd: '',
-        eee: '',
-        fff: '',
-        zzz: ''
-      }
+    async getData () {
+      // TODO:需要将项目名称也返回
+      const { shops_info: data } = await getShopInformation({
+        shops_id: this.id
+      })
+      this.formData = data
     },
     // 地址选择
     goMap () {
@@ -177,7 +184,7 @@ export default {
                 longitude: addressData.lon,
                 latitude: addressData.lat,
                 address: addressData.name,
-                ccc: addressData.name,
+                address_name: addressData.name,
                 address_province: ret.province,
                 address_city: ret.city,
                 address_area: ret.district
@@ -198,7 +205,7 @@ export default {
       //   longitude: addressData.lon,
       //   latitude: addressData.lat,
       //   address: addressData.name,
-      //   ccc: addressData.name,
+      //   address_name: addressData.name,
       //   address_province: '福建省',
       //   address_city: '福州市',
       //   address_area: '仓山区'
@@ -214,23 +221,26 @@ export default {
         this.formData.longitude = ''
         this.formData.latitude = ''
         this.formData.address = ''
-        this.formData.udpate_address = ''
         this.formData.address_province = ''
         this.formData.address_city = ''
         this.formData.address_area = ''
+        this.formData.address_detail = ''
       }
     },
     // 项目选择(小区)
     projectCall (projectData) {
       const { id, project_name: projectName } = projectData
-      this.projectName = projectName
-      this.formData.fff = id
+      this.formData.projectName = projectName
+      this.formData.project_id = id
     },
-    submit () {
-      if (!this.formData.aaa) {
+    async submit () {
+      if (!this.formData.shops_name) {
         this.$toast('请填写店铺名称')
       }
-      // this.$toast('提交成功')
+      console.log(this.formData)
+      // TODO：地址保存还需要保存经纬度等
+      const { success } = await saveShopInformation(this.formData)
+      success && this.$toast('提交成功')
       // this.$toast('提交失败   请重试')
     }
   }

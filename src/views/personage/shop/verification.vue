@@ -8,32 +8,37 @@
       <div class="coupon-container">
         <div class="coupon-info-box">
           <div class="coupon-content">
-            <div class="coupon-number"><span>￥</span>10</div>
+            <div class="coupon-number">
+              <template v-if="item.coupon_type == 1"
+                ><span>￥</span>{{ item.denomination }}</template
+              >
+              <template v-else>{{ item.denomination }}<span>折</span></template>
+            </div>
             <div>
-              <div class="coupon-text">满100减10</div>
-              <div class="coupon-text">全场商品</div>
+              <div class="coupon-text">{{ infoData.coupon_name }}</div>
+              <div class="coupon-text">{{ infoData.coupon_explain }}</div>
             </div>
           </div>
           <div class="coupon-info-footer">
-            2021.11.01 00:00 ~ 2021.11.01 00:00
+            {{ infoData.g_time2 }}
           </div>
         </div>
         <div class="coupon-rows">
           <div class="coupon-row">
             <div class="coupon-label">所属店铺：</div>
-            <div class="coupon-value">所属店铺</div>
+            <div class="coupon-value">{{ infoData.shops_name }}</div>
           </div>
           <div class="coupon-row">
             <div class="coupon-label">券编号：</div>
-            <div class="coupon-value">所属店铺</div>
+            <div class="coupon-value">{{ infoData.user_coupon_numb }}</div>
           </div>
           <div class="coupon-row">
             <div class="coupon-label">领取时间：</div>
-            <div class="coupon-value">所属店铺</div>
+            <div class="coupon-value">{{ infoData.ptime }}</div>
           </div>
           <div class="coupon-row">
             <div class="coupon-label">领取人：</div>
-            <div class="coupon-value">所属店铺</div>
+            <div class="coupon-value">{{ infoData.user_mobile }}</div>
           </div>
         </div>
       </div>
@@ -41,7 +46,7 @@
         class="dialog-btn"
         :class="{ 'dialog-btn-grey': !isCanUse }"
         @click="confirm"
-        >{{btnText}}</van-button
+        >{{ btnText }}</van-button
       >
     </div>
   </div>
@@ -49,39 +54,54 @@
 
 <script>
 // /personage/shop/verification
-import { confirmServer, serverClose } from '@/api/butler'
 import { mapGetters } from 'vuex'
+import { getCouponScan, verificationCoupon } from '@/api/personage/shop'
 export default {
   data () {
     return {
-      info: {},
-      code_id: ''
+      infoData: {},
+      codeInfo: ''
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
     isCanUse () {
-      return [3, 4].includes(+this.info.code_type)
+      return +this.infoData.is_ok
     },
     btnText () {
-      const status = {
-        1: '优惠券不属于本店铺',
-        2: '优惠券已过期',
-        3: '优惠券已使用',
-        4: '优惠券未到使用时间'
-      }
-      return this.isCanUse ? '核销优惠券' : status[1]
+      // const status = {
+      //   1: '优惠券不属于本店铺',
+      //   2: '优惠券已过期',
+      //   3: '优惠券已使用',
+      //   4: '优惠券未到使用时间'
+      // }
+      return this.isCanUse ? '核销优惠券' : this.infoData.error_text
     }
   },
   created () {
-    const { info, code_id: codeId } = this.$route.query
-    this.info = JSON.parse(info)
-    this.codeId = codeId
-    this.codeId = this.info.code_id
+    this.codeInfo = this.$route.query.codeInfo
+    this.getCouponScan()
   },
   methods: {
+    async getCouponScan () {
+      const { data } = await getCouponScan({
+        code_info: this.codeInfo
+      })
+      this.infoData = data
+    },
     confirm () {
       if (this.isCanUse) {
+        this.verificationCoupon()
+      }
+    },
+    async verificationCoupon () {
+      const { success } = await verificationCoupon({
+        shops_user_coupon_id: this.infoData.shops_user_coupon_id
+      })
+      if (success) {
+        this.$toast('核销成功')
+      } else {
+        this.$toast('核销失败')
       }
     }
   }

@@ -14,26 +14,30 @@
       placeholder="搜索券名称、券编号"
       @input="searchChange"
     />
-    <div class="tf-body-container" id="notice-list-container">
+    <div class="tf-body-container">
       <refreshList
         ref="list"
         class="refresh-box"
-        :list.sync="noticeList"
-        :load="getNoticeList"
+        :list.sync="records"
+        :load="getCouponRecords"
       >
         <template v-slot="{ item }">
           <div class="info-box">
-            <div class="info-left"><span>￥</span>5</div>
+            <div class="info-left">
+              <template v-if="item.coupon_type == 1"
+                ><span>￥</span>{{ item.denomination }}</template
+              >
+              <template v-else>{{ item.denomination }}<span>折</span></template>
+            </div>
             <div class="info-center">
               <div class="tf-row">
-                <span class="info-view">满10减5</span>
-                <span class="info-view">分类</span>
+                <span class="info-view">{{ item.coupon_explain }}</span>
               </div>
-              <div class="info-text">150600000000</div>
+              <div class="info-text">{{ item.mobile }}</div>
             </div>
             <div class="info-right">
-              <div class="info-tag">线下使用</div>
-              <div class="info-text">2021-11-11</div>
+              <div class="info-tag">{{ item.coupon_scene_name }}</div>
+              <div class="info-text">{{ item.u_time }}</div>
             </div>
           </div>
         </template>
@@ -45,7 +49,7 @@
 <script>
 import refreshList from '@/components/tf-refresh-list'
 import { debounce } from '@/utils/util'
-import { getNoticeList } from '@/api/butler.js'
+import { getCouponRecords } from '@/api/personage/shop'
 export default {
   name: 'noticeIndex',
   components: {
@@ -54,14 +58,18 @@ export default {
   data () {
     return {
       search: '',
-      noticeList: []
+      records: []
     }
   },
   created () {},
   methods: {
-    // 获取公告通知列表
-    getNoticeList (params) {
-      return getNoticeList(params)
+    getCouponRecords (params) {
+      return getCouponRecords({
+        ...params,
+        ...{
+          search_text: this.search
+        }
+      })
     },
     searchChange: debounce(function () {
       this.$refs.list.reload()
@@ -105,16 +113,16 @@ export default {
     margin-bottom: 0;
     background: #ffffff;
   }
-  /deep/ .tf-van-cell + .tf-van-cell{
+  /deep/ .tf-van-cell + .tf-van-cell {
     position: relative;
     &::before {
-    content: '';
-    position: absolute;
-    left: 30px;
-    right: 30px;
-    height: 1px;
-    background: #eee;
-  }
+      content: "";
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      height: 1px;
+      background: #eee;
+    }
   }
 }
 .info-box {

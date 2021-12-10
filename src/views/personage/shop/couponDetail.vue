@@ -137,13 +137,12 @@ export default {
   methods: {
     getData () {
       getOrderDetail({
-        order_project_id: this.order_id
+        order_project_id: this.order_id,
+        order_type: 3
       }).then(res => {
         if (res.success) {
           this.goodsList = res.order_goods_specs_list
           this.orderInfo = res.order_project_info
-          this.newTime = parseInt(new Date().getTime())
-          console.log(this.orderInfo.goods_price_total)
         }
       })
     }

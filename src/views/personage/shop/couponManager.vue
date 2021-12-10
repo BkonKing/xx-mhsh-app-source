@@ -9,25 +9,32 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <img class="nav-icon" src="@/assets/personage/shop/record.png" alt="" @click="jumpPage('couponUseRecord')">
-        <img class="nav-icon" src="@/assets/personage/shop/scan.png" alt="" @click="jumpPage('scanCode')">
+        <img
+          class="nav-icon"
+          src="@/assets/personage/shop/record.png"
+          alt=""
+          @click="jumpPage('couponUseRecord')"
+        />
+        <img
+          class="nav-icon"
+          src="@/assets/personage/shop/scan.png"
+          alt=""
+          @click="jumpPage('scanCode')"
+        />
       </template>
     </van-nav-bar>
-    <van-tabs
-      class="tf-body-container tf-column"
-      v-model="current"
-      @change="tabsChange"
-    >
-      <van-tab title="全部" id="taskList0">
-        <coupon-list></coupon-list>
-      </van-tab>
-      <van-tab title="领取中" id="taskList1">
-      </van-tab>
-      <van-tab title="未发布" id="taskList2">
-      </van-tab>
-      <van-tab title="已结束" id="taskList3">
-      </van-tab>
+    <van-tabs v-model="current" @change="tabsChange">
+      <van-tab title="全部" name="0"></van-tab>
+      <van-tab title="领取中" name="1"></van-tab>
+      <van-tab title="未发布" name="2"></van-tab>
+      <van-tab title="已结束" name="3"></van-tab>
     </van-tabs>
+    <coupon-list
+      ref="list"
+      class="tf-body-container tf-column"
+      :status="current"
+      :id="userInfo.shops_id"
+    ></coupon-list>
   </div>
 </template>
 
@@ -43,7 +50,7 @@ export default {
   },
   data () {
     return {
-      current: 0,
+      current: '0',
       scrollTop: 0
     }
   },
@@ -54,7 +61,7 @@ export default {
   activated () {
     if (this.scrollTop) {
       document
-        .getElementById(`taskList${this.current}`)
+        // .getElementById(`taskList${this.current}`)
         .getElementsByClassName(
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
@@ -68,20 +75,14 @@ export default {
         vm.current = parseInt(current)
         vm.$router.replace({ name: 'PersonageTaskIndex' })
       }
-      // 重新发布
-      if (from.query.type === 'anew' && +vm.current === 1) {
-        vm.$refs[`taskList${vm.current}`].reloadList()
-      } else if (+vm.current < 2 && vm.$refs[`taskList${vm.current}`]) {
-        vm.$refs[`taskList${vm.current}`].reSingleTask()
-      }
     })
   },
   beforeRouteLeave (to, from, next) {
     const el = document
-      .getElementById(`taskList${this.current}`)
+      // .getElementById(`taskList${this.current}`)
       .getElementsByClassName('tf-list-refresh')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
-    if (to.name === 'personage') {
+    if (to.name === 'storeIndex') {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
     }
@@ -90,12 +91,7 @@ export default {
   methods: {
     jumpPage (key) {
       const routerName = {
-        create: 'shopCreateCoupon',
-        couponManger: 'shopCouponManager',
         couponUseRecord: 'shopCouponUseRecord',
-        credits: 'happinessCoinIndex',
-        creditsRecord: 'happinessCoinRecord',
-        shopInformation: 'shopInformation',
         scanCode: 'scanCodeIndex'
       }
       this.$router.push({
@@ -103,10 +99,8 @@ export default {
       })
     },
     // tab页改变，为最新标签时刷新最新列表
-    tabsChange (name) {
-      if (name === 0) {
-        this.$refs.list && this.$refs.list.reload()
-      }
+    tabsChange () {
+      this.$refs.list && this.$refs.list.reload()
     }
   }
 }

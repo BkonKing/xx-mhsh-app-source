@@ -1,21 +1,21 @@
 <template>
   <div class="get-coupon-list">
     <div v-for="(shop, index) in data" :key="index">
-      <div v-if="shop.aaa" class="shop-name">
+      <div v-if="shop.shops_name" class="shop-name">
         <img class="shop-img" src="@/assets/personage/shop.png" alt="" />{{
-          shop.aaa
+          shop.shops_name
         }}
       </div>
-      <template v-for="(coupon, i) in shop.bbb">
+      <template v-for="(coupon, i) in shop.list">
         <coupon-item :data="coupon" :key="i">
-          <van-button v-if="coupon.status === 1" class="btn-ing"
+          <van-button v-if="!+coupon.is_complete" class="btn-ing"
             >已领取</van-button
           >
           <van-button
-            v-if="coupon.status === 0"
+            v-if="+coupon.is_complete"
             class="btn-click"
-            @click.stop="receiveCoupon(coupon)"
-            ><i v-if="coupon.type === 2" class="tf-icon tf-icon-xingfubi1"></i
+            @click.stop="handleReceive(coupon)"
+            ><i v-if="coupon.pay_type === '1'" class="tf-icon tf-icon-xingfubi1"></i
             >{{ coupon | btnText }}</van-button
           >
         </coupon-item>
@@ -38,9 +38,9 @@
     >
       <div class="credit-title">付款</div>
       <div class="credit-content">
-        <i class="tf-icon tf-icon-xingfubi1"></i>1000
+        <i class="tf-icon tf-icon-xingfubi1"></i>{{activeCoupon.pay_money}}
       </div>
-      <van-button class="credit-confirm-btn">确定付款</van-button>
+      <van-button class="credit-confirm-btn" @click="receiveCoupon">确定付款</van-button>
     </van-popup>
   </div>
 </template>
@@ -48,62 +48,74 @@
 <script>
 import paySwal from '@/views/life/components/pay-swal'
 import CouponItem from './CouponItem'
+import { payOrderUp } from '@/api/life'
+import { getCouponReceiveList, receiveCoupon } from '@/api/personage/shop'
+
 export default {
   components: { CouponItem, paySwal },
   data () {
     return {
       showPayCredit: false,
       showPaySwal: false, // 支付方式弹窗
+      activeCoupon: {},
+      orderId: '',
       payAmount: 0, // 支付金额
-      data: [
-        {
-          aaa: '',
-          bbb: [
-            {
-              status: 1
-            }
-          ]
-        },
-        {
-          aaa: '美好优选（新乡分店）',
-          bbb: [
-            {
-              status: 0,
-              type: 2
-            },
-            {
-              status: 0,
-              type: 1
-            },
-            {
-              status: 0,
-              type: 0
-            }
-          ]
-        }
-      ]
+      payOrderInfo: {},
+      data: []
     }
   },
   filters: {
     btnText (coupon) {
-      if (coupon.type === 0) {
+      if (+coupon.coupon_mode === 1) {
         return '免费领'
-      } else if (coupon.type === 1) {
-        return `￥${coupon.type}抢券`
-      } else if (coupon.type === 2) {
-        return `${coupon.type}抢券`
+      } else if (+coupon.pay_type === 2) {
+        return `￥${coupon.pay_money}抢券`
+      } else if (+coupon.pay_type === 1) {
+        return `${coupon.pay_money}抢券`
       }
     }
   },
+  created () {
+    this.getCouponReceiveList()
+  },
   methods: {
-    receiveCoupon (coupon) {
-      if (coupon.type === 2) {
+    async getCouponReceiveList () {
+      const { data } = await getCouponReceiveList()
+      this.data = data
+    },
+    handleReceive (coupon) {
+      this.activeCoupon = coupon
+      if (+coupon.pay_type === 1) {
         this.showPayCredit = true
+        return
       }
+      this.receiveCoupon()
+    },
+    async receiveCoupon () {
+      const { order_id: orderId } = await receiveCoupon({
+        shops_coupon_id: this.activeCoupon.shops_coupon_id
+      })
+      // 付费支付
+      if (+this.activeCoupon.pay_type === 2) {
+        this.orderId = orderId
+        this.payAmount = this.activeCoupon.pay_money
+        this.showPaySwal = true
+        return
+      }
+      this.receiveSuccess()
+    },
+    receiveSuccess () {
+      const { coupon_type: couponType, miane, pay_type: payType } = this.activeCoupon
+      if (+payType === 1) {
+        this.showPayCredit = false
+        return
+      }
+      const content = +couponType === 1 ? `用${miane}元` : `享${miane}折`
+      this.$toast(`恭喜，抢到了！\n 下单可${content}`)
     },
     // 支付
     surePaySwal (callData) {
-      payOrder({
+      payOrderUp({
         order_id: this.orderId,
         pay_type: callData.pay_type,
         pay_price: this.payAmount,
@@ -114,21 +126,24 @@ export default {
         mobile: callData.mobile
       })
         .then(res => {
-          const { data, order_info } = res
-          this.payOrderInfo = data
-          if (callData.pay_type == 1) {
-            this.showPaySwal = false
-            this.wxPayUp()
-          } else if (callData.pay_type == 2) {
-            this.showPaySwal = false
-            this.aliPayUp()
-          } else if (callData.pay_type == 4) {
-            this.$refs.payblock.sendCode(res)
+          if (res.success) {
+            if (res.data) {
+              this.payOrderInfo = res.data
+              if (callData.pay_type == 1) {
+                this.showPaySwal = false
+                this.wxPayUp()
+              } else if (callData.pay_type == 2) {
+                this.showPaySwal = false
+                this.aliPayUp()
+              } else if (callData.pay_type == 4) {
+                this.$refs.payblock.sendCode(res)
+              }
+            }
           }
         })
         .catch(res => {
           if (callData.pay_type == 4) {
-            if (this.idcard) {
+            if (callData.idcard) {
               this.$router.push({
                 path: '/pages/personage/information/addBankCard',
                 query: {
