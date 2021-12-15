@@ -107,7 +107,7 @@ export default {
         ...params,
         ...{
           coupon_status: this.status,
-          shops_id: this.id
+          shops_id: this.shopId
         }
       })
     },

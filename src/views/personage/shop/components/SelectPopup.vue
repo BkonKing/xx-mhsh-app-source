@@ -4,9 +4,14 @@
     :class="{ 'complaint-form-select--disabled': disabled }"
     @click="handleOpen"
   >
-    <span class="complaint-form-text" :class="{ 'complain-type': valueText }">{{
-      valueText || placeholder
-    }}</span>
+    <span
+      class="complaint-form-text"
+      :class="[
+        { 'complain-type': valueText },
+        { 'complain-form-placeholder': placeholder }
+      ]"
+      >{{ valueText || placeholder }}</span
+    >
     <span v-if="!this.disabled" class="van-icon van-icon-arrow-down"></span>
     <van-popup
       v-model="visible"
@@ -90,8 +95,10 @@ export default {
     select (item) {
       this.data = item[this.valueKey]
       this.valueText = item[this.labelKey]
-      this.$emit('select')
-      this.autoClose && this.close()
+      this.$nextTick(() => {
+        this.$emit('select')
+        this.autoClose && this.close()
+      })
     },
     close () {
       this.visible = false

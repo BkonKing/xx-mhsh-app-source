@@ -12,7 +12,7 @@
         >
           <template #right>
             <a
-              :href="'tel: ' + orderInfo.customerServiceHotline"
+              :href="`tel: ${orderInfo.customerServiceHotline}`"
               class="nav-serve"
               ><img src="@/assets/img/icon_23.png"
             /></a>
@@ -38,8 +38,8 @@
             </div>
             <div class="order-info">
               <div class="order-name-price">
-                <div class="order-name p-nowrap">10元优惠券</div>
-                <div class="order-price">￥200.00</div>
+                <div class="order-name p-nowrap">{{goodsInfo.goods_name}}</div>
+                <div class="order-price">￥{{(goodsInfo.s_price || 0) / 100}}</div>
               </div>
               <div class="order-sku-num">
                 1张
@@ -83,11 +83,11 @@
           <div class="detail-price-list">
             <div class="detail-price-item">
               <div>商品总价</div>
-              <div>￥3000</div>
+              <div>￥{{ orderInfo.goods_price_total / 100 }}</div>
             </div>
             <div class="detail-price-item">
               <div>幸福币抵扣</div>
-              <div>-￥200</div>
+              <div>-￥{{ orderInfo.happiness_price / 100 }}</div>
             </div>
           </div>
           <div class="order-total">
@@ -95,24 +95,24 @@
               共 1 件
             </div>
             <div class="order-price-text">合计:</div>
-            <div class="order-total-money">￥200</div>
+            <div class="order-total-money">￥{{(goodsInfo.s_price || 0) / 100}}</div>
           </div>
         </div>
         <div class="cont-session order-message">
           <div class="order-message-item">
-            订单编号：1234234234234
-            <div class="copy-btn" @click="copy_cont(orderInfo.order_numb)">
+            订单编号：{{ orderInfo.order_numb }}
+            <div class="copy-btn" @click="copy">
               复制
             </div>
           </div>
           <div class="order-message-item">
-            下单时间： 123123123123
+            下单时间： {{ orderInfo.ctime }}
           </div>
           <div class="order-message-item">
-            支付方式：无
+            支付方式：{{ orderInfo.payment_type_name }}
           </div>
           <div class="order-message-item">
-            支付时间：123123
+            支付时间：{{ orderInfo.pay_time }}
           </div>
         </div>
       </div>
@@ -126,8 +126,8 @@ export default {
   data () {
     return {
       expanded: false,
-      goodsList: [],
-      orderInfo: ''
+      goodsInfo: {},
+      orderInfo: {}
     }
   },
   created () {
@@ -141,10 +141,25 @@ export default {
         order_type: 3
       }).then(res => {
         if (res.success) {
-          this.goodsList = res.order_goods_specs_list
+          this.goodsInfo = res.order_goods_specs_list[0]
           this.orderInfo = res.order_project_info
         }
       })
+    },
+    copy () {
+      var clipBoard = api.require('clipBoard')
+      clipBoard.set(
+        {
+          value: this.orderInfo.order_numb
+        },
+        function (ret, err) {
+          if (ret) {
+            this.$toast('复制成功')
+          } else {
+            alert(JSON.stringify(err))
+          }
+        }
+      )
     }
   }
 }

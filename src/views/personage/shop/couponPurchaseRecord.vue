@@ -15,7 +15,7 @@
         :load="getOrderList"
       >
         <template v-slot="{ item }">
-          <div class="card-box" @click="goCouponDetail">
+          <div class="card-box" @click="goCouponDetail(item)">
             <div class="card-header">
               <div>
                 <span>订单编号：</span>
@@ -91,18 +91,23 @@ export default {
     }
   },
   methods: {
-    getOrderList (params) {
+    getOrderList ({ pages }) {
       return getOrderList({
-        ...params,
-        ...{
-          order_type: 3
+        page: pages,
+        order_type: 3
+      }).then(({ data }) => {
+        return {
+          data: data.order_project_list
         }
       })
     },
     searchChange () {},
-    goCouponDetail () {
+    goCouponDetail ({ id }) {
       this.$router.push({
-        name: 'shopCouponDetail'
+        name: 'shopCouponDetail',
+        query: {
+          id
+        }
       })
     },
     goBack () {

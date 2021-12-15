@@ -60,8 +60,8 @@
       </div>
     </div>
     <div v-if="isShowBanner" class="banner-container" @click="openCouponCentre">
-      <img class="coupon-banner" src="" alt="" />
-      <span class="banner-text">领取100元优惠券</span>
+      <img class="coupon-banner" :src="shopBannerInfo.banner" alt="" />
+      <span class="banner-text" v-html="bannerText"></span>
     </div>
     <div class="credit-task-box">
       <task-list
@@ -75,7 +75,7 @@
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
-      <van-tab title="领券中心"><get-coupon-list></get-coupon-list></van-tab>
+      <van-tab title="领券中心"><get-coupon-list @getSuccess="init"></get-coupon-list></van-tab>
       <van-tab
         v-if="taskData && taskData.length"
         title="任务中心"
@@ -109,6 +109,7 @@ import CreditArea from './components/CreditArea'
 import GetCouponList from './components/GetCouponList'
 import { getCreditsGoodsList } from '@/api/home'
 import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
+import { getShopCouponBanner } from '@/api/personage/shop'
 export default {
   components: {
     tfCalendar,
@@ -134,20 +135,38 @@ export default {
       signAlertVisible: false, // 游客认证提醒弹窗
       signMessage: '', // 签到成功提醒
       signOwnerCredits: '', // 业主签到幸福币
-      tabActive: 0
+      tabActive: 0,
+      shopBannerInfo: {}
     }
   },
   computed: {
     ...mapGetters(['userType']), // 1业主、2业主成员、3租户、4租户成员
     isShowBanner () {
       return true
+    },
+    bannerText () {
+      const bannerText = this.shopBannerInfo.banner_text
+      if (!bannerText) {
+        return ''
+      }
+      const text = bannerText.split('$money$')
+      if (text.length < 2) {
+        return bannerText
+      }
+      const text0 = text[0]
+      const text1 = text[1]
+      return `${text0}<span>${this.shopBannerInfo.z_money}</span>${text1}`
     }
   },
   created () {
-    this.getCreditsAccount()
+    this.init()
     this.getCreditsGoodsList()
   },
   methods: {
+    init () {
+      this.getCreditsAccount()
+      this.getShopCouponBanner()
+    },
     // 获取幸福币信息
     getCreditsAccount () {
       getCreditsAccount().then(({ data }) => {
@@ -159,6 +178,12 @@ export default {
         this.sd_credits = data.sd_credits
         this.getYxlpList()
       })
+    },
+    async getShopCouponBanner () {
+      const { data } = await getShopCouponBanner({
+        shops_id: '7'
+      })
+      this.shopBannerInfo = data || {}
     },
     // 签到事件
     signIn () {

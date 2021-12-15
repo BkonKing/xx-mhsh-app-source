@@ -26,6 +26,7 @@
             rows="1"
             :border="false"
             type="textarea"
+            :placeholder="validProps.coupon_name ? '请输入券名称' : ''"
             @blur="validate('coupon_name')"
           />
         </div>
@@ -57,30 +58,34 @@
           <template v-else>
             <form-date-picker
               v-model="formData.validityTime"
+              :fieldClassName="{ 'error-field': validProps.validityTime }"
+              :placeholder="validProps.validityTime ? '请选择日期' : ''"
+              @input="validate('validityTime')"
             ></form-date-picker>
           </template>
         </template>
         <template v-if="formData.e_type === '1'">
           <div
             class="suffix-input tf-mb-lg"
-            :class="[{ 'suffix-input--disabled': isDisabled },{ 'error-field': validProps.days_num }]"
+            :class="[
+              { 'suffix-input--disabled': isDisabled },
+              { 'error-field': validProps.days_num }
+            ]"
           >
             <van-field
               v-model="formData.days_num"
               type="number"
               class="prefix-input"
-              :class="[
-                { 'prefix-input--disabled': isDisabled },
-
-              ]"
+              :class="{ 'prefix-input--disabled': isDisabled }"
               :disabled="isDisabled"
+              :placeholder="validProps.days_num ? '请输入' : ''"
               @blur="validate('days_num')"
             />
             <span class="suffix-text">天</span>
           </div>
         </template>
         <div class="form-card-label">
-          使用时间<span class="form-card-label-required">*</span>
+          券类型<span class="form-card-label-required">*</span>
         </div>
         <van-radio-group
           v-model="formData.coupon_type"
@@ -103,8 +108,13 @@
               label="满"
               type="number"
               class="prefix-input"
-              :class="{ 'prefix-input--disabled': isDisabled }"
+              :class="[
+                { 'suffix-input--disabled': isDisabled },
+                { 'error-field': validProps.threshold_price }
+              ]"
               :disabled="isDisabled"
+              :placeholder="validProps.threshold_price ? '请输入' : ''"
+              @blur="validate('threshold_price')"
           /></van-col>
           <van-col span="12"
             ><van-field
@@ -114,18 +124,30 @@
               type="number"
               maxlength="5"
               class="prefix-input"
-              :class="{ 'prefix-input--disabled': isDisabled }"
+              :class="[
+                { 'suffix-input--disabled': isDisabled },
+                { 'error-field': validProps.reduce_price }
+              ]"
               :disabled="isDisabled"
+              :placeholder="validProps.reduce_price ? '请输入' : ''"
+              @blur="validate('reduce_price')"
             />
-            <div v-if="formData.coupon_type === '2'" class="suffix-input">
+            <div
+              v-if="formData.coupon_type === '2'"
+              class="suffix-input"
+              :class="{ 'error-field': validProps.reduce_discount }"
+            >
               <van-field
                 v-model="formData.reduce_discount"
                 type="number"
                 maxlength="5"
                 class="prefix-input"
-                placeholder="9折输入9"
                 :class="{ 'prefix-input--disabled': isDisabled }"
                 :disabled="isDisabled"
+                :placeholder="
+                  validProps.reduce_discount ? '请输入' : '9折输入9'
+                "
+                @blur="validate('reduce_discount')"
               />
               <span class="suffix-text">折</span>
             </div></van-col
@@ -154,8 +176,13 @@
             type="number"
             maxlength="5"
             class="prefix-input"
-            :class="{ 'prefix-input--disabled': isLook }"
+            :class="[
+              { 'suffix-input--disabled': isLook },
+              { 'error-field': validProps.stock }
+            ]"
             :disabled="isLook"
+            :placeholder="validProps.stock ? '请输入' : ''"
+            @blur="validate('stock')"
           />
         </template>
         <div class="form-card-label tf-mt-lg tf-mb-base">
@@ -173,8 +200,13 @@
           v-else
           v-model="formData.limit_num"
           :options="getNumOptions"
-          :class="{ 'prefix-input--disabled': isLook }"
+          :class="[
+            { 'suffix-input--disabled': isLook },
+            { 'error-field': validProps.limit_num }
+          ]"
           :disabled="isLook"
+          :placeholder="validProps.limit_num ? '请选择' : ''"
+          @select="validate('limit_num')"
         ></select-popup>
       </div>
       <div class="form-card" style="padding-bottom: 0;">
@@ -224,10 +256,15 @@
               label="幸福币"
               type="number"
               class="prefix-input"
-              :class="{
-                'prefix-input--disabled': !!formData.pay_money || isDisabled
-              }"
+              :class="[
+                {
+                  'prefix-input--disabled': !!formData.pay_money || isDisabled
+                },
+                { 'error-field': validProps.pay_credit }
+              ]"
               :disabled="!!formData.pay_money || isDisabled"
+              :placeholder="validProps.pay_credit ? '请输入' : ''"
+              @blur="handleCreditBlur"
           /></van-col>
           <van-col span="12"
             ><van-field
@@ -235,10 +272,15 @@
               label="人民币"
               type="number"
               class="prefix-input"
-              :class="{
-                'prefix-input--disabled': !!formData.pay_credit || isDisabled
-              }"
+              :class="[
+                {
+                  'prefix-input--disabled': !!formData.pay_credit || isDisabled
+                },
+                { 'error-field': validProps.pay_money }
+              ]"
               :disabled="!!formData.pay_credit || isDisabled"
+              :placeholder="validProps.pay_money ? '请输入' : ''"
+              @blur="handleMoneyBlur"
           /></van-col>
         </van-row>
         <div
@@ -272,18 +314,27 @@
             >{{ item.text }}</van-radio
           >
         </van-radio-group>
-        <template v-if="formData.available_type === '1'">
+        <template v-if="formData.available_type === '2'">
           <div class="form-select" @click="projectShow = true">
-            <span class="form-text">{{ formData.available_project_name }}</span>
+            <span
+              class="form-text"
+              :class="{ 'error-color': validProps.available_project_id }"
+              >{{
+                validProps.available_project_id
+                  ? "请选择"
+                  : formData.available_project_name
+              }}</span
+            >
             <span class="van-icon van-icon-arrow-down"></span>
           </div>
         </template>
-        <div class="userType-checkbox" v-if="formData.available_type === '2'">
+        <div class="userType-checkbox" v-if="formData.available_type === '3'">
           <van-checkbox-group
             v-model="formData.house_role_ids"
             direction="horizontal"
             checked-color="#FEBF00"
             class="tf-checkbox-group"
+            @change="validate('house_role_ids')"
           >
             <van-checkbox
               v-for="item in userTypes"
@@ -293,6 +344,12 @@
               >{{ item.label }}</van-checkbox
             >
           </van-checkbox-group>
+          <div
+            v-if="validProps.house_role_ids"
+            class="error-color tf-text tf-pd-base"
+          >
+            请选择
+          </div>
         </div>
         <div class="form-card-label tf-mt-lg">
           可使用商品
@@ -315,16 +372,26 @@
           <van-field
             v-model="formData.goods_type_name"
             class="prefix-input"
-            :class="{ 'prefix-input--disabled': isDisabled }"
+            :class="[
+              { 'suffix-input--disabled': isDisabled },
+              { 'error-field': validProps.goods_type_name }
+            ]"
             :disabled="isDisabled"
+            :placeholder="validProps.goods_type_name ? '请输入' : ''"
+            @blur="validate('goods_type_name')"
           />
         </template>
         <template v-if="formData.goods_type === '3'">
           <van-field
             v-model="formData.goods_type_precinct"
             class="prefix-input"
-            :class="{ 'prefix-input--disabled': isDisabled }"
+            :class="[
+              { 'suffix-input--disabled': isDisabled },
+              { 'error-field': validProps.goods_type_precinct }
+            ]"
             :disabled="isDisabled"
+            :placeholder="validProps.goods_type_precinct ? '请输入' : ''"
+            @blur="validate('goods_type_precinct')"
           />
         </template>
         <div class="form-card-label tf-mt-lg">
@@ -352,10 +419,14 @@
           <form-date-picker
             v-else
             v-model="formData.planTime"
+            :fieldClassName="{ 'error-field': validProps.planTime }"
+            :placeholder="validProps.planTime ? '请选择日期' : ''"
+            @input="validate('planTime')"
           ></form-date-picker>
         </div>
       </div>
       <van-button
+        v-if="!isLook"
         class="submit-btn"
         type="primary"
         size="large"
@@ -461,12 +532,12 @@ export default {
         coupon_mode: '1',
         pay_money: '',
         pay_credit: '',
-        available_type: '0',
+        available_type: '1',
         house_role_ids: [],
-        goods_type: '',
+        goods_type: '1',
         goods_type_name: '',
         goods_type_precinct: '',
-        release_type: '',
+        release_type: '1',
         planTime: '',
         available_project_id: '',
         available_project_name: '',
@@ -476,7 +547,20 @@ export default {
       },
       validProps: {
         coupon_name: false,
-        days_num: false
+        days_num: false,
+        threshold_price: false,
+        reduce_price: false,
+        reduce_discount: false,
+        stock: false,
+        limit_num: false,
+        pay_credit: false,
+        pay_money: false,
+        validityTime: false,
+        available_project_id: false,
+        house_role_ids: false,
+        goods_type_name: false,
+        goods_type_precinct: false,
+        planTime: false
       }
       // @blur="validate('coupon_name')"
       // :class="{'error-field': validProps.coupon_name}"
@@ -487,7 +571,7 @@ export default {
       const title = {
         0: '创建优惠券',
         1: '优惠券修改',
-        2: '查看',
+        2: '优惠券',
         3: '创建优惠券'
       }
       return title[this.type]
@@ -525,7 +609,8 @@ export default {
         shops_coupon_info: couponInfo,
         json_data: jsonData
       } = await getShopCouponInfo({
-        shops_id: this.shopId
+        shops_id: this.shopId,
+        shops_coupon_id: this.couponId
       })
       const {
         remind,
@@ -552,6 +637,7 @@ export default {
         couponInfo.stockShow = couponInfo.stock
         couponInfo.stock = ''
       }
+      couponInfo.available_type = +couponInfo.available_type + 1 + ''
       couponInfo.coupon_scene = ['1']
       if (this.isCopy) {
         couponInfo.e_type = '2'
@@ -582,43 +668,117 @@ export default {
       couponInfo.shops_coupon_id = this.isCopy ? '' : couponInfo.id
       this.formData = couponInfo
     },
+    handleCreditBlur () {
+      this.formData.pay_money && (this.formData.pay_credit = '')
+      this.validate('pay_credit')
+    },
+    handleMoneyBlur () {
+      this.formData.pay_credit && (this.formData.pay_money = '')
+      this.validate('pay_money')
+    },
     // 项目选择(小区)
     projectCall (projectData) {
       const { id, project_name: projectName } = projectData
       this.formData.available_project_name = projectName
       this.formData.available_project_id = id
+      this.validate('available_project_id')
     },
     validate (key) {
+      console.log(key, this.formData[key])
       !this.isLook && this.formData[key] && (this.validProps[key] = false)
     },
     handleSubmit () {
       let validStatus = true
-      Object.keys(this.validProps).forEach(key => {
-        if (!this.formData[key]) {
+      const props = cloneDeep(this.validProps)
+      const unValidation = []
+      if (+this.formData.e_type === 2) {
+        unValidation.push('days_num')
+        // delete props.days_num
+      } else if (+this.formData.e_type === 1) {
+        unValidation.push('validityTime')
+        // delete props.validityTime
+      } else {
+        unValidation.push('days_num', 'validityTime')
+        // delete props.days_num
+        // delete props.validityTime
+      }
+      if (+this.formData.coupon_type === 1) {
+        unValidation.push('reduce_discount')
+        // delete props.reduce_discount
+      } else if (+this.formData.coupon_type === 2) {
+        unValidation.push('reduce_price')
+        // delete props.reduce_price
+      }
+      if (!(+this.formData.coupon_mode === 2)) {
+        unValidation.push('pay_credit', 'pay_money')
+        // delete props.pay_credit
+        // delete props.pay_money
+      } else {
+        unValidation.push(this.formData.pay_credit ? 'pay_money' : 'pay_credit')
+      }
+      if (+this.formData.available_type === 1) {
+        unValidation.push('available_project_id', 'house_role_ids')
+        // delete props.available_project_id
+        // delete props.house_role_ids
+      } else if (+this.formData.available_type === 2) {
+        unValidation.push('house_role_ids')
+        // delete props.house_role_ids
+      } else if (+this.formData.available_type === 3) {
+        unValidation.push('available_project_id')
+        // delete props.available_project_id
+      }
+      if (+this.formData.goods_type === 2) {
+        unValidation.push('goods_type_precinct')
+        // delete props.goods_type_precinct
+      } else if (+this.formData.goods_type === 3) {
+        unValidation.push('goods_type_name')
+        // delete props.goods_type_name
+      } else {
+        unValidation.push('goods_type_name', 'goods_type_precinct')
+        // delete props.goods_type_name
+        // delete props.goods_type_precinct
+      }
+      if (!(+this.formData.release_type === 2)) {
+        unValidation.push('planTime')
+        // delete props.planTime
+      }
+      Object.keys(props).forEach(key => {
+        if (!unValidation.includes(key) && (!this.formData[key] || this.formData[key].length === 0)) {
+          console.log(key)
           validStatus = false
           this.validProps[key] = true
+        } else {
+          this.validProps[key] = false
         }
       })
       if (validStatus) {
         this.saveCouponInfo()
+      } else {
+        this.$toast('请填写完整')
       }
     },
     async saveCouponInfo () {
       const params = cloneDeep(this.formData)
       const validityTime = params.validityTime
       if (validityTime) {
-        params.g_stime = validityTime[0]
-        params.g_etime = validityTime[1]
+        const validityTimeArr = validityTime.split('~')
+        params.g_stime = validityTimeArr[0]
+        params.g_etime = validityTimeArr[1]
       }
       const planTime = params.planTime
       if (planTime) {
-        params.plan_stime = planTime[0]
-        params.plan_etime = planTime[1]
+        const planArr = planTime.split('~')
+        params.plan_stime = planArr[0]
+        params.plan_etime = planArr[1]
       }
       if (+params.coupon_mode === 2) {
-        params.pay_type = params.pay_credit ? '1' : '2'
+        const credit = params.pay_credit
+        params.pay_type = credit ? '1' : '2'
+        params.pay_money = credit || params.pay_money
       }
-      console.log(params)
+      params.available_type = +params.available_type - 1 + ''
+      this.shopId && (params.shops_id = this.shopId)
+      // this.couponId && (params.shops_coupon_id = this.couponId)
       const { success } = await saveCouponInfo(params)
       if (success) {
         this.$toast('提交成功')
@@ -634,8 +794,19 @@ export default {
 /deep/ .van-field__control {
   font-weight: bold;
 }
+.error-color {
+  color: #ff6555 !important;
+}
 .error-field {
-  border-color: #FF6555 !important;
+  border-color: #ff6555 !important;
+  /deep/ .van-field__control::placeholder {
+    font-weight: 400;
+    color: #ff6555 !important;
+  }
+  /deep/ .complain-form-placeholder {
+    font-weight: 400;
+    color: #ff6555 !important;
+  }
 }
 .coupon-name {
   margin-top: 24px;
@@ -653,6 +824,7 @@ export default {
 }
 .tf-radio-group {
   display: flex;
+  min-height: 96px;
   padding: 30px 0;
   /deep/ .van-radio {
     width: 30%;
@@ -791,7 +963,7 @@ export default {
 }
 .userType-checkbox {
   width: 650px;
-  height: 162px;
+  min-height: 162px;
   padding: 30px 30px 0;
   background: #f7f7f7;
   border-radius: 10px;
@@ -844,5 +1016,8 @@ export default {
 }
 .tf-pd-lg {
   padding-bottom: 30px;
+}
+.tf-pd-base {
+  padding-bottom: 20px;
 }
 </style>

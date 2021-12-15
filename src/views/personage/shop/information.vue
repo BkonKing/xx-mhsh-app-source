@@ -123,7 +123,7 @@ export default {
   },
   data () {
     return {
-      id: '',
+      shopId: '',
       projectShow: false,
       formData: {
         shops_name: '',
@@ -138,7 +138,7 @@ export default {
     }
   },
   created () {
-    this.id = this.$route.query.id
+    this.shopId = this.$route.query.shopId
     this.getData()
   },
   activated () {
@@ -156,7 +156,7 @@ export default {
     async getData () {
       // TODO:需要将项目名称也返回
       const { shops_info: data } = await getShopInformation({
-        shops_id: this.id
+        shops_id: this.shopId
       })
       this.formData = data
     },
@@ -239,8 +239,11 @@ export default {
       }
       console.log(this.formData)
       // TODO：地址保存还需要保存经纬度等
-      const { success } = await saveShopInformation(this.formData)
-      success && this.$toast('提交成功')
+      const { success } = await saveShopInformation({ ...this.formData, shops_id: this.shopId })
+      if (success) {
+        this.$toast('提交成功')
+        this.$router.go(-1)
+      }
       // this.$toast('提交失败   请重试')
     }
   }

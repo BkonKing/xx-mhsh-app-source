@@ -100,7 +100,9 @@ export default {
     },
     // tab页改变，为最新标签时刷新最新列表
     tabsChange () {
-      this.$refs.list && this.$refs.list.reload()
+      this.$nextTick(() => {
+        this.$refs.list && this.$refs.list.reload()
+      })
     }
   }
 }

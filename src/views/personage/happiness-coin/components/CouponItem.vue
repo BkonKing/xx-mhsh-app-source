@@ -7,8 +7,8 @@
           ><span class="coupon-money-number">{{data.miane}}</span>
         </template>
         <template v-else>
-          <span class="coupon-money-icon">{{data.miane}}</span
-          ><span class="coupon-money-number">折</span>
+          <span class="coupon-money-number">{{data.miane}}</span
+          ><span class="coupon-money-icon">折</span>
         </template>
       </div>
       <div class="coupon-info">

@@ -42,6 +42,7 @@ export default {
     line-height: 1;
   }
   &-num {
+    height: 36px;
     margin-bottom: 18px;
     font-size: 36px;
     font-weight: bold;

@@ -15,7 +15,10 @@
             v-if="+coupon.is_complete"
             class="btn-click"
             @click.stop="handleReceive(coupon)"
-            ><i v-if="coupon.pay_type === '1'" class="tf-icon tf-icon-xingfubi1"></i
+            ><i
+              v-if="coupon.pay_type === '1'"
+              class="tf-icon tf-icon-xingfubi1"
+            ></i
             >{{ coupon | btnText }}</van-button
           >
         </coupon-item>
@@ -38,9 +41,11 @@
     >
       <div class="credit-title">付款</div>
       <div class="credit-content">
-        <i class="tf-icon tf-icon-xingfubi1"></i>{{activeCoupon.pay_money}}
+        <i class="tf-icon tf-icon-xingfubi1"></i>{{ activeCoupon.pay_money }}
       </div>
-      <van-button class="credit-confirm-btn" @click="receiveCoupon">确定付款</van-button>
+      <van-button class="credit-confirm-btn" @click="receiveCoupon"
+        >确定付款</van-button
+      >
     </van-popup>
   </div>
 </template>
@@ -105,13 +110,18 @@ export default {
       this.receiveSuccess()
     },
     receiveSuccess () {
-      const { coupon_type: couponType, miane, pay_type: payType } = this.activeCoupon
+      const {
+        coupon_type: couponType,
+        miane,
+        pay_type: payType
+      } = this.activeCoupon
       if (+payType === 1) {
         this.showPayCredit = false
-        return
       }
       const content = +couponType === 1 ? `用${miane}元` : `享${miane}折`
       this.$toast(`恭喜，抢到了！\n 下单可${content}`)
+      this.getCouponReceiveList()
+      this.$emit('getSuccess')
     },
     // 支付
     surePaySwal (callData) {
@@ -198,6 +208,7 @@ export default {
     // 支付成功回调
     fyResult () {
       this.showPaySwal = false
+      this.receiveSuccess()
     },
     // 关闭支付选择弹窗
     closePaySwal (data) {

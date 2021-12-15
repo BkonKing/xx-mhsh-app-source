@@ -191,8 +191,9 @@ export default {
   },
   methods: {
     getShopInfo () {
+      console.log(this.userInfo.shops_id)
       getShopInfo({
-        shops_id: this.userInfo.shops_id
+        shops_id: 7
       }).then(({ data }) => {
         this.infoData = data
       })
@@ -210,7 +211,7 @@ export default {
       this.$router.push({
         name: routerName[key],
         query: {
-          shopId: this.infoData.shops_id
+          shopId: this.infoData.shops_id || '7'
         }
       })
     }
@@ -241,6 +242,7 @@ export default {
   position: relative;
   display: flex;
   width: 710px;
+  min-height: 220px;
   padding-top: 62px;
   padding-bottom: 62px;
   margin-top: 62px;
@@ -254,6 +256,7 @@ export default {
     align-items: center;
     width: 355px;
     .shop-header-view {
+      min-height: 56px;
       font-size: 56px;
       font-weight: bold;
       color: #ffffff;

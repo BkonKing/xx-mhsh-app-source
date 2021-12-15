@@ -4,7 +4,9 @@
       v-model="data"
       right-icon="notes-o"
       class="prefix-input tf-mb-lg"
+      :class="fieldClassName"
       :disabled="true"
+      :placeholder="placeholder"
       @click="setFFFTime"
     />
     <date-picker
@@ -29,7 +31,12 @@ export default {
     value: {
       type: String,
       default: ''
-    }
+    },
+    fieldClassName: {
+      type: [String, Object, Array],
+      default: ''
+    },
+    placeholder: [String]
   },
   data () {
     return {
@@ -58,6 +65,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.error-field {
+  border-color: #ff6555 !important;
+    /deep/ .van-field__control::placeholder {
+    font-weight: 400;
+    color: #ff6555 !important;
+  }
+}
 .prefix-input {
   padding: 0;
   border: 1px solid #cccccc;
@@ -82,6 +96,7 @@ export default {
   /deep/ .van-field__control {
     padding-left: 30px;
     line-height: 80px;
+    color: #222;
   }
   /deep/ .van-field__right-icon {
     margin-right: 20px;
