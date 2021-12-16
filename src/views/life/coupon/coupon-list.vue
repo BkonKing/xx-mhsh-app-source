@@ -9,10 +9,12 @@
       @click-left="$router.go(-1)"
     >
       <template #right>
-        <span
-          class="tf-icon tf-icon-shijian"
+        <img
+          class="nav-icon"
+          src="@/assets/personage/shop/record.png"
+          alt=""
           @click="goCouponPurchaseRecords"
-        ></span>
+        />
       </template>
     </van-nav-bar>
     <van-tabs v-model="current" @change="tabsChange">

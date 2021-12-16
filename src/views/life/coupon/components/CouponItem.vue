@@ -2,16 +2,15 @@
   <div class="coupon-item">
     <div
       class="coupon-card"
-      :class="{ 'coupon-card-un': status !== '1' }"
-      @click="expanded = !expanded"
+      :class="{ 'coupon-card-un': +status !== 1 }"
     >
       <div class="coupon-money">
         <template v-if="+data.type === 1">
           <span class="coupon-money-icon">￥</span
-          ><span class="coupon-money-number">{{ data.reduce_price }}</span>
+          ><span class="coupon-money-number">{{ isPenny ? (+data[priceKey] / 100) : data[priceKey] }}</span>
         </template>
         <template v-else>
-          <span class="coupon-money-number">{{ data.discount_num }}</span
+          <span class="coupon-money-number">{{ data[discountKey] }}</span
           ><span class="coupon-money-icon">折</span>
         </template>
         <div v-if="data.i_img" class="coupon-icon-bg">
@@ -21,7 +20,7 @@
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
-            <div class="coupon-info-2">{{ data.coupon_name }}</div>
+            <div class="coupon-info-2">{{ data[couponNameKey] }}</div>
             <div class="coupon-info-3">
               {{ data.term_of_validity }}
             </div>
@@ -30,9 +29,9 @@
             <slot></slot>
           </div>
         </div>
-        <div class="coupon-footer">
+        <div class="coupon-footer" @click="expanded = !expanded">
           <div class="coupon-footer-text">
-            {{ +data.coupon_type ? data.coupon_explain2 : data.coupon_explain }}
+            {{ +data.coupon_type && data.coupon_explain2 ? data.coupon_explain2 : data.coupon_explain }}
           </div>
           <i
             class="van-icon van-icon-arrow"
@@ -73,6 +72,22 @@ export default {
     status: {
       type: [Number, String],
       default: ''
+    },
+    priceKey: {
+      type: String,
+      default: 'reduce_price'
+    },
+    discountKey: {
+      type: String,
+      default: 'discount_num'
+    },
+    couponNameKey: {
+      type: String,
+      default: 'coupon_name'
+    },
+    isPenny: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -182,6 +197,7 @@ export default {
     height: 62px;
     margin-top: 40px;
     border-top: 1px dashed #dddddd;
+    z-index: 1;
     .coupon-footer-text {
       font-size: 24px;
       color: #8f8f94;

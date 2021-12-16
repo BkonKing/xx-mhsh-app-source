@@ -191,7 +191,6 @@ export default {
   },
   methods: {
     getShopInfo () {
-      console.log(this.userInfo.shops_id)
       getShopInfo({
         shops_id: 7
       }).then(({ data }) => {
@@ -211,7 +210,7 @@ export default {
       this.$router.push({
         name: routerName[key],
         query: {
-          shopId: this.infoData.shops_id || '7'
+          shopId: this.infoData.shops_id
         }
       })
     }

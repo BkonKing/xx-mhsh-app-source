@@ -142,7 +142,7 @@ export default {
   computed: {
     ...mapGetters(['userType']), // 1业主、2业主成员、3租户、4租户成员
     isShowBanner () {
-      return true
+      return +this.shopBannerInfo.z_money
     },
     bannerText () {
       const bannerText = this.shopBannerInfo.banner_text

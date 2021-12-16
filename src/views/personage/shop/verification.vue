@@ -100,7 +100,9 @@ export default {
       })
       if (success) {
         this.$toast('核销成功')
-        this.$router.go(-1)
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 500)
       } else {
         this.$toast('核销失败')
       }

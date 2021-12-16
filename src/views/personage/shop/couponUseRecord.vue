@@ -65,10 +65,9 @@ export default {
   methods: {
     getCouponRecords (params) {
       return getCouponRecords({
-        ...params,
-        ...{
-          search_text: this.search
-        }
+        page: params.pages,
+        search_text: this.search,
+        shops_id: '7'
       })
     },
     searchChange: debounce(function () {
