@@ -250,7 +250,7 @@
           class="gutter-row"
           type="flex"
         >
-          <van-col span="12"
+          <van-col v-if="isCreditInput" span="12"
             ><van-field
               v-model="formData.pay_credit"
               label="幸福币"
@@ -266,7 +266,7 @@
               :placeholder="validProps.pay_credit ? '请输入' : ''"
               @blur="handleCreditBlur"
           /></van-col>
-          <van-col span="12"
+          <van-col v-if="isMoneyInput" span="12"
             ><van-field
               v-model="formData.pay_money"
               label="人民币"
@@ -617,7 +617,7 @@ export default {
         coupon_type_data: couponTypes,
         coupon_scene_data: sceneData,
         coupon_mode_data: receiveModes,
-        coupon_mode_type_data: modeTypeData,
+        coupon_mode_type: modeTypeData,
         receive_coupon_data: receiveUserType,
         coupon_goods_type_data: goodsTypes
       } = jsonData
@@ -625,10 +625,18 @@ export default {
       this.couponTypes = couponTypes
       this.sceneData = sceneData
       this.receiveModes = receiveModes
-      modeTypeData.forEach(obj => {
-        +obj.key === 1 && (this.isCreditInput = true);
-        +obj.key === 2 && (this.isMoneyInput = true)
-      })
+      switch (+modeTypeData) {
+        case 1:
+          this.isCreditInput = true
+          break
+        case 2:
+          this.isMoneyInput = true
+          break
+        case 3:
+          this.isCreditInput = true
+          this.isMoneyInput = true
+          break
+      }
       this.receiveUserType = receiveUserType
       this.goodsTypes = goodsTypes
       // 数据回填
