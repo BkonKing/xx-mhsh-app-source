@@ -30,7 +30,7 @@
             </div>
             <div class="user-role-box">
               <img
-                v-if="isShop"
+                v-if="+shopData.is_reveal"
                 class="user-img"
                 src="@/assets/personage/shangjia.png"
                 alt=""
@@ -118,18 +118,18 @@
       </div>
       <div class="functional-box">
         <!-- 商户入口 -->
-        <div class="shop-box" @click="goShopCentre">
+        <div v-if="isShop" class="shop-box" @click="goShopCentre">
           <div class="shop-header">
             <img class="shop-icon" src="@/assets/personage/shop.png" alt="" />
-            <span class="shop-name">美好生活家园新乡店</span>
+            <span class="shop-name">{{shopData.shops_name}}</span>
           </div>
           <div class="shop-content">
             <div class="shop-item">
-              <div class="shop-num">50</div>
+              <div class="shop-num">{{shopData.jt_hx_num}}</div>
               <div class="shop-text">今日核销优惠券</div>
             </div>
             <div class="shop-item">
-              <div class="shop-num">3</div>
+              <div class="shop-num">{{shopData.jt_lqz_num}}</div>
               <div class="shop-text">领取中优惠券</div>
             </div>
           </div>
@@ -449,7 +449,8 @@ export default {
       activityTitle: '参与活动领积分',
       signAlertVisible: false, // 游客认证提醒弹窗
       signMessage: '', // 签到成功提醒
-      signOwnerCredits: '' // 业主签到幸福币
+      signOwnerCredits: '', // 业主签到幸福币
+      shopData: {}
     }
   },
   computed: {
@@ -476,16 +477,17 @@ export default {
     },
     // 是否为商户
     isShop () {
-      return true
+      return +this.shopData.is_shops
     }
   },
   activated () {
     // 重新获取用户信息
     this.$store
       .dispatch('getMyAccount')
-      .then(({ order_data, hb_banner_data }) => {
+      .then(({ order_data, hb_banner_data, shops_data }) => {
         this.orderData = order_data
         this.hbBannerData = hb_banner_data
+        this.shopData = shops_data || {}
       })
     this.getActivityInfo()
     this.getMyTaskNum()

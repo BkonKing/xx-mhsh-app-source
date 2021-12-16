@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import refreshList from '@/components/tf-refresh-list'
 import { debounce } from '@/utils/util'
 import { getCouponRecords } from '@/api/personage/shop'
@@ -61,13 +62,19 @@ export default {
       records: []
     }
   },
+  computed: {
+    ...mapGetters(['userInfo']),
+    shopId () {
+      return this.userInfo.shops_id
+    }
+  },
   created () {},
   methods: {
     getCouponRecords (params) {
       return getCouponRecords({
         page: params.pages,
         search_text: this.search,
-        shops_id: '7'
+        shops_id: this.shopId
       })
     },
     searchChange: debounce(function () {

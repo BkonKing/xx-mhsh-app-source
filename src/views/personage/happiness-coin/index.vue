@@ -141,6 +141,9 @@ export default {
   },
   computed: {
     ...mapGetters(['userType']), // 1业主、2业主成员、3租户、4租户成员
+    shopId () {
+      return this.userInfo.shops_id
+    },
     isShowBanner () {
       return +this.shopBannerInfo.z_money
     },
@@ -181,7 +184,7 @@ export default {
     },
     async getShopCouponBanner () {
       const { data } = await getShopCouponBanner({
-        shops_id: '7'
+        shops_id: this.shopId
       })
       this.shopBannerInfo = data || {}
     },

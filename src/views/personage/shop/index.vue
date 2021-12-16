@@ -136,6 +136,9 @@ export default {
   },
   computed: {
     ...mapGetters(['userInfo']),
+    shopId () {
+      return this.userInfo.shops_id
+    },
     title () {
       return this.infoData.shops_name
     },
@@ -192,7 +195,7 @@ export default {
   methods: {
     getShopInfo () {
       getShopInfo({
-        shops_id: 7
+        shops_id: this.shopId
       }).then(({ data }) => {
         this.infoData = data
       })
