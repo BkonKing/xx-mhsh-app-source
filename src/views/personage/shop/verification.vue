@@ -9,10 +9,10 @@
         <div class="coupon-info-box">
           <div class="coupon-content">
             <div class="coupon-number">
-              <template v-if="item.coupon_type == 1"
-                ><span>￥</span>{{ item.denomination }}</template
+              <template v-if="infoData.coupon_type == 1"
+                ><span>￥</span>{{ infoData.denomination }}</template
               >
-              <template v-else>{{ item.denomination }}<span>折</span></template>
+              <template v-else>{{ infoData.denomination }}<span>折</span></template>
             </div>
             <div>
               <div class="coupon-text">{{ infoData.coupon_name }}</div>
@@ -100,6 +100,7 @@ export default {
       })
       if (success) {
         this.$toast('核销成功')
+        this.$router.go(-1)
       } else {
         this.$toast('核销失败')
       }
