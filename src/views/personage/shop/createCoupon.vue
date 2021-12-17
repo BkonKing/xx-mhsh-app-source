@@ -50,7 +50,7 @@
           <template v-if="isDisabled">
             <van-field
               v-model="formData.validityTime"
-              class="prefix-input"
+              class="prefix-input tf-mb-lg"
               :class="{ 'prefix-input--disabled': isDisabled }"
               :disabled="isDisabled"
             />
@@ -320,9 +320,9 @@
               class="form-text"
               :class="{ 'error-color': validProps.available_project_id }"
               >{{
-                validProps.available_project_id
-                  ? "请选择"
-                  : formData.available_project_name
+                formData.available_project_id
+                  ? formData.available_project_name
+                  : "请选择"
               }}</span
             >
             <span class="van-icon van-icon-arrow-down"></span>
@@ -562,8 +562,6 @@ export default {
         goods_type_precinct: false,
         planTime: false
       }
-      // @blur="validate('coupon_name')"
-      // :class="{'error-field': validProps.coupon_name}"
     }
   },
   computed: {
@@ -701,58 +699,43 @@ export default {
       const unValidation = []
       if (+this.formData.e_type === 2) {
         unValidation.push('days_num')
-        // delete props.days_num
       } else if (+this.formData.e_type === 1) {
         unValidation.push('validityTime')
-        // delete props.validityTime
       } else {
         unValidation.push('days_num', 'validityTime')
-        // delete props.days_num
-        // delete props.validityTime
       }
       if (+this.formData.coupon_type === 1) {
         unValidation.push('reduce_discount')
-        // delete props.reduce_discount
       } else if (+this.formData.coupon_type === 2) {
         unValidation.push('reduce_price')
-        // delete props.reduce_price
       }
       if (!(+this.formData.coupon_mode === 2)) {
         unValidation.push('pay_credit', 'pay_money')
-        // delete props.pay_credit
-        // delete props.pay_money
       } else {
         unValidation.push(this.formData.pay_credit ? 'pay_money' : 'pay_credit')
       }
+      if (this.isEdit) {
+        unValidation.push('stock')
+      }
       if (+this.formData.available_type === 1) {
         unValidation.push('available_project_id', 'house_role_ids')
-        // delete props.available_project_id
-        // delete props.house_role_ids
       } else if (+this.formData.available_type === 2) {
         unValidation.push('house_role_ids')
-        // delete props.house_role_ids
       } else if (+this.formData.available_type === 3) {
         unValidation.push('available_project_id')
-        // delete props.available_project_id
       }
       if (+this.formData.goods_type === 2) {
         unValidation.push('goods_type_precinct')
-        // delete props.goods_type_precinct
       } else if (+this.formData.goods_type === 3) {
         unValidation.push('goods_type_name')
-        // delete props.goods_type_name
       } else {
         unValidation.push('goods_type_name', 'goods_type_precinct')
-        // delete props.goods_type_name
-        // delete props.goods_type_precinct
       }
       if (!(+this.formData.release_type === 2)) {
         unValidation.push('planTime')
-        // delete props.planTime
       }
       Object.keys(props).forEach(key => {
         if (!unValidation.includes(key) && (!this.formData[key] || this.formData[key].length === 0)) {
-          console.log(key)
           validStatus = false
           this.validProps[key] = true
         } else {
@@ -784,12 +767,15 @@ export default {
         params.pay_type = credit ? '1' : '2'
         params.pay_money = credit || params.pay_money
       }
+      if (+params.goods_type === 3) {
+        params.goods_type_name = params.goods_type_precinct
+      }
       params.available_type = +params.available_type - 1 + ''
       this.shopId && (params.shops_id = this.shopId)
-      // this.couponId && (params.shops_coupon_id = this.couponId)
       const { success } = await saveCouponInfo(params)
       if (success) {
         this.$toast('提交成功')
+        this.$router.go(-1)
       }
     }
   }

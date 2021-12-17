@@ -26,7 +26,7 @@
             :loading="signLoading"
             class="sign-tag"
             :class="{ 'sign-tag--complete': signinToday !== 0 }"
-            @click="signIn()"
+            @click="handleSignIn"
             ><img
               class="sign-img"
               src="@/assets/personage/qiandao.png"
@@ -69,6 +69,9 @@
         :data="taskData"
         :signinToday="signinToday"
         :userType="userType"
+        :entranceStatus="entranceStatus"
+        :show-unfinished="true"
+        @signIn="handleSignIn"
       ></task-list>
     </div>
     <van-tabs v-model="tabActive" class="credit-tabs" sticky offset-top="1.173rem" id="tabs">
@@ -85,6 +88,8 @@
           :data="taskData"
           :signinToday="signinToday"
           :userType="userType"
+          :entranceStatus="entranceStatus"
+          @signIn="handleSignIn"
         ></task-list>
       </van-tab>
     </van-tabs>
@@ -108,7 +113,7 @@ import TaskList from './components/TaskList'
 import CreditArea from './components/CreditArea'
 import GetCouponList from './components/GetCouponList'
 import { getCreditsGoodsList } from '@/api/home'
-import { signin, getCreditsAccount, getYxlpList } from '@/api/personage'
+import { signin, getCreditsAccount } from '@/api/personage'
 import { getShopCouponBanner } from '@/api/personage/shop'
 export default {
   components: {
@@ -127,8 +132,7 @@ export default {
       taskData: [], // 任务列表  task_type： 1: 签到 2：认证成功 3：首次开门 7:朋友到访、购房奖励
       creditsGoods: [], // 幸福币商品列表
       signLoading: false, // 签到按钮loading
-      mj_status: true, // 是否有门禁
-      yxlpNum: 0, // 推荐购房楼盘列表
+      entranceStatus: true, // 是否有门禁
       signRuledialog: false,
       sd_credits: '', // 锁定幸福币
       ky_credits: '', // 可用幸福币
@@ -176,10 +180,9 @@ export default {
         this.signinToday = data.signin_status
         this.taskData = data.task_list
         this.credits = data.credits
-        this.mj_status = data.mj_status
+        this.entranceStatus = !!+data.mj_status
         this.ky_credits = data.ky_credits
         this.sd_credits = data.sd_credits
-        this.getYxlpList()
       })
     },
     async getShopCouponBanner () {
@@ -189,7 +192,7 @@ export default {
       this.shopBannerInfo = data || {}
     },
     // 签到事件
-    signIn () {
+    handleSignIn () {
       if (this.signinToday === 1) {
         // 已签到，则打开签到日历
         this.showCalendar = true
@@ -249,64 +252,10 @@ export default {
         this.creditsGoods = res.data
       })
     },
-    // 幸福币专区商品详情
-    goCoinCommodity (item) {
-      this.$router.push(`/store/goods-detail?id=${item.id}`)
-    },
     // 菜单悬挂顶部，tab切换到“领券中心”
     openCouponCentre () {
       this.tabActive = 1
       this.$refs.container.scrollTop = document.getElementById('tabs').offsetTop - this.$refs.navBar.height
-    },
-    // 幸福币任务去完成跳转
-    complete ({ task_type: type, source_id: id }) {
-      switch (type) {
-        case '1':
-          this.signin()
-          break
-        case '2':
-          this.$router.push(
-            '/pages/personage/house/attestation?type=1&mode=0&select=1'
-          )
-          break
-        case '3':
-          if (this.mj_status == '0') {
-            this.$toast('小区暂未开放此功能')
-          } else {
-            this.authentication('/pages/butler/entrance/index')
-          }
-          break
-        case '7':
-          this.$router.push('/pages/personage/happiness-coin/recomBuyHouse')
-          break
-        default:
-          this.authentication(`/pages/butler/questionnaire/details?id=${id}`)
-          break
-      }
-    },
-    // 认证提醒
-    authentication (url) {
-      if (this.userType == 0) {
-        this.$dialog
-          .confirm({
-            title: '提示',
-            message: '您尚未认证房间，是否去认证？',
-            confirmButtonText: '去认证'
-          })
-          .then(res => {
-            this.$router.push(
-              '/pages/personage/house/attestation?type=1&mode=0&select=1'
-            )
-          })
-      } else {
-        this.$router.push(url)
-      }
-    },
-    // 获取推荐购房楼盘
-    getYxlpList () {
-      getYxlpList().then(({ data }) => {
-        this.yxlpNum = (data && data.length) || 0
-      })
     }
   }
 }

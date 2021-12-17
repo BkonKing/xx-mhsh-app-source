@@ -21,9 +21,9 @@
         </div>
       </div>
     </div>
-    <div class="sale-box">
+    <!-- <div class="sale-box">
       <div class="purchase-history" @click="goBuyRecord">购买记录</div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -40,6 +40,10 @@ export default {
     // 购买详情
     goBuyRecord () {
       this.$router.push({ name: 'happinessCoinBuyRecord' })
+    },
+    // 幸福币专区商品详情
+    goCoinCommodity (item) {
+      this.$router.push(`/store/goods-detail?id=${item.id}`)
     }
   }
 }

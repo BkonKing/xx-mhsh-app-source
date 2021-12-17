@@ -1,6 +1,6 @@
 <template>
   <div class="coupon-list">
-    <refreshList ref="list" :list.sync="list" :load="getList">
+    <refreshList ref="list" :list.sync="list" :load="getList" row-key="id">
       <template v-slot="{ item, index }">
         <!-- <coupon-item :data="item"></coupon-item> -->
         <coupon-item
@@ -63,6 +63,7 @@ import CouponItem from './CouponItem'
 import DatePicker from './DatePicker'
 import {
   getShopCouponList,
+  updateCouponInfo,
   publishCoupon,
   finishCoupon,
   deleteCoupon
@@ -104,18 +105,20 @@ export default {
     // 获取我的报事报修
     getList (params) {
       return getShopCouponList({
-        ...params,
-        ...{
-          coupon_status: this.status,
-          shops_id: this.shopId
-        }
+        page: params.pages,
+        coupon_status: this.status,
+        shops_id: this.shopId
       })
     },
     // 刷新单条数据
     updateSingleData () {
-      if (this.activeIndex !== '' && this.taskId !== '') {
-        reUserTask({
-          user_task_id: this.taskId
+      if (+this.status) {
+        this.list.splice(this.activeIndex, 1)
+        return
+      }
+      if (this.activeIndex !== '' && +this.couponId) {
+        updateCouponInfo({
+          shops_coupon_id: this.couponId
         }).then(({ data }) => {
           this.$set(this.list, this.activeIndex, data)
         })
@@ -177,7 +180,7 @@ export default {
       if (success) {
         this.deleteVisible = false
         this.$toast('优惠券已删除')
-        this.updateSingleData()
+        this.list.splice(this.activeIndex, 1)
       }
     },
     openFinish ({ id }, index) {

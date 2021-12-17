@@ -45,7 +45,7 @@
           <div class="group-text">累计使用张数</div>
         </div>
         <div class="group-item">
-          <div class="group-num">{{ data.employ_rate }}%</div>
+          <div class="group-num">{{ data.employ_rate }}</div>
           <div class="group-text">累计使用率</div>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default {
   }
   .van-icon-arrow {
     margin-right: 30px;
-    margin-left: 30px;
+    // margin-left: 30px;
     &::before {
       transform: rotate(90deg) translateZ(0);
       transition: transform 0.3s;

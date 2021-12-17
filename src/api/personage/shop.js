@@ -36,6 +36,15 @@ export function getShopCouponList (data) {
   })
 }
 
+// 更新商铺优惠券 列表 单条数据
+export function updateCouponInfo (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_coupon_one',
+    method: 'post',
+    data
+  })
+}
+
 // 发布商家券 接口
 export function publishCoupon (data) {
   return request({

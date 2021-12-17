@@ -60,29 +60,15 @@ export default {
   created () {},
   activated () {
     if (this.scrollTop) {
-      document
-        // .getElementById(`taskList${this.current}`)
-        .getElementsByClassName(
-          'tf-list-refresh'
-        )[0].scrollTop = this.scrollTop
+      const el = this.$refs.list.$el.getElementsByClassName('tf-list-refresh')
+      el.length && (el[0].scrollTop = this.scrollTop)
     }
   },
-  beforeRouteEnter (to, from, next) {
-    const current = +to.query.publish || 0
-    next(vm => {
-      if (current && current !== vm.current) {
-        vm.scrollTop = 0
-        vm.current = parseInt(current)
-        vm.$router.replace({ name: 'PersonageTaskIndex' })
-      }
-    })
-  },
   beforeRouteLeave (to, from, next) {
-    const el = document
-      // .getElementById(`taskList${this.current}`)
-      .getElementsByClassName('tf-list-refresh')
+    const lastPageName = ['shopCouponUseRecord', 'scanCodeIndex']
+    const el = document.getElementsByClassName('tf-list-refresh')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
-    if (to.name === 'storeIndex') {
+    if (!lastPageName.includes(to.name)) {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
     }
