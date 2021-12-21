@@ -9,6 +9,7 @@
       @click-left="goBack"
     />
     <van-search
+      v-if="!couponId"
       v-model="search"
       class="coupon-search-box"
       placeholder="搜索券名称、券编号"
@@ -58,6 +59,7 @@ export default {
   },
   data () {
     return {
+      couponId: '',
       search: '',
       records: []
     }
@@ -68,13 +70,16 @@ export default {
       return this.userInfo.shops_id
     }
   },
-  created () {},
+  created () {
+    this.couponId = this.$route.query.couponId
+  },
   methods: {
     getCouponRecords (params) {
       return getCouponRecords({
         page: params.pages,
         search_text: this.search,
-        shops_id: this.shopId
+        shops_id: this.shopId,
+        shops_coupon_id: this.couponId
       })
     },
     searchChange: debounce(function () {

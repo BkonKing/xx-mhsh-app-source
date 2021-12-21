@@ -63,9 +63,8 @@
       <img class="coupon-banner" :src="shopBannerInfo.banner" alt="" />
       <span class="banner-text" v-html="bannerText"></span>
     </div>
-    <div class="credit-task-box">
+    <div v-if="taskData && taskData.length" class="credit-task-box">
       <task-list
-        v-if="taskData && taskData.length"
         :data="taskData"
         :signinToday="signinToday"
         :userType="userType"
@@ -162,7 +161,7 @@ export default {
       }
       const text0 = text[0]
       const text1 = text[1]
-      return `${text0}<span>${this.shopBannerInfo.z_money}</span>${text1}`
+      return `${text0}<span class="shop-coupon-banner-number">${this.shopBannerInfo.z_money}</span>${text1}`
     }
   },
   created () {
@@ -372,7 +371,7 @@ export default {
   }
   .banner-text {
     position: absolute;
-    top: 48px;
+    top: 42px;
     left: 86px;
     font-size: 32px;
     font-weight: 800;
@@ -422,5 +421,12 @@ export default {
 }
 .task-tab {
   padding: 0 20px 30px;
+}
+</style>
+
+<style>
+.shop-coupon-banner-number {
+  font-size: 56px;
+  line-height: 1;
 }
 </style>

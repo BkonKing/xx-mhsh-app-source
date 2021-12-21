@@ -151,38 +151,38 @@ export default {
     info () {
       return [
         {
-          num: this.infoData.jt_hx_num,
-          yNum: this.infoData.zt_hx_num,
+          num: this.infoData.jt_hx_num || 0,
+          yNum: this.infoData.zt_hx_num || 0,
           title: '核销优惠券',
           border: true
         },
         {
-          num: this.infoData.jt_lq_num,
-          yNum: this.infoData.zt_lq_num,
+          num: this.infoData.jt_lq_num || 0,
+          yNum: this.infoData.zt_lq_num || 0,
           title: '领取优惠券',
           border: true
         },
         {
-          num: this.infoData.jt_lqz_num,
-          yNum: this.infoData.zt_lqz_num,
+          num: this.infoData.jt_lqz_num || 0,
+          yNum: this.infoData.zt_lqz_num || 0,
           title: '领取中优惠券',
           border: false
         },
         {
-          num: this.infoData.jthd_credits,
-          yNum: this.infoData.zthd_credits,
+          num: this.infoData.jthd_credits || 0,
+          yNum: this.infoData.zthd_credits || 0,
           title: '获得幸福币',
           border: true
         },
         {
-          num: this.infoData.jtsy_credits,
-          yNum: this.infoData.ztsy_credits,
+          num: this.infoData.jtsy_credits || 0,
+          yNum: this.infoData.ztsy_credits || 0,
           title: '使用幸福币',
           border: true
         },
         {
-          num: this.infoData.credits,
-          yNum: this.infoData.zt_credits,
+          num: this.infoData.credits || 0,
+          yNum: this.infoData.zt_credits || 0,
           title: '幸福币',
           border: false
         }

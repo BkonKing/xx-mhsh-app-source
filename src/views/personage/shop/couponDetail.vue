@@ -38,8 +38,12 @@
             </div>
             <div class="order-info">
               <div class="order-name-price">
-                <div class="order-name p-nowrap">{{goodsInfo.goods_name}}</div>
-                <div class="order-price">￥{{(goodsInfo.s_price || 0) / 100}}</div>
+                <div class="order-name p-nowrap">
+                  {{ goodsInfo.goods_name }}
+                </div>
+                <div class="order-price">
+                  ￥{{ (goodsInfo.s_price || 0) / 100 }}
+                </div>
               </div>
               <div class="order-sku-num">
                 1张
@@ -57,21 +61,26 @@
             :class="{ 'coupon-info--expanded': expanded }"
           >
             <div class="coupon-content" @click="expanded = true">
-              <div>券状态：未使用</div>
-              <div>券编号：fafe60540 (来源：页面领券)</div>
+              <div>券状态：{{ couponInfo.c_status_name }}</div>
+              <div>券编号：{{ couponInfo.user_coupon_numb }}</div>
               <template v-if="expanded">
                 <div>
-                  优惠说明：券前金额满500元享5折 | 食品分类可用 |
-                  店铺<strong>【美好优选】<i class="tf-icon tf-icon-dizhi"></i></strong>
+                  优惠说明：{{ couponInfo.coupon_explain
+                  }}<i
+                    v-if="shopInfo.shops_address"
+                    class="tf-icon tf-icon-dizhi"
+                    @click="goLocation"
+                  ></i>
+                  <!-- <strong
+                    >【美好优选】<i class="tf-icon tf-icon-dizhi"></i
+                  ></strong> -->
                 </div>
-                <div>有效期：2021.11.01 00:00 - 2021.11.11 00:00</div>
-                <div>领取时间：2021.11.01 00:00</div>
+                <div>有效期：{{ couponInfo.g_time }}</div>
+                <div>领取时间：{{ couponInfo.ctime }}</div>
                 <div>使用须知：</div>
-                <ul>
-                  <li>一个订单只能使用一张优惠券;</li>
-                  <li>可与其他活动优惠同时享受（提示不可用券的除外）;</li>
-                  <li>订单申请退款，优惠券不退回;</li>
-                </ul>
+                <div
+                  v-html="couponInfo.coupon_rule.replace(/\r\n|\n/g, '<br/>')"
+                ></div>
               </template>
             </div>
             <i
@@ -95,7 +104,13 @@
               共 1 件
             </div>
             <div class="order-price-text">合计:</div>
-            <div class="order-total-money">￥{{(goodsInfo.s_price || 0) / 100}}</div>
+            <div class="order-total-money">
+              ￥{{
+                (orderInfo.pay_type == 1
+                  ? orderInfo.happiness_price
+                  : orderInfo.pay_price) / 100
+              }}
+            </div>
           </div>
         </div>
         <div class="cont-session order-message">
@@ -105,9 +120,7 @@
               复制
             </div>
           </div>
-          <div class="order-message-item">
-            下单时间： {{ orderInfo.ctime }}
-          </div>
+          <div class="order-message-item">下单时间： {{ orderInfo.ctime }}</div>
           <div class="order-message-item">
             支付方式：{{ orderInfo.payment_type_name }}
           </div>
@@ -130,6 +143,14 @@ export default {
       orderInfo: {}
     }
   },
+  computed: {
+    shopInfo () {
+      return this.orderInfo.shops_user_coupon_info || {}
+    },
+    couponInfo () {
+      return this.shopInfo ? this.shopInfo.shops_user_coupon_data : {}
+    }
+  },
   created () {
     this.order_id = this.$route.query.id
     this.getData()
@@ -143,6 +164,17 @@ export default {
         if (res.success) {
           this.goodsInfo = res.order_goods_specs_list[0]
           this.orderInfo = res.order_project_info
+        }
+      })
+    },
+    goLocation () {
+      this.$router.push({
+        name: 'shopLocation',
+        query: {
+          name: this.shopInfo.shops_address,
+          address: `${this.shopInfo.shops_address_province}${this.shopInfo.shops_address_city}${this.shopInfo.shops_address_area}${this.shopInfo.shops_address}`,
+          lon: this.shopInfo.shops_longitude,
+          lat: this.shopInfo.shops_latitude
         }
       })
     },
@@ -367,5 +399,10 @@ export default {
     font-size: 22px;
     color: #ffa110;
   }
+}
+.tf-icon-dizhi {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #222;
 }
 </style>

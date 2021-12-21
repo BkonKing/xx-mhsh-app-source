@@ -567,6 +567,16 @@ const personageRouter = [
         /* webpackChunkName: "shopCouponVerification" */
         '@/views/personage/shop/verification'
       )
+  },
+  // 商户地址
+  {
+    path: '/personage/shop/location',
+    name: 'shopLocation',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopLocation" */
+        '@/views/personage/shop/location'
+      )
   }
 ]
 

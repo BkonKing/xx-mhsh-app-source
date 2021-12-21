@@ -40,7 +40,7 @@
           <div class="group-num">{{ data.receive }}</div>
           <div class="group-text">累计领取张数</div>
         </div>
-        <div class="group-item">
+        <div class="group-item" @click="goShopCouponUseRecord">
           <div class="group-num">{{ data.employ }}</div>
           <div class="group-text">累计使用张数</div>
         </div>
@@ -153,6 +153,17 @@ export default {
   methods: {
     emit (key) {
       this.$emit(key)
+    },
+    goShopCouponUseRecord () {
+      if (this.data.employ === '--' || !this.data.employ) {
+        return
+      }
+      this.$router.push({
+        name: 'shopCouponUseRecord',
+        query: {
+          couponId: this.data.id
+        }
+      })
     }
   }
 }

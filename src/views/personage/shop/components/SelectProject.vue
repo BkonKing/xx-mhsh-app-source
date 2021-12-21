@@ -40,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { searchProjectList } from '@/api/task'
+import { searchProject } from '@/api/personage'
 import { debounce } from '@/utils/util'
 export default {
   props: {
@@ -51,6 +51,10 @@ export default {
     value: {
       type: Boolean,
       default: false
+    },
+    selected: {
+      type: [String, Number],
+      default: ''
     }
   },
   data () {
@@ -66,14 +70,14 @@ export default {
     ...mapGetters(['currentProject'])
   },
   created () {
-    this.searchProjectList()
+    this.searchProject()
   },
   methods: {
     search: debounce(function () {
-      this.searchProjectList()
+      this.searchProject()
     }, 300),
-    searchProjectList () {
-      searchProjectList({
+    searchProject () {
+      searchProject({
         projectName: this.searchVal
       }).then(res => {
         this.projectList = res.data
@@ -105,6 +109,14 @@ export default {
     },
     projectShow (val) {
       this.$emit('input', val)
+    },
+    selected: {
+      handler (newValue) {
+        if (newValue !== this.selectProjectId) {
+          this.selectProjectId = newValue
+        }
+      },
+      immediate: true
     }
   }
 }

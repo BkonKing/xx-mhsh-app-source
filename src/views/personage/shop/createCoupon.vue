@@ -258,11 +258,11 @@
               class="prefix-input"
               :class="[
                 {
-                  'prefix-input--disabled': !!formData.pay_money || isDisabled
+                  'prefix-input--disabled': (!!formData.pay_money && isMoneyInput) || isDisabled
                 },
                 { 'error-field': validProps.pay_credit }
               ]"
-              :disabled="!!formData.pay_money || isDisabled"
+              :disabled="(!!formData.pay_money && isMoneyInput) || isDisabled"
               :placeholder="validProps.pay_credit ? '请输入' : ''"
               @blur="handleCreditBlur"
           /></van-col>
@@ -274,11 +274,11 @@
               class="prefix-input"
               :class="[
                 {
-                  'prefix-input--disabled': !!formData.pay_credit || isDisabled
+                  'prefix-input--disabled': (!!formData.pay_credit && isCreditInput) || isDisabled
                 },
                 { 'error-field': validProps.pay_money }
               ]"
-              :disabled="!!formData.pay_credit || isDisabled"
+              :disabled="(!!formData.pay_credit && isCreditInput) || isDisabled"
               :placeholder="validProps.pay_money ? '请输入' : ''"
               @blur="handleMoneyBlur"
           /></van-col>
@@ -377,6 +377,7 @@
               { 'error-field': validProps.goods_type_name }
             ]"
             :disabled="isDisabled"
+            :maxlength="10"
             :placeholder="validProps.goods_type_name ? '请输入' : ''"
             @blur="validate('goods_type_name')"
           />
@@ -390,6 +391,7 @@
               { 'error-field': validProps.goods_type_precinct }
             ]"
             :disabled="isDisabled"
+            :maxlength="10"
             :placeholder="validProps.goods_type_precinct ? '请输入' : ''"
             @blur="validate('goods_type_precinct')"
           />
@@ -437,6 +439,7 @@
     <select-project
       v-model="projectShow"
       title="指定社区"
+      :selected="formData.available_project_id"
       @projectSure="projectCall"
     ></select-project>
   </div>
@@ -648,6 +651,7 @@ export default {
       if (this.isCopy) {
         couponInfo.e_type = '2'
         couponInfo.validityTime = ''
+        couponInfo.days_num = ''
       } else if (couponInfo.g_stime || couponInfo.g_etime) {
         couponInfo.validityTime = `${couponInfo.g_stime}~${couponInfo.g_etime}`
         couponInfo.g_stime = ''
@@ -671,6 +675,7 @@ export default {
         couponInfo.goods_type_precinct = couponInfo.goods_type_name
         couponInfo.goods_type_name = ''
       }
+      couponInfo.house_role_ids = couponInfo.house_role_ids ? couponInfo.house_role_ids.split(',') : []
       couponInfo.shops_coupon_id = this.isCopy ? '' : couponInfo.id
       this.formData = couponInfo
     },
@@ -743,6 +748,10 @@ export default {
         }
       })
       if (validStatus) {
+        if (this.formData.coupon_type === '1' && parseFloat(this.formData.reduce_price) > parseFloat(this.formData.threshold_price)) {
+          this.$toast('使用门槛需大于券面额')
+          return
+        }
         this.saveCouponInfo()
       } else {
         this.$toast('请填写完整')
@@ -770,6 +779,7 @@ export default {
       if (+params.goods_type === 3) {
         params.goods_type_name = params.goods_type_precinct
       }
+      params.house_role_ids = params.house_role_ids.join(',')
       params.available_type = +params.available_type - 1 + ''
       this.shopId && (params.shops_id = this.shopId)
       const { success } = await saveCouponInfo(params)

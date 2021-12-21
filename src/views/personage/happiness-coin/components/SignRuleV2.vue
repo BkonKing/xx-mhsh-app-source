@@ -52,56 +52,56 @@ export default {
   width: 560px;
   background: #ffffff;
   border-radius: 10px;
-}
-.sign-header {
-  position: relative;
-  padding: 30px;
-  font-size: 32px;
-  font-weight: bold;
-  color: #222222;
-  &::before {
-    content: "";
-    display: block;
-    width: 60px;
-    height: 12px;
-    position: absolute;
-    bottom: 34px;
-    left: 30px;
-    z-index: -1;
+  .sign-btn {
+    width: 560px;
+    height: 80px;
     background: #febf00;
-    border-radius: 6px;
+    border-radius: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    border: none;
+    /deep/ .van-button__text {
+      line-height: 1;
+    }
   }
-  .tf-icon-guanbi {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    font-size: 30px;
-  }
-}
-.sign-rule-dialog {
-  padding: 20px 30px 40px;
-  .sign-rule-title {
-    font-size: 26px;
+  .sign-header {
+    position: relative;
+    padding: 30px;
+    font-size: 32px;
+    font-weight: bold;
     color: #222222;
-    line-height: 48px;
+    &::before {
+      content: "";
+      display: block;
+      width: 60px;
+      height: 12px;
+      position: absolute;
+      bottom: 34px;
+      left: 30px;
+      z-index: -1;
+      background: #febf00;
+      border-radius: 6px;
+    }
+    .tf-icon-guanbi {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 30px;
+    }
   }
-  .sign-rule-text {
-    font-size: 26px;
-    color: #8f8f94;
-    line-height: 52px;
-  }
-}
-.sign-btn {
-  width: 560px;
-  height: 80px;
-  background: #febf00;
-  border-radius: 10px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #ffffff;
-  border: none;
-  /deep/ .van-button__text {
-    line-height: 1;
+  .sign-rule-dialog {
+    padding: 20px 30px 40px;
+    .sign-rule-title {
+      font-size: 26px;
+      color: #222222;
+      line-height: 48px;
+    }
+    .sign-rule-text {
+      font-size: 26px;
+      color: #8f8f94;
+      line-height: 52px;
+    }
   }
 }
 </style>

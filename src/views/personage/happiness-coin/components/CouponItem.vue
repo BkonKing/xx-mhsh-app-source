@@ -34,16 +34,12 @@
     </div>
     <div class="coupon-panel" :class="{ 'coupon-panel--expanded': expanded }">
       <div class="coupon-content" @click="expanded = true">
-        <div>券状态：未使用</div>
-        <div>券编号：fafe60540 (来源：页面领券)</div>
         <template>
           <div>
-            优惠说明：券前金额满500元享5折 | 食品分类可用 | 店铺<strong
-              >【美好优选】<i class="tf-icon tf-icon-dizhi"></i
-            ></strong>
+            优惠说明：{{data.coupon_explain}} | {{data.goods_type_name}}<i  v-if="data.shops_address" class="tf-icon tf-icon-dizhi" @click="goLocation"></i
+            >
           </div>
-          <div>有效期：2021.11.01 00:00 - 2021.11.11 00:00</div>
-          <div>领取时间：2021.11.01 00:00</div>
+          <div>有效期：{{data.term_of_validity}}</div>
           <div>使用须知：</div>
           <ul>
             <li>一个订单只能使用一张优惠券;</li>
@@ -84,6 +80,17 @@ export default {
           this.completeTime = '截止 ' + obj.endTime
         }
       }
+    },
+    goLocation () {
+      this.$router.push({
+        name: 'shopLocation',
+        query: {
+          name: this.data.shops_address,
+          address: `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`,
+          lon: this.data.shops_longitude,
+          lat: this.data.shops_latitude
+        }
+      })
     }
   }
 }
@@ -162,12 +169,14 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 62px;
+    min-height: 64px;
+    padding: 14px 0;
     margin-top: 40px;
     border-top: 1px dashed #dddddd;
     .coupon-footer-text {
       font-size: 24px;
       color: #8f8f94;
+      line-height: 36px;
     }
   }
   .van-icon-arrow {
@@ -213,7 +222,13 @@ export default {
   transition: height 0.3s linear;
   overflow: hidden;
   &--expanded {
-    height: 480px;
+    height: auto;
+    // min-height: 480px;
+  }
+  .tf-icon-dizhi {
+    margin-left: 10px;
+    font-weight: bold;
+    color: #222;
   }
   .coupon-content {
     padding: 30px;

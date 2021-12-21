@@ -46,7 +46,7 @@
         <template>
           <div>
             优惠说明：{{ data.coupon_explain
-            }}<i class="tf-icon tf-icon-dizhi"></i>
+            }}<i v-if="data.shops_address" class="tf-icon tf-icon-dizhi" @click="goLocation"></i>
             <!--  | 店铺<strong
               >【美好优选】<i class="tf-icon tf-icon-dizhi"></i
             ></strong> -->
@@ -105,7 +105,19 @@ export default {
       return text[status]
     }
   },
-  methods: {}
+  methods: {
+    goLocation () {
+      this.$router.push({
+        name: 'shopLocation',
+        query: {
+          name: this.data.shops_address,
+          address: `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`,
+          lon: this.data.shops_longitude,
+          lat: this.data.shops_latitude
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -194,13 +206,15 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 62px;
+    min-height: 64px;
+    padding: 14px 0;
     margin-top: 40px;
     border-top: 1px dashed #dddddd;
     z-index: 1;
     .coupon-footer-text {
       font-size: 24px;
       color: #8f8f94;
+      line-height: 36px;
     }
   }
   .van-icon-arrow {
@@ -254,6 +268,11 @@ export default {
   border-radius: 0px 0px 10px 10px;
   transition: height 0.3s linear;
   overflow: hidden;
+  .tf-icon-dizhi {
+    margin-left: 10px;
+    font-weight: bold;
+    color: #222;
+  }
   &--expanded {
     height: auto;
   }

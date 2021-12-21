@@ -27,16 +27,15 @@
         </div>
       </div>
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
-        <div class="cell-item" @click="!formData.address_name && goMap()">
+        <div class="cell-item" @click="!formData.address && goMap()">
           <div class="item-left align-top" style="align-items: flex-start;">
             店铺地址
           </div>
           <div class="item-cont address-box">
-            <template v-if="!formData.address_name">不限</template>
-            <template v-else>
+            <template v-if="formData.address">
               <div class="address-name">
                 <van-field
-                  v-model="formData.address_name"
+                  v-model="formData.address"
                   type="text"
                   @input="updateAddressInput"
                 />
@@ -53,7 +52,7 @@
               </div>
             </template>
           </div>
-          <div @click="formData.address_name && goMap()" class="item-arrow">
+          <div @click="formData.address && goMap()" class="item-arrow">
             <i class="van-icon van-icon-location"></i>
           </div>
         </div>
@@ -68,14 +67,14 @@
           </div>
         </div>
         <div class="cell-item">
-          <div class="item-left">联系方式</div>
+          <div class="item-left">店铺电话</div>
           <div class="item-cont">
             <van-field v-model="formData.phone" maxlength="20" type="number" />
           </div>
         </div>
         <div class="cell-item" @click="projectShow = true">
           <div class="item-left">店铺归属</div>
-          <div class="item-cont p-30">{{ formData.projectName }}</div>
+          <div class="item-cont p-30">{{ formData.project_name }}</div>
           <div class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
@@ -102,10 +101,11 @@
       class="submit-btn"
       :disabled="!formData.shops_name"
       @click="submit"
-      >提交</van-button
+      >保存</van-button
     >
     <select-project
       v-model="projectShow"
+      :selected="formData.project_id"
       title="店铺隶属"
       @projectSure="projectCall"
     ></select-project>
@@ -127,12 +127,11 @@ export default {
       projectShow: false,
       formData: {
         shops_name: '',
-        bbb: '',
-        address_name: '',
+        address: '',
         business_hours: '',
         phone: '',
         project_id: '',
-        projectName: '',
+        project_name: '',
         shops_notice: ''
       }
     }
@@ -179,17 +178,15 @@ export default {
           },
           function (ret, err) {
             if (ret.status) {
-              const obj = {
-                location_limit: 1,
+              const addressInfo = {
                 longitude: addressData.lon,
                 latitude: addressData.lat,
                 address: addressData.name,
-                address_name: addressData.name,
                 address_province: ret.province,
                 address_city: ret.city,
                 address_area: ret.district
               }
-              that.formData = Object.assign({}, that.formData, obj)
+              that.formData = { ...this.formData, ...addressInfo }
             }
           }
         )
@@ -201,23 +198,18 @@ export default {
       //   lat: '26.052951'
       // }
       // const obj = {
-      //   location_limit: 1,
       //   longitude: addressData.lon,
       //   latitude: addressData.lat,
       //   address: addressData.name,
-      //   address_name: addressData.name,
       //   address_province: '福建省',
       //   address_city: '福州市',
       //   address_area: '仓山区'
       // }
-      // Object.assign(this.formData, obj)
-      // this.addressObj = obj
-      // console.log(111, this.formData)
+      // this.addressObj = Object.assign(this.formData, obj)
     },
     // 选完地址后的完成地点更改
     updateAddressInput (val) {
       if (!val) {
-        this.formData.location_limit = 0
         this.formData.longitude = ''
         this.formData.latitude = ''
         this.formData.address = ''
@@ -230,14 +222,13 @@ export default {
     // 项目选择(小区)
     projectCall (projectData) {
       const { id, project_name: projectName } = projectData
-      this.formData.projectName = projectName
+      this.formData.project_name = projectName
       this.formData.project_id = id
     },
     async submit () {
       if (!this.formData.shops_name) {
         this.$toast('请填写店铺名称')
       }
-      console.log(this.formData)
       // TODO：地址保存还需要保存经纬度等
       const { success } = await saveShopInformation({ ...this.formData, shops_id: this.shopId })
       if (success) {
