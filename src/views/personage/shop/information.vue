@@ -167,7 +167,6 @@ export default {
     },
     // 完成地点
     getMap () {
-      const that = this
       const addressData = this.$store.state.map_info || ''
       if (addressData) {
         const bMap = api.require('bMap')
@@ -176,7 +175,7 @@ export default {
             lon: addressData.lon,
             lat: addressData.lat
           },
-          function (ret, err) {
+          (ret, err) => {
             if (ret.status) {
               const addressInfo = {
                 longitude: addressData.lon,
@@ -186,7 +185,7 @@ export default {
                 address_city: ret.city,
                 address_area: ret.district
               }
-              that.formData = { ...this.formData, ...addressInfo }
+              this.formData = { ...this.formData, ...addressInfo }
             }
           }
         )

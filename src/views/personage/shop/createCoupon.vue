@@ -283,7 +283,8 @@
               @blur="handleMoneyBlur"
           /></van-col>
         </van-row>
-        <div
+        <collapsible-info v-if="remind && formData.coupon_mode === '2'" class="tf-mt-lg" :value="remind"></collapsible-info>
+        <!-- <div
           v-if="remind && formData.coupon_mode === '2'"
           class="alert-container tf-mt-lg"
           @click="expanded = !expanded"
@@ -296,7 +297,7 @@
             class="van-icon van-icon-arrow"
             :class="{ 'van-icon-arrow--expanded': expanded }"
           ></i>
-        </div>
+        </div> -->
         <div class="form-card-label tf-mt-lg">
           可领取用户
         </div>
@@ -450,11 +451,13 @@ import cloneDeep from 'lodash.clonedeep'
 import FormDatePicker from './components/FormDatePicker'
 import SelectPopup from './components/SelectPopup'
 import SelectProject from './components/SelectProject'
+import CollapsibleInfo from './components/CollapsibleInfo'
 import { getShopCouponInfo, saveCouponInfo } from '@/api/personage/shop'
 
 export default {
   name: 'shopCreateCoupon',
   components: {
+    CollapsibleInfo,
     FormDatePicker,
     SelectPopup,
     SelectProject
@@ -695,7 +698,6 @@ export default {
       this.validate('available_project_id')
     },
     validate (key) {
-      console.log(key, this.formData[key])
       !this.isLook && this.formData[key] && (this.validProps[key] = false)
     },
     handleSubmit () {
@@ -748,7 +750,7 @@ export default {
         }
       })
       if (validStatus) {
-        if (this.formData.coupon_type === '1' && parseFloat(this.formData.reduce_price) > parseFloat(this.formData.threshold_price)) {
+        if (this.formData.coupon_type === '1' && parseFloat(this.formData.reduce_price) >= parseFloat(this.formData.threshold_price)) {
           this.$toast('使用门槛需大于券面额')
           return
         }
