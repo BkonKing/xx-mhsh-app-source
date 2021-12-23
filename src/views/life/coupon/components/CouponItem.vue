@@ -1,13 +1,12 @@
 <template>
   <div class="coupon-item">
-    <div
-      class="coupon-card"
-      :class="{ 'coupon-card-un': +status !== 1 }"
-    >
+    <div class="coupon-card" :class="{ 'coupon-card-un': +status !== 1 }">
       <div class="coupon-money">
         <template v-if="+data.type === 1">
           <span class="coupon-money-icon">￥</span
-          ><span class="coupon-money-number">{{ isPenny ? (+data[priceKey] / 100) : data[priceKey] }}</span>
+          ><span class="coupon-money-number">{{
+            isPenny ? +data[priceKey] / 100 : data[priceKey]
+          }}</span>
         </template>
         <template v-else>
           <span class="coupon-money-number">{{ data[discountKey] }}</span
@@ -20,18 +19,26 @@
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
-            <div class="coupon-info-2">{{ data[couponNameKey] }}</div>
+            <div class="coupon-info-2">
+              <span v-if="+data.coupon_type === 1" class="shop-tag"
+                >线下店铺</span
+              >{{ data[couponNameKey] }}
+            </div>
             <div class="coupon-info-3">
-              {{ data.term_of_validity }}
+              {{ data.term_of_validity || data.g_time2 }}
             </div>
           </div>
           <div class="left-slot">
             <slot></slot>
           </div>
         </div>
-        <div class="coupon-footer" @click="expanded = !expanded">
+        <div class="coupon-footer" @click.stop="expanded = !expanded">
           <div class="coupon-footer-text">
-            {{ +data.coupon_type && data.coupon_explain2 ? data.coupon_explain2 : data.coupon_explain }}
+            {{
+              +data.coupon_type && data.coupon_explain2
+                ? data.coupon_explain2
+                : data.coupon_explain
+            }}
           </div>
           <i
             class="van-icon van-icon-arrow"
@@ -41,12 +48,16 @@
       </div>
     </div>
     <div class="coupon-panel" :class="{ 'coupon-panel--expanded': expanded }">
-      <div class="coupon-content" @click="expanded = true">
+      <div class="coupon-content" @click.stop="expanded = true">
         <div>券编号：{{ data.coupon_code }}</div>
         <template>
           <div>
             优惠说明：{{ data.coupon_explain
-            }}<i v-if="data.shops_address" class="tf-icon tf-icon-dizhi" @click="goLocation"></i>
+            }}<i
+              v-if="data.shops_address"
+              class="tf-icon tf-icon-dizhi"
+              @click="goLocation"
+            ></i>
             <!--  | 店铺<strong
               >【美好优选】<i class="tf-icon tf-icon-dizhi"></i
             ></strong> -->
@@ -190,6 +201,8 @@ export default {
       z-index: 1;
     }
     &-2 {
+      display: flex;
+      align-items: center;
       margin-bottom: 20px;
       font-size: 28px;
       font-weight: bold;
@@ -212,9 +225,12 @@ export default {
     border-top: 1px dashed #dddddd;
     z-index: 1;
     .coupon-footer-text {
+      flex: 1;
+      width: 0;
       font-size: 24px;
       color: #8f8f94;
       line-height: 36px;
+      @text-ellipsis();
     }
   }
   .van-icon-arrow {
@@ -293,5 +309,22 @@ export default {
       color: #222;
     }
   }
+}
+.shop-tag {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 120px;
+  height: 40px;
+  margin-right: 10px;
+  background: #ff65551a;
+  border-radius: 4px;
+  font-size: 24px;
+  color: #ff6555;
+  line-height: 1;
+}
+.coupon-card-un .shop-tag {
+  background: #f7f7f7;
+  color: #8f8f94;
 }
 </style>

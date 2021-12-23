@@ -24,6 +24,7 @@
       v-model="dateVisible"
       ref="date-picker"
       title="发布优惠券"
+      :show-calendar="release_type === '2'"
       :auto-close="false"
       @dateSure="publish"
     >

@@ -247,7 +247,7 @@ export default {
   border-top: 1px solid #EEEEEE;
 }
 .task-item__icon {
-  width: 48px;
+  // width: 48px;
   height: 48px;
   margin-right: 30px;
 }
@@ -260,6 +260,9 @@ export default {
 .task-item__remarks {
   font-size: 24px;
   color: #bbbbbb;
+  + .task-item__remarks {
+    margin-top: 10px;
+  }
   .tf-icon-zhushishuoming {
     margin-right: 10px;
   }

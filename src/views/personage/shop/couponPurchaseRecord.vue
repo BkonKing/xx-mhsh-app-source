@@ -8,7 +8,7 @@
       left-arrow
       @click-left="goBack"
     />
-    <div class="tf-body-container" id="notice-list-container">
+    <div class="tf-body-container" id="buy-coupon-list">
       <refreshList
         class="refresh-box"
         :list.sync="orderList"
@@ -30,9 +30,17 @@
                 alt=""
               />
               <div class="coupon-info">
-                <div class="card-name">{{ item.goods_name }}</div>
+                <div class="card-name">
+                  {{ item.order_goods_specs_list[0].goods_name }}
+                </div>
                 <div class="card-text">1张</div>
-                <div class="card-text"><span>不支持退货</span><i></i></div>
+                <div class="card-text tf-row-vertical-center">
+                  <span>不支持退货</span
+                  ><i
+                    class="van-icon van-icon-question-o"
+                    @click.stop="popoverVisible = true"
+                  ></i>
+                </div>
               </div>
               <div class="card-content-right">
                 <div class="card-money">
@@ -61,21 +69,25 @@
         </template>
       </refreshList>
     </div>
+    <explain-popover v-model="popoverVisible"></explain-popover>
   </div>
 </template>
 
 <script>
 import refreshList from '@/components/tf-refresh-list'
+import ExplainPopover from '@/views/personage/shop/components/ExplainPopover'
 import { getOrderList } from '@/api/life'
 
 export default {
   name: 'noticeIndex',
   components: {
+    ExplainPopover,
     refreshList
   },
   data () {
     return {
       search: '',
+      popoverVisible: false,
       orderList: [],
       scrollTop: 0
     }
@@ -84,7 +96,7 @@ export default {
   activated () {
     if (this.scrollTop) {
       document
-        .getElementById('notice-list-container')
+        .getElementById('buy-coupon-list')
         .getElementsByClassName(
           'tf-list-refresh'
         )[0].scrollTop = this.scrollTop
@@ -120,7 +132,7 @@ export default {
       this.$store.commit('deleteKeepAlive', from.name)
     } else {
       const el = document
-        .getElementById('notice-list-container')
+        .getElementById('buy-coupon-list')
         .getElementsByClassName('tf-list-refresh')
       this.scrollTop = (el[0] && el[0].scrollTop) || 0
     }
@@ -132,15 +144,16 @@ export default {
 <style lang="less" scoped>
 .tf-body-container {
   padding: 30px 20px;
-}
-.refresh-box {
-  width: 710px;
-  padding: 0;
+  .refresh-box {
+    width: 710px;
+    padding: 0;
+  }
 }
 .card-box {
   width: 710px;
   min-height: 372px;
   padding: 0 30px;
+  margin-bottom: 10px;
   background: #ffffff;
   border-radius: 10px;
   box-sizing: border-box;
@@ -177,6 +190,11 @@ export default {
         + .card-text {
           margin-bottom: 24px;
         }
+      }
+      .van-icon-question-o {
+        margin-left: 12px;
+        font-size: 30px;
+        color: #aaaaaa;
       }
     }
     .card-content-right {

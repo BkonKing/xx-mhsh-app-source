@@ -191,6 +191,7 @@ export default {
     min-height: 202px;
     padding-top: 30px;
     background: #ff6555;
+    border-radius: 10px 10px 0 0;
   }
   &-title {
     margin-bottom: 30px;
@@ -224,10 +225,12 @@ export default {
     padding-bottom: 50px;
   }
   &-shop-name {
+    padding: 0 90px;
     margin-bottom: 30px;
     font-size: 28px;
     font-weight: bold;
     color: #222222;
+    text-align: center;
   }
   &-text {
     margin-bottom: 20px;

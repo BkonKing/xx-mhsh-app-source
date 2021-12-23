@@ -50,6 +50,7 @@ import {
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { queryActive, getActivityPermission, getActivityUserInfo } from '@/api/activity'
+import { getCouponScan } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
@@ -218,7 +219,7 @@ export default {
           this.goTask(values[1])
           break
         case 'shangpuyhq':
-          this.goShopCouponVerification(value)
+          this.getCouponScan(value)
           break
         default:
           break
@@ -392,6 +393,14 @@ export default {
           title: err.message
         })
       })
+    },
+    async getCouponScan (codeInfo) {
+      const { data } = await getCouponScan({
+        code_info: codeInfo
+      })
+      if (+data.is_examine) {
+        this.goShopCouponVerification(codeInfo)
+      }
     },
     // 商户核销
     goShopCouponVerification (value) {

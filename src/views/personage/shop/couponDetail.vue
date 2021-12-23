@@ -50,7 +50,10 @@
               </div>
               <div class="order-action-session">
                 <div class="order-action-text">
-                  不支持退换
+                  不支持退换<i
+                    class="van-icon van-icon-question-o"
+                    @click.stop="popoverVisible = true"
+                  ></i>
                 </div>
                 <div class="order-buy-num">x1</div>
               </div>
@@ -130,14 +133,20 @@
         </div>
       </div>
     </div>
+    <explain-popover v-model="popoverVisible"></explain-popover>
   </div>
 </template>
 
 <script>
 import { getOrderDetail } from '@/api/life.js'
+import ExplainPopover from '@/views/personage/shop/components/ExplainPopover'
 export default {
+  components: {
+    ExplainPopover
+  },
   data () {
     return {
+      popoverVisible: false,
       expanded: false,
       goodsInfo: {},
       orderInfo: {}
@@ -404,5 +413,10 @@ export default {
   margin-left: 10px;
   font-weight: bold;
   color: #222;
+}
+.van-icon-question-o {
+  margin-left: 12px;
+  font-size: 30px;
+  color: #aaaaaa;
 }
 </style>

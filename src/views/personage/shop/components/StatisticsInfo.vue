@@ -3,7 +3,7 @@
     <div class="statistics-info-num">{{ num }}</div>
     <div class="statistics-info-title">{{ title }}</div>
     <div class="statistics-info-text">
-      昨日<span :class="{ 'is-have': +yNum }">{{ yNum }}</span>
+      昨日<span>{{ yNum }}</span>
     </div>
     <div v-if="border" class="right-line"></div>
   </div>
@@ -56,9 +56,9 @@ export default {
   &-text {
     font-size: 24px;
     color: #8f8f94;
-    .is-have {
-      color: #ef4a37;
-    }
+    // .is-have {
+    //   color: #ef4a37;
+    // }
   }
   .right-line {
     width: 1px;

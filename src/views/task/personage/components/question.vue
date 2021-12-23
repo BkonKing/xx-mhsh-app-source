@@ -68,6 +68,5 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-@import url("./complaint.less");
+<style lang="less" src="./complaint.less" scoped>
 </style>

@@ -412,18 +412,18 @@
 </template>
 
 <script>
-import tfCalendar from "@/components/tf-calendar";
-import tfList from "@/components/tf-list/index.vue";
-import tfListItem from "@/components/tf-list/item.vue";
-import SignRule from "./happiness-coin/components/SignRule";
-import { signin } from "@/api/personage";
-import { getUserActivity } from "@/api/activity";
-import { getMyTaskNum } from "@/api/task";
-import { mapGetters } from "vuex";
-import { handlePermission } from "@/utils/permission";
-import SignAlert from "@/views/home/components/SignAlert";
+import tfCalendar from '@/components/tf-calendar'
+import tfList from '@/components/tf-list/index.vue'
+import tfListItem from '@/components/tf-list/item.vue'
+import SignRule from './happiness-coin/components/SignRule'
+import { signin } from '@/api/personage'
+import { getUserActivity } from '@/api/activity'
+import { getMyTaskNum } from '@/api/task'
+import { mapGetters } from 'vuex'
+import { handlePermission } from '@/utils/permission'
+import SignAlert from '@/views/home/components/SignAlert'
 export default {
-  name: "personage",
+  name: 'personage',
   components: {
     [SignRule.name]: SignRule,
     tfList,
@@ -431,7 +431,7 @@ export default {
     tfCalendar,
     SignAlert
   },
-  data() {
+  data () {
     return {
       signStatus: true, // 签到状态
       showCalendar: false, // 签到日历是否隐藏
@@ -441,192 +441,192 @@ export default {
       signRuledialog: false, // 签到规则弹窗
       isOpenActivity: false, // 是否开启积分活动
       isShowTask: false, // 是否显示任务
-      taskNum: "", // 任务数量
-      activityTitle: "参与活动领积分",
+      taskNum: '', // 任务数量
+      activityTitle: '参与活动领积分',
       signAlertVisible: false, // 游客认证提醒弹窗
-      signMessage: "", // 签到成功提醒
-      signOwnerCredits: "", // 业主签到幸福币
+      signMessage: '', // 签到成功提醒
+      signOwnerCredits: '', // 业主签到幸福币
       shopData: {}
-    };
-  },
-  computed: {
-    ...mapGetters(["userInfo", "userType", "currentProject"]),
-    // 用户是否是客服部人员
-    isService() {
-      return this.userInfo.role_dep == 1;
-    },
-    // 用户是否有报事报修事务处理权限
-    isSwRole() {
-      return this.userInfo.swrole;
-    },
-    // 用户是否有水电抄表事务处理权限
-    isSdcbRole() {
-      return this.userInfo.sdcbrole;
-    },
-    // 是否有邀请活动
-    isInvite() {
-      return this.hbBannerData && this.hbBannerData.is_open_hb_banner;
-    },
-    // 美好红包banner图
-    inviteBanner() {
-      return this.hbBannerData.hb_banner_url || "";
-    },
-    // 是否为商户
-    isShop() {
-      return +this.shopData.is_shops;
     }
   },
-  activated() {
+  computed: {
+    ...mapGetters(['userInfo', 'userType', 'currentProject']),
+    // 用户是否是客服部人员
+    isService () {
+      return this.userInfo.role_dep == 1
+    },
+    // 用户是否有报事报修事务处理权限
+    isSwRole () {
+      return this.userInfo.swrole
+    },
+    // 用户是否有水电抄表事务处理权限
+    isSdcbRole () {
+      return this.userInfo.sdcbrole
+    },
+    // 是否有邀请活动
+    isInvite () {
+      return this.hbBannerData && this.hbBannerData.is_open_hb_banner
+    },
+    // 美好红包banner图
+    inviteBanner () {
+      return this.hbBannerData.hb_banner_url || ''
+    },
+    // 是否为商户
+    isShop () {
+      return +this.shopData.is_shops
+    }
+  },
+  activated () {
     // 重新获取用户信息
     this.$store
-      .dispatch("getMyAccount")
+      .dispatch('getMyAccount')
       .then(({ order_data, hb_banner_data, shops_data }) => {
-        this.orderData = order_data;
-        this.hbBannerData = hb_banner_data;
-        this.shopData = shops_data || {};
-      });
-    this.getActivityInfo();
-    this.getMyTaskNum();
+        this.orderData = order_data
+        this.hbBannerData = hb_banner_data
+        this.shopData = shops_data || {}
+      })
+    this.getActivityInfo()
+    this.getMyTaskNum()
   },
   methods: {
     // 获取积分活动信息
-    getActivityInfo() {
+    getActivityInfo () {
       getUserActivity({
         uid: this.userInfo.id
       }).then(({ activity_name: title, is_flag: isFlag }) => {
-        this.isOpenActivity = isFlag;
-        isFlag && title && (this.activityTitle = title);
-      });
+        this.isOpenActivity = isFlag
+        isFlag && title && (this.activityTitle = title)
+      })
     },
     // 获取我的任务数量
-    getMyTaskNum() {
+    getMyTaskNum () {
       getMyTaskNum().then(({ data }) => {
-        this.isShowTask = data.is_show_task;
-        this.taskNum = data.num;
-      });
+        this.isShowTask = data.is_show_task
+        this.taskNum = data.num
+      })
     },
     // 签到
-    sign() {
+    sign () {
       if (this.userInfo.signin_status === 0) {
         // 签到一定要开启定位
         handlePermission({
-          name: "location",
-          title: "定位服务未开启",
-          message: "为了提供更好服务，需要您开启定位"
+          name: 'location',
+          title: '定位服务未开启',
+          message: '为了提供更好服务，需要您开启定位'
         }).then(() => {
-          this.signLoading = true;
+          this.signLoading = true
           signin()
             .then(res => {
-              this.signLoading = false;
+              this.signLoading = false
               if (+res.open_box) {
-                this.signMessage = res.message;
-                this.signOwnerCredits = res.owner_credits;
-                this.signAlertVisible = true;
+                this.signMessage = res.message
+                this.signOwnerCredits = res.owner_credits
+                this.signAlertVisible = true
               } else {
                 this.$toast({
                   message: res.message
-                });
+                })
               }
-              this.$store.dispatch("getMyAccount");
+              this.$store.dispatch('getMyAccount')
               this.mtjEvent({
                 eventId: 4
-              });
+              })
             })
             .catch(() => {
-              this.signLoading = false;
-            });
-        });
+              this.signLoading = false
+            })
+        })
       } else if (this.userInfo.signin_status === 2) {
         // 不可签到，打开签到规则弹窗
-        this.signRuledialog = true;
+        this.signRuledialog = true
       } else {
         // 已签到，弹出签到日历
-        this.showCalendar = true;
+        this.showCalendar = true
       }
     },
     // 设置
-    goSetting() {
-      this.$router.push("/pages/personage/setting/index");
+    goSetting () {
+      this.$router.push('/pages/personage/setting/index')
     },
     // 消息
-    goMessage() {
-      this.$router.push("/pages/personage/message/index");
+    goMessage () {
+      this.$router.push('/pages/personage/message/index')
     },
     // 我的资料
-    goInformation() {
-      this.$router.push("/pages/personage/information/index");
+    goInformation () {
+      this.$router.push('/pages/personage/information/index')
     },
     // 点击事务处理
-    handleTransaction() {
-      let type;
+    handleTransaction () {
+      let type
       if (this.isSwRole) {
-        type = this.isService ? 1 : 3;
+        type = this.isService ? 1 : 3
       } else if (this.isSdcbRole) {
-        type = 8;
+        type = 8
       }
-      type && this.goTransaction(type);
+      type && this.goTransaction(type)
     },
     /**
      * 事务处理
      * @param type {number}  1：待处理，2：待分派，3：待结案，4：已结案，5：已取消，6：未抄电表 7：未抄水表 8:水电抄表全部
      */
-    goTransaction(type) {
-      const url = `/pages/personage/transaction/index?type=${type}`;
-      this.$router.push(url);
+    goTransaction (type) {
+      const url = `/pages/personage/transaction/index?type=${type}`
+      this.$router.push(url)
     },
     // 商户中心
-    goShopCentre() {
+    goShopCentre () {
       this.$router.push({
-        name: "shopIndex"
-      });
+        name: 'shopIndex'
+      })
     },
     /**
      * 我的订单
      * @param type {number} 无全部 1待付款 2待发货 3待收货 4退换
      */
-    goOrderList(type) {
+    goOrderList (type) {
       this.$router.push({
-        path: "/order/list",
+        path: '/order/list',
         query: {
           type
         }
-      });
+      })
     },
     // 意见反馈
-    goFeedback() {
-      this.$router.push("/pages/personage/feedback/index");
+    goFeedback () {
+      this.$router.push('/pages/personage/feedback/index')
     },
     // 幸福币
-    goHappiness() {
-      this.$router.push("/pages/personage/happiness-coin/index");
+    goHappiness () {
+      this.$router.push('/pages/personage/happiness-coin/index')
     },
     // 我的互动
-    goInteraction() {
-      this.$router.push("/pages/personage/interaction/index");
+    goInteraction () {
+      this.$router.push('/pages/personage/interaction/index')
     },
     // 常见问题
-    goQuestion() {
-      this.$router.push("/pages/personage/question/index");
+    goQuestion () {
+      this.$router.push('/pages/personage/question/index')
     },
     // 用户积分活动专区
-    goActivity() {
-      this.$router.push({ name: "activity" });
+    goActivity () {
+      this.$router.push({ name: 'activity' })
     },
     // 美好红包专区
-    goInvite() {
-      this.$router.push({ name: "inviteIndex" });
+    goInvite () {
+      this.$router.push({ name: 'inviteIndex' })
     },
     // 我的任务
-    goMyTask() {
-      this.$router.push({ name: "PersonageTaskIndex" });
+    goMyTask () {
+      this.$router.push({ name: 'PersonageTaskIndex' })
     }
   },
   filters: {
-    signText(value) {
-      return value === 1 ? "已签到" : "签到";
+    signText (value) {
+      return value === 1 ? '已签到' : '签到'
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

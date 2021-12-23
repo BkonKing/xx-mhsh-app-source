@@ -258,7 +258,8 @@
               class="prefix-input"
               :class="[
                 {
-                  'prefix-input--disabled': (!!formData.pay_money && isMoneyInput) || isDisabled
+                  'prefix-input--disabled':
+                    (!!formData.pay_money && isMoneyInput) || isDisabled
                 },
                 { 'error-field': validProps.pay_credit }
               ]"
@@ -274,7 +275,8 @@
               class="prefix-input"
               :class="[
                 {
-                  'prefix-input--disabled': (!!formData.pay_credit && isCreditInput) || isDisabled
+                  'prefix-input--disabled':
+                    (!!formData.pay_credit && isCreditInput) || isDisabled
                 },
                 { 'error-field': validProps.pay_money }
               ]"
@@ -283,7 +285,11 @@
               @blur="handleMoneyBlur"
           /></van-col>
         </van-row>
-        <collapsible-info v-if="remind && formData.coupon_mode === '2'" class="tf-mt-lg" :value="remind"></collapsible-info>
+        <collapsible-info
+          v-if="remind && formData.coupon_mode === '2'"
+          class="tf-mt-lg"
+          :value="remind"
+        ></collapsible-info>
         <!-- <div
           v-if="remind && formData.coupon_mode === '2'"
           class="alert-container tf-mt-lg"
@@ -428,15 +434,15 @@
           ></form-date-picker>
         </div>
       </div>
-      <van-button
-        v-if="!isLook"
-        class="submit-btn"
-        type="primary"
-        size="large"
-        @click="handleSubmit"
-        >提交</van-button
-      >
     </div>
+    <van-button
+      v-if="!isLook"
+      class="submit-btn"
+      type="primary"
+      size="large"
+      @click="handleSubmit"
+      >提交</van-button
+    >
     <select-project
       v-model="projectShow"
       title="指定社区"
@@ -499,7 +505,7 @@ export default {
           value: '5'
         },
         {
-          label: '无限',
+          label: '不限',
           value: '0'
         }
       ],
@@ -678,7 +684,9 @@ export default {
         couponInfo.goods_type_precinct = couponInfo.goods_type_name
         couponInfo.goods_type_name = ''
       }
-      couponInfo.house_role_ids = couponInfo.house_role_ids ? couponInfo.house_role_ids.split(',') : []
+      couponInfo.house_role_ids = couponInfo.house_role_ids
+        ? couponInfo.house_role_ids.split(',')
+        : []
       couponInfo.shops_coupon_id = this.isCopy ? '' : couponInfo.id
       this.formData = couponInfo
     },
@@ -719,7 +727,9 @@ export default {
       if (!(+this.formData.coupon_mode === 2)) {
         unValidation.push('pay_credit', 'pay_money')
       } else {
-        unValidation.push(this.formData.pay_credit ? 'pay_money' : 'pay_credit')
+        unValidation.push(
+          this.formData.pay_credit ? 'pay_money' : 'pay_credit'
+        )
       }
       if (this.isEdit) {
         unValidation.push('stock')
@@ -742,7 +752,10 @@ export default {
         unValidation.push('planTime')
       }
       Object.keys(props).forEach(key => {
-        if (!unValidation.includes(key) && (!this.formData[key] || this.formData[key].length === 0)) {
+        if (
+          !unValidation.includes(key) &&
+          (!this.formData[key] || this.formData[key].length === 0)
+        ) {
           validStatus = false
           this.validProps[key] = true
         } else {
@@ -750,7 +763,11 @@ export default {
         }
       })
       if (validStatus) {
-        if (this.formData.coupon_type === '1' && parseFloat(this.formData.reduce_price) >= parseFloat(this.formData.threshold_price)) {
+        if (
+          this.formData.coupon_type === '1' &&
+          parseFloat(this.formData.reduce_price) >=
+            parseFloat(this.formData.threshold_price)
+        ) {
           this.$toast('使用门槛需大于券面额')
           return
         }
@@ -784,7 +801,13 @@ export default {
       params.house_role_ids = params.house_role_ids.join(',')
       params.available_type = +params.available_type - 1 + ''
       this.shopId && (params.shops_id = this.shopId)
-      const { success } = await saveCouponInfo(params)
+      const { success } = await saveCouponInfo(params).catch(({ code }) => {
+        if (+code === 205) {
+          setTimeout(() => {
+            this.$router.go(-1)
+          }, 500)
+        }
+      })
       if (success) {
         this.$toast('提交成功')
         this.$router.go(-1)
@@ -1015,7 +1038,7 @@ export default {
 .submit-btn {
   width: 710px;
   height: 80px;
-  margin: 60px 20px 0;
+  margin: 30px 20px;
   background: #ff6555;
   border: none;
   border-radius: 40px !important;

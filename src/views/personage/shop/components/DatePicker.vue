@@ -2,6 +2,7 @@
   <div class="date-cont">
     <van-calendar
       v-model="dateShow"
+      :class="{ 'hidden-calendar': !showCalendar }"
       ref="calendar"
       :show-subtitle="false"
       :min-date="minDate"
@@ -13,14 +14,14 @@
     >
       <div class="date-header-block" slot="title">
         <div class="date-header tf-row-vertical-center">
-          <div class="date-tit">{{title}}</div>
+          <div class="date-tit">{{ title }}</div>
           <div
             class="date-close tf-row-vertical-center van-icon van-icon-cross"
             @click="close"
           ></div>
         </div>
         <div class="date-header-slot"><slot></slot></div>
-        <div class="time-field tf-row-center">
+        <div v-show="showCalendar" class="time-field tf-row-center">
           <div @click="timeBlur(0)" :class="{ active: timeIndex == 0 }">
             <van-field v-model="startTime" placeholder="开始时间" disabled />
           </div>
@@ -29,7 +30,7 @@
             <van-field v-model="endTime" placeholder="结束时间" disabled />
           </div>
         </div>
-        <div class="opera-block">
+        <div v-show="showCalendar" class="opera-block">
           <div
             @click="prev"
             class="opera-btn van-icon van-icon-arrow-left"
@@ -40,6 +41,7 @@
       </div>
       <div slot="footer">
         <van-datetime-picker
+          v-show="showCalendar"
           v-model="currentTime"
           :show-toolbar="false"
           :visible-item-count="3"
@@ -74,6 +76,10 @@ export default {
     data: {
       type: String,
       default: ''
+    },
+    showCalendar: {
+      type: Boolean,
+      default: true
     },
     title: {
       type: String,
@@ -507,5 +513,14 @@ export default {
 }
 .date-sure {
   padding: 30px 0;
+}
+.hidden-calendar {
+  /deep/ .van-calendar__days,
+  /deep/ .van-calendar__weekdays {
+    display: none;
+  }
+  /deep/ .van-calendar__body {
+    margin-bottom: 0 !important;
+  }
 }
 </style>

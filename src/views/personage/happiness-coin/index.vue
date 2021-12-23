@@ -73,7 +73,7 @@
         @signIn="handleSignIn"
       ></task-list>
     </div>
-    <van-tabs v-model="tabActive" class="credit-tabs" sticky offset-top="1.173rem" id="tabs">
+    <van-tabs v-model="tabActive" class="credit-tabs" sticky offset-top="1.17333rem" :lazy-render="false" id="tabs">
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
@@ -413,6 +413,7 @@ export default {
     }
     .van-tab--active .van-tab__text {
       font-size: 32px;
+      font-weight: bold;
     }
   }
   /deep/ .van-tabs__content {

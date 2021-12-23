@@ -55,6 +55,10 @@ export default {
     selected: {
       type: [String, Number],
       default: ''
+    },
+    haveParent: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -81,6 +85,12 @@ export default {
         projectName: this.searchVal
       }).then(res => {
         this.projectList = res.data
+        if (this.haveParent) {
+          this.projectList.unshift({
+            id: '0',
+            project_name: '美好生活家园运营中心'
+          })
+        }
         res.data.forEach((item, key) => {
           if (
             this.currentProject &&

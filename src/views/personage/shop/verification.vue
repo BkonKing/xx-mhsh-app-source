@@ -79,7 +79,7 @@ export default {
     }
   },
   created () {
-    this.codeInfo = this.$route.query.codeInfo
+    this.codeInfo = this.$route.query.codeInfo || 'shangpuyhq|100000|15447|bbe7d7778f3f4de5d86c77c6e8e219c0'
     this.getCouponScan()
   },
   methods: {
@@ -205,15 +205,18 @@ export default {
 }
 .coupon-row {
   display: flex;
-  margin-top: 30px;
+  margin-top: 26px;
   .coupon-label {
     width: 150px;
     font-size: 26px;
     color: #8f8f94;
+    line-height: 34px;
   }
   .coupon-value {
+    flex: 1;
     font-size: 26px;
     color: #222222;
+    line-height: 34px;
   }
 }
 

@@ -69,7 +69,7 @@
         <div class="cell-item">
           <div class="item-left">店铺电话</div>
           <div class="item-cont">
-            <van-field v-model="formData.phone" maxlength="20" type="number" />
+            <van-field v-model="formData.phone" maxlength="15" type="number" />
           </div>
         </div>
         <div class="cell-item" @click="projectShow = true">
@@ -106,6 +106,7 @@
     <select-project
       v-model="projectShow"
       :selected="formData.project_id"
+      :haveParent="true"
       title="店铺隶属"
       @projectSure="projectCall"
     ></select-project>

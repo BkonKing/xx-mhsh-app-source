@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="coupon-panel" :class="{ 'coupon-panel--expanded': expanded }">
-      <div class="coupon-content" @click="expanded = true">
+      <div class="coupon-content" @click.stop="expanded = true">
         <template>
           <div>
             优惠说明：{{data.coupon_explain}} | {{data.goods_type_name}}<i  v-if="data.shops_address" class="tf-icon tf-icon-dizhi" @click="goLocation"></i
@@ -107,7 +107,7 @@ export default {
   height: 223px;
   position: relative;
   background: #ffffff;
-  border-radius: 10px 10px 0px 0px;
+  border-radius: 10px;
   &::after {
     content: '';
     width: 200px;
@@ -131,12 +131,12 @@ export default {
     &-icon {
       padding-top: 6px;
       font-size: 28px;
-      font-weight: 600;
+      font-weight: bold;
       color: #ff6555;
     }
     &-number {
       font-size: 56px;
-      font-weight: 600;
+      font-weight: bold;
       color: #ff6555;
     }
     span + span {
@@ -174,9 +174,12 @@ export default {
     margin-top: 40px;
     border-top: 1px dashed #dddddd;
     .coupon-footer-text {
+      flex: 1;
+      width: 0;
       font-size: 24px;
       color: #8f8f94;
       line-height: 36px;
+      @text-ellipsis();
     }
   }
   .van-icon-arrow {

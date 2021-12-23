@@ -1,13 +1,15 @@
 <template>
   <div class="tf-bg tf-body">
     <van-nav-bar
-      :title="title"
       :fixed="true"
       :border="false"
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
     >
+      <template #title>
+        <span @click="jumpPage('shopInformation')">{{ title }}</span>
+      </template>
       <template #right>
         <img
           src="@/assets/personage/shop/scan.png"
@@ -19,19 +21,20 @@
     <div class="tf-body-container">
       <div class="shop-time">
         <template v-if="infoData.business_hours"
-          >营业时间 {{ infoData.business_hours }}</template
+          ><span @click="jumpPage('shopInformation')"
+            >营业时间 {{ infoData.business_hours }}</span
+          ></template
         >
       </div>
       <div class="shop-header">
-        <div class="shop-header-item">
+        <div class="shop-header-item" @click="haveCreate && jumpPage('create')">
           <div class="shop-header-view">
             {{ infoData.jt_lqz_num }}
           </div>
           <div class="shop-header-info">领取中优惠券</div>
           <van-button
-            v-if="haveCreate"
+            v-if="haveCreate && haveCashOut"
             class="shop-header-button"
-            @click="jumpPage('create')"
             >创建</van-button
           >
           <img
@@ -45,12 +48,20 @@
             {{ infoData.credits }}
           </div>
           <div class="shop-header-info">幸福币</div>
-          <!-- <van-button class="shop-header-button">提现</van-button> -->
+          <!-- <van-button v-if="haveCreate && haveCashOut" class="shop-header-button">提现</van-button> -->
           <img
             class="shop-header-image"
             src="@/assets/personage/shop/point-bg.png"
           />
         </div>
+      </div>
+      <div v-if="infoData.shops_notice" class="shop-notice">
+        <img
+          class="shop-notice-img"
+          src="@/assets/personage/shop/notice.png"
+          alt=""
+        />
+        <div class="shop-notice-text">{{ infoData.shops_notice }}</div>
       </div>
       <div class="shop-tool">
         <div class="shop-tool-title">常用工具</div>
@@ -194,11 +205,14 @@ export default {
   },
   methods: {
     getShopInfo () {
+      // this.$toast.loading()
       getShopInfo({
         shops_id: this.shopId
       }).then(({ data }) => {
         this.infoData = data
-      })
+      })/* .finally(() => {
+        this.$toast.clear()
+      }) */
     },
     jumpPage (key) {
       const routerName = {
@@ -246,7 +260,7 @@ export default {
   width: 710px;
   min-height: 220px;
   padding-top: 62px;
-  padding-bottom: 62px;
+  padding-bottom: 30px;
   margin-top: 62px;
   margin-left: 20px;
   border-radius: 10px;
@@ -266,7 +280,6 @@ export default {
     .shop-header-button {
       width: 120px;
       height: 48px;
-      margin-top: 30px;
       border-radius: 24px;
       border: none;
       background-color: #ff6555;
@@ -275,6 +288,7 @@ export default {
     }
     .shop-header-info {
       margin-top: 30px;
+      margin-bottom: 30px;
       font-size: 24px;
       color: #ffffff;
     }
@@ -328,5 +342,29 @@ export default {
   margin-left: 20px;
   background: #ffffff;
   border-radius: 10px;
+}
+.shop-notice {
+  display: flex;
+  align-items: center;
+  width: 710px;
+  height: 88px;
+  padding: 0 20px;
+  margin: 30px 20px 0;
+  background: #ffffff;
+  border-radius: 10px;
+  .shop-notice-img {
+    width: 69px;
+    height: 36px;
+    margin-right: 30px;
+  }
+  .shop-notice-text {
+    flex: 1;
+    width: 0;
+    margin-top: 14px;
+    font-size: 24px;
+    color: #8f8f94;
+    line-height: 1;
+    @text-ellipsis();
+  }
 }
 </style>

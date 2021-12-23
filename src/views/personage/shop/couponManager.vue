@@ -35,6 +35,9 @@
       :status="current"
       :id="userInfo.shops_id"
     ></coupon-list>
+    <div v-if="+shopInfo.is_coupon" class="fixed-btn-palceholder">
+      <van-button class="fixed-btn" @click="jumpPage('create')">创建优惠券</van-button>
+    </div>
   </div>
 </template>
 
@@ -42,6 +45,7 @@
 // /personage/shop/couponManager
 import { mapGetters } from 'vuex'
 import CouponList from './components/CouponList'
+import { getShopInfo } from '@/api/personage/shop'
 
 export default {
   name: 'shopCouponManager',
@@ -50,6 +54,7 @@ export default {
   },
   data () {
     return {
+      shopInfo: {},
       current: '0',
       scrollTop: 0
     }
@@ -57,7 +62,9 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created () {},
+  created () {
+    this.getShopInfo()
+  },
   activated () {
     if (this.scrollTop) {
       const el = this.$refs.list.$el.getElementsByClassName('tf-list-refresh')
@@ -75,8 +82,16 @@ export default {
     next()
   },
   methods: {
+    getShopInfo () {
+      getShopInfo({
+        shops_id: this.userInfo.shops_id
+      }).then(({ data }) => {
+        this.shopInfo = data
+      })
+    },
     jumpPage (key) {
       const routerName = {
+        create: 'shopCreateCoupon',
         couponUseRecord: 'shopCouponUseRecord',
         scanCode: 'scanCodeIndex'
       }
@@ -109,9 +124,6 @@ export default {
 .tf-body-container {
   /deep/ .van-tabs__wrap {
     height: 88px;
-    .van-tabs__line {
-      width: 56px !important;
-    }
   }
 }
 /deep/ .tf-list-refresh {
@@ -128,7 +140,7 @@ export default {
     color: #000000;
   }
   .van-tabs__line {
-    width: 40px !important;
+    width: 56px !important;
     height: 6px;
     left: -2px;
     background: #ff6555;
@@ -155,6 +167,23 @@ export default {
     font-size: 26px;
     color: #8f8f94;
     line-height: 1;
+  }
+}
+
+.fixed-btn-palceholder {
+  width: 100%;
+  height: 136px;
+  .fixed-btn {
+    width: 710px;
+    height: 80px;
+    margin: 28px 20px;
+    background: #FF5240;
+    border: none;
+    border-radius: 44px;
+    /deep/ .van-button__text {
+      color: #fff;
+      line-height: 1;
+    }
   }
 }
 </style>
