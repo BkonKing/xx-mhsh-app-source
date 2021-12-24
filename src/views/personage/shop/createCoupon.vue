@@ -21,6 +21,7 @@
         >
           <van-field
             v-model.trim="formData.coupon_name"
+            :class="{'max-word-limit': formData.coupon_name.length === 10}"
             maxlength="10"
             show-word-limit
             rows="1"

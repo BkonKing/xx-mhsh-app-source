@@ -365,10 +365,8 @@ export default {
   .shop-notice-text {
     flex: 1;
     width: 0;
-    margin-top: 14px;
     font-size: 24px;
     color: #8f8f94;
-    line-height: 1;
     @text-ellipsis();
   }
 }

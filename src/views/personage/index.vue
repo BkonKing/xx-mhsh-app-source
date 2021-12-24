@@ -150,8 +150,8 @@
               'justify-content': isService ? 'space-between' : 'space-around'
             }"
           >
-            <template v-if="!isSwRole">
-              <template v-if="!isService">
+            <template v-if="isSwRole">
+              <template v-if="isService">
                 <div class="manage-box" @click="goTransaction(1)">
                   <img
                     class="manage-image"

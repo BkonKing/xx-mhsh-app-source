@@ -18,6 +18,7 @@
         >
           <van-field
             v-model.trim="formData.shops_name"
+            :class="{'max-word-limit': formData.shops_name.length === 20}"
             rows="1"
             maxlength="20"
             show-word-limit
@@ -87,6 +88,7 @@
         <div class="area-block bottom-line tf-row-space-between">
           <van-field
             v-model.trim="formData.shops_notice"
+            :class="{'max-word-limit': formData.shops_notice.length === 50}"
             type="textarea"
             autosize
             rows="1"

@@ -29,7 +29,7 @@
       :auto-close="false"
       @dateSure="publish"
     >
-      <van-field class="date-radio" name="radio" label="发布时间：">
+      <van-field class="coupon-date-radio" name="radio" label="发布时间：">
         <template #input>
           <van-radio-group
             v-model="release_type"
@@ -116,12 +116,17 @@ export default {
         shops_id: this.shopId
       })
     },
-    // 刷新单条数据
-    updateSingleData () {
+    // 状态改变更新
+    updateStatusData () {
       if (+this.status) {
         this.list.splice(this.activeIndex, 1)
         return
       }
+      this.updateSingleData()
+    },
+    // 刷新单条数据
+    updateSingleData () {
+      console.log(this.activeIndex, +this.couponId)
       if (this.activeIndex !== '' && +this.couponId) {
         updateCouponInfo({
           shops_coupon_id: this.couponId
@@ -135,6 +140,7 @@ export default {
     },
     goCreateCoupon ({ id }, index, type) {
       this.activeIndex = index
+      this.couponId = id
       this.$router.push({
         name: 'shopCreateCoupon',
         query: {
@@ -171,7 +177,7 @@ export default {
       if (success) {
         this.dateVisible = false
         this.$toast('发布成功')
-        this.updateSingleData()
+        this.updateStatusData()
       }
     },
     openDelete ({ id }, index) {
@@ -201,7 +207,7 @@ export default {
       if (success) {
         this.finishVisible = false
         this.$toast('优惠券已结束')
-        this.updateSingleData()
+        this.updateStatusData()
       }
     }
   }
@@ -212,7 +218,7 @@ export default {
 .coupon-list {
   height: 100%;
 }
-.date-radio {
+.coupon-date-radio {
   padding: 30px 0 42px;
   background: #f7f7f7;
   /deep/ .van-radio__icon--checked + .van-radio__label {
@@ -221,7 +227,7 @@ export default {
   /deep/ .van-icon {
     width: 36px;
     height: 36px;
-    line-height: 1;
+    line-height: 36px;
   }
   /deep/ .van-radio__icon {
     height: 36px;

@@ -73,7 +73,7 @@
         @signIn="handleSignIn"
       ></task-list>
     </div>
-    <van-tabs v-model="tabActive" class="credit-tabs" sticky :offset-top="`${offsetTop}rem`" :lazy-render="false" id="tabs">
+    <van-tabs v-model="tabActive" class="credit-tabs" sticky :offset-top="`${offsetTop}px`" :lazy-render="false" id="tabs">
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
@@ -115,6 +115,7 @@ import { getCreditsGoodsList } from '@/api/home'
 import { signin, getCreditsAccount } from '@/api/personage'
 import { getShopCouponBanner } from '@/api/personage/shop'
 export default {
+  name: 'happinessCoinIndex',
   components: {
     tfCalendar,
     SignAlert,
@@ -139,8 +140,9 @@ export default {
       signMessage: '', // 签到成功提醒
       signOwnerCredits: '', // 业主签到幸福币
       tabActive: 0,
-      offsetTop: 1.17333,
-      shopBannerInfo: {}
+      offsetTop: 0,
+      shopBannerInfo: {},
+      scrollTop: 0
     }
   },
   computed: {
@@ -171,9 +173,24 @@ export default {
   },
   mounted () {
     // 安卓下部分需要添加顶部安全距离
-    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
-      this.offsetTop += api.safeArea.top / 37.5
+    if (process.env.VUE_APP_IS_APP === '1') {
+      this.offsetTop = api.safeArea.top + this.$refs.navBar.height
     }
+  },
+  activated () {
+    if (this.scrollTop) {
+      const el = this.$refs.container
+      el.scrollTop = this.scrollTop
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const el = this.$refs.container
+    this.scrollTop = el.scrollTop || 0
+    if (to.name !== 'goodsDetail') {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
+    }
+    next()
   },
   methods: {
     init () {
@@ -261,7 +278,7 @@ export default {
     // 菜单悬挂顶部，tab切换到“领券中心”
     openCouponCentre () {
       this.tabActive = 1
-      this.$refs.container.scrollTop = document.getElementById('tabs').offsetTop - this.$refs.navBar.height
+      this.$refs.container.scrollTop = document.getElementById('tabs').offsetTop - this.$refs.navBar.height - api.safeArea.top
     }
   }
 }

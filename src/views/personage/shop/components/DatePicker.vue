@@ -276,7 +276,10 @@ export default {
     },
     dateSure () {
       this.isBol = true
-      if (this.startTime && !this.endTime) {
+      if (!this.startTime) {
+        this.$toast('请选择开始时间')
+        return
+      } else if (!this.endTime) {
         this.$toast('请选择结束时间')
         return
       } else {
@@ -517,17 +520,18 @@ export default {
   .date-sure {
     padding: 30px 0;
   }
-  .hidden-calendar {
-    .van-calendar__days,
-    .van-calendar__weekdays {
-      display: none;
-    }
-    .van-calendar__body {
-      margin-bottom: 0 !important;
-    }
-  }
+
   .van-hairline-unset--top-bottom::after {
     border-width: 0;
+  }
+}
+.tf-date-picker.hidden-calendar {
+  .van-calendar__days,
+  .van-calendar__weekdays {
+    display: none;
+  }
+  .van-calendar__body {
+    margin-bottom: 0 !important;
   }
 }
 </style>

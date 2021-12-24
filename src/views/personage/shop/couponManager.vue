@@ -37,7 +37,7 @@
       :isCoupon="+shopInfo.is_coupon === 1"
     ></coupon-list>
     <div v-if="+shopInfo.is_coupon" class="fixed-btn-palceholder">
-      <van-button class="fixed-btn" @click="jumpPage('create')">创建优惠券</van-button>
+      <van-button class="fixed-btn" @click="createCoupon">创建优惠券</van-button>
     </div>
   </div>
 </template>
@@ -57,7 +57,8 @@ export default {
     return {
       shopInfo: {},
       current: '0',
-      scrollTop: 0
+      scrollTop: 0,
+      isCreate: false
     }
   },
   computed: {
@@ -73,10 +74,10 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    const lastPageName = ['shopCouponUseRecord', 'scanCodeIndex']
+    const lastPageName = ['shopCouponUseRecord', 'scanCodeIndex', 'shopCreateCoupon']
     const el = document.getElementsByClassName('tf-list-refresh')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
-    if (!lastPageName.includes(to.name)) {
+    if (!lastPageName.includes(to.name) || this.isCreate) {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
     }
@@ -89,6 +90,10 @@ export default {
       }).then(({ data }) => {
         this.shopInfo = data
       })
+    },
+    createCoupon () {
+      this.isCreate = true
+      this.jumpPage('create')
     },
     jumpPage (key) {
       const routerName = {
