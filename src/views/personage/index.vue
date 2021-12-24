@@ -150,8 +150,8 @@
               'justify-content': isService ? 'space-between' : 'space-around'
             }"
           >
-            <template v-if="isSwRole">
-              <template v-if="isService">
+            <template v-if="!isSwRole">
+              <template v-if="!isService">
                 <div class="manage-box" @click="goTransaction(1)">
                   <img
                     class="manage-image"
@@ -874,7 +874,6 @@ export default {
 }
 .shop-box {
   width: 710px;
-  min-height: 250px;
   padding: 34px 30px 48px;
   margin-bottom: 30px;
   background: #ffffff;
@@ -966,6 +965,10 @@ export default {
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 8px 8px #ffc97499;
+      .text-sm {
+        font-size: 24px !important;
+        line-height: 1;
+      }
     }
     .personage-badge {
       top: -10px;
@@ -1033,8 +1036,15 @@ export default {
     width: 56px;
     height: 56px;
   }
+  /deep/ .van-grid-item__icon-wrapper {
+    height: 56px;
+    line-height: 1;
+  }
   /deep/ .van-grid-item__text {
+    margin-top: 20px;
+    font-size: 24px;
     color: #222222;
+    line-height: 1;
   }
 }
 </style>

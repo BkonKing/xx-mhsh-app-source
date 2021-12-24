@@ -140,14 +140,14 @@
               <van-field
                 v-model="formData.reduce_discount"
                 type="number"
-                maxlength="5"
+                maxlength="3"
                 class="prefix-input"
                 :class="{ 'prefix-input--disabled': isDisabled }"
                 :disabled="isDisabled"
                 :placeholder="
                   validProps.reduce_discount ? '请输入' : '9折输入9'
                 "
-                @blur="validate('reduce_discount')"
+                @blur="validNumber"
               />
               <span class="suffix-text">折</span>
             </div></van-col
@@ -159,7 +159,7 @@
           </div>
           <van-field
             v-model="formData.stock"
-            type="number"
+            type="digit"
             maxlength="5"
             class="prefix-input"
           />
@@ -173,7 +173,7 @@
           </div>
           <van-field
             v-model="formData.stock"
-            type="number"
+            type="digit"
             maxlength="5"
             class="prefix-input"
             :class="[
@@ -254,7 +254,7 @@
             ><van-field
               v-model="formData.pay_credit"
               label="幸福币"
-              type="number"
+              type="digit"
               class="prefix-input"
               :class="[
                 {
@@ -437,6 +437,7 @@
     </div>
     <van-button
       v-if="!isLook"
+      v-preventReClick
       class="submit-btn"
       type="primary"
       size="large"
@@ -453,6 +454,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import cloneDeep from 'lodash.clonedeep'
 import FormDatePicker from './components/FormDatePicker'
 import SelectPopup from './components/SelectPopup'
@@ -471,7 +473,6 @@ export default {
   data () {
     return {
       type: '0', // 0：新增，1：修改，2：查看，3：复制
-      shopId: '',
       couponId: '',
       remind: '',
       couponTypes: [],
@@ -577,6 +578,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
+    shopId () {
+      return this.userInfo.shops_id
+    },
     title () {
       const title = {
         0: '创建优惠券',
@@ -607,8 +612,7 @@ export default {
     }
   },
   created () {
-    const { shopId, couponId, type } = this.$route.query
-    this.shopId = shopId
+    const { couponId, type } = this.$route.query
     this.couponId = couponId
     type && (this.type = type)
     this.getData()
@@ -704,6 +708,15 @@ export default {
       this.formData.available_project_name = projectName
       this.formData.available_project_id = id
       this.validate('available_project_id')
+    },
+    validNumber () {
+      const number = parseFloat(this.formData.reduce_discount)
+      if (number <= 0) {
+        this.formData.reduce_discount = 0.1
+      } else if (number >= 10) {
+        this.formData.reduce_discount = 9.9
+      }
+      this.validate('reduce_discount')
     },
     validate (key) {
       !this.isLook && this.formData[key] && (this.validProps[key] = false)
@@ -822,6 +835,9 @@ export default {
 <style lang="less" scoped>
 /deep/ .van-field__control {
   font-weight: bold;
+  &::placeholder {
+    font-weight: 400;
+  }
 }
 .error-color {
   color: #ff6555 !important;

@@ -1,19 +1,21 @@
 <template>
-  <div
-    ref="textCont"
-    class="collapsible-info"
-    :class="{ 'text-hidden': isOver && !expanded }"
-  >
+  <div class="collapsible-info-container">
     <div
-      v-show="isOver"
-      class="expanded"
-      :class="{ 'down-up': expanded }"
-      @click="showToggle"
-    ></div>
-    <div
-      v-html="valueHtml.replace(/\r\n|\n/g, '<br/>')"
-      class="collapsible-info-value"
-    ></div>
+      ref="textCont"
+      class="collapsible-info"
+      :class="{ 'text-hidden': isOver && !expanded }"
+    >
+      <div
+        v-show="isOver"
+        class="expanded"
+        :class="{ 'down-up': expanded }"
+        @click="showToggle"
+      ></div>
+      <div
+        v-html="valueHtml.replace(/\r\n|\n/g, '<br/>')"
+        class="collapsible-info-value"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -28,7 +30,7 @@ export default {
   },
   computed: {
     valueHtml () {
-      return '<i class="tf-icon tf-icon-shuoming"></i>' + this.value
+      return '<i class="tf-icon tf-icon-shuoming tf-mr-base"></i>' + this.value
     }
   },
   data () {
@@ -59,13 +61,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.collapsible-info {
+.collapsible-info-container {
+  display: flex;
   width: 650px;
-  min-height: 106px;
+  min-height: 82px;
   padding: 20px 24px;
-  position: relative;
   background: #ff68570d;
   border-radius: 10px;
+}
+.collapsible-info {
+  width: 100%;
+  position: relative;
   &.text-hidden {
     height: 84px;
     overflow: hidden;
@@ -88,24 +94,23 @@ export default {
 .expanded {
   width: 42px;
   height: 42px;
+  position: relative;
   font-size: 24px;
   line-height: 42px;
   color: #ff6555;
-  font-family: 'vant-icon';
+  font-family: "vant-icon";
   float: right;
   clear: both;
   &::after {
     content: "\F00A";
     position: absolute;
-    top: 60px;
-    right: 20px;
+    top: 0;
+    right: 6px;
     display: inline-block;
     transform: rotate(90deg) translateZ(0);
     transition: transform 0.3s;
   }
   &.down-up::after {
-    top: initial;
-    bottom: 20px;
     transform: rotate(-90deg);
   }
 }

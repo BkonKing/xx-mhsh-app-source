@@ -34,6 +34,7 @@
       class="tf-body-container tf-column"
       :status="current"
       :id="userInfo.shops_id"
+      :isCoupon="+shopInfo.is_coupon === 1"
     ></coupon-list>
     <div v-if="+shopInfo.is_coupon" class="fixed-btn-palceholder">
       <van-button class="fixed-btn" @click="jumpPage('create')">创建优惠券</van-button>

@@ -2,6 +2,7 @@
   <div class="date-cont">
     <van-calendar
       v-model="dateShow"
+      class="tf-date-picker"
       :class="{ 'hidden-calendar': !showCalendar }"
       ref="calendar"
       :show-subtitle="false"
@@ -10,6 +11,7 @@
       :show-confirm="false"
       :show-mark="false"
       :default-date="defaultDate"
+      get-container="body"
       @confirm="onConfirm"
     >
       <div class="date-header-block" slot="title">
@@ -53,7 +55,9 @@
           @change="timeChange"
         />
         <div class="date-sure">
-          <div @click="dateSure" class="task-btn">确定</div>
+          <van-button v-preventReClick @click="dateSure" class="task-btn"
+            >确定</van-button
+          >
         </div>
       </div>
     </van-calendar>
@@ -324,27 +328,27 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-/deep/ .nowDateClass {
-  position: relative;
-  z-index: 0;
-  &::after {
-    content: "";
-    width: 56px;
-    height: 56px;
-    position: absolute;
-    z-index: -1;
-    background: #eeeeee;
-    border-radius: 10px;
+<style lang="less">
+.tf-date-picker {
+  .nowDateClass {
+    position: relative;
+    z-index: 0;
+    &::after {
+      content: "";
+      width: 56px;
+      height: 56px;
+      position: absolute;
+      z-index: -1;
+      background: #eeeeee;
+      border-radius: 10px;
+    }
   }
-}
-.date-cont {
-  .van-popup--bottom.van-popup--round {
+  &.van-popup--bottom.van-popup--round {
     background: #f7f7f7;
     border-radius: 20px 20px 0px 0px;
     height: auto;
   }
-  /deep/.van-popup {
+  &.van-popup {
     .van-icon.van-popup__close-icon--top-right {
       display: none;
     }
@@ -417,110 +421,113 @@ export default {
       }
     }
   }
-}
-/deep/.van-calendar__header-title {
-  height: auto;
-}
-.date-header-block {
-  height: auto;
-}
-.date-header {
-  height: 90px;
-  line-height: 90px;
-  .date-tit {
-    font-size: 32px;
-    font-weight: 500;
-    color: #000000;
-    flex-grow: 1;
-    text-align: center;
-    padding-left: 76px;
+  .van-calendar__header-title {
+    height: auto;
   }
-  .date-close {
-    width: 50px;
-    height: 50px;
-    padding: 10px;
-    margin-right: 26px;
-    font-size: 40px;
-    justify-content: center;
-    color: #aaaaaa;
+  .date-header-block {
+    height: auto;
   }
-}
-.active {
-  /deep/.van-field {
-    border: 1px solid #ff6555;
-    // box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
-  }
-}
-/deep/.time-field {
-  height: 88px;
-  margin-bottom: 30px;
-  .van-field {
-    width: 324px;
-    height: 88px;
-    background: #ffffff;
-    border-radius: 10px;
-  }
-  .time-hr {
-    width: 62px;
-    justify-content: center;
-    &::after {
-      content: "";
-      width: 24px;
-      height: 2px;
-      background: #aaaaaa;
-      border-radius: 1px;
+  .date-header {
+    height: 90px;
+    line-height: 90px;
+    .date-tit {
+      font-size: 32px;
+      font-weight: 500;
+      color: #000000;
+      flex-grow: 1;
+      text-align: center;
+      padding-left: 76px;
+    }
+    .date-close {
+      width: 50px;
+      height: 50px;
+      padding: 10px;
+      margin-right: 26px;
+      font-size: 40px;
+      justify-content: center;
+      color: #aaaaaa;
     }
   }
-  .van-field__body {
-    height: 100%;
-    .van-field__control {
-      text-align: center;
-      font-weight: bold;
-      line-height: 1;
-      color: #000000;
-      &::placeholder {
-        font-weight: 400;
+  .active {
+    .van-field {
+      border: 1px solid #ff6555;
+      // box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.05);
+    }
+  }
+  .time-field {
+    height: 88px;
+    margin-bottom: 30px;
+    .van-field {
+      width: 324px;
+      height: 88px;
+      background: #ffffff;
+      border-radius: 10px;
+    }
+    .time-hr {
+      width: 62px;
+      justify-content: center;
+      &::after {
+        content: "";
+        width: 24px;
+        height: 2px;
+        background: #aaaaaa;
+        border-radius: 1px;
+      }
+    }
+    .van-field__body {
+      height: 100%;
+      .van-field__control {
+        text-align: center;
+        font-weight: bold;
+        line-height: 1;
+        color: #000000;
+        &::placeholder {
+          font-weight: 400;
+        }
       }
     }
   }
-}
-.opera-block {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 710px;
-  height: 116px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 10px 10px 0 0;
-  .opera-btn {
+  .opera-block {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40px;
-    height: 40px;
-    line-height: 1;
-    text-align: center;
-    background: #eeeeee;
-    border-radius: 50%;
-    font-size: 24px;
-    color: #333333;
+    width: 710px;
+    height: 116px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 10px 10px 0 0;
+    .opera-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 40px;
+      height: 40px;
+      line-height: 1;
+      text-align: center;
+      background: #eeeeee;
+      border-radius: 50%;
+      font-size: 24px;
+      color: #333333;
+    }
+    .year-month {
+      width: 208px;
+      line-height: 1;
+    }
   }
-  .year-month {
-    width: 208px;
-    line-height: 1;
+  .date-sure {
+    padding: 30px 0;
   }
-}
-.date-sure {
-  padding: 30px 0;
-}
-.hidden-calendar {
-  /deep/ .van-calendar__days,
-  /deep/ .van-calendar__weekdays {
-    display: none;
+  .hidden-calendar {
+    .van-calendar__days,
+    .van-calendar__weekdays {
+      display: none;
+    }
+    .van-calendar__body {
+      margin-bottom: 0 !important;
+    }
   }
-  /deep/ .van-calendar__body {
-    margin-bottom: 0 !important;
+  .van-hairline-unset--top-bottom::after {
+    border-width: 0;
   }
 }
 </style>

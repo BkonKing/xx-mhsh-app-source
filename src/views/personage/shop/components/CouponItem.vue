@@ -2,7 +2,7 @@
   <div class="coupon-item">
     <div
       class="coupon-card"
-      :class="{ 'coupon-card-expanded': expanded }"
+      :class="[{ 'coupon-card-expanded': expanded && isCoupon }]"
       @click="expanded = !expanded"
     >
       <div class="coupon-money">
@@ -30,7 +30,7 @@
         {{ data.coupon_status_name }}
       </div>
     </div>
-    <div class="coupon-panel" :class="{ 'coupon-panel-expanded': expanded }">
+    <div class="coupon-panel" :class="[{ 'coupon-panel-expanded': expanded }, {'coupon-panel-expanded-no-ops': expanded && !isCoupon}]">
       <div class="group-box">
         <div class="group-item">
           <div class="group-num">{{ data.surplus }}</div>
@@ -49,7 +49,7 @@
           <div class="group-text">累计使用率</div>
         </div>
       </div>
-      <div class="coupon-btn-box">
+      <div v-if="isCoupon" class="coupon-btn-box">
         <div
           v-if="+data.is_btn_open"
           class="coupon-btn"
@@ -124,6 +124,10 @@ export default {
       default: () => ({
         status: 1
       })
+    },
+    isCoupon: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -199,6 +203,7 @@ export default {
       background: #eeeeee;
     }
     span {
+      font-weight: bold;
       font-size: 24px;
     }
   }
@@ -329,5 +334,8 @@ export default {
 }
 .coupon-panel-expanded {
   height: 286px;
+}
+.coupon-panel-expanded-no-ops {
+  height: 176px;
 }
 </style>

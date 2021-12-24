@@ -50,7 +50,7 @@ import {
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { queryActive, getActivityPermission, getActivityUserInfo } from '@/api/activity'
-import { getCouponScan } from '@/api/personage/shop'
+import { getShopInfo } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
@@ -80,7 +80,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    shopId () {
+      return this.userInfo.shops_id
+    }
   },
   created () {
     this.current = parseInt(this.$route.query.current) || 1
@@ -219,7 +222,7 @@ export default {
           this.goTask(values[1])
           break
         case 'shangpuyhq':
-          this.getCouponScan(value)
+          this.shopId && this.getShopInfo(value)
           break
         default:
           break
@@ -394,13 +397,14 @@ export default {
         })
       })
     },
-    async getCouponScan (codeInfo) {
-      const { data } = await getCouponScan({
-        code_info: codeInfo
+    getShopInfo (codeInfo) {
+      getShopInfo({
+        shops_id: this.shopId
+      }).then(({ data }) => {
+        if (+data.is_scan) {
+          this.goShopCouponVerification(codeInfo)
+        }
       })
-      if (+data.is_examine) {
-        this.goShopCouponVerification(codeInfo)
-      }
     },
     // 商户核销
     goShopCouponVerification (value) {

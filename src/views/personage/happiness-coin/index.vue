@@ -73,7 +73,7 @@
         @signIn="handleSignIn"
       ></task-list>
     </div>
-    <van-tabs v-model="tabActive" class="credit-tabs" sticky offset-top="1.17333rem" :lazy-render="false" id="tabs">
+    <van-tabs v-model="tabActive" class="credit-tabs" sticky :offset-top="`${offsetTop}rem`" :lazy-render="false" id="tabs">
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
@@ -139,6 +139,7 @@ export default {
       signMessage: '', // 签到成功提醒
       signOwnerCredits: '', // 业主签到幸福币
       tabActive: 0,
+      offsetTop: 1.17333,
       shopBannerInfo: {}
     }
   },
@@ -167,6 +168,12 @@ export default {
   created () {
     this.init()
     this.getCreditsGoodsList()
+  },
+  mounted () {
+    // 安卓下部分需要添加顶部安全距离
+    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
+      this.offsetTop += api.safeArea.top / 37.5
+    }
   },
   methods: {
     init () {

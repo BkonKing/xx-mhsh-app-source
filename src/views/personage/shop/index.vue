@@ -27,7 +27,7 @@
         >
       </div>
       <div class="shop-header">
-        <div class="shop-header-item" @click="haveCreate && jumpPage('create')">
+        <div class="shop-header-item" @click="jumpPage('couponManger')">
           <div class="shop-header-view">
             {{ infoData.jt_lqz_num }}
           </div>
@@ -35,6 +35,7 @@
           <van-button
             v-if="haveCreate && haveCashOut"
             class="shop-header-button"
+            @click.stop="jumpPage('create')"
             >创建</van-button
           >
           <img
@@ -42,7 +43,7 @@
             src="@/assets/personage/shop/point-bg.png"
           />
         </div>
-        <div class="shop-header-item">
+        <div class="shop-header-item" @click="jumpPage('credits')">
           <div class="shop-header-VerticalLine" />
           <div class="shop-header-view">
             {{ infoData.credits }}
@@ -55,7 +56,11 @@
           />
         </div>
       </div>
-      <div v-if="infoData.shops_notice" class="shop-notice">
+      <div
+        v-if="infoData.shops_notice"
+        class="shop-notice"
+        @click="jumpPage('shopInformation')"
+      >
         <img
           class="shop-notice-img"
           src="@/assets/personage/shop/notice.png"
@@ -210,7 +215,7 @@ export default {
         shops_id: this.shopId
       }).then(({ data }) => {
         this.infoData = data
-      })/* .finally(() => {
+      }) /* .finally(() => {
         this.$toast.clear()
       }) */
     },

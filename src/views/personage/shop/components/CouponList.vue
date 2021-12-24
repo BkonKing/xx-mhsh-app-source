@@ -5,6 +5,7 @@
         <!-- <coupon-item :data="item"></coupon-item> -->
         <coupon-item
           :data="item"
+          :isCoupon="isCoupon"
           @publish="openPublish(item, index)"
           @delete="openDelete(item, index)"
           @finish="openFinish(item, index)"
@@ -82,6 +83,10 @@ export default {
     status: {
       type: [Number, String],
       default: ''
+    },
+    isCoupon: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

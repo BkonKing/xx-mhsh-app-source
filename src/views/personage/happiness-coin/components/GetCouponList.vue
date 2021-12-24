@@ -13,8 +13,9 @@
           >
           <van-button
             v-if="+coupon.is_complete"
+            v-preventReClick
             class="btn-click"
-            @click.stop="handleReceive(coupon)"
+            @click.stop="handleReceive(coupon, index, i)"
             ><i
               v-if="coupon.pay_type === '1'"
               class="tf-icon tf-icon-xingfubi1"
@@ -66,7 +67,9 @@ export default {
       orderId: '',
       payAmount: 0, // 支付金额
       payOrderInfo: {},
-      data: []
+      data: [],
+      activeShopIndex: 0,
+      activeCouponIndex: 0
     }
   },
   filters: {
@@ -88,26 +91,35 @@ export default {
       const { data } = await getCouponReceiveList()
       this.data = data
     },
-    handleReceive (coupon) {
+    handleReceive (coupon, shopIndex, couponIndex) {
       this.activeCoupon = coupon
+      this.activeShopIndex = shopIndex
+      this.activeCouponIndex = couponIndex
       if (+coupon.pay_type === 1) {
         this.showPayCredit = true
         return
       }
       this.receiveCoupon()
     },
-    async receiveCoupon () {
-      const { order_id: orderId } = await receiveCoupon({
+    receiveCoupon () {
+      receiveCoupon({
         shops_coupon_id: this.activeCoupon.shops_coupon_id
       })
-      // 付费支付
-      if (+this.activeCoupon.pay_type === 2) {
-        this.orderId = orderId
-        this.payAmount = this.activeCoupon.pay_money
-        this.showPaySwal = true
-        return
-      }
-      this.receiveSuccess()
+        .then(({ order_id: orderId }) => {
+          // 付费支付
+          if (+this.activeCoupon.pay_type === 2) {
+            this.orderId = orderId
+            this.payAmount = this.activeCoupon.pay_money
+            this.showPaySwal = true
+            return
+          }
+          this.receiveSuccess()
+        })
+        .catch(({ code }) => {
+          if (+code === 203) {
+            this.deleteCoupon()
+          }
+        })
     },
     receiveSuccess () {
       const {
@@ -122,6 +134,13 @@ export default {
       this.$toast(`恭喜，抢到了！\n 下单可${content}`)
       this.getCouponReceiveList()
       this.$emit('getSuccess')
+    },
+    deleteCoupon () {
+      const shopCoupon = this.data[this.activeShopIndex].list
+      shopCoupon.splice(this.activeCouponIndex, 1)
+      if (shopCoupon.length === 0) {
+        this.data.splice(this.activeShopIndex, 1)
+      }
     },
     // 支付
     surePaySwal (callData) {

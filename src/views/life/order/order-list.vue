@@ -30,7 +30,12 @@
             :load="load"
           >
             <template v-slot="{ item, index }">
+              <coupon-order-card
+                v-if="+item.order_type === 3"
+                :data="item"
+              ></coupon-order-card>
               <div
+                v-else
                 class="order-item"
                 @click="
                   linkFunc(item.order_type == 1 ? 12 : 13, { id: item.id })
@@ -219,7 +224,8 @@
 </template>
 
 <script>
-import { NavBar, CountDown, List, Tab, Tabs } from 'vant'
+import refreshList from '@/components/tf-refresh-list'
+import CouponOrderCard from '@/views/personage/shop/components/CouponOrderCard'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
@@ -233,21 +239,16 @@ import {
   getIsShare
 } from '@/api/life.js'
 import GoodsShare from '../components/goods-share.vue'
-import refreshList from '@/components/tf-refresh-list'
 export default {
   name: 'orderList',
   components: {
-    [NavBar.name]: NavBar,
-    [CountDown.name]: CountDown,
-    [List.name]: List,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
     explainSwal,
     remindSwal,
     ztOrder,
     paySwal,
     GoodsShare,
-    refreshList
+    refreshList,
+    CouponOrderCard
   },
   data () {
     return {
@@ -655,6 +656,26 @@ export default {
 <style scoped src="../../../styles/order.css"></style>
 <style scoped src="../../../styles/nav.css"></style>
 <style lang="less" scoped>
+.order-header {
+  height: 82px;
+}
+.order-item {
+  margin-bottom: 10px;
+}
+.order-no {
+  font-size: 24px;
+  line-height: 1;
+  color: #222222;
+}
+.order-status {
+  font-size: 24px;
+  line-height: 1;
+}
+.order-name,
+.order-price {
+  font-weight: bold;
+  color: #222222;
+}
 // tabs
 /deep/ .van-tabs {
   .van-tabs__content {

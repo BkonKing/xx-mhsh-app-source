@@ -1,5 +1,5 @@
 <template>
-  <div v-show="value" class="mask-bg" @click="calcel(0)">
+  <div v-if="value" class="mask-bg" @click="calcel(0)">
     <div class="mask-block" @click.stop="calcel(1)">
       <div class="mask-close" @click.stop="calcel(0)">
         <img class="img-100" src="@/assets/img/close.png" />

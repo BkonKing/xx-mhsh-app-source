@@ -33,12 +33,12 @@
             <div class="info-center">
               <div class="tf-row">
                 <span class="info-view">{{ item.coupon_explain }}</span>
+                <div class="info-tag">{{ item.coupon_scene_name }}</div>
               </div>
-              <div class="info-text">{{ item.mobile }}</div>
-            </div>
-            <div class="info-right">
-              <div class="info-tag">{{ item.coupon_scene_name }}</div>
-              <div class="info-text">{{ item.u_time }}</div>
+              <div class="tf-row">
+                <div class="info-text">{{ item.mobile }}</div>
+                <div class="info-text">{{ item.u_time }}</div>
+              </div>
             </div>
           </div>
         </template>
@@ -151,40 +151,27 @@ export default {
   .info-center {
     flex: 1;
     .tf-row {
-      margin-bottom: 20px;
+      justify-content: space-between;
+      + .tf-row {
+        margin-top: 20px;
+      }
     }
     .info-view {
+      flex: 1;
+      width: 0;
+      margin-right: 20px;
       position: relative;
       font-size: 28px;
       color: #222222;
       line-height: 40px;
+      @text-ellipsis();
     }
-    .info-view + .info-view {
-      margin-left: 40px;
-      &::before {
-        content: "";
-        display: block;
-        position: absolute;
-        width: 1px;
-        height: 28px;
-        top: 4px;
-        left: -20px;
-        background: #8f8f94;
-      }
-    }
-  }
-  .info-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    flex: 1;
     .info-tag {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 120px;
       height: 40px;
-      margin-bottom: 20px;
       background: #ff65551a;
       border-radius: 4px;
       font-size: 24px;

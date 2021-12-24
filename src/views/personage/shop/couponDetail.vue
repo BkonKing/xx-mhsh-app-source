@@ -157,7 +157,7 @@ export default {
       return this.orderInfo.shops_user_coupon_info || {}
     },
     couponInfo () {
-      return this.shopInfo ? this.shopInfo.shops_user_coupon_data : {}
+      return this.shopInfo.shops_user_coupon_data ? this.shopInfo.shops_user_coupon_data : {}
     }
   },
   created () {

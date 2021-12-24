@@ -43,6 +43,7 @@
         </div>
       </div>
       <van-button
+        v-preventReClick
         class="dialog-btn"
         :class="{ 'dialog-btn-grey': !isCanUse }"
         @click="confirm"
