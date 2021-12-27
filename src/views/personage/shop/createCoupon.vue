@@ -442,6 +442,7 @@
       class="submit-btn"
       type="primary"
       size="large"
+      :loading="submitLoading"
       @click="handleSubmit"
       >提交</van-button
     >
@@ -473,6 +474,7 @@ export default {
   },
   data () {
     return {
+      submitLoading: false,
       type: '0', // 0：新增，1：修改，2：查看，3：复制
       couponId: '',
       remind: '',
@@ -723,6 +725,7 @@ export default {
       !this.isLook && this.formData[key] && (this.validProps[key] = false)
     },
     handleSubmit () {
+      this.submitLoading = true
       let validStatus = true
       const props = cloneDeep(this.validProps)
       const unValidation = []
@@ -783,11 +786,13 @@ export default {
             parseFloat(this.formData.threshold_price)
         ) {
           this.$toast('使用门槛需大于券面额')
+          this.submitLoading = false
           return
         }
         this.saveCouponInfo()
       } else {
         this.$toast('请填写完整')
+        this.submitLoading = false
       }
     },
     async saveCouponInfo () {
@@ -816,12 +821,14 @@ export default {
       params.available_type = +params.available_type - 1 + ''
       this.shopId && (params.shops_id = this.shopId)
       const { success } = await saveCouponInfo(params).catch(({ code }) => {
+        this.submitLoading = false
         if (+code === 205) {
           setTimeout(() => {
             this.$router.go(-1)
           }, 500)
         }
       })
+      this.submitLoading = false
       if (success) {
         this.$toast('提交成功')
         this.$router.go(-1)
