@@ -73,11 +73,23 @@
         @signIn="handleSignIn"
       ></task-list>
     </div>
-    <van-tabs v-model="tabActive" class="credit-tabs" sticky :offset-top="`${offsetTop}px`" :lazy-render="false" id="tabs">
+    <van-tabs
+      v-model="tabActive"
+      class="credit-tabs"
+      sticky
+      :offset-top="`${offsetTop}px`"
+      :lazy-render="false"
+      id="tabs"
+    >
       <van-tab title="兑换专区">
         <credit-area :data="creditsGoods"></credit-area>
       </van-tab>
-      <van-tab title="领券中心"><get-coupon-list @getSuccess="init"></get-coupon-list></van-tab>
+      <van-tab v-if="showCouponCentre" title="领券中心"
+        ><get-coupon-list
+          @getSuccess="init"
+          @noData="showCouponCentre = false"
+        ></get-coupon-list
+      ></van-tab>
       <van-tab
         v-if="taskData && taskData.length"
         title="任务中心"
@@ -142,7 +154,8 @@ export default {
       tabActive: 0,
       offsetTop: 0,
       shopBannerInfo: {},
-      scrollTop: 0
+      scrollTop: 0,
+      showCouponCentre: true
     }
   },
   computed: {
@@ -278,7 +291,10 @@ export default {
     // 菜单悬挂顶部，tab切换到“领券中心”
     openCouponCentre () {
       this.tabActive = 1
-      this.$refs.container.scrollTop = document.getElementById('tabs').offsetTop - this.$refs.navBar.height - api.safeArea.top
+      this.$refs.container.scrollTop =
+        document.getElementById('tabs').offsetTop -
+        this.$refs.navBar.height -
+        api.safeArea.top
     }
   }
 }

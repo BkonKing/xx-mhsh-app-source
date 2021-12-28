@@ -90,6 +90,9 @@ export default {
     async getCouponReceiveList () {
       const { data } = await getCouponReceiveList()
       this.data = data
+      if (!this.data || !this.data.length) {
+        this.$emit('noData')
+      }
     },
     handleReceive (coupon, shopIndex, couponIndex) {
       this.activeCoupon = coupon
