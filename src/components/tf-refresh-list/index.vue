@@ -10,16 +10,16 @@
       <div class="tf-text tf-text-grey tf-padding">暂无数据</div>
     </slot>
     <van-list
-      class="tf-van-list"
       v-model="loading"
+      v-bind="$attrs"
       :finished="finished"
       :error.sync="error"
       loading-text="加载中"
       error-text="请求失败，请重新加载"
-      v-bind="$attrs"
+      class="tf-van-list"
       @load="onLoad"
     >
-      <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="i">
+      <van-cell class="tf-van-cell" v-for="(item, i) in listChild" :key="item[rowKey] || i">
         <slot :item="item" :index="i"></slot>
       </van-cell>
     </van-list>
@@ -53,6 +53,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    rowKey: {
+      type: String,
+      default: ''
     }
   },
   data () {

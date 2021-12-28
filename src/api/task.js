@@ -90,7 +90,7 @@ export function getTaskTypeList (params) {
   return request.post('/linli/linli/linli_task_type', params)
 }
 
-// 搜素项目
+// 搜索项目
 export function searchProjectList (params) {
   return request.post('/linli/linli/searchProject', params)
 }

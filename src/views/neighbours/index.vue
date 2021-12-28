@@ -587,6 +587,8 @@ export default {
   bottom: 128px;
   width: 108px;
   height: 108px;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
   .publish-img {
     width: 100%;
     height: 100%;

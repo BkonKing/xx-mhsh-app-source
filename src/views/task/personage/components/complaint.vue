@@ -80,9 +80,9 @@ export default {
 }
 </script>
 
+<style lang="less" src="./complaint.less" scoped>
+</style>
 <style lang="less" scoped>
-@import url("./complaint.less");
-
 .complaint-caption {
   font-size: 26px;
   line-height: 1;

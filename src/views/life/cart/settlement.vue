@@ -562,6 +562,7 @@ export default {
               this.openPaySwal()
             }
           } else {
+            this.$toast(res.message)
             if (res.code_val == 2) {
               this.getData()
             } else {

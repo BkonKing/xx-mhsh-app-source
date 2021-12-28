@@ -87,10 +87,25 @@ export default {
 <style lang="less" scoped>
 .coin-list {
   width: 710px !important;
-  // padding: 0 10px;
+  padding: 0;
   // margin: 30px 20px;
-  background-color: #fff;
   border-radius: 10px;
+  /deep/ .tf-van-cell {
+    padding: 0 30px;
+    margin-bottom: 0;
+    background: #ffffff;
+  }
+  /deep/ .tf-van-cell + .tf-van-cell {
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      left: 30px;
+      right: 30px;
+      height: 1px;
+      background: #eee;
+    }
+  }
 }
 .tf-body-container {
   @flex-column();
