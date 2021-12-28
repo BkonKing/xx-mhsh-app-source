@@ -660,6 +660,12 @@ export default {
         couponInfo.g_stime = ''
         couponInfo.g_etime = ''
       }
+      // 券类型
+      if (+this.formData.coupon_type === 1) {
+        couponInfo.reduce_discount = ''
+      } else if (+this.formData.coupon_type === 2) {
+        couponInfo.reduce_price = ''
+      }
       if (this.isCopy) {
         couponInfo.planTime = ''
         couponInfo.release_type = '1'
@@ -668,10 +674,15 @@ export default {
         couponInfo.plan_stime = ''
         couponInfo.plan_etime = ''
       }
-      // 付费方式 1幸福币 2人民币
-      if (+couponInfo.pay_type === 1) {
-        couponInfo.pay_credit = couponInfo.pay_money
+      if (+couponInfo.coupon_mode === 1) {
         couponInfo.pay_money = ''
+        couponInfo.pay_credit = ''
+      } else {
+        // 付费方式 1幸福币 2人民币
+        if (+couponInfo.pay_type === 1) {
+          couponInfo.pay_credit = couponInfo.pay_money
+          couponInfo.pay_money = ''
+        }
       }
       // 商品范围类型 1全场 2分类 3专区
       if (+couponInfo.goods_type === 3) {
