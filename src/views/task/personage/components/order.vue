@@ -153,9 +153,9 @@ export default {
 }
 </script>
 
+<style lang="less" src="./order.less" scoped>
+</style>
 <style lang="less" scoped>
-@import url("./order.less");
-
 .order-caption-1 {
   display: flex;
   align-items: center;

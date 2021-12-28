@@ -109,8 +109,10 @@ export default {
         case '3':
           if (this.info.order_type == 1) {
             path = `/order/coin-detail?id=${order_id}`
-          } else {
+          } else if (this.info.order_type == 2) {
             path = `/order/special-detail?id=${order_id}`
+          } else {
+            path = `/personage/shop/couponDetail?id=${order_id}`
           }
           break
         case '4':

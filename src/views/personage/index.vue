@@ -13,60 +13,76 @@
     </van-nav-bar>
     <div class="tf-body-container tf-overflow-auto">
       <div class="theme-header">
-        <div class="tf-bg-white">
-          <div class="tf-row tf-padding-lg" @click="goInformation">
-            <img
-              v-if="userInfo.avatar"
-              class="personage-info__avatar"
-              :src="userInfo.avatar"
-            />
-            <img
-              v-else
-              class="personage-info__avatar"
-              src="@/assets/imgs/touxiang.png"
-            />
-            <div class="personage-info--base">
-              <div class="user-info-box">
-                <div class="user-name">{{ userInfo.nickname }}</div>
-                <van-tag
-                  v-if="userType != '0'"
-                  class="user-role"
-                  plain
-                  :color="userType | houseRoleColor"
-                  :text-color="userType | houseRoleColor"
-                  :inverted="true"
-                  size="small"
-                  >{{ userType | houseRoleText }}</van-tag
-                >
-                <van-tag
-                  v-if="userInfo.position"
-                  class="user-role"
-                  plain
-                  :color="5 | houseRoleColor"
-                  :text-color="5 | houseRoleColor"
-                  :inverted="true"
-                  size="small"
-                  >{{ userInfo.position }}</van-tag
-                >
-              </div>
-              <div
-                v-if="currentProject && currentProject.fc_info"
-                class="user-address"
+        <div class="tf-row tf-padding-lg" @click="goInformation">
+          <img
+            v-if="userInfo.avatar"
+            class="personage-info__avatar"
+            :src="userInfo.avatar"
+          />
+          <img
+            v-else
+            class="personage-info__avatar"
+            src="@/assets/imgs/touxiang.png"
+          />
+          <div class="personage-info--base">
+            <div class="user-info-box">
+              <div class="user-name">{{ userInfo.nickname }}</div>
+            </div>
+            <div class="user-role-box">
+              <img
+                v-if="+shopData.is_reveal"
+                class="user-img"
+                src="@/assets/personage/shangjia.png"
+                alt=""
+              />
+              <img
+                v-if="false"
+                class="user-img"
+                src="@/assets/personage/zhiyuanzhe.png"
+                alt=""
+              />
+              <img
+                v-if="false"
+                class="user-img"
+                src="@/assets/personage/yuangong.png"
+                alt=""
+              />
+              <van-tag
+                v-if="userType != '0'"
+                class="user-role"
+                plain
+                :color="userType | houseRoleColor"
+                :text-color="userType | houseRoleColor"
+                :inverted="true"
+                size="small"
+                >{{ userType | houseRoleText }}</van-tag
               >
-                {{ currentProject.fc_info }}
-              </div>
-              <div
-                v-else-if="
-                  userInfo.bsbx_allots === '1' && userInfo.project_name
-                "
-                class="user-address"
+              <van-tag
+                v-if="userInfo.position"
+                class="user-role"
+                plain
+                :color="5 | houseRoleColor"
+                :text-color="5 | houseRoleColor"
+                :inverted="true"
+                size="small"
+                >{{ userInfo.position }}</van-tag
               >
-                {{ userInfo.project_name }}
-              </div>
+            </div>
+            <div
+              v-if="currentProject && currentProject.fc_info"
+              class="user-address"
+            >
+              {{ currentProject.fc_info }}
+            </div>
+            <div
+              v-else-if="userInfo.bsbx_allots === '1' && userInfo.project_name"
+              class="user-address"
+            >
+              {{ userInfo.project_name }}
             </div>
           </div>
         </div>
-        <div class="tf-row tf-bg-white coin-box">
+        <div class="tf-row coin-box">
           <div class="tf-flex-item tf-column" @click="goHappiness">
             <div class="user-text--lg">{{ userInfo.credits || 0 }}</div>
             <div class="user-text--grey">幸福币</div>
@@ -101,13 +117,32 @@
         </div>
       </div>
       <div class="functional-box">
+        <!-- 商户入口 -->
+        <div v-if="isShop" class="shop-box" @click="goShopCentre">
+          <div class="shop-header">
+            <img class="shop-icon" src="@/assets/personage/shop.png" alt="" />
+            <span class="shop-name">{{ shopData.shops_name }}</span>
+          </div>
+          <div class="shop-content">
+            <div class="shop-item">
+              <div class="shop-num">{{ shopData.jt_hx_num }}</div>
+              <div class="shop-text">今日核销优惠券</div>
+            </div>
+            <div class="shop-item">
+              <div class="shop-num">{{ shopData.jt_lqz_num }}</div>
+              <div class="shop-text">领取中优惠券</div>
+            </div>
+          </div>
+        </div>
         <!-- 事务处理 -->
         <div v-if="isSwRole || isSdcbRole" class="tansaction-box">
           <div class="tansaction-header" @click="handleTransaction">
             <div class="tansaction-title">
               {{ isSwRole ? "报事报修" : "水电抄表" }}
             </div>
-            <div class="tansaction-btn">事务处理 ></div>
+            <div class="tansaction-btn">
+              事务处理 <i class="van-icon van-icon-arrow"></i>
+            </div>
           </div>
           <div
             class="tf-row"
@@ -181,7 +216,7 @@
           </div>
         </div>
         <!-- 我的订单 -->
-        <div class="module-box">
+        <div v-if="!isShop" class="module-box">
           <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box" @click="goOrderList(1)">
@@ -247,65 +282,123 @@
         </div>
         <!-- 红包活动 -->
         <div v-if="isInvite" class="invite-banner" @click="goInvite">
-          <img class="invite-banner-img" :src="inviteBanner" alt="">
+          <img class="invite-banner-img" :src="inviteBanner" alt="" />
         </div>
-        <tf-list class="personage-list tf-mb-lg">
-          <tf-list-item
-            v-if="isShowTask"
-            border
-            title="我的任务"
-            @click="goMyTask"
-          >
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_task.png"
-              />
-            </template>
-            <template v-slot:right>
-              <span v-if="taskNum" class="num-tag">{{ taskNum }}</span>
-            </template>
-          </tf-list-item>
-          <tf-list-item border title="我的互动" @click="goInteraction">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_hudong.png"
-              />
-            </template>
-          </tf-list-item>
-          <tf-list-item border title="我的资料" @click="goInformation">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_ziliao.png"
-              />
-            </template>
-          </tf-list-item>
-          <!-- <tf-list-item title="幸福基金">
-            <template v-slot:image>
-              <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
-            </template>
-          </tf-list-item>-->
-        </tf-list>
-        <tf-list class="personage-list">
-          <tf-list-item border title="常见问题" @click="goQuestion">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_wenti.png"
-              />
-            </template>
-          </tf-list-item>
-          <tf-list-item title="意见反馈" @click="goFeedback">
-            <template v-slot:image>
-              <img
-                class="tf-clist-cell__image"
-                src="@/assets/imgs/personage_fankui.png"
-              />
-            </template>
-          </tf-list-item>
-        </tf-list>
+        <template v-if="!isShop">
+          <tf-list class="personage-list tf-mb-lg">
+            <tf-list-item
+              v-if="isShowTask"
+              border
+              title="我的任务"
+              @click="goMyTask"
+            >
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_task.png"
+                />
+              </template>
+              <template v-slot:right>
+                <span v-if="taskNum" class="num-tag">{{ taskNum }}</span>
+              </template>
+            </tf-list-item>
+            <tf-list-item border title="我的互动" @click="goInteraction">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_hudong.png"
+                />
+              </template>
+            </tf-list-item>
+            <tf-list-item border title="我的资料" @click="goInformation">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_ziliao.png"
+                />
+              </template>
+            </tf-list-item>
+            <!-- <tf-list-item title="幸福基金">
+              <template v-slot:image>
+                <img class="tf-clist-cell__image" src="@/assets/imgs/personage_jijin.png" />
+              </template>
+            </tf-list-item>-->
+          </tf-list>
+          <tf-list class="personage-list">
+            <tf-list-item border title="常见问题" @click="goQuestion">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_wenti.png"
+                />
+              </template>
+            </tf-list-item>
+            <tf-list-item title="意见反馈" @click="goFeedback">
+              <template v-slot:image>
+                <img
+                  class="tf-clist-cell__image"
+                  src="@/assets/imgs/personage_fankui.png"
+                />
+              </template>
+            </tf-list-item>
+          </tf-list>
+        </template>
+        <template v-else>
+          <div class="model-tow">
+            <div class="model-tow-title">我的服务</div>
+            <div class="model-grid">
+              <van-grid :border="false" :column-num="4">
+                <van-grid-item text="我的订单" @click="goOrderList(undefined)">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_order.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item
+                  v-if="isShowTask"
+                  text="我的任务"
+                  :badge="taskNum"
+                  @click="goMyTask"
+                >
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_wenti.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="我的互动" @click="goInteraction">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_hudong.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="我的资料" @click="goInformation">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_ziliao.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="常见问题" @click="goQuestion">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_hudong.png"
+                  /></template>
+                </van-grid-item>
+                <van-grid-item text="意见反馈" @click="goFeedback">
+                  <template slot="icon"
+                    ><img
+                      class="grid-item-icon"
+                      src="@/assets/personage/personage_fankui.png"
+                  /></template>
+                </van-grid-item>
+              </van-grid>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
     <tf-calendar v-model="showCalendar"></tf-calendar>
@@ -352,7 +445,8 @@ export default {
       activityTitle: '参与活动领积分',
       signAlertVisible: false, // 游客认证提醒弹窗
       signMessage: '', // 签到成功提醒
-      signOwnerCredits: '' // 业主签到幸福币
+      signOwnerCredits: '', // 业主签到幸福币
+      shopData: {}
     }
   },
   computed: {
@@ -376,14 +470,21 @@ export default {
     // 美好红包banner图
     inviteBanner () {
       return this.hbBannerData.hb_banner_url || ''
+    },
+    // 是否为商户
+    isShop () {
+      return +this.shopData.is_shops
     }
   },
   activated () {
     // 重新获取用户信息
-    this.$store.dispatch('getMyAccount').then(({ order_data, hb_banner_data }) => {
-      this.orderData = order_data
-      this.hbBannerData = hb_banner_data
-    })
+    this.$store
+      .dispatch('getMyAccount')
+      .then(({ order_data, hb_banner_data, shops_data }) => {
+        this.orderData = order_data
+        this.hbBannerData = hb_banner_data
+        this.shopData = shops_data || {}
+      })
     this.getActivityInfo()
     this.getMyTaskNum()
   },
@@ -473,6 +574,12 @@ export default {
       const url = `/pages/personage/transaction/index?type=${type}`
       this.$router.push(url)
     },
+    // 商户中心
+    goShopCentre () {
+      this.$router.push({
+        name: 'shopIndex'
+      })
+    },
     /**
      * 我的订单
      * @param type {number} 无全部 1待付款 2待发货 3待收货 4退换
@@ -560,6 +667,7 @@ export default {
   z-index: 9;
   margin: 0 20px;
   border-radius: 10px;
+  background: #fff;
   overflow: hidden;
 }
 
@@ -579,10 +687,10 @@ export default {
   top: 0;
 }
 
-.personage-info--base {
-  @flex-column();
-  justify-content: space-around;
-}
+// .personage-info--base {
+//   @flex-column();
+//   justify-content: space-around;
+// }
 
 .personage-info__avatar {
   width: 110px;
@@ -600,17 +708,33 @@ export default {
   font-size: 34px;
   font-weight: 500;
   color: @text-color;
+  line-height: 1;
 }
 
+.user-role-box {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  line-height: 1;
+  .user-img {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+  }
+}
 .user-role {
-  min-height: 46px;
-  margin-left: 10px;
-  padding: 7px 8px;
+  min-height: 36px;
+  padding: 0 8px;
+  margin-right: 10px;
+  line-height: 1;
 }
 
 .user-address {
+  margin-top: 12px;
   font-size: 26px;
-  color: @gray-7;
+  color: #8f8f94;
+  line-height: 42px;
+  letter-spacing: 2px;
 }
 
 .user-text--lg {
@@ -627,7 +751,7 @@ export default {
   color: @gray-7;
 }
 .coin-box {
-  padding: 40px 20px;
+  padding: 10px 20px 40px;
 }
 
 .module-box {
@@ -748,6 +872,55 @@ export default {
   top: 24px;
   right: 22px;
 }
+.shop-box {
+  width: 710px;
+  padding: 34px 30px 48px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  border-radius: 10px;
+  z-index: 1;
+  .shop-header {
+    display: flex;
+    align-items: center;
+    .shop-icon {
+      width: 32px;
+      height: 30px;
+      margin-right: 20px;
+    }
+    .shop-name {
+      font-size: 28px;
+      font-family: PingFang SC;
+      font-weight: bold;
+      color: #222222;
+    }
+  }
+  .shop-content {
+    display: flex;
+    width: 100%;
+    margin-top: 40px;
+  }
+  .shop-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    .shop-num {
+      margin-bottom: 30px;
+      font-size: 48px;
+      font-weight: bold;
+      color: #222222;
+      line-height: 1;
+    }
+    .shop-text {
+      font-size: 24px;
+      color: #8f8f94;
+      line-height: 1;
+    }
+  }
+  .shop-item + .shop-item {
+    border-left: 1px solid #eee;
+  }
+}
 .tansaction-box {
   padding: 30px 30px 40px;
   margin-bottom: 30px;
@@ -768,12 +941,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    min-width: 140px;
     height: 40px;
-    padding: 0 20px;
+    padding: 0 14px 0 20px;
     border: 1px solid #ff5240;
     border-radius: 20px;
-    font-size: 24px;
+    font-size: 22px;
     color: #ff5240;
+    line-height: 1;
+    .van-icon-arrow {
+      margin-right: -6px;
+    }
   }
   .tf-row {
     margin-top: 30px;
@@ -787,6 +965,10 @@ export default {
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 8px 8px #ffc97499;
+      .text-sm {
+        font-size: 24px !important;
+        line-height: 1;
+      }
     }
     .personage-badge {
       top: -10px;
@@ -831,5 +1013,38 @@ export default {
   font-size: 26px;
   font-weight: 500;
   color: #ffffff;
+}
+.model-tow {
+  width: 710px;
+  height: 408px;
+  background: #ffffff;
+  border-radius: 10px;
+  .model-tow-title {
+    padding-top: 30px;
+    padding-left: 30px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #021214;
+  }
+  .model-grid {
+    padding: 20px 0;
+    /deep/ .van-info {
+      top: 0;
+    }
+  }
+  .grid-item-icon {
+    width: 56px;
+    height: 56px;
+  }
+  /deep/ .van-grid-item__icon-wrapper {
+    height: 56px;
+    line-height: 1;
+  }
+  /deep/ .van-grid-item__text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #222222;
+    line-height: 1;
+  }
 }
 </style>

@@ -126,12 +126,13 @@ export default {
 }
 
 .van-special-list {
+  padding-top: 30px;
   background-color: #f7f7f7;
 }
 
 .special-list {
   width: 710px;
-  margin: 30px auto 0;
+  margin: 0 auto 30px;
   flex-wrap: wrap;
 }
 .special-item {

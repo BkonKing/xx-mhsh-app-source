@@ -937,6 +937,7 @@ export default {
 .van-tabs__content {
   .van-tab__pane,.flash-cont {
     height: 100%;
+    background: #f7f7f7;
   }
 }
 /*特卖、闪购、专区*/
@@ -1283,16 +1284,18 @@ export default {
 
 /*购物车*/
 .cart-fixed {
+  display: flex;
+  width: 110px;
+  height: 110px;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-bottom: constant(safe-area-inset-bottom);
   position: fixed;
   right: 20px;
   bottom: 138px;
-  width: 110px;
-  height: 110px;
   border-radius: 50%;
   background-color: #fff;
   box-shadow: 0 4px 13px rgba(160,160,160,0.4);
   z-index: 55;
-  display: flex;
 }
 .cart-fixed img {
   width: 60px;

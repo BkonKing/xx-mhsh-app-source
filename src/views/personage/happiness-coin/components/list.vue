@@ -1,15 +1,17 @@
 <template>
   <refreshList :list.sync="list" :load="load" finished-text="">
-    <template v-slot="{item}">
+    <template v-slot="{ item }">
       <div class="coin-list-item" @click="goDetails(item)">
         <div class="coin-list-item-left">
-          <div class="coin-list-item__name">{{item.title}}</div>
-          <div class="coin-list-item__time">{{item.ctime}}</div>
+          <div class="coin-list-item__name">{{ item.title }}</div>
+          <div class="coin-list-item__time">{{ item.ctime }}</div>
         </div>
         <div
           class="coin-list-item__number"
-          :class="{'tf-text-primary': parseInt(item.credits) > 0}"
-        >{{parseInt(item.credits) > 0 ? '+' : ''}}{{item.credits}}</div>
+          :class="{ 'coin-list-item__number-primary': parseInt(item.credits) > 0 }"
+        >
+          {{ parseInt(item.credits) > 0 ? "+" : "" }}{{ item.credits }}
+        </div>
       </div>
     </template>
   </refreshList>
@@ -60,25 +62,30 @@ export default {
   justify-content: space-between;
   align-items: center;
   // height: 144px;
-  padding: 20px 0 30px 0;
-  border-bottom: 1px solid @divider-color;
+  padding: 36px 0;
 }
 .coin-list-item-left {
-  height: 84px;
   justify-content: space-between;
 }
 .coin-list-item__name {
-  font-size: 30px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #000000;
+  line-height: 1;
 }
 .coin-list-item__time {
+  margin-top: 30px;
   font-size: 24px;
   color: @gray-7;
+  line-height: 1;
 }
 .coin-list-item__number {
-  font-size: 38px;
-  font-weight: 500;
-  color: @gray-7;
+  font-size: 32px;
+  font-weight: bold;
+  color: #000000;
+  &-primary {
+    color: #FEBF00;
+  }
 }
 .coin-list-item__number--add {
   color: @red-dark;
