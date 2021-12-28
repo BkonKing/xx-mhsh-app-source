@@ -97,7 +97,7 @@
               <div>商品总价</div>
               <div>￥{{ orderInfo.goods_price_total / 100 }}</div>
             </div>
-            <div class="detail-price-item">
+            <div v-if="+orderInfo.happiness_price" class="detail-price-item">
               <div>幸福币抵扣</div>
               <div>-￥{{ orderInfo.happiness_price / 100 }}</div>
             </div>
