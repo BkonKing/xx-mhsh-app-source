@@ -21,7 +21,7 @@
         >
           <van-field
             v-model.trim="formData.coupon_name"
-            :class="{'max-word-limit': formData.coupon_name.length === 10}"
+            :class="{ 'max-word-limit': formData.coupon_name.length === 10 }"
             maxlength="10"
             show-word-limit
             rows="1"
@@ -53,7 +53,7 @@
               v-model="formData.validityTime"
               class="prefix-input tf-mb-lg"
               :class="{ 'prefix-input--disabled': isDisabled }"
-              :disabled="isDisabled"
+              :readonly="isDisabled"
             />
           </template>
           <template v-else>
@@ -78,7 +78,7 @@
               type="number"
               class="prefix-input"
               :class="{ 'prefix-input--disabled': isDisabled }"
-              :disabled="isDisabled"
+              :readonly="isDisabled"
               :placeholder="validProps.days_num ? '请输入' : ''"
               @blur="validate('days_num')"
             />
@@ -113,7 +113,7 @@
                 { 'suffix-input--disabled': isDisabled },
                 { 'error-field': validProps.threshold_price }
               ]"
-              :disabled="isDisabled"
+              :readonly="isDisabled"
               :placeholder="validProps.threshold_price ? '请输入' : ''"
               @blur="validate('threshold_price')"
           /></van-col>
@@ -129,7 +129,7 @@
                 { 'suffix-input--disabled': isDisabled },
                 { 'error-field': validProps.reduce_price }
               ]"
-              :disabled="isDisabled"
+              :readonly="isDisabled"
               :placeholder="validProps.reduce_price ? '请输入' : ''"
               @blur="validate('reduce_price')"
             />
@@ -144,7 +144,7 @@
                 maxlength="3"
                 class="prefix-input"
                 :class="{ 'prefix-input--disabled': isDisabled }"
-                :disabled="isDisabled"
+                :readonly="isDisabled"
                 :placeholder="
                   validProps.reduce_discount ? '请输入' : '9折输入9'
                 "
@@ -181,7 +181,7 @@
               { 'suffix-input--disabled': isLook },
               { 'error-field': validProps.stock }
             ]"
-            :disabled="isLook"
+            :readonly="isLook"
             :placeholder="validProps.stock ? '请输入' : ''"
             @blur="validate('stock')"
           />
@@ -194,7 +194,7 @@
             v-model="formData.limit_num"
             class="prefix-input"
             :class="{ 'prefix-input--disabled': isLook }"
-            :disabled="isLook"
+            :readonly="isLook"
           />
         </template>
         <select-popup
@@ -264,7 +264,7 @@
                 },
                 { 'error-field': validProps.pay_credit }
               ]"
-              :disabled="(!!formData.pay_money && isMoneyInput) || isDisabled"
+              :readonly="(!!formData.pay_money && isMoneyInput) || isDisabled"
               :placeholder="validProps.pay_credit ? '请输入' : ''"
               @blur="handleCreditBlur"
           /></van-col>
@@ -281,7 +281,7 @@
                 },
                 { 'error-field': validProps.pay_money }
               ]"
-              :disabled="(!!formData.pay_credit && isCreditInput) || isDisabled"
+              :readonly="(!!formData.pay_credit && isCreditInput) || isDisabled"
               :placeholder="validProps.pay_money ? '请输入' : ''"
               @blur="handleMoneyBlur"
           /></van-col>
@@ -291,20 +291,6 @@
           class="tf-mt-lg"
           :value="remind"
         ></collapsible-info>
-        <!-- <div
-          v-if="remind && formData.coupon_mode === '2'"
-          class="alert-container tf-mt-lg"
-          @click="expanded = !expanded"
-        >
-          <div class="alert-text">
-            <i class="tf-icon tf-icon-shuoming"></i>
-            <span v-html="remind.replace(/\r\n/g, '<br/>')"></span>
-          </div>
-          <i
-            class="van-icon van-icon-arrow"
-            :class="{ 'van-icon-arrow--expanded': expanded }"
-          ></i>
-        </div> -->
         <div class="form-card-label tf-mt-lg">
           可领取用户
         </div>
@@ -323,7 +309,7 @@
           >
         </van-radio-group>
         <template v-if="formData.available_type === '2'">
-          <div class="form-select" @click="projectShow = true">
+          <div class="form-select" @click="openSelectProject">
             <span
               class="form-text"
               :class="{ 'error-color': validProps.available_project_id }"
@@ -342,6 +328,7 @@
             direction="horizontal"
             checked-color="#FEBF00"
             class="tf-checkbox-group"
+            :disabled="isDisabled"
             @change="validate('house_role_ids')"
           >
             <van-checkbox
@@ -384,7 +371,7 @@
               { 'suffix-input--disabled': isDisabled },
               { 'error-field': validProps.goods_type_name }
             ]"
-            :disabled="isDisabled"
+            :readonly="isDisabled"
             :maxlength="10"
             :placeholder="validProps.goods_type_name ? '请输入' : ''"
             @blur="validate('goods_type_name')"
@@ -398,7 +385,7 @@
               { 'suffix-input--disabled': isDisabled },
               { 'error-field': validProps.goods_type_precinct }
             ]"
-            :disabled="isDisabled"
+            :readonly="isDisabled"
             :maxlength="10"
             :placeholder="validProps.goods_type_precinct ? '请输入' : ''"
             @blur="validate('goods_type_precinct')"
@@ -423,7 +410,7 @@
               v-model="formData.planTime"
               class="prefix-input"
               :class="{ 'prefix-input--disabled': isDisabled }"
-              :disabled="isDisabled"
+              :readonly="isDisabled"
             />
           </template>
           <form-date-picker
@@ -705,6 +692,9 @@ export default {
       this.formData.pay_credit && (this.formData.pay_money = '')
       this.validate('pay_money')
     },
+    openSelectProject () {
+      !this.isDisabled && (this.projectShow = true)
+    },
     // 项目选择(小区)
     projectCall (projectData) {
       const { id, project_name: projectName } = projectData
@@ -961,28 +951,12 @@ export default {
       color: #222;
     }
   }
-  &--disabled {
-    background: #f7f7f7;
-    border-color: #f7f7f7;
-    // /deep/ .van-field__label {
-    //   > span {
-    //     color: #bbbbbb;
-    //   }
-    // }
-    /deep/ .van-field__control {
-      font-weight: 400;
-    }
-  }
 }
 .suffix-input {
   display: flex;
   padding: 0;
   border: 1px solid #cccccc;
   border-radius: 10px;
-  &--disabled {
-    background: #f7f7f7;
-    border-color: #f7f7f7;
-  }
   .prefix-input {
     border: none;
   }
@@ -999,6 +973,14 @@ export default {
     background: #f7f7f7;
     border-radius: 0px 10px 10px 0px;
     box-sizing: border-box;
+  }
+}
+.prefix-input--disabled,
+.suffix-input--disabled {
+  background: #f7f7f7;
+  border-color: #f7f7f7;
+  /deep/ .van-field__control {
+    font-weight: 400;
   }
 }
 .add-coupon {

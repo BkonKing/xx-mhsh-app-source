@@ -116,7 +116,7 @@ export default {
   align-self: center;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 31px;
+  margin-top: 32px;
   border: 1px solid #cbcbcb;
   border-radius: 10px;
   padding-right: 19px;

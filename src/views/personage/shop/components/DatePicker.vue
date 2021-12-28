@@ -276,32 +276,34 @@ export default {
     },
     dateSure () {
       this.isBol = true
-      if (!this.startTime) {
-        this.$toast('请选择开始时间')
-        return
-      } else if (!this.endTime) {
-        this.$toast('请选择结束时间')
-        return
-      } else {
-        const now = new Date().getTime()
-        const start = this.startTime
-          ? new Date(this.iosFormatDate(this.startTime)).getTime()
-          : 0
-        const end = new Date(this.iosFormatDate(this.endTime)).getTime()
-        if (end < now) {
-          this.$toast('结束时间不能小于当前时间')
+      if (this.showCalendar) {
+        if (!this.startTime) {
+          this.$toast('请选择开始时间')
           return
-        }
-        if (start && end < start) {
-          this.$toast('结束时间不能小于开始时间')
+        } else if (!this.endTime) {
+          this.$toast('请选择结束时间')
           return
+        } else {
+          const now = new Date().getTime()
+          const start = this.startTime
+            ? new Date(this.iosFormatDate(this.startTime)).getTime()
+            : 0
+          const end = new Date(this.iosFormatDate(this.endTime)).getTime()
+          if (end < now) {
+            this.$toast('结束时间不能小于当前时间')
+            return
+          }
+          if (start && end < start) {
+            this.$toast('结束时间不能小于开始时间')
+            return
+          }
         }
-      }
-      if (this.startTime === '') {
-        this.noStartTime = true
-      }
-      if (this.endTime === '') {
-        this.noEndTime = true
+        if (this.startTime === '') {
+          this.noStartTime = true
+        }
+        if (this.endTime === '') {
+          this.noEndTime = true
+        }
       }
       this.$emit('dateSure', {
         startTime: this.startTime,

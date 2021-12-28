@@ -126,7 +126,6 @@ export default {
     },
     // 刷新单条数据
     updateSingleData () {
-      console.log(this.activeIndex, +this.couponId)
       if (this.activeIndex !== '' && +this.couponId) {
         updateCouponInfo({
           shops_coupon_id: this.couponId
