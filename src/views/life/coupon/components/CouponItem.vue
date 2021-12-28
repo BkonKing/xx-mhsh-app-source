@@ -159,7 +159,7 @@ export default {
   .coupon-money {
     display: flex;
     justify-content: center;
-    width: 136px;
+    min-width: 170px;
     position: relative;
     font-size: 40px;
     font-weight: bold;
@@ -182,20 +182,20 @@ export default {
       z-index: 1;
     }
     &-number {
-      font-size: 56px;
+      font-size: 48px;
       font-weight: 600;
       color: #ff6555;
       z-index: 1;
     }
-    span + span {
-      margin-left: 6px;
-    }
+    // span + span {
+    //   margin-left: 6px;
+    // }
   }
   .coupon-info {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 50px 24px 0 40px;
+    padding: 50px 24px 0 12px;
     .left-slot {
       position: relative;
       z-index: 1;
