@@ -463,7 +463,7 @@ export function downloadPic (picUrl, name) {
         url: picUrl,
         savePath: 'fs://' + name + '.png',
         report: false,
-        cache: true,
+        cache: false,
         allowResume: false
       }, function (ret, err) {
         if (ret.state == 1) {
