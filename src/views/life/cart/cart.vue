@@ -12,8 +12,16 @@
     </div>
     <div v-if="carts.length" class="cart-session">
       <div class="cart-list">
-        <div :class="[item.goods_type == 2 ? 'cart-item-tm' : '','cart-item']" v-for="(item,index) in carts" :key="index" @click="linkFunc(5,{id: item.goods_id})">
-          <div :class="[item.is_checked ? 'cur' : '', 'cart-checkbox']" @click.stop="checkboxOne(index)">
+        <div
+          :class="[item.goods_type == 2 ? 'cart-item-tm' : '', 'cart-item']"
+          v-for="(item, index) in carts"
+          :key="index"
+          @click="linkFunc(5, { id: item.goods_id })"
+        >
+          <div
+            :class="[item.is_checked ? 'cur' : '', 'cart-checkbox']"
+            @click.stop="checkboxOne(index)"
+          >
             <div class="checkbox-session"></div>
           </div>
           <div class="cart-cont" hover-class="none">
@@ -21,26 +29,75 @@
               <img class="img-100" mode="aspectFill" :src="item.specs_img" />
             </div>
             <div class="product-info">
-              <div class="product-name p-nowrap">{{item.goods_name}}</div>
-              <div @click.stop="SelectSku(item.goods_id, index)" class="product-specs">
-                <div>{{item.specs_name}}<img src="@/assets/img/down.png" /></div>
+              <div class="product-name p-nowrap">{{ item.goods_name }}</div>
+              <div
+                @click.stop="SelectSku(item.goods_id, index)"
+                class="product-specs"
+              >
+                <div class="product-specs-box">
+                  <div class="product-specs-text">{{ item.specs_name }}</div><img src="@/assets/img/down.png" />
+                </div>
               </div>
               <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="label-item-block flex-center">特卖</div></div> -->
               <div class="flex-align-center cart-label-list">
-                <div v-if="item.goods_type == 2" :class="[item.goods_type == 2 ? 'label-item-tm' : '','label-item-block goods-type flex-center']">特卖</div>
-                <div v-for="(val, j) in item.tag" :key="j" class="label-item-block flex-center label-item-tip" :style="{ 'border-color': val.tag_color, 'color': val.tag_color}">{{ val.tag_name }}</div>
+                <div
+                  v-if="item.goods_type == 2"
+                  :class="[
+                    item.goods_type == 2 ? 'label-item-tm' : '',
+                    'label-item-block goods-type flex-center'
+                  ]"
+                >
+                  特卖
+                </div>
+                <div
+                  v-for="(val, j) in item.tag"
+                  :key="j"
+                  class="label-item-block flex-center label-item-tip"
+                  :style="{
+                    'border-color': val.tag_color,
+                    color: val.tag_color
+                  }"
+                >
+                  {{ val.tag_name }}
+                </div>
               </div>
-              <div class="product-price">￥<span>{{item.s_price/100}}</span> <span v-if="item.y_price && item.y_price!=0">￥{{item.y_price/100}}</span></div>
+              <div class="product-price">
+                ￥<span>{{ item.s_price / 100 }}</span>
+                <span v-if="item.y_price && item.y_price != 0"
+                  >￥{{ item.y_price / 100 }}</span
+                >
+              </div>
             </div>
           </div>
-          <div class="cart-operate">
-            <div class="operate-btn product-sub flex-between" @click.stop="countTab(index,-1)"></div>
+          <div class="cart-operate" @click.stop="">
+            <van-stepper
+              v-model="item.count"
+              min="1"
+              :max="+item.max_buy"
+              integer
+              @overlimit="handleOverlimit(item.count, index)"
+              @minus="countTabDebounce"
+              @plus="countTabDebounce"
+              @focus="activeCount = item.count"
+              @blur="blurCountTab(item)"
+            />
+            <!-- <div class="operate-btn product-sub flex-between" @click.stop="countTab(index,-1)"></div>
             <div class="shop-btn-block">
               <div class="shop-num">{{item.count}}</div>
             </div>
-            <div :class="[parseInt(item.count) >= parseInt(item.max_buy) ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div>
+            <div :class="[parseInt(item.count) >= parseInt(item.max_buy) ? 'not-add' : '','operate-btn product-add flex-between']" @click.stop="countTab(index,1)"></div> -->
           </div>
-          <div class="product-del" @click.stop="delCarts(index)" v-txAnalysis="{eventId: 13}"><img class="img-100" mode="aspectFill" src="@/assets/img/close_02.png" /></div>
+          <div
+            class="product-del"
+            @click.stop="delCarts(index)"
+            v-txAnalysis="{ eventId: 13 }"
+          >
+            <img
+              class="img-100"
+              mode="aspectFill"
+              src="@/assets/img/close_02.png"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -51,9 +108,21 @@
     <div class="cart-empty"></div>
     <div v-if="carts.length" class="cart-bottom bottom-fixed">
       <div class="cart-data flex-align-center">
-        <div :class="[allSelected ? 'cur' : '', 'all-checkbox']" @click="checkboxAll"><div class="all-checkbox-session"></div>全选</div>
-        <div class="all-price"><span>合计：</span>￥{{priceTotal}}</div>
-        <div class="all-go flex-center" v-txAnalysis="{eventId: 15}" @click="payFunc">结算({{numTotal}})</div>
+        <div
+          :class="[allSelected ? 'cur' : '', 'all-checkbox']"
+          @click="checkboxAll"
+        >
+          <div class="all-checkbox-session"></div>
+          全选
+        </div>
+        <div class="all-price"><span>合计：</span>￥{{ priceTotal }}</div>
+        <div
+          class="all-go flex-center"
+          v-txAnalysis="{ eventId: 15 }"
+          @click="payFunc"
+        >
+          结算({{ numTotal }})
+        </div>
       </div>
     </div>
     <goods-sku
@@ -61,21 +130,23 @@
       :carts-index="cartsIndex"
       :id-change="idChange"
       :show-sku="showSku"
-      :closeSku.sync='showSku'
+      :closeSku.sync="showSku"
       @sureSku="sureSku"
-      >
-    </goods-sku >
+    >
+    </goods-sku>
     <remind-swal
       :show-swal="showSwal"
       :remind-tit="remindTit"
       @closeSwal="closeSwal"
-      @sureSwal="sureSwal()">
+      @sureSwal="sureSwal()"
+    >
     </remind-swal>
   </div>
 </template>
 
 <script>
 import { NavBar, Toast } from 'vant'
+import { debounce } from '@/utils/util'
 import { getCart } from '@/api/life.js'
 import goodsSku from './../components/goods-sku'
 import remindSwal from './../components/remind-swal'
@@ -90,7 +161,7 @@ export default {
     return {
       windowHeight: document.documentElement.clientHeight,
       checked: false,
-
+      activeCount: 0,
       carts: [], // 购物车
       priceTotal: '', // 支付总额
       numTotal: '', // 支付商品总件数
@@ -117,7 +188,7 @@ export default {
   },
   methods: {
     getData () {
-      console.log('cart', this.carts)
+      this.$toast.loading('请稍等')
       getCart({
         giftbag: JSON.stringify(this.carts)
       }).then(res => {
@@ -126,6 +197,8 @@ export default {
           this.carts = res.goods_arr
           api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) })
         }
+      }).finally(() => {
+        this.$toast.clear()
       })
     },
     // 修改选择规格
@@ -174,19 +247,29 @@ export default {
           break
       }
     },
-    // 商品数量加减
-    countTab (index, types) {
-      if (types === 1 && this.carts[index].count >= this.carts[index].max_buy) return
-      if (parseInt(this.carts[index].count) + types > 0) {
-        this.carts[index].count = parseInt(this.carts[index].count) + types
-      } else {
-        this.showSwal = true
+    handleOverlimit (value, index) {
+      if (+value === 1) {
         this.delIndex = index
-        return
+        this.showSwal = true
       }
-      // localStorage.setItem('cart', JSON.stringify(this.carts));
-      api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) })
-      this.total()
+    },
+    blurCountTab (data) {
+      this.$nextTick(() => {
+        if (+this.activeCount !== +data.count) {
+          this.countTabDebounce()
+          this.activeCount = 0
+        }
+      })
+    },
+    countTabDebounce: debounce(function () {
+      this.countTab()
+    }, 300),
+    // 商品数量加减
+    countTab () {
+      this.$nextTick(() => {
+        api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) })
+        this.total()
+      })
     },
     // 点击删除按钮
     delCarts (index) {
@@ -204,7 +287,7 @@ export default {
     },
     /**
      * 勾选/取消单个商品
-    */
+     */
     checkboxOne (index) {
       const indexTab = index
       this.carts[index].is_checked = !this.carts[indexTab].is_checked
@@ -214,7 +297,7 @@ export default {
     },
     /**
      * 全选/全不选
-    */
+     */
     checkboxAll () {
       const carts_arr = this.carts
       const is_checked = this.allSelected
@@ -245,7 +328,9 @@ export default {
           if (carts_arr[j].is_checked) {
             checked_num++
             numTotal += parseInt(carts_arr[j].count)
-            priceTotal += parseFloat(carts_arr[j].count * carts_arr[j].pay_price)
+            priceTotal += parseFloat(
+              carts_arr[j].count * carts_arr[j].pay_price
+            )
           }
         }
         this.allSelected = checked_num === carts_arr.length
@@ -258,7 +343,7 @@ export default {
     },
     /**
      * 结算
-    */
+     */
     payFunc () {
       const that = this
       if (this.numTotal === 0) {
@@ -268,7 +353,10 @@ export default {
           giftbag: JSON.stringify(this.carts)
         }).then(res => {
           if (res.success) {
-            if (res.goods_arr.length && that.infoData.total_pay_price == res.data.total_pay_price) {
+            if (
+              res.goods_arr.length &&
+              that.infoData.total_pay_price == res.data.total_pay_price
+            ) {
               that.linkFunc(8)
             } else {
               that.carts = res.goods_arr
@@ -283,8 +371,26 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped>
+<style scoped src="../../../styles/life.css"></style>
+<style lang="less" scoped>
+/deep/ .van-stepper__minus,
+/deep/ .van-stepper__plus {
+  width: 48px;
+  height: 48px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+/deep/ .van-stepper__minus--disabled,
+/deep/ .van-stepper__plus--disabled {
+  background-color: #f2f2f4;
+}
+/deep/ .van-stepper__input {
+  width: 68px;
+  height: 48px;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -307,7 +413,8 @@ export default {
   min-height: 229px;
   border-radius: 10px;
 }
-.cart-item-sg,.cart-item-tm {
+.cart-item-sg,
+.cart-item-tm {
   /* height: 253px; */
 }
 .cart-item:last-child {
@@ -320,16 +427,19 @@ export default {
   display: flex;
   justify-content: center;
 }
-.checkbox-session,.all-checkbox-session {
+.checkbox-session,
+.all-checkbox-session {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   border: 2px solid #96a8bb;
   margin-top: 54px;
 }
-.cart-checkbox.cur .checkbox-session,.all-checkbox.cur .all-checkbox-session {
+.cart-checkbox.cur .checkbox-session,
+.all-checkbox.cur .all-checkbox-session {
   border: none;
-  background: url('../../../assets/img/tick2.png') no-repeat center center/100% 100%;
+  background: url("../../../assets/img/tick2.png") no-repeat center center/100%
+    100%;
 }
 .cart-cont {
   width: 638px;
@@ -358,18 +468,25 @@ export default {
 }
 .product-specs {
   font-size: 24px;
-  color: #8F8F94;
+  color: #8f8f94;
   height: 52px;
   display: flex;
+  max-width: 100%;
+  padding-right: 20px;
   margin-bottom: 20px;
 }
-.product-specs div {
+.product-specs-box {
   display: flex;
   align-items: center;
+  max-width: 100%;
   height: 100%;
   line-height: 52px;
-  background: #F2F2F4;
+  background: #f2f2f4;
   padding: 0 20px;
+}
+.product-specs-text {
+  flex: 1;
+  @text-ellipsis();
 }
 .product-specs img {
   width: 18px;
@@ -413,17 +530,19 @@ export default {
   position: relative;
 }
 .product-sub::after {
-  background: url('https://bht.liwushijian.com/library/img/xcx_img/sub.png') no-repeat center center/16px 16px;
+  background: url("https://bht.liwushijian.com/library/img/xcx_img/sub.png")
+    no-repeat center center/16px 16px;
 }
 .product-add::after {
-  background: url('https://bht.liwushijian.com/library/img/xcx_img/add.png') no-repeat center center/16px 16px;
+  background: url("https://bht.liwushijian.com/library/img/xcx_img/add.png")
+    no-repeat center center/16px 16px;
 }
 .product-add.not-add::after {
   background-color: #ccc;
 }
 .operate-btn::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 47px;
   height: 44px;
   top: 20px;
@@ -477,7 +596,7 @@ export default {
   height: 121px;
   background-color: #fff;
   line-height: 120px;
-  border-top: 1.4px solid #E5E5E5;
+  border-top: 1.4px solid #e5e5e5;
 }
 .all-checkbox {
   width: 140px;
