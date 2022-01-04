@@ -136,7 +136,10 @@
             <div
               v-if="formData.coupon_type === '2'"
               class="suffix-input"
-              :class="{ 'error-field': validProps.reduce_discount }"
+              :class="[
+                { 'suffix-input--disabled': isDisabled },
+                { 'error-field': validProps.reduce_discount }
+              ]"
             >
               <van-field
                 v-model="formData.reduce_discount"
@@ -661,9 +664,9 @@ export default {
         couponInfo.g_etime = ''
       }
       // 券类型
-      if (+this.formData.coupon_type === 1) {
+      if (+couponInfo.coupon_type === 1) {
         couponInfo.reduce_discount = ''
-      } else if (+this.formData.coupon_type === 2) {
+      } else if (+couponInfo.coupon_type === 2) {
         couponInfo.reduce_price = ''
       }
       if (this.isCopy) {
