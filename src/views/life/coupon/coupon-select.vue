@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     ></van-nav-bar>
-    <div class="tf-body-container">
+    <div class="tf-body-container" id="coupon-select-container">
       <template v-if="ableNum">
         <div class="coupon-num">
           可用优惠券<span>（{{ ableNum }}张）</span>
@@ -58,11 +58,13 @@ import CouponItem from './components/CouponItem'
 import { getSelectCoupon } from '@/api/life'
 import eventBus from '@/utils/eventbus'
 export default {
+  name: 'couponSelect',
   components: {
     CouponItem
   },
   data () {
     return {
+      scrollTop: 0,
       ableList: [],
       ableNum: 0,
       unableList: [],
@@ -73,6 +75,22 @@ export default {
     this.prevPage = this.$route.query.prev_page
     this.user_coupon_id = this.$route.query.user_coupon_id
     this.total()
+  },
+  activated () {
+    if (this.scrollTop) {
+      const el = document.getElementById('coupon-select-container')
+      el && (el.scrollTop = this.scrollTop)
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const nextPageName = ['shopLocation', 'shopIntroduce']
+    const el = document.getElementById('coupon-select-container')
+    this.scrollTop = (el && el.scrollTop) || 0
+    if (!nextPageName.includes(to.name)) {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
+    }
+    next()
   },
   methods: {
     /**

@@ -1,7 +1,7 @@
 <template>
   <div class="get-coupon-list">
     <div v-for="(shop, index) in data" :key="index">
-      <div v-if="shop.shops_name" class="shop-name">
+      <div v-if="shop.shops_name" class="shop-name" @click="goIntroduce(shop.shops_id)">
         <img class="shop-img" src="@/assets/personage/shop.png" alt="" />{{
           shop.shops_name
         }}
@@ -235,6 +235,14 @@ export default {
     // 关闭支付选择弹窗
     closePaySwal (data) {
       this.showPaySwal = data === 1
+    },
+    goIntroduce (shopId) {
+      this.$router.push({
+        name: 'shopIntroduce',
+        query: {
+          shopId
+        }
+      })
     }
   }
 }

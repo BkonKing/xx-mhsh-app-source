@@ -508,6 +508,19 @@ const personageRouter = [
       keepAlive: true
     }
   },
+  // 店铺介绍（展示信息）
+  {
+    path: '/personage/shop/introduce',
+    name: 'shopIntroduce',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopIntroduce" */
+        '@/views/personage/shop/introduce'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
   // 创建优惠券
   {
     path: '/personage/shop/createCoupon',

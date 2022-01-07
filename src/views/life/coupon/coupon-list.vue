@@ -22,33 +22,50 @@
       <van-tab title="已使用" name="2"></van-tab>
       <van-tab title="已过期" name="3"></van-tab>
     </van-tabs>
-    <coupon-list
+    <coupon-lists
       ref="list"
       class="tf-body-container tf-column"
       :status="current"
       :id="userInfo.shops_id"
-    ></coupon-list>
+    ></coupon-lists>
   </div>
 </template>
 
 <script>
-// /personage/shop/couponManager
+// /coupon/list
 import { mapGetters } from 'vuex'
-import CouponList from './components/CouponList'
+import CouponLists from './components/CouponList'
 
 export default {
+  name: 'couponList',
   components: {
-    CouponList
+    CouponLists
   },
   data () {
     return {
+      scrollTop: 0,
       current: '1'
     }
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
-  created () {},
+  activated () {
+    if (this.scrollTop) {
+      const el = this.$refs.list.$el.getElementsByClassName('tf-list-refresh')
+      el.length && (el[0].scrollTop = this.scrollTop)
+    }
+  },
+  beforeRouteLeave (to, from, next) {
+    const nextPageName = ['shopCouponPurchaseRecord', 'shopLocation', 'shopIntroduce']
+    const el = document.getElementsByClassName('tf-list-refresh')
+    this.scrollTop = (el.length && el[0].scrollTop) || 0
+    if (!nextPageName.includes(to.name)) {
+      this.$store.commit('deleteKeepAlive', from.name)
+      this.$destroy()
+    }
+    next()
+  },
   methods: {
     // tab页改变，为最新标签时刷新最新列表
     tabsChange () {

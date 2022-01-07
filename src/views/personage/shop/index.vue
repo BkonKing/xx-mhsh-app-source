@@ -345,6 +345,7 @@ export default {
   padding: 30px 20px;
   margin-top: 30px;
   margin-left: 20px;
+  margin-bottom: 30px;
   background: #ffffff;
   border-radius: 10px;
 }
