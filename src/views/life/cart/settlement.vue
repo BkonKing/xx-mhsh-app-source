@@ -58,7 +58,7 @@
                 </div>
               </template>
             </div>
-            <div class="order-buy-num">x{{item.count}}</div>
+            <div class="order-buy-num">×{{item.count}}</div>
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@
           <div v-if="settlementInfo.is_ok" class="all-price all-price-credits"><span>合计：</span><img src="@/assets/img/icon_37.png" />{{settlementInfo.freight ? parseFloat(settlementInfo.freight/10) + parseFloat(settlementInfo.credits) : settlementInfo.credits}}</div>
           <div v-else class="all-price"><template v-if="settlementInfo.differ_credits">还差{{settlementInfo.differ_credits}}幸福币</template></div>
         </template>
-        <div v-if="order_type!=3" class="all-go flex-center" @click="payFunc" v-preventReClick v-txAnalysis="{eventId: 16}">付款</div>
+        <van-button v-if="order_type!=3" class="all-go flex-center" @click="payFunc" :loading="payLoading" v-preventReClick v-txAnalysis="{eventId: 16}">付款</van-button>
         <template v-else>
           <div v-if="settlementInfo.is_ok" class="all-go flex-center" @click="payFunc" v-preventReClick v-txAnalysis="{eventId: 17}">兑换</div>
           <div v-else class="all-go flex-center btn-disabled">兑换</div>
@@ -262,6 +262,7 @@ export default {
   },
   data () {
     return {
+      payLoading: false,
       showExplainSwal: false, // 弹窗
       swalCont: '贵重物品、贴身衣物、肉类果蔬生鲜商品、定制商品、虚拟商品、报纸期刊等，处于信息安全或者卫生考虑，不支持无理由退货。跨境商品不支持换货。',
 
@@ -476,7 +477,9 @@ export default {
       const that = this
       if (!this.addressInfo || !this.addressInfo.id) {
         Toast('请先选择收货地址')
+        return
       }
+      this.payLoading = true
       if (this.order_type == 0 || this.prev_page == 0) {
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight))
         ordinaryCreate({
@@ -527,6 +530,8 @@ export default {
               this.$router.go(-1)
             }
           }
+        }).finally(() => {
+          this.payLoading = false
         })
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
@@ -545,6 +550,8 @@ export default {
               this.getData()
             }
           }
+        }).finally(() => {
+          this.payLoading = false
         })
       } else {
         this.flashParam.address_id = this.addressInfo.id
@@ -569,6 +576,8 @@ export default {
               this.$router.go(-1)
             }
           }
+        }).finally(() => {
+          this.payLoading = false
         })
       }
     },
@@ -1010,6 +1019,7 @@ input.order-remarks-text {
   background-image: linear-gradient(to right, #f9866b, #eb5841);
   border-radius: 10px;
   margin-right: 20px;
+  border: none;
 }
 .all-go.btn-disabled {
   background: #aaa;

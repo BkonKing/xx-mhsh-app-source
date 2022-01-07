@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="body-block">
       <div class="order-bar bar-white">
         <van-nav-bar
@@ -327,7 +327,7 @@
               <div class="shops-dtit">数量</div>
               <div class="goods-num-count">
                 <div class="goods-btn-block">
-                  <van-stepper v-model="skuList[typeVal].count" min="1" :max="+skuList[typeVal].stock" integer />
+                  <van-stepper v-model="skuList[typeVal].count" min="1" :max="+skuList[typeVal].stock > +goods.max_buy ? +goods.max_buy : +skuList[typeVal].stock" integer />
                   <!-- <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
                   <div class="goods-num">{{skuList[typeVal].count}}</div>
                   <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div> -->
@@ -393,7 +393,7 @@
       :share-obj="shareObj"
       @closeSwal="closeShare"></tf-share >
     </div>
-	</div>
+  </div>
 </template>
 
 <script>

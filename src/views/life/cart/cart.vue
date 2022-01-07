@@ -35,7 +35,8 @@
                 class="product-specs"
               >
                 <div class="product-specs-box">
-                  <div class="product-specs-text">{{ item.specs_name }}</div><img src="@/assets/img/down.png" />
+                  <div class="product-specs-text">{{ item.specs_name }}</div>
+                  <img src="@/assets/img/down.png" />
                 </div>
               </div>
               <!-- <div v-if="item.goods_type == 2" class="flex-align-center"><div class="label-item-block flex-center">特卖</div></div> -->
@@ -191,15 +192,17 @@ export default {
       this.$toast.loading('请稍等')
       getCart({
         giftbag: JSON.stringify(this.carts)
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data
-          this.carts = res.goods_arr
-          api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) })
-        }
-      }).finally(() => {
-        this.$toast.clear()
       })
+        .then(res => {
+          if (res.success) {
+            this.infoData = res.data
+            this.carts = res.goods_arr
+            api.setPrefs({ key: 'cart', value: JSON.stringify(this.carts) })
+          }
+        })
+        .finally(() => {
+          this.$toast.clear()
+        })
     },
     // 修改选择规格
     SelectSku (id, index) {
@@ -631,23 +634,4 @@ export default {
   border-radius: 10px;
   margin-right: 20px;
 }
-/* 购物车商品列表 end */
-/*.cart-bottom .van-submit-bar__bar {
-	height: 120px;
-	padding: 0;
-}
-.cart-bottom .van-checkbox {
-	height: 100%;
-	padding-left: 40px;
-}
-.cart-bottom .van-checkbox__icon {
-	height: 32px;
-	line-height: 32px;
-	font-size: 20px;
-}
-.cart-bottom .van-checkbox__label {
-	margin-left: 20px;
-  color: #8f8f94;
-  font-size: 24px;
-}*/
 </style>

@@ -30,7 +30,7 @@
               : data.pay_price / 100
           }}
         </div>
-        <div class="card-text">x1</div>
+        <div class="card-text">×1</div>
       </div>
     </div>
     <div class="card-footer">

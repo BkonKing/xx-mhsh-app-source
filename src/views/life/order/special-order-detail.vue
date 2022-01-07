@@ -57,7 +57,7 @@
                 <div v-else class="order-action-text">
                   {{item.order_status_name}}
                 </div>
-                <div class="order-buy-num">x1</div>
+                <div class="order-buy-num">×{{item.specs_count || 1}}</div>
               </div>
             </div>
             <div v-if="item.is_shouhou_btn == 1" class="order-goods-btn">

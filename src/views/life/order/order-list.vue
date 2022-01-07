@@ -100,7 +100,7 @@
                           {{ goods.order_status_name }}
                         </template>
                       </div>
-                      <div class="order-buy-num">x1</div>
+                      <div class="order-buy-num">×{{goods.specs_count || 1}}</div>
                     </div>
                   </div>
                 </div>
