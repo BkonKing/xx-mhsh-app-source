@@ -216,7 +216,7 @@
           </div>
         </div>
         <!-- 我的订单 -->
-        <div v-if="!isShop" class="module-box">
+        <div v-if="!isCardMode" class="module-box">
           <div class="module-title">我的订单</div>
           <div class="tf-row">
             <div class="order-box" @click="goOrderList(1)">
@@ -284,7 +284,8 @@
         <div v-if="isInvite" class="invite-banner" @click="goInvite">
           <img class="invite-banner-img" :src="inviteBanner" alt="" />
         </div>
-        <template v-if="!isShop">
+        <!-- 列表模式 -->
+        <template v-if="!isCardMode">
           <tf-list class="personage-list tf-mb-lg">
             <tf-list-item
               v-if="isShowTask"
@@ -343,6 +344,7 @@
             </tf-list-item>
           </tf-list>
         </template>
+        <!-- 卡片模式-->
         <template v-else>
           <div class="model-tow">
             <div class="model-tow-title">我的服务</div>
@@ -474,6 +476,10 @@ export default {
     // 是否为商户
     isShop () {
       return +this.shopData.is_shops
+    },
+    // 是否为卡片显示形式
+    isCardMode () {
+      return this.isShop || this.isSwRole || this.isSdcbRole
     }
   },
   activated () {

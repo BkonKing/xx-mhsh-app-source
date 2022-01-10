@@ -52,9 +52,10 @@
             <div class="shops-dtit">数量</div>
             <div class="goods-num-count">
               <div class="goods-btn-block">
-                <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
+                <van-stepper v-model="skuList[typeVal].count" min="1" :max="+skuList[typeVal].stock > +goods.max_buy ? +goods.max_buy : +skuList[typeVal].stock" integer />
+                <!-- <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
                 <div class="goods-num">{{skuList[typeVal].count}}</div>
-                <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
+                <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div> -->
               </div>
             </div>
           </div>
@@ -398,8 +399,27 @@ export default {
 }
 </script>
 
-<style scoped>
-@import '../../../styles/life.css';
+<style src="../../../styles/life.css" scoped></style>
+
+<style lang="less" scoped>
+/deep/ .van-stepper__minus,
+/deep/ .van-stepper__plus {
+  width: 48px;
+  height: 48px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+/deep/ .van-stepper__minus--disabled,
+/deep/ .van-stepper__plus--disabled {
+  background-color: #f2f2f4;
+}
+/deep/ .van-stepper__input {
+  width: 68px;
+  height: 48px;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
 .goods-price {
   line-height: 70px;
   color: #eb5841;

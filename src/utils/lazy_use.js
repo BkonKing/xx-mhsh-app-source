@@ -38,6 +38,7 @@ import {
   Lazyload,
   List,
   NoticeBar,
+  Stepper,
   Sticky,
   Swipe,
   SwipeItem,
@@ -93,6 +94,7 @@ Vue.use(ImagePreview)
 Vue.use(Lazyload)
 Vue.use(List)
 Vue.use(NoticeBar)
+Vue.use(Stepper)
 Vue.use(Sticky)
 Vue.use(Swipe)
 Vue.use(SwipeItem)

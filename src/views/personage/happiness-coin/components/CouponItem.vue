@@ -1,22 +1,26 @@
 <template>
   <div class="coupon-item">
-    <div class="coupon-card" @click="expanded = !expanded">
+    <div
+      class="coupon-card"
+      :class="[{ 'coupon-card--expanded': expanded }]"
+      @click="expanded = !expanded"
+    >
       <div class="coupon-money">
         <template v-if="+data.coupon_type === 1">
           <span class="coupon-money-icon">￥</span
-          ><span class="coupon-money-number">{{data.miane}}</span>
+          ><span class="coupon-money-number">{{ data.miane }}</span>
         </template>
         <template v-else>
-          <span class="coupon-money-number">{{data.miane}}</span
+          <span class="coupon-money-number">{{ data.miane }}</span
           ><span class="coupon-money-icon">折</span>
         </template>
       </div>
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
-            <div class="coupon-info-2">{{data.denomination}}</div>
+            <div class="coupon-info-2">{{ data.denomination }}</div>
             <div class="coupon-info-3">
-              {{data.term_of_validity}}
+              {{ data.term_of_validity }}
             </div>
           </div>
           <div class="left-slot">
@@ -24,7 +28,7 @@
           </div>
         </div>
         <div class="coupon-footer">
-          <div class="coupon-footer-text">{{data.goods_type_name}}</div>
+          <div class="coupon-footer-text">{{ data.goods_type_name }}</div>
           <i
             class="van-icon van-icon-arrow"
             :class="{ 'van-icon-arrow--expanded': expanded }"
@@ -35,11 +39,27 @@
     <div class="coupon-panel" :class="{ 'coupon-panel--expanded': expanded }">
       <div class="coupon-content" @click.stop="expanded = true">
         <template>
-          <div>
-            优惠说明：{{data.coupon_explain}} | {{data.goods_type_name}}<i  v-if="data.shops_address" class="tf-icon tf-icon-dizhi" @click="goLocation"></i
-            >
+          <div @click="goIntroduce">
+            <span>优惠说明：{{ data.new_goods_type_name1 }}</span
+            ><span v-if="data.new_shops_name">
+              | 线下店铺<strong
+                >【{{ data.new_shops_name }}】<van-icon name="arrow"
+              /></strong>
+            </span>
           </div>
-          <div>有效期：{{data.term_of_validity}}</div>
+          <div class="tf-row-vertical-center" v-if="shopsAddress">
+            <span class="tf-flex-item van-ellipsis"
+              >店铺地址：{{ shopsAddress }}</span
+            >
+            <i class="tf-icon tf-icon-dizhi" @click="goLocation"></i>
+          </div>
+          <div v-if="data.new_shops_phone" class="tf-row-vertical-center">
+            <span class="tf-flex-item"
+              >店铺电话：{{ data.new_shops_phone }}</span
+            >
+            <i class="van-icon van-icon-phone" @click="makePhoneCall"></i>
+          </div>
+          <div>有效期：{{ data.term_of_validity }}</div>
           <div>使用须知：</div>
           <ul>
             <li>一个订单只能使用一张优惠券;</li>
@@ -67,6 +87,11 @@ export default {
       expanded: false
     }
   },
+  computed: {
+    shopsAddress () {
+      return `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`
+    }
+  },
   methods: {
     dateSure (obj) {
       this.formData.task_stime = obj.startTime
@@ -81,12 +106,26 @@ export default {
         }
       }
     },
+    makePhoneCall () {
+      api.call({
+        type: 'tel_prompt',
+        number: this.data.new_shops_phone
+      })
+    },
+    goIntroduce () {
+      this.$router.push({
+        name: 'shopIntroduce',
+        query: {
+          shopId: this.data.new_shops_id
+        }
+      })
+    },
     goLocation () {
       this.$router.push({
         name: 'shopLocation',
         query: {
           name: this.data.shops_address,
-          address: `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`,
+          address: this.shopsAddress,
           lon: this.data.shops_longitude,
           lat: this.data.shops_latitude
         }
@@ -108,8 +147,11 @@ export default {
   position: relative;
   background: #ffffff;
   border-radius: 10px;
+  &--expanded {
+    border-radius: 10px 10px 0px 0px;
+  }
   &::after {
-    content: '';
+    content: "";
     width: 200px;
     height: 200px;
     position: absolute;
@@ -220,16 +262,18 @@ export default {
   width: 100%;
   height: 0;
   position: relative;
-  background: linear-gradient(0deg, #ffffff 0%, #f9f9f9 100%);
+  background: #fff;
+  background-image: linear-gradient(180deg, #efefef 0%, #ffffff 100%);
+  background-size: 100% 40px;
+  background-repeat: no-repeat;
   border-radius: 0px 0px 10px 10px;
   transition: height 0.3s linear;
   overflow: hidden;
   &--expanded {
     height: auto;
-    // min-height: 480px;
   }
   .tf-icon-dizhi {
-    margin-left: 10px;
+    padding: 16px 20px;
     font-weight: bold;
     color: #222;
   }
@@ -237,6 +281,18 @@ export default {
     padding: 30px;
     font-size: 24px;
     color: #8f8f94;
+    .tf-row-vertical-center {
+      width: 100%;
+      height: 56px;
+      padding-left: 26px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      background: #f7f7f7;
+      border-radius: 28px;
+      span {
+        line-height: initial;
+      }
+    }
     div {
       line-height: 42px;
     }
@@ -246,8 +302,19 @@ export default {
       list-style: disc;
     }
     strong {
+      display: inline-flex;
       font-weight: bold;
       color: #222;
+      .van-icon-arrow {
+        font-weight: bold;
+        color: #000;
+      }
+    }
+    .van-icon-phone {
+      padding: 16px 20px;
+      font-weight: bold;
+      color: #222;
+      transform: rotateY(180deg);
     }
   }
 }

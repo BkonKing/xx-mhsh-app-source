@@ -197,9 +197,10 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
+    const nextPageName = ['shopLocation', 'shopIntroduce', 'goodsDetail']
     const el = this.$refs.container
     this.scrollTop = el.scrollTop || 0
-    if (to.name !== 'goodsDetail') {
+    if (!nextPageName.includes(to.name)) {
       this.$store.commit('deleteKeepAlive', from.name)
       this.$destroy()
     }

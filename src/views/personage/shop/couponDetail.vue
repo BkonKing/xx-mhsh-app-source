@@ -55,7 +55,7 @@
                     @click.stop="popoverVisible = true"
                   ></i>
                 </div>
-                <div class="order-buy-num">x1</div>
+                <div class="order-buy-num">×1</div>
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@
                 <div>领取时间：{{ couponInfo.ctime }}</div>
                 <div>使用须知：</div>
                 <div
-                  v-html="couponInfo.coupon_rule.replace(/\r\n|\n/g, '<br/>')"
+                  v-html="couponRule.replace(/\r\n|\n/g, '<br/>')"
                 ></div>
               </template>
             </div>
@@ -158,6 +158,10 @@ export default {
     },
     couponInfo () {
       return this.shopInfo.shops_user_coupon_data ? this.shopInfo.shops_user_coupon_data : {}
+    },
+    couponRule () {
+      const value = this.couponInfo.coupon_rule || ''
+      return value.replace(/\r\n|\n/g, '<br/>')
     }
   },
   created () {

@@ -99,6 +99,12 @@ service.interceptors.response.use(
     } else {
       return config.headers.completeData ? response : data
     }
+  },
+  error => {
+    if (error.message.includes('timeout')) {
+      Toast('请求超时')
+    }
+    return Promise.reject(error)
   }
 )
 

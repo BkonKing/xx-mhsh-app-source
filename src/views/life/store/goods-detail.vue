@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="body-block">
       <div class="order-bar bar-white">
         <van-nav-bar
@@ -327,9 +327,10 @@
               <div class="shops-dtit">数量</div>
               <div class="goods-num-count">
                 <div class="goods-btn-block">
-                  <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
+                  <van-stepper v-model="skuList[typeVal].count" min="1" :max="+skuList[typeVal].stock > +goods.max_buy ? +goods.max_buy : +skuList[typeVal].stock" integer />
+                  <!-- <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>
                   <div class="goods-num">{{skuList[typeVal].count}}</div>
-                  <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div>
+                  <div :class="[skuList[typeVal].notAdd ? 'not-add' : '','goods-btn goods-add']" @click.stop="countTab(1)">+</div> -->
                 </div>
               </div>
             </div>
@@ -392,7 +393,7 @@
       :share-obj="shareObj"
       @closeSwal="closeShare"></tf-share >
     </div>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -707,7 +708,7 @@ export default {
               // 相等的话，给count+1（即再次添加入购物车，数量+1）
               // console.log(this.cart_counts >= this.infoData.quota_num);return;
               if (parseInt(arr[j].count) >= goods.max_buy) { // 判断是否已经达到限购
-                arr[j].count = parseInt(arr[j].count) + goods.count - 1
+                arr[j].count = goods.max_buy
               } else {
                 arr[j].count = parseInt(arr[j].count) + goods.count
               }
@@ -965,7 +966,25 @@ export default {
 </script>
 
 <style scoped  src="../../../styles/life.css"></style>
-<style scoped>
+<style lang="less" scoped>
+/deep/ .van-stepper__minus,
+/deep/ .van-stepper__plus {
+  width: 48px;
+  height: 48px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+/deep/ .van-stepper__minus--disabled,
+/deep/ .van-stepper__plus--disabled {
+  background-color: #f2f2f4;
+}
+/deep/ .van-stepper__input {
+  width: 68px;
+  height: 48px;
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;

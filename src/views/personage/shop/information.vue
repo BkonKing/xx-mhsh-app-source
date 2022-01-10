@@ -255,7 +255,7 @@ export default {
   line-height: initial !important;
 }
 .address-name {
-  padding-top: 36px !important;
+  padding-top: 40px !important;
   /deep/.van-cell {
     padding: 0;
     input {
@@ -264,7 +264,8 @@ export default {
   }
 }
 .address-area {
-  padding-top: 14px;
+  padding-top: 20px;
+  padding-bottom: 40px !important;
 }
 .submit-btn {
   width: 710px;

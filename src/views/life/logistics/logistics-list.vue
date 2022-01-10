@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="order-bar bar-white">
       <van-nav-bar
         title="物流详情"
@@ -12,107 +12,48 @@
     </div>
     <div class="logistics-list">
       <template v-for="(item, index) in listData">
-        <div class="logistics-item block-session" @click="logisticsLink(index)">
+        <div class="logistics-item block-session" @click="logisticsLink(index)" :key="index">
           <div class="item-header">
-            <img v-if="item.buy_type == 1 && item.l_status == 0" class="wxchart-code" src="@/assets/img/code_01.png" />
-            <div class="logistics-name">{{item.name}}<span :class="[item.buy_type!=0 && item.l_status == 0 ? 'color-eb5841' : 'color-8f8f94']">（{{item.name2}}）</span></div>
-            <div v-if="item.buy_type==0 && item.l_status==0" class="logistics-info">
+            <img
+              v-if="item.buy_type == 1 && item.l_status == 0"
+              class="wxchart-code"
+              src="@/assets/img/code_01.png"
+            />
+            <div class="logistics-name">
+              {{ item.name
+              }}<span
+                :class="[
+                  item.buy_type != 0 && item.l_status == 0
+                    ? 'color-eb5841'
+                    : 'color-8f8f94'
+                ]"
+                >（{{ item.name2 }}）</span
+              >
+            </div>
+            <div
+              v-if="item.buy_type == 0 && item.l_status == 0"
+              class="logistics-info"
+            >
               <div class="logistics-icon-circular"></div>
               <div class="logistics-icon-line"></div>
-              <div class="logistics-text p-nowrap">{{item.kd_text_arr.data[0].context}}</div>
-              <div class="logistics-time">{{item.kd_text_arr.data[0].time}}</div>
+              <div class="logistics-text p-nowrap">
+                {{ item.kd_text_arr.data[0].context }}
+              </div>
+              <div class="logistics-time">
+                {{ item.kd_text_arr.data[0].time }}
+              </div>
             </div>
           </div>
           <div class="item-pic-list">
-            <div v-for="(val, key) in item.img_arr" class="item-pic-item">
-              <img class="img-100" :src="val" />
+            <div v-for="(item, key) in item.img_arr" class="item-pic-item" :key="key">
+              <img class="img-100" :src="item.src" />
+              <div class="goods-num">×{{item.count}}</div>
             </div>
           </div>
         </div>
       </template>
-      <!-- <div class="logistics-item block-session" @click="linkFunc(22,{id:2})">
-        <div class="item-header">
-          <div class="logistics-name">顺丰速运<span class="color-8f8f94">（已签收）</span></div>
-          <div class="logistics-info">
-            <div class="logistics-icon-circular"></div>
-            <div class="logistics-icon-line"></div>
-            <div class="logistics-text p-nowrap">仓库已接单</div>
-            <div class="logistics-time">2018-11-11 11:11:11</div>
-          </div>
-        </div>
-        <div class="item-pic-list">
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-        </div>
-      </div>
-      <div class="logistics-item block-session" @click="linkFunc(22,{id:2})">
-        <div class="item-header">
-          <div class="logistics-name">顺丰速运<span class="color-8f8f94">（SF123456789）</span></div>
-          <div class="logistics-info">
-            <div class="logistics-icon-circular"></div>
-            <div class="logistics-icon-line"></div>
-            <div class="logistics-text">仓库已接单</div>
-            <div class="logistics-time">2018-11-11 11:11:11</div>
-          </div>
-        </div>
-        <div class="item-pic-list">
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-        </div>
-      </div>
-      <div class="logistics-item block-session" @click="linkFunc(21,{id:2})">
-        <div class="item-header">
-          <img class="wxchart-code" src="@/assets/img/code_01.png" />
-          <div class="logistics-name">上门自提<span class="color-eb5841">（未提货）</span></div>
-        </div>
-        <div class="item-pic-list">
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-        </div>
-      </div>
-      <div class="logistics-item block-session" @click="linkFunc(21,{id:2})">
-        <div class="item-header">
-          <img class="wxchart-code" src="@/assets/img/code_01.png" />
-          <div class="logistics-name">上门自提<span class="color-8f8f94">（已提货）</span></div>
-        </div>
-        <div class="item-pic-list">
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-          <div class="item-pic-item">
-            <img class="img-100" src="http://192.168.1.158/library/uploads/image/20200529/20200529143533_43955.jpg" />
-          </div>
-        </div>
-      </div> -->
     </div>
-	</div>
+  </div>
 </template>
 
 <script>
@@ -120,17 +61,17 @@ import { NavBar } from 'vant'
 import { getLogisticsInfo } from '@/api/life.js'
 export default {
   components: {
-    [NavBar.name]: NavBar,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
       windowHeight: document.documentElement.clientHeight,
-      listData: '',
+      listData: ''
     }
   },
-  created(){
-    this.order_id = this.$route.query.id;
-    this.getData();
+  created () {
+    this.order_id = this.$route.query.id
+    this.getData()
   },
   methods: {
     getData () {
@@ -138,13 +79,14 @@ export default {
         order_project_id: this.order_id
       }).then(res => {
         if (res.success) {
-          this.listData = res.data;
+          this.listData = res.data
         }
       })
     },
-    logisticsLink(index) {
-      var _this = this.listData[index];
-      if(_this.buy_type == 0){ //0快递 1自提 2商家配送
+    logisticsLink (index) {
+      var _this = this.listData[index]
+      if (_this.buy_type == 0) {
+        // 0快递 1自提 2商家配送
         this.$router.push({
           path: '/logistics/logistics-express',
           query: {
@@ -152,7 +94,7 @@ export default {
             index: index
           }
         })
-      }else if(_this.buy_type == 1){
+      } else if (_this.buy_type == 1) {
         this.$router.push({
           path: '/logistics/logistics-self',
           query: {
@@ -160,7 +102,7 @@ export default {
             index: index
           }
         })
-      }else {
+      } else {
         this.$router.push({
           path: '/logistics/logistics-business',
           query: {
@@ -169,12 +111,12 @@ export default {
           }
         })
       }
-    },
+    }
   }
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/life.css"></style>
 <style scoped>
 .app-body {
   background-color: #f2f2f4;
@@ -246,11 +188,24 @@ export default {
   flex-wrap: wrap;
 }
 .item-pic-item {
+  display: flex;
   width: 114px;
   height: 114px;
+  margin: 0 10px 20px;
   border-radius: 4px;
   overflow: hidden;
-  display: flex;
-  margin: 0 10px 20px;
-} 
+  position: relative;
+}
+.goods-num {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 24px;
+}
 </style>

@@ -32,7 +32,7 @@
             </div>
             <div class="order-action-session">
               <div class="order-action-text">{{item.order_status_name}}</div>
-              <div class="order-buy-num">x1</div>
+              <div class="order-buy-num">×{{item.specs_count || 1}}</div>
             </div>
           </div>
           <div v-if="item.reason_type!=''" class="apply-select flex-between">

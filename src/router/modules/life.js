@@ -104,7 +104,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "couponList" */
       '@/views/life/coupon/coupon-list'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 {
   path: '/coupon/coupon-select',
@@ -113,7 +116,10 @@ const lifeRouter = [{
     import(
       /* webpackChunkName: "couponSelect" */
       '@/views/life/coupon/coupon-select'
-    )
+    ),
+  meta: {
+    keepAlive: true
+  }
 },
 {
   path: '/order/list',
