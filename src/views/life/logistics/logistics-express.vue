@@ -1,5 +1,5 @@
 <template>
-	<div class="app-body">
+  <div class="app-body">
     <div class="order-bar bar-white">
       <van-nav-bar
         title="物流详情"
@@ -14,24 +14,31 @@
       <template v-if="infoData">
         <div class="block-session logistics-goods">
           <div class="logistics-goods-pic">
-            <div class="goods-num">共{{infoData.count}}件</div>
-            <img class="img-100" :src="infoData.img_arr[0]" />
+            <div class="goods-num">共{{ infoData.count }}件</div>
+            <img class="img-100" :src="infoData.img_arr[0] && infoData.img_arr[0].src" />
           </div>
           <div class="logistics-tip">
-            <div>物流配送：{{infoData.name}}</div>
-            <div>运单编号：{{infoData.kuaidi_numb}}</div>
+            <div>物流配送：{{ infoData.name }}</div>
+            <div>运单编号：{{ infoData.kuaidi_numb }}</div>
           </div>
           <div class="copy-btn" @click="copy_cont(infoData.name2)">
             <div class="copy-text">复制</div>
           </div>
         </div>
-        
-        <div v-if="infoData.kd_text_arr.data.length" class="block-session logistics-body">
+
+        <div
+          v-if="infoData.kd_text_arr.data.length"
+          class="block-session logistics-body"
+        >
           <div class="logistics-list">
-            <div v-for="(item, index) in infoData.kd_text_arr.data" class="logistics-item">
+            <div
+              v-for="(item, index) in infoData.kd_text_arr.data"
+              class="logistics-item"
+              :key="index"
+            >
               <div class="item-icon-box"><div class="item-icon"></div></div>
-              <div class="item-msg">{{item.context}}</div>
-              <div class="item-time">{{item.time}}</div>
+              <div class="item-msg">{{ item.context }}</div>
+              <div class="item-time">{{ item.time }}</div>
             </div>
           </div>
           <div class="logistics-line"></div>
@@ -43,24 +50,30 @@
       <template v-if="infoData2">
         <div class="block-session logistics-goods">
           <div class="logistics-goods-pic">
-            <div class="goods-num">共{{num}}件</div>
+            <div class="goods-num">共{{ num }}件</div>
             <img class="img-100" :src="url" />
           </div>
           <div class="logistics-tip">
-            <div>物流配送：{{infoData2.kuaidi_name}}</div>
-            <div>运单编号：{{infoData2.kuaidi_numb}}</div>
+            <div>物流配送：{{ infoData2.kuaidi_name }}</div>
+            <div>运单编号：{{ infoData2.kuaidi_numb }}</div>
           </div>
           <div class="copy-btn" @click="copy_cont(infoData2.kuaidi_numb)">
             <div class="copy-text">复制</div>
           </div>
         </div>
-        
-        <div v-if="infoData2.kd_text_arr.data.length" class="block-session logistics-body">
+
+        <div
+          v-if="infoData2.kd_text_arr.data.length"
+          class="block-session logistics-body"
+        >
           <div class="logistics-list">
-            <div v-for="(item, index) in infoData2.kd_text_arr.data" class="logistics-item">
+            <div
+              v-for="(item, index) in infoData2.kd_text_arr.data"
+              class="logistics-item"
+            >
               <div class="item-icon-box"><div class="item-icon"></div></div>
-              <div class="item-msg">{{item.context}}</div>
-              <div class="item-time">{{item.time}}</div>
+              <div class="item-msg">{{ item.context }}</div>
+              <div class="item-time">{{ item.time }}</div>
             </div>
           </div>
           <div class="logistics-line"></div>
@@ -68,8 +81,7 @@
         <div v-else class="no-logistics color-8f8f94">暂无物流进度</div>
       </template>
     </template>
-    
-	</div>
+  </div>
 </template>
 
 <script>
@@ -90,55 +102,56 @@ export default {
       url: ''
     }
   },
-  created(){
-    this.order_id = this.$route.query.id;
-    this.index = this.$route.query.index ? this.$route.query.index : 0;
+  created () {
+    this.order_id = this.$route.query.id
+    this.index = this.$route.query.index ? this.$route.query.index : 0
 
-    this.logistice_id = this.$route.query.logistice_id;
-    this.num = this.$route.query.num;
-    this.url = this.$route.query.url;
-    this.getData();
+    this.logistice_id = this.$route.query.logistice_id
+    this.num = this.$route.query.num
+    this.url = this.$route.query.url
+    this.getData()
   },
   methods: {
     getData () {
-      if(this.order_id){
+      if (this.order_id) {
         getLogisticsInfo({
           order_project_id: this.order_id
         }).then(res => {
           if (res.success) {
-            this.infoData = res.data[this.index];
+            this.infoData = res.data[this.index]
           }
         })
-      }else {
-
+      } else {
         getLogisticsOne({
           logistice_id: this.logistice_id
         }).then(res => {
           if (res.success) {
-            this.infoData2 = res.data;
-            console.log(this.infoData2.kd_text_arr.data);
+            this.infoData2 = res.data
+            console.log(this.infoData2.kd_text_arr.data)
           }
         })
       }
-      
     },
-    copy_cont(text_c){
-      var clipBoard = api.require('clipBoard');
-      clipBoard.set({
-        value: text_c
-      }, function(ret, err) {
-        if (ret) {
-            Toast('复制成功');
-        } else {
-            alert(JSON.stringify(err));
+    copy_cont (text_c) {
+      var clipBoard = api.require('clipBoard')
+      clipBoard.set(
+        {
+          value: text_c
+        },
+        function (ret, err) {
+          if (ret) {
+            Toast('复制成功')
+          } else {
+            alert(JSON.stringify(err))
+          }
         }
-      });
-    },
-  },
+      )
+    }
+  }
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/life.css"></style>
 <style scoped>
 .app-body {
   background-color: #f2f2f4;
@@ -170,7 +183,7 @@ export default {
   height: 40px;
   text-align: center;
   line-height: 40px;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   font-size: 22px;
 }
