@@ -18,5 +18,6 @@ export const swiperightWhiteList = [
   'operateEvaluate',
   'operateComplaint',
   'taskDetail',
-  'scheduleInitiator'
+  'scheduleInitiator',
+  'settlement'
 ]

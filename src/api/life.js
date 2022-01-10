@@ -97,20 +97,35 @@ export function getSelectCoupon (params) {
 export function getFlashInfo (params) {
   return request.post('/life/order/ollage_pay_json', params)
 }
-export function flashCreate (params) {
-  return request.post('/life/order/create_ollage_order', params)
+export function flashCreate (data) {
+  return request({
+    url: '/life/order/create_ollage_order',
+    method: 'post',
+    data,
+    timeout: 0
+  })
 }
 export function getOrdinaryInfo (params) {
   return request.post('/life/order/shopping_pay', params)
 }
-export function ordinaryCreate (params) {
-  return request.post('/life/order/create_order', params)
+export function ordinaryCreate (data) {
+  return request({
+    url: '/life/order/create_order',
+    method: 'post',
+    data,
+    timeout: 0
+  })
 }
 export function getExchangeInfo (params) {
   return request.post('/life/order/credits_pay_json', params)
 }
-export function exchangeCreate (params) {
-  return request.post('/life/order/create_credits_order', params)
+export function exchangeCreate (data) {
+  return request({
+    url: '/life/order/create_credits_order',
+    method: 'post',
+    data,
+    timeout: 0
+  })
 }
 export function payOrderUp (params) {
   return request.post('/life/order/pay_order', params)

@@ -480,6 +480,11 @@ export default {
         return
       }
       this.payLoading = true
+      this.$toast.loading({
+        duration: 0,
+        overlay: true,
+        message: '请稍等'
+      })
       if (this.order_type == 0 || this.prev_page == 0) {
         var pricetotal = this.is_credits ? (parseInt(this.settlementInfo.total_price) + parseInt(this.settlementInfo.freight)) : (parseInt(this.settlementInfo.total_pay_price) + parseInt(this.settlementInfo.freight))
         ordinaryCreate({
@@ -532,6 +537,7 @@ export default {
           }
         }).finally(() => {
           this.payLoading = false
+          this.$toast.clear()
         })
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
@@ -552,6 +558,7 @@ export default {
           }
         }).finally(() => {
           this.payLoading = false
+          this.$toast.clear()
         })
       } else {
         this.flashParam.address_id = this.addressInfo.id
@@ -578,6 +585,7 @@ export default {
           }
         }).finally(() => {
           this.payLoading = false
+          this.$toast.clear()
         })
       }
     },

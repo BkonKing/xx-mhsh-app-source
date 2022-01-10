@@ -708,7 +708,7 @@ export default {
               // 相等的话，给count+1（即再次添加入购物车，数量+1）
               // console.log(this.cart_counts >= this.infoData.quota_num);return;
               if (parseInt(arr[j].count) >= goods.max_buy) { // 判断是否已经达到限购
-                arr[j].count = parseInt(arr[j].count) + goods.count - 1
+                arr[j].count = goods.max_buy
               } else {
                 arr[j].count = parseInt(arr[j].count) + goods.count
               }

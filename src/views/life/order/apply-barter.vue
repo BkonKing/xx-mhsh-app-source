@@ -205,7 +205,7 @@
             <div class="goods-num-count">
               <div class="goods-btn-block">
                 <div class="goods-btn goods-sub not-add">-</div>
-                <div class="goods-num">1</div>
+                <div class="goods-num">{{ableList[tabIndex] && ableList[tabIndex].specs_count}}</div>
                 <div class="goods-btn goods-add not-add">+</div>
               </div>
             </div>
@@ -322,7 +322,7 @@ export default {
     },
     checkboxOne (index) {
       this.tabIndex = index
-      console.log(this.ableList[index].is_checked)
+      // console.log(this.ableList[index].is_checked)
       if (this.ableList[index].is_checked) {
         this.ableList[index].is_checked = false
         this.ableList[index].reason = ''
@@ -347,8 +347,9 @@ export default {
     showFunc (index = '') {
       if (index) {
         this.tabIndex = index - 1
-        this.skuList = this.ableList[this.tabIndex].goods_specs_list
       }
+      this.skuList = this.ableList[this.tabIndex].goods_specs_list
+      this.typeVal = 0
       this.skuShow = !this.skuShow
     },
     // 显示/隐藏不可选商品
@@ -361,7 +362,7 @@ export default {
     },
     // 弹窗选择(回调)
     sureSwal (data) {
-      console.log(data)
+      // console.log(data)
       this.tapReason = this.swalList[data].text
       this.showFunc()
       this.closeReasonSwal(0)
