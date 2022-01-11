@@ -13,115 +13,189 @@
     <div class="order-session">
       <div class="order-header-bg"></div>
       <div class="order-status-session">
-        <div class="order-status-name">{{infoData.order_status_name}}</div>
-        <div class="order-status-tip">{{infoData.order_status_name2}}</div>
+        <div class="order-status-name">{{ infoData.order_status_name }}</div>
+        <div class="order-status-tip">{{ infoData.order_status_name2 }}</div>
       </div>
       <div class="cont-session goods-session">
-        <div v-for="(item,index) in goodsList" class="order-goods-info">
+        <div v-for="(item, index) in goodsList" class="order-goods-info" :key="index">
           <div class="order-pic-block">
             <img class="img-100" mode="aspectFill" :src="item.specs_img" />
           </div>
           <div class="order-info">
             <div class="order-name-price">
-              <div class="order-name p-nowrap">{{item.goods_name}}</div>
-              <div class="order-price">￥{{item.pay_price/100}}</div>
+              <div class="order-name p-nowrap">{{ item.goods_name }}</div>
+              <div class="order-price">￥{{ item.pay_price / 100 }}</div>
             </div>
             <div class="order-sku-num">
-              <div class="order-sku p-nowrap">{{item.specs_name}}</div>
-              <div class="order-num color-222" v-if="item.happiness_price!=0">幸福币{{item.happiness_price/10}}</div>
+              <div class="order-sku p-nowrap">{{ item.specs_name }}</div>
+              <div class="order-num color-222" v-if="item.happiness_price != 0">
+                幸福币{{ item.happiness_price / 10 }}
+              </div>
             </div>
             <div class="order-action-session">
-              <div class="order-action-text">{{item.order_status_name}}</div>
-              <div class="order-buy-num">×{{item.specs_count || 1}}</div>
+              <div class="order-action-text">{{ item.order_status_name }}</div>
+              <div class="order-buy-num">×{{ item.specs_count || 1 }}</div>
             </div>
           </div>
-          <div v-if="item.reason_type!=''" class="apply-select flex-between">
+          <div v-if="item.reason_type != ''" class="apply-select flex-between">
             <div class="select-left">
-              <div>退款原因：{{item.reason_type}}</div>
+              <div>退款原因：{{ item.reason_type }}</div>
             </div>
           </div>
         </div>
         <div class="detail-price-list">
           <div class="flex-sart-item">
             <div class="color-222 font-28 flex-sart-item-left">退款编号：</div>
-            <div class="color-222 font-28">{{typeVal == 1 ? infoData.refund_numb : infoData.returnfund_numb}}</div>
+            <div class="color-222 font-28">
+              {{
+                typeVal == 1 ? infoData.refund_numb : infoData.returnfund_numb
+              }}
+            </div>
           </div>
           <div class="flex-sart-item">
             <div class="color-222 font-28 flex-sart-item-left">申请时间：</div>
-            <div class="color-222 font-28">{{infoData.ctime}}</div>
+            <div class="color-222 font-28">{{ infoData.ctime }}</div>
           </div>
           <div v-if="infoData.refund_time" class="flex-sart-item">
             <div class="color-222 font-28 flex-sart-item-left">退款时间：</div>
-            <div class="color-222 font-28">{{infoData.refund_time}}</div>
+            <div class="color-222 font-28">{{ infoData.refund_time }}</div>
           </div>
           <div v-if="infoData.cancel_time" class="flex-sart-item">
             <div class="color-222 font-28 flex-sart-item-left">取消时间：</div>
-            <div class="color-222 font-28">{{infoData.cancel_time}}</div>
+            <div class="color-222 font-28">{{ infoData.cancel_time }}</div>
           </div>
         </div>
         <div class="order-total order-total-detail">
-          <div class="color-8f8f94 font-24">共 {{typeVal == 1 ? infoData.refund_num : infoData.return_num}} 件</div>
+          <div class="color-8f8f94 font-24">
+            共 {{ typeVal == 1 ? infoData.refund_num : infoData.return_num }} 件
+          </div>
         </div>
       </div>
-      <template v-if="(typeVal ==1&&infoData.order_status<2)||(typeVal ==2&&infoData.order_status<5)">
+      <template
+        v-if="
+          (typeVal == 1 && infoData.order_status < 2) ||
+            (typeVal == 2 && infoData.order_status < 5)
+        "
+      >
         <div class="cont-session order-message">
           <div class="order-tip-item">
-            <div class="order-tip-item-left order-tip-text color-222 font-28">退款总额:</div>
-            <div class="color-222 font-28 order-tip-text">{{infoData.pay_text}}</div>
+            <div class="order-tip-item-left order-tip-text color-222 font-28">
+              退款总额:
+            </div>
+            <div class="color-222 font-28 order-tip-text">
+              {{ infoData.pay_text }}
+            </div>
           </div>
           <div v-if="infoData.reason_text" class="order-tip-item">
-            <div class="order-tip-item-left order-tip-text color-222 font-28">退款说明:</div>
-            <div class="order-tip-item-right color-222 font-28 order-tip-text">{{infoData.reason_text}}</div>
+            <div class="order-tip-item-left order-tip-text color-222 font-28">
+              退款说明:
+            </div>
+            <div class="order-tip-item-right color-222 font-28 order-tip-text">
+              {{ infoData.reason_text }}
+            </div>
           </div>
-          <template v-if="typeVal==2">
+          <template v-if="typeVal == 2">
             <template v-if="infoData.order_status == 1">
               <div class="shipping-address">
                 <div class="shipping-address-item">
-                  <div class="shipping-address-item-left color-222 font-28">退货地址:</div>
-                  <div class="shipping-address-item-right">
-                    <div class="shipping-address-username p-nowrap">{{infoData.return_name}}</div>
-                    <div class="color-222 font-28">{{infoData.return_tel}}</div>
+                  <div class="shipping-address-item-left color-222 font-28">
+                    退货地址:
                   </div>
-                  <div class="copy-btn" @click="copy_cont(infoData.return_name+infoData.return_tel+infoData.tuihuo2)">
-                    <div class="copy-text">复制</div>
+                  <div
+                    class="color-222 font-28 p-nowrap"
+                    style="flex: 1;width: 0;"
+                  >
+                    {{ infoData.tuihuo1 }}
+                  </div>
+                  <div
+                    class="copy-text"
+                    @click="copy_cont(infoData.tuihuo1 + infoData.tuihuo2)"
+                  >
+                    复制
                   </div>
                 </div>
                 <div class="shipping-address-item">
                   <div class="shipping-address-item-left"></div>
                   <div class="shipping-address-item-right">
-                    <div class="shipping-address-text p-nowrap">{{infoData.tuihuo2}}</div>
+                    <div class="shipping-address-text p-nowrap">
+                      {{ infoData.tuihuo2 }}
+                    </div>
                   </div>
                 </div>
               </div>
               <div @click="linkFunc(19)" class="order-tip-item">
-                <div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
-                <div class="color-eb5841 font-28 order-tip-text">请及时寄出并填写物流单号</div>
-                <img class="shipping-address-icon" src="@/assets/img/right.png" />
+                <div
+                  class="order-tip-item-left order-tip-text color-222 font-28"
+                >
+                  退货物流:
+                </div>
+                <div class="color-eb5841 font-28 order-tip-text">
+                  请及时寄出并填写物流单号
+                </div>
+                <img
+                  class="shipping-address-icon"
+                  src="@/assets/img/right.png"
+                />
               </div>
             </template>
             <template v-else>
               <template v-if="go_logistice_info">
-                <div @click="linkFunc(22,{id:go_logistice_info.id})" v-if="go_logistice_info.s_time && go_logistice_info.s_time!='0'" class="order-tip-item">
-                  <div class="order-tip-item-left order-tip-text color-222 font-28">退货物流: </div>
-                  <div class="color-222 font-28 order-tip-text">{{go_logistice_info.kuaidi_name}}</div>
-                  <div class="color-8f8f94 font-28 order-tip-text">(已签收)</div>
-                  <img class="shipping-address-icon" src="@/assets/img/right.png" />
+                <div
+                  @click="linkFunc(22, { id: go_logistice_info.id })"
+                  v-if="
+                    go_logistice_info.s_time && go_logistice_info.s_time != '0'
+                  "
+                  class="order-tip-item"
+                >
+                  <div
+                    class="order-tip-item-left order-tip-text color-222 font-28"
+                  >
+                    退货物流:
+                  </div>
+                  <div class="color-222 font-28 order-tip-text">
+                    {{ go_logistice_info.kuaidi_name }}
+                  </div>
+                  <div class="color-8f8f94 font-28 order-tip-text">
+                    (已签收)
+                  </div>
+                  <img
+                    class="shipping-address-icon"
+                    src="@/assets/img/right.png"
+                  />
                 </div>
-                <div @click="linkFunc(22,{id:go_logistice_info.id})" v-else class="shipping-address">
+                <div
+                  @click="linkFunc(22, { id: go_logistice_info.id })"
+                  v-else
+                  class="shipping-address"
+                >
                   <div class="shipping-address-item">
-                    <div class="shipping-address-item-left color-222 font-28">退货物流:</div>
+                    <div class="shipping-address-item-left color-222 font-28">
+                      退货物流:
+                    </div>
                     <div class="shipping-address-item-right">
-                      <div class="color-222 font-28">{{go_logistice_info.kuaidi_name}}</div>
-                      <div class="color-8f8f94 font-28">({{go_logistice_info.kuaidi_numb}})</div>
-                      <img class="shipping-address-icon" src="@/assets/img/right.png" />
+                      <div class="color-222 font-28">
+                        {{ go_logistice_info.kuaidi_name }}
+                      </div>
+                      <div class="color-8f8f94 font-28">
+                        ({{ go_logistice_info.kuaidi_numb }})
+                      </div>
+                      <img
+                        class="shipping-address-icon"
+                        src="@/assets/img/right.png"
+                      />
                     </div>
                   </div>
                   <div class="shipping-logistics-item">
                     <div class="shipping-address-item-left"></div>
-                    <div class="shipping-address-item-right shipping-logistics-item-right">
+                    <div
+                      class="shipping-address-item-right shipping-logistics-item-right"
+                    >
                       <div class="shipping-logistics-point"></div>
                       <div class="shipping-logistics-line"></div>
-                      <div class="shipping-logistics-text">{{go_logistice_info.kd_text_arr.data[0].context}}<br />{{go_logistice_info.kd_text_arr.data[0].time}}</div>
+                      <div class="shipping-logistics-text">
+                        {{ go_logistice_info.kd_text_arr.data[0].context
+                        }}<br />{{ go_logistice_info.kd_text_arr.data[0].time }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -131,24 +205,45 @@
         </div>
       </template>
     </div>
-    <template v-if="typeVal ==1&&infoData.order_status==0&&infoData.is_cancel_btn==1">
+    <template
+      v-if="
+        typeVal == 1 &&
+          infoData.order_status == 0 &&
+          infoData.is_cancel_btn == 1
+      "
+    >
       <div class="fixed-empty"></div>
-      <template v-if="infoData.type==0">
+      <template v-if="infoData.type == 0">
         <div class="btn-fixed-buttom">
-          <div class="order-border-btn"><div @click="cancelApply" class="color-8f8f94 font-28">取消退款</div></div>
+          <div class="order-border-btn">
+            <div @click="cancelApply" class="color-8f8f94 font-28">
+              取消退款
+            </div>
+          </div>
         </div>
       </template>
       <template v-else>
         <div class="btn-fixed-buttom">
-          <div class="order-border-btn"><div @click="cancelApply2" class="color-8f8f94 font-28">取消退款</div></div>
+          <div class="order-border-btn">
+            <div @click="cancelApply2" class="color-8f8f94 font-28">
+              取消退款
+            </div>
+          </div>
         </div>
       </template>
     </template>
-    <template v-if="typeVal ==2&&infoData.order_status<2">
+    <template v-if="typeVal == 2 && infoData.order_status < 2">
       <div class="fixed-empty"></div>
       <div class="btn-fixed-buttom">
-        <div v-if="infoData.order_status==0&&infoData.is_cancel_btn==1" class="order-border-btn"><div @click="cancelApply" class="color-8f8f94 font-28">取消退款</div></div>
-        <div @click="linkFunc(19)" v-else class="order-border-btn paid-btn"><div class="color-fff font-26">填写退货物流</div></div>
+        <div
+          v-if="infoData.order_status == 0 && infoData.is_cancel_btn == 1"
+          class="order-border-btn"
+        >
+          <div @click="cancelApply" class="color-8f8f94 font-28">取消退款</div>
+        </div>
+        <div @click="linkFunc(19)" v-else class="order-border-btn paid-btn">
+          <div class="color-fff font-26">填写退货物流</div>
+        </div>
       </div>
     </template>
   </div>
@@ -156,7 +251,13 @@
 
 <script>
 import { NavBar, Toast } from 'vant'
-import { getRefundInfo, getReturnRefundInfo, cancelRefundApply, cancelRefundApply2, cancelRefundReturnApply } from '@/api/life.js'
+import {
+  getRefundInfo,
+  getReturnRefundInfo,
+  cancelRefundApply,
+  cancelRefundApply2,
+  cancelRefundReturnApply
+} from '@/api/life.js'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -168,7 +269,7 @@ export default {
       typeVal: 1,
       goodsList: [], // 商品列表
       infoData: '', // 退款信息
-      go_logistice_info: ''// 物流信息
+      go_logistice_info: '' // 物流信息
     }
   },
   created () {
@@ -178,7 +279,8 @@ export default {
   },
   methods: {
     getData () {
-      if (this.typeVal == 1) { // 退款
+      if (this.typeVal == 1) {
+        // 退款
         getRefundInfo({
           sale_order_id: this.sale_order_id
         }).then(res => {
@@ -201,7 +303,8 @@ export default {
     },
     // 取消申请
     cancelApply () {
-      if (this.typeVal == 1) { // 退款
+      if (this.typeVal == 1) {
+        // 退款
         cancelRefundApply({
           sale_order_id: this.sale_order_id
         }).then(res => {
@@ -209,7 +312,8 @@ export default {
             this.getData()
           }
         })
-      } else { // 退货退款
+      } else {
+        // 退货退款
         cancelRefundReturnApply({
           sale_order_id: this.sale_order_id
         }).then(res => {
@@ -229,17 +333,20 @@ export default {
         }
       })
     },
-    copy_cont (text_c) {
+    copy_cont (copyText) {
       var clipBoard = api.require('clipBoard')
-      clipBoard.set({
-        value: text_c
-      }, function (ret, err) {
-        if (ret) {
-          Toast('复制成功')
-        } else {
-          alert(JSON.stringify(err))
+      clipBoard.set(
+        {
+          value: copyText
+        },
+        function (ret, err) {
+          if (ret) {
+            Toast('复制成功')
+          } else {
+            alert(JSON.stringify(err))
+          }
         }
-      })
+      )
     },
     linkFunc (type, obj = {}) {
       switch (type) {
@@ -264,7 +371,6 @@ export default {
           break
       }
     }
-
   },
   beforeRouteLeave (to, from, next) {
     if (to.name == 'applyRefund') {
@@ -275,8 +381,8 @@ export default {
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
-<style scoped  src="../../../styles/order.css"></style>
+<style scoped src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/order.css"></style>
 <style scoped>
 .apply-select {
   width: 100%;
