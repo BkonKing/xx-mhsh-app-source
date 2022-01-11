@@ -173,12 +173,22 @@ export function getReturnRefundInfo (params) {
   return request.post('/life/my_order/returnfund_info', params)
 }
 // 取消订单（未支付）
-export function cancelNoPayOrder (params) {
-  return request.post('/life/my_order/cancelOrderProject', params)
+export function cancelNoPayOrder (data) {
+  return request({
+    url: '/life/my_order/cancelOrderProject',
+    method: 'post',
+    data,
+    timeout: 0
+  })
 }
 // 取消订单（已支付）
-export function cancelPayOrder (params) {
-  return request.post('/life/my_order/refundOrderProject', params)
+export function cancelPayOrder (data) {
+  return request({
+    url: '/life/my_order/refundOrderProject',
+    method: 'post',
+    data,
+    timeout: 0
+  })
 }
 // 取消退款申请
 export function cancelRefundApply (params) {
