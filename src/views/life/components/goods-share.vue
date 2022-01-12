@@ -94,8 +94,8 @@ export default {
       this.shareShow = true
       if (!this.activeGoods.goods_id) {
         this.activeGoods = this.infoData.list[0]
-        this.downloadSharePic()
       }
+      this.downloadSharePic()
     },
     // 保存分享图片
     downloadSharePic () {
