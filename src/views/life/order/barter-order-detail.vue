@@ -365,12 +365,18 @@ export default {
             path: '/logistics/logistics-express',
             query: {
               logistice_id: obj.id,
-              num: this.goodsList.length,
+              num: this.getGoodsNum(),
               url: this.goodsList[0].specs_img
             }
           })
           break
       }
+    },
+    getGoodsNum () {
+      const reducer = (previousValue, goods) => {
+        return previousValue + (+goods.specs_count)
+      }
+      return this.goodsList.reduce(reducer, 0)
     },
     // 取消申请
     cancelApply () {

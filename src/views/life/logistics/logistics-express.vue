@@ -27,7 +27,7 @@
         </div>
 
         <div
-          v-if="infoData.kd_text_arr.data.length"
+          v-if="infoData.kd_text_arr && infoData.kd_text_arr.data.length"
           class="block-session logistics-body"
         >
           <div class="logistics-list">
@@ -51,7 +51,7 @@
         <div class="block-session logistics-goods">
           <div class="logistics-goods-pic">
             <div class="goods-num">共{{ num }}件</div>
-            <img class="img-100" :src="url" />
+            <img class="img-100" :src="infoData2.img || url" />
           </div>
           <div class="logistics-tip">
             <div>物流配送：{{ infoData2.kuaidi_name }}</div>
@@ -63,13 +63,14 @@
         </div>
 
         <div
-          v-if="infoData2.kd_text_arr.data.length"
+          v-if="infoData2.kd_text_arr && infoData2.kd_text_arr.data.length"
           class="block-session logistics-body"
         >
           <div class="logistics-list">
             <div
               v-for="(item, index) in infoData2.kd_text_arr.data"
               class="logistics-item"
+              :key="index"
             >
               <div class="item-icon-box"><div class="item-icon"></div></div>
               <div class="item-msg">{{ item.context }}</div>
@@ -127,7 +128,7 @@ export default {
         }).then(res => {
           if (res.success) {
             this.infoData2 = res.data
-            console.log(this.infoData2.kd_text_arr.data)
+            // console.log(this.infoData2.kd_text_arr.data)
           }
         })
       }
