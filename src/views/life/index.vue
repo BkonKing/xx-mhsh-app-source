@@ -152,7 +152,7 @@
                 </template>
                 <!-- 其他专区 -->
                 <template v-else>
-                  <div class="bg-guodu" :key="`${index}bg`"></div>
+                  <!-- <div class="bg-guodu" :key="`${index}bg`"></div> -->
                   <template  v-if="item.special_type == 2">
                     <div v-if="item.child && item.child.length > 0" class="special-session flex-between" :key="index">
                       <div class="special-list">
@@ -947,7 +947,7 @@ export default {
   border-radius: 10px;
 }
 .life-session {
-  margin-bottom: 80px;
+  margin-bottom: 8px;
 }
 .life-tit {
   width: 710px;
@@ -1213,7 +1213,7 @@ export default {
   line-height: 40px
 }
 .life-area-tit {
-  height: 138px;
+  height: auto;
   padding: 0 30px 0 10px;
 }
 .life-area-tit-small.life-area-tit {
@@ -1225,16 +1225,18 @@ export default {
   padding: 30px 0;*/
 }
 .area-text-tit {
-  line-height: 52px;
+  margin-bottom: 20px;
+  line-height: 1;
 }
 .area-text-detail {
-  line-height: 42px;
+  margin-bottom: 20px;
+  line-height: 1;
   font-weight: normal;
   font-size: 24px;
   color: #8f8f94;
 }
 .banner-session {
-  margin: 34px auto 74px;
+  margin: 0 auto 40px;
   width: 710px;
   height: 326px;
   border-radius: 10px;
@@ -1349,6 +1351,7 @@ div.empty-session {
 }
 .app-body {
   /deep/ .life-home {
+    padding-bottom: 2px;
     background: linear-gradient(to bottom, #fff,#f2f2f4, #fff);
   }
 }
