@@ -17,6 +17,16 @@ const activityRouter = [
         /* webpackChunkName: "activityService" */
         '@/views/activity/service'
       )
+  },
+  // 2022-1-15 海丝文创广场 打卡活动
+  {
+    path: '/pages/activity/20220115activity',
+    name: '20220115activity',
+    component: () =>
+      import(
+        /* webpackChunkName: "activityService" */
+        '@/views/activity/20220115'
+      )
   }
 ]
 export default activityRouter

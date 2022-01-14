@@ -16,10 +16,10 @@
           left-arrow
         ></van-nav-bar>
       </div>
-      <div class="header-session">
+      <!-- <div class="header-session">
         <div class="area-tit">{{ infoData.special_name }}</div>
         <div class="area-subtit">{{ infoData.special_text }}</div>
-      </div>
+      </div> -->
     </div>
     <van-list
       v-model="loading"
