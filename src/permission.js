@@ -191,6 +191,12 @@ router.beforeEach(async (to, from, next) => {
             )
           }).catch(() => {})
         }
+      } else if (params.routerName) {
+        const { routerName, ...query } = params
+        router.push({
+          name: params.routerName,
+          query
+        })
       }
     })
   }
