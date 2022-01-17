@@ -204,21 +204,23 @@
                     </div>
                   </template>
                   <template v-else-if="item.special_type == 1">
-                    <div v-if="item.child && item.child.length > 0" class="life-session" :key="index">
+                    <div v-if="item.child && item.child.length > 0" class="life-session life-session-area" :key="index">
                       <div :class="[item.special_text ? '' : 'life-area-tit-small', 'life-tit life-area-tit flex-between']" @click="selectNav(3, item.special_id)">
                         <div class="font-34 font-weight flex-column-center">
                           <div class="area-text-tit">{{item.special_name}}</div>
-                          <div class="area-text-detail">{{item.special_text}}</div>
+                          <div v-if="item.special_text" class="area-text-detail">{{item.special_text}}</div>
                         </div>
                         <div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
                       </div>
-                      <div class="life-goods-list flex-align-center" ref="scrollEl" @scroll="scrollEvent" @touchend="touchEnd">
-                        <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item" :key="key">
-                          <div class="life-goods-pic">
-                            <img class="img-100" :src="val.thumb" />
+                      <div class="life-goods-list-container">
+                        <div class="life-goods-list flex-align-center" ref="scrollEl" @scroll="scrollEvent" @touchend="touchEnd">
+                          <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item" :key="key">
+                            <div class="life-goods-pic">
+                              <img class="img-100" :src="val.thumb" />
+                            </div>
+                            <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
+                            <price-show class="price-tag-3" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
                           </div>
-                          <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-                          <price-show class="price-tag-3" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
                         </div>
                       </div>
                     </div>
@@ -960,7 +962,6 @@ export default {
 .life-arrow-right,
 .life-arrow-right img {
   width: 15px;
-  height: 26px;
 }
 .life-special-tit {
   background: url('../../assets/img/bg_01.png') center top /100% 100%;
@@ -968,11 +969,12 @@ export default {
 .life-flash-tit {
   background: url('../../assets/img/bg_02.png') center top /100% 100%;
 }
+.life-goods-list-container {
+  width: 710px;
+  padding: 0 20px 20px;
+  margin: 0 auto;
+}
 .life-goods-list {
-  /*width: 720px;
-  margin-left: 30px;*/
-  padding-left: 30px;
-  height: 367px;
   overflow-x: auto;
   white-space: nowrap;
   .life-goods-name {
@@ -1212,9 +1214,32 @@ export default {
   font-size: 24px;
   line-height: 40px
 }
+.life-session-area {
+  margin: 0 20px 40px;
+  background: #fff;
+  border-radius: 10px;
+  .life-area-tit {
+    align-items: flex-end;
+    padding: 20px;
+  }
+  .life-arrow-right {
+    line-height: 1;
+  }
+  .life-goods-item {
+    width: 216px;
+    margin-right: 0;
+    + .life-goods-item {
+      margin-left: 12px;
+    }
+  }
+  .life-goods-pic {
+    height: 216px;
+  }
+}
 .life-area-tit {
   height: auto;
   padding: 0 30px 0 10px;
+  // margin-bottom: 20px;
 }
 .life-area-tit-small.life-area-tit {
   height: 100px;
@@ -1225,11 +1250,10 @@ export default {
   padding: 30px 0;*/
 }
 .area-text-tit {
-  margin-bottom: 20px;
   line-height: 1;
 }
 .area-text-detail {
-  margin-bottom: 20px;
+  margin-top: 20px;
   line-height: 1;
   font-weight: normal;
   font-size: 24px;
@@ -1352,7 +1376,7 @@ div.empty-session {
 .app-body {
   /deep/ .life-home {
     padding-bottom: 2px;
-    background: linear-gradient(to bottom, #fff,#f2f2f4, #fff);
+    background: #f2f2f4;
   }
 }
 .price-tag-1 {
