@@ -115,22 +115,24 @@ export default {
       this.getGoodsData()
     },
     getGoodsData () {
+      const page = this.page
+      const isFirst = page == 1
       getAreaGoods({
-        page: this.page,
+        page,
         special_id: this.special_id
       }).then(res => {
         if (res.success) {
           this.listData =
-            this.page == 1
+            isFirst
               ? res.data.special_goods_list
               : this.listData.concat(res.data.special_goods_list)
           this.isEmpty = !!(
-            this.page == 1 && res.data.special_goods_list.length == 0
+            isFirst && res.data.special_goods_list.length == 0
           )
           if (res.data.special_goods_list.length < res.pageSize) {
             this.finished = true
           } else {
-            this.page = this.page + 1
+            this.page = page + 1
           }
           // if (!this.infoData) {
           this.infoData = res.data.special_info
