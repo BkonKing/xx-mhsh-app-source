@@ -98,6 +98,7 @@ export default {
   position: relative;
 }
 .logistics-goods-pic {
+  flex-shrink: 0;
   width: 114px;
   height: 114px;
   border-radius: 4px;
@@ -120,11 +121,13 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-right: 20px;
   margin-left: 20px;
   color: #222;
 }
 .logistics-tip div {
   line-height: 57px;
+  word-break: break-all;
 }
 .logistics-code {
   display: flex;
