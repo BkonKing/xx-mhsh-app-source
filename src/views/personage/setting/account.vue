@@ -54,7 +54,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   methods: {
-    /* 切换账号 */
+    // 切换账号
     switchAccount (item) {
       Toast.loading('正在切换')
       let tokenList = api.getPrefs({
@@ -66,6 +66,12 @@ export default {
         key: 'access_token',
         value: tokenList[item.id]
       })
+      let userList = api.getPrefs({
+        key: 'user_list',
+        sync: true
+      }) || {}
+      userList = typeof userList === 'string' ? JSON.parse(userList) : userList
+      this.$store.commit('setUser_info', userList[item.id] || {})
       this.$store.commit('clearKeepAlive')
       this.$store.dispatch('getMyAccount').then(async () => {
         Toast.clear()
@@ -87,7 +93,7 @@ export default {
         Toast.clear()
       })
     },
-    /* 账号登录 */
+    // 账号登录
     login () {
       this.$router.push('/login?status=1')
     }
