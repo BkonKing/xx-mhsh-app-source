@@ -43,7 +43,7 @@ import { NavBar } from 'vant'
 import { getLogisticsInfo } from '@/api/life.js'
 export default {
   components: {
-    [NavBar.name]: NavBar,
+    [NavBar.name]: NavBar
   },
   data () {
     return {
@@ -52,14 +52,14 @@ export default {
       timer: ''
     }
   },
-  created(){
-    this.order_id = this.$route.query.id;
-    this.index = this.$route.query.index ? this.$route.query.index : 0;
-    this.getData();
-    let that = this;
-    this.timer = setInterval(()=>{
-      that.getData();
-    },2000)
+  created () {
+    this.order_id = this.$route.query.id
+    this.index = this.$route.query.index ? this.$route.query.index : 0
+    this.getData()
+    const that = this
+    this.timer = setInterval(() => {
+      that.getData()
+    }, 2000)
   },
   methods: {
     getData () {
@@ -67,15 +67,15 @@ export default {
         order_project_id: this.order_id
       }).then(res => {
         if (res.success) {
-          this.infoData = res.data[this.index];
+          this.infoData = res.data[this.index]
         }
       })
-    },
+    }
   },
-  beforeDestroy() {
-    //清除定时器
-    clearInterval(this.timer);
-  },
+  beforeDestroy () {
+    // 清除定时器
+    clearInterval(this.timer)
+  }
 }
 </script>
 

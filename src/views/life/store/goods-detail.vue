@@ -96,8 +96,9 @@
             <div v-if="infoData.distribution_type == 0 || infoData.distribution_type == 2" class="tip-right color-222">
               {{infoData.distribution_type_name}} · {{infoData.freight ? '运费'+(infoData.freight)+'元' : '免邮'}}
             </div>
-            <div v-else-if="infoData.distribution_type == 1" class="tip-right color-222 p-nowrap">
-              {{infoData.distribution_type_name}}({{infoData.take_address}})
+            <div v-else-if="infoData.distribution_type == 1" class="tip-right color-222 p-nowrap" @click="openAddress">
+              {{infoData.distribution_type_name}}{{oneTakeAddress}}
+              <van-icon v-if="mulTakeAddress" name="arrow" class="address-right" />
             </div>
           </div>
           <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" @click="tipToggle()" class="tip-item">
@@ -392,6 +393,7 @@
       :share-show="shareShow"
       :share-obj="shareObj"
       @closeSwal="closeShare"></tf-share >
+      <tf-select-popup v-model="addressVisible" :data="addressData" title="提货地点" :is-select-mode="false" labelKey="address"></tf-select-popup>
     </div>
   </div>
 </template>
@@ -399,6 +401,7 @@
 <script>
 import { Swipe, SwipeItem, Icon, ImagePreview, NavBar, CountDown, Toast } from 'vant'
 import remindSwal from './../components/remind-swal'
+import TfSelectPopup from '@/components/tf-select-popup'
 import tfShare from '@/components/tf-share'
 import { getGoodsDetail, remindSend } from '@/api/life.js'
 import { downloadPic } from '@/utils/util.js'
@@ -412,7 +415,8 @@ export default {
     [CountDown.name]: CountDown,
     [Toast.name]: Toast,
     remindSwal,
-    tfShare
+    tfShare,
+    TfSelectPopup
   },
   data () {
     return {
@@ -469,7 +473,21 @@ export default {
       ableCredits: '',
       // show: false,
       swiperArr: [], // 轮播图
-      skuPicArr: [] // 规格图
+      skuPicArr: [], // 规格图
+      addressVisible: false
+    }
+  },
+  computed: {
+    oneTakeAddress () {
+      const arr = this.infoData.pickup_address_list || []
+      return arr.length === 1 ? `(${arr[0].address})` : ''
+    },
+    mulTakeAddress () {
+      const arr = this.infoData.pickup_address_list || []
+      return arr.length > 1
+    },
+    addressData () {
+      return this.infoData.pickup_address_list || []
     }
   },
   created () {
@@ -488,6 +506,9 @@ export default {
     }
   },
   methods: {
+    openAddress () {
+      this.mulTakeAddress && (this.addressVisible = true)
+    },
     /* 保存分享图片 */
     downloadSharePic () {
       const that = this
@@ -1622,6 +1643,12 @@ div.btn-disabled {
 .collage-user-photo {
   width: 100%;
   height: 80px;
+}
+.address-right {
+  float: right;
+  padding-top: 9px;
+  font-size: 26px;
+  color: #AAAAAA;
 }
 /* .collage-item {
   height: 161px;

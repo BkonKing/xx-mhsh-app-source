@@ -65,6 +65,7 @@
         <div class="cont-session goods-session">
           <div
             v-for="(item, index) in goodsList"
+            :key="index"
             @click.stop="linkFunc(5, { id: item.goods_id })"
             :class="[
               index > 4 ? 'toggle-up' : '',
@@ -113,7 +114,7 @@
                 <div v-else class="order-action-text">
                   {{ item.order_status_name }}
                 </div>
-                <div class="order-buy-num">×{{item.specs_count || 1}}</div>
+                <div class="order-buy-num">×{{ item.specs_count || 1 }}</div>
               </div>
             </div>
             <div v-if="item.is_shouhou_btn == 1" class="order-goods-btn">
@@ -243,7 +244,16 @@
             </div>
             <div class="shipping-address-item-right">
               <div class="color-222 font-28">
-                {{ goodsList[0].take_address }}
+                <span style="margin-right: 4px;">{{
+                  goodsList[0].take_address
+                }}</span>
+                <span
+                  v-if="+orderInfo.order_status < 3"
+                  class="copy-text"
+                  @click="changeAddress"
+                  style="display: inline-block;"
+                  >更换</span
+                >
               </div>
             </div>
           </div>
@@ -506,11 +516,20 @@
       <zt-order ref="ztswal" :thSwal.sync="thSwal"></zt-order>
     </div>
     <goods-share v-model="sharePopup" :infoData="shareList"></goods-share>
+    <tf-select-popup
+      v-model="selectAddressVisible"
+      title="提货地点"
+      :data="addressData"
+      :selected.sync="activeAddressId"
+      labelKey="address"
+      @confirm="updatePickupAddress"
+    ></tf-select-popup>
   </div>
 </template>
 
 <script>
 import { NavBar, CountDown, Toast } from 'vant'
+import TfSelectPopup from '@/components/tf-select-popup'
 import paySwal from './../components/pay-swal'
 import explainSwal from './../components/explain-swal'
 import remindSwal from './../components/remind-swal'
@@ -522,7 +541,8 @@ import {
   cancelPayOrder,
   payOrderUp,
   editOrderAddress,
-  getIsShare
+  getIsShare,
+  updatePickupAddress
 } from '@/api/life.js'
 import GoodsShare from '../components/goods-share.vue'
 export default {
@@ -535,7 +555,8 @@ export default {
     explainSwal,
     remindSwal,
     ztOrder,
-    GoodsShare
+    GoodsShare,
+    TfSelectPopup
   },
   data () {
     return {
@@ -560,7 +581,9 @@ export default {
       timer: '', // 定时器
       infoData: '', // 自提物流信息
       sharePopup: false, // 分享弹窗
-      shareList: {} // 分享的商品列表
+      shareList: {}, // 分享的商品列表
+      selectAddressVisible: false,
+      activeAddressId: ''
     }
   },
   mounted () {
@@ -578,6 +601,11 @@ export default {
         that.orderAddress(that.addressInfo.id)
       }
     })
+  },
+  computed: {
+    addressData () {
+      return this.goodsList[0] ? this.goodsList[0].pickup_address_list : []
+    }
   },
   created () {
     eventBus.$off('chooseAddress')
@@ -599,6 +627,7 @@ export default {
           this.goodsList = res.order_goods_specs_list
           this.orderInfo = res.order_project_info
           this.logisticsInfo = res.logistice_info
+          this.activeAddressId = this.orderInfo.pickup_address_id || ''
           this.newTime = parseInt(new Date().getTime())
           isShare && this.getIsShare()
         }
@@ -874,6 +903,18 @@ export default {
           })
         }
       }
+    },
+    changeAddress () {
+      this.selectAddressVisible = true
+    },
+    // 修改订单自提点
+    updatePickupAddress ({ id }) {
+      updatePickupAddress({
+        order_project_id: this.order_id,
+        pickup_address_id: id
+      }).then(({ success }) => {
+        success && this.getData(false)
+      })
     }
   },
   watch: {
@@ -1021,5 +1062,8 @@ export default {
       height: 160px;
     }
   }
+}
+.copy-text {
+  line-height: 32px;
 }
 </style>
