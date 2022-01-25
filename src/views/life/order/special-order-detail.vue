@@ -299,7 +299,7 @@
         </div>
 
         <div
-          v-if="goodsList[0].buy_type == 1"
+          v-if="goodsList[0] && goodsList[0].buy_type == 1"
           @click="
             orderInfo.project_logistice_buy_type &&
               orderInfo.project_logistice_buy_type == 1 &&
