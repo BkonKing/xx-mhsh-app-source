@@ -1,6 +1,7 @@
 <template>
   <div class="tf-bg-white tf-body">
     <van-nav-bar
+      ref="navBar"
       :class="{ 'unfixed-background': !isFixedTabs }"
       :title="isFixedTabs ? filmInfo.film_name : ''"
       :border="false"
@@ -21,9 +22,10 @@
       <van-tabs
         v-else-if="scheduList.length"
         v-model="activeDate"
+        id="schedule-tabs"
         title-active-color="#EB5841"
         sticky
-        :offset-top="`${offsetTop}rem`"
+        :offset-top="`${offsetTop}px`"
         @scroll="scrollTabs"
         @change="changeSchedu"
       >
@@ -33,7 +35,7 @@
           ref="filter-cinema"
           :cityId="cityId"
           :filmNo="filmInfo.film_code"
-          :offset-top="`${offsetTop + 1.30667}rem`"
+          :offset-top="`${offsetTop + tabHeight}px`"
           @change="getSelectCinema"
         ></filter-cinema>
         <!-- 排期渲染选择 -->
@@ -104,7 +106,8 @@ export default {
       cityId: 0,
       lon: 0,
       lat: 0,
-      offsetTop: 1.17333, // tab吸顶距离（单位rem）
+      offsetTop: 0, // tab吸顶距离
+      tabHeight: 0,
       shareShow: false,
       shareObj: { pyqHide: true },
       first: true,
@@ -124,9 +127,10 @@ export default {
   watch: {
     activeDate (val) {
       const FilterCinema = this.$refs['filter-cinema']
-      FilterCinema && FilterCinema.reload({
-        input_date: val
-      })
+      FilterCinema &&
+        FilterCinema.reload({
+          input_date: val
+        })
     }
   },
   created () {
@@ -160,8 +164,8 @@ export default {
   },
   mounted () {
     // 安卓下部分需要添加顶部安全距离
-    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
-      this.offsetTop += api.safeArea.top / 37.5
+    if (process.env.VUE_APP_IS_APP === '1') {
+      this.offsetTop = api.safeArea.top + this.$refs.navBar.height
     }
   },
   methods: {
@@ -234,6 +238,13 @@ export default {
             // 跳转到选择排期，那个页面tabs值（后台接口返回的值）用的是`${week} ${date}`
             this.activeScheduDate = `${week} ${date}`
             this.getSelectCinema({ init: true })
+            this.$nextTick(() => {
+              setTimeout(() => {
+                this.tabHeight = document.querySelector(
+                  '#schedule-tabs .van-tabs__wrap'
+                ).offsetHeight
+              }, 0)
+            })
           }
         })
         .finally(() => {

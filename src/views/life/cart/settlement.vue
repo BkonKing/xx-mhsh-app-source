@@ -506,7 +506,7 @@ export default {
       this.payLoading = true
       this.$toast.loading({
         duration: 0,
-        overlay: true,
+        forbidClick: true,
         message: '请稍等'
       })
       if (this.order_type == 0 || this.prev_page == 0) {

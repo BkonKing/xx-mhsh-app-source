@@ -18,7 +18,10 @@
           </template>
         </van-nav-bar>
       </div>
-      <div class="scroll-body">
+      <div class="loading-box" v-if="loading">
+        <van-loading type="spinner" size="30px" vertical>加载中</van-loading>
+      </div>
+      <div v-show="!loading" class="scroll-body">
         <div class="banner">
           <van-swipe :autoplay="4000" @change="onChange">
             <van-swipe-item
@@ -346,7 +349,7 @@
       </div>
 
       <!-- <div class="fixed-empty"></div> -->
-      <div class="bottom-fixed operate-session flex-align-center">
+      <div v-show="!loading" class="bottom-fixed operate-session flex-align-center">
         <a
           :href="'tel: ' + infoData.customerServiceHotline"
           class="kf-btn flex-center"
@@ -857,7 +860,8 @@ export default {
       // show: false,
       swiperArr: [], // 轮播图
       skuPicArr: [], // 规格图
-      addressVisible: false
+      addressVisible: false,
+      loading: false
     }
   },
   computed: {
@@ -959,6 +963,7 @@ export default {
       this.cart_num = cart_num
     },
     getData () {
+      this.loading = true
       getGoodsDetail({
         goods_id: this.goodsId,
         f_id: this.f_orderid
@@ -999,6 +1004,8 @@ export default {
           this.typeFunc(0)
           this.downloadSharePic()
         }
+      }).finally(() => {
+        this.loading = false
       })
     },
     onChange (index) {
@@ -2179,5 +2186,12 @@ div.btn-disabled {
   font-size: 30px;
   font-weight: 400;
   line-height: 1;
+}
+.loading-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 </style>
