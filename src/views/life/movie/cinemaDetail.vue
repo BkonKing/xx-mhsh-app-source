@@ -1,6 +1,7 @@
 <template>
   <div class="tf-bg-white">
     <van-nav-bar
+      ref="navBar"
       :class="{ 'unfixed-background': !isFixedTabs }"
       :fixed="true"
       :border="false"
@@ -77,7 +78,7 @@
         v-model="activeDate"
         title-active-color="#EB5841"
         sticky
-        :offset-top="`${offsetTop}rem`"
+        :offset-top="`${offsetTop}px`"
         @scroll="scrollTabs"
       >
         <van-tab
@@ -148,7 +149,7 @@ export default {
       sidePaddingWidth: 280, // 影片轮播，film-swipe左右需要添加两个占位item和margin间距的宽度和
       scrollLeft: 0, // 离开页面保存的滚动位置
       first: true,
-      offsetTop: 1.17333, // tab吸顶距离（单位rem）
+      offsetTop: 0, // tab吸顶距离
       shareShow: false,
       shareObj: {}
     }
@@ -162,9 +163,8 @@ export default {
   mounted () {
     this.filmItemWidth = (api.winWidth || document.body.clientWidth) / 4
     this.sidePaddingWidth = this.filmItemWidth * 3
-    // 安卓下部分需要添加顶部安全距离
-    if (process.env.VUE_APP_IS_APP === '1' && api.systemType === 'android') {
-      this.offsetTop += api.safeArea.top / 37.5
+    if (process.env.VUE_APP_IS_APP === '1') {
+      this.offsetTop = api.safeArea.top + this.$refs.navBar.height
     }
   },
   methods: {
