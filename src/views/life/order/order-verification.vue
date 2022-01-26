@@ -9,7 +9,10 @@
         left-arrow
         @click-left="$router.go(-1)"
       >
-        <template slot="left"><div class="nav-goback"><img class="img-100" src="@/assets/img/close_03.png" /></div></template>
+        <template slot="left"
+          ><div class="nav-goback">
+            <img class="img-100" src="@/assets/img/close_03.png" /></div
+        ></template>
       </van-nav-bar>
     </div>
     <template v-if="infoData">
@@ -31,7 +34,9 @@
           </div>
           <div class="distribution-item">
             <div>订单备注：</div>
-            <div>{{ infoData.user_explain ? infoData.user_explain : '无' }}</div>
+            <div class="text-wrap">
+              {{ infoData.user_explain ? infoData.user_explain : "无" }}
+            </div>
           </div>
         </div>
       </div>
@@ -41,8 +46,14 @@
           <div>共 {{ infoData.count }} 件</div>
         </div>
         <div class="goods-list">
-          <div v-for="(item, index) in infoData.order_goods_specs_list" :key="index" class="goods-item">
-            <div class="goods-index flex-column-center"><div>{{ index + 1 }}</div></div>
+          <div
+            v-for="(item, index) in infoData.order_goods_specs_list"
+            :key="index"
+            class="goods-item"
+          >
+            <div class="goods-index flex-column-center">
+              <div>{{ index + 1 }}</div>
+            </div>
             <div class="goods-info">
               <img class="goods-img" :src="item.specs_img" />
               <div class="goods-name-des flex-column-center">
@@ -50,24 +61,19 @@
                 <div class="goods-des">{{ item.specs_name }}</div>
               </div>
             </div>
-            <div class="goods-num flex-align-center">x{{ item.count }}</div>
+            <div class="goods-num flex-align-center">×{{ item.count }}</div>
           </div>
-          <!-- <div class="goods-item">
-            <div class="goods-index flex-column-center"><div>2</div></div>
-            <div class="goods-info">
-              <img class="goods-img" src="" />
-              <div class="goods-name-des flex-column-center">
-                <div class="goods-name p-nowrap">网易严选魔方蓝牙音箱</div>
-                <div class="goods-des">粉色</div>
-              </div>
-            </div>
-            <div class="goods-num flex-align-center">x5</div>
-          </div> -->
         </div>
       </div>
       <div v-if="infoData.is_verification" class="btn-block">
         <div class="bottom-fixed">
-          <div @click="sureFunc" class="submit-btn">确定核销</div>
+          <van-button
+            v-preventReClick
+            class="submit-btn"
+            :loading="submitLoading"
+            @click="sureFunc"
+            >确定核销</van-button
+          >
         </div>
       </div>
       <div v-else class="status-block">
@@ -88,7 +94,8 @@ export default {
   },
   data () {
     return {
-      infoData: '',
+      infoData: {},
+      submitLoading: false,
       code_info: ''
     }
   },
@@ -107,26 +114,26 @@ export default {
       })
     },
     sureFunc () {
-      const that = this
+      this.submitLoading = true
       sureVerification({
         code_info: this.code_info
       }).then(res => {
         if (res.success) {
           Toast({
             message: '核销成功',
-            duration: 1500,
-            onClose: function () {
-              that.$router.go(-1)
-            }
+            duration: 1500
           })
+          this.$router.go(-1)
         }
+      }).finally(() => {
+        this.submitLoading = false
       })
     }
   }
 }
 </script>
 
-<style scoped  src="../../../styles/life.css"></style>
+<style scoped src="../../../styles/life.css"></style>
 <style scoped>
 .app-body {
   color: #222222;
@@ -140,7 +147,8 @@ export default {
 .block-session {
   margin-top: 30px;
 }
-.order-take,.order-goods {
+.order-take,
+.order-goods {
   padding: 0 30px;
 }
 .take-info {
@@ -229,6 +237,7 @@ export default {
   margin: 0 auto;
   font-size: 30px;
   color: #fff;
+  border: none;
 }
 .status-block {
   height: 128px;
@@ -242,5 +251,8 @@ export default {
   line-height: 98px;
   text-align: center;
   border-radius: 20px 20px 0 0;
+}
+.text-wrap {
+  word-break: break-all;
 }
 </style>

@@ -162,7 +162,7 @@
         </div>
         <div class="common-item-right ps-type">
           <div v-if="selectType == 0 || selectType == 2" class="color-222 font-28 p-nowrap">{{ selectType == 0 ? '快递配送' : '商家配送' }}</div>
-          <div v-else class="color-222 font-28 p-nowrap">{{ psList[selectType].psName + '-' + psList[selectType].psCont }}</div>
+          <div v-else class="color-222 font-28 p-nowrap">{{ psList[selectType].psName + '-' + selectAddressText }}</div>
           <div v-if="userInfo.user_type>0" class="link-icon">
             <img class="img-100" src="@/assets/img/right.png" mode=""/>
           </div>
@@ -211,30 +211,36 @@
     ></pay-swal>
     <div v-show="psShow" class="mask-bg" @click="psShow = false"></div>
     <div v-show="psShow" class="swal-session bottom-fixed">
-      <div class="close-block" @click.stop="psShow = false">
-        <div class="close-btn flex-center"><img class="img-100" src="@/assets/img/close.png" /></div>
-      </div>
       <div class="swal-session-cont">
+        <div class="close-btn flex-center" @click.stop="psShow = false"><img class="img-100" src="@/assets/img/close_02.png" /></div>
         <div class="swal-tit">配送方式</div>
         <div class="swal-list">
-          <template v-if="psType == 0 || psType == 2">
+          <template v-if="psType == 1">
+            <div v-for="(item, index) in selectPsList" :key="index" class="swal-item flex-between">
+              <template v-if="item.psType==0">
+                <div class="select-type tf-row-space-between" @click="selectType=item.psType">
+                  <div>{{ item.psName }}<span class="text-wrap">（{{ item.psCont }}）</span></div>
+                  <span class="address-checkbox" :class="{'active-address-checkbox': selectType=== item.psType}"></span>
+                </div>
+              </template>
+              <template v-if="item.psType==1">
+                <div class="swal-label">
+                  <div class="swal-label-title">{{ item.psName }}<span class="text-wrap">（选择一个地点提货）</span></div>
+                  <div class="address-list">
+                    <div v-for="(address,index) in addressList" :key="address.id" class="address-item" @click="selectAddress(address, index)"><span>{{address.address}}</span><span class="address-checkbox" :class="{'active-address-checkbox': selectType == 1 && pickup_address_id == address.id}"></span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+          <template v-else>
             <div class="swal-item flex-between">
               <div class="swal-label">
                 <div>{{ psList[psType].psName }}</div>
                 <div>{{ psList[psType].psCont }}</div>
               </div>
               <div class="swal-tick"><img class="tick-pic" src="@/assets/img/tick.png" /></div>
-            </div>
-          </template>
-          <template v-else>
-            <div v-for="(item, index) in psList" :key="index" class="swal-item flex-between" @click="selectType=item.psType">
-              <template v-if="item.psType!=2">
-                <div class="swal-label">
-                  <div>{{ item.psName }}</div>
-                  <div class="text-wrap">{{ item.psCont }}</div>
-                </div>
-                <div v-if="selectType == item.psType" class="swal-tick"><img class="tick-pic" src="@/assets/img/tick.png" /></div>
-              </template>
             </div>
           </template>
         </div>
@@ -304,6 +310,16 @@ export default {
       psShow: false, // 配送方式弹窗
       psType: 0, // 配送方式 0快递配送   1上门自提   2商家配送
       selectType: 0, // 选中的配送方式
+      selectPsList: [{
+        psType: '0',
+        psName: '快递',
+        psCont: '快递公司配送'
+      },
+      {
+        psType: '1',
+        psName: '上门自提',
+        psCont: ''
+      }],
       psList: [
         {
           psType: '0',
@@ -320,11 +336,18 @@ export default {
           psName: '商家配送',
           psCont: '商家自行配送'
         }
-      ]
+      ],
+      addressList: [],
+      pickup_address_id: '',
+      activeAddress: 0
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    selectAddressText () {
+      const text = this.addressList[this.activeAddress] && this.addressList[this.activeAddress].address
+      return text
+    }
   },
   mounted () {
     var that = this
@@ -395,8 +418,9 @@ export default {
             this.settlementInfo = res.data.pay
             this.psType = res.data.info_data.distribution_type
             this.selectType = res.data.info_data.distribution_type
+            this.addressList = res.data.info_data.pickup_address_list
             if (this.psType == 1) {
-              this.psList[1].psCont = res.data.info_data.take_address
+              this.pickup_address_id = this.addressList[this.activeAddress].id
             }
             if (!this.isSelectAddress) {
               this.addressInfo = res.data.address_info
@@ -543,6 +567,9 @@ export default {
         this.flashParam.address_id = this.addressInfo.id
         this.flashParam.old_pay_credits = this.settlementInfo.pay_credits + parseFloat(this.settlementInfo.freight)
         this.flashParam.is_change = this.psType == this.selectType ? 0 : 1
+        if (+this.selectType === 1) {
+          this.flashParam.pickup_address_id = this.pickup_address_id
+        }
         exchangeCreate(Object.assign({ user_explain: this.remarks }, this.flashParam)).then(res => { // 幸福币兑换
           if (res.success) {
             this.order_id = res.order_id
@@ -789,6 +816,11 @@ export default {
           })
           break
       }
+    },
+    selectAddress ({ id }, index) {
+      this.selectType = 1
+      this.pickup_address_id = id
+      this.activeAddress = index
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -1046,34 +1078,35 @@ input.order-remarks-text {
   animation: translateMove 0.5s;
   -webkit-animation: translateMove 0.5s;
   z-index: 188;
-  .close-block {
-    height: 110px;
-    position: relative;
-  }
   .close-btn {
     position: absolute;
-    width: 110px;
-    height: 110px;
+    width: 90px;
+    height: 90px;
     top: 0;
     right: 0;
     padding: 30px;
   }
   .swal-session-cont {
-    padding: 0 30px 40px;
+    padding: 0 20px 40px;
     background-color: #fff;
+    border-radius: 10px 10px 0px 0px;
   }
   .swal-tit {
-    height: 110px;
-    line-height: 110px;
+    height: 90px;
+    line-height: 90px;
     text-align: center;
-    font-size: 30px;
-    color: #222;
+    font-size: 32px;
+    color: #000;
     font-weight: bold;
   }
   .swal-item {
     padding: 15px 0;
     .swal-label {
       max-width: 640px;
+      font-size: 26px;
+      .text-wrap {
+        color: #8F8F94;
+      }
       div:nth-child(1) {
         line-height: 50px;
         color: #222;
@@ -1099,5 +1132,53 @@ input.order-remarks-text {
   .swal-sure {
     margin-top: 30px;
   }
+}
+.submit-btn {
+  border-radius: 88px;
+}
+.address-list {
+  width: 710px;
+  padding: 0 30px;
+  background: #F7F7F7;
+  border-radius: 10px;
+}
+.address-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0;
+  line-height: 34px !important;
+  font-size: 26px;
+  color: #222222 !important;
+  word-break: break-all;
+}
+.address-item + .address-item {
+  border-top: 1px solid #DDDDDD;
+}
+.select-type {
+  width: 100%;
+  padding-right: 30px;
+}
+.address-checkbox {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  margin-left: 30px;
+  border: 1px solid #8F8F94;
+  border-radius: 50%;
+}
+.active-address-checkbox {
+  background: #FF6555;
+  border-color: #FF6555;
+  color: #FFFFFF;
+  font-family: 'vant-icon' !important;
+  text-align: center;
+  line-height: 38px;
+  &::before {
+    content: "\F0C8";
+  }
+}
+.swal-label-title {
+  padding-bottom: 20px;
 }
 </style>

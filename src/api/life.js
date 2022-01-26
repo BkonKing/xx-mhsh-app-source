@@ -240,6 +240,11 @@ export function getLogisticsOne (params) {
   return request.post('/life/my_order/get_logistice_info', params)
 }
 
+// 修改订单自提点
+export function updatePickupAddress (data) {
+  return request.post('/life/my_order/order_project_pickup_address_up', data)
+}
+
 // 订单核销
 export function sureVerification (params) {
   return request.post('/life/order/projectSmztScanCode', params)
