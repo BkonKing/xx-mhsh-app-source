@@ -18,10 +18,10 @@
           </template>
         </van-nav-bar>
       </div>
-      <div class="loading-box" v-if="loading">
+      <div v-if="loading" class="loading-box">
         <van-loading type="spinner" size="30px" vertical>加载中</van-loading>
       </div>
-      <div v-show="!loading" class="scroll-body">
+      <div v-if="!loading" class="scroll-body">
         <div class="banner">
           <van-swipe :autoplay="4000" @change="onChange">
             <van-swipe-item
@@ -75,8 +75,8 @@
             </div>
           </div>
           <!-- <div class="flash-session flash-over">
-          <div>已结束</div>
-        </div> -->
+            <div>已结束</div>
+          </div> -->
         </template>
         <div class="goods-info goods-session">
           <div class="info-pubilc">
@@ -334,13 +334,13 @@
         </div>
 
         <!-- <div v-if="infoData.tips_arr && infoData.tips_arr.length" class="goods-tip goods-session flex-align-center">
-        <div class="tip-left flex-center">
-          <img src="@/assets/img/icon_02.png" />
-        </div>
-        <div class="tip-right">
-          <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
-        </div>
-      </div> -->
+          <div class="tip-left flex-center">
+            <img src="@/assets/img/icon_02.png" />
+          </div>
+          <div class="tip-right">
+            <div v-for="(item, index) in infoData.tips_arr">{{item}}</div>
+          </div>
+        </div> -->
 
         <div class="goods-cont goods-session">
           <div class="goods-cont-tit">商品详情</div>
@@ -349,7 +349,10 @@
       </div>
 
       <!-- <div class="fixed-empty"></div> -->
-      <div v-show="!loading" class="bottom-fixed operate-session flex-align-center">
+      <div
+        v-show="!loading"
+        class="bottom-fixed operate-session flex-align-center"
+      >
         <a
           :href="'tel: ' + infoData.customerServiceHotline"
           class="kf-btn flex-center"
@@ -967,46 +970,48 @@ export default {
       getGoodsDetail({
         goods_id: this.goodsId,
         f_id: this.f_orderid
-      }).then(res => {
-        if (res.success) {
-          this.infoData = res.data
-          this.ableCredits = res.ok_credits
-          this.swiperArr = res.data.pic_url_arr
-          this.skuList = res.data.formats
-          this.skuList.forEach(res2 => {
-            this.$set(res2, 'count', 1)
-            this.skuPicArr.push(res2.specs_img)
-          })
-          this.newTime = parseInt(new Date().getTime())
-
-          this.goods.goods_id = res.data.id
-          this.goods.goods_name = res.data.goods_name
-          this.goods.goods_type = res.data.goods_type
-          this.goods.tip_text = res.data.tip_text
-          if (res.data.goods_type == 3) {
-            this.goods.sign_url = res.data.sign_url
-            if (this.is_collage) {
-              this.collageList = res.data.f_collage_order_arr
-                ? res.data.f_collage_order_arr
-                : []
-            }
-            if (res.data.user_order_project_info) {
-              this.my_ing_info = res.data.user_order_project_info
-            }
-          }
-          if (res.data.goods_type == 2) {
-            this.goods.special_bargain_type = res.data.special_bargain_type
-          }
-          // if(this.infoData.goods_type == 3 && !this.is_collage){
-          //   this.goods.s_price = this.skuList[index].o_price;
-          //   this.goods.pay_price = this.skuList[index].o_price;
-          // }
-          this.typeFunc(0)
-          this.downloadSharePic()
-        }
-      }).finally(() => {
-        this.loading = false
       })
+        .then(res => {
+          if (res.success) {
+            this.infoData = res.data
+            this.ableCredits = res.ok_credits
+            this.swiperArr = res.data.pic_url_arr
+            this.skuList = res.data.formats
+            this.skuList.forEach(res2 => {
+              this.$set(res2, 'count', 1)
+              this.skuPicArr.push(res2.specs_img)
+            })
+            this.newTime = parseInt(new Date().getTime())
+
+            this.goods.goods_id = res.data.id
+            this.goods.goods_name = res.data.goods_name
+            this.goods.goods_type = res.data.goods_type
+            this.goods.tip_text = res.data.tip_text
+            if (res.data.goods_type == 3) {
+              this.goods.sign_url = res.data.sign_url
+              if (this.is_collage) {
+                this.collageList = res.data.f_collage_order_arr
+                  ? res.data.f_collage_order_arr
+                  : []
+              }
+              if (res.data.user_order_project_info) {
+                this.my_ing_info = res.data.user_order_project_info
+              }
+            }
+            if (res.data.goods_type == 2) {
+              this.goods.special_bargain_type = res.data.special_bargain_type
+            }
+            // if(this.infoData.goods_type == 3 && !this.is_collage){
+            //   this.goods.s_price = this.skuList[index].o_price;
+            //   this.goods.pay_price = this.skuList[index].o_price;
+            // }
+            this.typeFunc(0)
+            this.downloadSharePic()
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     onChange (index) {
       this.current = index
@@ -2192,6 +2197,6 @@ div.btn-disabled {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 1.17333rem);
 }
 </style>
