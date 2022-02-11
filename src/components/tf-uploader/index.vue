@@ -6,7 +6,9 @@
     v-bind="$attrs"
     upload-icon="plus"
     multiple
-  ></van-uploader>
+  >
+    <slot></slot>
+  </van-uploader>
 </template>
 
 <script>

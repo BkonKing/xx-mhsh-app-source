@@ -27,6 +27,24 @@ export function saveShopInformation (data) {
   })
 }
 
+// 商铺 店铺认证 数据 接口
+export function getShopAttestationInfo (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_attestation_info',
+    method: 'post',
+    data
+  })
+}
+
+// 商铺 提交或修改 审核接口
+export function saveAttestationInfo (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_attestation_submit',
+    method: 'post',
+    data
+  })
+}
+
 // 商铺优惠券 列表 接口
 export function getShopCouponList (data) {
   return request({

@@ -1,23 +1,22 @@
 <template>
-  <div class="certification">
+  <div class="addBankCard">
     <van-nav-bar
-      class="navbar"
       :fixed="true"
       :border="false"
       placeholder
       left-arrow
-      @click-left="goback"
-    ></van-nav-bar>
+      @click-left="goBack"
+    />
     <div class="content">
-      <div class="title">
-        <div class="t1">使用新银行卡支付</div>
-        <div class="t2">请填写您的真实信息</div>
+      <div class="top">
+        <h3>绑定银行卡</h3>
+        <div class="t1">请填写您的真实信息</div>
       </div>
       <div class="item-card">
         <van-field
           class="field"
           v-model="personName"
-          placeholder="真实姓名"
+          placeholder="请输入真实姓名"
           @change="setRealname"
         >
           <template #label>
@@ -27,7 +26,7 @@
         <van-field
           class="field"
           v-model="idCard"
-          placeholder="身份证号码"
+          placeholder="请输入身份证号码"
           maxlength="18"
           onkeyup="value=value.replace(/[\W]/g,'')"
         >
@@ -38,16 +37,16 @@
       </div>
       <div class="item-card">
         <van-field
-          ref="cardInput"
-          @input="formatCardNumber(bankCardNum)"
-          class="field"
           v-model="bankCardNum"
-          placeholder="储蓄卡"
+          ref="cardInput"
+          class="field"
+          placeholder="请输入储蓄卡卡号"
           maxlength="23"
           @change="getBankCardName"
+          @input="formatCardNumber(bankCardNum)"
         >
           <template #label>
-            <div class="label kahao">卡号</div>
+            <div class="label">卡号</div>
           </template>
           <template #button>
             <i
@@ -55,28 +54,15 @@
               class="tf-icon tf-icon-close-circle-fill close"
               @click="clearBankInfo"
             ></i>
-            <i class="tf-icon tf-icon-xiangji xiangji" @click="openCamera"></i>
-          </template>
-          <!-- <template #right-icon>
-            <i class="tf-icon tf-icon-xiangji xiangji"
-               @click="openCamera"></i>
-          </template> -->
-        </van-field>
-        <van-field
-          v-if="bankCardName"
-          v-model="bankCardName"
-          class="field card-sort"
-          disabled
-        >
-          <template #label>
-            <div class="label">卡类型</div>
+            <i class="tf-icon tf-icon-xiangji" @click="openCamera"></i>
           </template>
         </van-field>
+        <van-field v-if="bankCardName" v-model="bankCardName" class="card-sort" disabled />
         <van-field
-          class="field"
           v-model="phone"
           type="tel"
-          placeholder="手机号"
+          class="field"
+          placeholder="请输入手机号码"
           maxlength="11"
         >
           <template #label>
@@ -84,15 +70,13 @@
           </template>
         </van-field>
       </div>
-      <div class="toCard">
-        <span @click="tosubBankCardList">
-          支持的银行>
-        </span>
+      <div class="toCard" @click="goBankCardList">
+        支持的银行 >
       </div>
       <div class="btnBox">
         <van-button
           class="btn"
-          :color="bol ? '#EB5841' : 'gray'"
+          :color="bol ? '#EB5841' : '#ff65554d'"
           :disabled="!bol"
           block
           @click="getIdCard"
@@ -102,36 +86,32 @@
     </div>
     <!-- 认证通过 -->
     <van-popup v-model="isShow" round class="popup">
-      <!-- <div v-if="showTc">
-        <i class="tf-icon tf-icon-gouxuan gouxuan"></i>
-        <div class="txt">认证成功</div>
-      </div> -->
-      <!-- <div v-else> -->
       <div class="t1">{{ message }}</div>
       <div class="red" @click="isShow = false">知道了</div>
-      <!-- </div> -->
     </van-popup>
     <i
       v-if="isShow"
       @click="isShow = false"
       class="tf-icon tf-icon-guanbi1 guanbi"
     ></i>
+    <pay-popup
+      v-model="payVisible"
+      :payMoney="0.01"
+      :bankCard="bankCard"
+      :otherPayShow="false"
+    ></pay-popup>
   </div>
 </template>
 
 <script>
-import { NavBar, Field, Button, Popup, Toast } from 'vant'
 import { mapGetters } from 'vuex'
-import { getBankInfo, editRealname } from '@/api/personage.js'
+import { getBankInfo, editRealname } from '@/api/personage'
 import { handlePermission } from '@/utils/permission'
+import PayPopup from './components/PayPopup'
 export default {
-  name: 'certification',
+  name: 'shopBankCard',
   components: {
-    [NavBar.name]: NavBar,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    [Popup.name]: Popup,
-    [Toast.name]: Toast
+    PayPopup
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -143,6 +123,9 @@ export default {
         this.bankCardName &&
         this.phone
       )
+    },
+    bankCard () {
+      return this.data
     }
   },
   data () {
@@ -155,7 +138,8 @@ export default {
       bankCardName: '',
       idCard: '',
       message: '',
-      bankIco: ''
+      bankIco: '',
+      payVisible: false
     }
   },
   methods: {
@@ -170,7 +154,7 @@ export default {
         realname: this.personName
       }).then(res => {
         if (!this.userInfo.idcard) {
-          Toast.success('姓名设置成功')
+          this.$toast.success('姓名设置成功')
         }
       })
     },
@@ -277,11 +261,11 @@ export default {
       }, 100)
     },
     // 跳转支持的银行卡列表
-    tosubBankCardList () {
+    goBankCardList () {
       this.$router.push('/pages/personage/information/support-bankCard-list')
     },
     // 回退
-    goback () {
+    goBack () {
       this.$router.go(-1)
     }
   },
@@ -317,80 +301,95 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.certification {
+.addBankCard {
   height: 100%;
-  background-color: #f2f2f4;
-  /deep/ .van-nav-bar {
-    background-color: #f2f2f4 !important;
-  }
+  overflow: auto;
+  background-color: #fff;
   .content {
-    padding: 20px;
-    .title {
-      height: 300px;
-      text-align: center;
-      .t1 {
-        font-size: 48px;
-        margin-top: 90px;
-        margin-bottom: 40px;
+    padding: 0 50px;
+    .top {
+      h3 {
+        margin-top: 80px;
+        margin-bottom: 20px;
+        font-size: 40px;
+        font-weight: bold;
+        color: #000000;
+        &::before {
+          content: "";
+          display: inline-block;
+          width: 6px;
+          height: 32px;
+          margin-right: 12px;
+          background: #ff6555;
+          border-radius: 4px;
+        }
       }
-      .t2 {
+      .t1 {
         font-size: 26px;
+        color: #222222;
+        line-height: 1;
       }
     }
     .item-card {
+      margin-top: 80px;
       margin-bottom: 30px;
-      border-radius: 8px;
-      padding: 0 20px;
-      background-color: #fff;
       position: relative;
+      border-radius: 8px;
+      background-color: #fff;
       .field {
-        padding-top: 20px;
-        padding-bottom: 20px;
-        &:nth-child(1) {
-          border-bottom: 1px solid #f0f0f0;
-        }
+        display: flex;
+        align-items: center;
+        width: 650px;
+        height: 100px;
+        margin-bottom: 30px;
+        background: #f7f7f7;
+        border-radius: 20px;
         .label {
           font-size: 28px;
           color: #222222;
         }
-        .kahao {
-          line-height: 55px;
-        }
-        .xiangji {
+        .tf-icon-xiangji {
+          margin-right: 10px;
           font-size: 40px;
           color: #383838;
         }
       }
       .card-sort {
-        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 30px;
+        padding: 0 0 0 210px;
+        font-size: 24px;
+        line-height: 1;
       }
       /deep/ .van-field__control {
         color: black;
       }
       .close {
-        font-size: 32px;
-        margin-right: 10px;
-        // position: absolute;
-        // top: 50%;
-        // left: 200px;
-        // transform: translateY(-50%);
+        font-size: 36px;
+        margin-right: 30px;
+        color: #bbbbbb;
       }
     }
     .toCard {
       text-align: right;
-      span {
-        font-size: 22px;
-        color: #8f8f94;
-        text-decoration: underline;
-      }
+      font-size: 22px;
+      color: #8f8f94;
     }
   }
   .btnBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     position: fixed;
-    padding: 0 20px;
     left: 0;
     top: 1200px;
+    .btn {
+      width: 650px;
+      height: 88px;
+      background: #ff65554d;
+      border-radius: 44px;
+      border: none;
+    }
   }
   .popup {
     width: 560px;
@@ -428,7 +427,6 @@ export default {
       height: 60px;
       background: #eb5841;
       border-radius: 4px;
-      // margin: 50px auto;
       font-size: 30px;
       font-family: PingFang SC;
       font-weight: 400;

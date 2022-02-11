@@ -1,10 +1,12 @@
 <template>
   <div class="addBankCard">
-    <van-nav-bar :fixed="true"
-                 :border="false"
-                 placeholder
-                 left-arrow
-                 @click-left="goback">
+    <van-nav-bar
+      :fixed="true"
+      :border="false"
+      placeholder
+      left-arrow
+      @click-left="goback"
+    >
     </van-nav-bar>
     <div class="content">
       <div class="top">
@@ -12,55 +14,65 @@
         <div class="t1">请绑定持卡人本人的银行卡</div>
       </div>
       <div class="middle">
-        <van-field class="field"
-                   v-model="personName"
-                   placeholder="姓名"
-                   @change="setRealname"
-                   :disabled='personName!==""?true:false'
-                   >
+        <van-field
+          class="field"
+          v-model="personName"
+          placeholder="姓名"
+          @change="setRealname"
+          :disabled="personName !== '' ? true : false"
+        >
           <template #label>
             <div class="label">
               持卡人
             </div>
           </template>
           <template #right-icon>
-            <i class="tf-icon tf-icon-shuoming right"
-               @click="isShow = true"></i>
+            <i
+              class="tf-icon tf-icon-shuoming right"
+              @click="isShow = true"
+            ></i>
           </template>
         </van-field>
-        <van-field @change="getCardName"
-                   class="field"
-                   v-model="bankCardNum"
-                   placeholder="银行卡号"
-                   ref="cardInput"
-                   maxlength="23"
-                   @input="formatCardNumber(bankCardNum)">
+        <van-field
+          @change="getCardName"
+          class="field"
+          v-model="bankCardNum"
+          placeholder="银行卡号"
+          ref="cardInput"
+          maxlength="23"
+          @input="formatCardNumber(bankCardNum)"
+        >
           <template #label>
             <div class="label">卡号</div>
           </template>
           <template #right-icon>
-            <i class="tf-icon tf-icon-close-circle-fill clear"
-               v-if="bankCardNum != ''"
-               @click="clearBankInfo"></i>
-            <i class="tf-icon tf-icon-xiangji right"
-               @click="openCamera"></i>
+            <i
+              class="tf-icon tf-icon-close-circle-fill clear"
+              v-if="bankCardNum != ''"
+              @click="clearBankInfo"
+            ></i>
+            <i class="tf-icon tf-icon-xiangji right" @click="openCamera"></i>
           </template>
         </van-field>
         <div v-if="bankCardName && phone">
-          <van-field class="field"
-                     v-model="bankCardName"
-                     placeholder="银行卡号"
-                     disabled>
+          <van-field
+            class="field"
+            v-model="bankCardName"
+            placeholder="银行卡号"
+            disabled
+          >
             <template #label>
               <div class="label2">
                 卡类型
               </div>
             </template>
           </van-field>
-          <van-field class="field"
-                     v-model="phone"
-                     placeholder="银行预留手机号"
-                     maxlength="11">
+          <van-field
+            class="field"
+            v-model="phone"
+            placeholder="银行预留手机号"
+            maxlength="11"
+          >
             <template #label>
               <div class="label2">
                 手机号
@@ -70,33 +82,40 @@
         </div>
       </div>
       <div class="other">
-        <span @click="
+        <span
+          @click="
             $router.push('/pages/personage/information/support-bankCard-list')
-          ">支持的银行></span>
+          "
+          >支持的银行></span
+        >
       </div>
       <div class="btn1">
         <div class="agree">
-          <van-checkbox class="checkbox"
-                        v-model="checked"
-                        shape="square"
-                        icon-size="14px"></van-checkbox>
+          <van-checkbox
+            class="checkbox"
+            v-model="checked"
+            shape="square"
+            icon-size="14px"
+          ></van-checkbox>
           同意
-          <span @click="$router.push('/pages/personage/information/pay-agreeMent')">《支付协议》
+          <span
+            @click="$router.push('/pages/personage/information/pay-agreeMent')"
+            >《支付协议》
           </span>
         </div>
-        <van-button class="btn"
-                    block
-                    :color="bol ? 'red' : 'gray'"
-                    :disabled="!bol"
-                    @click="goToPay">
+        <van-button
+          class="btn"
+          block
+          :color="bol ? 'red' : 'gray'"
+          :disabled="!bol"
+          @click="goToPay"
+        >
           去支付
         </van-button>
       </div>
     </div>
     <!-- 持卡人说明弹窗 -->
-    <van-popup v-model="isShow"
-               round
-               position="bottom">
+    <van-popup v-model="isShow" round position="bottom">
       <div class="shuoming">
         <div class="title">持卡人说明</div>
         <div class="info">
@@ -107,24 +126,17 @@
         </div>
       </div>
       <div class="btnBox">
-        <van-button block
-                    color="#eb5841"
-                    class="btn"
-                    @click="isShow = false">知道了
+        <van-button block color="#eb5841" class="btn" @click="isShow = false"
+          >知道了
         </van-button>
       </div>
     </van-popup>
-    <van-popup v-model="show"
-               round
-               class="popup">
+    <van-popup v-model="show" round class="popup">
       <div class="t1">{{ message }}</div>
-      <div class="red"
-           @click="show = false">知道了</div>
+      <div class="red" @click="show = false">知道了</div>
     </van-popup>
     <!-- 关闭弹窗按钮 -->
-    <div class="close"
-         v-if="isShow"
-         @click="isShow = false">
+    <div class="close" v-if="isShow" @click="isShow = false">
       <i class="tf-icon tf-icon-guanbi1 guanbi"></i>
     </div>
 
@@ -291,11 +303,12 @@ export default {
         if (this.bankCardNum === '') {
           return
         }
-        getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, '') })
-          .then(res => {
+        getBankInfo({ bank_card: this.bankCardNum.replace(/\s/g, '') }).then(
+          res => {
             this.bankCardName = res.cnm + '   储蓄卡'
             this.bankIco = res.bank_ico
-          })
+          }
+        )
       }, 100)
     }
   },

@@ -593,6 +593,26 @@ const personageRouter = [
         /* webpackChunkName: "shopLocation" */
         '@/views/personage/shop/location'
       )
+  },
+  // 商户提现
+  {
+    path: '/personage/shop/withdraw',
+    name: 'shopWithdraw',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopWithdraw" */
+        '@/views/personage/shop/withdraw'
+      )
+  },
+  // 绑定银行卡
+  {
+    path: '/personage/shop/bankCard',
+    name: 'shopBankCard',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopBankCard" */
+        '@/views/personage/shop/bankCard'
+      )
   }
 ]
 

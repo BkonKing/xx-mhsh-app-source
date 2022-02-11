@@ -36,6 +36,24 @@
           :load="({ pages }) => getCreditsLog(pages, 2)"
         ></list>
       </van-tab>
+      <van-tab title="提现">
+        <list
+          class="coin-list"
+          id="list4"
+          key="list4"
+          :data.sync="list4"
+          :load="({ pages }) => getCreditsLog(pages, 2)"
+        ></list>
+      </van-tab>
+      <van-tab title="不可用">
+        <list
+          class="coin-list"
+          id="list5"
+          key="list5"
+          :data.sync="list5"
+          :load="({ pages }) => getCreditsLog(pages, 2)"
+        ></list>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
@@ -54,6 +72,8 @@ export default {
       list1: [],
       list2: [],
       list3: [],
+      list4: [],
+      list5: [],
       scrollTop: 0
     }
   },
@@ -117,6 +137,18 @@ export default {
       height: 100%;
       padding: 30px 20px;
     }
+  }
+  /deep/ .van-tab {
+    flex-basis: 20% !important;
+  }
+  /deep/ .van-tab--active .van-tab__text {
+    font-size: 32px;
+  }
+  /deep/ .van-tabs__line {
+    width: 40px !important;
+    height: 6px;
+    background: #ff5240;
+    border-radius: 3px;
   }
 }
 </style>

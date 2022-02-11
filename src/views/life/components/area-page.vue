@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="area-page-component">
     <div
       class="area-header"
       :style="{
         backgroundImage:
-          'url(' + (infoData.bj_thumb ? infoData.bj_thumb : bgImg) + ')'
+          'url(' + (infoData.bj_thumb ? infoData.bj_thumb : '') + ')'
       }"
     >
       <div v-if="navBarShow" class="order-bar bar-nobg">
@@ -23,12 +23,11 @@
     </div>
     <van-list
       v-model="loading"
-      :finished="finished"
+      class="special-van-list"
       finished-text=""
+      :finished="finished"
       @load="onLoad"
-      :immediate-check="false"
     >
-      <div class="special-list">
         <div
           v-for="(item, index) in listData"
           :key="index"
@@ -66,7 +65,6 @@
             </div>
           </div>
         </div>
-      </div>
     </van-list>
   </div>
 </template>
@@ -111,6 +109,7 @@ export default {
   },
   methods: {
     onLoad () {
+      console.log('load')
       // 异步更新数据
       this.getGoodsData()
     },
@@ -120,37 +119,41 @@ export default {
       getAreaGoods({
         page,
         special_id: this.special_id
-      }).then(res => {
-        if (res.success) {
-          this.listData =
-            isFirst
+      })
+        .then(res => {
+          if (res.success) {
+            this.listData = isFirst
               ? res.data.special_goods_list
               : this.listData.concat(res.data.special_goods_list)
-          this.isEmpty = !!(
-            isFirst && res.data.special_goods_list.length == 0
-          )
-          if (res.data.special_goods_list.length < res.pageSize) {
-            this.finished = true
-          } else {
-            this.page = page + 1
+            this.isEmpty = !!(
+              isFirst && res.data.special_goods_list.length == 0
+            )
+            if (res.data.special_goods_list.length < res.pageSize) {
+              this.finished = true
+            } else {
+              this.page = page + 1
+            }
+            // if (!this.infoData) {
+            this.infoData = res.data.special_info
+            // }
+            this.loading = false
           }
-          // if (!this.infoData) {
-          this.infoData = res.data.special_info
-          // }
-          this.loading = false
-        }
-      })
+        })
+        .finally(() => {
+          this.pageLoading = false
+        })
     },
     listInit () {
+      console.log('init', this.loading, this.finished)
       this.listData = []
       this.page = 1
       if (!this.loading && !this.finished) {
+        this.loading = true
         this.getGoodsData()
       } else {
         this.loading = false
         this.finished = false
       }
-      // this.getGoodsData()
     },
     linkFunc (type, obj = {}) {
       switch (type) {
@@ -170,6 +173,9 @@ export default {
 
 <style scoped src="../../../styles/life.css"></style>
 <style lang="less" scoped>
+.area-page-component {
+  background: #f7f7f7;
+}
 .app-body {
   background-color: #f2f2f4;
   font-size: 28px;
@@ -178,8 +184,8 @@ export default {
 .area-header {
   background-position: center top;
   background-size: 100% 100%;
+  background-color: #d7d7d7;
   height: 381px;
-  /*background: url('../../../assets/img/area_01.png') center top /100% 100%;*/
   position: relative;
   z-index: 2;
   position: relative;
@@ -202,19 +208,21 @@ export default {
   font-size: 28px;
   line-height: 58px;
 }
-.special-list {
+.special-van-list {
   width: 710px;
   margin: -80px auto 0;
-  position: relative;
-  z-index: 6;
+  padding: 40px 30px;
   background-color: #fff;
   border-radius: 10px;
-  padding: 40px 30px;
+  position: relative;
+  z-index: 6;
 }
 .special-item {
-  margin-bottom: 30px;
   padding-bottom: 30px;
   border-bottom: 1px solid #f0f0f0;
+}
+.special-item + .special-item {
+  margin-top: 30px;
 }
 .special-item:last-child {
   margin-bottom: 0;

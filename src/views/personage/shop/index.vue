@@ -50,6 +50,7 @@
           </div>
           <div class="shop-header-info">幸福币</div>
           <!-- <van-button v-if="haveCreate && haveCashOut" class="shop-header-button">提现</van-button> -->
+          <van-button class="shop-header-button" @click.stop="jumpPage('withdraw')">提现</van-button>
           <img
             class="shop-header-image"
             src="@/assets/personage/shop/point-bg.png"
@@ -227,7 +228,8 @@ export default {
         credits: 'happinessCoinIndex',
         creditsRecord: 'happinessCoinRecord',
         shopInformation: 'shopInformation',
-        scanCode: 'scanCodeIndex'
+        scanCode: 'scanCodeIndex',
+        withdraw: 'shopWithdraw'
       }
       this.$router.push({
         name: routerName[key],
