@@ -2,19 +2,19 @@
   <div>
     <div class="tf-body-container">
       <div class="status-container">
-        <!-- <div class="tf-flex-center">
+        <div v-if="+formData.a_state === 1" class="tf-flex-center">
           <img
             class="status-img"
             src="@/assets/personage/shop/review-ing.png"
           /><span class="status-text">审核中</span>
-        </div> -->
-        <!-- <div class="tf-flex-center">
+        </div>
+        <div v-if="+formData.a_state === 3" class="tf-flex-center">
           <img
             class="status-img"
             src="@/assets/personage/shop/review-able.png"
-          /><span class="status-text status-text-1">审核中</span>
-        </div> -->
-        <van-collapse v-model="activeCollapse">
+          /><span class="status-text status-text-1">已认证</span>
+        </div>
+        <van-collapse v-if="+formData.a_state === 2" v-model="activeCollapse">
           <van-collapse-item class="tf-collapse-item" name="1">
             <template #title>
               <div class="tf-flex-center">
@@ -25,7 +25,7 @@
               </div>
             </template>
             <div class="tf-collapse-content">
-              审核说明：审核未通过，请修改后再次提交。身份证个信息错误请重新上传，请修改后再次提交。身份证个信息错误请重新上传。
+              审核说明：{{ formData.attestation_error_explain }}
             </div>
           </van-collapse-item>
         </van-collapse>
@@ -37,32 +37,40 @@
           </div>
           <div class="item-cont">
             <van-field
-              v-model="formData.business_hours"
+              v-model="formData.operator_realname"
               maxlength="15"
-              type="text"
+              placeholder="姓名"
+              :disabled="isDisabled"
             />
           </div>
         </div>
-        <div class="cell-item">
+        <div class="cell-item" style="border-bottom: none;">
           <div class="item-left">
             联系电话<span class="form-card-label-required">*</span>
           </div>
           <div class="item-cont">
-            <van-field v-model="formData.phone" maxlength="15" type="number" />
+            <van-field
+              v-model="formData.operator_mobile"
+              maxlength="15"
+              type="digit"
+              :disabled="isDisabled"
+            />
           </div>
         </div>
       </div>
       <div class="form-card" style="padding-top: 0;">
-        <div class="cell-item" @click="typeVisible = true">
-          <div class="item-left">认证类型</div>
-          <div class="item-cont p-30">
-            {{ formData.project_name || "请选择" }}
+        <div class="cell-item" @click="openSelect">
+          <div class="item-left">
+            认证类型<span class="form-card-label-required">*</span>
           </div>
-          <div class="item-arrow">
+          <div class="item-cont p-30">
+            {{ formData.a_type_name || "请选择" }}
+          </div>
+          <div v-if="!isDisabled" class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
         </div>
-        <template v-if="formData.project_id === '1'">
+        <template v-if="formData.a_type === '1'">
           <div class="cell-item" style="border-bottom: none;">
             <div class="item-left">
               身份证<span class="form-card-label-required">*</span>
@@ -70,18 +78,24 @@
           </div>
           <div class="tf-flex">
             <tf-uploader
-              v-model="formData.shops_notice"
+              v-model="voucher_img1"
               max-count="1"
               class="IDCard-upload"
+              :disabled="isDisabled"
+              :deletable="!isDisabled"
+              :show-upload="!isDisabled"
               ><div class="custom-upload-box">
                 <img src="@/assets/personage/shop/IDCard1.png" />
                 <div>上传人像面</div>
               </div></tf-uploader
             >
             <tf-uploader
-              v-model="formData.shops_notice"
+              v-model="voucher_img2"
               max-count="1"
               class="tf-ml-lg IDCard-upload"
+              :disabled="isDisabled"
+              :deletable="!isDisabled"
+              :show-upload="!isDisabled"
               ><div class="custom-upload-box">
                 <img src="@/assets/personage/shop/IDCard2.png" />
                 <div>上传国徽面</div>
@@ -89,7 +103,7 @@
             >
           </div>
         </template>
-        <template v-if="formData.project_id === '2'">
+        <template v-if="formData.a_type === '2'">
           <div class="cell-item" style="border-bottom: none;">
             <div class="item-left">
               营业执照<span class="form-card-label-required">*</span>
@@ -97,19 +111,39 @@
           </div>
           <div>
             <tf-uploader
-              v-model="formData.shops_notice"
+              v-model="voucher_img"
               max-count="3"
               class="license-upload"
+              :disabled="isDisabled"
+              :deletable="!isDisabled"
+              :show-upload="!isDisabled"
             ></tf-uploader>
           </div>
         </template>
       </div>
     </div>
     <van-button
+      v-if="+formData.a_state === 0 || isEdit"
       class="submit-btn"
-      :disabled="!formData.shops_name"
+      :disabled="
+        !(
+          (submitAble &&
+            formData.a_type === '1' &&
+            voucher_img1 &&
+            voucher_img1.length &&
+            voucher_img2 &&
+            voucher_img2.length) ||
+          (formData.a_type === '2' && voucher_img && voucher_img.length)
+        )
+      "
       @click="submit"
       >提交审核</van-button
+    >
+    <van-button
+      v-if="+formData.a_state > 1 && !isEdit"
+      class="submit-btn white-btn"
+      @click="switchEdit"
+      >修改</van-button
     >
     <tf-select-popup
       v-model="typeVisible"
@@ -123,7 +157,10 @@
 <script>
 import tfUploader from '@/components/tf-uploader'
 import TfSelectPopup from '@/components/tf-select-popup'
-import { getShopAttestationInfo, saveAttestationInfo } from '@/api/personage/shop'
+import {
+  getShopAttestationInfo,
+  saveAttestationInfo
+} from '@/api/personage/shop'
 export default {
   name: 'ShopInformationTab',
   components: {
@@ -151,14 +188,24 @@ export default {
         }
       ],
       formData: {
-        shops_name: '',
-        address: '',
-        business_hours: '',
-        phone: '',
-        project_id: '',
-        project_name: '',
-        shops_notice: []
-      }
+        operator_realname: '',
+        operator_mobile: '',
+        a_type: '',
+        a_type_name: ''
+      },
+      voucher_img: [],
+      voucher_img1: [],
+      voucher_img2: [],
+      isEdit: false
+    }
+  },
+  computed: {
+    submitAble () {
+      const { operator_realname, operator_mobile, a_type } = this.formData
+      return operator_realname && operator_mobile && a_type
+    },
+    isDisabled () {
+      return +this.formData.a_state > 0 && !this.isEdit
     }
   },
   created () {
@@ -166,29 +213,67 @@ export default {
   },
   methods: {
     async getData () {
-      const { shops_info: data } = await getShopAttestationInfo({
+      const { data } = await getShopAttestationInfo({
         shops_id: this.shopId
       })
       this.formData = data
-      this.formData.shops_notice = []
+      this.voucher_img = data.voucher_img_data || []
+      if (+data.a_type === 1) {
+        const img1 = this.voucher_img[0]
+        const img2 = this.voucher_img[1]
+        this.voucher_img1 = img1 ? [img1] : []
+        this.voucher_img2 = img2 ? [img2] : []
+      }
     },
-    // 项目选择(小区)
+    openSelect () {
+      !this.isDisabled && (this.typeVisible = true)
+    },
+    // 选择认证类型
     selectConfirm (data) {
-      const { id, text: projectName } = data
-      this.formData.project_name = projectName
-      this.formData.project_id = id
+      const { id, text } = data
+      this.formData.a_type = id
+      this.formData.a_type_name = text
+      this.voucher_img = []
+      this.voucher_img1 = []
+      this.voucher_img2 = []
+    },
+    switchEdit () {
+      this.isEdit = true
     },
     async submit () {
-      if (!this.formData.shops_name) {
-        this.$toast('请填写店铺名称')
+      if (!this.formData.operator_realname) {
+        this.$toast('请填写经营者')
+        return
       }
+      if (!this.formData.operator_mobile) {
+        this.$toast('请填写联系电话')
+        return
+      }
+      if (!this.formData.a_type) {
+        this.$toast('请选择认证类型')
+        return
+      }
+      // if (
+      //   !this.formData.voucher_img ||
+      //   this.formData.voucher_img.length === 0
+      // ) {
+      //   this.$toast(
+      //     `请上传${+this.formData.a_type === 1 ? '身份证' : '营业执照'}`
+      //   )
+      //   return
+      // }
+      this.formData.voucher_img =
+        +this.formData.a_type === 1
+          ? [...this.voucher_img1, ...this.voucher_img2]
+          : this.voucher_img
       const { success } = await saveAttestationInfo({
         ...this.formData,
         shops_id: this.shopId
       })
       if (success) {
         this.$toast('提交成功')
-        this.$router.go(-1)
+        this.isEdit = false
+        this.getData()
       }
     }
   }
@@ -207,10 +292,14 @@ export default {
 .license-upload /deep/ .van-uploader__preview {
   width: 204px !important;
   height: 204px !important;
-  margin: 0;
-  + .van-uploader__preview {
-    margin-left: 10px !important;
-  }
+  margin-right: 10px !important;
+  margin-left: 0 !important;
+  // + .van-uploader__preview {
+  //   margin-left: 10px !important;
+  // }
+}
+.license-upload /deep/ .van-uploader__wrapper .van-uploader__preview:last-child {
+  margin-right: 0;
 }
 .tf-ml-lg {
   margin-left: 30px;
@@ -303,7 +392,18 @@ export default {
     line-height: 1;
   }
 }
+.white-btn {
+  background: #ffffff;
+  border: 1px solid #fff;
+  color: #222222;
+}
 /deep/ .van-button--disabled {
   opacity: 0.3;
+}
+.item-cont /deep/ .van-field__control:disabled {
+  color: #222;
+}
+/deep/ .van-uploader__wrapper--disabled {
+  opacity: 1;
 }
 </style>

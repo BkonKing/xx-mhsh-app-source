@@ -161,3 +161,39 @@ export function getShopCouponBanner (data) {
     data
   })
 }
+
+// 商铺员工 列表 接口
+export function getStaffList (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_clerk_list',
+    method: 'post',
+    data
+  })
+}
+
+// 店铺员工 用户筛选接口
+export function getUserOption (data) {
+  return request({
+    url: '/shops/shops_coupon/user_shops_clerk_screen',
+    method: 'post',
+    data
+  })
+}
+
+// 添加修改 商家员工 接口
+export function saveShopStaff (data) {
+  return request({
+    url: '/shops/shops_coupon/edit_shops_clerk',
+    method: 'post',
+    data
+  })
+}
+
+// 删除 商家员工 接口
+export function delShopStaff (data) {
+  return request({
+    url: '/shops/shops_coupon/del_shops_clerk',
+    method: 'post',
+    data
+  })
+}

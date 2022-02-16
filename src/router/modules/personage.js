@@ -613,6 +613,16 @@ const personageRouter = [
         /* webpackChunkName: "shopBankCard" */
         '@/views/personage/shop/bankCard'
       )
+  },
+  // 店员管理
+  {
+    path: '/personage/shop/staff',
+    name: 'shopStaff',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopStaff" */
+        '@/views/personage/shop/staff'
+      )
   }
 ]
 

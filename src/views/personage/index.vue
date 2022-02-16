@@ -30,22 +30,24 @@
             </div>
             <div class="user-role-box">
               <img
-                v-if="+shopData.is_reveal"
+                v-if="+shopData.is_reveal && isShop"
                 class="user-img"
                 src="@/assets/personage/shangjia.png"
-                alt=""
+              />
+              <img
+                v-if="+shopData.is_clerk_reveal && isShopStaff"
+                class="user-img"
+                src="@/assets/personage/dianyuan.png"
               />
               <img
                 v-if="false"
                 class="user-img"
                 src="@/assets/personage/zhiyuanzhe.png"
-                alt=""
               />
               <img
                 v-if="false"
                 class="user-img"
                 src="@/assets/personage/yuangong.png"
-                alt=""
               />
               <van-tag
                 v-if="userType != '0'"
@@ -118,7 +120,7 @@
       </div>
       <div class="functional-box">
         <!-- 商户入口 -->
-        <div v-if="isShop" class="shop-box" @click="goShopCentre">
+        <div v-if="isShop || isShopStaff" class="shop-box" @click="goShopCentre">
           <div class="shop-header">
             <img class="shop-icon" src="@/assets/personage/shop.png" alt="" />
             <span class="shop-name">{{ shopData.shops_name }}</span>
@@ -477,9 +479,13 @@ export default {
     isShop () {
       return +this.shopData.is_shops
     },
+    // 是否为商户店员
+    isShopStaff () {
+      return +this.shopData.is_shops_clerk
+    },
     // 是否为卡片显示形式
     isCardMode () {
-      return this.isShop || this.isSwRole || this.isSdcbRole
+      return this.isShop || this.isShopStaff || this.isSwRole || this.isSdcbRole
     }
   },
   activated () {
@@ -582,9 +588,11 @@ export default {
     },
     // 商户中心
     goShopCentre () {
-      this.$router.push({
-        name: 'shopIndex'
-      })
+      if (this.isShop || (this.isShopStaff && +this.shopData.is_shops_coupon_power)) {
+        this.$router.push({
+          name: 'shopIndex'
+        })
+      }
     },
     /**
      * 我的订单
@@ -723,7 +731,7 @@ export default {
   margin-top: 20px;
   line-height: 1;
   .user-img {
-    width: 36px;
+    width: 86px;
     height: 36px;
     margin-right: 10px;
   }
