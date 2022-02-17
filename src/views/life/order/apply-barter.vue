@@ -454,7 +454,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    if (to.name == 'goodsDetail' || to.name == 'orderApply') {
+    if (to.name !== 'addressList') {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
