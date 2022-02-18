@@ -125,17 +125,7 @@
     <van-button
       v-if="+formData.a_state === 0 || isEdit"
       class="submit-btn"
-      :disabled="
-        !(
-          (submitAble &&
-            formData.a_type === '1' &&
-            voucher_img1 &&
-            voucher_img1.length &&
-            voucher_img2 &&
-            voucher_img2.length) ||
-          (formData.a_type === '2' && voucher_img && voucher_img.length)
-        )
-      "
+      :disabled="submitAble"
       @click="submit"
       >提交审核</van-button
     >
@@ -148,6 +138,7 @@
     <tf-select-popup
       v-model="typeVisible"
       title="认证类型"
+      :selected="formData.a_type"
       :data="typeOptions"
       @confirm="selectConfirm"
     ></tf-select-popup>
@@ -200,9 +191,21 @@ export default {
     }
   },
   computed: {
+    uploadImgStatus1 () {
+      const { a_type: type } = this.formData
+      return type === '1' &&
+        this.voucher_img1 &&
+        this.voucher_img1.length &&
+        this.voucher_img2 &&
+        this.voucher_img2.length
+    },
+    uploadImgStatus2 () {
+      const { a_type: type } = this.formData
+      return type === '2' && this.voucher_img && this.voucher_img.length
+    },
     submitAble () {
-      const { operator_realname, operator_mobile, a_type } = this.formData
-      return operator_realname && operator_mobile && a_type
+      const { operator_realname: realname, operator_mobile: mobile, a_type: type } = this.formData
+      return !(realname && mobile && type && (this.uploadImgStatus1 || this.uploadImgStatus2))
     },
     isDisabled () {
       return +this.formData.a_state > 0 && !this.isEdit
@@ -253,15 +256,14 @@ export default {
         this.$toast('请选择认证类型')
         return
       }
-      // if (
-      //   !this.formData.voucher_img ||
-      //   this.formData.voucher_img.length === 0
-      // ) {
-      //   this.$toast(
-      //     `请上传${+this.formData.a_type === 1 ? '身份证' : '营业执照'}`
-      //   )
-      //   return
-      // }
+      if (+this.formData.a_type === 1 && !this.uploadImgStatus1) {
+        this.$toast('请上传身份证')
+        return
+      }
+      if (+this.formData.a_type === 2 && !this.uploadImgStatus2) {
+        this.$toast('请上传营业执照')
+        return
+      }
       this.formData.voucher_img =
         +this.formData.a_type === 1
           ? [...this.voucher_img1, ...this.voucher_img2]
@@ -298,7 +300,10 @@ export default {
   //   margin-left: 10px !important;
   // }
 }
-.license-upload /deep/ .van-uploader__wrapper .van-uploader__preview:last-child {
+.license-upload
+  /deep/
+  .van-uploader__wrapper
+  .van-uploader__preview:last-child {
   margin-right: 0;
 }
 .tf-ml-lg {

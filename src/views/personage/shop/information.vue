@@ -33,7 +33,15 @@ export default {
   created () {
     this.shopId = this.$route.query.shopId
   },
-  methods: {}
+  methods: {},
+  beforeRouteLeave (to, from, next) {
+    if (to.name !== 'addressMap') {
+      this.$destroy()
+      this.$store.commit('setMap_info', '')
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
+  }
 }
 </script>
 

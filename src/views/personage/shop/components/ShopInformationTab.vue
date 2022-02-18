@@ -141,14 +141,6 @@ export default {
   activated () {
     this.getMap()
   },
-  beforeRouteLeave (to, from, next) {
-    if (to.name !== 'addressMap') {
-      this.$destroy()
-      this.$store.commit('setMap_info', '')
-      this.$store.commit('deleteKeepAlive', from.name)
-    }
-    next()
-  },
   methods: {
     async getData () {
       // TODO:需要将项目名称也返回
@@ -230,7 +222,7 @@ export default {
       const { success } = await saveShopInformation({ ...this.formData, shops_id: this.shopId })
       if (success) {
         this.$toast('提交成功')
-        this.$router.go(-1)
+        // this.$router.go(-1)
       }
       // this.$toast('提交失败   请重试')
     }
