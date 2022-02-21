@@ -31,6 +31,15 @@
             @blur="validate('coupon_name')"
           />
         </div>
+        <van-checkbox-group
+          v-model="formData.is_visible"
+          direction="horizontal"
+          checked-color="#FEBF00"
+          class="tf-checkbox-group app-checkbox"
+          :disabled="isLook"
+        >
+          <van-checkbox name="1" shape="square">APP显示(用户可见)</van-checkbox>
+        </van-checkbox-group>
       </div>
       <div class="form-card">
         <div class="form-card-label">
@@ -213,7 +222,7 @@
           @select="validate('limit_num')"
         ></select-popup>
       </div>
-      <div class="form-card" style="padding-bottom: 0;">
+      <div class="form-card">
         <div class="form-card-label">
           使用场景<span class="form-card-label-required">*</span>
         </div>
@@ -394,6 +403,34 @@
             @blur="validate('goods_type_precinct')"
           />
         </template>
+      </div>
+      <div class="form-card" style="padding-bottom: 0;">
+        <div class="form-card-label tf-mb-lg">
+          券使用说明（补充）
+        </div>
+        <div class="explain-container">
+          <van-field
+            v-if="!isDisabled"
+            v-model.trim="formData.supplementary_content"
+            maxlength="100"
+            rows="1"
+            :border="false"
+            :autosize="true"
+            type="textarea"
+            placeholder="请输入新增内容"
+            class="explain-textarea"
+          />
+          <div
+            v-if="isDisabled"
+            v-html="explainContent.replace(/\r\n|\n/g, '<br/>')"
+            class="explain-content"
+          ></div>
+          <div
+            v-else
+            v-html="formData.coupon_instructions.replace(/\r\n|\n/g, '<br/>')"
+            class="explain-content"
+          ></div>
+        </div>
         <div class="form-card-label tf-mt-lg">
           发布时间
         </div>
@@ -529,6 +566,7 @@ export default {
         coupon_name: '',
         e_type: '2',
         coupon_type: '1',
+        is_visible: [],
         coupon_scene: ['1'],
         stock: '',
         stockShow: '',
@@ -547,6 +585,8 @@ export default {
         planTime: '',
         available_project_id: '',
         available_project_name: '',
+        supplementary_content: '',
+        coupon_instructions: '',
         reduce_discount: '',
         reduce_price: '',
         threshold_price: ''
@@ -602,6 +642,9 @@ export default {
     },
     isDisabled () {
       return this.isLook || this.isEditReceiving
+    },
+    explainContent () {
+      return `${this.formData.supplementary_content}${this.formData.coupon_instructions}`
     }
   },
   created () {
@@ -647,13 +690,20 @@ export default {
       this.receiveUserType = receiveUserType
       this.goodsTypes = goodsTypes
       // 数据回填
-      if (this.isAdd) return
+      if (this.isAdd) {
+        this.formData.coupon_instructions =
+          couponInfo.coupon_instructions || ''
+        return
+      }
       if (this.isEdit) {
         couponInfo.stockShow = couponInfo.stock
         couponInfo.stock = ''
       }
       couponInfo.available_type = +couponInfo.available_type + 1 + ''
       couponInfo.coupon_scene = ['1']
+      couponInfo.supplementary_content = couponInfo.supplementary_content || ''
+      couponInfo.coupon_instructions = couponInfo.coupon_instructions || ''
+      couponInfo.is_visible = +couponInfo.is_visible ? ['1'] : []
       if (this.isCopy) {
         couponInfo.e_type = '2'
         couponInfo.validityTime = ''
@@ -912,13 +962,19 @@ export default {
     }
   }
 }
+.app-checkbox /deep/ .van-checkbox__icon--disabled .van-icon-success {
+  background-color: #f7f7f7;
+  border-color: #f7f7f7;
+}
 .tf-checkbox-group {
   padding: 30px 0;
   /deep/ .van-checkbox__label {
     font-size: 28px;
     color: #000000;
   }
-  /deep/ .van-checkbox__icon--disabled .van-icon {
+  /deep/
+    .van-checkbox__icon--disabled.van-checkbox__icon--checked
+    .van-icon-success {
     background-color: #febf00;
     border-color: #febf00;
   }
@@ -1053,6 +1109,24 @@ export default {
     &--expanded::before {
       transform: rotate(-90deg);
     }
+  }
+}
+.explain-container {
+  width: 650px;
+  border: 1px solid #cccccc;
+  border-radius: 10px;
+  .explain-content {
+    width: 100%;
+    padding: 24px 30px;
+    border-radius: 0 0 10px 10px;
+    background: #f7f7f7;
+    font-size: 24px;
+    line-height: 36px;
+    color: #8f8f94;
+    word-break: break-all;
+  }
+  .explain-textarea {
+    padding: 24px 30px;
   }
 }
 .submit-btn {
