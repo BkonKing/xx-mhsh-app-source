@@ -660,8 +660,7 @@
                     :max="
                       +skuList[typeVal].stock > +goods.max_buy
                         ? +goods.max_buy
-                        : +skuList[typeVal].stock
-                    "
+                        : +skuList[typeVal].stock"
                     integer
                   />
                   <!-- <div class="goods-btn goods-sub" @click.stop="countTab(-1)" data-types="-1">-</div>

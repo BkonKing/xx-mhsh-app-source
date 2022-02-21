@@ -15,7 +15,7 @@
         </div>
         <div class="card-text">1张</div>
         <div class="card-text tf-row-vertical-center">
-          <span>不支持退货</span
+          <span>不支持退换</span
           ><i
             class="van-icon van-icon-question-o"
             @click.stop="popoverVisible = true"

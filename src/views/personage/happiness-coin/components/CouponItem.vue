@@ -18,6 +18,9 @@
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
+            <div v-if="data.coupon_name" class="coupon-name">
+              {{ data.coupon_name }}
+            </div>
             <div class="coupon-info-2">{{ data.denomination }}</div>
             <div class="coupon-info-3">
               {{ data.term_of_validity }}
@@ -40,7 +43,7 @@
       <div class="coupon-content" @click.stop="expanded = true">
         <template>
           <div @click="goIntroduce">
-            <span>优惠说明：{{ data.new_goods_type_name1 }}</span
+            <span>优惠说明：{{data.coupon_explain}} | {{ data.new_goods_type_name1 }}</span
             ><span v-if="data.new_shops_name">
               | 线下店铺<strong
                 >【{{ data.new_shops_name }}】<van-icon name="arrow"
@@ -61,11 +64,10 @@
           </div>
           <div>有效期：{{ data.term_of_validity }}</div>
           <div>使用须知：</div>
-          <ul>
-            <li>一个订单只能使用一张优惠券;</li>
-            <li>可与其他活动优惠同时享受（提示不可用券的除外）;</li>
-            <li>订单申请退款，优惠券不退回;</li>
-          </ul>
+          <div
+            v-html="explainContent.replace(/\r\n|\n/g, '<br/>')"
+            class="explain-content"
+          ></div>
         </template>
       </div>
     </div>
@@ -89,7 +91,10 @@ export default {
   },
   computed: {
     shopsAddress () {
-      return `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`
+      return `${this.data.shops_address_area}${this.data.shops_address}`
+    },
+    explainContent () {
+      return `${this.data.supplementary_content}${this.data.coupon_instructions}`
     }
   },
   methods: {
@@ -143,7 +148,7 @@ export default {
   display: flex;
   align-items: center;
   width: 710px;
-  height: 223px;
+  min-height: 223px;
   position: relative;
   background: #ffffff;
   border-radius: 10px;
@@ -161,6 +166,13 @@ export default {
     background: linear-gradient(225deg, #ff6555 0%, #ffffff 50%);
     opacity: 0.1;
     border-radius: 0px 10px 0px 0px;
+  }
+  .coupon-name {
+    margin-bottom: 30px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #222222;
+    line-height: 1;
   }
   .coupon-money {
     display: flex;
@@ -191,6 +203,8 @@ export default {
     flex: 1;
     padding: 50px 24px 0 12px;
     .left-slot {
+      display: flex;
+      align-items: center;
       position: relative;
       z-index: 1;
     }
@@ -213,7 +227,7 @@ export default {
     align-items: center;
     min-height: 64px;
     padding: 14px 0;
-    margin-top: 40px;
+    margin-top: 30px;
     border-top: 1px dashed #dddddd;
     .coupon-footer-text {
       flex: 1;
@@ -295,11 +309,6 @@ export default {
     }
     div {
       line-height: 42px;
-    }
-    li {
-      margin-left: 30px;
-      line-height: 42px;
-      list-style: disc;
     }
     strong {
       display: inline-flex;

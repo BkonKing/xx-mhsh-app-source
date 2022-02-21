@@ -7,6 +7,7 @@
         { 'coupon-card--expanded': expanded }
       ]"
     >
+      <span v-if="+data.coupon_type === 1" class="shop-tag">线下店铺</span>
       <div class="coupon-money">
         <template v-if="+data.type === 1">
           <span class="coupon-money-icon">￥</span
@@ -25,10 +26,12 @@
       <div class="coupon-info">
         <div class="tf-row-space-between">
           <div>
+            <!-- 真正的商户优惠券名称 -->
+            <div v-if="data.yhj_name" class="coupon-name">
+              {{data.yhj_name}}
+            </div>
             <div class="coupon-info-2">
-              <span v-if="+data.coupon_type === 1" class="shop-tag"
-                >线下店铺</span
-              >{{ data[couponNameKey] }}
+              {{ data[couponNameKey] }}
             </div>
             <div class="coupon-info-3">
               {{ data.term_of_validity || data.g_time2 }}
@@ -124,7 +127,7 @@ export default {
   },
   computed: {
     shopsAddress () {
-      return `${this.data.shops_address_province}${this.data.shops_address_city}${this.data.shops_address_area}${this.data.shops_address}`
+      return `${this.data.shops_address_area}${this.data.shops_address}`
     }
   },
   filters: {
@@ -234,6 +237,13 @@ export default {
     flex-direction: column;
     flex: 1;
     padding: 50px 24px 0 12px;
+    .coupon-name {
+      margin-bottom: 30px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #222222;
+      line-height: 1;
+    }
     .left-slot {
       position: relative;
       z-index: 1;
@@ -259,7 +269,7 @@ export default {
     align-items: center;
     min-height: 64px;
     padding: 14px 0;
-    margin-top: 40px;
+    margin-top: 30px;
     border-top: 1px dashed #dddddd;
     z-index: 1;
     .coupon-footer-text {
@@ -375,14 +385,17 @@ export default {
   }
 }
 .shop-tag {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 120px;
+  width: 132px;
   height: 40px;
   margin-right: 10px;
   background: #ff65551a;
-  border-radius: 4px;
+  border-radius: 10px 0px 10px 0px;
   font-size: 24px;
   color: #ff6555;
   line-height: 1;
