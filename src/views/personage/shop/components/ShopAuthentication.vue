@@ -15,7 +15,12 @@
           /><span class="status-text status-text-1">已认证</span>
         </div>
         <van-collapse v-if="+formData.a_state === 2" v-model="activeCollapse">
-          <van-collapse-item class="tf-collapse-item" name="1">
+          <van-collapse-item
+            class="tf-collapse-item"
+            name="1"
+            :is-link="!!formData.attestation_error_explain"
+            :disabled="!formData.attestation_error_explain"
+          >
             <template #title>
               <div class="tf-flex-center">
                 <img
@@ -24,7 +29,10 @@
                 /><span class="status-text">审核未通过，请修改后再次提交</span>
               </div>
             </template>
-            <div class="tf-collapse-content">
+            <div
+              v-if="formData.attestation_error_explain"
+              class="tf-collapse-content"
+            >
               审核说明：{{ formData.attestation_error_explain }}
             </div>
           </van-collapse-item>
@@ -80,6 +88,7 @@
             <tf-uploader
               v-model="voucher_img1"
               max-count="1"
+              del-icon-type="2"
               class="IDCard-upload"
               :disabled="isDisabled"
               :deletable="!isDisabled"
@@ -92,6 +101,7 @@
             <tf-uploader
               v-model="voucher_img2"
               max-count="1"
+              del-icon-type="2"
               class="tf-ml-lg IDCard-upload"
               :disabled="isDisabled"
               :deletable="!isDisabled"
@@ -113,6 +123,7 @@
             <tf-uploader
               v-model="voucher_img"
               max-count="3"
+              del-icon-type="2"
               class="license-upload"
               :disabled="isDisabled"
               :deletable="!isDisabled"
@@ -193,19 +204,30 @@ export default {
   computed: {
     uploadImgStatus1 () {
       const { a_type: type } = this.formData
-      return type === '1' &&
+      return (
+        type === '1' &&
         this.voucher_img1 &&
         this.voucher_img1.length &&
         this.voucher_img2 &&
         this.voucher_img2.length
+      )
     },
     uploadImgStatus2 () {
       const { a_type: type } = this.formData
       return type === '2' && this.voucher_img && this.voucher_img.length
     },
     submitAble () {
-      const { operator_realname: realname, operator_mobile: mobile, a_type: type } = this.formData
-      return !(realname && mobile && type && (this.uploadImgStatus1 || this.uploadImgStatus2))
+      const {
+        operator_realname: realname,
+        operator_mobile: mobile,
+        a_type: type
+      } = this.formData
+      return !(
+        realname &&
+        mobile &&
+        type &&
+        (this.uploadImgStatus1 || this.uploadImgStatus2)
+      )
     },
     isDisabled () {
       return +this.formData.a_state > 0 && !this.isEdit
@@ -296,9 +318,6 @@ export default {
   height: 204px !important;
   margin-right: 10px !important;
   margin-left: 0 !important;
-  // + .van-uploader__preview {
-  //   margin-left: 10px !important;
-  // }
 }
 .license-upload
   /deep/
@@ -313,13 +332,15 @@ export default {
   width: 310px;
   height: 196px;
   /deep/ .van-uploader__upload,
-  /deep/ .van-uploader__preview {
+  /deep/ .van-uploader__preview,
+  /deep/ .van-uploader__input-wrapper {
     width: 310px !important;
     height: 196px !important;
     margin: 0;
   }
 }
-.custom-upload-box {
+.custom-upload-box,
+/deep/ .custom-upload-box {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -410,5 +431,25 @@ export default {
 }
 /deep/ .van-uploader__wrapper--disabled {
   opacity: 1;
+}
+/deep/ .van-popup--bottom {
+  background: #f7f7f7;
+  .tf-select-popup-header {
+    background: #f7f7f7;
+  }
+  .tf-select-popup-list {
+    border-radius: 10px 10px 0px 0px;
+    background: #fff;
+    .tf-select-popup-item {
+      justify-content: center;
+      &.cur .check-block {
+        position: absolute;
+        right: 30px;
+      }
+    }
+  }
+  .fixed-bottom-placeholder {
+    background: #fff;
+  }
 }
 </style>

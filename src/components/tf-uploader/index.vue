@@ -6,6 +6,7 @@
     v-bind="$attrs"
     upload-icon="plus"
     multiple
+    :class="delIconClass"
   >
     <slot></slot>
   </van-uploader>
@@ -24,6 +25,10 @@ export default {
     value: {
       type: Array,
       default: () => []
+    },
+    delIconType: {
+      type: [Number, String],
+      default: 1
     }
   },
   data () {
@@ -31,6 +36,15 @@ export default {
       fileList: [],
       images: this.value,
       uploadStatus: 0 // 图片的上传状态，0则为没有文件在上传中的状态
+    }
+  },
+  computed: {
+    delIconClass () {
+      const className = {
+        1: 'mh-upload',
+        2: 'default-upload'
+      }
+      return className[this.delIconType]
     }
   },
   created () {
@@ -107,7 +121,7 @@ export default {
   width: 105px !important;
   height: 105px !important;
   margin-left: 4px !important;
-img {
+  img {
     width: 100%;
     height: 100%;
   }
@@ -116,7 +130,7 @@ img {
   margin-bottom: 10px;
 }
 
-/deep/ .van-uploader__preview-delete {
+.mh-upload /deep/ .van-uploader__preview-delete {
   position: absolute;
   top: -17px;
   right: -17px;
@@ -133,6 +147,15 @@ img {
     top: 0;
     right: 0;
     font-size: 44px;
+  }
+}
+.default-upload /deep/ .van-uploader__preview-delete {
+  width: 36px;
+  height: 36px;
+  background: #000000cc;
+  border-radius: 0px 0px 0px 14px;
+  .van-uploader__preview-delete-icon {
+    font-size: 38px;
   }
 }
 </style>

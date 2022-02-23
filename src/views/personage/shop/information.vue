@@ -8,7 +8,7 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <van-tabs>
+    <van-tabs v-model="active">
       <van-tab title="店铺信息">
         <shop-information-tab :shopId="shopId"></shop-information-tab>
       </van-tab>
@@ -27,11 +27,14 @@ export default {
   components: { ShopInformationTab, ShopAuthentication },
   data () {
     return {
-      shopId: ''
+      shopId: '',
+      active: 0
     }
   },
   created () {
     this.shopId = this.$route.query.shopId
+    const type = this.$route.query.type
+    type && (this.active = +type)
   },
   methods: {},
   beforeRouteLeave (to, from, next) {

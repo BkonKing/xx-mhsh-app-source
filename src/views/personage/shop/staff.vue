@@ -8,7 +8,7 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-body-container">
-      <refreshList :list.sync="list" :load="getStaffList">
+      <refreshList ref="list" :list.sync="list" :load="getStaffList">
         <template v-slot="{ item, index }">
           <div class="staff-item flex-row justify-between">
             <div class="flex-col">
@@ -16,10 +16,10 @@
                 <div v-if="+item.is_shopkeeper" class="shop-user-tag">
                   店主
                 </div>
-                <span class="staff-userInfo-text">{{item.clerk_name}}</span>
-                <span class="staff-userInfo-text">{{item.mobile}}</span>
+                <span class="staff-userInfo-text">{{ item.clerk_name }}</span>
+                <span class="staff-userInfo-text">{{ item.mobile }}</span>
               </div>
-              <span class="staff-userInfo-1">{{item.clerk_power_text}}</span>
+              <span class="staff-userInfo-1">{{ item.clerk_power_text }}</span>
             </div>
             <div v-if="!+item.is_shopkeeper" class="flex-row align-center">
               <img
@@ -27,7 +27,11 @@
                 src="@/assets/personage/shop/staff-delete.png"
                 @click="handleDel(item, index)"
               />
-              <img class="staff-icon" src="@/assets/personage/shop/staff-edit.png" @click="handleEdit(item, index)" />
+              <img
+                class="staff-icon"
+                src="@/assets/personage/shop/staff-edit.png"
+                @click="handleEdit(item, index)"
+              />
             </div>
           </div>
         </template>
@@ -36,7 +40,12 @@
         <img class="publish-img" src="@/assets/neighbours/publish.png" />
       </div>
     </div>
-    <staff-popup v-model="staffVisible" :shopId="shopId" :data="activeStaff"></staff-popup>
+    <staff-popup
+      v-model="staffVisible"
+      :shopId="shopId"
+      :data="activeStaff"
+      @success="reloadList"
+    ></staff-popup>
   </div>
 </template>
 
@@ -66,6 +75,9 @@ export default {
         page: params.pages,
         shops_id: this.shopId
       })
+    },
+    reloadList () {
+      this.$refs.list && this.$refs.list.reload()
     },
     handleAdd () {
       this.activeStaff = null

@@ -49,8 +49,8 @@
             {{ infoData.credits }}
           </div>
           <div class="shop-header-info">幸福币</div>
-          <!-- <van-button v-if="haveCreate && haveCashOut" class="shop-header-button" @click.stop="jumpPage('withdraw')">提现</van-button> -->
           <van-button
+            v-if="haveCreate && haveCashOut"
             class="shop-header-button"
             @click.stop="jumpPage('withdraw')"
             >提现</van-button

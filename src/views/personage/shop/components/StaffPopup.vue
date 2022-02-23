@@ -15,8 +15,8 @@
             type="digit"
             maxlength="11"
             placeholder="手机号"
-            :disabled="false"
-            :right-icon="false ? search : ''"
+            :disabled="isEdit"
+            :right-icon="isEdit ? '' : 'search'"
             @blur="handleBlur"
             @input="handleSearch"
           />
@@ -37,7 +37,7 @@
               {{ item.name_text }}
             </div>
           </div>
-          <div v-if="false" class="alert-text">
+          <div v-if="isUnregistered" class="alert-text">
             手机号未注册，请先注册后再添加
           </div>
           <div class="form-card-label">
@@ -102,10 +102,15 @@ export default {
         clerk_name: '',
         clerk_power_data: []
       },
-      userOptions: []
+      userOptions: [],
+      isUnregistered: false
     }
   },
-  created () {},
+  computed: {
+    isEdit () {
+      return !!+this.formData.id
+    }
+  },
   methods: {
     closeOperation () {
       this.selectVisible = false
@@ -121,10 +126,17 @@ export default {
           user_text: value
         })
         this.userOptions = data.list || []
+        const userData = data.list[0]
+        this.isUnregistered = userData
+          ? !+userData.id || +userData.is_logoff
+          : true
         this.selectVisible = true
       }
     },
     handleSelect (data) {
+      if (+data.is_shops || +data.is_shops_clerk) {
+        return
+      }
       if (!this.formData.clerk_name) {
         this.formData.clerk_name = data.realname
         this.selectVisible = false
@@ -146,12 +158,18 @@ export default {
         this.$toast('请设置店员店铺权限')
         return
       }
+      if (this.isUnregistered) {
+        this.$toast('请确认店员手机号是否已经注册')
+        return
+      }
       const { success } = await saveShopStaff({
         shops_id: this.shopId,
         ...this.formData
       })
       if (success) {
-        this.$toast('添加成功')
+        this.$toast(this.isEdit ? '保存成功' : '添加成功')
+        this.visible = false
+        this.$emit('success')
       }
     }
   },
@@ -163,17 +181,18 @@ export default {
       if (val !== this.visible) {
         this.visible = val
       }
-    },
-    data (val) {
       if (val) {
-        const data = cloneDeep(val)
-        data.clerk_power_data = data.clerk_power.split(',')
-        this.formData = data
-      } else {
-        this.formData = {
-          mobile: '',
-          clerk_name: '',
-          clerk_power_data: []
+        if (this.data) {
+          const data = cloneDeep(this.data)
+          data.shops_clerk_id = data.id
+          data.clerk_power_data = data.clerk_power.split(',')
+          this.formData = data
+        } else {
+          this.formData = {
+            mobile: '',
+            clerk_name: '',
+            clerk_power_data: []
+          }
         }
       }
     }
@@ -251,6 +270,9 @@ export default {
     font-size: 26px;
     color: #000000;
     line-height: 1;
+    &-disabled {
+      color: #999;
+    }
   }
 }
 .prefix-input {
