@@ -240,6 +240,10 @@ export default {
     async getData () {
       const { data } = await getShopAttestationInfo({
         shops_id: this.shopId
+      }).catch((error) => {
+        if (error.code === '202') {
+          this.$router.go(-1)
+        }
       })
       this.formData = data
       this.voucher_img = data.voucher_img_data || []

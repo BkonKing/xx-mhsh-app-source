@@ -588,9 +588,13 @@ export default {
     },
     // 商户中心
     goShopCentre () {
-      if (this.isShop || (this.isShopStaff && +this.shopData.is_shops_coupon_power)) {
+      if (this.isShop) {
         this.$router.push({
           name: 'shopIndex'
+        })
+      } else if (this.isShopStaff && +this.shopData.is_shops_coupon_power) {
+        this.$router.push({
+          name: 'shopCouponManager'
         })
       }
     },

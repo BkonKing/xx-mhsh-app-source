@@ -197,3 +197,12 @@ export function delShopStaff (data) {
     data
   })
 }
+
+// 是否扫码核销优惠券权限 接口
+export function getScan (data) {
+  return request({
+    url: '/shops/shops_coupon/is_scan',
+    method: 'post',
+    data
+  })
+}

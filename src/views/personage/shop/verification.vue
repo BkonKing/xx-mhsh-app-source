@@ -80,7 +80,7 @@ export default {
     }
   },
   created () {
-    this.codeInfo = this.$route.query.codeInfo || 'shangpuyhq|100000|15447|bbe7d7778f3f4de5d86c77c6e8e219c0'
+    this.codeInfo = this.$route.query.codeInfo
     this.getCouponScan()
   },
   methods: {

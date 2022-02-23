@@ -228,6 +228,10 @@ export default {
         shops_id: this.shopId
       }).then(({ data }) => {
         this.infoData = data
+      }).catch((error) => {
+        if (error.code === '202') {
+          this.$router.go(-1)
+        }
       }) /* .finally(() => {
         this.$toast.clear()
       }) */

@@ -50,7 +50,7 @@ import {
 } from '@/api/personage'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { queryActive, getActivityPermission, getActivityUserInfo } from '@/api/activity'
-import { getShopInfo } from '@/api/personage/shop'
+import { getScan } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
 import { mapGetters } from 'vuex'
 export default {
@@ -222,7 +222,7 @@ export default {
           this.goTask(values[1])
           break
         case 'shangpuyhq':
-          this.shopId && this.getShopInfo(value)
+          this.shopId && this.getScan(value)
           break
         default:
           break
@@ -397,8 +397,8 @@ export default {
         })
       })
     },
-    getShopInfo (codeInfo) {
-      getShopInfo({
+    getScan (codeInfo) {
+      getScan({
         shops_id: this.shopId
       }).then(({ data }) => {
         if (+data.is_scan) {
