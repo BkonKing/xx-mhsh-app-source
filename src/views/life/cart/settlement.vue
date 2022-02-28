@@ -519,6 +519,7 @@ export default {
           is_credits: this.is_credits ? 1 : 0,
           user_explain: this.remarks
         }).then(res => {
+          this.$toast.clear()
           if (res.success) {
             this.callbackData = res.order_info
             this.order_id = res.order_info.id
@@ -561,7 +562,6 @@ export default {
           }
         }).finally(() => {
           this.payLoading = false
-          this.$toast.clear()
         })
       } else if (this.order_type == 3) {
         this.flashParam.address_id = this.addressInfo.id
