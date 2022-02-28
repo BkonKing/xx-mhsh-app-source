@@ -206,3 +206,39 @@ export function getScan (data) {
     data
   })
 }
+
+// 获取商家设置
+export function getAgentSetting (data) {
+  return request({
+    url: '/cash/cash/getAgentSetting',
+    method: 'post',
+    data
+  })
+}
+
+// 提现申请
+export function applyCash (data) {
+  return request({
+    url: '/cash/cash/cashApply',
+    method: 'post',
+    data
+  })
+}
+
+// 获取提现详情
+export function getCashInfo (data) {
+  return request({
+    url: '/cash/cash/getCashInfo',
+    method: 'post',
+    data
+  })
+}
+
+// 提现取消
+export function cancelCash (data) {
+  return request({
+    url: '/cash/cash/cancelCash',
+    method: 'post',
+    data
+  })
+}

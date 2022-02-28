@@ -6,14 +6,14 @@
       :border="false"
       placeholder
       left-arrow
-      @click-left="$router.go(-1)"
+      @click-left="goBack"
     />
     <div class="tf-body-container">
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
         <div class="cell-item" @click="goBankCard">
           <div class="item-left">到账银行卡</div>
           <div class="item-cont p-30">
-            {{ formData.project_name || "请先绑定银行卡" }}
+            {{ formData.bank_id || "请先绑定银行卡" }}
           </div>
           <div class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
@@ -34,21 +34,26 @@
         </div>
         <div
           class="form-field"
-          :class="{ 'form-field-placeholder': !creditNumber }"
+          :class="{ 'form-field-placeholder': !formData.credits }"
           @click="showKeyboard = true"
         >
-          {{ creditNumber || "100~10000" }}
+          {{ formData.credits || creditScope }}
         </div>
         <div v-if="false" class="form-alert red-text">
-          <van-icon name="warning" color="#ff6555" />单笔可提现100~10000幸福币
+          <van-icon name="warning" color="#ff6555" />单笔可提现{{
+            creditScope
+          }}幸福币
         </div>
-        <div class="form-service">
+        <div v-if="+serviceFee" class="form-service">
           <div>
             <span class="tf-mr-lg">提现人民币</span
-            ><span class="red-text">￥1000</span
-            ><span class="red-text">（实际到账￥950）</span>
+            ><span class="red-text">￥{{rmb}}</span
+            ><span class="red-text">（实际到账￥{{actualMoney}}）</span>
           </div>
-          <div><span class="tf-mr-lg">服务费</span><span>5%</span></div>
+          <div>
+            <span class="tf-mr-lg">服务费</span
+            ><span>{{ serviceFee * 100 }}%</span><span>（本次收取￥{{charge}}）</span>
+          </div>
         </div>
       </div>
     </div>
@@ -79,14 +84,14 @@
       </div>
     </van-popup>
     <van-number-keyboard
-      v-model="creditNumber"
+      v-model="formData.credits"
       :show="showKeyboard"
       safe-area-inset-bottom
       get-container="body"
       key="number"
       theme="custom"
       :extra-key="['']"
-      :close-button-text="type !== '2' ? '提现' : '确定'"
+      close-button-text="提现"
       @close="handlePay"
       @blur="showKeyboard = false"
     />
@@ -97,36 +102,93 @@
       key="password"
       z-index="9999"
       theme="custom"
+      :extra-key="['']"
       close-button-text="完成"
       @input="onInput"
       @delete="onDelete"
       @blur="showPasswordBoard = false"
       @close="payEnter"
     />
+    <van-popup
+      v-model="successVisible"
+      position="bottom"
+      :style="{ height: '100%' }"
+    >
+      <div class="success-header">
+        <van-icon class="close-icon" name="cross" @click="goBack" />
+        <div class="success-title">提现</div>
+      </div>
+      <div class="success-content">
+        <van-icon class="success-icon" name="checked" />
+        <div class="success-text-1">提交成功！</div>
+        <div class="success-text-2">请耐心等待工作人员处理</div>
+        <van-button class="success-confirm-btn" @click="goBack"
+          >确定</van-button
+        >
+      </div>
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { getBankList } from '@/api/personage'
+import { getAgentSetting, applyCash } from '@/api/personage/shop'
+
 export default {
   name: 'shopWithdraw',
   data () {
     return {
-      formData: {},
+      shopId: '',
+      formData: {
+        bank_id: '',
+        credits: ''
+      },
+      bankCards: [],
+      settingData: {},
       payCodeShow: false,
       payPassword: '',
       showKeyboard: false,
       showPasswordBoard: false,
-      type: '1',
-      creditNumber: ''
+      successVisible: false
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    creditScope () {
+      return `${this.settingData.min_credits}~${this.settingData.max_credits}`
+    },
+    serviceFee () {
+      return +this.settingData.service_fee
+    },
+    rmb () {
+      return this.formData.credits / 10
+    },
+    charge () {
+      if (!this.formData.rmb) {
+        return 0
+      }
+      const num = this.formData.rmb * this.serviceMoney
+      return num.toFixed(2)
+    },
+    actualMoney () {
+      return this.formData.rmb - this.charge
+    }
   },
   created () {
+    this.shopId = this.$route.query.shopId
+    this.getBankList()
+    this.getAgentSetting()
   },
   methods: {
+    async getBankList () {
+      const { data } = await getBankList()
+      this.bankCards = data
+    },
+    async getAgentSetting () {
+      const { data } = await getAgentSetting()
+      this.settingData = data
+    },
     goBankCard () {
       this.$router.push({
         name: 'shopBankCard'
@@ -141,18 +203,34 @@ export default {
         this.setPaymentPassword()
         return
       }
-      if (this.type !== '2') {
-        this.payCodeShow = true
-        this.showPasswordBoard = true
+      this.payPassword = ''
+      this.payCodeShow = true
+      this.showPasswordBoard = true
+    },
+    // 输入完密码
+    async payEnter () {
+      if (this.payPassword.length < 6) {
+        this.$toast('请输入完整密码')
       } else {
-        this.skCredits()
+        const { success } = await applyCash({
+          ...this.formData
+        }).catch(({ code }) => {
+          if (+code === 202) {
+          }
+        })
+        if (success) {
+          this.successVisible = true
+        }
       }
     },
     // 设置支付密码
     setPaymentPassword () {
       this.$dialog
         .confirm({
-          title: '您还未设置支付密码！'
+          className: 'v2-dialog',
+          title: '未设置支付密码',
+          confirmButtonText: '去设置',
+          cancelButtonText: '取消'
         })
         .then(() => {
           this.payCodeShow = false
@@ -166,23 +244,59 @@ export default {
           this.showPasswordBoard = true
         })
     },
-    // 输入完密码
-    payEnter () {
-      if (this.payPassword.length < 6) {
-        this.$toast('请输入完整密码')
-        return
-      }
-      if (this.type === '1') {
-        this.collectCredits()
-      } else if (this.type === '3') {
-        this.paymentCredits()
-      }
+    // 密码错误
+    wrongPassword () {
+      this.payCodeShow = false
+      this.$dialog
+        .confirm({
+          className: 'v2-dialog',
+          title: '支付密码错误，请重试',
+          confirmButtonText: '重试',
+          cancelButtonText: '忘记密码'
+        })
+        .then(() => {
+          this.payCodeShow = true
+          this.payPassword = ''
+          this.showPasswordBoard = true
+        })
+        .catch(() => {
+          this.$router.push({
+            name: 'informationForgetPaymentCode',
+            type: 1
+          })
+        })
+    },
+    alertAttestation () {
+      this.$dialog
+        .confirm({
+          className: 'v2-dialog',
+          title: '完成商家认证后才能申请提现',
+          message:
+            '若是认证处于审核中，请您耐心等待审核处理。审核未通过可进行修改再次提交审核。',
+          confirmButtonText: '去认证',
+          cancelButtonText: '知道了'
+        })
+        .then(() => {
+          this.$router.push({
+            name: 'shopInformation',
+            query: {
+              shopId: this.shopId,
+              type: 1
+            }
+          })
+        })
+        .catch(() => {
+          this.goBack()
+        })
     },
     onInput (key) {
       this.payPassword = (this.payPassword + key).slice(0, 6)
     },
     onDelete () {
       this.payPassword = this.payPassword.slice(0, this.payPassword.length - 1)
+    },
+    goBack () {
+      this.$router.go(-1)
     }
   }
 }
@@ -301,5 +415,72 @@ export default {
 .pay-code-popup {
   top: 35%;
   border-radius: 10px;
+}
+.success-header {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 88px;
+  .close-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 40px;
+  }
+  .success-title {
+    max-width: 60%;
+    margin: 0 auto;
+    color: #222;
+    font-size: 34px;
+    text-align: center;
+  }
+}
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100px 80px;
+  .success-icon {
+    font-size: 200px;
+    color: #55b862;
+  }
+  .success-text-1 {
+    margin-top: 40px;
+    font-size: 40px;
+    font-weight: bold;
+  }
+  .success-text-2 {
+    margin-top: 30px;
+    font-size: 28px;
+  }
+  .success-confirm-btn {
+    width: 590px;
+    height: 88px;
+    margin-top: 100px;
+    background: #ff6555;
+    border: none;
+    border-radius: 44px !important;
+    color: #fff;
+  }
+}
+</style>
+
+<style lang="less">
+.v2-dialog {
+  .van-dialog__footer {
+    .van-dialog__cancel {
+      height: 88px;
+      background: #f7f7f7;
+      border-color: #f7f7f7;
+      border-radius: 10px;
+    }
+    .van-dialog__confirm {
+      height: 88px;
+      border-radius: 10px;
+    }
+  }
 }
 </style>

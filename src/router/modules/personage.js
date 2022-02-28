@@ -604,6 +604,16 @@ const personageRouter = [
         '@/views/personage/shop/withdraw'
       )
   },
+  // 商户提现详情
+  {
+    path: '/personage/shop/withdrawDetail',
+    name: 'shopWithdrawDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopWithdrawDetail" */
+        '@/views/personage/shop/withdrawDetail'
+      )
+  },
   // 绑定银行卡
   {
     path: '/personage/shop/bankCard',
@@ -612,7 +622,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "shopBankCard" */
         '@/views/personage/shop/bankCard'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 店员管理
   {

@@ -14,7 +14,7 @@
             class="prefix-input"
             type="digit"
             maxlength="11"
-            placeholder="手机号"
+            placeholder="输入手机号搜索"
             :disabled="isEdit"
             :right-icon="isEdit ? '' : 'search'"
             @blur="handleBlur"
@@ -99,6 +99,7 @@ export default {
       selectVisible: false,
       formData: {
         mobile: '',
+        uid: '',
         clerk_name: '',
         clerk_power_data: []
       },
@@ -116,8 +117,11 @@ export default {
       this.selectVisible = false
     },
     handleBlur () {
-      if (this.formData.mobile.length === 11) {
-        this.selectVisible = true
+      if (!this.formData.uid) {
+        this.formData.mobile = ''
+      }
+      if (this.isUnregistered) {
+        this.isUnregistered = false
       }
     },
     async handleSearch (value) {
@@ -130,7 +134,13 @@ export default {
         this.isUnregistered = userData
           ? !+userData.id || +userData.is_logoff
           : true
+        if (!+userData.is_shops && !+userData.is_shops_clerk) {
+          this.formData.uid = userData.id
+        }
         this.selectVisible = true
+      } else {
+        this.formData.uid = ''
+        this.isUnregistered = false
       }
     },
     handleSelect (data) {
@@ -146,7 +156,7 @@ export default {
       this.$emit('close')
     },
     async handleConfirm () {
-      if (!this.formData.mobile) {
+      if (!this.formData.mobile || this.formData.mobile.length !== 11) {
         this.$toast('请填写店员手机号')
         return
       }
@@ -189,6 +199,7 @@ export default {
           this.formData = data
         } else {
           this.formData = {
+            uid: '',
             mobile: '',
             clerk_name: '',
             clerk_power_data: []
