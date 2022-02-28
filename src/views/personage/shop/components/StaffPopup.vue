@@ -3,7 +3,7 @@
     <div class="pay-mask">
       <div class="pay-step-item">
         <div class="pay-header">
-          添加店员
+          {{title}}
         </div>
         <div class="form-card">
           <div class="form-card-label">
@@ -110,6 +110,9 @@ export default {
   computed: {
     isEdit () {
       return !!+this.formData.id
+    },
+    title () {
+      return this.isEdit ? '编辑店员' : '添加店员'
     }
   },
   methods: {

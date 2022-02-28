@@ -216,6 +216,15 @@ export function getAgentSetting (data) {
   })
 }
 
+// 创建绑定银行卡的订单
+export function createOrder (data) {
+  return request({
+    url: '/cash/cash/createOrder',
+    method: 'post',
+    data
+  })
+}
+
 // 提现申请
 export function applyCash (data) {
   return request({

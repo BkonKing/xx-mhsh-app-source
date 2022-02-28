@@ -92,6 +92,7 @@
       v-model="payVisible"
       :payMoney="0.01"
       :data="formData"
+      :create-pay-order-api="createOrder"
     ></pay-popup>
   </div>
 </template>
@@ -99,6 +100,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getBankInfo, editRealname } from '@/api/personage'
+import { createOrder } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
 import PayPopup from './components/PayPopup'
 export default {
@@ -131,7 +133,10 @@ export default {
         idcard: '350583199405017417',
         bankIco: ''
       },
-      payVisible: false
+      payVisible: false,
+      createOrder: () => {
+        return createOrder({ ...this.formData })
+      }
     }
   },
   methods: {
@@ -245,10 +250,11 @@ export default {
   },
   created () {
     this.formData.realname = this.userInfo.realname
-    this.formData.mobile =
-      this.userInfo.mobile.substr(0, 3) +
-      '****' +
-      this.userInfo.mobile.substr(7)
+    this.formData.mobile = this.userInfo.mobile
+    // this.formData.mobile =
+    //   this.userInfo.mobile.substr(0, 3) +
+    //   '****' +
+    //   this.userInfo.mobile.substr(7)
   },
   beforeRouteLeave (to, from, next) {
     const names = ['supportBankCardList']

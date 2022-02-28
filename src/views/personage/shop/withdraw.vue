@@ -13,7 +13,11 @@
         <div class="cell-item" @click="goBankCard">
           <div class="item-left">到账银行卡</div>
           <div class="item-cont p-30">
-            {{ formData.bank_id || "请先绑定银行卡" }}
+            <div v-if="formData.bank_id">
+              <div class="bank-name">{{ formData.bank_name }}</div>
+              <div class="bank-card">{{ formData.bank_card }}</div>
+            </div>
+            <template v-else>请先绑定银行卡</template>
           </div>
           <div class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
@@ -47,12 +51,13 @@
         <div v-if="+serviceFee" class="form-service">
           <div>
             <span class="tf-mr-lg">提现人民币</span
-            ><span class="red-text">￥{{rmb}}</span
-            ><span class="red-text">（实际到账￥{{actualMoney}}）</span>
+            ><span class="red-text">￥{{ rmb }}</span
+            ><span class="red-text">（实际到账￥{{ actualMoney }}）</span>
           </div>
           <div>
             <span class="tf-mr-lg">服务费</span
-            ><span>{{ serviceFee * 100 }}%</span><span>（本次收取￥{{charge}}）</span>
+            ><span>{{ serviceFee * 100 }}%</span
+            ><span>（本次收取￥{{ charge }}）</span>
           </div>
         </div>
       </div>
@@ -127,21 +132,43 @@
         >
       </div>
     </van-popup>
+    <tf-select-popup
+      v-model="selectBankVisible"
+      title="到账银行卡"
+      valueKey="bank_id"
+      :selected="formData.bank_id"
+      :data="bankCards"
+      @confirm="setBank"
+    >
+      <template v-slot:label="slotProps">
+        <div class="tf-flex-column">
+          <div class="bank-name">{{ slotProps.record.bank_name }}</div>
+          <div class="bank-card">{{ slotProps.record.bank_card }}</div>
+        </div>
+      </template>
+    </tf-select-popup>
   </div>
 </template>
 
 <script>
+import NP from 'number-precision'
 import { mapGetters } from 'vuex'
+import TfSelectPopup from '@/components/tf-select-popup'
 import { getBankList } from '@/api/personage'
 import { getAgentSetting, applyCash } from '@/api/personage/shop'
 
 export default {
   name: 'shopWithdraw',
+  components: {
+    TfSelectPopup
+  },
   data () {
     return {
       shopId: '',
       formData: {
         bank_id: '',
+        bank_name: '',
+        bank_card: '',
         credits: ''
       },
       bankCards: [],
@@ -150,7 +177,8 @@ export default {
       payPassword: '',
       showKeyboard: false,
       showPasswordBoard: false,
-      successVisible: false
+      successVisible: false,
+      selectBankVisible: false
     }
   },
   computed: {
@@ -165,14 +193,14 @@ export default {
       return this.formData.credits / 10
     },
     charge () {
-      if (!this.formData.rmb) {
+      if (!this.rmb) {
         return 0
       }
-      const num = this.formData.rmb * this.serviceMoney
+      const num = NP.times(this.rmb, this.serviceFee)
       return num.toFixed(2)
     },
     actualMoney () {
-      return this.formData.rmb - this.charge
+      return NP.minus(this.rmb, this.charge)
     }
   },
   created () {
@@ -183,24 +211,56 @@ export default {
   methods: {
     async getBankList () {
       const { data } = await getBankList()
-      this.bankCards = data
+      if (data && data.length === 1) {
+        this.setBank(data[0])
+      } else {
+        this.bankCards = data || []
+      }
     },
     async getAgentSetting () {
       const { data } = await getAgentSetting()
       this.settingData = data
     },
+    setBank (data) {
+      this.formData.bank_id = data.bank_id
+      this.formData.bank_name = data.bank_name
+      this.formData.bank_card = data.bank_card
+    },
     goBankCard () {
-      this.$router.push({
-        name: 'shopBankCard'
-      })
+      if (this.bankCards.length === 0) {
+        this.$router.push({
+          name: 'shopBankCard'
+        })
+      } else if (this.bankCards.length > 1) {
+        this.selectBankVisible = true
+      }
     },
     handlePay () {
-      if (parseInt(this.value) <= 0) {
+      const credits = parseInt(this.formData.credits)
+      if (credits <= 0) {
         this.$toast('请输入提现幸福币')
+        this.$nextTick(() => {
+          this.showKeyboard = true
+        })
+        return
+      }
+      if (
+        !(
+          credits >= this.settingData.min_credits &&
+          credits <= this.settingData.max_credits
+        )
+      ) {
+        this.$toast('请输入区间幸福币')
+        this.$nextTick(() => {
+          this.showKeyboard = true
+        })
         return
       }
       if (!this.userInfo.is_setpaypassword) {
         this.setPaymentPassword()
+        this.$nextTick(() => {
+          this.showKeyboard = true
+        })
         return
       }
       this.payPassword = ''
@@ -310,6 +370,18 @@ export default {
 }
 /deep/ .van-nav-bar {
   background: #f7f7f7;
+}
+.bank-name {
+  margin-top: -2px;
+  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  color: #222222;
+}
+.bank-card {
+  font-size: 24px;
+  color: #8f8f94;
 }
 .form-title {
   font-size: 28px;

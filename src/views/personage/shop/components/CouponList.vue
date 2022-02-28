@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import refreshList from '@/components/tf-refresh-list'
 import TfDialogV3 from '@/components/tf-dialog-v3'
 import CouponItem from './CouponItem'
@@ -78,6 +79,9 @@ export default {
     CouponItem,
     DatePicker
   },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
   props: {
     id: [Number, String],
     status: {
@@ -92,7 +96,6 @@ export default {
   data () {
     return {
       list: [],
-      shopId: '',
       couponId: '',
       activeIndex: '',
       deleteVisible: false,
@@ -100,9 +103,6 @@ export default {
       dateVisible: false,
       release_type: '1'
     }
-  },
-  created () {
-    this.shopId = this.$route.query.shopId
   },
   activated () {
     this.updateSingleData()
@@ -113,7 +113,7 @@ export default {
       return getShopCouponList({
         page: params.pages,
         coupon_status: this.status,
-        shops_id: this.shopId
+        shops_id: this.userInfo.shops_id
       })
     },
     // 状态改变更新
@@ -143,7 +143,7 @@ export default {
       this.$router.push({
         name: 'shopCreateCoupon',
         query: {
-          shopId: this.shopId,
+          shopId: this.userInfo.shops_id,
           couponId: id,
           type // 1：修改，2：查看，3：复制
         }
