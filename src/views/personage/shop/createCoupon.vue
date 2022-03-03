@@ -661,6 +661,10 @@ export default {
       } = await getShopCouponInfo({
         shops_id: this.shopId,
         shops_coupon_id: this.couponId
+      }).catch((error) => {
+        if (+error.code === 205) {
+          this.$router.go(-1)
+        }
       })
       const {
         remind,

@@ -171,6 +171,15 @@ export function getStaffList (data) {
   })
 }
 
+// 获取员工所在店铺对应的权限
+export function getShopPrivilege (data) {
+  return request({
+    url: '/shops/shops_coupon/get_shop_privilege',
+    method: 'post',
+    data
+  })
+}
+
 // 店铺员工 用户筛选接口
 export function getUserOption (data) {
   return request({

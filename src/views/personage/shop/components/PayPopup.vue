@@ -40,13 +40,13 @@
             </van-cell-group>
           </van-radio-group>
         </div>
-        <van-button class="submit-btn" type="primary" @click="goPay"
+        <van-button class="submit-btn" type="primary" @click="createOrder"
           >去付款</van-button
         >
       </div>
       <div v-show="step == 2">
         <div class="pay-header-2">
-          <van-icon name="arrow-left" />
+          <van-icon name="arrow-left" @click="handlePrev"/>
           <div class="pay-title">安全验证</div>
         </div>
         <div class="pay-content">
@@ -68,7 +68,7 @@
                     <van-count-down
                       ref="countDown"
                       :auto-start="false"
-                      :time="downTime2"
+                      :time="downTime"
                       @finish="handleFinish"
                     >
                       <template v-slot="timeData">{{
@@ -127,11 +127,10 @@ export default {
   data () {
     return {
       visible: this.value,
-      tapIndex: 1,
       step: 1, // 1选中支付方式 2选择银行卡支付方式（银行卡待选择） 3选择银行卡
       selectIndex: -1, // 选中的银行卡index
       cardList: [],
-      downTime2: 60000,
+      downTime: 60000,
       isAgain: false,
       codeVal: '', // 验证码
       payData: {},
@@ -142,33 +141,37 @@ export default {
   },
   methods: {
     setBankCard (data) {
-      const { idcard } = data
+      const { idcard, mobile } = data
       this.cardList = [data]
       this.idCard = idcard
+      this.userTel = mobile
       this.selectIndex = 0
       this.step = 1
     },
-    goPay () {
-      this.step = 2
-      this.createOrder()
+    handlePrev () {
+      this.step = 1
     },
     async createOrder () {
       const { success, data } = await this.createPayOrderApi()
       if (success) {
+        this.step = 2
         this.payData = data
         this.sendCode()
       }
     },
     sendCode () {
       this.codeVal = ''
-      this.downTime2 = 60000
+      this.downTime = 60000
       this.$refs.countDown.reset()
       this.$refs.countDown.start()
     },
     // 再次获取验证码
     codeAgain () {
       this.isAgain = false
-      this.createOrder()
+      this.downTime = 60000
+      this.$nextTick(() => {
+        this.createOrder()
+      })
     },
     // 富友确认支付
     sureFuPay () {
@@ -181,15 +184,12 @@ export default {
       })
         .then(res => {
           if (res.success) {
-            // 成功
-            this.$emit('fyResult', res.success)
+            this.$emit('success')
           }
         })
-        .catch(res => {
-          if (
-            res.message.indexOf('短信') == -1 &&
-            res.message.indexOf('验证码') == -1
-          ) {
+        .catch((error) => {
+          const code = ['8143']
+          if (!code.includes(error.code)) {
             this.step = 1
           }
         })
@@ -323,7 +323,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      width: 100px;
+      width: 120px;
     }
   }
 }

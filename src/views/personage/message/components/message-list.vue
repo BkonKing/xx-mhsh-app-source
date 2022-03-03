@@ -164,7 +164,8 @@ export default {
         19: 'tf-icon-lifepaymessage',
         20: 'tf-icon-lifepaymessage',
         22: 'tf-icon-lifepaymessage',
-        25: 'tf-icon-renwutiwen' // 任务提问
+        25: 'tf-icon-renwutiwen', // 任务提问
+        26: 'tf-icon-xingfubi1'
       }
       return icon[value]
     },

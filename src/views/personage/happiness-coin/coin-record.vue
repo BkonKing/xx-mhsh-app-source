@@ -42,7 +42,7 @@
           id="list4"
           key="list4"
           :data.sync="list4"
-          :load="({ pages }) => getCreditsLog(pages, 2)"
+          :load="({ pages }) => getCreditsLog(pages, 3)"
         ></list>
       </van-tab>
       <van-tab title="不可用">
@@ -51,7 +51,7 @@
           id="list5"
           key="list5"
           :data.sync="list5"
-          :load="({ pages }) => getCreditsLog(pages, 2)"
+          :load="({ pages }) => getCreditsLog(pages, 4)"
         ></list>
       </van-tab>
     </van-tabs>

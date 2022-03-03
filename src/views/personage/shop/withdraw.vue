@@ -14,12 +14,14 @@
           <div class="item-left">到账银行卡</div>
           <div class="item-cont p-30">
             <div v-if="formData.bank_id">
-              <div class="bank-name">{{ formData.bank_name }}</div>
+              <div class="bank-name">
+                {{ formData.bank_name }}({{ formData.realname }})
+              </div>
               <div class="bank-card">{{ formData.bank_card }}</div>
             </div>
-            <template v-else>请先绑定银行卡</template>
+            <template v-else>{{bankCards.length ? '请选择银行卡' : '请先绑定银行卡'}}</template>
           </div>
-          <div class="item-arrow">
+          <div v-if="bankCards.length === 0" class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
         </div>
@@ -28,7 +30,7 @@
             提现账户
           </div>
           <div class="item-cont">
-            123123
+            {{ settingData.user_credits }}
           </div>
         </div>
       </div>
@@ -50,12 +52,12 @@
         </div>
         <div v-if="+serviceFee" class="form-service">
           <div>
-            <span class="tf-mr-lg">提现人民币</span
-            ><span class="red-text">￥{{ rmb }}</span
+            <span class="grey-text">提现人民币</span
+            ><span class="red-text large-text">￥{{ rmb }}</span
             ><span class="red-text">（实际到账￥{{ actualMoney }}）</span>
           </div>
           <div>
-            <span class="tf-mr-lg">服务费</span
+            <span class="grey-text">服务费</span
             ><span>{{ serviceFee * 100 }}%</span
             ><span>（本次收取￥{{ charge }}）</span>
           </div>
@@ -135,7 +137,6 @@
     <tf-select-popup
       v-model="selectBankVisible"
       title="到账银行卡"
-      valueKey="bank_id"
       :selected="formData.bank_id"
       :data="bankCards"
       @confirm="setBank"
@@ -143,7 +144,7 @@
       <template v-slot:label="slotProps">
         <div class="tf-flex-column">
           <div class="bank-name">{{ slotProps.record.bank_name }}</div>
-          <div class="bank-card">{{ slotProps.record.bank_card }}</div>
+          <div class="bank-card">{{ slotProps.record.full_bank_card }}</div>
         </div>
       </template>
     </tf-select-popup>
@@ -172,6 +173,7 @@ export default {
         credits: ''
       },
       bankCards: [],
+      realname: '',
       settingData: {},
       payCodeShow: false,
       payPassword: '',
@@ -184,7 +186,8 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
     creditScope () {
-      return `${this.settingData.min_credits}~${this.settingData.max_credits}`
+      return `${this.settingData.min_credits || 0}~${this.settingData
+        .max_credits || 0}`
     },
     serviceFee () {
       return +this.settingData.service_fee
@@ -208,13 +211,24 @@ export default {
     this.getBankList()
     this.getAgentSetting()
   },
+  activated () {
+    this.getBankList()
+  },
+  beforeRouteLeave (to, from, next) {
+    const names = ['shopBankCard']
+    if (!names.includes(to.name)) {
+      this.$destroy()
+      this.$store.commit('deleteKeepAlive', from.name)
+    }
+    next()
+  },
   methods: {
     async getBankList () {
-      const { data } = await getBankList()
+      const { data, realname } = await getBankList()
+      this.bankCards = data || []
+      this.realname = realname
       if (data && data.length === 1) {
         this.setBank(data[0])
-      } else {
-        this.bankCards = data || []
       }
     },
     async getAgentSetting () {
@@ -222,9 +236,10 @@ export default {
       this.settingData = data
     },
     setBank (data) {
-      this.formData.bank_id = data.bank_id
+      this.formData.bank_id = data.id
+      this.formData.realname = this.realname
       this.formData.bank_name = data.bank_name
-      this.formData.bank_card = data.bank_card
+      this.formData.bank_card = data.full_bank_card
     },
     goBankCard () {
       if (this.bankCards.length === 0) {
@@ -273,9 +288,11 @@ export default {
         this.$toast('请输入完整密码')
       } else {
         const { success } = await applyCash({
+          paypassword: this.payPassword,
           ...this.formData
         }).catch(({ code }) => {
-          if (+code === 202) {
+          if (+code === 206) {
+            this.wrongPassword()
           }
         })
         if (success) {
@@ -433,8 +450,17 @@ export default {
     margin-right: 10px;
   }
 }
+.grey-text {
+  display: inline-block;
+  width: 160px;
+  font-size: 24px;
+  color: #8f8f94;
+}
 .red-text {
   color: #ff6555;
+}
+.large-text {
+  font-size: 32px;
 }
 .tf-dialog {
   width: 560px;
@@ -480,6 +506,11 @@ export default {
 }
 /deep/ .van-number-keyboard__body {
   padding: 30px 18px;
+  .van-key:not(.van-key--blue) {
+    font-size: 36px;
+    font-weight: bold;
+    color: #222222;
+  }
 }
 /deep/ .van-key__wrapper {
   padding: 12px;

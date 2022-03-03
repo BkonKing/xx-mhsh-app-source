@@ -602,7 +602,10 @@ const personageRouter = [
       import(
         /* webpackChunkName: "shopWithdraw" */
         '@/views/personage/shop/withdraw'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 商户提现详情
   {

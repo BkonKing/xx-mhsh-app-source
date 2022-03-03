@@ -3,7 +3,7 @@
     <div class="pay-mask">
       <div class="pay-step-item">
         <div class="pay-header">
-          {{title}}
+          {{ title }}
         </div>
         <div class="form-card">
           <div class="form-card-label">
@@ -58,8 +58,13 @@
             checked-color="#FF6555"
             class="tf-checkbox-group"
           >
-            <van-checkbox shape="square" name="1">店铺券管理</van-checkbox>
-            <van-checkbox shape="square" name="2">扫码核销券</van-checkbox>
+            <van-checkbox
+              v-for="item in powerOptions"
+              :key="item.value"
+              shape="square"
+              :name="item.value"
+              >{{ item.label }}</van-checkbox
+            >
           </van-checkbox-group>
         </div>
         <van-button class="submit-btn" type="primary" @click="handleConfirm"
@@ -71,9 +76,13 @@
 </template>
 
 <script>
-import ClickOutSide from '@/directive/ClickOutSide'
-import { getUserOption, saveShopStaff } from '@/api/personage/shop'
 import cloneDeep from 'lodash.clonedeep'
+import ClickOutSide from '@/directive/ClickOutSide'
+import {
+  getUserOption,
+  saveShopStaff,
+  getShopPrivilege
+} from '@/api/personage/shop'
 export default {
   name: 'StaffPopup',
   directives: {
@@ -104,6 +113,16 @@ export default {
         clerk_power_data: []
       },
       userOptions: [],
+      powerOptions: [
+        {
+          label: '店铺券管理',
+          value: '1'
+        },
+        {
+          label: '扫码核销券',
+          value: '2'
+        }
+      ],
       isUnregistered: false
     }
   },
@@ -116,6 +135,12 @@ export default {
     }
   },
   methods: {
+    async getShopPower () {
+      const { list } = await getShopPrivilege({
+        shops_id: this.shopId
+      })
+      this.powerOptions = list || []
+    },
     closeOperation () {
       this.selectVisible = false
     },
@@ -175,9 +200,13 @@ export default {
         this.$toast('请确认店员手机号是否已经注册')
         return
       }
+      const params = cloneDeep(this.formData)
+      params.clerk_power_data = params.clerk_power_data.filter(obj =>
+        this.powerOptions.findIndex(option => option.value === obj) > -1
+      )
       const { success } = await saveShopStaff({
         shops_id: this.shopId,
-        ...this.formData
+        ...params
       })
       if (success) {
         this.$toast(this.isEdit ? '保存成功' : '添加成功')
@@ -195,6 +224,7 @@ export default {
         this.visible = val
       }
       if (val) {
+        this.getShopPower()
         if (this.data) {
           const data = cloneDeep(this.data)
           data.shops_clerk_id = data.id

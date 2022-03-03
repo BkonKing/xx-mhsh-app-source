@@ -36,9 +36,9 @@ export default {
     }
   },
   methods: {
-    goDetails ({ id }) {
+    goDetails ({ id, title }) {
       this.$router.push({
-        name: 'happinessCoinDetails',
+        name: title === '提现' ? 'shopWithdrawDetail' : 'happinessCoinDetails',
         query: {
           id
         }

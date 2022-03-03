@@ -11,19 +11,19 @@
     <div class="tf-padding">
       <userInfo :avatar="info.avatar" :name="info.username"></userInfo>
       <div class="module-box money-box">
-        <div class="money-num">{{parseInt(info.credits) > 0 ? '+' : ''}}{{info.credits}}</div>
+        <div class="money-num">{{info.credits}}</div>
       </div>
       <div class="module-box">
         <div class="clist-item">
           <div class="clist-item__label">
-            <span class="mr60">类</span>型
+            类型<span></span>
           </div>
           <div>提现</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">
             <template v-if="true">
-              <span class="mr60">时</span>间
+              时间<span></span>
             </template>
             <template v-else></template>
           </div>
@@ -35,14 +35,14 @@
         </div>
         <div class="clist-item">
           <div class="clist-item__label">到账金额</div>
-          <div>{{info.amount_received}}</div>
+          <div>￥{{info.amount_received}}</div>
         </div>
         <div class="clist-item">
-          <div class="clist-item__label">服务费</div>
-          <div>{{info.service_fee}}（本次收取￥{{info.service_charge}}）</div>
+          <div class="clist-item__label">服务费<span></span></div>
+          <div>{{`${info.service_fee * 100}%`}}（本次收取￥{{info.service_charge}}）</div>
         </div>
         <div class="clist-item">
-          <div class="clist-item__label">提现到</div>
+          <div class="clist-item__label">提现到<span></span></div>
           <div>{{info.cashout_numb}}</div>
         </div>
         <div class="clist-item">
@@ -51,13 +51,14 @@
         </div>
         <div class="clist-item">
           <div class="clist-item__label">
-            <span class="mr60">备</span>注
+            备注<span></span>
           </div>
           <div>{{info.remark}}</div>
         </div>
       </div>
     </div>
     <van-button
+      v-if="+info.cash_cancel"
       v-preventReClick
       class="submit-btn"
       type="primary"
@@ -79,7 +80,11 @@ export default {
   data () {
     return {
       id: '',
-      info: {}
+      submitLoading: false,
+      info: {
+        service_fee: 0,
+        credits: 0
+      }
     }
   },
   created () {
@@ -88,7 +93,7 @@ export default {
   },
   methods: {
     async getCashInfo () {
-      const { data } = getCashInfo({
+      const { data } = await getCashInfo({
         cash_id: this.id
       })
       this.info = data
@@ -145,6 +150,15 @@ export default {
   .van-ellipsis {
     flex: 1;
   }
+  .clist-item__label {
+    width: 120px;
+    height: 42px;
+    text-align: justify;
+    > span {
+      display: inline-block;
+      padding-left: 100%;
+    }
+  }
 }
 .money-box {
   display: flex;
@@ -169,6 +183,8 @@ export default {
   border-top: 2px solid #f0f0f0;
 }
 .submit-btn {
+  position: fixed;
+  bottom: 0;
   width: 710px;
   height: 80px;
   margin: 30px 20px;

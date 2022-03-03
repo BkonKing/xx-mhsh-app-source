@@ -16,7 +16,7 @@
         <van-field
           class="field"
           v-model="formData.realname"
-          placeholder="请输入真实姓名"
+          placeholder="真实姓名"
           @change="setRealname"
         >
           <template #label>
@@ -26,7 +26,7 @@
         <van-field
           class="field"
           v-model="formData.idcard"
-          placeholder="请输入身份证号码"
+          placeholder="身份证号码"
           maxlength="18"
         >
           <template #label>
@@ -39,7 +39,7 @@
           v-model="formData.bank_card"
           ref="cardInput"
           class="field"
-          placeholder="请输入储蓄卡卡号"
+          placeholder="储蓄卡"
           maxlength="23"
           @change="getBankCardName"
           @input="formatCardNumber(formData.bank_card)"
@@ -66,7 +66,7 @@
           v-model="formData.mobile"
           type="tel"
           class="field"
-          placeholder="请输入手机号码"
+          placeholder="手机号码"
           maxlength="11"
         >
           <template #label>
@@ -75,7 +75,7 @@
         </van-field>
       </div>
       <div class="toCard" @click="goBankCardList">
-        支持的银行 >
+        支持的银行 <van-icon class="arrow-icon" name="arrow" />
       </div>
       <div class="btnBox">
         <van-button
@@ -93,11 +93,13 @@
       :payMoney="0.01"
       :data="formData"
       :create-pay-order-api="createOrder"
+      @success="paySuccess"
     ></pay-popup>
   </div>
 </template>
 
 <script>
+import cloneDeep from 'lodash.clonedeep'
 import { mapGetters } from 'vuex'
 import { getBankInfo, editRealname } from '@/api/personage'
 import { createOrder } from '@/api/personage/shop'
@@ -128,14 +130,17 @@ export default {
       formData: {
         realname: '',
         mobile: '',
-        bank_card: '6214835993411139',
+        bank_card: '6214835911399341',
         bank_name: '',
         idcard: '350583199405017417',
         bankIco: ''
       },
       payVisible: false,
       createOrder: () => {
-        return createOrder({ ...this.formData })
+        const params = cloneDeep(this.formData)
+        params.pay_price = '1'
+        params.bank_card = params.bank_card.replace(/\s*/g, '')
+        return createOrder(params)
       }
     }
   },
@@ -237,6 +242,9 @@ export default {
     handlePay () {
       this.payVisible = true
     },
+    paySuccess () {
+      this.$router.go(-1)
+    },
     // 跳转支持的银行卡列表
     goBankCardList () {
       this.$router.push({
@@ -308,9 +316,13 @@ export default {
         align-items: center;
         width: 650px;
         height: 100px;
+        padding: 10px 30px;
         margin-bottom: 30px;
         background: #f7f7f7;
         border-radius: 20px;
+        /deep/ .van-field__label {
+          width: 118px;
+        }
         .label {
           font-size: 28px;
           color: #222222;
@@ -328,6 +340,7 @@ export default {
         line-height: 1;
       }
       /deep/ .van-field__control {
+        line-height: 1;
         color: black;
       }
       .close {
@@ -337,9 +350,14 @@ export default {
       }
     }
     .toCard {
-      text-align: right;
-      font-size: 22px;
-      color: #8f8f94;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 26px;
+      color: #222;
+      .arrow-icon {
+        margin-left: 12px;
+      }
     }
   }
   .btnBox {
