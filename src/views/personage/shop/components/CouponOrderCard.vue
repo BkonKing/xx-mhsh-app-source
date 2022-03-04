@@ -8,12 +8,24 @@
       <div>{{ data.order_status_name }}</div>
     </div>
     <div class="card-content">
-      <img class="card-img" src="@/assets/personage/shop/coupon.png" alt="" />
+      <img
+        v-if="type === 1"
+        class="card-img"
+        src="@/assets/personage/shop/coupon.png"
+        alt=""
+      />
+      <img
+        v-else-if="type === 2"
+        class="card-img"
+        src="@/assets/personage/shop/bank.png"
+        alt=""
+      />
       <div class="coupon-info">
         <div class="card-name">
           {{ data.order_goods_specs_list[0].goods_name }}
         </div>
-        <div class="card-text">1张</div>
+        <div v-if="type === 1" class="card-text">1张</div>
+        <div v-else-if="type === 2" class="card-text">支付认证</div>
         <div class="card-text tf-row-vertical-center">
           <span>不支持退换</span
           ><i
@@ -60,6 +72,10 @@ export default {
     data: {
       type: Object,
       default: () => ({})
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data () {
@@ -72,7 +88,8 @@ export default {
       this.$router.push({
         name: 'shopCouponDetail',
         query: {
-          id
+          id,
+          type: this.type
         }
       })
     }

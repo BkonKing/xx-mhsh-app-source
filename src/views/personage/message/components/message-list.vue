@@ -165,9 +165,11 @@ export default {
         20: 'tf-icon-lifepaymessage',
         22: 'tf-icon-lifepaymessage',
         25: 'tf-icon-renwutiwen', // 任务提问
-        26: 'tf-icon-xingfubi1'
+        26: 'tf-icon-xingfubi1',
+        29: 'tf-icon-xingfubi1',
+        30: 'tf-icon-xingfubi1'
       }
-      return icon[value]
+      return `${icon[value]} icon-${value}`
     },
     repairIcon (value) {
       const icon = {
@@ -288,10 +290,12 @@ export default {
 .tf-icon-yizhongzhi,
 .tf-icon-renwuchaoshi,
 .tf-icon-renwushenhe,
-.tf-icon-renwutousu {
+.tf-icon-renwutousu,
+.icon-29 {
   background: #ff6555;
 }
-.tf-icon-yifangqi {
+.tf-icon-yifangqi,
+.icon-30 {
   background: #CCCCCC;
 }
 .tf-icon-renwutiwen {

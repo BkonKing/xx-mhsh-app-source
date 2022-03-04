@@ -234,15 +234,15 @@ export default {
             }
           })
           break
-        // 商户提现详情
-        case '26':
-          this.$router.push({
-            name: 'shopWithdrawDetail',
-            query: {
-              id: item.source_id
-            }
-          })
-          break
+      }
+      // 商户提现详情
+      if ([26, 29, 30].includes(+sub_type)) {
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id: item.source_id
+          }
+        })
       }
       // 幸福币详情
       if (sub_type == 6 || sub_type == 7) {

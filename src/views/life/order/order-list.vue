@@ -34,6 +34,11 @@
                 v-if="+item.order_type === 3"
                 :data="item"
               ></coupon-order-card>
+              <coupon-order-card
+                v-if="+item.order_type === 4"
+                :data="item"
+                :type="2"
+              ></coupon-order-card>
               <div
                 v-else
                 class="order-item"

@@ -9,51 +9,56 @@
       @click-left="$router.go(-1)"
     />
     <div class="tf-padding">
-      <userInfo :avatar="info.avatar" :name="info.username"></userInfo>
+      <userInfo :avatar="info.bank_ico" :name="info.account_name"></userInfo>
       <div class="module-box money-box">
-        <div class="money-num">{{info.credits}}</div>
+        <div class="money-num">{{ info.credits }}</div>
       </div>
       <div class="module-box">
         <div class="clist-item">
-          <div class="clist-item__label">
-            类型<span></span>
-          </div>
+          <div class="clist-item__label">类型<span></span></div>
           <div>提现</div>
         </div>
         <div class="clist-item">
           <div class="clist-item__label">
-            <template v-if="true">
-              时间<span></span>
-            </template>
-            <template v-else></template>
+            时间<span></span>
           </div>
-          <div>{{info.apply_time}}</div>
+          <div>{{ info.apply_time }}</div>
         </div>
-        <div class="clist-item">
-          <div class="clist-item__label">到账时间</div>
-          <div>{{info.payment_date}}</div>
-        </div>
-        <div class="clist-item">
-          <div class="clist-item__label">到账金额</div>
-          <div>￥{{info.amount_received}}</div>
-        </div>
-        <div class="clist-item">
-          <div class="clist-item__label">服务费<span></span></div>
-          <div>{{`${info.service_fee * 100}%`}}（本次收取￥{{info.service_charge}}）</div>
-        </div>
-        <div class="clist-item">
-          <div class="clist-item__label">提现到<span></span></div>
-          <div>{{info.cashout_numb}}</div>
-        </div>
+        <template v-if="isCashBack">
+          <div class="clist-item">
+            <div class="clist-item__label">对方账号</div>
+            <div>{{ info.account_name }}</div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="clist-item">
+            <div class="clist-item__label">到账时间</div>
+            <div :class="{'red-text': +info.cash_cancel}">{{ info.payment_date }}</div>
+          </div>
+          <div class="clist-item">
+            <div class="clist-item__label">到账金额</div>
+            <div>￥{{ info.amount_received }}</div>
+          </div>
+          <div class="clist-item">
+            <div class="clist-item__label">服务费<span></span></div>
+            <div>
+              {{ `${info.service_fee * 100}%` }}（本次收取￥{{
+                info.service_charge
+              }}）
+            </div>
+          </div>
+          <div class="clist-item">
+            <div class="clist-item__label">提现到<span></span></div>
+            <div>{{ info.account_name }} ({{ info.realname }})</div>
+          </div>
+        </template>
         <div class="clist-item">
           <div class="clist-item__label">交易单号</div>
-          <div>{{info.cashout_numb}}</div>
+          <div>{{ info.cashout_numb }}</div>
         </div>
         <div class="clist-item">
-          <div class="clist-item__label">
-            备注<span></span>
-          </div>
-          <div>{{info.remark}}</div>
+          <div class="clist-item__label">备注<span></span></div>
+          <div>{{ info.remark }}</div>
         </div>
       </div>
     </div>
@@ -87,6 +92,11 @@ export default {
       }
     }
   },
+  computed: {
+    isCashBack () {
+      return +this.info.credits > 0
+    }
+  },
   created () {
     this.id = this.$route.query.id
     this.getCashInfo()
@@ -106,13 +116,7 @@ export default {
           showCancelButton: false
         })
         .then(() => {
-          this.$router.push({
-            name: 'shopInformation',
-            query: {
-              shopId: this.shopId,
-              type: 1
-            }
-          })
+          this.cancelCash()
         })
         .catch(() => {
           this.goBack()
@@ -130,7 +134,7 @@ export default {
 }
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .module-box {
   border-radius: 10px;
   background: #fff;
@@ -191,5 +195,8 @@ export default {
   background: #ff6555;
   border: none;
   border-radius: 40px !important;
+}
+.red-text {
+  color:#ff6555;
 }
 </style>

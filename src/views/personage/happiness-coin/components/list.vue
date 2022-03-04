@@ -36,11 +36,11 @@ export default {
     }
   },
   methods: {
-    goDetails ({ id, title }) {
+    goDetails ({ id, cash_id: cashId }) {
       this.$router.push({
-        name: title === '提现' ? 'shopWithdrawDetail' : 'happinessCoinDetails',
+        name: cashId ? 'shopWithdrawDetail' : 'happinessCoinDetails',
         query: {
-          id
+          id: cashId || id
         }
       })
     }
