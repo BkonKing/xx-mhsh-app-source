@@ -36,13 +36,37 @@ export default {
     }
   },
   methods: {
-    goDetails ({ id, cash_id: cashId }) {
-      this.$router.push({
-        name: cashId ? 'shopWithdrawDetail' : 'happinessCoinDetails',
-        query: {
-          id: cashId || id
-        }
-      })
+    goDetails ({ id, cash_id: cashId, id_type: idType, data_type: dataType }) {
+      if (cashId) { // 提现
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id
+          }
+        })
+      } else if (dataType === 1) { // 不可用提现
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id,
+            idType
+          }
+        })
+      } else if (dataType === 2) { // 不可用任务
+        this.$router.push({
+          name: 'taskDetail',
+          query: {
+            taskId: id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'happinessCoinDetails',
+          query: {
+            id
+          }
+        })
+      }
     }
   },
   watch: {

@@ -167,7 +167,8 @@ export default {
         25: 'tf-icon-renwutiwen', // 任务提问
         26: 'tf-icon-xingfubi1',
         29: 'tf-icon-xingfubi1',
-        30: 'tf-icon-xingfubi1'
+        30: 'tf-icon-xingfubi1',
+        31: 'tf-icon-xingfubi1'
       }
       return `${icon[value]} icon-${value}`
     },
@@ -295,7 +296,8 @@ export default {
   background: #ff6555;
 }
 .tf-icon-yifangqi,
-.icon-30 {
+.icon-30,
+.icon-31 {
   background: #CCCCCC;
 }
 .tf-icon-renwutiwen {

@@ -236,11 +236,12 @@ export default {
           break
       }
       // 商户提现详情
-      if ([26, 29, 30].includes(+sub_type)) {
+      if ([26, 29, 30, 31].includes(+sub_type)) {
         this.$router.push({
           name: 'shopWithdrawDetail',
           query: {
-            id: item.source_id
+            id: item.source_id,
+            idType: item.id_type
           }
         })
       }

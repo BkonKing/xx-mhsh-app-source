@@ -95,7 +95,8 @@ export default {
     this.scrollTop = document.getElementById(
       'list' + (this.current + 1)
     ).scrollTop
-    if (to.name !== 'happinessCoinDetails') {
+    const routerName = ['happinessCoinDetails', 'shopWithdrawDetail']
+    if (!routerName.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

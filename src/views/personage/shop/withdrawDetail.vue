@@ -18,20 +18,32 @@
           <div class="clist-item__label">类型<span></span></div>
           <div>提现</div>
         </div>
-        <div class="clist-item">
-          <div class="clist-item__label">
-            时间<span></span>
-          </div>
-          <div>{{ info.apply_time }}</div>
-        </div>
         <template v-if="isCashBack">
+          <div class="clist-item">
+            <div class="clist-item__label">
+              时间<span></span>
+            </div>
+            <div>{{ info.return_time }}</div>
+          </div>
           <div class="clist-item">
             <div class="clist-item__label">对方账号</div>
             <div>{{ info.account_name }}</div>
           </div>
         </template>
         <template v-else>
-          <div class="clist-item">
+          <div v-if="info.apply_time" class="clist-item">
+            <div class="clist-item__label">
+              申请时间<span></span>
+            </div>
+            <div>{{ info.apply_time }}</div>
+          </div>
+          <div v-if="info.cancel_time" class="clist-item">
+            <div class="clist-item__label">
+              取消时间<span></span>
+            </div>
+            <div>{{ info.cancel_time }}</div>
+          </div>
+          <div v-if="info.payment_date" class="clist-item">
             <div class="clist-item__label">到账时间</div>
             <div :class="{'red-text': +info.cash_cancel}">{{ info.payment_date }}</div>
           </div>
@@ -85,6 +97,7 @@ export default {
   data () {
     return {
       id: '',
+      idType: 1,
       submitLoading: false,
       info: {
         service_fee: 0,
@@ -98,13 +111,16 @@ export default {
     }
   },
   created () {
-    this.id = this.$route.query.id
+    const { id, idType } = this.$route.query
+    this.id = id
+    idType && (this.idType = idType)
     this.getCashInfo()
   },
   methods: {
     async getCashInfo () {
       const { data } = await getCashInfo({
-        cash_id: this.id
+        cash_id: this.id,
+        type: this.idType
       })
       this.info = data
     },

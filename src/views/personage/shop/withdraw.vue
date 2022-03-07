@@ -21,7 +21,7 @@
             </div>
             <template v-else>{{bankCards.length ? '请选择银行卡' : '请先绑定银行卡'}}</template>
           </div>
-          <div v-if="bankCards.length === 0" class="item-arrow">
+          <div v-if="bankCards.length !== 1" class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
           </div>
         </div>
@@ -227,7 +227,7 @@ export default {
       const { data, realname } = await getBankList()
       this.bankCards = data || []
       this.realname = realname
-      if (data && data.length === 1) {
+      if (data && data.length > 0) {
         this.setBank(data[0])
       }
     },
