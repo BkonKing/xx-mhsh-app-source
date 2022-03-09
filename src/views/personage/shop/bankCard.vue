@@ -130,9 +130,9 @@ export default {
       formData: {
         realname: '',
         mobile: '',
-        bank_card: '6214835911399341',
+        bank_card: '',
         bank_name: '',
-        idcard: '350583199405017417',
+        idcard: '',
         bankIco: ''
       },
       payVisible: false,
