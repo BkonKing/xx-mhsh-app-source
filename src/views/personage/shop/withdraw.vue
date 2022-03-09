@@ -30,7 +30,7 @@
             提现账户
           </div>
           <div class="item-cont">
-            {{ settingData.user_credits }}
+            幸福币（{{ settingData.user_credits }}币）
           </div>
         </div>
       </div>
@@ -292,6 +292,7 @@ export default {
           ...this.formData
         }).catch(({ code }) => {
           if (+code === 206) {
+            this.$toast.clear()
             this.wrongPassword()
           }
         })
@@ -339,7 +340,9 @@ export default {
         .catch(() => {
           this.$router.push({
             name: 'informationForgetPaymentCode',
-            type: 1
+            query: {
+              type: 1
+            }
           })
         })
     },
