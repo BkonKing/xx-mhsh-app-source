@@ -310,7 +310,7 @@ export default {
     align-items: center;
     width: 100%;
     height: 84px;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
     font-size: 26px;
     color: #000000;
     line-height: 1;
@@ -321,7 +321,7 @@ export default {
 }
 .prefix-input {
   padding: 0;
-  border: 1px solid #cccccc;
+  border: 2px solid #cccccc;
   border-radius: 10px;
   /deep/ .van-field__label {
     display: flex;

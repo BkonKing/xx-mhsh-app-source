@@ -315,7 +315,7 @@ export default {
   width: 204px;
   height: 204px;
   background: #fff;
-  border: 1px dashed #8f8f94;
+  border: 2px dashed #8f8f94;
 }
 .license-upload /deep/ .van-uploader__preview {
   width: 204px !important;
@@ -352,11 +352,11 @@ export default {
   width: 310px;
   height: 196px;
   background: #fff;
-  border: 1px dashed #8f8f94;
+  border: 2px dashed #8f8f94;
   img {
     width: 162px;
     height: 101px;
-    border: 1px dashed #8f8f94;
+    border: 2px dashed #8f8f94;
   }
   div {
     margin-top: 20px;
@@ -424,7 +424,7 @@ export default {
 }
 .white-btn {
   background: #ffffff;
-  border: 1px solid #fff;
+  border: 2px solid #fff;
   color: #222222;
 }
 /deep/ .van-button--disabled {
