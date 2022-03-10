@@ -200,7 +200,7 @@ export default {
         return 0
       }
       const num = NP.times(this.rmb, this.serviceFee)
-      return num.toFixed(2)
+      return (Math.floor(num * 100) / 100).toFixed(2)
     },
     actualMoney () {
       return NP.minus(this.rmb, this.charge)
