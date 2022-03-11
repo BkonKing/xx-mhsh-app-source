@@ -330,7 +330,7 @@ import { getfilmlist } from '@/api/movie'
 import { getTaskSwitch, getHomeTaskList } from '@/api/task'
 import { mapGetters } from 'vuex'
 import SignAlert from './components/SignAlert'
-import { bulterPermission } from '@/utils/business'
+import { butlerPermission } from '@/utils/business'
 import { handlePermission } from '@/utils/permission'
 import { bMapGetLocationInfo } from '@/utils/util'
 export default {
@@ -738,7 +738,7 @@ export default {
       next()
       return
     }
-    bulterPermission(to, from, next, this.userType, this.userInfo, () => {
+    butlerPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
         next(false)

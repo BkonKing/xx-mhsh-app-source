@@ -36,7 +36,7 @@ import pageNavBar from '@/components/page-nav-bar/index.vue'
 import appList from './components/app-list.vue'
 import { NoticeBar, Swipe, SwipeItem, Toast } from 'vant'
 import { queryAllApp, getNoticeLbList } from '@/api/butler.js'
-import { bulterPermission } from '@/utils/business'
+import { butlerPermission } from '@/utils/business'
 import { mapGetters } from 'vuex'
 export default {
   name: 'butler',
@@ -105,7 +105,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    bulterPermission(to, from, next, this.userType, this.userInfo)
+    butlerPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>

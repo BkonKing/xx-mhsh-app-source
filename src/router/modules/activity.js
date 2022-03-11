@@ -18,6 +18,16 @@ const activityRouter = [
         '@/views/activity/service'
       )
   },
+  // 专题
+  {
+    path: '/activity/special',
+    name: 'activitySpecial',
+    component: () =>
+      import(
+        /* webpackChunkName: "activitySpecial" */
+        '@/views/activity/special'
+      )
+  },
   // 2022-1-15 海丝文创广场 打卡活动
   {
     path: '/pages/activity/20220115activity',
