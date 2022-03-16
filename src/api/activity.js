@@ -87,3 +87,12 @@ export function enterBannerActivity (data) {
     data
   })
 }
+
+// 获取专题活动
+export function getSpecial (data) {
+  return request({
+    url: '/life/goods/thematic_info',
+    method: 'post',
+    data
+  })
+}

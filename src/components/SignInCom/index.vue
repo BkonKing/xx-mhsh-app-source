@@ -10,10 +10,14 @@
 </template>
 
 <script>
-import { signin } from '@/api/personage'
+import SignAlert from '@/views/home/components/SignAlert'
 import { handlePermission } from '@/utils/permission'
+import { signin } from '@/api/personage'
 export default {
   name: 'SignInCom',
+  components: {
+    SignAlert
+  },
   data () {
     return {
       signAlertVisible: false, // 游客认证提醒弹窗

@@ -18,15 +18,15 @@
     </van-nav-bar>
     <div class="tf-body-container">
       <div
-        v-for="(item, index) in specialData.list"
+        v-for="(item, index) in specialList"
         :key="index"
         class="mobile-image-box"
       >
         <template v-for="(imgData, i) in item.list">
           <img
-            v-if="imgData.url"
+            v-if="imgData.block_img"
             :key="`img${i}`"
-            :src="imgData.url"
+            :src="imgData.block_img"
             class="mobile-image"
             @click="operate(imgData)"
           />
@@ -39,89 +39,68 @@
       @closeSwal="closeShare"
     >
     </tf-share>
+    <sign-in-com ref="sign"></sign-in-com>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import tfShare from '@/components/tf-share'
+import SignInCom from '@/components/SignInCom'
 import { butlerPermission } from '@/utils/business'
-import { getUserActivity } from '@/api/activity'
+import { getSpecial } from '@/api/activity'
 export default {
   components: {
-    tfShare
+    tfShare,
+    SignInCom
   },
   data () {
     return {
       id: '',
       specialData: {
         bbbbb: '33333333333',
-        ccccc: '22222222222222',
-        ggggg: '777777777',
-        ddddd:
-          'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190',
-        eeeee:
-          'https://img95.699pic.com/photo/40186/5971.jpg_wh300.jpg!/both/282x190',
-        fffff:
-          'https://img95.699pic.com/photo/40186/5968.jpg_wh300.jpg!/both/282x190',
-        list: [
+        wechat_title: '22222222222222',
+        wechat_content: '777777777',
+        wechat_img:
+          'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
+      },
+      specialList: [
+        [
           {
-            id: '123',
-            list: [
-              {
-                name:
-                  '是打发第三方是打发第三方是打发第三方是打发第三方是打发第三方',
-                type: 1,
-                url:
-                  'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
-              },
-              {
-                name:
-                  '是打发第三方是打发第三方是打发第三方是打发第三方是打发第三方',
-                type: 1,
-                url:
-                  'https://img95.699pic.com/photo/40190/5612.jpg_wh300.jpg!/both/282x190'
-              }
-            ]
+            block_type: '0',
+            block_content: '',
+            block_img: '/upload/image/20200822/20200822135602_56310.png'
+          }
+        ],
+        [
+          {
+            block_type: '1',
+            block_img: '/upload/image/20211011/20211011141043_89576.png',
+            goods_id: '802',
+            goods_name: '雕牌肥皂102g*6'
           },
           {
-            id: '1234',
-            list: [
-              {
-                name:
-                  '是打发第三方是打发第三方是打发第三方是打发第三方是打发第三方',
-                type: 1,
-                url:
-                  'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
-              }
-            ]
-          },
+            block_type: '1',
+            block_img: '/upload/image/20211105/20211105134223_49730.jpg',
+            goods_id: '872',
+            goods_name: '【自营】金牡丹限购1次'
+          }
+        ],
+        [
           {
-            id: '1233',
-            list: [
-              {
-                name:
-                  '是打发第三方是打发第三方是打发第三方是打发第三方是打发第三方',
-                type: 1,
-                url:
-                  'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
-              }
-            ]
-          },
+            block_type: '3',
+            block_content: '1',
+            block_img: '/upload/image/20220125/20220125142114_97215.jpg'
+          }
+        ],
+        [
           {
-            id: '12334',
-            list: [
-              {
-                name:
-                  '是打发第三方是打发第三方是打发第三方是打发第三方是打发第三方',
-                type: 1,
-                url:
-                  'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
-              }
-            ]
+            block_type: '2',
+            block_content: 'www.baidu.com',
+            block_img: '/upload/image/20220125/20220125142114_97215.jpg'
           }
         ]
-      },
+      ],
       shareShow: false,
       shareObj: {}
     }
@@ -145,13 +124,23 @@ export default {
   },
   methods: {
     async getSpecial () {
-      const { data } = await getUserActivity({
+      const { data, child } = await getSpecial({
         uid: this.userInfo.id
       })
-      this.specialData = data
+      if (+data.state === 1) {
+        this.specialData = data
+        this.specialList = child
+      } else {
+        const stateMessage = {
+          2: '活动未开始',
+          3: '活动已结束'
+        }
+        this.$toast(stateMessage[data.state])
+        this.$router.go(-1)
+      }
     },
     operate (data) {
-      const { type } = data
+      const { block_type: type } = data
       const methodObj = {
         1: 'goGoodsDetail',
         2: 'goPage',
@@ -160,15 +149,15 @@ export default {
       const methodName = methodObj[type]
       this[methodName](data)
     },
-    goGoodsDetail ({ id }) {
+    goGoodsDetail ({ goods_id: goodsId }) {
       this.$router.push({
         name: 'goodsDetail',
         query: {
-          id
+          id: goodsId
         }
       })
     },
-    goPage ({ url }) {
+    goPage ({ block_content: url }) {
       this.$router.push({
         path: url
       })
@@ -177,17 +166,17 @@ export default {
       const featureObj = {
         1: 'signIn'
       }
-      const featureName = featureObj[data.type]
+      const featureName = featureObj[data.block_content]
       this[featureName]()
     },
     signIn () {
-
+      this.$refs.sign.signIn()
     },
     setShareObj () {
       this.shareObj = {
-        title: this.specialData.ccccc,
-        description: this.specialData.ggggg,
-        thumb: this.specialData.ddddd,
+        title: this.specialData.wechat_title,
+        description: this.specialData.wechat_content,
+        thumb: this.specialData.wechat_img,
         contentUrl: `${process.env.VUE_APP_DOMAIN_NAME}/wap/#/activity/special?id=${this.id}`,
         pyqHide: false
       }
