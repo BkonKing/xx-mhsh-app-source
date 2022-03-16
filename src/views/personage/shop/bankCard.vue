@@ -17,7 +17,6 @@
           class="field"
           v-model="formData.realname"
           placeholder="真实姓名"
-          @change="setRealname"
         >
           <template #label>
             <div class="label">姓名</div>
@@ -68,6 +67,7 @@
           class="field"
           placeholder="手机号码"
           maxlength="11"
+          :disabled="true"
         >
           <template #label>
             <div class="label">手机号</div>
@@ -101,7 +101,7 @@
 <script>
 import cloneDeep from 'lodash.clonedeep'
 import { mapGetters } from 'vuex'
-import { getBankInfo, editRealname } from '@/api/personage'
+import { getBankInfo } from '@/api/personage'
 import { createOrder } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
 import PayPopup from './components/PayPopup'
@@ -133,7 +133,7 @@ export default {
         bank_card: '',
         bank_name: '',
         idcard: '',
-        bankIco: ''
+        bank_ico: ''
       },
       payVisible: false,
       createOrder: () => {
@@ -149,16 +149,6 @@ export default {
       this.formData.bank_name = ''
       this.formData.bank_card = ''
       this.$refs.cardInput.focus()
-    },
-    // 设置姓名
-    setRealname () {
-      editRealname({
-        realname: this.realname
-      }).then(res => {
-        if (!this.userInfo.idcard) {
-          this.$toast.success('姓名设置成功')
-        }
-      })
     },
     // 打开摄像头
     openCamera () {
@@ -236,7 +226,7 @@ export default {
           bank_card: this.formData.bank_card.replace(/\s/g, '')
         })
         this.formData.bank_name = res.cnm + '   储蓄卡'
-        this.formData.bankIco = res.bank_ico
+        this.formData.bank_ico = res.bank_ico
       }, 100)
     },
     handlePay () {

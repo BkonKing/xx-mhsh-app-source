@@ -10,7 +10,7 @@
           class="coin-list-item__number"
           :class="{ 'coin-list-item__number-primary': parseInt(item.credits) > 0 }"
         >
-          {{ parseInt(item.credits) > 0 && item.data_type !== 1 ? "+" : "" }}{{ item.credits }}
+          {{ parseInt(item.credits) > 0 &&  type !== 'disabled' ? "+" : "" }}{{ item.credits }}
         </div>
       </div>
     </template>
@@ -27,6 +27,10 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    type: {
+      type: String,
+      default: ''
     },
     load: Function
   },

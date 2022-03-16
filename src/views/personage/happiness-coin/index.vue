@@ -57,6 +57,13 @@
           />
           <div class="function-box__text">收款码</div>
         </div>
+        <div v-if="userInfo.is_shops && isWithdraw" class="function-box" @click="goShopWithdraw">
+          <img
+            class="function-box__icon"
+            src="@/assets/personage/credits_withdraw.png"
+          />
+          <div class="function-box__text">提现</div>
+        </div>
       </div>
     </div>
     <div v-if="isShowBanner" class="banner-container" @click="openCouponCentre">
@@ -125,7 +132,7 @@ import CreditArea from './components/CreditArea'
 import GetCouponList from './components/GetCouponList'
 import { getCreditsGoodsList } from '@/api/home'
 import { signin, getCreditsAccount } from '@/api/personage'
-import { getShopCouponBanner } from '@/api/personage/shop'
+import { getShopCouponBanner, getJudgeCash } from '@/api/personage/shop'
 export default {
   name: 'happinessCoinIndex',
   components: {
@@ -155,7 +162,8 @@ export default {
       offsetTop: 0,
       shopBannerInfo: {},
       scrollTop: 0,
-      showCouponCentre: true
+      showCouponCentre: true,
+      isWithdraw: false
     }
   },
   computed: {
@@ -210,6 +218,9 @@ export default {
     init () {
       this.getCreditsAccount()
       this.getShopCouponBanner()
+      if (+this.userInfo.is_shops) {
+        this.getJudgeCash()
+      }
     },
     // 获取幸福币信息
     getCreditsAccount () {
@@ -221,6 +232,12 @@ export default {
         this.ky_credits = data.ky_credits
         this.sd_credits = data.sd_credits
       })
+    },
+    async getJudgeCash () {
+      const { is_privilege: isPrivilege } = await getJudgeCash({
+        shops_id: this.userInfo.shops_id
+      })
+      this.isWithdraw = !!+isPrivilege
     },
     async getShopCouponBanner () {
       const { data } = await getShopCouponBanner({
@@ -280,6 +297,14 @@ export default {
         name: 'scanCodeIndex',
         query: {
           current
+        }
+      })
+    },
+    goShopWithdraw () {
+      this.$router.push({
+        name: 'shopWithdraw',
+        query: {
+          shopId: this.userInfo.shops_id
         }
       })
     },
