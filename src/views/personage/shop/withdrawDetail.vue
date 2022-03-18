@@ -44,14 +44,14 @@
             <div>{{ info.cancel_time }}</div>
           </div>
           <div v-if="info.payment_date" class="clist-item">
-            <div class="clist-item__label">到账时间</div>
-            <div :class="{'red-text': +info.cash_cancel}">{{ info.payment_date }}</div>
+            <div class="clist-item__label">到账时间<span></span></div>
+            <div :class="{'red-text': [1, 2, 3].includes(+info.status)}">{{ info.payment_date }}</div>
           </div>
           <div class="clist-item">
-            <div class="clist-item__label">到账金额</div>
+            <div class="clist-item__label">到账金额<span></span></div>
             <div>￥{{ info.amount_received }}</div>
           </div>
-          <div class="clist-item">
+          <div v-if="+info.service_charge" class="clist-item">
             <div class="clist-item__label">服务费<span></span></div>
             <div>
               {{ `${info.service_fee * 100}%` }}（本次收取￥{{
@@ -65,7 +65,7 @@
           </div>
         </template>
         <div class="clist-item">
-          <div class="clist-item__label">交易单号</div>
+          <div class="clist-item__label">交易单号<span></span></div>
           <div>{{ info.cashout_numb }}</div>
         </div>
         <div class="clist-item">
@@ -171,7 +171,7 @@ export default {
     flex: 1;
   }
   .clist-item__label {
-    width: 120px;
+    width: 142px;
     height: 42px;
     text-align: justify;
     > span {

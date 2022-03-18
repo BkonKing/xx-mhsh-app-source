@@ -36,7 +36,7 @@
           :load="({ pages }) => getCreditsLog(pages, 2)"
         ></list>
       </van-tab>
-      <van-tab title="提现">
+      <van-tab v-if="isShowWithdraw" title="提现">
         <list
           class="coin-list"
           id="list4"
@@ -50,6 +50,7 @@
           class="coin-list"
           id="list5"
           key="list5"
+          type="disabled"
           :data.sync="list5"
           :load="({ pages }) => getCreditsLog(pages, 4)"
         ></list>
@@ -59,6 +60,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import list from './components/list'
 import { getCreditsLog } from '@/api/personage'
 export default {
@@ -74,8 +76,18 @@ export default {
       list3: [],
       list4: [],
       list5: [],
-      scrollTop: 0
+      scrollTop: 0,
+      isShowWithdraw: false
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  created () {
+    const tab = this.$route.query.tab
+    tab && (this.current = +tab)
+    this.isShowWithdraw = +this.userInfo.is_shops
+    this.getWithdrawList()
   },
   activated () {
     this.scrollTop &&
@@ -84,6 +96,15 @@ export default {
       ).scrollTop = this.scrollTop)
   },
   methods: {
+    getWithdrawList () {
+      this.getCreditsLog(1, 3).then(({ data }) => {
+        const haveData = data && data.length
+        this.isShowWithdraw = haveData || +this.userInfo.is_shops
+        if (!haveData && this.$route.query.tab) {
+          this.current = 0
+        }
+      })
+    },
     getCreditsLog (pages, type) {
       return getCreditsLog({
         pages,

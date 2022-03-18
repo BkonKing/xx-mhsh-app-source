@@ -7,7 +7,16 @@
       placeholder
       left-arrow
       @click-left="goBack"
-    />
+    >
+      <template #right>
+        <img
+          class="nav-icon"
+          src="@/assets/personage/shop/record.png"
+          alt=""
+          @click="goCreditRecord"
+        />
+      </template>
+    </van-nav-bar>
     <div class="tf-body-container">
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
         <div class="cell-item" @click="goBankCard">
@@ -19,7 +28,9 @@
               </div>
               <div class="bank-card">{{ formData.bank_card }}</div>
             </div>
-            <template v-else>{{bankCards.length ? '请选择银行卡' : '请先绑定银行卡'}}</template>
+            <template v-else>{{
+              bankCards.length ? "请选择银行卡" : "请先绑定银行卡"
+            }}</template>
           </div>
           <div v-if="bankCards.length !== 1" class="item-arrow">
             <i class="van-icon van-icon-arrow"></i>
@@ -50,13 +61,15 @@
             creditScope
           }}幸福币
         </div>
-        <div v-if="+serviceFee" class="form-service">
+        <div class="form-service">
           <div>
             <span class="grey-text">提现人民币</span
             ><span class="red-text large-text">￥{{ rmb }}</span
-            ><span class="red-text">（实际到账￥{{ actualMoney }}）</span>
+            ><span v-if="+serviceFee" class="red-text"
+              >（实际到账￥{{ actualMoney }}）</span
+            >
           </div>
-          <div>
+          <div v-if="+serviceFee">
             <span class="grey-text">服务费</span
             ><span>{{ serviceFee * 100 }}%</span
             ><span>（本次收取￥{{ charge }}）</span>
@@ -119,7 +132,7 @@
     <van-popup
       v-model="successVisible"
       position="bottom"
-      :style="{ height: '100%' }"
+      :style="{ height: `calc(100% - ${safeAreaTop}px)` }"
     >
       <div class="success-header">
         <van-icon class="close-icon" name="cross" @click="goBack" />
@@ -156,7 +169,7 @@ import NP from 'number-precision'
 import { mapGetters } from 'vuex'
 import TfSelectPopup from '@/components/tf-select-popup'
 import { getBankList } from '@/api/personage'
-import { getAgentSetting, applyCash } from '@/api/personage/shop'
+import { getAgentSetting, getJudgeCash, applyCash } from '@/api/personage/shop'
 
 export default {
   name: 'shopWithdraw',
@@ -165,6 +178,7 @@ export default {
   },
   data () {
     return {
+      safeAreaTop: 0,
       shopId: '',
       formData: {
         bank_id: '',
@@ -186,8 +200,15 @@ export default {
   computed: {
     ...mapGetters(['userInfo']),
     creditScope () {
-      return `${this.settingData.min_credits || 0}~${this.settingData
-        .max_credits || 0}`
+      const min = +this.settingData.min_credits || 0
+      const max = +this.settingData.max_credits || 0
+      if (min === 0 && max === 0) {
+        return ''
+      }
+      if (max === 0) {
+        return `${min}起`
+      }
+      return `${min}~${max}`
     },
     serviceFee () {
       return +this.settingData.service_fee
@@ -207,15 +228,21 @@ export default {
     }
   },
   created () {
+    if (!this.userInfo.is_setpaypassword) {
+      this.setPaymentPassword()
+      return
+    }
+    this.getJudgeCash()
     this.shopId = this.$route.query.shopId
     this.getBankList()
     this.getAgentSetting()
+    this.safeAreaTop = api.safeArea.top
   },
   activated () {
     this.getBankList()
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['shopBankCard']
+    const names = ['shopBankCard', 'happinessCoinRecord']
     if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
@@ -223,6 +250,17 @@ export default {
     next()
   },
   methods: {
+    async getJudgeCash () {
+      const { is_business: isBusiness, is_privilege: isPrivilege } = await getJudgeCash({
+        shops_id: this.userInfo.shops_id
+      })
+      if (!+isBusiness) {
+        this.alertAttestation()
+      } else if (!+isPrivilege) {
+        this.$toast('对不起，您没有提现权限')
+        this.$router.go(-1)
+      }
+    },
     async getBankList () {
       const { data, realname } = await getBankList()
       this.bankCards = data || []
@@ -250,29 +288,19 @@ export default {
         this.selectBankVisible = true
       }
     },
+    goCreditRecord () {
+      this.$router.push({
+        name: 'happinessCoinRecord',
+        query: {
+          tab: 3
+        }
+      })
+    },
     handlePay () {
       const credits = parseInt(this.formData.credits)
-      if (credits <= 0) {
-        this.$toast('请输入提现幸福币')
-        this.$nextTick(() => {
-          this.showKeyboard = true
-        })
-        return
-      }
-      if (
-        !(
-          credits >= this.settingData.min_credits &&
-          credits <= this.settingData.max_credits
-        )
-      ) {
-        this.$toast('请输入区间幸福币')
-        this.$nextTick(() => {
-          this.showKeyboard = true
-        })
-        return
-      }
-      if (!this.userInfo.is_setpaypassword) {
-        this.setPaymentPassword()
+      const { min_credits: min, max_credits: max } = this.settingData
+      const creditStatus = this.validCredit(min, max, credits)
+      if (creditStatus) {
         this.$nextTick(() => {
           this.showKeyboard = true
         })
@@ -281,6 +309,21 @@ export default {
       this.payPassword = ''
       this.payCodeShow = true
       this.showPasswordBoard = true
+    },
+    validCredit (min, max, value) {
+      if (value <= 0) {
+        this.$toast('请输入提现幸福币')
+        return true
+      }
+      if (min === 0 && max === 0) {
+        return false
+      } else if (max === 0 && value < min) {
+        this.$toast(`单笔可提现幸福币不能少于${min}`)
+        return true
+      } else if (max && (value < min || value > max)) {
+        this.$toast(`单笔可提现${this.creditScope}幸福币`)
+        return true
+      }
     },
     // 输入完密码
     async payEnter () {
@@ -357,7 +400,7 @@ export default {
           cancelButtonText: '知道了'
         })
         .then(() => {
-          this.$router.push({
+          this.$router.replace({
             name: 'shopInformation',
             query: {
               shopId: this.shopId,
@@ -391,6 +434,10 @@ export default {
 /deep/ .van-nav-bar {
   background: #f7f7f7;
 }
+.nav-icon {
+  width: 44px;
+  height: 44px;
+}
 .bank-name {
   margin-top: -2px;
   margin-bottom: 10px;
@@ -412,6 +459,7 @@ export default {
   }
 }
 .form-field {
+  min-height: 98px;
   padding: 20px 0;
   margin-top: 20px;
   border-bottom: 1px solid #eeeeee;

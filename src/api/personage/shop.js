@@ -260,3 +260,12 @@ export function cancelCash (data) {
     data
   })
 }
+
+// 提现权限判断
+export function getJudgeCash (data) {
+  return request({
+    url: '/cash/cash/judgeCash',
+    method: 'post',
+    data
+  })
+}

@@ -360,7 +360,8 @@ export default {
 .tf-checkbox-group {
   height: 36px;
   /deep/ .van-checkbox--horizontal {
-    margin-right: 40px;
+    width: 49%;
+    margin-right: 0;
   }
   /deep/ .van-checkbox__label {
     margin-left: 20px;
