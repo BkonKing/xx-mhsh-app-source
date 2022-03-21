@@ -26,7 +26,10 @@ const activityRouter = [
       import(
         /* webpackChunkName: "activitySpecial" */
         '@/views/activity/special'
-      )
+      ),
+    meta: {
+      keepAlive: true
+    }
   },
   // 2022-1-15 海丝文创广场 打卡活动
   {

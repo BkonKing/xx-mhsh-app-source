@@ -16,13 +16,13 @@
         />
       </template>
     </van-nav-bar>
-    <div class="tf-body-container">
+    <div class="tf-body-container" id="specialContent">
       <div
         v-for="(item, index) in specialList"
         :key="index"
         class="mobile-image-box"
       >
-        <template v-for="(imgData, i) in item.list">
+        <template v-for="(imgData, i) in item">
           <img
             v-if="imgData.block_img"
             :key="`img${i}`"
@@ -50,6 +50,7 @@ import SignInCom from '@/components/SignInCom'
 import { butlerPermission } from '@/utils/business'
 import { getSpecial } from '@/api/activity'
 export default {
+  name: 'activitySpecial',
   components: {
     tfShare,
     SignInCom
@@ -57,50 +58,9 @@ export default {
   data () {
     return {
       id: '',
-      specialData: {
-        bbbbb: '33333333333',
-        wechat_title: '22222222222222',
-        wechat_content: '777777777',
-        wechat_img:
-          'https://img95.699pic.com/photo/40174/9787.jpg_wh300.jpg!/both/282x190'
-      },
-      specialList: [
-        [
-          {
-            block_type: '0',
-            block_content: '',
-            block_img: '/upload/image/20200822/20200822135602_56310.png'
-          }
-        ],
-        [
-          {
-            block_type: '1',
-            block_img: '/upload/image/20211011/20211011141043_89576.png',
-            goods_id: '802',
-            goods_name: '雕牌肥皂102g*6'
-          },
-          {
-            block_type: '1',
-            block_img: '/upload/image/20211105/20211105134223_49730.jpg',
-            goods_id: '872',
-            goods_name: '【自营】金牡丹限购1次'
-          }
-        ],
-        [
-          {
-            block_type: '3',
-            block_content: '1',
-            block_img: '/upload/image/20220125/20220125142114_97215.jpg'
-          }
-        ],
-        [
-          {
-            block_type: '2',
-            block_content: 'www.baidu.com',
-            block_img: '/upload/image/20220125/20220125142114_97215.jpg'
-          }
-        ]
-      ],
+      scrollTop: 0,
+      specialData: {},
+      specialList: [],
       shareShow: false,
       shareObj: {}
     }
@@ -110,7 +70,11 @@ export default {
   },
   async created () {
     this.id = this.$route.query.id
-    // this.getSpecial()
+    this.getSpecial()
+  },
+  activated () {
+    this.scrollTop &&
+      (document.getElementById('specialContent').scrollTop = this.scrollTop)
   },
   beforeRouteLeave (to, from, next) {
     butlerPermission(to, from, next, this.userType, this.userInfo, () => {
@@ -118,6 +82,12 @@ export default {
       if (to.matched.length === 0) {
         next(false)
       } else {
+        this.scrollTop = document.getElementById('specialContent').scrollTop
+        const routerName = ['home', 'life', 'movieIndex', 'scanCodeIndex']
+        if (routerName.includes(to.name)) {
+          this.$destroy()
+          this.$store.commit('deleteKeepAlive', from.name)
+        }
         next()
       }
     })
@@ -125,7 +95,7 @@ export default {
   methods: {
     async getSpecial () {
       const { data, child } = await getSpecial({
-        uid: this.userInfo.id
+        thematic_id: this.id
       })
       if (+data.state === 1) {
         this.specialData = data
@@ -141,6 +111,9 @@ export default {
     },
     operate (data) {
       const { block_type: type } = data
+      if (!+type) {
+        return
+      }
       const methodObj = {
         1: 'goGoodsDetail',
         2: 'goPage',
