@@ -3,7 +3,7 @@
     <van-nav-bar
       :fixed="true"
       :border="false"
-      :title="specialData.bbbbb"
+      :title="specialData.thematic_name"
       placeholder
       left-arrow
       @click-left="$router.go(-1)"
@@ -58,6 +58,7 @@ export default {
   data () {
     return {
       id: '',
+      isPreview: false,
       scrollTop: 0,
       specialData: {},
       specialList: [],
@@ -70,6 +71,7 @@ export default {
   },
   async created () {
     this.id = this.$route.query.id
+    this.isPreview = !!this.$route.query.isPreview
     this.getSpecial()
   },
   activated () {
@@ -97,9 +99,10 @@ export default {
       const { data, child } = await getSpecial({
         thematic_id: this.id
       })
-      if (+data.state === 1) {
+      if (+data.state === 1 || this.isPreview) {
         this.specialData = data
         this.specialList = child
+        this.setShareObj()
       } else {
         const stateMessage = {
           2: '活动未开始',
@@ -123,7 +126,7 @@ export default {
       this[methodName](data)
     },
     goGoodsDetail ({ goods_id: goodsId }) {
-      this.$router.push({
+      goodsId && this.$router.push({
         name: 'goodsDetail',
         query: {
           id: goodsId
@@ -131,15 +134,16 @@ export default {
       })
     },
     goPage ({ block_content: url }) {
-      this.$router.push({
+      url && this.$router.push({
         path: url
       })
     },
-    feature (data) {
+    feature ({ block_content: type }) {
+      if (!type) { return }
       const featureObj = {
         1: 'signIn'
       }
-      const featureName = featureObj[data.block_content]
+      const featureName = featureObj[type]
       this[featureName]()
     },
     signIn () {

@@ -512,7 +512,8 @@ export default {
       this.$router.push({
         name: 'activitySpecial',
         query: {
-          id
+          id,
+          isPreview: 1
         }
       })
     },

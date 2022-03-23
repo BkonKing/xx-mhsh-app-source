@@ -1,13 +1,25 @@
 <template>
   <div class="app-body">
     <!-- <div class="status-box"></div> -->
-    <div class="fixed-top" id="life-top" :style="{'top':$store.state.paddingTop+'px'}">
+    <div
+      class="fixed-top"
+      id="life-top"
+      :style="{ top: $store.state.paddingTop + 'px' }"
+    >
       <div class="life-header">
         <div class="header-tit flex-between">
           <div class="font-34 font-weight">美好优选</div>
           <div class="header-right flex-align-center">
-            <div class="header-link" @click="linkFunc(6)"><img class="img-100" src="@/assets/img/icon_16.png" /></div>
-            <div class="header-link" @click="linkFunc(1)" v-txAnalysis="{eventId: 9}"><img class="img-100" src="@/assets/img/icon_17.png" /></div>
+            <div class="header-link" @click="linkFunc(6)">
+              <img class="img-100" src="@/assets/img/icon_16.png" />
+            </div>
+            <div
+              class="header-link"
+              @click="linkFunc(1)"
+              v-txAnalysis="{ eventId: 9 }"
+            >
+              <img class="img-100" src="@/assets/img/icon_17.png" />
+            </div>
           </div>
         </div>
       </div>
@@ -20,11 +32,16 @@
             @click="navFun(index)"
             :class="index === activeIndex ? 'active' : null"
           >
-            <div>{{item.name}}</div>
+            <div>{{ item.name }}</div>
           </div>
         </scrollBar>
       </div>
-      <div v-if="activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length" class="seconds-nav">
+      <div
+        v-if="
+          activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length
+        "
+        class="seconds-nav"
+      >
         <scrollBar direction="x" :activeIndex="activeIndex2">
           <div
             class="seconds-scroll-barItem"
@@ -33,37 +50,84 @@
             @click="changeNav2(index, item.id)"
             :class="index === activeIndex2 ? 'active' : null"
           >
-            <div>{{item.bargain_name}}</div>
+            <div>{{ item.bargain_name }}</div>
           </div>
         </scrollBar>
       </div>
     </div>
-    <div :class="[activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length ? 'seconds-nav-show' : '','fixed-empty']"></div>
+    <div
+      :class="[
+        activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length
+          ? 'seconds-nav-show'
+          : '',
+        'fixed-empty'
+      ]"
+    ></div>
 
-    <div :class="[activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length ? 'scroll-body-two' : '','scroll-body']" id="life-body">
-      <van-tabs v-model="active" :swipeable="swipeable" swipe-threshold="1" @change="changeNav">
-        <van-tab v-for="(item, index) in navList" :key="index" :title="item.name">
+    <div
+      :class="[
+        activeIndex > 0 && navList[activeIndex].type == 2 && navList2.length
+          ? 'scroll-body-two'
+          : '',
+        'scroll-body'
+      ]"
+      id="life-body"
+    >
+      <van-tabs
+        v-model="active"
+        :swipeable="swipeable"
+        swipe-threshold="1"
+        @change="changeNav"
+      >
+        <van-tab
+          v-for="(item, index) in navList"
+          :key="index"
+          :title="item.name"
+        >
           <!-- <template v-if="activeIndex==0 || (isChange&&activeIndex==0)"> -->
-          <template v-if="index==0">
+          <template v-if="index == 0">
             <div class="life-home">
               <div v-if="bannerList.length > 0" class="life-swipe">
                 <van-swipe :autoplay="3000" indicator-color="white">
-                  <van-swipe-item v-for="(item,index) in bannerList"  @click="goLink(item.url)" :key="index">
+                  <van-swipe-item
+                    v-for="(item, index) in bannerList"
+                    @click="goLink(item.url)"
+                    :key="index"
+                  >
                     <img class="img-100" :src="item.img" />
                   </van-swipe-item>
                 </van-swipe>
               </div>
               <div v-else class="banner-empty"></div>
-              <div :class="[!navList2.length || !flashIcon || !nowMovieList.length ? 'flex-around' : '','tab-list flex-between']">
-                <div v-if="navList2.length" class="tab-item flex" @click="selectNav(2)">
+              <div
+                :class="[
+                  !navList2.length || !flashIcon || !nowMovieList.length
+                    ? 'flex-around'
+                    : '',
+                  'tab-list flex-between'
+                ]"
+              >
+                <div
+                  v-if="navList2.length"
+                  class="tab-item flex"
+                  @click="selectNav(2)"
+                >
                   <img src="@/assets/img/icon_28.png" />
                   <div>9.9特卖</div>
                 </div>
-                <div v-if="flashIcon" class="tab-item flex" @click="selectNav(1)">
+                <div
+                  v-if="flashIcon"
+                  class="tab-item flex"
+                  @click="selectNav(1)"
+                >
                   <img src="@/assets/img/icon_29.png" />
                   <div>限时闪购</div>
                 </div>
-                <div v-if="nowMovieList.length" class="tab-item flex" @click="linkFunc(8)">
+                <div
+                  v-if="nowMovieList.length"
+                  class="tab-item flex"
+                  @click="linkFunc(8)"
+                >
                   <img src="@/assets/img/icon_30.png" />
                   <div>电影影院</div>
                 </div>
@@ -79,19 +143,49 @@
                     <div class="flex-align-center">
                       <span>热映电影</span>
                     </div>
-                    <div class="life-arrow-right"><van-icon name="arrow" /></div>
+                    <div class="life-arrow-right">
+                      <van-icon name="arrow" />
+                    </div>
                   </div>
                   <div class="movie-list">
-                    <div v-for="(item, index) in nowMovieList" :key="index" class="movie-item">
-                      <div class="movie-pic" @click="linkFunc(9, {id: item.film_id})">
+                    <div
+                      v-for="(item, index) in nowMovieList"
+                      :key="index"
+                      class="movie-item"
+                    >
+                      <div
+                        class="movie-pic"
+                        @click="linkFunc(9, { id: item.film_id })"
+                      >
                         <div class="movie-tip flex-between">
-                          <div class="moive-score">{{ item.score != 0 ? (parseFloat(item.score) / 10) : '' }}</div>
-                          <div class="moive-look">{{ item.want_view | wantFormat }}想看</div>
+                          <div class="moive-score">
+                            {{
+                              item.score != 0 ? parseFloat(item.score) / 10 : ""
+                            }}
+                          </div>
+                          <div class="moive-look">
+                            {{ item.want_view | wantFormat }}想看
+                          </div>
                         </div>
                         <img class="img-100" :src="item.cover" />
                       </div>
-                      <div class="movie-name p-nowrap" @click="linkFunc(9, {id: item.film_id})">{{ item.film_name }}</div>
-                      <div class="movie-price flex-center" @click="linkFunc(9, {id: item.film_id,code: item.film_code})">低至{{ item.ticket_price }}元<van-icon name="arrow" /></div>
+                      <div
+                        class="movie-name p-nowrap"
+                        @click="linkFunc(9, { id: item.film_id })"
+                      >
+                        {{ item.film_name }}
+                      </div>
+                      <div
+                        class="movie-price flex-center"
+                        @click="
+                          linkFunc(9, {
+                            id: item.film_id,
+                            code: item.film_code
+                          })
+                        "
+                      >
+                        低至{{ item.ticket_price }}元<van-icon name="arrow" />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -99,20 +193,35 @@
               <template v-for="(item, index) in lifeData">
                 <!-- 9.9特卖 -->
                 <template v-if="item.type == 2">
-                  <div v-if="item.child && item.child.length > 0" :key="index" class="life-session life-sale">
+                  <div
+                    v-if="item.child && item.child.length > 0"
+                    :key="index"
+                    class="life-session life-sale"
+                  >
                     <div class="sale-cont">
                       <div class="life-tit flex-between" @click="selectNav(2)">
                         <div class="flex-align-center">
-                          <span>{{item.bargain_name}}</span>
+                          <span>{{ item.bargain_name }}</span>
                         </div>
-                        <div class="life-arrow-right"><van-icon name="arrow" /></div>
+                        <div class="life-arrow-right">
+                          <van-icon name="arrow" />
+                        </div>
                       </div>
                       <div class="special-goods-list">
-                        <div v-for="(val, key) in item.child" :key="key" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+                        <div
+                          v-for="(val, key) in item.child"
+                          :key="key"
+                          @click="linkFunc(5, { id: val.goods_id })"
+                          class="life-goods-item"
+                        >
                           <div class="life-goods-pic">
                             <img class="img-100" :src="val.thumb" />
                           </div>
-                          <price-show class="price-tag-1" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
+                          <price-show
+                            class="price-tag-1"
+                            :money="val.rmb_price"
+                            :credit="val.xfb_num"
+                          ></price-show>
                         </div>
                       </div>
                     </div>
@@ -120,31 +229,76 @@
                 </template>
                 <!-- 限时闪购 -->
                 <template v-else-if="item.type == 1">
-                  <div v-if="item.child && item.child.length > 0" :key="index" class="life-session life-flash">
+                  <div
+                    v-if="item.child && item.child.length > 0"
+                    :key="index"
+                    class="life-session life-flash"
+                  >
                     <div class="flash-cont">
                       <div class="life-tit flex-between" @click="selectNav(1)">
                         <div class="flex-align-center">
                           <span>限时闪购</span>
-                          <van-count-down v-if="item.ollage_info && item.ollage_info.is_start==1" class="life-countdown flex-align-center" ref="countDown" :auto-start="true" :time="item.ollage_info.end_time*1000-newTime" @finish="finish">
+                          <van-count-down
+                            v-if="
+                              item.ollage_info && item.ollage_info.is_start == 1
+                            "
+                            class="life-countdown flex-align-center"
+                            ref="countDown"
+                            :auto-start="true"
+                            :time="item.ollage_info.end_time * 1000 - newTime"
+                            @finish="finish"
+                          >
                             <template v-slot="timeData">
-                              <span class="countdown-time">{{ timeData.hours<10 ? '0'+timeData.hours : timeData.hours }}</span>
+                              <span class="countdown-time">{{
+                                timeData.hours < 10
+                                  ? "0" + timeData.hours
+                                  : timeData.hours
+                              }}</span>
                               <div class="countdown-point">:</div>
-                              <span class="countdown-time">{{ timeData.minutes<10 ? '0'+timeData.minutes : timeData.minutes }}</span>
+                              <span class="countdown-time">{{
+                                timeData.minutes < 10
+                                  ? "0" + timeData.minutes
+                                  : timeData.minutes
+                              }}</span>
                               <div class="countdown-point">:</div>
-                              <span class="countdown-time">{{ timeData.seconds<10 ? '0'+timeData.seconds : timeData.seconds }}</span>
+                              <span class="countdown-time">{{
+                                timeData.seconds < 10
+                                  ? "0" + timeData.seconds
+                                  : timeData.seconds
+                              }}</span>
                             </template>
                           </van-count-down>
-                          <div v-if="item.ollage_info && item.ollage_info.is_start==0" class="flash-no-start">即将开始</div>
+                          <div
+                            v-if="
+                              item.ollage_info && item.ollage_info.is_start == 0
+                            "
+                            class="flash-no-start"
+                          >
+                            即将开始
+                          </div>
                         </div>
-                        <div class="life-arrow-right"><van-icon name="arrow" /></div>
+                        <div class="life-arrow-right">
+                          <van-icon name="arrow" />
+                        </div>
                       </div>
                       <div class="flash-goods-list">
-                        <div v-for="(val, key) in item.child" :key="key" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item">
+                        <div
+                          v-for="(val, key) in item.child"
+                          :key="key"
+                          @click="linkFunc(5, { id: val.goods_id })"
+                          class="life-goods-item"
+                        >
                           <div class="life-goods-pic">
                             <img class="img-100" :src="val.thumb" />
                           </div>
-                          <div class="life-goods-name color-222 p-nowrap">{{val.goods_name}}</div>
-                          <price-show class="price-tag-2" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
+                          <div class="life-goods-name color-222 p-nowrap">
+                            {{ val.goods_name }}
+                          </div>
+                          <price-show
+                            class="price-tag-2"
+                            :money="val.rmb_price"
+                            :credit="val.xfb_num"
+                          ></price-show>
                         </div>
                       </div>
                     </div>
@@ -152,104 +306,63 @@
                 </template>
                 <!-- 其他专区 -->
                 <template v-else>
-                  <!-- <div class="bg-guodu" :key="`${index}bg`"></div> -->
-                  <template  v-if="item.special_type == 2">
-                    <div v-if="item.child && item.child.length > 0" class="special-session flex-between" :key="index">
-                      <div class="special-list">
-                        <template v-if="item.child.length < 4" v-for="(val, key) in item.child">
-                          <div @click="selectNav(3, val.special_id)" :key="key" class="height-345">
-                            <img class="img-100" :src="val.special_thumb" />
-                            <div class="special-tip">
-                              <div class="p-nowrap">{{val.special_name}}</div>
-                              <div class="p-nowrap">{{val.special_text}}</div>
-                            </div>
-                            <div class="special-tip-bg"></div>
-                          </div>
-                        </template>
-                        <template v-else>
-                          <div v-if="key==0" class="height-440" @click="selectNav(3, val.special_id)">
-                            <img class="img-100" :src="val.special_thumb" />
-                            <div class="special-tip">
-                              <div class="p-nowrap">{{val.special_name}}</div>
-                              <div class="p-nowrap">{{val.special_text}}</div>
-                            </div>
-                            <div class="special-tip-bg"></div>
-                          </div>
-                          <div v-if="key==2" class="height-345" @click="selectNav(3, val.special_id)">
-                            <img class="img-100" :src="val.special_thumb" />
-                            <div class="special-tip">
-                              <div class="p-nowrap">{{val.special_name}}</div>
-                              <div class="p-nowrap">{{val.special_text}}</div>
-                            </div>
-                            <div class="special-tip-bg"></div>
-                          </div>
-                          <div v-if="key==1" class="height-345" @click="selectNav(3, val.special_id)">
-                            <img class="img-100" :src="val.special_thumb" />
-                            <div class="special-tip">
-                              <div class="p-nowrap">{{val.special_name}}</div>
-                              <div class="p-nowrap">{{val.special_text}}</div>
-                            </div>
-                            <div class="special-tip-bg"></div>
-                          </div>
-                          <div v-if="key==3" class="height-440" @click="selectNav(3, val.special_id)">
-                            <img class="img-100" :src="val.special_thumb" />
-                            <div class="special-tip">
-                              <div class="p-nowrap">{{val.special_name}}</div>
-                              <div class="p-nowrap">{{val.special_text}}</div>
-                            </div>
-                            <div class="special-tip-bg"></div>
-                          </div>
-                        </template>
-                      </div>
-                    </div>
+                  <!-- 方块 -->
+                  <template v-if="item.special_type == 2">
+                    <block-special
+                      v-if="item.child && item.child.length > 0"
+                      :key="`blockSpecial${index}`"
+                      :data="item"
+                      @selectNav="data => selectNav(data.navType, data.id)"
+                    ></block-special>
                   </template>
+                  <!-- 列表 -->
                   <template v-else-if="item.special_type == 1">
-                    <div v-if="item.child && item.child.length > 0" class="life-session life-session-area" :key="index">
-                      <div :class="[item.special_text ? '' : 'life-area-tit-small', 'life-tit life-area-tit flex-between']" @click="selectNav(3, item.special_id)">
-                        <div class="font-34 font-weight flex-column-center">
-                          <div class="area-text-tit">{{item.special_name}}</div>
-                          <div v-if="item.special_text" class="area-text-detail">{{item.special_text}}</div>
-                        </div>
-                        <div class="life-arrow-right"><img class="img-100" src="@/assets/img/right_03.png" /></div>
-                      </div>
-                      <div class="life-goods-list-container">
-                        <div class="life-goods-list flex-align-center" ref="scrollEl" @scroll="scrollEvent" @touchend="touchEnd">
-                          <div v-for="(val, key) in item.child" @click="linkFunc(5,{id: val.goods_id})" class="life-goods-item" :key="key">
-                            <div class="life-goods-pic">
-                              <img class="img-100" :src="val.thumb" />
-                            </div>
-                            <div class="life-goods-name color-222 font-24 p-nowrap">{{val.goods_name}}</div>
-                            <price-show class="price-tag-3" :money="val.rmb_price" :credit="val.xfb_num"></price-show>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <list-special
+                      v-if="item.child && item.child.length > 0"
+                      :data="item"
+                      :key="`listSpecial${index}`"
+                      @scrollEvent="scrollEvent"
+                      @touchEnd="touchEnd"
+                      @selectNav="data => selectNav(data.navType, data.id)"
+                    ></list-special>
                   </template>
+                  <!-- 大图 -->
                   <template v-else>
-                    <div v-if="item.special_thumb" @click="selectNav(3, item.special_id)" :key="index" class="banner-session">
-                      <img class="img-100" :src="item.special_thumb" />
-                    </div>
+                    <large-img-special
+                      :data="item"
+                      :key="`largeImgSpecial${index}`"
+                      @selectNav="data => selectNav(data.navType, data.id)"
+                    ></large-img-special>
                   </template>
                 </template>
               </template>
             </div>
           </template>
           <template v-else>
-            <template v-if="navList[index].type==1">
+            <template v-if="navList[index].type == 1">
               <flash-page
-                @scrollEvent="scrollEvent" @touchEnd="touchEnd"
+                @scrollEvent="scrollEvent"
+                @touchEnd="touchEnd"
                 ref="flash"
               ></flash-page>
             </template>
-            <template v-else-if="navList[index].type==2">
+            <template v-else-if="navList[index].type == 2">
               <special-page
                 ref="special"
                 :bargain_id="bargain_id"
               ></special-page>
             </template>
-            <template v-else-if="navList[index].type==3">
+            <template v-else-if="navList[index].type == 3">
               <area-page
-                :ref="'area'+index"
+                :ref="'area' + index"
+                :special_id="special_id"
+                :navBarShow="navBarShow"
+              ></area-page>
+            </template>
+            <template v-else-if="navList[index].type == 5">
+              <area-page
+                :isClassification="true"
+                :ref="'area' + index"
                 :special_id="special_id"
                 :navBarShow="navBarShow"
               ></area-page>
@@ -266,12 +379,15 @@
       </van-tabs>
     </div>
 
-    <div @click="linkFunc(7)" class="cart-fixed" v-txAnalysis="{eventId: 14}"><img src="@/assets/img/icon_18.png" /><div class="cart-num" v-if="cart_num > 0">{{cart_num}}</div></div>
+    <div @click="linkFunc(7)" class="cart-fixed" v-txAnalysis="{ eventId: 14 }">
+      <img src="@/assets/img/icon_18.png" />
+      <div class="cart-num" v-if="cart_num > 0">{{ cart_num }}</div>
+    </div>
   </div>
 </template>
 
 <script>
-import { Swipe, SwipeItem, Icon, CountDown, List, Toast, Tab, Tabs } from 'vant'
+import { Toast } from 'vant'
 import scrollBar from '@/components/scroll-bar'
 import { getLifeInfo, getBanner, getMenu } from '@/api/life.js'
 import { getfilmlist } from '@/api/movie'
@@ -279,22 +395,20 @@ import flashPage from './components/flash-page'
 import specialPage from './components/special-page'
 import areaPage from './components/area-page'
 import PriceShow from '../home/components/price-show'
+import ListSpecial from './components/ListSpecial'
+import BlockSpecial from './components/BlockSpecial'
+import LargeImgSpecial from './components/LargeImgSpecial'
 import { bMapGetLocationInfo } from '@/utils/util'
 export default {
   components: {
-    [Icon.name]: Icon,
-    [Swipe.name]: Swipe,
-    [SwipeItem.name]: SwipeItem,
-    [CountDown.name]: CountDown,
-    [List.name]: List,
-    [Toast.name]: Toast,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
     scrollBar,
     flashPage,
     specialPage,
     areaPage,
-    PriceShow
+    PriceShow,
+    ListSpecial,
+    BlockSpecial,
+    LargeImgSpecial
   },
   data () {
     return {
@@ -324,9 +438,7 @@ export default {
       skipType: 0 // 跳转type，特卖1，闪购 2
     }
   },
-  created () {
-
-  },
+  created () {},
   activated () {
     var cartList = api.getPrefs({ sync: true, key: 'cart' }) || []
     var cart_num = 0
@@ -358,14 +470,24 @@ export default {
         )[0].scrollTop = this.scrollTop
     }
     if (this.scrollLeft) {
-      document.getElementById('life-top').getElementsByClassName(
-        'scrollBarContent'
-      )[0].scrollLeft = this.scrollLeft
+      document
+        .getElementById('life-top')
+        .getElementsByClassName(
+          'scrollBarContent'
+        )[0].scrollLeft = this.scrollLeft
     }
-    if (this.scrollLeft2 && document.getElementById('flash-top') && document.getElementById('flash-top').getElementsByClassName('scrollBarContent')) {
-      document.getElementById('flash-top').getElementsByClassName(
-        'scrollBarContent'
-      )[0].scrollLeft = this.scrollLeft2
+    if (
+      this.scrollLeft2 &&
+      document.getElementById('flash-top') &&
+      document
+        .getElementById('flash-top')
+        .getElementsByClassName('scrollBarContent')
+    ) {
+      document
+        .getElementById('flash-top')
+        .getElementsByClassName(
+          'scrollBarContent'
+        )[0].scrollLeft = this.scrollLeft2
     }
   },
   methods: {
@@ -394,12 +516,14 @@ export default {
     // 获取当前地址信息
     getLocationInfo () {
       // adCode:行政区编码
-      bMapGetLocationInfo().then(data => {
-        const { adCode } = data
-        this.getfilmlist(String(adCode).substring(0, 4) + '00')
-      }).catch(() => {
-        this.getfilmlist()
-      })
+      bMapGetLocationInfo()
+        .then(data => {
+          const { adCode } = data
+          this.getfilmlist(String(adCode).substring(0, 4) + '00')
+        })
+        .catch(() => {
+          this.getfilmlist()
+        })
     },
     // 获取热映影片资料(列表)
     getfilmlist (cityId = '') {
@@ -455,7 +579,7 @@ export default {
     // 获取9.9特卖(type = 2)闪购（type = 1）所在的index并设置tab值
     setTabIndex () {
       if (this.skipType) {
-        const index = this.navList.findIndex((obj) => obj.type == this.skipType)
+        const index = this.navList.findIndex(obj => obj.type == this.skipType)
         this.activeIndex = index > -1 ? index : 0
         this.active = index > -1 ? index : 0
       }
@@ -489,14 +613,19 @@ export default {
     },
     // 闪购更多,专区更多
     selectNav (navType, id) {
-      for (let i = 0; i < this.navList.length; i++) {
-        if (this.navList[i].type == navType) {
-          if (navType != 3 || (navType == 3 && this.navList[i].special_id == id)) {
-            this.navFun(i)
-            break
+      const SpecialOrCategoryKey = [3, 5]
+      const isInclude = SpecialOrCategoryKey.includes(+navType)
+      this.navList.some((data, index) => {
+        if (data.type == navType) {
+          if (!isInclude || this.isSpecialOrCategory(data, id, +navType)) {
+            this.navFun(index)
+            return true
           }
         }
-      }
+      })
+    },
+    isSpecialOrCategory (data, id, type) {
+      return (type === 3 && data.special_id == id) || (type === 5 && data.category_id == id)
     },
     changeNav (index = '') {
       this.bargain_id = this.initId
@@ -529,13 +658,20 @@ export default {
             }
           })
         }
+        if (this.navList[index].type == 5) {
+          this.special_id = this.navList[index].category_id
+          this.$nextTick(() => {
+            const key = 'area' + index
+            if (this.$refs[key]) {
+              this.$refs[key][0].listInit()
+            }
+          })
+        }
         this.listInit()
       } else {
         document
           .getElementById('life-body')
-          .getElementsByClassName(
-            'van-tabs__content'
-          )[0].scrollTop = 0
+          .getElementsByClassName('van-tabs__content')[0].scrollTop = 0
         this.flag = true
         // this.page = 1;
         // this.finished = true;
@@ -662,14 +798,19 @@ export default {
       .getElementById('life-body')
       .getElementsByClassName('van-tabs__content')
     this.scrollTop = (el.length && el[0].scrollTop) || 0
-    const el2 = document.getElementById('life-top').getElementsByClassName(
-      'scrollBarContent'
-    )
+    const el2 = document
+      .getElementById('life-top')
+      .getElementsByClassName('scrollBarContent')
     this.scrollLeft = (el2.length && el2[0].scrollLeft) || 0
-    if (document.getElementById('flash-top') && document.getElementById('flash-top').getElementsByClassName('scrollBarContent')) {
-      const el3 = document.getElementById('flash-top').getElementsByClassName(
-        'scrollBarContent'
-      )
+    if (
+      document.getElementById('flash-top') &&
+      document
+        .getElementById('flash-top')
+        .getElementsByClassName('scrollBarContent')
+    ) {
+      const el3 = document
+        .getElementById('flash-top')
+        .getElementsByClassName('scrollBarContent')
       this.scrollLeft2 = (el3.length && el3[0].scrollLeft) || 0
     }
     next()
@@ -677,7 +818,7 @@ export default {
 }
 </script>
 
-<style scoped  src="../../styles/life.css"></style>
+<style scoped src="../../styles/life.css"></style>
 <style scoped lang="less">
 .scroll-body {
   height: calc(100% - 176px);
@@ -749,7 +890,7 @@ export default {
   font-weight: bold;
 }
 .scroll-barItem.active div:after {
-  content: '';
+  content: "";
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -775,15 +916,15 @@ export default {
   line-height: 50px;
   padding: 0 30px;
   color: #222;
-  background: #F2F2F4;
+  background: #f2f2f4;
   border-radius: 4px;
   position: relative;
   margin-right: 10px;
   font-size: 22px;
 }
 .seconds-scroll-barItem.active div {
-  color: #EB5841;
-  background: #FDEEEC;
+  color: #eb5841;
+  background: #fdeeec;
 }
 
 /*轮播*/
@@ -848,7 +989,7 @@ export default {
 }
 .movie-tip {
   height: 74px;
-  background: linear-gradient(to top, rgba(51,51,51),transparent);
+  background: linear-gradient(to top, rgba(51, 51, 51), transparent);
   // opacity: 0.8;
   border-radius: 0px 0px 10px 10px;
   position: absolute;
@@ -861,11 +1002,11 @@ export default {
 .moive-score {
   font-size: 34px;
   font-weight: 500;
-  color: #FFA110;
+  color: #ffa110;
 }
 .moive-look {
   font-size: 20px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 .movie-name {
   width: 190px;
@@ -880,7 +1021,7 @@ export default {
   height: 42px;
   line-height: 42px;
   text-align: center;
-  background: #EB5841;
+  background: #eb5841;
   border-radius: 21px;
   font-size: 22px;
   color: #fff;
@@ -908,36 +1049,40 @@ export default {
   font-size: 30px;
 }
 .life-movie .life-tit {
-  color: #E66E57;
-  background: url('../../assets/img/icon_32.png') no-repeat 40px top /260px auto;
+  color: #e66e57;
+  background: url("../../assets/img/icon_32.png") no-repeat 40px top / 260px
+    auto;
 }
 .life-sale .life-tit {
-  color: #63A85C;
-  background: url('../../assets/img/icon_33.png') no-repeat 40px top /260px auto;
+  color: #63a85c;
+  background: url("../../assets/img/icon_33.png") no-repeat 40px top / 260px
+    auto;
 }
 .life-flash .life-tit {
-  color: #FF8A14;
-  background: url('../../assets/img/icon_34.png') no-repeat 40px top /260px auto;
+  color: #ff8a14;
+  background: url("../../assets/img/icon_34.png") no-repeat 40px top / 260px
+    auto;
 }
 .movie-cont {
   @life-public-session();
-  background: linear-gradient(0deg, #FFFFFF, #FFDAD3);
+  background: linear-gradient(0deg, #ffffff, #ffdad3);
 }
 .sale-cont {
   @life-public-session();
-  background: linear-gradient(0deg, #FFFFFF, #D9F1BD);
+  background: linear-gradient(0deg, #ffffff, #d9f1bd);
   padding-bottom: 20px;
 }
 .life-flash .flash-cont {
   // @life-public-session();
-  background: linear-gradient(0deg, #FFFFFF, #FFF7AF);
+  background: linear-gradient(0deg, #ffffff, #fff7af);
   padding-bottom: 20px;
   width: 710px;
   margin: 0 auto;
   border-radius: 10px;
 }
 .van-tabs__content {
-  .van-tab__pane,.flash-cont {
+  .van-tab__pane,
+  .flash-cont {
     height: 100%;
     background: #f7f7f7;
   }
@@ -947,7 +1092,7 @@ export default {
   width: 710px;
   margin: 0 auto;
   border-radius: 10px;
-}
+};
 .life-session {
   margin-bottom: 8px;
 }
@@ -964,28 +1109,13 @@ export default {
   width: 15px;
 }
 .life-special-tit {
-  background: url('../../assets/img/bg_01.png') center top /100% 100%;
+  background: url("../../assets/img/bg_01.png") center top / 100% 100%;
 }
 .life-flash-tit {
-  background: url('../../assets/img/bg_02.png') center top /100% 100%;
+  background: url("../../assets/img/bg_02.png") center top / 100% 100%;
 }
-.life-goods-list-container {
-  width: 710px;
-  padding: 0 20px 20px;
-  margin: 0 auto;
-}
-.life-goods-list {
-  overflow-x: auto;
-  white-space: nowrap;
-  .life-goods-name {
-    line-height: 1;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 0 10px;
-    font-size: 24px;
-  }
-}
-.special-goods-list,.flash-goods-list {
+.special-goods-list,
+.flash-goods-list {
   padding: 0 20px;
   display: flex;
   flex-wrap: wrap;
@@ -1008,7 +1138,8 @@ export default {
   height: 216px;
   border-radius: 0;
 }
-.special-goods-list,.flash-goods-list {
+.special-goods-list,
+.flash-goods-list {
   .life-goods-price {
     font-size: 38px;
     line-height: 70px;
@@ -1036,9 +1167,6 @@ export default {
     text-align: left;
     padding: 0 10px;
   }
-}
-.life-goods-list::-webkit-scrollbar {
-  display: none;
 }
 .life-goods-item {
   width: 230px;
@@ -1102,11 +1230,11 @@ export default {
   text-align: center;
   line-height: 38px;
   background: rgba(255, 255, 255, 0.2);
-  border: 2px solid #FF8A14;
+  border: 2px solid #ff8a14;
   border-radius: 10px;
   font-size: 24px;
   font-weight: 500;
-  color: #FF8A14;
+  color: #ff8a14;
   margin-left: 19px;
 }
 .life-countdown {
@@ -1117,7 +1245,7 @@ export default {
   height: 100%;
   line-height: 42px;
   text-align: center;
-  color: #FF8A14;
+  color: #ff8a14;
 }
 .countdown-time {
   text-align: center;
@@ -1127,15 +1255,16 @@ export default {
   width: 42px;
   height: 42px;
   line-height: 42px;
-  background: #FF8A14;
+  background: #ff8a14;
   border-radius: 10px;
 }
 .countdown-point {
   width: 20px;
   position: relative;
 }
-.countdown-point::before,.countdown-point::after {
-  content: '';
+.countdown-point::before,
+.countdown-point::after {
+  content: "";
   position: absolute;
   width: 4px;
   height: 4px;
@@ -1150,123 +1279,7 @@ export default {
   bottom: 16px;
 }
 
-.special-session {
-  margin: 0 auto 28px;
-  width: 710px;
-  /*height: 805px;*/
-}
-.special-list {
-  /*height: 100%;*/
-  width: 100%;
-  -moz-column-count: 2;
-  /* Firefox */
-  -webkit-column-count: 2;
-  /* Safari 和 Chrome */
-  column-count: 2;
-  -moz-column-gap: 20px;
-  -webkit-column-gap: 20px;
-  column-gap: 20px;
-}
-.special-list > div {
-  width: 345px;
-  position: relative;
-  /*padding-bottom: 20px;*/
-  break-inside: avoid;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.special-list > div img {
-  border-radius: 10px;
-}
-.height-440 {
-  height: 440px;
-  overflow: hidden;
-}
-.height-345 {
-  height: 345px;
-  overflow: hidden;
-}
-.special-tip-bg {
-  position: absolute;;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 120px;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
-  background-image: linear-gradient(to bottom, rgb(129, 129, 129), transparent);
-}
-.special-tip {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 10px;
-  color: #fff;
-  z-index: 10;
-}
-.special-tip div:nth-child(1) {
-  font-size: 30px;
-  font-weight: bold;
-  line-height: 46px
-}
-.special-tip div:nth-child(2) {
-  font-size: 24px;
-  line-height: 40px
-}
-.life-session-area {
-  margin: 0 20px 40px;
-  background: #fff;
-  border-radius: 10px;
-  .life-area-tit {
-    align-items: flex-end;
-    padding: 20px;
-  }
-  .life-arrow-right {
-    line-height: 1;
-  }
-  .life-goods-item {
-    width: 216px;
-    margin-right: 0;
-    + .life-goods-item {
-      margin-left: 12px;
-    }
-  }
-  .life-goods-pic {
-    height: 216px;
-  }
-}
-.life-area-tit {
-  height: auto;
-  padding: 0 30px 0 10px;
-  // margin-bottom: 20px;
-}
-.life-area-tit-small.life-area-tit {
-  height: 100px;
-}
-.life-area-tit .life-arrow-right {
-  /*margin-top: 52px;
-  height: 86px;
-  padding: 30px 0;*/
-}
-.area-text-tit {
-  line-height: 1;
-}
-.area-text-detail {
-  margin-top: 20px;
-  line-height: 1;
-  font-weight: normal;
-  font-size: 24px;
-  color: #8f8f94;
-}
-.banner-session {
-  margin: 0 auto 40px;
-  width: 710px;
-  height: 326px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-  /*闪购*/
+/*闪购*/
 .item-btn {
   position: absolute;
   right: 0;
@@ -1286,7 +1299,7 @@ export default {
   background: #2da0fb;
 }
 .btn-collage {
-  background: linear-gradient(to right, #eb5842 , #f9856a);
+  background: linear-gradient(to right, #eb5842, #f9856a);
 }
 .item-btn .btn-remind {
   border: 2px solid #2da0fb;
@@ -1320,7 +1333,7 @@ export default {
   bottom: 138px;
   border-radius: 50%;
   background-color: #fff;
-  box-shadow: 0 4px 13px rgba(160,160,160,0.4);
+  box-shadow: 0 4px 13px rgba(160, 160, 160, 0.4);
   z-index: 55;
 }
 .cart-fixed img {
@@ -1385,10 +1398,6 @@ div.empty-session {
 }
 .price-tag-2 {
   height: 68px;
-  font-size: 28px;
-}
-.price-tag-3 {
-  height: 56px;
   font-size: 28px;
 }
 </style>
