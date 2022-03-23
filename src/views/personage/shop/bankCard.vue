@@ -1,24 +1,22 @@
 <template>
-  <div class="certification">
+  <div class="addBankCard">
     <van-nav-bar
-      class="navbar"
       :fixed="true"
       :border="false"
       placeholder
       left-arrow
-      @click-left="goback"
-    ></van-nav-bar>
+      @click-left="goBack"
+    />
     <div class="content">
-      <div class="title">
-        <div class="t1">使用新银行卡支付</div>
-        <div class="t2">请填写您的真实信息</div>
+      <div class="top">
+        <h3>绑定银行卡</h3>
+        <div class="t1">请填写您的真实信息</div>
       </div>
       <div class="item-card">
         <van-field
           class="field"
-          v-model="personName"
+          v-model="formData.realname"
           placeholder="真实姓名"
-          @change="setRealname"
         >
           <template #label>
             <div class="label">姓名</div>
@@ -26,10 +24,9 @@
         </van-field>
         <van-field
           class="field"
-          v-model="idCard"
+          v-model="formData.idcard"
           placeholder="身份证号码"
           maxlength="18"
-          onkeyup="value=value.replace(/[\W]/g,'')"
         >
           <template #label>
             <div class="label">身份证</div>
@@ -38,141 +35,120 @@
       </div>
       <div class="item-card">
         <van-field
+          v-model="formData.bank_card"
           ref="cardInput"
-          @input="formatCardNumber(bankCardNum)"
           class="field"
-          v-model="bankCardNum"
           placeholder="储蓄卡"
           maxlength="23"
           @change="getBankCardName"
+          @input="formatCardNumber(formData.bank_card)"
         >
           <template #label>
-            <div class="label kahao">卡号</div>
+            <div class="label">卡号</div>
           </template>
           <template #button>
             <i
-              v-if="bankCardNum.length > 0"
+              v-if="formData.bank_card.length > 0"
               class="tf-icon tf-icon-close-circle-fill close"
               @click="clearBankInfo"
             ></i>
-            <i class="tf-icon tf-icon-xiangji xiangji" @click="openCamera"></i>
+            <i class="tf-icon tf-icon-xiangji" @click="openCamera"></i>
           </template>
-          <!-- <template #right-icon>
-            <i class="tf-icon tf-icon-xiangji xiangji"
-               @click="openCamera"></i>
-          </template> -->
         </van-field>
         <van-field
-          v-if="bankCardName"
-          v-model="bankCardName"
-          class="field card-sort"
+          v-if="formData.bank_name"
+          v-model="formData.bank_name"
+          class="card-sort"
           disabled
-        >
-          <template #label>
-            <div class="label">卡类型</div>
-          </template>
-        </van-field>
+        />
         <van-field
-          class="field"
-          v-model="phone"
+          v-model="formData.mobile"
           type="tel"
-          placeholder="手机号"
+          class="field"
+          placeholder="手机号码"
           maxlength="11"
+          :disabled="true"
         >
           <template #label>
             <div class="label">手机号</div>
           </template>
         </van-field>
       </div>
-      <div class="toCard">
-        <span @click="tosubBankCardList">
-          支持的银行>
-        </span>
+      <div class="toCard" @click="goBankCardList">
+        支持的银行 <van-icon class="arrow-icon" name="arrow" />
       </div>
       <div class="btnBox">
         <van-button
           class="btn"
-          :color="bol ? '#EB5841' : 'gray'"
+          :color="bol ? '#EB5841' : '#ff65554d'"
           :disabled="!bol"
           block
-          @click="getIdCard"
-          >去支付</van-button
+          @click="handlePay"
+          >去支付0.01</van-button
         >
       </div>
     </div>
-    <!-- 认证通过 -->
-    <van-popup v-model="isShow" round class="popup">
-      <!-- <div v-if="showTc">
-        <i class="tf-icon tf-icon-gouxuan gouxuan"></i>
-        <div class="txt">认证成功</div>
-      </div> -->
-      <!-- <div v-else> -->
-      <div class="t1">{{ message }}</div>
-      <div class="red" @click="isShow = false">知道了</div>
-      <!-- </div> -->
-    </van-popup>
-    <i
-      v-if="isShow"
-      @click="isShow = false"
-      class="tf-icon tf-icon-guanbi1 guanbi"
-    ></i>
+    <pay-popup
+      v-model="payVisible"
+      :payMoney="0.01"
+      :data="formData"
+      :create-pay-order-api="createOrder"
+      @success="paySuccess"
+    ></pay-popup>
   </div>
 </template>
 
 <script>
-import { NavBar, Field, Button, Popup, Toast } from 'vant'
+import cloneDeep from 'lodash.clonedeep'
 import { mapGetters } from 'vuex'
-import { getBankInfo, editRealname } from '@/api/personage.js'
+import { getBankInfo } from '@/api/personage'
+import { createOrder } from '@/api/personage/shop'
 import { handlePermission } from '@/utils/permission'
+import PayPopup from './components/PayPopup'
 export default {
-  name: 'certification',
+  name: 'shopBankCard',
   components: {
-    [NavBar.name]: NavBar,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    [Popup.name]: Popup,
-    [Toast.name]: Toast
+    PayPopup
   },
   computed: {
     ...mapGetters(['userInfo']),
     bol () {
       return (
-        this.personName &&
-        this.idCard &&
-        this.bankCardNum &&
-        this.bankCardName &&
-        this.phone
+        this.formData.realname &&
+        this.formData.idcard &&
+        this.formData.bank_card &&
+        this.formData.bank_name &&
+        this.formData.mobile
       )
+    },
+    bankCard () {
+      return this.data
     }
   },
   data () {
     return {
-      value: '',
-      isShow: false,
-      personName: '',
-      phone: '',
-      bankCardNum: '',
-      bankCardName: '',
-      idCard: '',
-      message: '',
-      bankIco: ''
+      formData: {
+        realname: '',
+        mobile: '',
+        bank_card: '',
+        bank_name: '',
+        idcard: '',
+        bank_ico: ''
+      },
+      payVisible: false,
+      createOrder: () => {
+        const params = cloneDeep(this.formData)
+        params.pay_price = '1'
+        params.bank_card = params.bank_card.replace(/\s*/g, '')
+        return createOrder(params)
+      }
     }
   },
   methods: {
     clearBankInfo () {
-      this.bankCardName = ''
-      this.bankCardNum = ''
+      this.formData.bank_name = ''
+      this.formData.bank_card = ''
       this.$refs.cardInput.focus()
-    },
-    /* 设置姓名 */
-    setRealname () {
-      editRealname({
-        realname: this.personName
-      }).then(res => {
-        if (!this.userInfo.idcard) {
-          Toast.success('姓名设置成功')
-        }
-      })
     },
     // 打开摄像头
     openCamera () {
@@ -185,7 +161,9 @@ export default {
             if (ret.status) {
               baiduAd.bankCardOCROnline(({ status, result }, err) => {
                 if (status) {
-                  this.bankCardNum = result.split('\n')[0].split('：')[1]
+                  this.formData.bank_card = result
+                    .split('\n')[0]
+                    .split('：')[1]
                   this.getBankCardName()
                 }
               })
@@ -194,37 +172,12 @@ export default {
         } else {
           baiduAd.bankCardOCROnline(({ status, result }, err) => {
             if (status) {
-              this.bankCardNum = result.result.bank_card_number
+              this.formData.bank_card = result.result.bank_card_number
               this.getBankCardName()
             }
           })
         }
       })
-    },
-    // 保存实名信息到本地
-    getIdCard () {
-      if (
-        this.idCard === '' ||
-        this.bankCardNum === '' ||
-        this.personName === '' ||
-        this.userInfo.mobile === ''
-      ) {
-        return
-      }
-      const realNameInfo = {
-        bank_card: this.bankCardNum,
-        realname: this.personName,
-        idcard: this.idCard,
-        mobile: this.userInfo.mobile,
-        bank_name: this.bankCardName,
-        bank_ico: this.bankIco
-      }
-      api.setPrefs({
-        key: 'realNameInfo',
-        value: JSON.stringify(realNameInfo)
-      })
-      // 回退
-      this.$router.go(-1)
     },
     // 格式化银行卡号
     formatCardNumber (cardNum) {
@@ -252,7 +205,7 @@ export default {
         cursorIndex + newLineNumOfCursorLeft - lineNumOfCursorLeft
       // 赋新值，nextTick保证-不能手动输入或删除，只能按照规则自动填入
       this.$nextTick(() => {
-        this.bankCardNum = newCardNum
+        this.formData.bank_card = newCardNum
         // 修正光标位置，nextTick保证在渲染新值后定位光标
         this.$nextTick(() => {
           // selectionStart、selectionEnd分别代表选择一段文本时的开头和结尾位置
@@ -266,47 +219,43 @@ export default {
       setTimeout(async () => {
         // 进行延时处理，时间单位为千分之一秒
         // 事件处理
-        if (this.bankCardNum === '') {
+        if (this.formData.bank_card === '') {
           return
         }
         const res = await getBankInfo({
-          bank_card: this.bankCardNum.replace(/\s/g, '')
+          bank_card: this.formData.bank_card.replace(/\s/g, '')
         })
-        this.bankCardName = res.cnm + '   储蓄卡'
-        this.bankIco = res.bank_ico
+        this.formData.bank_name = res.cnm + '   储蓄卡'
+        this.formData.bank_ico = res.bank_ico
       }, 100)
     },
+    handlePay () {
+      this.payVisible = true
+    },
+    paySuccess () {
+      this.$router.go(-1)
+    },
     // 跳转支持的银行卡列表
-    tosubBankCardList () {
-      this.$router.push('/pages/personage/information/support-bankCard-list')
+    goBankCardList () {
+      this.$router.push({
+        name: 'supportBankCardList'
+      })
     },
     // 回退
-    goback () {
+    goBack () {
       this.$router.go(-1)
     }
   },
   created () {
-    this.personName = this.userInfo.realname
-    this.phone =
-      this.userInfo.mobile.substr(0, 3) +
-      '****' +
-      this.userInfo.mobile.substr(7)
-    if (this.$route.query.message) {
-      console.log('this.$route.query.message', this.$route.query.message)
-      this.isShow = true
-      this.message = this.$route.query.message
-      const realNameInfo = JSON.parse(
-        api.getPrefs({ sync: true, key: 'realNameInfo' })
-      )
-      this.personName = realNameInfo.realname
-      console.log('realNameInfo', realNameInfo)
-      this.bankCardNum = realNameInfo.bank_card
-      this.idCard = realNameInfo.idcard
-      this.bankCardName = realNameInfo.bank_name
-    }
+    this.formData.realname = this.userInfo.realname
+    this.formData.mobile = this.userInfo.mobile
+    // this.formData.mobile =
+    //   this.userInfo.mobile.substr(0, 3) +
+    //   '****' +
+    //   this.userInfo.mobile.substr(7)
   },
   beforeRouteLeave (to, from, next) {
-    const names = ['payAgreeMent', 'supportBankCardList']
+    const names = ['supportBankCardList']
     if (!names.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
@@ -317,80 +266,105 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.certification {
+.addBankCard {
   height: 100%;
-  background-color: #f2f2f4;
-  /deep/ .van-nav-bar {
-    background-color: #f2f2f4 !important;
-  }
+  overflow: auto;
+  background-color: #fff;
   .content {
-    padding: 20px;
-    .title {
-      height: 300px;
-      text-align: center;
-      .t1 {
-        font-size: 48px;
-        margin-top: 90px;
-        margin-bottom: 40px;
+    padding: 0 50px;
+    .top {
+      h3 {
+        margin-top: 80px;
+        margin-bottom: 20px;
+        font-size: 40px;
+        font-weight: bold;
+        color: #000000;
+        &::before {
+          content: "";
+          display: inline-block;
+          width: 6px;
+          height: 32px;
+          margin-right: 12px;
+          background: #ff6555;
+          border-radius: 4px;
+        }
       }
-      .t2 {
+      .t1 {
         font-size: 26px;
+        color: #222222;
+        line-height: 1;
       }
     }
     .item-card {
+      margin-top: 80px;
       margin-bottom: 30px;
-      border-radius: 8px;
-      padding: 0 20px;
-      background-color: #fff;
       position: relative;
+      border-radius: 8px;
+      background-color: #fff;
       .field {
-        padding-top: 20px;
-        padding-bottom: 20px;
-        &:nth-child(1) {
-          border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        width: 650px;
+        height: 100px;
+        padding: 10px 30px;
+        margin-bottom: 30px;
+        background: #f7f7f7;
+        border-radius: 20px;
+        /deep/ .van-field__label {
+          width: 118px;
         }
         .label {
           font-size: 28px;
           color: #222222;
         }
-        .kahao {
-          line-height: 55px;
-        }
-        .xiangji {
+        .tf-icon-xiangji {
+          margin-right: 10px;
           font-size: 40px;
           color: #383838;
         }
       }
       .card-sort {
-        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 30px;
+        padding: 0 0 0 210px;
+        font-size: 24px;
+        line-height: 1;
       }
       /deep/ .van-field__control {
+        line-height: 1;
         color: black;
       }
       .close {
-        font-size: 32px;
-        margin-right: 10px;
-        // position: absolute;
-        // top: 50%;
-        // left: 200px;
-        // transform: translateY(-50%);
+        font-size: 36px;
+        margin-right: 30px;
+        color: #bbbbbb;
       }
     }
     .toCard {
-      text-align: right;
-      span {
-        font-size: 22px;
-        color: #8f8f94;
-        text-decoration: underline;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 26px;
+      color: #222;
+      .arrow-icon {
+        margin-left: 12px;
       }
     }
   }
   .btnBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     position: fixed;
-    padding: 0 20px;
     left: 0;
     top: 1200px;
+    .btn {
+      width: 650px;
+      height: 88px;
+      background: #ff65554d;
+      border-radius: 44px;
+      border: none;
+    }
   }
   .popup {
     width: 560px;
@@ -428,7 +402,6 @@ export default {
       height: 60px;
       background: #eb5841;
       border-radius: 4px;
-      // margin: 50px auto;
       font-size: 30px;
       font-family: PingFang SC;
       font-weight: 400;

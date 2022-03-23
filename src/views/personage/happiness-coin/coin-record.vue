@@ -36,11 +36,31 @@
           :load="({ pages }) => getCreditsLog(pages, 2)"
         ></list>
       </van-tab>
+      <van-tab v-if="isShowWithdraw" title="提现">
+        <list
+          class="coin-list"
+          id="list4"
+          key="list4"
+          :data.sync="list4"
+          :load="({ pages }) => getCreditsLog(pages, 3)"
+        ></list>
+      </van-tab>
+      <van-tab title="不可用">
+        <list
+          class="coin-list"
+          id="list5"
+          key="list5"
+          type="disabled"
+          :data.sync="list5"
+          :load="({ pages }) => getCreditsLog(pages, 4)"
+        ></list>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import list from './components/list'
 import { getCreditsLog } from '@/api/personage'
 export default {
@@ -54,8 +74,20 @@ export default {
       list1: [],
       list2: [],
       list3: [],
-      scrollTop: 0
+      list4: [],
+      list5: [],
+      scrollTop: 0,
+      isShowWithdraw: false
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
+  },
+  created () {
+    const tab = this.$route.query.tab
+    tab && (this.current = +tab)
+    this.isShowWithdraw = +this.userInfo.is_shops
+    this.getWithdrawList()
   },
   activated () {
     this.scrollTop &&
@@ -64,6 +96,15 @@ export default {
       ).scrollTop = this.scrollTop)
   },
   methods: {
+    getWithdrawList () {
+      this.getCreditsLog(1, 3).then(({ data }) => {
+        const haveData = data && data.length
+        this.isShowWithdraw = haveData || +this.userInfo.is_shops
+        if (!haveData && this.$route.query.tab) {
+          this.current = 0
+        }
+      })
+    },
     getCreditsLog (pages, type) {
       return getCreditsLog({
         pages,
@@ -75,7 +116,8 @@ export default {
     this.scrollTop = document.getElementById(
       'list' + (this.current + 1)
     ).scrollTop
-    if (to.name !== 'happinessCoinDetails') {
+    const routerName = ['happinessCoinDetails', 'shopWithdrawDetail']
+    if (!routerName.includes(to.name)) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }
@@ -117,6 +159,18 @@ export default {
       height: 100%;
       padding: 30px 20px;
     }
+  }
+  /deep/ .van-tab {
+    flex-basis: 20% !important;
+  }
+  /deep/ .van-tab--active .van-tab__text {
+    font-size: 32px;
+  }
+  /deep/ .van-tabs__line {
+    width: 40px !important;
+    height: 6px;
+    background: #ff5240;
+    border-radius: 3px;
   }
 }
 </style>

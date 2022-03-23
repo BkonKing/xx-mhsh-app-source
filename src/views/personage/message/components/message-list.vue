@@ -16,6 +16,10 @@
             class="list-icon-box tf-icon"
             :class="item.repairs_status | repairIcon"
           ></div>
+          <div v-else-if="type === 'system' && [27, 28].includes(+item.sub_type)" class="list-icon-box audit-icon">
+            <img v-if="+item.sub_type === 27" class="pass-icon" src="@/assets/personage/pass.png" alt="">
+            <img v-else class="un-pass-icon" src="@/assets/personage/unPass.png" alt="">
+          </div>
           <div
             v-else-if="type !== 'system'"
             class="list-icon-box tf-icon"
@@ -160,9 +164,13 @@ export default {
         19: 'tf-icon-lifepaymessage',
         20: 'tf-icon-lifepaymessage',
         22: 'tf-icon-lifepaymessage',
-        25: 'tf-icon-renwutiwen' // 任务提问
+        25: 'tf-icon-renwutiwen', // 任务提问
+        26: 'tf-icon-xingfubi1',
+        29: 'tf-icon-xingfubi1',
+        30: 'tf-icon-xingfubi1',
+        31: 'tf-icon-xingfubi1'
       }
-      return icon[value]
+      return `${icon[value]} icon-${value}`
     },
     repairIcon (value) {
       const icon = {
@@ -180,6 +188,7 @@ export default {
 
 <style lang="less" scoped>
 .list-icon-box {
+  flex-shrink: 0;
   width: 80px;
   height: 80px;
   line-height: 80px;
@@ -189,17 +198,20 @@ export default {
   text-align: center;
   margin-right: 20px;
 }
+.tf-space-around {
+  flex: 1;
+  width: 0;
+}
 .tf-list-title,
 .tf-list-content {
+  width: 100%;
   line-height: 1;
+  @text-ellipsis();
 }
 .tf-circle-tag--warning {
   width: 14px;
   height: 14px;
   margin-left: 8px;
-}
-.tf-list-content {
-  @text-ellipsis();
 }
 .system-content {
   line-height: 1.4;
@@ -266,7 +278,8 @@ export default {
 }
 .tf-icon-daijiean,
 .tf-icon-tf-icon-guihuan,
-.tf-icon-huodongkaishi {
+.tf-icon-huodongkaishi,
+.audit-icon {
   background: #fd7d6f;
 }
 .tf-icon-lifepaymessage {
@@ -278,10 +291,13 @@ export default {
 .tf-icon-yizhongzhi,
 .tf-icon-renwuchaoshi,
 .tf-icon-renwushenhe,
-.tf-icon-renwutousu {
+.tf-icon-renwutousu,
+.icon-29 {
   background: #ff6555;
 }
-.tf-icon-yifangqi {
+.tf-icon-yifangqi,
+.icon-30,
+.icon-31 {
   background: #CCCCCC;
 }
 .tf-icon-renwutiwen {
@@ -289,5 +305,16 @@ background: #00A0E9;
 }
 .tf-list-image {
   object-fit: cover;
+}
+.audit-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .pass-icon {
+    width: 38px;
+  }
+  .un-pass-icon {
+    width: 45px;
+  }
 }
 </style>

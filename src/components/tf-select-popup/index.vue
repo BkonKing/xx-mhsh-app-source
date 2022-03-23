@@ -26,7 +26,9 @@
           :class="{ cur: currentSelected == item[valueKey] }"
           @click="onSelect(index, item[valueKey])"
         >
-          <div class="item-name">{{ item[labelKey] }}</div>
+          <div class="item-name">
+            <slot name="label" v-bind:record="item">{{ item[labelKey] }}</slot>
+          </div>
           <div v-if="currentSelected == item[valueKey]" class="check-block">
             <span class="tf-icon tf-icon-gou"></span>
           </div>

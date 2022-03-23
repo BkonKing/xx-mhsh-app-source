@@ -59,7 +59,7 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab v-if="isShowTask" false="message-list-6" title="任务" :badge="badgeList[7]">
+      <van-tab v-if="isShowTask" id="message-list-5" title="任务" :badge="badgeList[7]">
         <message-list
           ref="task"
           type="task"
@@ -68,7 +68,7 @@
           @mark="messageRead"
         ></message-list>
       </van-tab>
-      <van-tab id="message-list-5" title="系统" :badge="badgeList[6]">
+      <van-tab id="message-list-6" title="系统" :badge="badgeList[6]">
         <message-list
           ref="system"
           type="system"
@@ -235,6 +235,16 @@ export default {
           })
           break
       }
+      // 商户提现详情
+      if ([26, 29, 30, 31].includes(+sub_type)) {
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id: item.source_id,
+            idType: item.id_type
+          }
+        })
+      }
       // 幸福币详情
       if (sub_type == 6 || sub_type == 7) {
         this.$router.push(
@@ -347,6 +357,15 @@ export default {
           path: '/pages/personage/feedback/details',
           query: {
             id: item.source_id
+          }
+        })
+      }
+      if ([27, 28].includes(+item.sub_type)) {
+        this.$router.push({
+          name: 'shopInformation',
+          query: {
+            shopId: item.source_id,
+            type: 1
           }
         })
       }

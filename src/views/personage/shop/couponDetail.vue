@@ -31,9 +31,16 @@
           <div class="order-goods-info">
             <div class="order-pic-block">
               <img
+                v-if="type === 1"
                 class="img-100"
                 mode="aspectFill"
                 src="@/assets/personage/shop/coupon.png"
+              />
+              <img
+                v-else-if="type === 2"
+                class="img-100"
+                mode="aspectFill"
+                src="@/assets/personage/shop/bank.png"
               />
             </div>
             <div class="order-info">
@@ -46,7 +53,7 @@
                 </div>
               </div>
               <div class="order-sku-num">
-                1张
+                {{ isCoupon ? "1张" : "支付认证" }}
               </div>
               <div class="order-action-session">
                 <div class="order-action-text">
@@ -60,6 +67,7 @@
             </div>
           </div>
           <div
+            v-if="isCoupon"
             class="coupon-info"
             :class="{ 'coupon-info--expanded': expanded }"
           >
@@ -81,9 +89,7 @@
                 <div>有效期：{{ couponInfo.g_time }}</div>
                 <div>领取时间：{{ couponInfo.ctime }}</div>
                 <div>使用须知：</div>
-                <div
-                  v-html="couponRule.replace(/\r\n|\n/g, '<br/>')"
-                ></div>
+                <div v-html="couponRule.replace(/\r\n|\n/g, '<br/>')"></div>
               </template>
             </div>
             <i
@@ -146,6 +152,7 @@ export default {
   },
   data () {
     return {
+      type: 1,
       popoverVisible: false,
       expanded: false,
       goodsInfo: {},
@@ -157,22 +164,28 @@ export default {
       return this.orderInfo.shops_user_coupon_info || {}
     },
     couponInfo () {
-      return this.shopInfo.shops_user_coupon_data ? this.shopInfo.shops_user_coupon_data : {}
+      return this.shopInfo.shops_user_coupon_data
+        ? this.shopInfo.shops_user_coupon_data
+        : {}
     },
     couponRule () {
       const value = this.couponInfo.coupon_rule || ''
       return value.replace(/\r\n|\n/g, '<br/>')
+    },
+    isCoupon () {
+      return this.type === 1
     }
   },
   created () {
     this.order_id = this.$route.query.id
+    this.type = +this.$route.query.type
     this.getData()
   },
   methods: {
     getData () {
       getOrderDetail({
         order_project_id: this.order_id,
-        order_type: 3
+        order_type: this.isCoupon ? 3 : 4
       }).then(res => {
         if (res.success) {
           this.goodsInfo = res.order_goods_specs_list[0]

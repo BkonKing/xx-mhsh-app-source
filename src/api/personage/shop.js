@@ -27,6 +27,24 @@ export function saveShopInformation (data) {
   })
 }
 
+// 商铺 店铺认证 数据 接口
+export function getShopAttestationInfo (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_attestation_info',
+    method: 'post',
+    data
+  })
+}
+
+// 商铺 提交或修改 审核接口
+export function saveAttestationInfo (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_attestation_submit',
+    method: 'post',
+    data
+  })
+}
+
 // 商铺优惠券 列表 接口
 export function getShopCouponList (data) {
   return request({
@@ -139,6 +157,114 @@ export function saveCouponInfo (data) {
 export function getShopCouponBanner (data) {
   return request({
     url: '/shops/shops_coupon/shops_coupon_banner_data',
+    method: 'post',
+    data
+  })
+}
+
+// 商铺员工 列表 接口
+export function getStaffList (data) {
+  return request({
+    url: '/shops/shops_coupon/shops_clerk_list',
+    method: 'post',
+    data
+  })
+}
+
+// 获取员工所在店铺对应的权限
+export function getShopPrivilege (data) {
+  return request({
+    url: '/shops/shops_coupon/get_shop_privilege',
+    method: 'post',
+    data
+  })
+}
+
+// 店铺员工 用户筛选接口
+export function getUserOption (data) {
+  return request({
+    url: '/shops/shops_coupon/user_shops_clerk_screen',
+    method: 'post',
+    data
+  })
+}
+
+// 添加修改 商家员工 接口
+export function saveShopStaff (data) {
+  return request({
+    url: '/shops/shops_coupon/edit_shops_clerk',
+    method: 'post',
+    data
+  })
+}
+
+// 删除 商家员工 接口
+export function delShopStaff (data) {
+  return request({
+    url: '/shops/shops_coupon/del_shops_clerk',
+    method: 'post',
+    data
+  })
+}
+
+// 是否扫码核销优惠券权限 接口
+export function getScan (data) {
+  return request({
+    url: '/shops/shops_coupon/is_scan',
+    method: 'post',
+    data
+  })
+}
+
+// 获取商家设置
+export function getAgentSetting (data) {
+  return request({
+    url: '/cash/cash/getAgentSetting',
+    method: 'post',
+    data
+  })
+}
+
+// 创建绑定银行卡的订单
+export function createOrder (data) {
+  return request({
+    url: '/cash/cash/createOrder',
+    method: 'post',
+    data
+  })
+}
+
+// 提现申请
+export function applyCash (data) {
+  return request({
+    url: '/cash/cash/cashApply',
+    method: 'post',
+    data
+  })
+}
+
+// 获取提现详情
+export function getCashInfo (data) {
+  return request({
+    url: '/cash/cash/getCashInfo',
+    method: 'post',
+    data
+  })
+}
+
+// 提现取消
+export function cancelCash (data) {
+  return request({
+    url: '/cash/cash/cancelCash',
+    method: 'post',
+    data
+  })
+}
+
+// 提现权限判断
+export function getJudgeCash (data) {
+  return request({
+    url: '/cash/cash/judgeCash',
     method: 'post',
     data
   })

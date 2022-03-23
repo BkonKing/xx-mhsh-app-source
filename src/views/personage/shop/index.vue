@@ -49,7 +49,12 @@
             {{ infoData.credits }}
           </div>
           <div class="shop-header-info">幸福币</div>
-          <!-- <van-button v-if="haveCreate && haveCashOut" class="shop-header-button">提现</van-button> -->
+          <van-button
+            v-if="haveCreate && haveCashOut"
+            class="shop-header-button"
+            @click.stop="jumpPage('withdraw')"
+            >提现</van-button
+          >
           <img
             class="shop-header-image"
             src="@/assets/personage/shop/point-bg.png"
@@ -110,6 +115,14 @@
               alt=""
             />
             <div class="shop-tool-text">店铺资料</div>
+          </van-grid-item>
+          <van-grid-item @click="jumpPage('shopStaff')">
+            <img
+              class="shop-tool-icon"
+              src="@/assets/personage/shop/tool-7.png"
+              alt=""
+            />
+            <div class="shop-tool-text">店员管理</div>
           </van-grid-item>
           <van-grid-item @click="jumpPage('scanCode')">
             <img
@@ -215,6 +228,10 @@ export default {
         shops_id: this.shopId
       }).then(({ data }) => {
         this.infoData = data
+      }).catch((error) => {
+        if (error.code === '202') {
+          this.$router.go(-1)
+        }
       }) /* .finally(() => {
         this.$toast.clear()
       }) */
@@ -227,7 +244,9 @@ export default {
         credits: 'happinessCoinIndex',
         creditsRecord: 'happinessCoinRecord',
         shopInformation: 'shopInformation',
-        scanCode: 'scanCodeIndex'
+        scanCode: 'scanCodeIndex',
+        shopStaff: 'shopStaff',
+        withdraw: 'shopWithdraw'
       }
       this.$router.push({
         name: routerName[key],

@@ -593,6 +593,52 @@ const personageRouter = [
         /* webpackChunkName: "shopLocation" */
         '@/views/personage/shop/location'
       )
+  },
+  // 商户提现
+  {
+    path: '/personage/shop/withdraw',
+    name: 'shopWithdraw',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopWithdraw" */
+        '@/views/personage/shop/withdraw'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // 商户提现详情
+  {
+    path: '/personage/shop/withdrawDetail',
+    name: 'shopWithdrawDetail',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopWithdrawDetail" */
+        '@/views/personage/shop/withdrawDetail'
+      )
+  },
+  // 绑定银行卡
+  {
+    path: '/personage/shop/bankCard',
+    name: 'shopBankCard',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopBankCard" */
+        '@/views/personage/shop/bankCard'
+      ),
+    meta: {
+      keepAlive: true
+    }
+  },
+  // 店员管理
+  {
+    path: '/personage/shop/staff',
+    name: 'shopStaff',
+    component: () =>
+      import(
+        /* webpackChunkName: "shopStaff" */
+        '@/views/personage/shop/staff'
+      )
   }
 ]
 

@@ -10,7 +10,7 @@
           class="coin-list-item__number"
           :class="{ 'coin-list-item__number-primary': parseInt(item.credits) > 0 }"
         >
-          {{ parseInt(item.credits) > 0 ? "+" : "" }}{{ item.credits }}
+          {{ parseInt(item.credits) > 0 &&  type !== 'disabled' ? "+" : "" }}{{ item.credits }}
         </div>
       </div>
     </template>
@@ -28,6 +28,10 @@ export default {
       type: Array,
       default: () => []
     },
+    type: {
+      type: String,
+      default: ''
+    },
     load: Function
   },
   data () {
@@ -36,13 +40,37 @@ export default {
     }
   },
   methods: {
-    goDetails ({ id }) {
-      this.$router.push({
-        name: 'happinessCoinDetails',
-        query: {
-          id
-        }
-      })
+    goDetails ({ id, cash_id: cashId, id_type: idType, data_type: dataType }) {
+      if (cashId) { // 提现
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id
+          }
+        })
+      } else if (dataType === 1) { // 不可用提现
+        this.$router.push({
+          name: 'shopWithdrawDetail',
+          query: {
+            id,
+            idType
+          }
+        })
+      } else if (dataType === 2) { // 不可用任务
+        this.$router.push({
+          name: 'taskDetail',
+          query: {
+            taskId: id
+          }
+        })
+      } else {
+        this.$router.push({
+          name: 'happinessCoinDetails',
+          query: {
+            id
+          }
+        })
+      }
     }
   },
   watch: {
