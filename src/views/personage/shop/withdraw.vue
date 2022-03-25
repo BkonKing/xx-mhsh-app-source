@@ -54,14 +54,15 @@
           :class="{ 'form-field-placeholder': !formData.credits }"
           @click="showKeyboard = true"
         >
-          {{ formData.credits || creditScope }}
+          <span>{{ formData.credits || creditScope
+          }}</span><span v-if="showKeyboard" class="input-cursor" :class="{'fixed-input-cursor': !formData.credits}"></span>
         </div>
         <div v-if="false" class="form-alert red-text">
           <van-icon name="warning" color="#ff6555" />单笔可提现{{
             creditScope
           }}幸福币
         </div>
-        <div class="form-service">
+        <div v-if="formData.credits" class="form-service">
           <div>
             <span class="grey-text">提现人民币</span
             ><span class="red-text large-text">￥{{ rmb }}</span
@@ -251,7 +252,10 @@ export default {
   },
   methods: {
     async getJudgeCash () {
-      const { is_business: isBusiness, is_privilege: isPrivilege } = await getJudgeCash({
+      const {
+        is_business: isBusiness,
+        is_privilege: isPrivilege
+      } = await getJudgeCash({
         shops_id: this.userInfo.shops_id
       })
       if (!+isBusiness) {
@@ -459,14 +463,30 @@ export default {
   }
 }
 .form-field {
+  display: flex;
+  align-items: center;
   min-height: 98px;
   padding: 20px 0;
   margin-top: 20px;
+  position: relative;
   border-bottom: 1px solid #eeeeee;
   line-height: 1;
   font-size: 56px;
   font-weight: bold;
   color: #222222;
+  .input-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 44px;
+    margin-left: 6px;
+    background-color: #666;
+    animation: 1s van-cursor-flicker infinite;
+  }
+  .fixed-input-cursor {
+    position: absolute;
+    top: 36px;
+    left: 0;
+  }
   &.form-field-placeholder {
     color: #ddd;
   }

@@ -48,6 +48,7 @@ import { mapGetters } from 'vuex'
 import tfShare from '@/components/tf-share'
 import SignInCom from '@/components/SignInCom'
 import { butlerPermission } from '@/utils/business'
+import { downloadPic } from '@/utils/util'
 import { getSpecial } from '@/api/activity'
 export default {
   name: 'activitySpecial',
@@ -102,7 +103,7 @@ export default {
       if (+data.state === 1 || this.isPreview) {
         this.specialData = data
         this.specialList = child
-        this.setShareObj()
+        this.downloadSharePic()
       } else {
         const stateMessage = {
           2: '活动未开始',
@@ -134,9 +135,22 @@ export default {
       })
     },
     goPage ({ block_content: url }) {
-      url && this.$router.push({
-        path: url
-      })
+      if (url) {
+        const reg = /^(http|https):\/\//
+        const status = reg.test(url)
+        if (status) {
+          this.$router.push({
+            name: 'activityFrame',
+            query: {
+              frameUrl: url
+            }
+          })
+        } else {
+          this.$router.push({
+            path: url
+          })
+        }
+      }
     },
     feature ({ block_content: type }) {
       if (!type) { return }
@@ -149,11 +163,21 @@ export default {
     signIn () {
       this.$refs.sign.signIn()
     },
-    setShareObj () {
+    downloadSharePic () {
+      const urlName = 'activity_special_' + this.specialData.id
+      downloadPic(this.specialData.wechat_img, urlName)
+        .then(data => {
+          this.setShareObj(data)
+        })
+        .catch(() => {
+          this.setShareObj('')
+        })
+    },
+    setShareObj (thumb) {
       this.shareObj = {
         title: this.specialData.wechat_title,
         description: this.specialData.wechat_content,
-        thumb: this.specialData.wechat_img,
+        thumb: thumb ? 'fs://' + thumb + '.png' : '',
         contentUrl: `${process.env.VUE_APP_DOMAIN_NAME}/wap/#/activity/special?id=${this.id}`,
         pyqHide: false
       }

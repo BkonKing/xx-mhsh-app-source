@@ -102,12 +102,18 @@ export default {
 
 <style lang="less" scoped>
 .special-session {
-  width: 710px;
-  margin: 0 auto 28px;
+  width: 730px;
+  margin: 0 0 28px 20px;
 }
 .special-list {
   width: 100%;
+  -moz-column-count: 2;
+  /* Firefox */
+  -webkit-column-count: 2;
+  /* Safari 和 Chrome */
   column-count: 2;
+  -moz-column-gap: 20px;
+  -webkit-column-gap: 20px;
   column-gap: 20px;
   .special-item {
     width: 345px;

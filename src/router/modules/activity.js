@@ -31,6 +31,16 @@ const activityRouter = [
       keepAlive: true
     }
   },
+  // 专题外部链接frame页面
+  {
+    path: '/activity/frame',
+    name: 'activityFrame',
+    component: () =>
+      import(
+        /* webpackChunkName: "activityFrame" */
+        '@/views/activity/frame'
+      )
+  },
   // 2022-1-15 海丝文创广场 打卡活动
   {
     path: '/pages/activity/20220115activity',
