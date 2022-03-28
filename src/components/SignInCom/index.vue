@@ -18,6 +18,12 @@ export default {
   components: {
     SignAlert
   },
+  props: {
+    showLoading: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     return {
       signAlertVisible: false, // 游客认证提醒弹窗
@@ -26,18 +32,23 @@ export default {
     }
   },
   methods: {
-    signIn () {
+    async signIn () {
       handlePermission({
         name: 'location',
         title: '定位服务未开启',
         message: '为了提供更好服务，需要您开启定位'
       }).then(async () => {
-        const loading = this.$toast.loading({
-          duration: 0,
-          forbidClick: true
+        if (this.showLoading) {
+          var loading = this.$toast.loading({
+            duration: 30000,
+            forbidClick: true,
+            message: '签到中'
+          })
+        }
+        const res = await signin().catch(() => {
+          this.showLoading && loading.clear()
         })
-        const res = await signin()
-        loading.clear()
+        this.showLoading && loading.clear()
         if (+res.open_box) {
           this.signMessage = res.message
           this.signOwnerCredits = res.owner_credits

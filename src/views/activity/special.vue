@@ -39,7 +39,7 @@
       @closeSwal="closeShare"
     >
     </tf-share>
-    <sign-in-com ref="sign"></sign-in-com>
+    <sign-in-com ref="sign" :show-loading="false"></sign-in-com>
   </div>
 </template>
 
@@ -165,13 +165,17 @@ export default {
     },
     downloadSharePic () {
       const urlName = 'activity_special_' + this.specialData.id
-      downloadPic(this.specialData.wechat_img, urlName)
-        .then(data => {
-          this.setShareObj(data)
-        })
-        .catch(() => {
-          this.setShareObj('')
-        })
+      if (this.specialData.wechat_img) {
+        downloadPic(this.specialData.wechat_img, urlName)
+          .then(data => {
+            this.setShareObj(data)
+          })
+          .catch(() => {
+            this.setShareObj('')
+          })
+      } else {
+        this.setShareObj('')
+      }
     },
     setShareObj (thumb) {
       this.shareObj = {

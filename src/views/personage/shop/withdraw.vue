@@ -54,16 +54,20 @@
           :class="{ 'form-field-placeholder': !formData.credits }"
           @click="showKeyboard = true"
         >
-          <span>{{ formData.credits || creditScope
-          }}</span><span v-if="showKeyboard" class="input-cursor" :class="{'fixed-input-cursor': !formData.credits}"></span>
+          <span>{{ formData.credits || creditScope }}</span
+          ><span
+            v-if="showKeyboard"
+            class="input-cursor"
+            :class="{ 'fixed-input-cursor': !formData.credits }"
+          ></span>
         </div>
-        <div v-if="false" class="form-alert red-text">
+        <div v-if="isExceed" class="form-alert red-text">
           <van-icon name="warning" color="#ff6555" />单笔可提现{{
             creditScope
           }}幸福币
         </div>
-        <div v-if="formData.credits" class="form-service">
-          <div>
+        <div class="form-service">
+          <div v-if="formData.credits && !isExceed">
             <span class="grey-text">提现人民币</span
             ><span class="red-text large-text">￥{{ rmb }}</span
             ><span v-if="+serviceFee" class="red-text"
@@ -73,7 +77,7 @@
           <div v-if="+serviceFee">
             <span class="grey-text">服务费</span
             ><span>{{ serviceFee * 100 }}%</span
-            ><span>（本次收取￥{{ charge }}）</span>
+            ><span v-if="formData.credits && !isExceed">（本次收取￥{{ charge }}）</span>
           </div>
         </div>
       </div>
@@ -226,6 +230,12 @@ export default {
     },
     actualMoney () {
       return NP.minus(this.rmb, this.charge)
+    },
+    isExceed () {
+      const min = +this.settingData.min_credits || 0
+      const max = +this.settingData.max_credits || 0
+      const value = +this.formData.credits
+      return value && (value < min || value > max)
     }
   },
   created () {
