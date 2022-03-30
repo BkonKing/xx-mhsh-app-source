@@ -224,6 +224,9 @@ export default {
         case 'shangpuyhq':
           this.shopId && this.getScan(value)
           break
+        case 'zhuanti':
+          this.goActiveSpecial(values[1])
+          break
         default:
           break
       }
@@ -502,6 +505,15 @@ export default {
           marginRight: 0,
           marginTop: api.safeArea.top,
           marginBottom: this.footerHeight
+        }
+      })
+    },
+    goActiveSpecial (id) {
+      this.$router.push({
+        name: 'activitySpecial',
+        query: {
+          id,
+          isPreview: 1
         }
       })
     },

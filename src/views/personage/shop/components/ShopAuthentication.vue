@@ -41,7 +41,7 @@
       <div class="form-card" style="padding-top: 0;padding-bottom: 0;">
         <div class="cell-item">
           <div class="item-left">
-            经营者<span class="form-card-label-required">*</span>
+            经营者<span v-if="!isDisabled" class="form-card-label-required">*</span>
           </div>
           <div class="item-cont">
             <van-field
@@ -54,7 +54,7 @@
         </div>
         <div class="cell-item" style="border-bottom: none;">
           <div class="item-left">
-            联系电话<span class="form-card-label-required">*</span>
+            联系电话<span v-if="!isDisabled" class="form-card-label-required">*</span>
           </div>
           <div class="item-cont">
             <van-field
@@ -69,7 +69,7 @@
       <div class="form-card" style="padding-top: 0;">
         <div class="cell-item" @click="openSelect">
           <div class="item-left">
-            认证类型<span class="form-card-label-required">*</span>
+            认证类型<span v-if="!isDisabled" class="form-card-label-required">*</span>
           </div>
           <div class="item-cont p-30">
             {{ formData.a_type_name || "请选择" }}
@@ -81,7 +81,7 @@
         <template v-if="formData.a_type === '1'">
           <div class="cell-item" style="border-bottom: none;">
             <div class="item-left">
-              身份证<span class="form-card-label-required">*</span>
+              身份证<span v-if="!isDisabled" class="form-card-label-required">*</span>
             </div>
           </div>
           <div class="tf-flex">
@@ -116,7 +116,7 @@
         <template v-if="formData.a_type === '2'">
           <div class="cell-item" style="border-bottom: none;">
             <div class="item-left">
-              营业执照<span class="form-card-label-required">*</span>
+              营业执照<span v-if="!isDisabled" class="form-card-label-required">*</span>
             </div>
           </div>
           <div>

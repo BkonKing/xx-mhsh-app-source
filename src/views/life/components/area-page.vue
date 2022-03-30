@@ -72,7 +72,7 @@
 <script>
 import { NavBar, List } from 'vant'
 import PriceShow from '../../home/components/price-show'
-import { getAreaGoods } from '@/api/life.js'
+import { getAreaGoods, getAreaTypesGoods } from '@/api/life.js'
 export default {
   name: 'area-page',
   components: {
@@ -89,12 +89,16 @@ export default {
     navBarShow: {
       type: Boolean,
       default: false
+    },
+    isClassification: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       listData: [], // 数据列表
-      infoData: '', // 其他信息
+      infoData: {}, // 其他信息
       page: 1, // 页码
       pageSize: 10, // 分页条数
       isEmpty: false, // 是否为空
@@ -114,6 +118,9 @@ export default {
       this.getGoodsData()
     },
     getGoodsData () {
+      this.isClassification ? this.getAreaTypesGoods() : this.getAreaData()
+    },
+    getAreaData () {
       const page = this.page
       const isFirst = page == 1
       getAreaGoods({
@@ -133,9 +140,38 @@ export default {
             } else {
               this.page = page + 1
             }
-            // if (!this.infoData) {
-            this.infoData = res.data.special_info
-            // }
+            this.infoData = res.data.special_info || {}
+            this.loading = false
+          }
+        })
+        .finally(() => {
+          this.pageLoading = false
+        })
+    },
+    getAreaTypesGoods () {
+      const page = this.page
+      const isFirst = page == 1
+      getAreaTypesGoods({
+        page,
+        category_id: this.special_id
+      })
+        .then(res => {
+          if (res.success) {
+            const { goods_list: goodsList, bj_thumb: bjThumb } = res.data
+            this.listData = isFirst
+              ? goodsList
+              : this.listData.concat(goodsList)
+            this.isEmpty = !!(
+              isFirst && goodsList.length == 0
+            )
+            if (goodsList.length < res.pageSize) {
+              this.finished = true
+            } else {
+              this.page = page + 1
+            }
+            this.infoData = {
+              bj_thumb: bjThumb
+            }
             this.loading = false
           }
         })

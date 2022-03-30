@@ -105,7 +105,7 @@ import CinemaList from './components/CinemaList'
 import { handlePermission } from '@/utils/permission'
 import { getCarouselMap, getfilmlist, getcinemanearby } from '@/api/movie'
 import { bMapGetLocationInfo } from '@/utils/util'
-import { bulterPermission } from '@/utils/business'
+import { butlerPermission } from '@/utils/business'
 export default {
   name: 'movieIndex',
   components: {
@@ -255,7 +255,7 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     // 轮播图支持跳转到各个页面，所以需要判断是否有权限跳转到管家页面等
-    bulterPermission(to, from, next, this.userType, this.userInfo, () => {
+    butlerPermission(to, from, next, this.userType, this.userInfo, () => {
       // 如果未匹配到路由
       if (to.matched.length === 0) {
         next(false)

@@ -103,7 +103,7 @@ import appItem from './components/app-item'
 import draggable from 'vuedraggable'
 import { getMyApp, saveMyApp, getAllApp } from '@/api/home'
 import { mapGetters } from 'vuex'
-import { bulterPermission } from '@/utils/business'
+import { butlerPermission } from '@/utils/business'
 export default {
   components: {
     [NavBar.name]: NavBar,
@@ -229,7 +229,7 @@ export default {
     }
   },
   beforeRouteLeave (to, from, next) {
-    bulterPermission(to, from, next, this.userType, this.userInfo)
+    butlerPermission(to, from, next, this.userType, this.userInfo)
   }
 }
 </script>

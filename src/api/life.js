@@ -38,6 +38,11 @@ export function getAreaGoods (params) {
   return request.post('/life/goods/special_goods_json', params)
 }
 
+// 商品类型专区
+export function getAreaTypesGoods (params) {
+  return request.post('/life/goods/category_goods_list', params)
+}
+
 // 全部商品
 export function getClassifyGoods (params) {
   return request.post('/life/goods/goods_list', params)

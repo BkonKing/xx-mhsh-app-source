@@ -12,7 +12,7 @@
         v-for="(item, index) in listData"
         :key="index"
         class="special-item"
-        @click="linkFunc(5, { id: item.goods_id })"
+        @click="goGoodsDetail(item.goods_id)"
       >
         <div class="special-goods-pic">
           <img class="img-100" :src="item.thumb" />
@@ -101,17 +101,13 @@ export default {
         this.finished = false
       }
     },
-    linkFunc (type, obj = {}) {
-      switch (type) {
-        case 5:
-          this.$router.push({
-            path: '/store/goods-detail',
-            query: {
-              id: obj.id
-            }
-          })
-          break
-      }
+    goGoodsDetail (type, obj = {}) {
+      this.$router.push({
+        path: '/store/goods-detail',
+        query: {
+          id: obj.id
+        }
+      })
     }
   }
 }

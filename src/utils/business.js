@@ -1,7 +1,7 @@
 import { Dialog } from 'vant'
 import router from '../router'
 
-export function bulterPermission (to, from, next, userType, userInfo, fn) {
+export function butlerPermission (to, from, next, userType, userInfo, fn) {
   const butlerList = [
     'entranceIndex',
     'noticeIndex',

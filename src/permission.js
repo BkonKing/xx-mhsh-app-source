@@ -15,7 +15,7 @@ import {
   getParams
 } from '@/utils/util.js'
 import {
-  bulterPermission
+  butlerPermission
 } from '@/utils/business'
 
 const whiteList = ['/login', '/agreement', '/openingPage']
