@@ -66,7 +66,7 @@
             creditScope
           }}幸福币
         </div>
-        <div class="form-service">
+        <div v-if="(formData.credits && !isExceed) || +serviceFee" class="form-service">
           <div v-if="formData.credits && !isExceed">
             <span class="grey-text">提现人民币</span
             ><span class="red-text large-text">￥{{ rmb }}</span
