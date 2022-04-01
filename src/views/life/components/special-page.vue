@@ -101,11 +101,11 @@ export default {
         this.finished = false
       }
     },
-    goGoodsDetail (type, obj = {}) {
+    goGoodsDetail (id) {
       this.$router.push({
         path: '/store/goods-detail',
         query: {
-          id: obj.id
+          id
         }
       })
     }
