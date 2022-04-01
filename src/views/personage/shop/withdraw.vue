@@ -66,8 +66,8 @@
             creditScope
           }}幸福币
         </div>
-        <div v-if="(formData.credits && !isExceed) || +serviceFee" class="form-service">
-          <div v-if="formData.credits && !isExceed">
+        <div v-if="(+formData.credits && !isExceed) || +serviceFee" class="form-service">
+          <div v-if="+formData.credits && !isExceed">
             <span class="grey-text">提现人民币</span
             ><span class="red-text large-text">￥{{ rmb }}</span
             ><span v-if="+serviceFee" class="red-text"
@@ -77,7 +77,7 @@
           <div v-if="+serviceFee">
             <span class="grey-text">服务费</span
             ><span>{{ serviceFee * 100 }}%</span
-            ><span v-if="formData.credits && !isExceed">（本次收取￥{{ charge }}）</span>
+            ><span v-if="+formData.credits && !isExceed">（本次收取￥{{ charge }}）</span>
           </div>
         </div>
       </div>
@@ -234,8 +234,8 @@ export default {
     isExceed () {
       const min = +this.settingData.min_credits || 0
       const max = +this.settingData.max_credits || 0
-      const value = +this.formData.credits
-      return value && (value < min || value > max)
+      const value = this.formData.credits
+      return value && (+value < min || +value > max)
     }
   },
   created () {
