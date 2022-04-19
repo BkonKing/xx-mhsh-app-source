@@ -49,7 +49,7 @@
                       v-if="userInfo.gender == 1"
                       class="tf-icon tf-icon-xingbie1 nan"
                     ></i>
-                    {{ userInfo.birthday }}
+                    {{ userInfo.birthday || '' }}
                   </div>
                 </div>
                 <div class="r-left">
