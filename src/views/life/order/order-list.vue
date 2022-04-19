@@ -35,7 +35,7 @@
                 :data="item"
               ></coupon-order-card>
               <coupon-order-card
-                v-if="+item.order_type === 4"
+                v-else-if="+item.order_type === 4"
                 :data="item"
                 :type="2"
               ></coupon-order-card>
