@@ -525,14 +525,7 @@ export default {
     },
     /* 添加成员 */
     addMember () {
-      if (this.memberList.length >= 10) {
-        Toast('一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加')
-        // Dialog.alert({
-        //   title: '一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加'
-        // })
-      } else {
-        this.goAttestation(0, 0)
-      }
+      this.goAttestation(0, 0)
     },
     /**
      * 房屋认证（成员添加修改）

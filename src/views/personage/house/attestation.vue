@@ -244,7 +244,12 @@ export default {
       this.items.shift()
       // 新增成员模式房屋默认值为业主当前房产
       if (this.mode === 0) {
-        const { project_id, house_id, project_name, fc_info } = this.currentProject
+        const {
+          project_id,
+          house_id,
+          project_name,
+          fc_info
+        } = this.currentProject
         this.project_id = project_id
         this.house_id = house_id
         this.house_name = project_name + fc_info
@@ -316,20 +321,28 @@ export default {
         realname: this.realname,
         mobile: this.mobile,
         house_role: this.house_role
-      }).then(res => {
-        if (res.success) {
-          Dialog.alert({
-            title: '添加成功'
-          }).then(() => {
-            this.$router.go(-1)
-          })
-          this.mtjEvent({
-            eventId: 72
-          })
-        } else {
-          Toast.fail('保存失败')
-        }
       })
+        .then(res => {
+          if (res.success) {
+            Dialog.alert({
+              title: '添加成功'
+            }).then(() => {
+              this.$router.go(-1)
+            })
+            this.mtjEvent({
+              eventId: 72
+            })
+          } else {
+            Toast.fail('保存失败')
+          }
+        })
+        .catch(error => {
+          if (+error.code === 202) {
+            this.$toast('一个房产最多只能绑定10个人（包括业主），超过只能解除后再添加')
+          } else {
+            this.$toast(error.message)
+          }
+        })
     },
     // 更新成员
     updateMember () {
@@ -493,7 +506,10 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     const whiteList = ['houSelectCommunity', 'agreement']
-    if (whiteList.indexOf(to.name) === -1 && !(to.name === 'houSeselectHouse' && to.query.mode === 2)) {
+    if (
+      whiteList.indexOf(to.name) === -1 &&
+      !(to.name === 'houSeselectHouse' && to.query.mode === 2)
+    ) {
       this.$destroy()
       this.$store.commit('deleteKeepAlive', from.name)
     }

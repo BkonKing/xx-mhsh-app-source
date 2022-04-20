@@ -63,7 +63,14 @@ export function getMemberList (params) {
 
 /* 新增报备成员 */
 export function addMember (data) {
-  return request.post('/my/member/addMember', data)
+  return request({
+    url: '/my/member/addMember',
+    method: 'post',
+    data,
+    headers: {
+      noToast: true
+    }
+  })
 }
 
 /* 修改报备成员 */
