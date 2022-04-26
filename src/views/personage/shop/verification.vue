@@ -12,7 +12,9 @@
               <template v-if="infoData.coupon_type == 1"
                 ><span>￥</span>{{ infoData.denomination }}</template
               >
-              <template v-else>{{ infoData.denomination }}<span>折</span></template>
+              <template v-else
+                >{{ infoData.denomination }}<span>折</span></template
+              >
             </div>
             <div>
               <div class="coupon-text">{{ infoData.coupon_name }}</div>
@@ -87,6 +89,10 @@ export default {
     async getCouponScan () {
       const { data } = await getCouponScan({
         code_info: this.codeInfo
+      }).catch(() => {
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 1000)
       })
       this.infoData = data
     },
