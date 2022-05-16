@@ -86,7 +86,10 @@ export function deleteCoupon (data) {
   return request({
     url: '/shops/shops_coupon/del_shops_coupon',
     method: 'post',
-    data
+    data,
+    headers: {
+      noToast: true
+    }
   })
 }
 

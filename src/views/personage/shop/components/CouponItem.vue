@@ -9,7 +9,8 @@
         <template v-if="data.coupon_type == 1"
           ><span>￥</span>{{ data.miane }}</template
         >
-        <template v-else>{{ data.miane }}<span>折</span></template>
+        <template v-else-if="data.coupon_type == 2">{{ data.miane }}<span>折</span></template>
+        <template v-else><span>{{data.give}}</span></template>
       </div>
       <div class="coupon-info">
         <div class="coupon-info-1">{{ data.text }}</div>
@@ -190,6 +191,7 @@ export default {
     justify-content: center;
     align-items: center;
     width: 136px;
+    padding: 0 20px;
     position: relative;
     font-size: 40px;
     font-weight: bold;

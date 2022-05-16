@@ -117,7 +117,7 @@
               v-model="formData.threshold_price"
               label="满"
               type="number"
-              class="prefix-input"
+              class="prefix-input p-0-input"
               :class="[
                 { 'suffix-input--disabled': isDisabled },
                 { 'error-field': validProps.threshold_price }
@@ -133,7 +133,7 @@
               label="减"
               type="number"
               maxlength="5"
-              class="prefix-input"
+              class="prefix-input p-0-input"
               :class="[
                 { 'suffix-input--disabled': isDisabled },
                 { 'error-field': validProps.reduce_price }
@@ -163,7 +163,21 @@
                 @blur="validNumber"
               />
               <span class="suffix-text">折</span>
-            </div></van-col
+            </div>
+            <van-field
+              v-if="formData.coupon_type === '3'"
+              v-model="formData.give"
+              label="送"
+              maxlength="10"
+              class="prefix-input p-0-input"
+              :class="[
+                { 'suffix-input--disabled': isDisabled },
+                { 'error-field': validProps.give }
+              ]"
+              :readonly="isDisabled"
+              :placeholder="validProps.give ? '请输入' : ''"
+              @blur="validate('reduce_price')"
+            /></van-col
           >
         </van-row>
         <div v-if="isEdit" class="add-coupon">
@@ -589,6 +603,7 @@ export default {
         coupon_instructions: '',
         reduce_discount: '',
         reduce_price: '',
+        give: '',
         threshold_price: ''
       },
       validProps: {
@@ -606,7 +621,8 @@ export default {
         house_role_ids: false,
         goods_type_name: false,
         goods_type_precinct: false,
-        planTime: false
+        planTime: false,
+        give: false
       }
     }
   },
@@ -720,8 +736,13 @@ export default {
       // 券类型
       if (+couponInfo.coupon_type === 1) {
         couponInfo.reduce_discount = ''
+        couponInfo.give = ''
       } else if (+couponInfo.coupon_type === 2) {
         couponInfo.reduce_price = ''
+        couponInfo.give = ''
+      } else if (+couponInfo.coupon_type === 3) {
+        couponInfo.reduce_price = ''
+        couponInfo.reduce_discount = ''
       }
       if (this.isCopy) {
         couponInfo.planTime = ''
@@ -796,7 +817,12 @@ export default {
       }
       if (+this.formData.coupon_type === 1) {
         unValidation.push('reduce_discount')
+        unValidation.push('give')
       } else if (+this.formData.coupon_type === 2) {
+        unValidation.push('reduce_price')
+        unValidation.push('give')
+      } else if (+this.formData.coupon_type === 3) {
+        unValidation.push('reduce_discount')
         unValidation.push('reduce_price')
       }
       if (!(+this.formData.coupon_mode === 2)) {
@@ -1025,6 +1051,9 @@ export default {
       color: #222;
     }
   }
+}
+.p-0-input.suffix-input--disabled /deep/ .van-field__control{
+  padding-left: 0;
 }
 .suffix-input {
   display: flex;

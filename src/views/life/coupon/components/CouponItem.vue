@@ -15,10 +15,13 @@
             isPenny ? +data[priceKey] / 100 : data[priceKey]
           }}</span>
         </template>
-        <template v-else>
+        <template v-else-if="data.type == 2">
           <span class="coupon-money-number">{{ data[discountKey] }}</span
           ><span class="coupon-money-icon">折</span>
         </template>
+        <template v-else
+          ><span class="coupon-money-give">{{ data.give }}</span></template
+        >
         <div v-if="data.i_img" class="coupon-icon-bg">
           <img :src="data.i_img" />
         </div>
@@ -199,8 +202,10 @@ export default {
   }
   .coupon-money {
     display: flex;
+    flex-grow: 0;
     justify-content: center;
-    min-width: 170px;
+    width: 170px;
+    padding: 0 20px;
     position: relative;
     font-size: 40px;
     font-weight: bold;
@@ -228,6 +233,10 @@ export default {
       color: #ff6555;
       z-index: 1;
     }
+    &-give {
+      font-size: 32px;
+      font-weight: bold;
+    }
     // span + span {
     //   margin-left: 6px;
     // }
@@ -236,7 +245,7 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 50px 24px 0 12px;
+    padding: 50px 24px 0 0;
     .coupon-name {
       margin-bottom: 30px;
       font-size: 32px;
@@ -320,7 +329,8 @@ export default {
     width: 0;
   }
   .coupon-money-icon,
-  .coupon-money-number {
+  .coupon-money-number,
+  .coupon-money-give {
     color: #8f8f94;
   }
 }

@@ -187,6 +187,16 @@ export default {
     async deleteCoupon () {
       const { success } = await deleteCoupon({
         shops_coupon_id: this.couponId
+      }).catch((error) => {
+        this.deleteVisible = false
+        if (+error.code === 202) {
+          this.$dialog.alert({
+            message: '此优惠券为当前转盘抽奖活动的奖品，暂时不能删除。',
+            confirmButtonText: '我知道了'
+          })
+        } else {
+          this.$toast(error.message)
+        }
       })
       if (success) {
         this.deleteVisible = false

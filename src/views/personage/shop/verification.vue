@@ -9,12 +9,9 @@
         <div class="coupon-info-box">
           <div class="coupon-content">
             <div class="coupon-number">
-              <template v-if="infoData.coupon_type == 1"
-                ><span>￥</span>{{ infoData.denomination }}</template
-              >
-              <template v-else
-                >{{ infoData.denomination }}<span>折</span></template
-              >
+              <span v-if="infoData.coupon_type == 1">￥</span
+              >{{ infoData.denomination
+              }}<span v-if="infoData.coupon_type == 2">折</span>
             </div>
             <div>
               <div class="coupon-text">{{ infoData.coupon_name }}</div>

@@ -28,7 +28,8 @@
               <template v-if="item.coupon_type == 1"
                 ><span>￥</span>{{ item.denomination }}</template
               >
-              <template v-else>{{ item.denomination }}<span>折</span></template>
+              <template v-else-if="item.coupon_type == 2">{{ item.denomination }}<span>折</span></template>
+              <template v-else><span>{{ item.denomination }}</span></template>
             </div>
             <div class="info-center">
               <div class="tf-row">
@@ -140,12 +141,20 @@ export default {
   display: flex;
   padding: 40px 0;
   .info-left {
-    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120px;
+    padding: 10px 12px;
+    margin-right: 20px;
+    background: #F7F7F7;
+    border-radius: 10px 10px 10px 10px;
     font-size: 36px;
     font-weight: bold;
     color: #222222;
     span {
       font-size: 24px;
+      font-weight: bold;
     }
   }
   .info-center {

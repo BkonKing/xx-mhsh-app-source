@@ -128,13 +128,19 @@ export default {
       const {
         coupon_type: couponType,
         miane,
-        pay_type: payType
+        pay_type: payType,
+        give
       } = this.activeCoupon
       if (+payType === 1) {
         this.showPayCredit = false
       }
-      const content = +couponType === 1 ? `用${miane}元` : `享${miane}折`
-      this.$toast(`恭喜，抢到了！\n 下单可${content}`)
+      const contentObj = {
+        1: `可用${miane}元`,
+        2: `可享${miane}折`,
+        3: `满送${give}`
+      }
+      const content = contentObj[couponType]
+      this.$toast(`恭喜，抢到了！\n 下单${content}`)
       this.getCouponReceiveList()
       this.$emit('getSuccess')
     },

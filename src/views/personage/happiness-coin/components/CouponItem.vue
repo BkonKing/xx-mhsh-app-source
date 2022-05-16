@@ -10,10 +10,13 @@
           <span class="coupon-money-icon">￥</span
           ><span class="coupon-money-number">{{ data.miane }}</span>
         </template>
-        <template v-else>
+        <template v-else-if="data.coupon_type == 2">
           <span class="coupon-money-number">{{ data.miane }}</span
           ><span class="coupon-money-icon">折</span>
         </template>
+        <template v-else
+          ><span class="coupon-money-give">{{ data.give }}</span></template
+        >
       </div>
       <div class="coupon-info">
         <div class="tf-row-space-between">
@@ -43,7 +46,9 @@
       <div class="coupon-content" @click.stop="expanded = true">
         <template>
           <div @click="goIntroduce">
-            <span>优惠说明：{{data.coupon_explain}} | {{ data.new_goods_type_name1 }}</span
+            <span
+              >优惠说明：{{ data.coupon_explain }} |
+              {{ data.new_goods_type_name1 }}</span
             ><span v-if="data.new_shops_name">
               | 线下店铺<strong
                 >【{{ data.new_shops_name }}】<van-icon name="arrow"
@@ -176,8 +181,10 @@ export default {
   }
   .coupon-money {
     display: flex;
+    flex-grow: 0;
     justify-content: center;
-    min-width: 170px;
+    width: 170px;
+    padding: 0 20px;
     position: relative;
     font-size: 40px;
     font-weight: bold;
@@ -193,6 +200,10 @@ export default {
       font-weight: bold;
       color: #ff6555;
     }
+    &-give {
+      font-size: 32px;
+      font-weight: bold;
+    }
     // span + span {
     //   margin-left: 6px;
     // }
@@ -201,7 +212,7 @@ export default {
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 50px 24px 0 12px;
+    padding: 50px 24px 0 0;
     .left-slot {
       display: flex;
       align-items: center;
