@@ -140,6 +140,7 @@ export default {
     display: flex;
     font-size: 30px;
     &__label {
+      flex-shrink: 0;
       margin-right: 40px;
       color: #8f8f94;
     }

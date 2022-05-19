@@ -131,7 +131,7 @@
           </div>
           <div class="order-message-item">下单时间： {{ orderInfo.ctime }}</div>
           <div class="order-message-item">
-            支付方式：{{ orderInfo.payment_type_name }}
+            支付方式：{{ orderInfo.payment_type_name || "无" }}
           </div>
           <div class="order-message-item">
             支付时间：{{ orderInfo.pay_time }}
@@ -164,9 +164,10 @@ export default {
       return this.orderInfo.shops_user_coupon_info || {}
     },
     couponInfo () {
-      return this.shopInfo.shops_user_coupon_data
-        ? this.shopInfo.shops_user_coupon_data
-        : {}
+      const isShopCoupon = +this.orderInfo.shops_user_coupon_id
+      return isShopCoupon
+        ? (this.shopInfo.shops_user_coupon_data || {})
+        : this.shopInfo
     },
     couponRule () {
       const value = this.couponInfo.coupon_rule || ''

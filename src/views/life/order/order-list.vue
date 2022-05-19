@@ -31,7 +31,7 @@
           >
             <template v-slot="{ item, index }">
               <coupon-order-card
-                v-if="+item.order_type === 3"
+                v-if="+item.order_type === 3 || (+item.order_type === 5 && [2,3].includes(+item.award_type))"
                 :data="item"
               ></coupon-order-card>
               <coupon-order-card

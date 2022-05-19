@@ -50,6 +50,16 @@ const activityRouter = [
         /* webpackChunkName: "activityService" */
         '@/views/activity/20220115'
       )
+  },
+  // 转盘抽奖 - 奖品核销
+  {
+    path: '/pages/activity/award/verification',
+    name: 'awardVerification',
+    component: () =>
+      import(
+        /* webpackChunkName: "awardVerification" */
+        '@/views/activity/award/verification'
+      )
   }
 ]
 export default activityRouter

@@ -48,6 +48,7 @@ import {
   paymentStatus,
   collectStatus
 } from '@/api/personage'
+import { getAwardScan } from '@/api/award.js'
 import { serverCodeScan, visitorCodeScan, takeCodeScan } from '@/api/butler'
 import { queryActive, getActivityPermission, getActivityUserInfo } from '@/api/activity'
 import { getScan } from '@/api/personage/shop'
@@ -226,6 +227,9 @@ export default {
           break
         case 'zhuanti':
           this.goActiveSpecial(values[1])
+          break
+        case 'awardLogCode':
+          this.getAwardScan(value, values)
           break
         default:
           break
@@ -424,6 +428,23 @@ export default {
         name: 'taskDetail',
         query: {
           taskId
+        }
+      })
+    },
+    async getAwardScan (value, valueArray) {
+      const id = valueArray[1]
+      const { data } = await getAwardScan({
+        award_log_id: id
+      })
+      if (data.id) {
+        this.goAwardVerification(id)
+      }
+    },
+    goAwardVerification (id) {
+      this.$router.push({
+        path: '/pages/activity/award/verification',
+        query: {
+          id
         }
       })
     },
